@@ -92,8 +92,8 @@ namespace BattleStateMachineInternal
 		[Header("敵ターン開始演出時間 (秒)")]
 		public float enemyTurnStartActionWaitSecond = 1.5f;
 
-		[Header("メニュー表示BGMボリューム (%)")]
 		[Range(1f, 0f)]
+		[Header("メニュー表示BGMボリューム (%)")]
 		public float pauseBgmVolumeLevel = 0.5f;
 
 		[Header("通常攻撃演出速度 (倍速)")]
@@ -102,8 +102,8 @@ namespace BattleStateMachineInternal
 		[Header("WIN演出のWinモーション再生開始までの時間 (秒)")]
 		public float winActionStartMotionWaitSecond = 1.5f;
 
-		[Range(1f, 0f)]
 		[Header("スローモーションの速度倍率")]
+		[Range(1f, 0f)]
 		public float lastAttackSlowMotionSpeed = 0.1f;
 
 		[Header("スローモーション開始までの時間 (秒)")]

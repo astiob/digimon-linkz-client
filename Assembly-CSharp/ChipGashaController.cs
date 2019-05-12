@@ -21,12 +21,12 @@ public sealed class ChipGashaController : CutsceneBase
 	[Header("光弾エフェクト")]
 	private GameObject goPartsLight;
 
-	[Header("青色→青色")]
 	[SerializeField]
+	[Header("青色→青色")]
 	private GameObject goPartsBlue;
 
-	[Header("青色→黄色")]
 	[SerializeField]
+	[Header("青色→黄色")]
 	private GameObject goPartsYellow;
 
 	[SerializeField]

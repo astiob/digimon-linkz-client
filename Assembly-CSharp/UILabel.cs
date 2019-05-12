@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Label")]
+[ExecuteInEditMode]
 public class UILabel : UIWidget
 {
 	public static Font defaultFont = null;
 
 	public UILabel.Crispness keepCrispWhenShrunk = UILabel.Crispness.OnDesktop;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Font mTrueTypeFont;
 
 	[SerializeField]
@@ -27,20 +27,20 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private int mFontSize = 16;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private FontStyle mFontStyle;
 
 	[SerializeField]
 	[HideInInspector]
 	private NGUIText.Alignment mAlignment;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mEncoding = true;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mMaxLineCount;
 
 	[HideInInspector]
@@ -51,16 +51,16 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Color mEffectColor = Color.black;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private NGUIText.SymbolStyle mSymbols = NGUIText.SymbolStyle.Normal;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector2 mEffectDistance = Vector2.one;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UILabel.Overflow mOverflow;
 
 	[SerializeField]
@@ -75,20 +75,20 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private Color mGradientTop = Color.white;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mSpacingX;
 
 	[SerializeField]
 	[HideInInspector]
 	private int mSpacingY;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mUseFloatSpacing;
 
 	[HideInInspector]
@@ -99,8 +99,8 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private float mFloatSpacingY;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mOverflowEllipsis;
 
 	[HideInInspector]

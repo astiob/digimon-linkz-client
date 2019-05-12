@@ -401,7 +401,7 @@ public class ExtraEffectStatus : EffectStatusBase
 
 	private static List<ExtraEffectStatus> GetExtraEffectStatusList(List<ExtraEffectStatus> extraEffectStatusList, ExtraEffectStatus.ExtraTargetType targetType, EffectStatusBase.ExtraTargetSubType targetSubType, int targetValue, ConstValue.ResistanceType resistanceType, EffectStatusBase.ExtraEffectType effectType)
 	{
-		ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9 <GetExtraEffectStatusList>c__AnonStorey2E = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9();
+		ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E8 <GetExtraEffectStatusList>c__AnonStorey2E = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E8();
 		<GetExtraEffectStatusList>c__AnonStorey2E.effectType = effectType;
 		<GetExtraEffectStatusList>c__AnonStorey2E.targetType = targetType;
 		<GetExtraEffectStatusList>c__AnonStorey2E.targetSubType = targetSubType;
@@ -423,12 +423,12 @@ public class ExtraEffectStatus : EffectStatusBase
 		}
 		else
 		{
-			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2EA <GetExtraEffectStatusList>c__AnonStorey2EA = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2EA();
-			<GetExtraEffectStatusList>c__AnonStorey2EA.<>f__ref$745 = <GetExtraEffectStatusList>c__AnonStorey2E;
-			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2EA <GetExtraEffectStatusList>c__AnonStorey2EA2 = <GetExtraEffectStatusList>c__AnonStorey2EA;
+			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9 <GetExtraEffectStatusList>c__AnonStorey2E2 = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9();
+			<GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744 = <GetExtraEffectStatusList>c__AnonStorey2E;
+			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9 <GetExtraEffectStatusList>c__AnonStorey2E3 = <GetExtraEffectStatusList>c__AnonStorey2E2;
 			int num = (int)resistanceType;
-			<GetExtraEffectStatusList>c__AnonStorey2EA2.resistance = num.ToString();
-			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2EA.<>f__ref$745.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2EA.<>f__ref$745.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2EA.<>f__ref$745.targetValue && x.TargetValue2.Contains(<GetExtraEffectStatusList>c__AnonStorey2EA.resistance) && <GetExtraEffectStatusList>c__AnonStorey2EA.<>f__ref$745.searchEffectType(x.EffectType));
+			<GetExtraEffectStatusList>c__AnonStorey2E3.resistance = num.ToString();
+			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.targetValue && x.TargetValue2.Contains(<GetExtraEffectStatusList>c__AnonStorey2E2.resistance) && <GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.searchEffectType(x.EffectType));
 		}
 		foreach (ExtraEffectStatus item in enumerable)
 		{

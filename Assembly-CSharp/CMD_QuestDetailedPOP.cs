@@ -15,12 +15,12 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private const int BOSS_ID_AP_FREE = 4;
 
-	[SerializeField]
 	[Header("出現する敵リスト")]
+	[SerializeField]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
-	[SerializeField]
 	[Header("ドロップするアイテムリスト")]
+	[SerializeField]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
 	[SerializeField]
@@ -29,24 +29,24 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_TITLE;
 
-	[SerializeField]
 	[Header("ステージの数字のラベル")]
+	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
-	[SerializeField]
 	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
+	[SerializeField]
 	private GameObject goContentsROOT;
 
-	[SerializeField]
 	[Header("ポイントコンテンツ・ルート (ボーナス)")]
+	[SerializeField]
 	private GameObject goPointContentsROOT;
 
-	[SerializeField]
 	[Header("詳細説明 (ヒナの吹き出し)")]
+	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[SerializeField]
 	[Header("ポイント・タイトルのリスト)")]
+	[SerializeField]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("取得できるEXPのタイトル")]
 	private UILabel getEXPTitleLabel;
 
-	[SerializeField]
 	[Header("取得できるEXP")]
+	[SerializeField]
 	private UILabel getEXPLabel;
 
 	[SerializeField]
@@ -68,12 +68,12 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("消費するスタミナタイトル")]
+	[SerializeField]
 	private UILabel getStaminaTitleLabel;
 
-	[Header("消費するスタミナ")]
 	[SerializeField]
+	[Header("消費するスタミナ")]
 	private UILabel getStaminaLabel;
 
 	[SerializeField]

@@ -18,16 +18,16 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("取得クラスタのタイトルラベル")]
 	private UILabel getClusterTitleLabel;
 
-	[SerializeField]
 	[Header("取得クラスタのラベル")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
 	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
 	private UILabel normalMessageLabel;
 
-	[SerializeField]
 	[Header("警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel warningMessageLabel;
 
 	[Header("警告ダイアログの窓本体")]

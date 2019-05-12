@@ -33,8 +33,8 @@ public class UIPlayAnimation : MonoBehaviour
 	[HideInInspector]
 	private GameObject eventReceiver;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private string callWhenFinished;
 
 	private bool mStarted;

@@ -34,12 +34,12 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private GameObject[] clipObjects;
 
-	[SerializeField]
 	[Header("ポイントクエスト用 ROOT")]
+	[SerializeField]
 	private GameObject goPartsPointROOT;
 
-	[SerializeField]
 	[Header("ポイントクエスト用（ランキングなし） ROOT")]
+	[SerializeField]
 	private GameObject goPartsPointWithoutRankingROOT;
 
 	[SerializeField]
@@ -54,8 +54,8 @@ public class CMD_QuestTOP : CMD
 	[Header("降臨エリア用 スケジュールバナー")]
 	private GameObject goScheduleBannerParts;
 
-	[SerializeField]
 	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
+	[SerializeField]
 	private float timeOutSeconds;
 
 	public bool isGoingBattle;

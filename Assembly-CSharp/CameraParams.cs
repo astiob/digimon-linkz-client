@@ -4,16 +4,16 @@ using UnityEngine;
 using UnityEngine.CameraParams.Internal;
 using UnityEngine.Serialization;
 
-[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Camera Params")]
+[DisallowMultipleComponent]
 public class CameraParams : MonoBehaviour
 {
 	public static CameraParams current;
 
 	private static readonly Vector3 inverseScale = new Vector3(-1f, 1f, 1f);
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraType")]
+	[SerializeField]
 	private CameraParams.CameraType _cameraType;
 
 	[SerializeField]
@@ -24,21 +24,21 @@ public class CameraParams : MonoBehaviour
 	[FormerlySerializedAs("useAnimation")]
 	private bool _useAnimation = true;
 
-	[FormerlySerializedAs("isLoopAnimation")]
 	[SerializeField]
+	[FormerlySerializedAs("isLoopAnimation")]
 	private bool _onLoopAnimation;
 
-	[Range(1f, 179f)]
 	[FormerlySerializedAs("fieldOfView")]
+	[Range(1f, 179f)]
 	[SerializeField]
 	private float _fieldOfView = 60f;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraAnimation")]
+	[SerializeField]
 	private Animation _cameraAnimation;
 
-	[FormerlySerializedAs("animationEndStop")]
 	[SerializeField]
+	[FormerlySerializedAs("animationEndStop")]
 	private bool _animationEndStop = true;
 
 	[FormerlySerializedAs("endTime")]
@@ -49,8 +49,8 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private Transform _cameraTarget;
 
-	[FormerlySerializedAs("cameraLookTarget")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraLookTarget")]
 	private Transform _cameraLookTarget;
 
 	[SerializeField]

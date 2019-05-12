@@ -7,20 +7,20 @@ public sealed class MultiBattleAlways : BattleAlways
 	[SerializeField]
 	private GameObject emotionButtonFrontGO;
 
-	[SerializeField]
 	[Header("EmotionIconのButton")]
+	[SerializeField]
 	private UIButton emotionIconButton;
 
-	[SerializeField]
 	[Header("右下のメッセージ")]
+	[SerializeField]
 	public MultiConnetionMessage connectionMessage;
 
-	[Header("マルチバトルのダイアログ")]
 	[SerializeField]
+	[Header("マルチバトルのダイアログ")]
 	public MultiBattleDialog multiBattleDialog;
 
-	[SerializeField]
 	[Header("共有AP")]
+	[SerializeField]
 	public BattleUIMultiSharedAP sharedAP;
 
 	[SerializeField]

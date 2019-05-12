@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class BattleFadeout : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("Fadeoutのスキナー")]
+	[SerializeField]
 	public UIComponentSkinner fadeoutSkinner;
 
 	private UISprite sprite;

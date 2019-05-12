@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class GUIListPartsTrainingMenu : GUIListPartBS
 {
-	[SerializeField]
 	[Header("ベースのスプライト")]
+	[SerializeField]
 	private UISprite spBase;
 
-	[SerializeField]
 	[Header("NEWを示すアイコン")]
+	[SerializeField]
 	private UISprite spNew;
 
-	[SerializeField]
 	[Header("ビックリマーク")]
+	[SerializeField]
 	private UISprite spInfo;
 
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel lbTX_Title;
 
 	[Header("タイトル左")]
@@ -29,8 +29,8 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 	[Header("タイトル右")]
 	private UISprite spR_Title;
 
-	[Header("キャンペーンラベル")]
 	[SerializeField]
+	[Header("キャンペーンラベル")]
 	private UILabel lbTX_Campaign;
 
 	private GUIListPartsTrainingMenu.PartsData data;

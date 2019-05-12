@@ -8,16 +8,16 @@ public class RoundStart : MonoBehaviour
 	[SerializeField]
 	public UIWidget widget;
 
-	[Header("ApHpUp_Rootのスキナー")]
 	[SerializeField]
+	[Header("ApHpUp_Rootのスキナー")]
 	protected UIComponentSkinner apHpUpRootSkinner;
 
-	[SerializeField]
 	[Header("ラウンドのローカライズ")]
+	[SerializeField]
 	protected UILabel roundLocalize;
 
-	[Header("AP UPローカライズ(片方の時)")]
 	[SerializeField]
+	[Header("AP UPローカライズ(片方の時)")]
 	protected UILabel onlyApUpLocalize;
 
 	[Header("AP UPローカライズ(両方)")]

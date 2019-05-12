@@ -6,20 +6,20 @@ using UnityEngine;
 
 public class GUIListPartsS_DungeonR : GUIListPartBS
 {
-	[Header("NEWの画像")]
 	[SerializeField]
+	[Header("NEWの画像")]
 	private GameObject goNEW;
 
-	[SerializeField]
 	[Header("ドロップの画像")]
+	[SerializeField]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
-	[SerializeField]
 	[Header("ステージ数用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAGE;
 
-	[Header("ステージ名用のラベル")]
 	[SerializeField]
+	[Header("ステージ名用のラベル")]
 	private UILabel ngTXT_STAGE_NAME;
 
 	[SerializeField]
@@ -30,40 +30,40 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("残回数 ラベル")]
 	public UILabel ngTXT_TICKET_LEFT;
 
-	[SerializeField]
 	[Header("ノーコン ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_NO_CONTINUE;
 
-	[SerializeField]
 	[Header("ソロとマルチができるステージ色")]
+	[SerializeField]
 	private Color colorNormalStage;
 
-	[SerializeField]
 	[Header("マルチ専用のステージ色")]
+	[SerializeField]
 	private Color colorMultiStage;
 
 	[Header("ソロ専用のステージ色")]
 	[SerializeField]
 	private Color colorSoloStage;
 
-	[Header("イベント用のステージ背景色")]
 	[SerializeField]
+	[Header("イベント用のステージ背景色")]
 	private Color colorEventStageBackground;
 
 	[Header("####ソロとマルチステージ名装飾色")]
 	[SerializeField]
 	private Color colorSoloMultiStageNameOutline;
 
-	[Header("####マルチ専用名装飾色")]
 	[SerializeField]
+	[Header("####マルチ専用名装飾色")]
 	private Color colorMultiStageNameOutline;
 
 	[SerializeField]
 	[Header("####ソロ専用ステージ名装飾色")]
 	private Color colorSoloStageNameOutline;
 
-	[Header("イベント用のステージ名装飾色")]
 	[SerializeField]
+	[Header("イベント用のステージ名装飾色")]
 	private Color colorEventStageNameOutline;
 
 	[SerializeField]
@@ -86,8 +86,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
+	[SerializeField]
 	private UISprite ngSPR_LOCK;
 
 	[Header("クリアのマークの画像")]

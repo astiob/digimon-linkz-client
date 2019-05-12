@@ -9,24 +9,24 @@ public class PrizeEfcDirector : MonoBehaviour
 
 	private int efcTypeIDX;
 
-	[SerializeField]
 	[Header("フェードアウトのアルファ値")]
+	[SerializeField]
 	private float valueA_Min;
 
 	[Header("フェードインのアルファ値")]
 	[SerializeField]
 	private float valueA_Max = 1f;
 
-	[SerializeField]
 	[Header("フェードイン時間")]
+	[SerializeField]
 	private float fadeInTime = 0.3f;
 
-	[SerializeField]
 	[Header("オンしている時間")]
+	[SerializeField]
 	private float stayTime = 0.8f;
 
-	[SerializeField]
 	[Header("フェードアウト時間")]
+	[SerializeField]
 	private float fadeOutTime = 0.3f;
 
 	private float valueA;

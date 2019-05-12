@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 {
-	[Header("Menu/PanelのTransform")]
 	[SerializeField]
+	[Header("Menu/PanelのTransform")]
 	private Transform menuPanelTransform;
 
 	[Header("味方のPvP用上に出る文字")]
 	[SerializeField]
 	private UIWidget _pvpBattleYourPartyUi;
 
-	[Header("敵のPvP用上に出る文字")]
 	[SerializeField]
+	[Header("敵のPvP用上に出る文字")]
 	private UIWidget _pvpBattleEnemyPartyUi;
 
 	[Header("シード同期中のもの")]
@@ -34,8 +34,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[NonSerialized]
 	public EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("Winの次のボタン")]
+	[SerializeField]
 	public UIButton winNextButton;
 
 	[Header("Loseの次のボタン")]

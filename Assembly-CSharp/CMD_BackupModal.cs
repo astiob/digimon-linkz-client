@@ -41,6 +41,10 @@ public class CMD_BackupModal : CMD
 
 	private string btn_txt_no = string.Empty;
 
+	private Action actionYesButton;
+
+	private Action actionNoButton;
+
 	public string Title
 	{
 		get
@@ -143,5 +147,33 @@ public class CMD_BackupModal : CMD
 		this.backupButtonObj.SetActive(true);
 		this.googleButtonObj.SetActive(true);
 		this.iCloudButtonObj.SetActive(false);
+	}
+
+	private void OnPushYesButton()
+	{
+		if (this.actionYesButton != null)
+		{
+			this.actionYesButton();
+		}
+		this.ClosePanel(true);
+	}
+
+	private void OnPushNoButton()
+	{
+		if (this.actionNoButton != null)
+		{
+			this.actionNoButton();
+		}
+		this.ClosePanel(true);
+	}
+
+	public void SetYesButtonAction(Action action)
+	{
+		this.actionYesButton = action;
+	}
+
+	public void SetNoButtonAction(Action action)
+	{
+		this.actionNoButton = action;
 	}
 }

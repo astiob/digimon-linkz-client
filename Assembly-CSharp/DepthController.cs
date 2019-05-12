@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("GUI/DepthController")]
 [ExecuteInEditMode]
+[AddComponentMenu("GUI/DepthController")]
 public class DepthController : MonoBehaviour
 {
 	private int myDepthNow;

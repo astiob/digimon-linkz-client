@@ -31,44 +31,44 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private GameObject barrierGO;
 
-	[SerializeField]
 	[Header("左下のベースを変更ボタンラベル")]
+	[SerializeField]
 	private UILabel changeBaseButtonLabel;
 
-	[Header("取外パッチの残り個数")]
 	[SerializeField]
+	[Header("取外パッチの残り個数")]
 	private UILabel ejectCountLabel;
 
 	[SerializeField]
 	[Header("拡張パッチの残り個数")]
 	private UILabel extraCountLabel;
 
-	[Header("右下の切り替わるメニューのオブジェクト")]
 	[SerializeField]
+	[Header("右下の切り替わるメニューのオブジェクト")]
 	private ChipSphereStatus[] chipSphereStatus;
 
-	[SerializeField]
 	[Header("チップボタン達の親")]
+	[SerializeField]
 	private Transform sphereRoot;
 
 	[SerializeField]
 	[Header("左に出る3Dキャラの表示")]
 	private UITexture character3DTexture;
 
-	[Header("ステータスのルート")]
 	[SerializeField]
+	[Header("ステータスのルート")]
 	private GameObject statusRoot;
 
 	[Header("装着アニメーションのゲームオブジェクト")]
 	[SerializeField]
 	private GameObject partsUpperCutinGO;
 
-	[SerializeField]
 	[Header("装着アニメーションのテクスチャ")]
+	[SerializeField]
 	private UITexture[] partsUpperCutinTextures;
 
-	[SerializeField]
 	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject ejectItemCutinGO;
 
 	[Header("拡張/チップ取外アニメーションのテクスチャ")]

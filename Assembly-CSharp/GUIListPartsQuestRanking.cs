@@ -9,8 +9,8 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private UISprite spYouIcon;
 
-	[SerializeField]
 	[Header("キャラサムネの位置")]
+	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
 	[SerializeField]
@@ -21,16 +21,16 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[Header("称号アイコン")]
 	private GameObject goTITLE_ICON;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[Header("Nextポイント")]
 	[SerializeField]
+	[Header("Nextポイント")]
 	private UILabel lbTX_NextPoint;
 
-	[Header("ランキング順位")]
 	[SerializeField]
+	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
 	[Header("ランキングアイコン")]

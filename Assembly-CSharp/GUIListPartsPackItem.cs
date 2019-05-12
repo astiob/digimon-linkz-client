@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GUIListPartsPackItem : GUIListPartBS
 {
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	private UITexture ItemIcon;
 
 	[SerializeField]

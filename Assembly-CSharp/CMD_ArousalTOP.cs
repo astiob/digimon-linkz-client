@@ -65,8 +65,8 @@ public sealed class CMD_ArousalTOP : CMD
 	[SerializeField]
 	private UILabel _ngTX_MN_HAVE;
 
-	[Header("チップ装備の処理は分離")]
 	[SerializeField]
+	[Header("チップ装備の処理は分離")]
 	private ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]

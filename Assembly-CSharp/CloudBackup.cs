@@ -252,10 +252,6 @@ public class CloudBackup
 
 	private IEnumerator LoadBackupDataForiCloud()
 	{
-		if (this.ClearBackupMissionFlag)
-		{
-			yield break;
-		}
 		if (string.IsNullOrEmpty(this.inquiryCode))
 		{
 			yield return AppCoroutine.Start(this.GetInquiryCode(), false);
@@ -273,11 +269,17 @@ public class CloudBackup
 		}), false);
 		if (string.IsNullOrEmpty(this.cloudUserCode) && string.IsNullOrEmpty(this.cloudInquiryCode))
 		{
+			string title = StringMaster.GetString("CloudTakeOverTitle");
+			string info = StringMaster.GetString("CloudTakeOverNotFound");
+			yield return AppCoroutine.Start(this.ShowCMD_ModalMessage(title, info), false);
 			yield break;
 		}
 		yield return AppCoroutine.Start(this.SendClearBackupMission(), false);
 		if ((this.cloudUserCode == DataMng.Instance().RespDataCM_Login.playerInfo.userCode && this.cloudInquiryCode == this.inquiryCode) || (string.IsNullOrEmpty(this.cloudUserCode) && string.IsNullOrEmpty(this.cloudInquiryCode)))
 		{
+			string title2 = StringMaster.GetString("CloudSynchronizedTitle");
+			string info2 = StringMaster.GetString("CloudSynchronizedInfo");
+			yield return AppCoroutine.Start(this.ShowCMD_ModalMessage(title2, info2), false);
 			yield break;
 		}
 		string userName = string.Empty;
@@ -287,10 +289,10 @@ public class CloudBackup
 		}), false);
 		RestrictionInput.EndLoad();
 		bool isPermit = false;
-		string title = StringMaster.GetString("CloudTakeOverTitle");
+		string title3 = StringMaster.GetString("CloudTakeOverTitle");
 		string format = StringMaster.GetString("CloudTakeOverInfo");
-		string info = string.Format(format, this.cloudUserCode, userName);
-		yield return AppCoroutine.Start(this.ShowCMD_BackupModal_2(title, info, delegate(bool result)
+		string info3 = string.Format(format, this.cloudUserCode, userName);
+		yield return AppCoroutine.Start(this.ShowCMD_BackupModal(title3, info3, delegate(bool result)
 		{
 			isPermit = result;
 		}), false);
@@ -299,6 +301,7 @@ public class CloudBackup
 		{
 			yield return AppCoroutine.Start(this.ClearUserData(), false);
 			this.ClearBackupMissionFlag = false;
+			RestrictionInput.EndLoad();
 			yield break;
 		}
 		bool isSuccess = false;
@@ -307,17 +310,17 @@ public class CloudBackup
 			isSuccess = result;
 		}), false);
 		RestrictionInput.EndLoad();
-		title = StringMaster.GetString("TakeOverTitle");
+		title3 = StringMaster.GetString("TakeOverTitle");
 		if (isSuccess)
 		{
-			info = StringMaster.GetString("CloudTakeOverSuccess");
-			yield return AppCoroutine.Start(this.ShowCMD_ModalMessage(title, info), false);
+			info3 = StringMaster.GetString("CloudTakeOverSuccess");
+			yield return AppCoroutine.Start(this.ShowCMD_ModalMessage(title3, info3), false);
 			GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 		}
 		else
 		{
-			info = StringMaster.GetString("CloudTakeOverFailed");
-			yield return AppCoroutine.Start(this.ShowCMD_ModalMessage(title, info), false);
+			info3 = StringMaster.GetString("CloudTakeOverFailed");
+			yield return AppCoroutine.Start(this.ShowCMD_ModalMessage(title3, info3), false);
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		}
 		yield break;
@@ -597,38 +600,17 @@ public class CloudBackup
 	{
 		bool isClose = false;
 		bool pushYes = false;
-		CMD_BackupModal cd = GUIMain.ShowCommonDialog(delegate(int index)
+		CMD_BackupModal cd = GUIMain.ShowCommonDialog(delegate(int noop)
 		{
 			isClose = true;
-			if (index == 1)
-			{
-				pushYes = true;
-			}
 		}, "CMD_BackupModal") as CMD_BackupModal;
 		cd.Title = TitleText;
 		cd.Info = InfoText;
-		while (!isClose)
+		cd.SetYesButtonAction(delegate
 		{
-			yield return null;
-		}
-		OnClose(pushYes);
-		yield break;
-	}
-
-	private IEnumerator ShowCMD_BackupModal_2(string TitleText, string InfoText, Action<bool> OnClose)
-	{
-		bool isClose = false;
-		bool pushYes = false;
-		CMD_BackupModal cd = GUIMain.ShowCommonDialog(delegate(int index)
-		{
-			isClose = true;
-			if (index != 1)
-			{
-				pushYes = true;
-			}
-		}, "CMD_BackupModal") as CMD_BackupModal;
-		cd.Title = TitleText;
-		cd.Info = InfoText;
+			pushYes = true;
+		});
+		cd.SetNoButtonAction(null);
 		while (!isClose)
 		{
 			yield return null;

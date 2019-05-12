@@ -12,12 +12,12 @@ public class UVAnimHelper : MonoBehaviour
 	[SerializeField]
 	private float speedV;
 
-	[SerializeField]
 	[Header("テクスチャ タイリング X")]
+	[SerializeField]
 	private float tileX = 1f;
 
-	[Header("テクスチャ タイリング Y")]
 	[SerializeField]
+	[Header("テクスチャ タイリング Y")]
 	private float tileY = 10f;
 
 	private float totalU;

@@ -19,28 +19,28 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
-	[Header("経験値などが入ってる")]
 	[SerializeField]
+	[Header("経験値などが入ってる")]
 	private GameObject acquisitionGO;
 
-	[Header("デジモン部分")]
 	[SerializeField]
+	[Header("デジモン部分")]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[SerializeField]
 	[Header("デジモンに吸収されるパーティクルを消す")]
+	[SerializeField]
 	private GameObject particleRemover;
 
-	[SerializeField]
 	[Header("取得経験値のラベル")]
+	[SerializeField]
 	private UILabel getExp;
 
 	[Header("取得経験値の文言ラベル")]
 	[SerializeField]
 	private UILabel getExpText;
 
-	[SerializeField]
 	[Header("取得クラスタのラベル")]
+	[SerializeField]
 	private UILabel getCluster;
 
 	[SerializeField]
@@ -51,12 +51,12 @@ public class ExperienceResult : ResultBase
 	[Header("取得友情度【リーダー】のラベル")]
 	private UILabel getFriendPointForLeader;
 
-	[Header("取得友情度【リーダー】の文言ラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】の文言ラベル")]
 	private UILabel getFriendPointForLeaderText;
 
-	[SerializeField]
 	[Header("取得友情度のラベル")]
+	[SerializeField]
 	private UILabel getFriendPoint;
 
 	[Header("取得友情度の文言ラベル")]

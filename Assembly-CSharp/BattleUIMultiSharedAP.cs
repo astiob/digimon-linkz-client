@@ -10,12 +10,12 @@ public class BattleUIMultiSharedAP : MonoBehaviour
 	[SerializeField]
 	private SharedApNotes[] apNotes = new SharedApNotes[16];
 
-	[SerializeField]
 	[Header("AP値ラベル")]
+	[SerializeField]
 	private UILabel apLabel;
 
-	[Header("AP Maxエフェクト")]
 	[SerializeField]
+	[Header("AP Maxエフェクト")]
 	private GameObject apMaxEffect;
 
 	private int currentAp;

@@ -39,8 +39,8 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[Header("消費メッセージローカライズ")]
 	private UILabel consumeMessageLocalize;
 
-	[Header("所持ローカライズ")]
 	[SerializeField]
+	[Header("所持ローカライズ")]
 	private UILabel haveLocalize;
 
 	[SerializeField]
@@ -51,8 +51,8 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[Header("復活予約ローカライズ")]
 	private UILabel bookRevivalLocalize;
 
-	[Header("ショップへローカライズ")]
 	[SerializeField]
+	[Header("ショップへローカライズ")]
 	private UILabel goShopLocalize;
 
 	public GameObject GetRevivalDialogEnterUIButton

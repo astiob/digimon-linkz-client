@@ -12,8 +12,8 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	public GameObject hpUpObject;
 
-	[Header("ターン数のラベル")]
 	[SerializeField]
+	[Header("ターン数のラベル")]
 	private UILabel turnNumber;
 
 	[SerializeField]
@@ -24,16 +24,16 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UIGaugeManager hpGauge;
 
-	[Header("APゲージ")]
 	[SerializeField]
+	[Header("APゲージ")]
 	private UIGaugeManager apGauge;
 
-	[Header("押しっぱなしのボタン")]
 	[SerializeField]
+	[Header("押しっぱなしのボタン")]
 	private HoldPressButton holdPressButton;
 
-	[Header("アイコン画像(Group01)")]
 	[SerializeField]
+	[Header("アイコン画像(Group01)")]
 	private UISprite[] iconImageGroup01;
 
 	[SerializeField]
@@ -44,8 +44,8 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UIComponentSkinner statePlateComponentSkinner;
 
-	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
 	[SerializeField]
+	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
 	private UIComponentSkinner pnSpriteComponentSkinner;
 
 	[Header("[マルチバトル用]AP UP Rootのコンポーネントのスキナー")]
@@ -56,24 +56,24 @@ public class BattleUIHUD : UITweener
 	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
-	[SerializeField]
 	[Header("ターン数Tween")]
+	[SerializeField]
 	private UITweener turnNumberTween;
 
 	[SerializeField]
 	[Header("HUDのTween")]
 	private UITweener hudTween;
 
-	[Header("デジモンの名前")]
 	[SerializeField]
+	[Header("デジモンの名前")]
 	private UITextReplacer digimonName;
 
 	[Range(0f, 1f)]
 	[SerializeField]
 	private float from = 1f;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float to = 1f;
 
 	[SerializeField]

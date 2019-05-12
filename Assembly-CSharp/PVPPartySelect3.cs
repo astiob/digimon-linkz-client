@@ -41,8 +41,8 @@ public class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject leaderObj;
 
-	[Header("キャラクターのステータスPanel")]
 	[SerializeField]
+	[Header("キャラクターのステータスPanel")]
 	private StatusPanel statusPanel;
 
 	[SerializeField]

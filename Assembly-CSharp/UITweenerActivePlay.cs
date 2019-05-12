@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 [RequireComponent(typeof(UITweener))]
+[DisallowMultipleComponent]
 public class UITweenerActivePlay : MonoBehaviour
 {
-	[SerializeField]
 	[Header("ONなら終了後、非表示にする")]
+	[SerializeField]
 	private bool autoDisable;
 
 	private List<UITweener> tween;

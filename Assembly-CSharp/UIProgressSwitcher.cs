@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(UIGaugeManager))]
 [ExecuteInEditMode]
+[RequireComponent(typeof(UIGaugeManager))]
 public class UIProgressSwitcher : MonoBehaviour
 {
 	[SerializeField]

@@ -9,15 +9,15 @@ public static class GameCache
 	{
 		try
 		{
-			GameCache.<ClearCache>c__AnonStorey44F <ClearCache>c__AnonStorey44F = new GameCache.<ClearCache>c__AnonStorey44F();
+			GameCache.<ClearCache>c__AnonStorey44E <ClearCache>c__AnonStorey44E = new GameCache.<ClearCache>c__AnonStorey44E();
 			DirectoryInfo directoryInfo = new DirectoryInfo(Application.persistentDataPath);
-			<ClearCache>c__AnonStorey44F.fileInfoList = directoryInfo.GetFiles();
+			<ClearCache>c__AnonStorey44E.fileInfoList = directoryInfo.GetFiles();
 			int i;
-			for (i = 0; i < <ClearCache>c__AnonStorey44F.fileInfoList.Length; i++)
+			for (i = 0; i < <ClearCache>c__AnonStorey44E.fileInfoList.Length; i++)
 			{
-				if (ignoreFileNameList == null || !ignoreFileNameList.Any((string x) => x == <ClearCache>c__AnonStorey44F.fileInfoList[i].Name))
+				if (ignoreFileNameList == null || !ignoreFileNameList.Any((string x) => x == <ClearCache>c__AnonStorey44E.fileInfoList[i].Name))
 				{
-					File.Delete(Application.persistentDataPath + "/" + <ClearCache>c__AnonStorey44F.fileInfoList[i].Name);
+					File.Delete(Application.persistentDataPath + "/" + <ClearCache>c__AnonStorey44E.fileInfoList[i].Name);
 				}
 			}
 		}

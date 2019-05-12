@@ -13,20 +13,20 @@ public class BMFont
 	[SerializeField]
 	private int mBase;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mHeight;
 
 	[SerializeField]
 	[HideInInspector]
 	private string mSpriteName;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private List<BMGlyph> mSaved = new List<BMGlyph>();
 
 	private Dictionary<int, BMGlyph> mDict = new Dictionary<int, BMGlyph>();

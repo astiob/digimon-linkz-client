@@ -5,8 +5,8 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/Atlas")]
 public class UIAtlas : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material material;
 
 	[HideInInspector]

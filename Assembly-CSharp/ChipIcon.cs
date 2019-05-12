@@ -18,8 +18,8 @@ public class ChipIcon : MonoBehaviour
 	[Header("チップアイコン")]
 	private UITexture iconTexture;
 
-	[Header("ランクアイコン")]
 	[SerializeField]
+	[Header("ランクアイコン")]
 	private UISprite rankSprite;
 
 	[SerializeField]

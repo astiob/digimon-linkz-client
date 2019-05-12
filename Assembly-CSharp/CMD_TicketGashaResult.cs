@@ -9,8 +9,8 @@ public class CMD_TicketGashaResult : CMD
 {
 	public static CMD_TicketGashaResult instance;
 
-	[Header("アイコン中心位置")]
 	[SerializeField]
+	[Header("アイコン中心位置")]
 	private GameObject goICON_CENTER_POS;
 
 	[Header("アイコンオフセット XY")]
@@ -21,8 +21,8 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private int iconNumX;
 
-	[SerializeField]
 	[Header("アイコン登場時間(フレーム数)")]
+	[SerializeField]
 	private int showChipInterval = 16;
 
 	[SerializeField]
@@ -41,24 +41,24 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private UILabel ngTX_EXP_TEN;
 
-	[Header("シングルキャプチャボタンSprite")]
 	[SerializeField]
+	[Header("シングルキャプチャボタンSprite")]
 	private UISprite buttonSpriteSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTen;
 
 	[Header("TOPへボタンSprite")]
 	[SerializeField]
 	private UISprite buttonSpriteTOP;
 
-	[Header("シングルキャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("シングルキャプチャボタンGUICollider")]
 	private GUICollider buttonColliderSingle;
 
-	[Header("10連キャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("10連キャプチャボタンGUICollider")]
 	private GUICollider buttonColliderTen;
 
 	[SerializeField]
@@ -76,8 +76,8 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private UILabel lbCAMPAIGN_10;
 
-	[SerializeField]
 	[Header("WHITE エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_WHITE;
 
 	[SerializeField]

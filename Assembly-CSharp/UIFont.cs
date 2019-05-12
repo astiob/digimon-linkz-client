@@ -10,20 +10,20 @@ public class UIFont : MonoBehaviour
 	[SerializeField]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Rect mUVRect = new Rect(0f, 0f, 1f, 1f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private BMFont mFont = new BMFont();
 
 	[SerializeField]
 	[HideInInspector]
 	private UIAtlas mAtlas;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIFont mReplacement;
 
 	[HideInInspector]

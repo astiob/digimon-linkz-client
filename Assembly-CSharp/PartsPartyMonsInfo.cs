@@ -90,12 +90,12 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject gimmickSkillSucceedDown2;
 
-	[Header("左クリップのOBJ")]
 	[SerializeField]
+	[Header("左クリップのOBJ")]
 	private GameObject goL_CLIP;
 
-	[Header("右クリップのOBJ")]
 	[SerializeField]
+	[Header("右クリップのOBJ")]
 	private GameObject goR_CLIP;
 
 	[SerializeField]

@@ -51,8 +51,8 @@ public sealed class CMD_Succession : CMD
 	[Header("所持クラスタ数")]
 	private UILabel myClusterLabel;
 
-	[SerializeField]
 	[Header("必要クラスタ数")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -740,8 +740,8 @@ public sealed class CMD_Succession : CMD
 	[Serializable]
 	private class SkillTab
 	{
-		[SerializeField]
 		[Header("スプライト")]
+		[SerializeField]
 		private UISprite sprite;
 
 		[SerializeField]

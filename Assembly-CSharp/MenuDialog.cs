@@ -40,12 +40,12 @@ public class MenuDialog : MonoBehaviour
 
 	public UILabel expCount;
 
-	[Header("ヘルプローカライズ")]
 	[SerializeField]
+	[Header("ヘルプローカライズ")]
 	private UILabel helpLocalize;
 
-	[SerializeField]
 	[Header("リタイアローカライズ")]
+	[SerializeField]
 	private UILabel retireLocalize;
 
 	[Header("獲得EXPローカライズ")]

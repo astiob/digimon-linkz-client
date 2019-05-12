@@ -16,28 +16,28 @@ public sealed class CMD_PvPBattleResult : CMD
 	[Header("Winのロゴ")]
 	private GameObject winLogo;
 
-	[SerializeField]
 	[Header("Loseのロゴ")]
+	[SerializeField]
 	private GameObject loseLogo;
 
-	[SerializeField]
 	[Header("スキップ用Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogoForSkip;
 
 	[Header("獲得クラスタ表示ルート")]
 	[SerializeField]
 	private GameObject acquisitionRoot;
 
-	[SerializeField]
 	[Header("DP表示ルート")]
+	[SerializeField]
 	private GameObject dpRoot;
 
 	[Header("ランク表示用スプライト")]
 	[SerializeField]
 	private UISprite rankSprite;
 
-	[Header("獲得クラスタ数値ラベル")]
 	[SerializeField]
+	[Header("獲得クラスタ数値ラベル")]
 	private UILabel getClusterLabel;
 
 	[SerializeField]
@@ -64,8 +64,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject gaugeDown;
 
-	[SerializeField]
 	[Header("ランクアップ用エフェクト")]
+	[SerializeField]
 	private GameObject rankUpEffect;
 
 	[Header("ランクダウン用エフェクト")]

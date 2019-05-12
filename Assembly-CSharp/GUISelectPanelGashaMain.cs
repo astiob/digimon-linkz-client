@@ -10,8 +10,8 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 	[Header("バナーのセルのスケール")]
 	private Vector3 bannerScale;
 
-	[SerializeField]
 	[Header("選択されたパーツのアニメ量 X")]
+	[SerializeField]
 	private float selectPartsAnimX = 25f;
 
 	private int animIndexBK = -1;

@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class BattleStartAction : MonoBehaviour
 {
-	[SerializeField]
 	[Header("タイトル")]
+	[SerializeField]
 	private GameObject titleRoot;
 
 	[Header("味方のリーダースキルのUI")]
 	[SerializeField]
 	private BattleStartAction.LeaderSkillUI playerLeaderSkillUI;
 
-	[Header("敵のリーダースキルのUI")]
 	[SerializeField]
+	[Header("敵のリーダースキルのUI")]
 	private BattleStartAction.LeaderSkillUI enemyLeaderSkillUI;
 
 	[SerializeField]

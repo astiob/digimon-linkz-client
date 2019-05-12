@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-[AddComponentMenu("NGUI/UI/Sprite Animation")]
 [RequireComponent(typeof(UISprite))]
+[AddComponentMenu("NGUI/UI/Sprite Animation")]
 public class UISpriteAnimation : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mFPS = 30;
 
 	[HideInInspector]
@@ -19,8 +19,8 @@ public class UISpriteAnimation : MonoBehaviour
 	[HideInInspector]
 	protected bool mLoop = true;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mSnap = true;
 
 	protected UISprite mSprite;

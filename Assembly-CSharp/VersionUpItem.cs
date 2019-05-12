@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class VersionUpItem : GUICollider
 {
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	public UISprite spIcon;
 
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	public UITexture texIcon;
 
-	[SerializeField]
 	[Header("素材選択")]
+	[SerializeField]
 	public UILabel lbSelect;
 
 	[Header("個数プレート")]
 	[SerializeField]
 	public UISprite spNumPlate;
 
-	[SerializeField]
 	[Header("個数表示")]
+	[SerializeField]
 	public UILabel lbNum;
 
 	private Action actTouchShort;

@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("Digimon Effects/Tools/Texture Scroll")]
 [RequireComponent(typeof(Renderer))]
+[AddComponentMenu("Digimon Effects/Tools/Texture Scroll")]
 public class TextureScroll : MonoBehaviour
 {
 	[SerializeField]

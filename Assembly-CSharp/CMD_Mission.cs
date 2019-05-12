@@ -15,8 +15,8 @@ public sealed class CMD_Mission : CMD
 	[SerializeField]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[SerializeField]
 	[Header("ミッションの段階終了時カットイン演出コントローラ")]
+	[SerializeField]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]

@@ -14,8 +14,8 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("NEW スプライト")]
+	[SerializeField]
 	private UISprite spNew;
 
 	private QuestData.WorldAreaData areaData;

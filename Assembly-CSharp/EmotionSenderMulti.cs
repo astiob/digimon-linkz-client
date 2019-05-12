@@ -15,8 +15,8 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 	[NonSerialized]
 	public List<GameObject> iconSpriteParents = new List<GameObject>();
 
-	[SerializeField]
 	[Header("送信用アイコンたちが載ってる親")]
+	[SerializeField]
 	private GameObject dialog;
 
 	[SerializeField]

@@ -2,28 +2,28 @@
 using System.Diagnostics;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Widget")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Widget")]
 public class UIWidget : UIRect
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected Color mColor = Color.white;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIWidget.Pivot mPivot = UIWidget.Pivot.Center;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mWidth = 100;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mHeight = 100;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mDepth;
 
 	public UIWidget.OnDimensionsChanged onChange;
@@ -683,8 +683,8 @@ public class UIWidget : UIRect
 		return (num != 0) ? num : UIWidget.PanelCompareFunc(left, right);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int PanelCompareFunc(UIWidget left, UIWidget right)
 	{
 		if (left.mDepth < right.mDepth)

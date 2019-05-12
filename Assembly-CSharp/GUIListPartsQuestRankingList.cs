@@ -6,24 +6,24 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 {
 	private const string hexColorOutRange = "#707070B4";
 
-	[Header("ベースのスプライト")]
 	[SerializeField]
+	[Header("ベースのスプライト")]
 	private UISprite spBase;
 
 	[SerializeField]
 	[Header("ベースのSabスプライト")]
 	private UISprite spBaseSab;
 
-	[SerializeField]
 	[Header("ベースのLineスプライト")]
+	[SerializeField]
 	private UISprite spBaseLine;
 
 	[Header("ベースのGlowスプライト")]
 	[SerializeField]
 	private UISprite spBaseGlow;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
 	[SerializeField]

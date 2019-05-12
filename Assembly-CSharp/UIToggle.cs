@@ -31,8 +31,8 @@ public class UIToggle : UIWidgetContainer
 
 	public UIToggle.Validate validator;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UISprite checkSprite;
 
 	[HideInInspector]
@@ -47,8 +47,8 @@ public class UIToggle : UIWidgetContainer
 	[HideInInspector]
 	private string functionName = "OnActivate";
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool startsChecked;
 
 	private bool mIsActive = true;

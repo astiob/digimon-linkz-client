@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class PlayerWinnerController : MonoBehaviour
 {
-	[Header("サークルオブジェクト")]
 	[SerializeField]
+	[Header("サークルオブジェクト")]
 	private Transform[] circles = new Transform[0];
 
-	[SerializeField]
 	[Header("サークルの回転制御")]
+	[SerializeField]
 	private float[] circleRotate = new float[0];
 
 	private int circleIndex;

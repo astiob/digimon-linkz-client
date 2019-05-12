@@ -18,8 +18,8 @@ public sealed class TicketGashaController : CutsceneBase
 	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
 	private List<GameObject> goCardEfcList;
 
-	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
 	[SerializeField]
+	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
 	private List<GameObject> goCardAnimList;
 
 	[SerializeField]

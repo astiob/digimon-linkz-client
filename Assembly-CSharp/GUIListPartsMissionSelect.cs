@@ -4,12 +4,12 @@ using UnityEngine;
 
 public sealed class GUIListPartsMissionSelect : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWの スプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
-	[SerializeField]
 	[Header("回数表示")]
+	[SerializeField]
 	private UILabel lbAbleCount;
 
 	[Header("選択してないときの背景色")]
@@ -20,8 +20,8 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択してないときの外枠色")]
+	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
 	[Header("選択時の外枠色")]
@@ -32,24 +32,24 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]
 	[SerializeField]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
-	[Header("バッジスプライト")]
 	[SerializeField]
+	[Header("バッジスプライト")]
 	private UISprite spBadge;
 
 	private bool isTouchEndFromChild;

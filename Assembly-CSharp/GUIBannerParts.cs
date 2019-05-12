@@ -16,16 +16,16 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[Header("ガシャの背景色")]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[Header("イベントの背景色")]
 	[SerializeField]
+	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
 	[SerializeField]
 	[Header("キャンペーンの背景色")]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]

@@ -44,8 +44,8 @@ public class UIScrollView : MonoBehaviour
 
 	public UIScrollView.OnDragNotification onStoppedMoving;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector3 scale = new Vector3(1f, 0f, 0f);
 
 	[SerializeField]

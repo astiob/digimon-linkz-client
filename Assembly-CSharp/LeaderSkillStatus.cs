@@ -7,8 +7,8 @@ public class LeaderSkillStatus
 	[SerializeField]
 	private string _name;
 
-	[SerializeField]
 	[Multiline(1)]
+	[SerializeField]
 	private string _description;
 
 	[SerializeField]

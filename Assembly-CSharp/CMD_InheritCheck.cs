@@ -10,28 +10,28 @@ public sealed class CMD_InheritCheck : CMD
 	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
-	[Header("デジモンの継承スキル")]
 	[SerializeField]
+	[Header("デジモンの継承スキル")]
 	private MonsterLearnSkill monsterSuccessionSkill;
 
-	[SerializeField]
 	[Header("消費クラスタのラベル")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[Header("警告のメッセージのラベル")]
 	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string useCluster, int baseDigimonSkillNumber, int partnerDigimonSkillNumber)

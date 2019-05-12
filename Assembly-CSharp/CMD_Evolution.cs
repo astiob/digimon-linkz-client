@@ -32,8 +32,8 @@ public sealed class CMD_Evolution : CMD
 	[SerializeField]
 	private UILabel ngTXT_CHIP;
 
-	[Header("各進化先のリンク")]
 	[SerializeField]
+	[Header("各進化先のリンク")]
 	private GameObject goListParts;
 
 	private GUISelectPanelEvolution csSelectPanelEvolution;

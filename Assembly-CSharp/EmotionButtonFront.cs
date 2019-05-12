@@ -16,8 +16,8 @@ public class EmotionButtonFront : MonoBehaviour
 	[Header("スタンプの本体")]
 	private UITexture[] stampTextureList;
 
-	[SerializeField]
 	[Header("スタンプの画像名")]
+	[SerializeField]
 	private string[] stampNameList;
 
 	private void Awake()

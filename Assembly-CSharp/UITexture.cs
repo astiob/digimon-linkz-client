@@ -5,8 +5,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UITexture : UIBasicSprite
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Rect mRect = new Rect(0f, 0f, 1f, 1f);
 
 	[SerializeField]
@@ -17,16 +17,16 @@ public class UITexture : UIBasicSprite
 	[SerializeField]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Shader mShader;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mFixedAspect;
 
 	[NonSerialized]

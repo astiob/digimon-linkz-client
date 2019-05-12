@@ -11,12 +11,12 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private GameObject goNEW;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[Header("選択時の背景色")]
 	[SerializeField]
+	[Header("選択時の背景色")]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択してないときの外枠色")]
@@ -27,32 +27,32 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[Header("残り時間のラベル")]
 	[SerializeField]
+	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
 	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
-	[SerializeField]
 	[Header("外枠のスプライト")]
+	[SerializeField]
 	private UISprite frameSprite;
 
 	[Header("バナーのテクスチャ")]
 	[SerializeField]
 	public UITexture bannerTex;
 
-	[Header("オープンの時の色")]
 	[SerializeField]
+	[Header("オープンの時の色")]
 	private Color openBannerCol;
 
-	[SerializeField]
 	[Header("クローズの時の色")]
+	[SerializeField]
 	private Color closeBannerCol;
 
 	[SerializeField]
@@ -67,8 +67,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
-	[SerializeField]
 	[Header("ステージギミック表記Obj")]
+	[SerializeField]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

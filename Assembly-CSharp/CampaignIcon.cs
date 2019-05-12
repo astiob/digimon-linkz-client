@@ -12,8 +12,8 @@ public sealed class CampaignIcon : PartsMenuNotfIcon
 	[SerializeField]
 	private UILabel lbContent;
 
-	[SerializeField]
 	[Header("キャンペーン中を必ず表示")]
+	[SerializeField]
 	private bool forceShowInCampaign;
 
 	protected override void Start()

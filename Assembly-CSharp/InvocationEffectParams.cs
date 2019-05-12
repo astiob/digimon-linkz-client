@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Invocation Effect Params")]
+[DisallowMultipleComponent]
 public class InvocationEffectParams : EffectParamsGeneric
 {
 	[SerializeField]
@@ -17,12 +17,12 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private string _cameraMotionId;
 
-	[FormerlySerializedAs("hideStage")]
 	[SerializeField]
+	[FormerlySerializedAs("hideStage")]
 	private bool _hideStage;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStageBackgroundColor")]
+	[SerializeField]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]

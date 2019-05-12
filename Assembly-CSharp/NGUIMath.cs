@@ -37,8 +37,8 @@ public static class NGUIMath
 		return val;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float WrapAngle(float angle)
 	{
 		while (angle > 180f)
@@ -52,8 +52,8 @@ public static class NGUIMath
 		return angle;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static float Wrap01(float val)
 	{
 		return val - (float)Mathf.FloorToInt(val);
@@ -143,16 +143,16 @@ public static class NGUIMath
 		return num.ToString("X2");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string DecimalToHex24(int num)
 	{
 		num &= 16777215;
 		return num.ToString("X6");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string DecimalToHex32(int num)
 	{
 		return num.ToString("X8");
@@ -169,8 +169,8 @@ public static class NGUIMath
 		return num | Mathf.RoundToInt(c.a * 255f);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color IntToColor(int val)
 	{
 		float num = 0.003921569f;
@@ -182,8 +182,8 @@ public static class NGUIMath
 		return black;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string IntToBinary(int val, int bits)
 	{
 		string text = string.Empty;

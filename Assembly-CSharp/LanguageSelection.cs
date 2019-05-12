@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Language Selection")]
 [RequireComponent(typeof(UIPopupList))]
+[AddComponentMenu("NGUI/Interaction/Language Selection")]
 public class LanguageSelection : MonoBehaviour
 {
 	private UIPopupList mList;

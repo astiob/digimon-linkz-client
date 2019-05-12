@@ -24,8 +24,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[Header("一括受取ボタン")]
 	[SerializeField]
+	[Header("一括受取ボタン")]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]

@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class IsWarning : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("Allyのタイトルバーのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner allyTitleBarSkinner;
 
-	[SerializeField]
 	[Header("メッセージ")]
+	[SerializeField]
 	private UILabel messageLocalize;
 
 	public void ApplyWarning(SufferStateProperty.SufferType sufferType, CharacterStateControl characterStateControl = null)

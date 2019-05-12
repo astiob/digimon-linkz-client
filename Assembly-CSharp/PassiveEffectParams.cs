@@ -2,8 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Passive Effect Params")]
+[DisallowMultipleComponent]
 public class PassiveEffectParams : EffectParamsGeneric
 {
 	[SerializeField]

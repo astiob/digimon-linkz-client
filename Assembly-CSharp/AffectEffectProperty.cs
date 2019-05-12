@@ -31,8 +31,8 @@ public class AffectEffectProperty
 	[SerializeField]
 	private int[] _intValue = new int[2];
 
-	[SerializeField]
 	[FormerlySerializedAs("floatValue")]
+	[SerializeField]
 	private float[] _floatValue = new float[6];
 
 	public AffectEffectProperty()

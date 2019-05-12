@@ -1,12 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Unity2D Sprite")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Unity2D Sprite")]
 public class UI2DSprite : UIBasicSprite
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Sprite mSprite;
 
 	[SerializeField]
@@ -17,12 +17,12 @@ public class UI2DSprite : UIBasicSprite
 	[SerializeField]
 	private Shader mShader;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mFixedAspect;
 
 	[HideInInspector]

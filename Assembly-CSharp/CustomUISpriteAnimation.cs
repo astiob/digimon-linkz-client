@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(UISprite))]
 [ExecuteInEditMode]
+[RequireComponent(typeof(UISprite))]
 public class CustomUISpriteAnimation : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected float mFPS = 30f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected string mPrefix = string.Empty;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected bool mLoop = true;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected bool mSnap = true;
 
 	protected UISprite mSprite;

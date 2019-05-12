@@ -32,8 +32,8 @@ public class CMD_10gashaResult : CMD
 	[SerializeField]
 	private UISprite buttonSpriteSingle;
 
-	[Header("10連キャプチャボタンSprite")]
 	[SerializeField]
+	[Header("10連キャプチャボタンSprite")]
 	private UISprite buttonSpriteTen;
 
 	[Header("シングルキャプチャボタンGUICollider")]

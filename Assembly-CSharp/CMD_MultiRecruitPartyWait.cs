@@ -10,8 +10,8 @@ using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[Header("エリア名 ステージ名")]
 	[SerializeField]
+	[Header("エリア名 ステージ名")]
 	private UILabel lbAreaName;
 
 	[SerializeField]
@@ -34,12 +34,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_PASSWORD_EXP;
 
-	[Header("フレンドボタン")]
 	[SerializeField]
+	[Header("フレンドボタン")]
 	private GameObject goBTN_FRIEND;
 
-	[Header("チャットボタン")]
 	[SerializeField]
+	[Header("チャットボタン")]
 	private GameObject goBTN_CHAT;
 
 	[SerializeField]
@@ -78,8 +78,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[Header("エモーションコンポーネント")]
 	[SerializeField]
+	[Header("エモーションコンポーネント")]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]

@@ -12,8 +12,8 @@ namespace MonsterList.ChangeMonster
 		[Header("ベース用チップ装備")]
 		private ChipBaseSelect baseChipBaseSelect;
 
-		[SerializeField]
 		[Header("パートナー用チップ装備")]
+		[SerializeField]
 		private ChipBaseSelect partnerChipBaseSelect;
 
 		[SerializeField]
@@ -165,8 +165,8 @@ namespace MonsterList.ChangeMonster
 
 		private GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray;
 
-		[SerializeField]
 		[Header("キャラクターのステータスPanel")]
+		[SerializeField]
 		private StatusPanel statusPanel;
 
 		private MonsterData changeMonsterData;

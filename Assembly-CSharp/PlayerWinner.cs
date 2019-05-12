@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PlayerWinner : MonoBehaviour
 {
-	[Header("Nextボタン")]
 	[SerializeField]
+	[Header("Nextボタン")]
 	private UIButton nextButton;
 
 	[SerializeField]

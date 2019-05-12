@@ -12,8 +12,8 @@ public class CommonRender3DPartyRT : MonoBehaviour
 
 	private List<CharacterParams> cpParamList;
 
-	[SerializeField]
 	[Header("モンスター配置用Locater")]
+	[SerializeField]
 	private GameObject[] Locater;
 
 	protected virtual void Awake()

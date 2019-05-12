@@ -12,12 +12,12 @@ public sealed class BattleStateManager : MonoBehaviour
 	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
-	[Header("マルチUI")]
 	[SerializeField]
+	[Header("マルチUI")]
 	private BattleUIComponentsMulti battleUIComponentsMulti;
 
-	[Header("PvPUI")]
 	[SerializeField]
+	[Header("PvPUI")]
 	private BattleUIComponentsPvP battleUIComponentsPvP;
 
 	private static BattleMode _battleMode;

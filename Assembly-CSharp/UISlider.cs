@@ -1,16 +1,16 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/NGUI Slider")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/NGUI Slider")]
 public class UISlider : UIProgressBar
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Transform foreground;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float rawValue = 1f;
 
 	[HideInInspector]

@@ -235,8 +235,8 @@ public static class NGUIText
 		return Mathf.Clamp01((float)num / 255f);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static Color ParseColor(string text, int offset)
 	{
 		return NGUIText.ParseColor24(text, offset);
@@ -253,8 +253,8 @@ public static class NGUIText
 		return new Color(num4 * (float)num, num4 * (float)num2, num4 * (float)num3);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color ParseColor32(string text, int offset)
 	{
 		int num = NGUIMath.HexToDecimal(text[offset]) << 4 | NGUIMath.HexToDecimal(text[offset + 1]);
@@ -272,8 +272,8 @@ public static class NGUIText
 		return NGUIText.EncodeColor24(c);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeColor(string text, Color c)
 	{
 		return string.Concat(new string[]
@@ -302,8 +302,8 @@ public static class NGUIText
 		return NGUIMath.DecimalToHex24(num);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeColor32(Color c)
 	{
 		int num = NGUIMath.ColorToInt(c);
@@ -727,15 +727,15 @@ public static class NGUIText
 		return indices[i];
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private static bool IsSpace(int ch)
 	{
 		return ch == 32 || ch == 8202 || ch == 8203 || ch == 8201;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static void EndLine(ref StringBuilder s)
 	{
 		int num = s.Length - 1;
@@ -749,8 +749,8 @@ public static class NGUIText
 		}
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	private static void ReplaceSpaceWithNewline(ref StringBuilder s)
 	{
 		int num = s.Length - 1;
