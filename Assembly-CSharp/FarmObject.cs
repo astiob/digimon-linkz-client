@@ -475,5 +475,6 @@ public class FarmObject : MonoBehaviour
 
 	public virtual void OnResumeFromCache()
 	{
+		this.SetNamePlate(true);
 	}
 }

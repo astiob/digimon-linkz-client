@@ -7,12 +7,12 @@ using UnityEngine;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[Header("NEWのGameObject")]
 	[SerializeField]
+	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -27,16 +27,16 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]
@@ -51,8 +51,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("オープンの時の色")]
 	private Color openBannerCol;
 
-	[Header("クローズの時の色")]
 	[SerializeField]
+	[Header("クローズの時の色")]
 	private Color closeBannerCol;
 
 	[SerializeField]
@@ -63,12 +63,12 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("クリアのマークの画像")]
+	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

@@ -36,8 +36,8 @@ public sealed class CMD_BaseSelect : CMD
 
 	private GUIMonsterIcon leftLargeMonsterIcon;
 
-	[Header("キャンペーンラベル")]
 	[SerializeField]
+	[Header("キャンペーンラベル")]
 	private CampaignLabel campaignLabel;
 
 	[SerializeField]
@@ -115,8 +115,8 @@ public sealed class CMD_BaseSelect : CMD
 	[SerializeField]
 	private UILabel ngTX_SORT_DISP;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	[SerializeField]

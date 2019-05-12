@@ -28,6 +28,9 @@ public class GUIMain : Singleton<GUIMain>
 
 	public GameStringsFont gsfTXT_DBG00;
 
+	[SerializeField]
+	private GameObject screenEdgeCurtain;
+
 	private static float _verticalSpaceSize = 0f;
 
 	private static UIRoot uiRoot;
@@ -562,7 +565,11 @@ public class GUIMain : Singleton<GUIMain>
 			{
 				string guiName2 = guiName;
 				Action<int> actionEnd_ = new Action<int>(GUIMain.actCallBackBackToTOP);
-				GUIFadeControll.SetLoadInfo(null, "Empty", guiName2, string.Empty, actionEnd_, false);
+				GUIFadeControll.SetLoadInfo(delegate(int x)
+				{
+					Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(true);
+					GUIFadeControll.ActionRestart();
+				}, "Empty", guiName2, string.Empty, actionEnd_, false);
 				GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 				GUIManager.LoadCommonGUI("Effect/FADE_W", GUIMain.self.gameObject);
 			}
@@ -607,6 +614,7 @@ public class GUIMain : Singleton<GUIMain>
 			GUIMain.onFadeBlackLoadScene();
 			GUIMain.onFadeBlackLoadScene = null;
 		}
+		Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(false);
 		GUIFadeControll.ActionRestart();
 	}
 
@@ -698,11 +706,13 @@ public class GUIMain : Singleton<GUIMain>
 					if (num2 == 0)
 					{
 						actionReceived();
-						return;
+						goto IL_91;
 					}
 				}
 			}
 			Singleton<GUIMain>.instance.StartCoroutine(APIUtil.Instance().SendBattleResult(actionReceived));
+			IL_91:
+			Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(true);
 		}, "Empty", screenName, string.Empty, null, false);
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
@@ -828,6 +838,7 @@ public class GUIMain : Singleton<GUIMain>
 				}
 				ClassSingleton<QuestData>.Instance.ClearDNGDataCache();
 			}
+			Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(true);
 		}, "Empty", screenName, string.Empty, null, false);
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
@@ -839,6 +850,14 @@ public class GUIMain : Singleton<GUIMain>
 		if (GUIMain.self.onStartNewScreenEvent != null)
 		{
 			GUIMain.self.onStartNewScreenEvent(newScreenName);
+		}
+	}
+
+	public void SetScreenEdgeCurtain(bool view)
+	{
+		if (this.screenEdgeCurtain.activeSelf != view)
+		{
+			this.screenEdgeCurtain.SetActive(view);
 		}
 	}
 }

@@ -18,4 +18,9 @@ public sealed class MonsterIconCacheBuffer : AssetDataCacheBuffer
 		}
 		return MonsterIconCacheBuffer.instance;
 	}
+
+	public static void ClearCacheBuffer()
+	{
+		MonsterIconCacheBuffer.instance = null;
+	}
 }

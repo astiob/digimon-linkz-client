@@ -165,8 +165,8 @@ namespace MonsterList.ChangeMonster
 
 		private GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray;
 
-		[Header("キャラクターのステータスPanel")]
 		[SerializeField]
+		[Header("キャラクターのステータスPanel")]
 		private StatusPanel statusPanel;
 
 		private MonsterData changeMonsterData;

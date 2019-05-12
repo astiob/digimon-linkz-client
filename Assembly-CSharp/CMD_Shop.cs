@@ -21,6 +21,12 @@ public class CMD_Shop : CMD
 	private UILabel labelTrade;
 
 	[SerializeField]
+	private GameObject fundObject;
+
+	[SerializeField]
+	private GameObject tradeObject;
+
+	[SerializeField]
 	private GUISelectPanelStone csSelectPanelStone;
 
 	private int _virtualAddStoneNum;
@@ -53,6 +59,14 @@ public class CMD_Shop : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		if (this.fundObject != null)
+		{
+			this.fundObject.SetActive(false);
+		}
+		if (this.tradeObject != null)
+		{
+			this.tradeObject.SetActive(false);
+		}
 		base.HideDLG();
 		base.StartCoroutine(this.InitShop(f, sizeX, sizeY, aT));
 	}
@@ -94,6 +108,7 @@ public class CMD_Shop : CMD
 				this.SetCommonUI_Stone();
 				this.Init_Stone();
 				base.Show(f, sizeX, sizeY, aT);
+				Singleton<GUIMain>.Instance.SetScreenEdgeCurtain(true);
 			}
 		}
 		else
@@ -134,6 +149,7 @@ public class CMD_Shop : CMD
 			this.csSelectPanelStone.FadeOutAllListParts(null, false);
 			this.csSelectPanelStone.SetHideScrollBarAllWays(true);
 		}
+		Singleton<GUIMain>.Instance.SetScreenEdgeCurtain(false);
 	}
 
 	protected override void OnDestroy()

@@ -124,11 +124,11 @@ public class ConstValue
 
 	public static Color DEACTIVE_BUTTON_LABEL = new Color32(150, 150, 150, byte.MaxValue);
 
-	public static string APP_SITE_DOMAIN = Secure.ConstValue.APP_SITE_DOMAIN;
+	public static string APP_SITE_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_SITE_DOMAIN;
 
-	public static string APP_WEB_DOMAIN = Secure.ConstValue.APP_WEB_DOMAIN;
+	public static string APP_WEB_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_SITE_DOMAIN;
 
-	public static string APP_ASSET_DOMAIN = Secure.ConstValue.APP_ASSET_DOMAIN;
+	public static string APP_ASSET_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_ASSET_DOMAIN;
 
 	public static string WEB_INFO_ADR = "/information/InformationDetail/?informationId=";
 
@@ -839,7 +839,7 @@ public class ConstValue
 	{
 		get
 		{
-			return "https://play.google.com/store/apps/details?id=com.bandainamcoent.digimon_linkz";
+			return "https://play.google.com/store/apps/details?id=com.bandainamcoent.digimon_linkz_ww";
 		}
 	}
 

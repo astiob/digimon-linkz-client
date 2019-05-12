@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Other/Antialiasing")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Other/Antialiasing")]
 	[RequireComponent(typeof(Camera))]
 	public class Antialiasing : PostEffectsBase
 	{

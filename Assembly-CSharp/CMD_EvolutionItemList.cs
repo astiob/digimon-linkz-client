@@ -25,12 +25,12 @@ public sealed class CMD_EvolutionItemList : CMD
 	[SerializeField]
 	private GameObject corePluginPartsParent;
 
-	[SerializeField]
 	[Header("バージョンアップ耐性変化の親")]
+	[SerializeField]
 	private GameObject verupAttrChangePartsParent;
 
-	[SerializeField]
 	[Header("プラグインリストのwraper")]
+	[SerializeField]
 	private GameObject goWrapPlugin;
 
 	[SerializeField]
@@ -41,8 +41,8 @@ public sealed class CMD_EvolutionItemList : CMD
 	[SerializeField]
 	private GameObject goWrapVerup;
 
-	[SerializeField]
 	[Header("コアプラグインリストのwraper")]
+	[SerializeField]
 	private GameObject goWrapCorePlugin;
 
 	[Header("バージョンアップ耐性変化リストのwraper")]
@@ -53,8 +53,8 @@ public sealed class CMD_EvolutionItemList : CMD
 	[SerializeField]
 	private GameObject soulListParts;
 
-	[SerializeField]
 	[Header("進化素材未所持メッセージ")]
+	[SerializeField]
 	private GameObject goNoEvolutionItemMsg;
 
 	private GUISelectPanelEvolutionItemList csPluginPartsParent;

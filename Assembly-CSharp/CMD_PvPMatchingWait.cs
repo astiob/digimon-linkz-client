@@ -73,12 +73,12 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private GameObject goMatchingNowAnim;
 
-	[Header("マッチング完了アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング完了アニメオブジェクト")]
 	private GameObject goMatchingEndAnim;
 
-	[SerializeField]
 	[Header("マッチング完了エフェクト")]
+	[SerializeField]
 	private Animator MatchingEffectAnimator;
 
 	[SerializeField]
@@ -88,16 +88,16 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private Color renderTextureColor;
 
-	[SerializeField]
 	[Header("キャラの勝利アニメを見せる時間（秒）")]
+	[SerializeField]
 	private float winAnimationWait;
 
 	[SerializeField]
 	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	private float transferWait;
 
-	[SerializeField]
 	[Header("３対選択画面")]
+	[SerializeField]
 	private PVPPartySelect3 partySelect;
 
 	[SerializeField]
@@ -384,9 +384,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_291;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map33 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map34 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map33 = new Dictionary<string, int>(9)
+							CMD_PvPMatchingWait.<>f__switch$map34 = new Dictionary<string, int>(9)
 							{
 								{
 									"0",
@@ -427,7 +427,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map33.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map34.TryGetValue(text, out num))
 						{
 							goto IL_291;
 						}
@@ -538,9 +538,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_13D;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map34 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map35 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map34 = new Dictionary<string, int>(3)
+							CMD_PvPMatchingWait.<>f__switch$map35 = new Dictionary<string, int>(3)
 							{
 								{
 									"1",
@@ -557,7 +557,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map34.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map35.TryGetValue(text, out num))
 						{
 							goto IL_13D;
 						}

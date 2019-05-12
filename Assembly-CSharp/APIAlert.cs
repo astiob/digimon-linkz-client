@@ -31,6 +31,7 @@ public sealed class APIAlert
 		string message = string.Empty;
 		if (error.localErrorStatus != WWWResponse.LocalErrorStatus.NONE)
 		{
+			this.SetJsonParseExceptionMessage(error);
 			errorCode = AlertManager.GetErrorCode(error.localErrorStatus);
 		}
 		else
@@ -50,6 +51,7 @@ public sealed class APIAlert
 		}
 		if (error.responseDataError == null)
 		{
+			this.SetJsonParseExceptionMessage(error);
 			this.ShowJsonParseError();
 		}
 		else
@@ -63,6 +65,7 @@ public sealed class APIAlert
 				this.ShowVersionError(error.responseDataError);
 				return;
 			}
+			this.SetJsonParseExceptionMessage(error);
 			this.ShowJsonParseError();
 		}
 	}
@@ -192,5 +195,9 @@ public sealed class APIAlert
 	{
 		Application.OpenURL(ConstValue.STORE_SITE_URL);
 		return CMD_Alert.ExtraFunctionReturnValue.NOT_CLOSE;
+	}
+
+	private void SetJsonParseExceptionMessage(WebAPIException error)
+	{
 	}
 }

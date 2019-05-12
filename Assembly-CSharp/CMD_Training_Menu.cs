@@ -42,8 +42,8 @@ public class CMD_Training_Menu : CMD
 
 	public static CMD_Training_Menu instance;
 
-	[SerializeField]
 	[Header("各パーツのデータ")]
+	[SerializeField]
 	private List<GUIListPartsTrainingMenu.PartsData> TrainingMenuPartsDataL;
 
 	protected override void Awake()

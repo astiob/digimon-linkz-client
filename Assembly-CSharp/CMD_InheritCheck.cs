@@ -6,32 +6,32 @@ using UnityEngine;
 
 public sealed class CMD_InheritCheck : CMD
 {
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("デジモンの継承スキル")]
+	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
 
-	[Header("消費クラスタのラベル")]
 	[SerializeField]
+	[Header("消費クラスタのラベル")]
 	private UILabel useClusterLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
+	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
 	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string useCluster, int baseDigimonSkillNumber, int partnerDigimonSkillNumber)

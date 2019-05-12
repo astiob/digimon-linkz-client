@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class UVAnimHelper : MonoBehaviour
 {
-	[Header("UV アニメ U方向スピード")]
 	[SerializeField]
+	[Header("UV アニメ U方向スピード")]
 	private float speedU;
 
-	[Header("UV アニメ V方向スピード")]
 	[SerializeField]
+	[Header("UV アニメ V方向スピード")]
 	private float speedV;
 
 	[Header("テクスチャ タイリング X")]
 	[SerializeField]
 	private float tileX = 1f;
 
-	[SerializeField]
 	[Header("テクスチャ タイリング Y")]
+	[SerializeField]
 	private float tileY = 10f;
 
 	private float totalU;

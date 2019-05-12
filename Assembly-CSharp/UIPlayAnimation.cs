@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Play Animation")]
+[ExecuteInEditMode]
 public class UIPlayAnimation : MonoBehaviour
 {
 	public static UIPlayAnimation current;
@@ -29,12 +29,12 @@ public class UIPlayAnimation : MonoBehaviour
 
 	public List<EventDelegate> onFinished = new List<EventDelegate>();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string callWhenFinished;
 
 	private bool mStarted;

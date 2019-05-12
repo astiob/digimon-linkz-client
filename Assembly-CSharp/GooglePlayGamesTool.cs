@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class GooglePlayGamesTool
 {
-	private readonly string achievementIdClearQuest = "CgkIs8LykPocEAIQAQ";
+	private readonly string achievementIdClearQuest = "CgkIy76jmIIfEAIQAA";
 
-	private readonly string achievementIdMeal = "CgkIs8LykPocEAIQAg";
+	private readonly string achievementIdMeal = "CgkIy76jmIIfEAIQAQ";
 
-	private readonly string achievementIdReinforce = "CgkIs8LykPocEAIQAw";
+	private readonly string achievementIdReinforce = "CgkIy76jmIIfEAIQAg";
 
-	private readonly string achievementIdEvolution = "CgkIs8LykPocEAIQBA";
+	private readonly string achievementIdEvolution = "CgkIy76jmIIfEAIQAw";
 
-	private readonly string achievementIdLaboratory = "CgkIs8LykPocEAIQBQ";
+	private readonly string achievementIdLaboratory = "CgkIy76jmIIfEAIQBA";
 
 	private static GooglePlayGamesTool instance;
 

@@ -183,7 +183,7 @@ public class GUIListChatLogParts : GUIListPartBS
 					GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
 					GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == dungeonIds[0]);
 					GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM2 = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonIds[1]);
-					arg = "【" + worldStageM2.name + "】 " + worldDungeonM2.name;
+					arg = string.Format(StringMaster.GetString("MultiRecruitChat-07"), worldStageM2.name, worldDungeonM2.name);
 					this.multiWorldAreaId = worldStageM2.worldAreaId;
 					this.multiWorldDungeonId = worldDungeonM2.worldDungeonId;
 					this.multiRoomId = dungeonIds[2];

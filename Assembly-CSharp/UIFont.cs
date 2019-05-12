@@ -6,16 +6,16 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UIFont : MonoBehaviour
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material mMat;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Rect mUVRect = new Rect(0f, 0f, 1f, 1f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private BMFont mFont = new BMFont();
 
 	[SerializeField]
@@ -30,12 +30,12 @@ public class UIFont : MonoBehaviour
 	[SerializeField]
 	private List<BMSymbol> mSymbols = new List<BMSymbol>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Font mDynamicFont;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mDynamicFontSize = 16;
 
 	[HideInInspector]

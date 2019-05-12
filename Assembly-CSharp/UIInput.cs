@@ -29,8 +29,8 @@ public class UIInput : MonoBehaviour
 
 	public string savedAs;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject selectOnTab;
 
 	public Color activeTextColor = Color.white;
@@ -45,8 +45,8 @@ public class UIInput : MonoBehaviour
 
 	public UIInput.OnValidate onValidate;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected string mValue;
 
 	[NonSerialized]
@@ -1054,7 +1054,7 @@ public class UIInput : MonoBehaviour
 
 	protected char Validate(string text, int pos, char ch)
 	{
-		if (char.IsSurrogate(ch))
+		if (TextUtil.IsEmojiCheck(ch))
 		{
 			return '\0';
 		}

@@ -11,6 +11,12 @@ public class CMD_LoginNormal : CMD_LoginBase
 	[SerializeField]
 	private UILabel loginBonusTitle;
 
+	[SerializeField]
+	private UILabel todayTitle;
+
+	[SerializeField]
+	private UILabel tomorrowTitle;
+
 	public string GET_ICON_PATH = "UISPR_ITEM_GET_";
 
 	public string NEXT_ICON_PATH = "UISPR_ITEM_NEXT_";
@@ -53,6 +59,8 @@ public class CMD_LoginNormal : CMD_LoginBase
 	protected new void Start()
 	{
 		this.loginBonusTitle.text = StringMaster.GetString("LoginBonus");
+		this.todayTitle.text = StringMaster.GetString("NormalLogin_txt");
+		this.tomorrowTitle.text = StringMaster.GetString("NormalLogin_txt2");
 		base.Start();
 	}
 

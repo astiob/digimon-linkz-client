@@ -42,8 +42,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GameObject goBT_SELL;
 
-	[SerializeField]
 	[Header("お別れの実行のボタンのラベル")]
+	[SerializeField]
 	private UILabelEx cellBtnLabel;
 
 	[SerializeField]
@@ -60,8 +60,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider showBtnCollider;
 
-	[Header("一覧ボタンのラベル")]
 	[SerializeField]
+	[Header("一覧ボタンのラベル")]
 	private UILabelEx showBtnLabel;
 
 	[SerializeField]

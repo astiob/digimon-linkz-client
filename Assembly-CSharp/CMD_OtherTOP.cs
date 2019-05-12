@@ -22,6 +22,12 @@ public class CMD_OtherTOP : CMD
 	[SerializeField]
 	private UILabel authorityText;
 
+	[SerializeField]
+	private GameObject[] buttonObjectList;
+
+	[SerializeField]
+	private GameObject[] multiLanguageButtonObjectList;
+
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		SoundMng.Instance().PlayGameBGM("bgm_102");
@@ -33,6 +39,20 @@ public class CMD_OtherTOP : CMD
 		this.inquiryText.text = StringMaster.GetString("InquiryTitle");
 		this.termsText.text = StringMaster.GetString("AgreementTitle");
 		this.authorityText.text = StringMaster.GetString("OtherRight");
+		if (this.buttonObjectList != null)
+		{
+			foreach (GameObject gameObject in this.buttonObjectList)
+			{
+				gameObject.SetActive(false);
+			}
+		}
+		if (this.multiLanguageButtonObjectList != null)
+		{
+			foreach (GameObject gameObject2 in this.multiLanguageButtonObjectList)
+			{
+				gameObject2.SetActive(true);
+			}
+		}
 	}
 
 	protected override void WindowOpened()
@@ -60,12 +80,7 @@ public class CMD_OtherTOP : CMD
 
 	private void OnClickedTermsOfUse()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
-		if (null != cmdwebWindow)
-		{
-			cmdwebWindow.TitleText = StringMaster.GetString("AgreementTitle");
-			cmdwebWindow.Url = WebAddress.EXT_ADR_AGREE;
-		}
+		Application.OpenURL(WebAddress.EXT_ADR_AGREE);
 	}
 
 	private void OnClickedRightsExpression()
@@ -92,5 +107,10 @@ public class CMD_OtherTOP : CMD
 	private void OnClickedContact()
 	{
 		GUIMain.ShowCommonDialog(null, "CMD_inquiry");
+	}
+
+	private void OnClickedPrivacyOfUse()
+	{
+		Application.OpenURL(WebAddress.EXT_ADR_PRIVACY_POLICY);
 	}
 }

@@ -9,8 +9,8 @@ public class SpawnPointParams : MonoBehaviour
 	[SerializeField]
 	private Transform[] _playersSpawnPoint;
 
-	[SerializeField]
 	[FormerlySerializedAs("enemiesSpawnPoint")]
+	[SerializeField]
 	private Transform[] _enemiesSpawnPoint;
 
 	[SerializeField]

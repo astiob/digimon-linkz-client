@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class BattleSkillSelect : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[Header("エモーション送信機能（マルチ）")]
 	[SerializeField]
 	public EmotionSenderMulti emotionSenderMulti;
 
-	[Header("エモーション送信機能（PvP）")]
 	[SerializeField]
+	[Header("エモーション送信機能（PvP）")]
 	public EmotionSenderMulti emotionSenderPvP;
 
 	[Header("ボタンオブジェクト")]
 	[SerializeField]
 	public GameObject monsterButtonRoot;
 
-	[Header("残りターン/マルチバトルのみ")]
 	[SerializeField]
+	[Header("残りターン/マルチバトルのみ")]
 	public RemainingTurn remainingTurnMiddle;
 
 	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
@@ -44,13 +44,21 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	private UILabel skillDesc2HitRateLocalize;
 
+	[Header("スキル説明3の命中率のローカライズ")]
+	[SerializeField]
+	private UILabel skillDesc3HitRateLocalize;
+
 	[Header("スキル説明1の威力のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc1PowerLocalize;
 
-	[SerializeField]
 	[Header("スキル説明2の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc2PowerLocalize;
+
+	[Header("スキル説明3の威力のローカライズ")]
+	[SerializeField]
+	private UILabel skillDesc3PowerLocalize;
 
 	[Header("Leftの親")]
 	[SerializeField]
@@ -60,12 +68,12 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	public BattleSkillBtn[] skillButton;
 
-	[Header("デジモンボタン")]
 	[SerializeField]
+	[Header("デジモンボタン")]
 	public BattleMonsterButton[] monsterButton;
 
-	[Header("アタックタイマー")]
 	[SerializeField]
+	[Header("アタックタイマー")]
 	public AttackTime attackTime;
 
 	private void Awake()
@@ -107,12 +115,14 @@ public class BattleSkillSelect : MonoBehaviour
 
 	private void SetupLocalize()
 	{
-		string text = string.Format("{0} :", StringMaster.GetString("BattleSkillUI-04"));
-		this.skillDesc1HitRateLocalize.text = text;
-		this.skillDesc2HitRateLocalize.text = text;
-		string text2 = string.Format("{0} :", StringMaster.GetString("BattleSkillUI-03"));
-		this.skillDesc1PowerLocalize.text = text2;
-		this.skillDesc2PowerLocalize.text = text2;
+		string @string = StringMaster.GetString("BattleSkillUI-04");
+		this.skillDesc1HitRateLocalize.text = @string;
+		this.skillDesc2HitRateLocalize.text = @string;
+		this.skillDesc3HitRateLocalize.text = @string;
+		string string2 = StringMaster.GetString("BattleSkillUI-03");
+		this.skillDesc1PowerLocalize.text = string2;
+		this.skillDesc2PowerLocalize.text = string2;
+		this.skillDesc3PowerLocalize.text = string2;
 	}
 
 	public void SetColliderActive(bool active)

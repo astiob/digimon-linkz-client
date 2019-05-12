@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class CMD_MissionItemList : CMD
 {
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel lbTitle;
 
 	[SerializeField]

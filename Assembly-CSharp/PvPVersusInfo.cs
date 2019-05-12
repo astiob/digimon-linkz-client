@@ -13,12 +13,12 @@ public sealed class PvPVersusInfo : MonoBehaviour
 	[SerializeField]
 	private EffectAnimatorEventTime userDataUIRoot;
 
-	[SerializeField]
 	[Header("自分の情報を表示するUI群")]
+	[SerializeField]
 	private PvPVersusInfo.UserDataUI myDataUI;
 
-	[Header("相手の情報を表示するUI群")]
 	[SerializeField]
+	[Header("相手の情報を表示するUI群")]
 	private PvPVersusInfo.UserDataUI opponentDataUI;
 
 	[SerializeField]

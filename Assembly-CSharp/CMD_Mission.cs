@@ -7,16 +7,16 @@ using UnityEngine;
 
 public sealed class CMD_Mission : CMD
 {
-	[Header("ミッションリストのタッチ領域")]
 	[SerializeField]
+	[Header("ミッションリストのタッチ領域")]
 	private GUISelectPanelMission missionList;
 
-	[Header("ミッション選択のタッチ領域")]
 	[SerializeField]
+	[Header("ミッション選択のタッチ領域")]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[Header("ミッションの段階終了時カットイン演出コントローラ")]
 	[SerializeField]
+	[Header("ミッションの段階終了時カットイン演出コントローラ")]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]

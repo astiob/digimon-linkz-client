@@ -7,8 +7,8 @@ using UnityEngine;
 
 public sealed class PvPVersusInfo6Icon : MonoBehaviour
 {
-	[SerializeField]
 	[Header("対人戦の名称を表示するスプライト")]
+	[SerializeField]
 	private TextMeshPro title;
 
 	[SerializeField]
@@ -23,8 +23,8 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[SerializeField]
 	private PvPVersusInfo6Icon.UserDataUI opponentDataUI;
 
-	[SerializeField]
 	[Header("背景のDepth値")]
+	[SerializeField]
 	private int backgroundDepth;
 
 	[SerializeField]

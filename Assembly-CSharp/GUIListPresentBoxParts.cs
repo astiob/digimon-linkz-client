@@ -43,10 +43,10 @@ public sealed class GUIListPresentBoxParts : GUIListPartBS
 	{
 		this.lbDescription.text = this.prizeData.message;
 		this.lbGetButton.text = StringMaster.GetString("Present-11");
-		DateTime dateTime;
-		if (DateTime.TryParse(this.prizeData.receiveLimitTime, out dateTime))
+		DateTime jpDateTime;
+		if (DateTime.TryParse(this.prizeData.receiveLimitTime, out jpDateTime))
 		{
-			string str = dateTime.ToString("yyyy/MM/dd");
+			string str = TimeUtility.ToJPLocalDateTime(jpDateTime).ToString("yyyy/MM/dd");
 			this.lbLimitTime.text = StringMaster.GetString("Present-05") + str;
 		}
 		else

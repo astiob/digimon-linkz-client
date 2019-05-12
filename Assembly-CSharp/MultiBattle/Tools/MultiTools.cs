@@ -139,14 +139,5 @@ namespace MultiBattle.Tools
 				yMax = 250f + GUIMain.VerticalSpaceSize
 			};
 		}
-
-		public static string AddAreaNameZero(string word)
-		{
-			if (word.Length < 2)
-			{
-				return "0" + word + " ";
-			}
-			return word + " ";
-		}
 	}
 }

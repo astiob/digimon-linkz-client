@@ -126,6 +126,7 @@ public abstract class CMD_ProfileBase : CMD
 	private void InitOpenScreen()
 	{
 		this.ngTX_OPEN_SCREEN = this.goOPEN_SCREEN.GetComponent<UILabel>();
+		this.ngTX_OPEN_SCREEN.text = StringMaster.GetString("CharaDetailsFullScreen");
 		this.vOrgSCR_CHARACTER = this.goSCR_CHARACTER.transform.localPosition;
 		this.vOrgSCR_HEADER = this.goSCR_HEADER.transform.localPosition;
 		this.vOrgSCR_DETAIL = this.goSCR_DETAIL.transform.localPosition;

@@ -130,7 +130,7 @@ public class ConstructionName : MonoBehaviour
 		private void SetName()
 		{
 			this.param.farmNameUI.text = this.GetName();
-			int w = this.param.farmNameUI.text.Length * 26 + 35;
+			int w = this.param.farmNameUI.width + 35;
 			this.param.farmNameSprite.SetDimensions(w, 35);
 		}
 

@@ -20,8 +20,8 @@ public class VersionUpDetail : MonoBehaviour
 	[SerializeField]
 	private UILabel lbTXT_LevArrow;
 
-	[SerializeField]
 	[Header("バージョンアップ LEV AFTER 表示")]
+	[SerializeField]
 	private UILabel lbTXT_LevAfter;
 
 	[SerializeField]

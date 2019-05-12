@@ -95,6 +95,7 @@ public class CMD_FriendTop : CMD
 	{
 		this.ngTX_EMPTY_SHOW.text = string.Empty;
 		this.ngTX_EMPTY_SHOW.gameObject.SetActive(false);
+		this.ngSelectModeButton.text = StringMaster.GetString("Friend-05");
 		base.Awake();
 		CMD_FriendTop.instance = this;
 	}

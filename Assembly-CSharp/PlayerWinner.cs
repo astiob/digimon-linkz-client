@@ -7,8 +7,8 @@ public class PlayerWinner : MonoBehaviour
 	[Header("Nextボタン")]
 	private UIButton nextButton;
 
-	[SerializeField]
 	[Header("Nextボタンのコライダー")]
+	[SerializeField]
 	private Collider nextButtonCollider;
 
 	[Header("NextボタンのGameObject")]
@@ -19,8 +19,8 @@ public class PlayerWinner : MonoBehaviour
 	[SerializeField]
 	public UIWidget widget;
 
-	[Header("スピードクリア")]
 	[SerializeField]
+	[Header("スピードクリア")]
 	public GameObject speedClearObject;
 
 	public void AddEvent(Action skipWinnerAction)

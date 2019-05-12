@@ -115,8 +115,8 @@ public class CMD_QuestSelect : CMD
 				{
 					CMD_QuestSelect.Schedule item = new CMD_QuestSelect.Schedule
 					{
-						start = DateTime.Parse(colosseumTimeSchedule.startHour),
-						end = DateTime.Parse(colosseumTimeSchedule.endHour)
+						start = TimeUtility.DateTimeDifferenceServer(DateTime.Parse(colosseumTimeSchedule.startHour)),
+						end = TimeUtility.DateTimeDifferenceServer(DateTime.Parse(colosseumTimeSchedule.endHour))
 					};
 					list.Add(item);
 				}

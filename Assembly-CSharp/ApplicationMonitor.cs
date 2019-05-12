@@ -12,6 +12,7 @@ public class ApplicationMonitor : MonoBehaviour
 		"Heap:",
 		"Total:",
 		"FPS:",
+		"Json Parse Error",
 		"Api"
 	};
 
@@ -22,6 +23,7 @@ public class ApplicationMonitor : MonoBehaviour
 		"mb",
 		"mb",
 		"fps",
+		string.Empty,
 		"Log"
 	};
 
@@ -113,14 +115,8 @@ public class ApplicationMonitor : MonoBehaviour
 		switch (this.displayMode)
 		{
 		case ApplicationMonitor.MODE.UseMemoryPercent:
-			this.MonitoringMemory();
-			break;
 		case ApplicationMonitor.MODE.PeekUseMemoryPercent:
-			this.MonitoringMemory();
-			break;
 		case ApplicationMonitor.MODE.HeapMemory:
-			this.MonitoringMemory();
-			break;
 		case ApplicationMonitor.MODE.ReservedMemory:
 			this.MonitoringMemory();
 			break;
@@ -194,6 +190,7 @@ public class ApplicationMonitor : MonoBehaviour
 		HeapMemory,
 		ReservedMemory,
 		FPS,
+		JSON,
 		ApiLog
 	}
 }

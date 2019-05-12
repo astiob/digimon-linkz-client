@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Noise/Noise And Grain (Filmic)")]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Noise/Noise And Grain (Filmic)")]
 	[ExecuteInEditMode]
 	public class NoiseAndGrain : PostEffectsBase
 	{

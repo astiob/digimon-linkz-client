@@ -13,8 +13,8 @@ public class BattleAlways : MonoBehaviour
 	[SerializeField]
 	protected Collider menuCollider;
 
-	[Header("Autoのコライダー")]
 	[SerializeField]
+	[Header("Autoのコライダー")]
 	protected Collider autoCollider;
 
 	[SerializeField]

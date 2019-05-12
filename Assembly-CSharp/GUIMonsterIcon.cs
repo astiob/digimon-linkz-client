@@ -415,17 +415,25 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	public static void SetTextureMonsterParts(UITexture iconTexture, string resourcePath, string assetBundlePath, bool isLoadASync)
 	{
-		Texture2D texture2D = Resources.Load(resourcePath) as Texture2D;
-		Texture2D texture2D2 = Resources.Load(resourcePath + "_alpha") as Texture2D;
-		if (texture2D != null && texture2D2 != null)
+		bool flag = false;
+		string localizedPath = AssetDataMng.GetLocalizedPath(resourcePath);
+		Texture2D texture2D = Resources.Load(localizedPath) as Texture2D;
+		Texture2D texture2D2 = Resources.Load(localizedPath + "_alpha") as Texture2D;
+		Texture2D texture2D3 = (!(texture2D != null)) ? (Resources.Load(resourcePath) as Texture2D) : texture2D;
+		Texture2D texture2D4 = (!(texture2D2 != null)) ? (Resources.Load(resourcePath + "_alpha") as Texture2D) : texture2D2;
+		if (texture2D == null && texture2D2 == null)
+		{
+			flag = AssetDataMng.Instance().IsIncludedInAssetBundle(AssetDataMng.GetLocalizedPath(assetBundlePath));
+		}
+		if (texture2D3 != null && texture2D4 != null && !flag)
 		{
 			if (iconTexture.material == null)
 			{
 				Shader iconShader = GUIMonsterIcon.GetIconShader();
 				iconTexture.material = new Material(iconShader);
 			}
-			iconTexture.material.SetTexture("_MaskTex", texture2D2);
-			iconTexture.material.SetTexture("_MainTex", texture2D);
+			iconTexture.material.SetTexture("_MaskTex", texture2D4);
+			iconTexture.material.SetTexture("_MainTex", texture2D3);
 			iconTexture.mainTexture = null;
 		}
 		else if (isLoadASync)

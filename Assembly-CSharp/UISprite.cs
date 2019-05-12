@@ -5,8 +5,8 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/NGUI Sprite")]
 public class UISprite : UIBasicSprite
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIAtlas mAtlas;
 
 	[HideInInspector]

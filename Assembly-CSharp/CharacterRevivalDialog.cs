@@ -31,24 +31,24 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel specificTradeLocalize;
 
-	[SerializeField]
 	[Header("足りないエッセージローカライズ(マルチバトル用)")]
+	[SerializeField]
 	private UILabel notEnoughConsumeMessageLocalize;
 
-	[SerializeField]
 	[Header("消費メッセージローカライズ")]
+	[SerializeField]
 	private UILabel consumeMessageLocalize;
 
 	[SerializeField]
 	[Header("所持ローカライズ")]
 	private UILabel haveLocalize;
 
-	[SerializeField]
 	[Header("閉じるローカライズ")]
+	[SerializeField]
 	private UILabel closeLocalize;
 
-	[SerializeField]
 	[Header("復活予約ローカライズ")]
+	[SerializeField]
 	private UILabel bookRevivalLocalize;
 
 	[SerializeField]
@@ -74,6 +74,7 @@ public class CharacterRevivalDialog : MonoBehaviour
 	private void Awake()
 	{
 		this.SetupLocalize();
+		this.specificTradeButton.gameObject.SetActive(false);
 	}
 
 	private void SetupLocalize()

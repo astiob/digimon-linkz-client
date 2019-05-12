@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class MasterDataLoadingGauge : MonoBehaviour
+public sealed class MasterDataLoadingGauge : MonoBehaviour
 {
 	[SerializeField]
 	private UILabel loadDescription;
@@ -50,6 +50,7 @@ public class MasterDataLoadingGauge : MonoBehaviour
 		{
 			this.partsGaugePoint.SetGaugeValue(this.progressBar.value);
 		}
-		this.downloadProgressValue.text = this.progressBar.value.ToString("P0");
+		int num = Mathf.FloorToInt(this.progressBar.value * 100f);
+		this.downloadProgressValue.text = string.Format(StringMaster.GetString("SystemPercent"), num);
 	}
 }

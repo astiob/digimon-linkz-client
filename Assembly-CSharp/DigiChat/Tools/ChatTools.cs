@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using LitJson;
+using Master;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,14 @@ namespace DigiChat.Tools
 			}
 			else if (resp.type == 3)
 			{
+				try
+				{
+					TCPUtil.SystemMsg systemMsg = JsonMapper.ToObject<TCPUtil.SystemMsg>(resp.message);
+					txt = string.Format(StringMaster.GetString(systemMsg.key), systemMsg.uname);
+				}
+				catch (Exception ex)
+				{
+				}
 				num = ChatTools.CheckCommentSize(txt, 635, tmpTxtOb, out outStr) + 30;
 			}
 			else
@@ -58,18 +67,19 @@ namespace DigiChat.Tools
 			string a = DateTime.Parse(ServerDateTime.Now.ToString()).ToString("yyyyMMdd");
 			string a2 = DateTime.Parse(ServerDateTime.Now.ToString()).AddDays(-1.0).ToString("yyyyMMdd");
 			string b = DateTime.Parse(compDate).ToString("yyyyMMdd");
+			DateTime dateTime = TimeUtility.ToJPLocalDateTime(DateTime.Parse(compDate));
 			string result;
 			if (a == b)
 			{
-				result = DateTime.Parse(compDate).ToString(StringMaster.GetString("ChatLog-08"));
+				result = dateTime.ToString(StringMaster.GetString("ChatLog-08"));
 			}
 			else if (a2 == b)
 			{
-				result = DateTime.Parse(compDate).ToString(StringMaster.GetString("ChatLog-07"));
+				result = dateTime.ToString(StringMaster.GetString("ChatLog-07"));
 			}
 			else
 			{
-				result = DateTime.Parse(compDate).ToString(StringMaster.GetString("ChatLog-06"));
+				result = dateTime.ToString(StringMaster.GetString("ChatLog-06"));
 			}
 			return result;
 		}

@@ -308,35 +308,36 @@ public sealed class RewardListItem : MonoBehaviour
 
 	private string GetSpriteName(MasterDataMng.AssetCategory assetCategoryId)
 	{
-		string result = string.Empty;
+		string text = string.Empty;
 		switch (assetCategoryId)
 		{
 		case MasterDataMng.AssetCategory.DIGI_STONE:
-			result = "Common02_LB_Stone";
+			text = "Common02_LB_Stone";
 			break;
 		case MasterDataMng.AssetCategory.LINK_POINT:
-			result = "Common02_LB_Link";
+			text = "Common02_LB_Link";
 			break;
 		case MasterDataMng.AssetCategory.TIP:
-			result = "Common02_LB_Chip";
+			text = "Common02_LB_Chip";
 			break;
 		case MasterDataMng.AssetCategory.EXP:
-			result = "Common02_Drop_Exp";
+			text = "Common02_Drop_Exp";
 			break;
 		default:
 			if (assetCategoryId != MasterDataMng.AssetCategory.MEAT)
 			{
 				if (assetCategoryId == MasterDataMng.AssetCategory.TITLE)
 				{
-					result = "Common02_item_title";
+					text = "Common02_item_title";
+					text = string.Format("{0}_{1}", text, CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN));
 				}
 			}
 			else
 			{
-				result = "Common02_item_meat";
+				text = "Common02_item_meat";
 			}
 			break;
 		}
-		return result;
+		return text;
 	}
 }

@@ -49,7 +49,11 @@ public static class CountrySetting
 
 	public static void SetCountryCode(string countryCode, CountrySetting.CountryCode defaultCountryCode = CountrySetting.CountryCode.EN)
 	{
-		countryCode = 1.ToString();
+		if (string.IsNullOrEmpty(countryCode) || !CountrySetting.CountryPrefix.ContainsKey(int.Parse(countryCode)))
+		{
+			int num = (int)defaultCountryCode;
+			countryCode = num.ToString();
+		}
 		PlayerPrefs.SetString("PlayerCountryCode", countryCode);
 		PlayerPrefs.Save();
 		if (DataMng.Instance().RespDataUS_PlayerInfo != null)
@@ -60,7 +64,25 @@ public static class CountrySetting
 
 	public static string GetCountryCode(CountrySetting.CountryCode defaultCountryCode = CountrySetting.CountryCode.EN)
 	{
-		return 1.ToString();
+		string text = PlayerPrefs.GetString("PlayerCountryCode");
+		if (string.IsNullOrEmpty(text) && DataMng.Instance().RespDataUS_PlayerInfo != null)
+		{
+			string countryCode = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.countryCode;
+			if (!string.IsNullOrEmpty(countryCode))
+			{
+				text = countryCode;
+			}
+		}
+		if (string.IsNullOrEmpty(text))
+		{
+			text = CountrySetting.GetSystemCountryCode(CountrySetting.CountryCode.EN);
+		}
+		else if (!CountrySetting.CountryPrefix.ContainsKey(int.Parse(text)))
+		{
+			int num = (int)defaultCountryCode;
+			text = num.ToString();
+		}
+		return text;
 	}
 
 	public static string GetCountryPrefix(CountrySetting.CountryCode defaultCountryCode = CountrySetting.CountryCode.EN)
@@ -71,7 +93,7 @@ public static class CountrySetting
 
 	public static bool IsReloadRequired(string countryCode)
 	{
-		return !countryCode.Equals(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+		return string.IsNullOrEmpty(PlayerPrefs.GetString("PlayerCountryCode")) || !countryCode.Equals(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
 	}
 
 	public static string GetSystemCountryCode(CountrySetting.CountryCode defaultCountryCode = CountrySetting.CountryCode.EN)
@@ -97,12 +119,18 @@ public static class CountrySetting
 			}
 		}
 		MasterDataMng.Instance().ClearCache();
+		MissionBannerCacheBuffer.ClearCacheBuffer();
+		MonsterIconCacheBuffer.ClearCacheBuffer();
+		PresentBoxItemIconCacheBuffer.ClearCacheBuffer();
+		TitleIconCacheBuffer.ClearCacheBuffer();
 		StringMaster.Reload();
 		AlertMaster.Reload();
 	}
 
 	public static void ConvertTMProText(ref TextMeshPro textMeshPro)
 	{
+		string text = string.Format("<font=\"US/{0}\" material=\"US/mat/{1}\">{2}</font>", textMeshPro.font.name, textMeshPro.fontSharedMaterial.name, textMeshPro.text);
+		textMeshPro.text = text;
 	}
 
 	public enum CountryCode

@@ -275,7 +275,7 @@ public class GUIManager : Singleton<GUIManager>
 			return false;
 		}
 		string path = "UIScreen/" + prefabName;
-		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
+		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(MultiLanguageResources.Load(path, typeof(GameObject)));
 		gameObject.name = guiName;
 		GUIBase component = gameObject.GetComponent<GUIBase>();
 		if (component == null)
@@ -293,7 +293,7 @@ public class GUIManager : Singleton<GUIManager>
 	public static GameObject LoadCommonGUI(string guiName, GameObject parent)
 	{
 		string path = "UICommon/" + guiName;
-		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
+		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(MultiLanguageResources.Load(path, typeof(GameObject)));
 		if (gameObject == null)
 		{
 			return null;
@@ -525,7 +525,7 @@ public class GUIManager : Singleton<GUIManager>
 		if (!GUIManager.commonDialogs.ContainsKey(dialogName))
 		{
 			string path = "UIDialogBox/" + dialogName;
-			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
+			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(MultiLanguageResources.Load(path, typeof(GameObject)));
 			if (gameObject == null)
 			{
 				return null;

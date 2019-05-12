@@ -4,7 +4,9 @@ public class WebAddress
 {
 	public static string EXT_ADR_INFO = ConstValue.APP_WEB_DOMAIN + "/information/InformationList";
 
-	public static string EXT_ADR_AGREE = ConstValue.APP_WEB_DOMAIN + "/agreement/AgreementView";
+	public static string EXT_ADR_AGREE = "http://legal.bandainamcoent.co.jp/terms/";
+
+	public static string EXT_ADR_PRIVACY_POLICY = "http://legal.bandainamcoent.co.jp/privacy/";
 
 	public static string EXT_ADR_COPY = ConstValue.APP_WEB_DOMAIN + "/agreement/CopyRight";
 

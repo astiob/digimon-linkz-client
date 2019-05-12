@@ -18,4 +18,9 @@ public sealed class MissionBannerCacheBuffer : AssetDataCacheBuffer
 		}
 		return MissionBannerCacheBuffer.instance;
 	}
+
+	public static void ClearCacheBuffer()
+	{
+		MissionBannerCacheBuffer.instance = null;
+	}
 }

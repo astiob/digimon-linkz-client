@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExtension;
 
-[RequireComponent(typeof(CapsuleCollider))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(CapsuleCollider))]
 public class CharacterParams : MonoBehaviour
 {
 	public const float DeathEffectGenerationInterval = 1f;

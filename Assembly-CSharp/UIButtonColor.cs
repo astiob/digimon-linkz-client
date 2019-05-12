@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Button Color")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Button Color")]
 public class UIButtonColor : UIWidgetContainer
 {
 	public bool useTweenTarget = true;

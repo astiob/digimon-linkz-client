@@ -103,7 +103,7 @@ public class ExchangeMenuItem : GUIListPartBS
 				this.bannerTex.mainTexture = texture;
 			}
 		};
-		string downloadURL = ConstValue.APP_ASSET_DOMAIN + "/asset/img/" + path;
+		string downloadURL = AssetDataMng.GetWebAssetImagePath() + "/" + path;
 		yield return TextureManager.instance.Load(downloadURL, callback, 30f, true);
 		yield break;
 	}

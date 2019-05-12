@@ -41,8 +41,8 @@ public class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject leaderObj;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	[SerializeField]
@@ -164,6 +164,7 @@ public class PVPPartySelect3 : MonoBehaviour
 		this.DataChg = null;
 		this.chipBaseSelect.ClearChipIcons();
 		this.monsterMedalList.SetActive(false);
+		this.leaderSkill.ClearSkill();
 		this.selectLimitTime = (float)MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_PARTY_SELECT_TIME;
 		this.timerLabel.text = Mathf.CeilToInt(this.selectLimitTime).ToString();
 		this.timerCountCheck = true;
@@ -430,6 +431,7 @@ public class PVPPartySelect3 : MonoBehaviour
 			this.monsterMedalList.SetActive(false);
 			this.switchDetailSkillPanel(false);
 			this.RequestStatusPage(1);
+			this.leaderSkill.ClearSkill();
 		}
 	}
 

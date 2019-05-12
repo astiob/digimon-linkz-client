@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(UITweener))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(UITweener))]
 public class UITweenerActivePlay : MonoBehaviour
 {
 	[Header("ONなら終了後、非表示にする")]

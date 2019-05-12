@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleUIHUD : UITweener
 {
-	[Header("[マルチバトル用]AP UP用オブジェクト")]
 	[SerializeField]
+	[Header("[マルチバトル用]AP UP用オブジェクト")]
 	public GameObject apUpObject;
 
 	[Header("[マルチバトル用]HP UP用オブジェクト")]
@@ -20,12 +20,12 @@ public class BattleUIHUD : UITweener
 	[Header("[マルチバトル用]AP数")]
 	public UILabel multiAPNumber;
 
-	[Header("HPゲージ")]
 	[SerializeField]
+	[Header("HPゲージ")]
 	private UIGaugeManager hpGauge;
 
-	[SerializeField]
 	[Header("APゲージ")]
+	[SerializeField]
 	private UIGaugeManager apGauge;
 
 	[SerializeField]
@@ -44,8 +44,8 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UIComponentSkinner statePlateComponentSkinner;
 
-	[SerializeField]
 	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner pnSpriteComponentSkinner;
 
 	[Header("[マルチバトル用]AP UP Rootのコンポーネントのスキナー")]
@@ -56,8 +56,8 @@ public class BattleUIHUD : UITweener
 	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
-	[Header("ターン数Tween")]
 	[SerializeField]
+	[Header("ターン数Tween")]
 	private UITweener turnNumberTween;
 
 	[SerializeField]
@@ -68,16 +68,16 @@ public class BattleUIHUD : UITweener
 	[Header("デジモンの名前")]
 	private UITextReplacer digimonName;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float from = 1f;
 
 	[SerializeField]
 	[Range(0f, 1f)]
 	private float to = 1f;
 
-	[SerializeField]
 	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
+	[SerializeField]
 	private List<UIWidget> viewWidgets = new List<UIWidget>();
 
 	private Dictionary<SufferStateProperty.SufferType, string> iconSpriteNames = new Dictionary<SufferStateProperty.SufferType, string>();

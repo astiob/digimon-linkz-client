@@ -11,8 +11,8 @@ public class CharacterAnimationClip
 	[SerializeField]
 	private AnimationClip _idle;
 
-	[FormerlySerializedAs("hit")]
 	[SerializeField]
+	[FormerlySerializedAs("hit")]
 	private AnimationClip _hit;
 
 	[SerializeField]

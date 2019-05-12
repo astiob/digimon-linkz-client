@@ -33,8 +33,8 @@ public class CMD_PairSelectBase : CMD
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
 
-	[SerializeField]
 	[Header("ベースデジモンラベル")]
+	[SerializeField]
 	private UILabel baseDigimonLabel;
 
 	[SerializeField]

@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class GUIListPartsQuestSelect : GUIListPartBS
 {
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[SerializeField]
@@ -72,7 +72,7 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	{
 		this.failedTextLabel.text = this.areaData.data.name;
 		this.failedTextLabel.gameObject.SetActive(true);
-		string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img/events/" + this.areaData.data.img;
+		string path = AssetDataMng.GetWebAssetImagePath() + "/events/" + this.areaData.data.img;
 		yield return TextureManager.instance.Load(path, delegate(Texture2D tex)
 		{
 			if (tex != null)

@@ -46,7 +46,7 @@ public class DownloadGashaTopTex
 			GameWebAPI.RespDataGA_GetGachaInfo.Result gashaData = gashaDataList[i];
 			if (gashaData != null)
 			{
-				yield return AppCoroutine.Start(this.DownloadTex("/img/gasha/" + gashaData.mainImagePath), false);
+				yield return AppCoroutine.Start(this.DownloadTex(gashaData.mainImagePath), false);
 				gashaData.tex = this.topTex;
 			}
 		}
@@ -63,7 +63,7 @@ public class DownloadGashaTopTex
 		{
 			this.topTex = texture;
 		};
-		string downloadURL = ConstValue.APP_ASSET_DOMAIN + "/asset" + url;
+		string downloadURL = AssetDataMng.GetWebAssetImagePath() + "/gasha/" + url;
 		yield return TextureManager.instance.Load(downloadURL, callback, this.TimeoutSeconds, true);
 		yield break;
 	}

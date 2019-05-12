@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Rendering/Screen Space Ambient Occlusion")]
+	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
 	public class ScreenSpaceAmbientOcclusion : MonoBehaviour
 	{

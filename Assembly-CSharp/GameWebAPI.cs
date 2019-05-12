@@ -2238,6 +2238,8 @@ public class GameWebAPI : WebAPI
 
 		public string currencyCode;
 
+		public string countryCode;
+
 		public string priceNumber;
 
 		public string receiptData;
@@ -2258,6 +2260,8 @@ public class GameWebAPI : WebAPI
 		public string osVersion;
 
 		public string currencyCode;
+
+		public string countryCode;
 
 		public string priceNumber;
 
@@ -3944,6 +3948,120 @@ public class GameWebAPI : WebAPI
 	public sealed class RespDataTL_EditUserTitle : WebAPI.ResponseData
 	{
 		public int resultStatus;
+	}
+
+	public sealed class RequestTL_ModelChangeRequest : RequestTypeBase<GameWebAPI.SendDataTL_ModelChangeRequest, GameWebAPI.RespDataTL_ModelChangeRequest>
+	{
+		public RequestTL_ModelChangeRequest()
+		{
+			this.apiId = "210001";
+		}
+	}
+
+	public sealed class SendDataTL_ModelChangeRequest : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_ModelChangeRequest : WebAPI.ResponseData
+	{
+		public int appliId;
+
+		public string userCode;
+
+		public string transferCode;
+
+		public string expireTime;
+	}
+
+	public sealed class RequestTL_UserSocialStatusInfo : RequestTypeBase<GameWebAPI.SendDataTL_UserSocialStatusInfo, GameWebAPI.RespDataTL_UserSocialStatusInfo>
+	{
+		public RequestTL_UserSocialStatusInfo()
+		{
+			this.apiId = "210002";
+		}
+	}
+
+	public sealed class SendDataTL_UserSocialStatusInfo : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_UserSocialStatusInfo : WebAPI.ResponseData
+	{
+		public string userCode;
+
+		public string nickname;
+
+		public string transferCode;
+	}
+
+	public sealed class RequestTL_DeleteUserSocialStatus : RequestTypeBase<GameWebAPI.SendDataTL_DeleteUserSocialStatus, GameWebAPI.RespDataTL_DeleteUserSocialStatus>
+	{
+		public RequestTL_DeleteUserSocialStatus()
+		{
+			this.apiId = "210003";
+		}
+	}
+
+	public sealed class SendDataTL_DeleteUserSocialStatus : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_DeleteUserSocialStatus : WebAPI.ResponseData
+	{
+		public int resultCode;
+
+		public bool IsSuccess()
+		{
+			return 1 == this.resultCode;
+		}
+	}
+
+	public sealed class RequestTL_ModelChangeAuthLogic : RequestTypeBase<GameWebAPI.SendDataTL_ModelChangeAuthLogic, GameWebAPI.RespDataTL_ModelChangeAuthLogic>
+	{
+		public RequestTL_ModelChangeAuthLogic()
+		{
+			this.apiId = "210004";
+		}
+	}
+
+	public sealed class SendDataTL_ModelChangeAuthLogic : WebAPI.SendBaseData
+	{
+		public string accessToken;
+
+		public int transferUserCode;
+
+		public string transferCode;
+	}
+
+	public sealed class RespDataTL_ModelChangeAuthLogic : WebAPI.ResponseData
+	{
+		public int transferStatus;
+	}
+
+	public sealed class RequestTL_UserSocialStatusCheckLogic : RequestTypeBase<GameWebAPI.SendDataTL_UserSocialStatusCheckLogic, GameWebAPI.RespDataTL_UserSocialStatusCheckLogic>
+	{
+		public RequestTL_UserSocialStatusCheckLogic()
+		{
+			this.apiId = "210005";
+		}
+	}
+
+	public sealed class SendDataTL_UserSocialStatusCheckLogic : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_UserSocialStatusCheckLogic : WebAPI.ResponseData
+	{
+		public int resultCode;
+
+		public bool Authenticated()
+		{
+			return 1 == this.resultCode;
+		}
 	}
 
 	public sealed class RequestIN_InfoList : RequestTypeBase<GameWebAPI.SendDataIN_InfoList, GameWebAPI.RespDataIN_InfoList>

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/Root")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/Root")]
 public class UIRoot : MonoBehaviour
 {
 	public static List<UIRoot> list = new List<UIRoot>();

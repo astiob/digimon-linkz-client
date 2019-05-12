@@ -82,6 +82,7 @@ public class GUIListPartsStone : GUIListPartBS
 		if (this.data.packFlg)
 		{
 			this.SetTimeStatus();
+			this.ngTX_PRICE.text = this.data.storePrice;
 			AppCoroutine.Start(this.LoadBannerTexture(this.data.imgPath), false);
 		}
 		else
@@ -99,7 +100,6 @@ public class GUIListPartsStone : GUIListPartBS
 				this.ngTEX_BANNER.mainTexture = texture;
 				this.ngICON.gameObject.SetActive(false);
 				this.ngTX_NAME.gameObject.SetActive(false);
-				this.ngTX_PRICE.gameObject.SetActive(false);
 			}
 			else
 			{
@@ -108,7 +108,7 @@ public class GUIListPartsStone : GUIListPartBS
 				this.ngICON.gameObject.SetActive(false);
 			}
 		};
-		string downloadURL = ConstValue.APP_ASSET_DOMAIN + "/asset/img/" + path;
+		string downloadURL = AssetDataMng.GetWebAssetImagePath() + "/" + path;
 		yield return TextureManager.instance.Load(downloadURL, callback, 30f, true);
 		yield break;
 	}
@@ -123,7 +123,6 @@ public class GUIListPartsStone : GUIListPartBS
 				this.ngTEX_BANNER.mainTexture = mainTexture;
 				this.ngICON.gameObject.SetActive(false);
 				this.ngTX_NAME.gameObject.SetActive(false);
-				this.ngTX_PRICE.gameObject.SetActive(false);
 			}
 			else
 			{
@@ -141,7 +140,7 @@ public class GUIListPartsStone : GUIListPartBS
 		this.ngICON.spriteName = component.GetSpriteName(this.data.spriteType);
 		this.ngICON.MakePixelPerfect();
 		this.ngTX_NAME.text = this.data.productTitle;
-		this.ngTX_PRICE.text = StringFormat.Yen(this.data.price);
+		this.ngTX_PRICE.text = this.data.storePrice;
 	}
 
 	private void SetTimeStatus()
@@ -276,27 +275,11 @@ public class GUIListPartsStone : GUIListPartBS
 
 	private void OnClickedPurchase()
 	{
-		if (this.AgeConfirmd())
-		{
-			return;
-		}
 		if (this.CheckMaxDigistoneCount())
 		{
 			return;
 		}
-		string birthday = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.birthday;
-		DateTime dateTime = DateTime.Parse(birthday);
-		if (!string.IsNullOrEmpty(birthday))
-		{
-			if (ServerDateTime.Now < dateTime.AddYears(20))
-			{
-				this.AgreementConfirmation();
-			}
-			else
-			{
-				this.BranchHowBuy();
-			}
-		}
+		this.BranchHowBuy();
 	}
 
 	private void AgreementConfirmation()

@@ -12,12 +12,12 @@ public sealed class CMD_PvPBattleResult : CMD
 {
 	private const int UP_COUNT_VALUE = 1;
 
-	[SerializeField]
 	[Header("Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogo;
 
-	[Header("Loseのロゴ")]
 	[SerializeField]
+	[Header("Loseのロゴ")]
 	private GameObject loseLogo;
 
 	[Header("スキップ用Winのロゴ")]
@@ -36,8 +36,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private UISprite rankSprite;
 
-	[SerializeField]
 	[Header("獲得クラスタ数値ラベル")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
 	[SerializeField]
@@ -48,8 +48,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private UILabel currentDpLabel;
 
-	[Header("通算勝利数のラベル")]
 	[SerializeField]
+	[Header("通算勝利数のラベル")]
 	private UILabel totalWinNum;
 
 	[SerializeField]
@@ -64,16 +64,16 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject gaugeDown;
 
-	[Header("ランクアップ用エフェクト")]
 	[SerializeField]
+	[Header("ランクアップ用エフェクト")]
 	private GameObject rankUpEffect;
 
 	[Header("ランクダウン用エフェクト")]
 	[SerializeField]
 	private GameObject rankDownEffect;
 
-	[Header("TAP NEXTのオブジェクト")]
 	[SerializeField]
+	[Header("TAP NEXTのオブジェクト")]
 	private GameObject tapNext;
 
 	[SerializeField]
@@ -82,8 +82,8 @@ public sealed class CMD_PvPBattleResult : CMD
 
 	private readonly Vector3 BIG_LABEL_SIZE = new Vector3(1.35f, 1.35f, 1f);
 
-	[Header("カウントアップするときのラベルの色")]
 	[SerializeField]
+	[Header("カウントアップするときのラベルの色")]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	private GUIMonsterIcon[] digimonIcons;

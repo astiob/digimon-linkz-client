@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ChipBarLnvocation : MonoBehaviour
 {
-	[SerializeField]
 	[Header("チップアニメーション")]
+	[SerializeField]
 	private Animation chipAnimation;
 
 	[Header("アニメーションチップ")]

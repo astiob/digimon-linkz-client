@@ -7,6 +7,9 @@ public class CMD_Takeover : CMD
 	[SerializeField]
 	private TakeoverMenu menu;
 
+	[SerializeField]
+	private TakeoverMenu menuMultiLanguage;
+
 	public static CMD_Takeover.MODE currentMode;
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -38,13 +41,22 @@ public class CMD_Takeover : CMD
 		{
 			base.PartsTitle.SetTitle(StringMaster.GetString("TakeOverTitle"));
 		}
-		this.menu.gameObject.SetActive(true);
 		if (CMD_Takeover.currentMode == CMD_Takeover.MODE.INPUT)
 		{
-			this.menu.Initialize(TakeoverMenu.MODE.Input);
+			this.menu.gameObject.SetActive(false);
+			if (this.menuMultiLanguage != null)
+			{
+				this.menuMultiLanguage.gameObject.SetActive(true);
+			}
+			this.menuMultiLanguage.Initialize(TakeoverMenu.MODE.Input);
 		}
 		else if (CMD_Takeover.currentMode == CMD_Takeover.MODE.ISSUE)
 		{
+			this.menu.gameObject.SetActive(true);
+			if (this.menuMultiLanguage != null)
+			{
+				this.menuMultiLanguage.gameObject.SetActive(false);
+			}
 			this.menu.Initialize(TakeoverMenu.MODE.Issue);
 		}
 	}

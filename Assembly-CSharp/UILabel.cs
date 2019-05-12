@@ -14,13 +14,13 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Font mTrueTypeFont;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIFont mFont;
 
+	[SerializeField]
 	[HideInInspector]
 	[Multiline(6)]
-	[SerializeField]
 	private string mText = string.Empty;
 
 	[SerializeField]
@@ -43,16 +43,16 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private int mMaxLineCount;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel.Effect mEffectStyle;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Color mEffectColor = Color.black;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private NGUIText.SymbolStyle mSymbols = NGUIText.SymbolStyle.Normal;
 
 	[SerializeField]
@@ -67,24 +67,24 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Material mMaterial;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mApplyGradient;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Color mGradientTop = Color.white;
 
 	[HideInInspector]
 	[SerializeField]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingX;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingY;
 
 	[SerializeField]
@@ -103,24 +103,24 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private bool mOverflowEllipsis;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mShrinkToFit;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mMaxLineWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mMaxLineHeight;
 
 	[SerializeField]
 	[HideInInspector]
 	private float mLineWidth;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mMultiline = true;
 
 	[NonSerialized]
@@ -1021,6 +1021,10 @@ public class UILabel : UIWidget
 			UILabel.mTexRebuildAdded = true;
 			Font.textureRebuilt += UILabel.OnFontChanged;
 		}
+		if (UILabel.defaultFont != null && this.bitmapFont == null && this.trueTypeFont == null)
+		{
+			this.trueTypeFont = UILabel.defaultFont;
+		}
 	}
 
 	protected override void OnStart()
@@ -1782,6 +1786,10 @@ public class UILabel : UIWidget
 	protected override void Awake()
 	{
 		base.Awake();
+		if (UILabel.defaultFont != null && this.bitmapFont == null && this.trueTypeFont == null)
+		{
+			this.trueTypeFont = UILabel.defaultFont;
+		}
 	}
 
 	public enum Effect

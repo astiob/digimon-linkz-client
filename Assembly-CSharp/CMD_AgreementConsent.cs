@@ -20,6 +20,12 @@ public class CMD_AgreementConsent : CMD
 	[SerializeField]
 	protected UILabel noButtonLabel;
 
+	[SerializeField]
+	protected GameObject ruleButtonObject;
+
+	[SerializeField]
+	protected GameObject multiLanguageRuleButtonObject;
+
 	private Action<bool> actionClosed;
 
 	private void Start()
@@ -29,6 +35,14 @@ public class CMD_AgreementConsent : CMD
 		this.ruleButtonLabel.text = StringMaster.GetString("AgreementTitle");
 		this.yesButtonLabel.text = StringMaster.GetString("AgreementYesButtonText");
 		this.noButtonLabel.text = StringMaster.GetString("AgreementNoButtonText");
+		if (this.ruleButtonObject != null)
+		{
+			this.ruleButtonObject.SetActive(false);
+		}
+		if (this.multiLanguageRuleButtonObject != null)
+		{
+			this.multiLanguageRuleButtonObject.SetActive(true);
+		}
 	}
 
 	public void SetActionAgreementPopupClosed(Action<bool> action)
@@ -76,8 +90,11 @@ public class CMD_AgreementConsent : CMD
 
 	private void OnClickedTermsOfUse()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
-		cmdwebWindow.TitleText = StringMaster.GetString("AgreementTitle");
-		cmdwebWindow.Url = WebAddress.EXT_ADR_AGREE;
+		Application.OpenURL(WebAddress.EXT_ADR_AGREE);
+	}
+
+	private void OnClickedPrivacyOfUse()
+	{
+		Application.OpenURL(WebAddress.EXT_ADR_PRIVACY_POLICY);
 	}
 }

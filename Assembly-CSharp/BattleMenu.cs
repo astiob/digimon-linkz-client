@@ -15,12 +15,12 @@ public class BattleMenu : MonoBehaviour
 	[SerializeField]
 	private MenuDialog menuDialog;
 
-	[Header("DialogHelpのGameObject")]
 	[SerializeField]
+	[Header("DialogHelpのGameObject")]
 	public GameObject helpDialogGO;
 
-	[SerializeField]
 	[Header("Menu/PanelのTransform")]
+	[SerializeField]
 	public Transform menuPanelTransform;
 
 	public MenuDialog SetupMenu(Transform parent)

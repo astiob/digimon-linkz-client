@@ -42,20 +42,20 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private GameObject goPartsPointWithoutRankingROOT;
 
-	[SerializeField]
 	[Header("ポイントクエスト用 BG")]
+	[SerializeField]
 	private UITexture txEVENT_BG;
 
 	[SerializeField]
 	[Header("降臨エリア用 スケジュールバナー領域")]
 	private GameObject goScheduleBannerROOT;
 
-	[SerializeField]
 	[Header("降臨エリア用 スケジュールバナー")]
+	[SerializeField]
 	private GameObject goScheduleBannerParts;
 
-	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
 	[SerializeField]
+	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
 	private float timeOutSeconds;
 
 	public bool isGoingBattle;
@@ -181,7 +181,7 @@ public class CMD_QuestTOP : CMD
 			parts.name += banner.dispNum.ToString();
 			parts.Data = banner;
 			parts.SetBGColor();
-			string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img" + banner.img;
+			string path = AssetDataMng.GetWebAssetImagePath() + banner.img;
 			yield return TextureManager.instance.Load(path, new Action<Texture2D>(parts.OnBannerReceived), this.timeOutSeconds, true);
 		}
 		yield break;
@@ -262,7 +262,7 @@ public class CMD_QuestTOP : CMD
 					string backgroundImg = respDataMA_WorldEventMaster.worldEventM[j].backgroundImg;
 					if (!string.IsNullOrEmpty(backgroundImg))
 					{
-						return ConstValue.APP_ASSET_DOMAIN + "/asset/img/events/" + backgroundImg;
+						return AssetDataMng.GetWebAssetImagePath() + "/events/" + backgroundImg;
 					}
 				}
 			}

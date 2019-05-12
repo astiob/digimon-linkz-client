@@ -39,10 +39,10 @@ public sealed class GUIListPresentHistoryParts : GUIListPartBS
 	private void SetCommonUI()
 	{
 		this.lbDescription.text = this.prizeData.message;
-		DateTime dateTime;
-		if (DateTime.TryParse(this.prizeData.updateTime, out dateTime))
+		DateTime jpDateTime;
+		if (DateTime.TryParse(this.prizeData.updateTime, out jpDateTime))
 		{
-			string str = dateTime.ToString("yyyy/MM/dd");
+			string str = TimeUtility.ToJPLocalDateTime(jpDateTime).ToString("yyyy/MM/dd");
 			this.lbLimitTime.text = StringMaster.GetString("OtherHistory-03") + str;
 		}
 		else

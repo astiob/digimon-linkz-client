@@ -198,7 +198,7 @@ public static class AlertManager
 		}
 		if (!useErrorCode)
 		{
-			AlertManager.lastErrorCode = string.Empty;
+			AlertManager.lastErrorCode = "unknown:" + AlertManager.lastErrorCode;
 		}
 		PlayerPrefs.SetString("LastErrorInfo", ServerDateTime.Now + ":" + AlertManager.lastErrorCode);
 		CMD_Type cmd_Type = GUIManager.ShowCommonDialog(action2, true, dialogName, null, null, 0.2f, 0f, 0f, -1f, -1f) as CMD_Type;

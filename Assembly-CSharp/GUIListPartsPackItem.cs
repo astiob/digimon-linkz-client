@@ -8,16 +8,16 @@ public class GUIListPartsPackItem : GUIListPartBS
 	[SerializeField]
 	private UITexture ItemIcon;
 
-	[SerializeField]
 	[Header("アイテムネーム")]
+	[SerializeField]
 	private UILabel lbTX_ItemName;
 
-	[SerializeField]
 	[Header("アイテム個数")]
+	[SerializeField]
 	private UILabel lbTX_ItemNum;
 
-	[Header("オマケフラグ")]
 	[SerializeField]
+	[Header("オマケフラグ")]
 	private bool isOmake;
 
 	[SerializeField]

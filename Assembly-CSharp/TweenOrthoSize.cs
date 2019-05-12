@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
 [AddComponentMenu("NGUI/Tween/Tween Orthographic Size")]
+[RequireComponent(typeof(Camera))]
 public class TweenOrthoSize : UITweener
 {
 	public float from = 1f;

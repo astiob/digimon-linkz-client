@@ -25,8 +25,8 @@ public class PrizeEfcDirector : MonoBehaviour
 	[SerializeField]
 	private float stayTime = 0.8f;
 
-	[Header("フェードアウト時間")]
 	[SerializeField]
+	[Header("フェードアウト時間")]
 	private float fadeOutTime = 0.3f;
 
 	private float valueA;

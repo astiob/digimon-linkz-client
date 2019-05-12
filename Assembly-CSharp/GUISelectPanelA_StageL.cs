@@ -360,7 +360,7 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 			callback(null);
 			yield break;
 		}
-		string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img/events/" + wsd.worldStageM.stageImage;
+		string path = AssetDataMng.GetWebAssetImagePath() + "/events/" + wsd.worldStageM.stageImage;
 		yield return TextureManager.instance.Load(path, callback, 30f, true);
 		yield break;
 	}

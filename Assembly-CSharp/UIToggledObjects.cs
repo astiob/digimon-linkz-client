@@ -9,8 +9,8 @@ public class UIToggledObjects : MonoBehaviour
 
 	public List<GameObject> deactivate;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject target;
 
 	[HideInInspector]

@@ -68,6 +68,8 @@ public class BattleInitialize : BattleFunctionBase
 			characterParams.SetShadowObject();
 			yield return null;
 		}
+		characterParams.PlayIdleAnimation();
+		yield return null;
 		characterParams.Initialize(base.hierarchyData.cameraObject.camera3D);
 		GameObject hasColliderObject = characterParams.collider.gameObject;
 		BattleStateData battleStateData = base.battleStateData;

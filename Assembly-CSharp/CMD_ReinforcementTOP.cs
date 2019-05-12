@@ -39,8 +39,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private UILabel possessionClusterLabel;
 
-	[SerializeField]
 	[Header("消費クラスタ")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
 	[SerializeField]

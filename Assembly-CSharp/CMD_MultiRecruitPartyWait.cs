@@ -46,8 +46,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[Header("ステータス変更ボタン")]
 	private UILabel lbTXT_ST_EXCHANGE;
 
-	[SerializeField]
 	[Header("準備完了ボタン")]
+	[SerializeField]
 	private UILabel lbTXT_BTN_READY;
 
 	[SerializeField]
@@ -74,12 +74,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[Header("エモーション処理")]
 	[SerializeField]
+	[Header("エモーション処理")]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーションコンポーネント")]
+	[SerializeField]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]
@@ -318,8 +318,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		if (this.roomInfo.worldAreaId == "1")
 		{
-			this.lbAreaName.text = StringMaster.GetString("QuestArea") + " " + MultiTools.AddAreaNameZero(this.roomInfo.worldStageId) + this.roomInfo.stageName;
-			this.lbStageName.text = string.Format(StringMaster.GetString("MultiRecruitQuestStage"), this.roomInfo.priority.ToInt32(), this.roomInfo.dungeonName);
+			this.lbAreaName.text = string.Format(StringMaster.GetString("GUIListPartsA_txt"), int.Parse(this.roomInfo.worldStageId)) + " " + this.roomInfo.stageName;
+			this.lbStageName.text = string.Format(StringMaster.GetString("MultiRecruitQuestStage"), int.Parse(this.roomInfo.priority), this.roomInfo.dungeonName);
 		}
 		else
 		{

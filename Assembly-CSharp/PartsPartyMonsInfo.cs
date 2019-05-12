@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[Header("チップの処理")]
 	[SerializeField]
+	[Header("チップの処理")]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
@@ -94,15 +94,15 @@ public class PartsPartyMonsInfo : GUICollider
 	[Header("左クリップのOBJ")]
 	private GameObject goL_CLIP;
 
-	[SerializeField]
 	[Header("右クリップのOBJ")]
+	[SerializeField]
 	private GameObject goR_CLIP;
 
 	[SerializeField]
 	private UISprite leaderMark;
 
-	[Header("クリッピングオブジェクト")]
 	[SerializeField]
+	[Header("クリッピングオブジェクト")]
 	private GameObject clipObject;
 
 	[SerializeField]

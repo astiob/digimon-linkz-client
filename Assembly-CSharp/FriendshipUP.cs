@@ -26,6 +26,7 @@ public class FriendshipUP : MonoBehaviour
 	{
 		int num = upFriendshipValue;
 		this.statusPart.spriteName = "Common02_Friendship";
+		this.statusPart.spriteName = string.Format("{0}_{1}", this.statusPart.spriteName, CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN));
 		this.statusPart.MakePixelPerfect();
 		int num2 = 1;
 		foreach (char c in num.ToString())

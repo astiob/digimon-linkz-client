@@ -417,6 +417,7 @@
     <Compile Include="CMD_DigiGarden.cs" />
     <Compile Include="CMD_Evolution.cs" />
     <Compile Include="CMD_EvolutionItemList.cs" />
+    <Compile Include="CMD_FacebookConfirm.cs" />
     <Compile Include="CMD_FacilityInfo.cs" />
     <Compile Include="CMD_FacilityInfoNoneEffect.cs" />
     <Compile Include="CMD_FacilityShop.cs" />
@@ -454,7 +455,7 @@
     <Compile Include="CMD_ModalSort.cs" />
     <Compile Include="CMD_MonsterParamPop.cs" />
     <Compile Include="CMD_MultiBattleParticipateMenu.cs" />
-    <Compile Include="CMD_MultiLangSetting_TEST.cs" />
+    <Compile Include="CMD_MultiLangSetting.cs" />
     <Compile Include="CMD_MultiRecruitChatList.cs" />
     <Compile Include="CMD_MultiRecruitFriend.cs" />
     <Compile Include="CMD_MultiRecruitPartyWait.cs" />
@@ -674,6 +675,7 @@
     <Compile Include="ExtraEffectStatus.cs" />
     <Compile Include="ExtraEffectType.cs" />
     <Compile Include="ExtraEffectUtil.cs" />
+    <Compile Include="FacebookWrapper.cs" />
     <Compile Include="FaceChatNotification.cs" />
     <Compile Include="FaceChatNotificationAccessor.cs" />
     <Compile Include="FaceMission.cs" />
@@ -1712,6 +1714,7 @@
     <Compile Include="UISprite.cs" />
     <Compile Include="UISpriteAnimation.cs" />
     <Compile Include="UISpriteData.cs" />
+    <Compile Include="UISpriteEx.cs" />
     <Compile Include="UISpriteSkinner.cs" />
     <Compile Include="UISpriteSkinnerBase.cs" />
     <Compile Include="UIStartupCaution.cs" />
@@ -1802,44 +1805,48 @@
       <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857966}</Project>
       <Name>Chopin</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Facebook.Unity\Facebook.Unity.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857968}</Project>
+      <Name>Facebook.Unity</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JsonFx.Json\JsonFx.Json.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857967}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
       <Name>JsonFx.Json</Name>
     </ProjectReference>
     <ProjectReference Include="..\mscorlib\mscorlib.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
       <Name>mscorlib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Secure\Secure.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
       <Name>Secure</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml\System.Xml.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>System.Xml</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\TextMeshPro\TextMeshPro.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
       <Name>TextMeshPro</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>UnityEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\websocket-sharp\websocket-sharp.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857973}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
       <Name>websocket-sharp</Name>
     </ProjectReference>
   </ItemGroup>

@@ -78,8 +78,8 @@ public class CMD_LoginCampaign : CMD_LoginBase
 	{
 		if (string.IsNullOrEmpty(path))
 		{
-			return ConstValue.APP_ASSET_DOMAIN + "/asset/img/login/";
+			return AssetDataMng.GetWebAssetImagePath() + "/login/";
 		}
-		return ConstValue.APP_ASSET_DOMAIN + "/asset/img/login/" + path;
+		return AssetDataMng.GetWebAssetImagePath() + "/login/" + path;
 	}
 }

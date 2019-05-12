@@ -131,6 +131,8 @@ public class GUIListNewsParts : GUIListPartBS
 		((CMDWebWindow)commonDialog).TitleText = this.Data.title;
 		((CMDWebWindow)commonDialog).callbackAction = new Action(this.CallbackClosePanel);
 		((CMDWebWindow)commonDialog).Url = ConstValue.APP_WEB_DOMAIN + ConstValue.WEB_INFO_ADR + this.Data.userInfoId;
+		CMDWebWindow cmdwebWindow = (CMDWebWindow)commonDialog;
+		cmdwebWindow.Url = cmdwebWindow.Url + "&countryCode=" + CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN);
 	}
 
 	private void CallbackClosePanel()

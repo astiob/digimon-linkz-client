@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TicketEfc : MonoBehaviour
 {
-	[Header("サムネイル TEX")]
 	[SerializeField]
+	[Header("サムネイル TEX")]
 	public UITexture ngTICKET_THUMB;
 
 	[SerializeField]
@@ -20,8 +20,8 @@ public class TicketEfc : MonoBehaviour
 	[SerializeField]
 	public UISprite spNew;
 
-	[SerializeField]
 	[Header("枚数ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_TICKET_NUM;
 
 	private int playFrameCT;

@@ -47,6 +47,12 @@ public sealed class GUIScreenTitle : GUIScreen
 	[SerializeField]
 	private GooglePlayGamesObjects googlePlay;
 
+	[SerializeField]
+	private UITexture titleLogo;
+
+	[SerializeField]
+	private UITexture rightSignage;
+
 	private CloudBackup backup = new CloudBackup();
 
 	protected override void Start()
@@ -65,6 +71,8 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.takeoverButtonLabel.text = StringMaster.GetString("TakeOverTitle");
 		this.optionButtonLabel.text = StringMaster.GetString("TitleOptionButton");
 		this.inquiryButtonLabel.text = StringMaster.GetString("InquiryTitle");
+		this.titleLogo.mainTexture = (Resources.Load(string.Format("UITexture/InternationalTitleLogo/digimon_linkz_logo_{0}", CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN))) as Texture2D);
+		this.rightSignage.mainTexture = (Resources.Load("UITexture/InternationalTitleLogo/RightSignage_en") as Texture2D);
 		base.Start();
 		base.gameObject.SetActive(true);
 		if (!global::Debug.isDebugBuild || this.buildNumLabel != null)
@@ -84,6 +92,9 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.googlePlay.Bootup();
 		yield return base.StartCoroutine(this.AuthLogin());
 		yield return base.StartCoroutine(APIUtil.Instance().StartGameLogin());
+		yield return base.StartCoroutine(this.InitAssetBundleDownloadInfo());
+		yield return base.StartCoroutine(this.DownloadFontAsset());
+		UILabel.defaultFont = (AssetDataMng.Instance().LoadObject("Font/DigimonTitle", null, true) as Font);
 		this.userID.gameObject.SetActive(true);
 		this.userCode.gameObject.SetActive(true);
 		this.appVersion.gameObject.SetActive(true);
@@ -105,6 +116,10 @@ public sealed class GUIScreenTitle : GUIScreen
 			GUICollider.EnableAllCollider(string.Empty);
 		}
 		RestrictionInput.EndLoad();
+		if (string.IsNullOrEmpty(PlayerPrefs.GetString("PlayerCountryCode")))
+		{
+			GUIMain.ShowCommonDialog(null, "CMD_MultiLangSetting");
+		}
 		yield break;
 	}
 
@@ -211,7 +226,6 @@ public sealed class GUIScreenTitle : GUIScreen
 		}
 		UpdateMasterData updateMasterData = new UpdateMasterData();
 		yield return base.StartCoroutine(updateMasterData.UpdateData());
-		yield return base.StartCoroutine(this.InitAssetBundleDownloadInfo());
 		bool tutorialStart = this.CheckFirstTutorial();
 		if (tutorialStart)
 		{

@@ -4,28 +4,32 @@ using UnityEngine;
 
 public class RoundStart : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("ApHpUp_Rootのスキナー")]
+	[SerializeField]
 	protected UIComponentSkinner apHpUpRootSkinner;
 
-	[Header("ラウンドのローカライズ")]
 	[SerializeField]
+	[Header("ラウンドのローカライズ")]
 	protected UILabel roundLocalize;
 
 	[SerializeField]
 	[Header("AP UPローカライズ(片方の時)")]
 	protected UILabel onlyApUpLocalize;
 
-	[Header("AP UPローカライズ(両方)")]
 	[SerializeField]
+	[Header("AP UPローカライズ(両方)")]
 	protected UILabel apUpLocalize;
 
 	[SerializeField]
-	[Header("HP回復ローカライズ")]
+	[Header("HP回復ローカライズ(片方の時)")]
+	protected UILabel onlyHpRecoverLocalize;
+
+	[SerializeField]
+	[Header("HP回復ローカライズ(両方)")]
 	protected UILabel hpRecoverLocalize;
 
 	private void Awake()
@@ -37,6 +41,7 @@ public class RoundStart : MonoBehaviour
 	{
 		this.onlyApUpLocalize.text = StringMaster.GetString("BattleNotice-03");
 		this.apUpLocalize.text = StringMaster.GetString("BattleNotice-03");
+		this.onlyHpRecoverLocalize.text = StringMaster.GetString("BattleNotice-04");
 		this.hpRecoverLocalize.text = StringMaster.GetString("BattleNotice-04");
 	}
 

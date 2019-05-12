@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Master;
+using System;
 using UnityEngine;
 
 public sealed class ChipSphereIconButton : GUICollider
@@ -17,12 +18,12 @@ public sealed class ChipSphereIconButton : GUICollider
 	[Header("LOOKのオブジェクト")]
 	private GameObject lookGO;
 
-	[Header("Chargesのオブジェクト")]
 	[SerializeField]
+	[Header("Chargesのオブジェクト")]
 	private GameObject chargesGO;
 
-	[SerializeField]
 	[Header("選択中(Chip_choosing)")]
+	[SerializeField]
 	private GameObject choosingGO;
 
 	[SerializeField]
@@ -33,8 +34,8 @@ public sealed class ChipSphereIconButton : GUICollider
 	[SerializeField]
 	private UILabel chipDescriptLabel;
 
-	[Header("チップのテクスチャ/枠")]
 	[SerializeField]
+	[Header("チップのテクスチャ/枠")]
 	private UITexture chipTexture;
 
 	[Header("アイテムのスプライト")]
@@ -131,7 +132,7 @@ public sealed class ChipSphereIconButton : GUICollider
 		NGUITools.SetActiveSelf(this.rankSprite.gameObject, false);
 		this.chipNameLabel.text = this.myParameter.chipName;
 		NGUITools.SetActiveSelf(this.chipDescriptLabel.gameObject, true);
-		this.chipDescriptLabel.text = string.Format("x{0}", this.myParameter.itemCount);
+		this.chipDescriptLabel.text = string.Format(StringMaster.GetString("SystemItemCount2"), this.myParameter.itemCount);
 		NGUITools.SetActiveSelf(this.chargesGO, true);
 		NGUITools.SetActiveSelf(this.lookSprite.gameObject, false);
 		NGUIUtil.ChangeUITextureFromFileASync(this.chipTexture, "ChipThumbnail/Chip_NotOpen", false, null);

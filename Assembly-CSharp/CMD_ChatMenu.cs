@@ -125,7 +125,7 @@ public class CMD_ChatMenu : CMD
 		{
 			this.groupExitBtnLabel.text = StringMaster.GetString("ChatLogMenu-04");
 		}
-		this.chatServiceButtonLabel.text = StringMaster.GetString("ChatLogMenu-05");
+		this.chatServiceButtonLabel.text = StringMaster.GetString("AgreementTitle");
 	}
 
 	private void setMenuBtn()
@@ -229,11 +229,11 @@ public class CMD_ChatMenu : CMD
 	{
 		if (ChatTools.CheckOnFLG(data.result))
 		{
-			this.SendChatResignGroup(StringMaster.GetString("ChatLog-03"), StringMaster.GetString("ChatConfirmTitle"), StringMaster.GetString("ChatLeavingSuccess"));
+			this.SendChatResignGroup("ChatLog-03", StringMaster.GetString("ChatConfirmTitle"), StringMaster.GetString("ChatLeavingSuccess"));
 		}
 		else if (data.resultCode == 90)
 		{
-			this.SendChatResignGroup(StringMaster.GetString("ChatLog-03"), StringMaster.GetString("SystemConfirm"), StringMaster.GetString("ChatMemberKickNotice"));
+			this.SendChatResignGroup("ChatLog-03", StringMaster.GetString("SystemConfirm"), StringMaster.GetString("ChatMemberKickNotice"));
 		}
 		else
 		{
@@ -313,9 +313,7 @@ public class CMD_ChatMenu : CMD
 
 	private void PushedChatNoticeBtn()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
-		cmdwebWindow.TitleText = StringMaster.GetString("SystemCaution");
-		cmdwebWindow.Url = WebAddress.EXT_ADR_CHAT_NOTICE;
+		Application.OpenURL(WebAddress.EXT_ADR_AGREE);
 	}
 
 	private void SendChatResignGroup(string mes, string title, string info)

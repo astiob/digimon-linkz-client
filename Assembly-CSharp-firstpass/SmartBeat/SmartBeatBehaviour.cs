@@ -5,11 +5,11 @@ namespace SmartBeat
 {
 	public class SmartBeatBehaviour : MonoBehaviour
 	{
-		private const string APP_KEY = "3bbe2b4f-10e9-493d-ab2e-4a120c1c1c5b";
+		private const string APP_KEY = "10d19da5-f83a-4f44-9d5a-dede5d742f3b";
 
 		private void Awake()
 		{
-			SmartBeat.init("3bbe2b4f-10e9-493d-ab2e-4a120c1c1c5b", this.enabled());
+			SmartBeat.init("10d19da5-f83a-4f44-9d5a-dede5d742f3b", this.enabled());
 			this.init();
 		}
 

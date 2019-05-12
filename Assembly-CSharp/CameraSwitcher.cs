@@ -7,8 +7,8 @@ public sealed class CameraSwitcher : MonoBehaviour
 
 	private const float MIN_DISTANCE = 0.5f;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	private Camera mainCamera;
 
 	[Header("サブカメラ")]

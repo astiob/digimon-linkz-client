@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using LitJson;
+using Master;
 using Neptune.Cloud;
 using Neptune.Cloud.Core;
 using System;
@@ -18,7 +19,7 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 
 	public const string TCP_SHARDING_MULTI = "multi";
 
-	private string projectId = "gsdigimon";
+	private string projectId = "usdigimon";
 
 	private string SocketCtrl = "socket/ActiveController";
 
@@ -584,20 +585,30 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 
 	public IEnumerator SendSystemMessege(int cgi, string uid, string uname)
 	{
+		string msg = JsonMapper.ToJson(new TCPUtil.SystemMsg
+		{
+			key = "ChatLog-01",
+			uname = uname
+		});
 		while (!Singleton<TCPUtil>.Instance.CheckPrepareTCPServer())
 		{
 			yield return null;
 		}
 		if (Singleton<TCPUtil>.Instance.ConnectTCPServer(uid))
 		{
-			base.StartCoroutine(this.SendChatMessage(cgi, string.Format(StringMaster.GetString("ChatLog-01"), uname), 3, null));
+			base.StartCoroutine(this.SendChatMessage(cgi, msg, 3, null));
 		}
 		yield break;
 	}
 
 	public void SendSystemMessegeAlreadyConnected(int cgi, string mes, string uname, Action<int> action = null)
 	{
-		base.StartCoroutine(this.SendChatMessage(cgi, string.Format(mes, uname), 3, action));
+		string message = JsonMapper.ToJson(new TCPUtil.SystemMsg
+		{
+			key = mes,
+			uname = uname
+		});
+		base.StartCoroutine(this.SendChatMessage(cgi, message, 3, action));
 	}
 
 	public void OnJoinRoom(NpRoomParameter roomData)
@@ -659,5 +670,12 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		public int chatGroupId;
 
 		public string target;
+	}
+
+	public class SystemMsg
+	{
+		public string key;
+
+		public string uname;
 	}
 }

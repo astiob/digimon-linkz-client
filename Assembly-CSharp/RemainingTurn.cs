@@ -25,12 +25,12 @@ public sealed class RemainingTurn : MonoBehaviour
 	[SerializeField]
 	private UILabel yourRemaingTurnLabel;
 
-	[SerializeField]
 	[Header("自分/仲間/敵メッセージ(右下用)")]
+	[SerializeField]
 	private UILabel[] messageLabels;
 
-	[Header("コンテンツ")]
 	[SerializeField]
+	[Header("コンテンツ")]
 	private GameObject contains;
 
 	[Header("自分/仲間/敵コンテンツ(真ん中ターン表示)")]

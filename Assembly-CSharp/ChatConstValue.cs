@@ -91,9 +91,9 @@ public static class ChatConstValue
 
 	public const int CHAT_RECONNECT_COUNT = 3;
 
-	public const string SPRITE_MEMBER_RELATION_TYPE_SELF = "Text_you";
+	public const string SPRITE_MEMBER_RELATION_TYPE_SELF = "ListStatus_Waku_Green";
 
-	public const string SPRITE_MEMBER_RELATION_TYPE_BLOCK = "Text_block";
+	public const string SPRITE_MEMBER_RELATION_TYPE_BLOCK = "ListStatus_Waku_Red";
 
 	public const string API_SOCKET_SEND_MESSAGE = "810002";
 
@@ -132,10 +132,10 @@ public static class ChatConstValue
 	public static readonly string[] SPRITE_GROUP_CATEGORY = new string[]
 	{
 		string.Empty,
-		"txt_Capture",
-		"txt_Chat",
-		"txt_AlternateCurrent",
-		"txt_Other"
+		"ChatCategori_Capture",
+		"ChatCategori_Chat",
+		"ChatCategori_Interact2",
+		"ChatCategori_Interact"
 	};
 
 	public static readonly string[] WORLD_ID_LIST = new string[]

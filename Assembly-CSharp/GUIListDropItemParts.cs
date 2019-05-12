@@ -33,8 +33,8 @@ public class GUIListDropItemParts : GUIListPartBS
 	[Header("運の文字アイコン")]
 	private UILabel luckIcons;
 
-	[SerializeField]
 	[Header("マルチ運プレイヤーアイコン")]
+	[SerializeField]
 	private GameObject goLuckPlayerIcons;
 
 	[Header("マルチの文字アイコン")]

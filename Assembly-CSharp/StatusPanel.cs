@@ -3,12 +3,12 @@ using UnityEngine;
 
 public sealed class StatusPanel : MonoBehaviour
 {
-	[Header("左下の表示切替のGameObject")]
 	[SerializeField]
+	[Header("左下の表示切替のGameObject")]
 	private GameObject switchButton;
 
-	[SerializeField]
 	[Header("ボタンのラベル")]
+	[SerializeField]
 	private UILabel switchButtonLabel;
 
 	[SerializeField]

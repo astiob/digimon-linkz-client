@@ -61,8 +61,6 @@ public class CMD_AgreementConfirmation : CMD
 
 	private void OnClickedTermsOfUse()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
-		cmdwebWindow.TitleText = StringMaster.GetString("AgreementTitle");
-		cmdwebWindow.Url = WebAddress.EXT_ADR_AGREE;
+		Application.OpenURL(WebAddress.EXT_ADR_AGREE);
 	}
 }

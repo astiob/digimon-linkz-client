@@ -20,7 +20,8 @@ public class CMD_maintenance : CMD
 		}
 		set
 		{
-			this.info = TextUtil.GetWinTextSkipColorCode(value, 40);
+			this.ngTXT_EXP.overflowMethod = UILabel.Overflow.ClampContent;
+			this.info = value;
 			this.ngTXT_EXP.text = this.info;
 		}
 	}

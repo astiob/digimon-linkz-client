@@ -15,8 +15,8 @@ public class AlwaysPvP : BattleAlways
 	[SerializeField]
 	public MultiConnetionMessage connetionMessage;
 
-	[SerializeField]
 	[Header("ダイアログ")]
+	[SerializeField]
 	public MultiBattleDialog dialog;
 
 	public void Initialize(BattleUIComponentsPvP ui, Action<UIButton> sendEmotionAction)

@@ -15,8 +15,8 @@ public class UIToggledComponents : MonoBehaviour
 	[HideInInspector]
 	private MonoBehaviour target;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool inverse;
 
 	private void Awake()

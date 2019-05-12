@@ -7,16 +7,16 @@ public class BattleUIInitialize : MonoBehaviour
 {
 	private const int LoadingGaugeInterval = 10000;
 
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("ローディングのオブジェクト")]
+	[SerializeField]
 	public GameObject loadingGaugeRootObject;
 
-	[Header("ローディングのゲージ")]
 	[SerializeField]
+	[Header("ローディングのゲージ")]
 	private UIGaugeManager loadingGauge;
 
 	[Header("ローディングのパーセンテージ")]
@@ -24,8 +24,16 @@ public class BattleUIInitialize : MonoBehaviour
 	private UITextReplacer loadingText;
 
 	[SerializeField]
+	[Header("ローディングのパーセンテージ")]
+	private UILabel loadingLabel;
+
 	[Header("ローディングのメッセージのローカライズ")]
+	[SerializeField]
 	private UITextReplacer loadingMessageText;
+
+	[SerializeField]
+	[Header("ローディングのメッセージのローカライズ")]
+	private UILabel loadingMessageLabel;
 
 	private int currentLoadingLevel = 1;
 
@@ -36,15 +44,16 @@ public class BattleUIInitialize : MonoBehaviour
 
 	private void SetupLocalize()
 	{
-		TextReplacerValue replacerValue = new TextReplacerValue(StringMaster.GetString("SystemLoading"));
-		this.loadingMessageText.SetValue(0, replacerValue);
+		this.loadingMessageLabel.text = StringMaster.GetString("SystemLoading");
 	}
 
 	public void ApplyLoadingGauge(int current, int max)
 	{
 		this.loadingGauge.SetMax(max);
 		this.loadingGauge.SetValue(current);
-		this.loadingText.SetValue(0, new TextReplacerValue(Mathf.RoundToInt(Mathf.InverseLerp(0f, (float)max, (float)current) * 100f)));
+		int num = Mathf.RoundToInt(Mathf.InverseLerp(0f, (float)max, (float)current) * 100f);
+		string @string = StringMaster.GetString("SystemPercent");
+		this.loadingLabel.text = string.Format(@string, num);
 	}
 
 	public UIPanel panel
@@ -63,6 +72,7 @@ public class BattleUIInitialize : MonoBehaviour
 			this.currentLoadingLevel += 10000;
 			IEnumerator routine = this.LoadingGaugeAnimation(this.currentLoadingLevel - 10000, this.currentLoadingLevel, maxLoading * 10000);
 			this.StartCoroutine(routine);
+			this.StartCoroutine(this.TextAnimation());
 		};
 	}
 
@@ -82,6 +92,35 @@ public class BattleUIInitialize : MonoBehaviour
 			yield return null;
 		}
 		this.ApplyLoadingGauge(diff, max);
+		yield break;
+	}
+
+	private IEnumerator TextAnimation()
+	{
+		float currentTime = 0f;
+		int count = 0;
+		for (;;)
+		{
+			currentTime -= Time.deltaTime;
+			if (currentTime < 0f)
+			{
+				currentTime = 0.5f;
+				count++;
+				if (count > 3)
+				{
+					count = 0;
+				}
+				string addString = string.Empty;
+				for (int i = 0; i < count; i++)
+				{
+					addString += ".";
+				}
+				this.loadingMessageLabel.text = StringMaster.GetString("SystemLoading");
+				UILabel uilabel = this.loadingMessageLabel;
+				uilabel.text += addString;
+			}
+			yield return null;
+		}
 		yield break;
 	}
 }

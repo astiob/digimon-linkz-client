@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Internal/Draw Call")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Internal/Draw Call")]
 public class UIDrawCall : MonoBehaviour
 {
 	private const int maxIndexBufferCache = 10;

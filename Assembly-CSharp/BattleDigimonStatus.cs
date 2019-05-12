@@ -85,8 +85,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("固有技")]
 	private BattleDigimonStatus.Skill deathblow;
 
-	[Header("継承技1")]
 	[SerializeField]
+	[Header("継承技1")]
 	private BattleDigimonStatus.Skill inheritance1;
 
 	[SerializeField]
@@ -100,8 +100,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private MonsterMedalList MonsterMedalList;
 
-	[SerializeField]
 	[Header("Lvローカライズ")]
+	[SerializeField]
 	private UILabel lvLocalize;
 
 	[SerializeField]
@@ -112,12 +112,12 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("友情度ローカライズ")]
 	private UILabel friendLocalize;
 
-	[SerializeField]
 	[Header("ATKローカライズ")]
+	[SerializeField]
 	private UILabel atkLocalize;
 
-	[Header("DEFローカライズ")]
 	[SerializeField]
+	[Header("DEFローカライズ")]
 	private UILabel defLocalize;
 
 	[SerializeField]
@@ -132,16 +132,16 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel spdLocalize;
 
-	[SerializeField]
 	[Header("Luckローカライズ")]
+	[SerializeField]
 	private UILabel luckLocalize;
 
-	[SerializeField]
 	[Header("リーダースキルローカライズ")]
+	[SerializeField]
 	private UILabel lSkillLocalize;
 
-	[Header("装着チップ")]
 	[SerializeField]
+	[Header("装着チップ")]
 	private ChipIcon[] chipIcons;
 
 	private void Awake()
@@ -151,6 +151,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 
 	protected override void SetupLocalize()
 	{
+		base.SetupLocalize();
 		this.lvLocalize.text = StringMaster.GetString("CharaStatus-11");
 		this.hpLocalize.text = StringMaster.GetString("CharaStatus-10");
 		this.friendLocalize.text = StringMaster.GetString("CharaStatus-17");

@@ -66,9 +66,7 @@ public class PartsMenu : MonoBehaviour
 		this.UpdateBackKeyAndroid();
 		if (this.isShow)
 		{
-			DateTime now = DateTime.Now;
-			string formatDate = TextUtil.GetFormatDate(now);
-			this.ngTX_DATE.text = formatDate;
+			this.ngTX_DATE.text = DateTime.Now.ToString(StringMaster.GetString("PartsMenu_txt"));
 		}
 	}
 

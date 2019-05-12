@@ -19,8 +19,8 @@ public class HitIcon : MonoBehaviour
 	[Header("ステージ効果用のUI")]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
-	[Header("耐性結果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("耐性結果を表示するフォントテクスチャ")]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
 	[Header("通常効果を表示するフォントテクスチャ")]
@@ -33,19 +33,36 @@ public class HitIcon : MonoBehaviour
 
 	private MaterialPropertyBlock materialPropertyBlock;
 
-	private static Dictionary<string, string> dictionary = new Dictionary<string, string>();
+	private Dictionary<string, string> dictionary;
 
-	[SerializeField]
 	[Header("ステージ効果上昇UI")]
+	[SerializeField]
 	private UISprite upSprite;
 
 	[SerializeField]
 	[Header("ステージ効果減少UI")]
 	private UISprite downSprite;
 
+	[Header("国内用フォントデータ")]
+	[SerializeField]
+	private HitIcon.LanguageFont languageFont;
+
+	[SerializeField]
+	[Header("海外用フォントデータ")]
+	private HitIcon.LanguageFont usLanguageFont;
+
 	private void Awake()
 	{
+		this.dictionary = new Dictionary<string, string>();
 		this.materialPropertyBlock = new MaterialPropertyBlock();
+		this.standard.numMesh.font = this.usLanguageFont.num.font;
+		this.standard.topMesh.font = this.usLanguageFont.resistance.font;
+		this.standard.bottomMesh.font = this.usLanguageFont.standard.font;
+		this.standard.middleMesh.font = this.usLanguageFont.standard.font;
+		this.standard.numMesh.fontSharedMaterial = this.usLanguageFont.num.material;
+		this.standard.topMesh.fontSharedMaterial = this.usLanguageFont.resistance.material;
+		this.standard.bottomMesh.fontSharedMaterial = this.usLanguageFont.standard.material;
+		this.standard.middleMesh.fontSharedMaterial = this.usLanguageFont.standard.material;
 	}
 
 	public void HitIconReposition(Vector3 position)
@@ -63,10 +80,10 @@ public class HitIcon : MonoBehaviour
 		this.standard.gameObject.SetActive(!flag);
 		this.gimmick.gameObject.SetActive(flag);
 		base.transform.localScale = Vector3.one;
-		data.numMesh.text = null;
-		data.topMesh.text = null;
-		data.middleMesh.text = null;
-		data.bottomMesh.text = null;
+		data.numMesh.text = string.Empty;
+		data.topMesh.text = string.Empty;
+		data.middleMesh.text = string.Empty;
+		data.bottomMesh.text = string.Empty;
 		this.upSprite.gameObject.SetActive(false);
 		this.downSprite.gameObject.SetActive(false);
 		if (onMiss)
@@ -808,11 +825,11 @@ public class HitIcon : MonoBehaviour
 	{
 		if (BattleStateManager.current.onServerConnect)
 		{
-			if (!HitIcon.dictionary.ContainsKey(key))
+			if (!this.dictionary.ContainsKey(key))
 			{
-				HitIcon.dictionary.Add(key, StringMaster.GetString(key));
+				this.dictionary.Add(key, StringMaster.GetString(key));
 			}
-			return HitIcon.dictionary[key];
+			return this.dictionary[key];
 		}
 		return string.Empty;
 	}
@@ -851,6 +868,26 @@ public class HitIcon : MonoBehaviour
 		public Texture up;
 
 		public Texture down;
+	}
+
+	[Serializable]
+	private class LanguageData
+	{
+		public TMP_FontAsset font;
+
+		public Material material;
+	}
+
+	[Serializable]
+	private class LanguageFont
+	{
+		public HitIcon.LanguageData resistance;
+
+		public HitIcon.LanguageData standard;
+
+		public HitIcon.LanguageData num;
+
+		public HitIcon.LanguageData stage;
 	}
 
 	[Serializable]

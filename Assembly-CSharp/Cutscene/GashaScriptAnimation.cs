@@ -48,39 +48,7 @@ namespace Cutscene
 		private ParticleSystem auraParticleRed;
 
 		[SerializeField]
-		private ParticleSystem rareGlitterParticle;
-
-		[SerializeField]
-		[Header("成長帯の文字画像一覧")]
-		private UITexture[] textImageChild;
-
-		[SerializeField]
-		private UITexture[] textImageGrowing;
-
-		[SerializeField]
-		private UITexture[] textImageRipe;
-
-		[SerializeField]
-		private UITexture[] textImagePerfect;
-
-		[SerializeField]
-		private UITexture[] textImageUltimate;
-
-		[SerializeField]
-		private UITexture[] textImageArmor;
-
-		[SerializeField]
-		private UITexture[] textImageHybrid;
-
-		[Header("レアリティの文字画像一覧")]
-		[SerializeField]
-		private UITexture[] rareLow;
-
-		[SerializeField]
-		private UITexture[] rareMiddle;
-
-		[SerializeField]
-		private UITexture[] rareHigh;
+		private Animator textAnimator;
 
 		[SerializeField]
 		private GashaNextButton gashaNextButton;
@@ -150,6 +118,7 @@ namespace Cutscene
 		private void NextAnimation()
 		{
 			this.DeleteAnimation();
+			this.textAnimator.SetTrigger("Idle");
 			this.rareSignAnimation.SetTrigger("start");
 			this.subCameraAnimation.SetTrigger("start");
 			this.rareSignParticle.localPosition = new Vector3(0f, 2f, 0f);
@@ -251,19 +220,11 @@ namespace Cutscene
 		private void DeleteAnimation()
 		{
 			UnityEngine.Object.Destroy(this.gashaMonster);
-			GashaAnimationCommon.StopParticle(this.rareGlitterParticle);
 			GashaAnimationCommon.StopParticle(this.circleParticleAppear);
 			GashaAnimationCommon.StopParticle(this.circleParticleRectFill);
 			GashaAnimationCommon.StopParticle(this.circleParticleRect);
 			GashaAnimationCommon.StopParticle(this.circleParticleRoot);
 			GashaAnimationCommon.StopParticle(this.shockWaveparticle);
-			GashaAnimationCommon.SetTextureAlpha(this.textImageChild, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.textImageGrowing, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.textImageHybrid, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.textImageRipe, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.textImagePerfect, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.textImageUltimate, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.textImageArmor, 0f);
 		}
 
 		public void Initialize(CutsceneSound sound, Camera subCamera, Transform rareSignParticle, string[] modelIdList, string[] growStepList)
@@ -330,23 +291,13 @@ namespace Cutscene
 				cameraSwitcher = this.cameraSwitcher,
 				bgColorRareHigh = this.bgColorRareHigh,
 				sound = this.sound,
-				rareGlitterParticle = this.rareGlitterParticle,
-				rareLow = this.rareLow,
-				rareMiddle = this.rareMiddle,
-				rareHigh = this.rareHigh
+				rareAnimator = this.textAnimator
 			};
 			this.growStepText = new GashaGrowStepText
 			{
 				mainCamera = this.mainCamera,
 				cameraSwitcher = this.cameraSwitcher,
-				rareGlitterParticle = this.rareGlitterParticle,
-				textImageChild = this.textImageChild,
-				textImageGrowing = this.textImageGrowing,
-				textImageRipe = this.textImageRipe,
-				textImagePerfect = this.textImagePerfect,
-				textImageUltimate = this.textImageUltimate,
-				textImageArmor = this.textImageArmor,
-				textImageHybrid = this.textImageHybrid
+				growAnimator = this.textAnimator
 			};
 		}
 

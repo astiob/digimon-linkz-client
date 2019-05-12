@@ -6,16 +6,16 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/NGUI Widget")]
 public class UIWidget : UIRect
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected Color mColor = Color.white;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIWidget.Pivot mPivot = UIWidget.Pivot.Center;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mWidth = 100;
 
 	[HideInInspector]

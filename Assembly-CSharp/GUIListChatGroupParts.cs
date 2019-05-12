@@ -58,7 +58,7 @@ public class GUIListChatGroupParts : GUIListPartBS
 
 	private UILabel ngTX_COMMENT;
 
-	private UISprite ngICON_CATEGORY;
+	private UILabel ngTX_CATEGORY;
 
 	public GameObject groupMasterIcon;
 
@@ -103,11 +103,11 @@ public class GUIListChatGroupParts : GUIListPartBS
 		this.ngICON_TITLE = this.goICON_TITLE.GetComponent<UITexture>();
 		this.ngTX_APPROVALTYPE = this.goTX_APPROVALTYPE.GetComponent<UILabel>();
 		this.ngTX_COMMENT = this.goTX_COMMENT.GetComponent<UILabel>();
-		this.ngICON_CATEGORY = this.goICON_CATEGORY.GetComponent<UISprite>();
+		this.ngTX_CATEGORY = this.goICON_CATEGORY.GetComponent<UILabel>();
 		this.ngTX_MASTER.text = StringMaster.GetString("ChatMaster");
 		if (this.Data != null)
 		{
-			this.ngICON_CATEGORY.spriteName = ChatConstValue.SPRITE_GROUP_CATEGORY[int.Parse(this.Data.categoryId)];
+			this.ngTX_CATEGORY.text = StringMaster.GetString(ChatConstValue.SPRITE_GROUP_CATEGORY[int.Parse(this.Data.categoryId)]);
 			this.ngTX_GRPNAME.text = this.Data.groupName;
 			if (ChatConstValue.CHAT_GROUP_MEMBER_MAX_NUM > int.Parse(this.Data.memberNum))
 			{

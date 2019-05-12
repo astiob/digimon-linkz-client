@@ -14,8 +14,8 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 	[Header("元レベルのLv部分")]
 	private GameObject oldLevelTitle;
 
-	[Header("元レベルのテキスト")]
 	[SerializeField]
+	[Header("元レベルのテキスト")]
 	private UILabel oldLevel;
 
 	[Header("新しいレベルのLv部分")]
@@ -26,12 +26,12 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 	[SerializeField]
 	private UILabel newLevel;
 
-	[Header("経験値のテキスト")]
 	[SerializeField]
+	[Header("経験値のテキスト")]
 	private UILabel exp;
 
-	[Header("経験値の数字のテキスト")]
 	[SerializeField]
+	[Header("経験値の数字のテキスト")]
 	private UILabel expNum;
 
 	[Header("レベルアップアイコン")]
@@ -42,24 +42,24 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 
 	private Animation levelUpAnimtion;
 
-	[SerializeField]
 	[Header("友情度アップアイコン")]
+	[SerializeField]
 	private GameObject friendUpIcon;
 
 	private Transform friendUpIconTrans;
 
 	private Animation friendUpAnimtion;
 
-	[Header("下向きの矢印")]
 	[SerializeField]
+	[Header("下向きの矢印")]
 	private UISprite arrow;
 
-	[Header("新しいレベルの左にある「Lv.」のテキスト自体")]
 	[SerializeField]
+	[Header("新しいレベルの左にある「Lv.」のテキスト自体")]
 	private UILabel newLevelText;
 
-	[Header("ゲージの背景")]
 	[SerializeField]
+	[Header("ゲージの背景")]
 	private GameObject expGaugeBG;
 
 	[Header("黄色の経験値ゲージ")]
@@ -70,8 +70,8 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 	[Header("アイコンのアンカー")]
 	private Transform iconAnchor;
 
-	[SerializeField]
 	[Header("レベルマックスの時のマーク")]
+	[SerializeField]
 	private GameObject levelMaxMark;
 
 	private GameObject levelUpParticlePref;
@@ -255,6 +255,7 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 		component.transform.SetParent(this.friendUpDigitIcon.transform);
 		component.transform.localScale = Vector3.one;
 		component.spriteName = "Common02_Friendship";
+		component.spriteName = string.Format("{0}_{1}", component.spriteName, CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN));
 		component.MakePixelPerfect();
 		int num = 1;
 		foreach (char c in upVal.ToString())

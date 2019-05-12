@@ -181,6 +181,8 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		dictionary = NpOAuth.Instance.RequestHeaderDic(requestMethod, url, null);
 		dictionary["Content-Type"] = "application/x-www-form-urlencoded";
 		dictionary["X-AppVer"] = WebAPIPlatformValue.GetAppVersion();
+		dictionary["X-TimeZone"] = global::TimeZone.GetTimezoneName();
+		dictionary["X-Lang"] = CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN);
 		CMDWebWindow.webViewObject.Open(url, dictionary, string.Empty);
 	}
 

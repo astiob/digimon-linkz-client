@@ -211,6 +211,22 @@ namespace Neptune.Purchase
 			}
 		}
 
+		public static string GetRequestProductsJson()
+		{
+			string result;
+			using (AndroidJavaClass androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+			{
+				using (androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity"))
+				{
+					using (AndroidJavaClass androidJavaClass2 = new AndroidJavaClass("jp.crooz.neptune.billing.SkuDetails"))
+					{
+						result = androidJavaClass2.Call<string>("toString", new object[0]);
+					}
+				}
+			}
+			return result;
+		}
+
 		public static bool GetIsPurchaseSupport()
 		{
 			bool result;

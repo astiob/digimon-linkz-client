@@ -49,6 +49,7 @@ public class GUIScreenHome : GUIScreen
 
 	protected virtual IEnumerator StartEvent()
 	{
+		yield return base.StartCoroutine(this.checkAndSyncCountryCode());
 		yield return base.StartCoroutine(this.CreateHomeData());
 		RestrictionInput.DeleteDisplayObject();
 		TipsLoading.Instance.StopTipsLoad(true);
@@ -374,6 +375,8 @@ public class GUIScreenHome : GUIScreen
 				CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(action, "CMDWebWindow") as CMDWebWindow;
 				cmdwebWindow.TitleText = StringMaster.GetString("InfomationTitle");
 				cmdwebWindow.Url = WebAddress.EXT_ADR_INFO;
+				CMDWebWindow cmdwebWindow2 = cmdwebWindow;
+				cmdwebWindow2.Url = cmdwebWindow2.Url + "?countryCode=" + CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN);
 				if (null != dataMng)
 				{
 					dataMng.IsPopUpInformaiton = false;
@@ -411,6 +414,8 @@ public class GUIScreenHome : GUIScreen
 				cd.userInfoId = int.Parse(dt.userInfoId);
 				cd.TitleText = dt.title;
 				cd.Url = ConstValue.APP_WEB_DOMAIN + ConstValue.WEB_INFO_ADR + dt.userInfoId;
+				CMDWebWindowPopup cmdwebWindowPopup = cd;
+				cmdwebWindowPopup.Url = cmdwebWindowPopup.Url + "&countryCode=" + CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN);
 				while (!isClose)
 				{
 					yield return null;
@@ -500,5 +505,20 @@ public class GUIScreenHome : GUIScreen
 	{
 		List<string> battleCommon = AssetDataCacheData.GetBattleCommon();
 		AssetDataCacheMng.Instance().RegisterCacheType(battleCommon, AssetDataCacheMng.CACHE_TYPE.BATTLE_COMMON, false);
+	}
+
+	private IEnumerator checkAndSyncCountryCode()
+	{
+		if (!DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.countryCode.Equals(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN)))
+		{
+			GameWebAPI.RequestUS_RegisterLanguageInfo requestUS_RegisterLanguageInfo = new GameWebAPI.RequestUS_RegisterLanguageInfo();
+			requestUS_RegisterLanguageInfo.SetSendData = delegate(GameWebAPI.US_Req_RegisterLanguageInfo param)
+			{
+				param.countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			};
+			GameWebAPI.RequestUS_RegisterLanguageInfo request = requestUS_RegisterLanguageInfo;
+			yield return base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), null, null));
+		}
+		yield break;
 	}
 }

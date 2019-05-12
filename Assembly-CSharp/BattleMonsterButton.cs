@@ -18,8 +18,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[SerializeField]
 	private UISprite leaderIcon;
 
-	[Header("プレイヤー名ラベル")]
 	[SerializeField]
+	[Header("プレイヤー名ラベル")]
 	private UILabel playerNameLabel;
 
 	[Header("プレイヤー名板")]
@@ -30,8 +30,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[Header("プレイヤー番号アイコン")]
 	private UISprite playerNumberIcon;
 
-	[SerializeField]
 	[Header("覚醒度アイコン")]
+	[SerializeField]
 	private UISprite arousalIcon;
 
 	[Header("フレーム")]
@@ -113,12 +113,12 @@ public class BattleMonsterButton : MonoBehaviour
 		[SerializeField]
 		private UI2DSprite materialFrame;
 
-		[Header("マテリアル（通常、死亡時の順）")]
 		[SerializeField]
+		[Header("マテリアル（通常、死亡時の順）")]
 		private Material[] materials;
 
-		[SerializeField]
 		[Header("アトラス（通常、死亡時の順）")]
+		[SerializeField]
 		private UIAtlas[] uiAtlases;
 
 		public void SetEvolutionStep(GrowStep growStep)

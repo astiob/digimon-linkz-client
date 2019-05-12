@@ -8,7 +8,7 @@ using UnityEngine;
 
 public sealed class PushNotice : MonoBehaviour, NpPush.INpPushListener
 {
-	private const string SENDER_ID = "994857230643";
+	private const string SENDER_ID = "1065739673419";
 
 	private static PushNotice instance;
 
@@ -139,7 +139,7 @@ public sealed class PushNotice : MonoBehaviour, NpPush.INpPushListener
 	{
 		this.npPush = new NpPush(base.gameObject, this);
 		this.DeleteLocalPushNotice();
-		this.npPush.GetDeviceToken("994857230643");
+		this.npPush.GetDeviceToken("1065739673419");
 	}
 
 	private IEnumerator SaveDeviceTokenToServer(string deviceToken)

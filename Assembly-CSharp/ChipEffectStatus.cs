@@ -465,7 +465,7 @@ public class ChipEffectStatus : EffectStatusBase
 
 	private static List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> GetChipEffectList(GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects, ChipEffectStatus.TargetType targetType, EffectStatusBase.ExtraTargetSubType targetSubType, int targetValue, bool isEnemy, ConstValue.ResistanceType resistanceType, EffectStatusBase.ExtraEffectType effectType)
 	{
-		ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E2 <GetChipEffectList>c__AnonStorey2E = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E2();
+		ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E4 <GetChipEffectList>c__AnonStorey2E = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E4();
 		<GetChipEffectList>c__AnonStorey2E.effectType = effectType;
 		<GetChipEffectList>c__AnonStorey2E.targetType = targetType;
 		<GetChipEffectList>c__AnonStorey2E.isEnemy = isEnemy;
@@ -489,12 +489,12 @@ public class ChipEffectStatus : EffectStatusBase
 		}
 		else
 		{
-			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E3 <GetChipEffectList>c__AnonStorey2E2 = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E3();
-			<GetChipEffectList>c__AnonStorey2E2.<>f__ref$738 = <GetChipEffectList>c__AnonStorey2E;
-			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E3 <GetChipEffectList>c__AnonStorey2E3 = <GetChipEffectList>c__AnonStorey2E2;
+			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E5 <GetChipEffectList>c__AnonStorey2E2 = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E5();
+			<GetChipEffectList>c__AnonStorey2E2.<>f__ref$740 = <GetChipEffectList>c__AnonStorey2E;
+			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E5 <GetChipEffectList>c__AnonStorey2E3 = <GetChipEffectList>c__AnonStorey2E2;
 			int num = (int)resistanceType;
 			<GetChipEffectList>c__AnonStorey2E3.resistance = num.ToString();
-			enumerable = chipEffects.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect x) => <GetChipEffectList>c__AnonStorey2E2.<>f__ref$738.searchTargetType(x.targetType.ToInt32()) && x.targetSubType.ToInt32() == (int)<GetChipEffectList>c__AnonStorey2E2.<>f__ref$738.targetSubType && x.targetValue.ToInt32() == <GetChipEffectList>c__AnonStorey2E2.<>f__ref$738.targetValue && x.targetValue2.Contains(<GetChipEffectList>c__AnonStorey2E2.resistance) && <GetChipEffectList>c__AnonStorey2E2.<>f__ref$738.searchEffectType(x.effectType.ToInt32()));
+			enumerable = chipEffects.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect x) => <GetChipEffectList>c__AnonStorey2E2.<>f__ref$740.searchTargetType(x.targetType.ToInt32()) && x.targetSubType.ToInt32() == (int)<GetChipEffectList>c__AnonStorey2E2.<>f__ref$740.targetSubType && x.targetValue.ToInt32() == <GetChipEffectList>c__AnonStorey2E2.<>f__ref$740.targetValue && x.targetValue2.Contains(<GetChipEffectList>c__AnonStorey2E2.resistance) && <GetChipEffectList>c__AnonStorey2E2.<>f__ref$740.searchEffectType(x.effectType.ToInt32()));
 		}
 		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect item in enumerable)
 		{

@@ -563,8 +563,8 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		}
 		if (this.battleDialog.gameObject.activeInHierarchy)
 		{
-			string waitingConnectionFormat = "メンバーの通信が切断されたので\n復帰を待ちます\nあと{0}秒";
-			this.battleDialog.StartFailedTimer(waitingConnectionFormat, action, false);
+			string @string = StringMaster.GetString("AlertDialog_battle_txt");
+			this.battleDialog.StartFailedTimer(@string, action, false);
 		}
 	}
 

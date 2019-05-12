@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Popup List")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Popup List")]
 public class UIPopupList : UIWidgetContainer
 {
 	private const float animSpeed = 0.15f;
@@ -55,28 +55,28 @@ public class UIPopupList : UIWidgetContainer
 
 	public List<EventDelegate> onChange = new List<EventDelegate>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected string mSelectedItem;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIPanel mPanel;
 
 	[HideInInspector]
 	[SerializeField]
 	protected UISprite mBackground;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UISprite mHighlight;
 
 	[HideInInspector]
 	[SerializeField]
 	protected UILabel mHighlightedLabel;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected List<UILabel> mLabelList = new List<UILabel>();
 
 	[HideInInspector]
@@ -89,24 +89,24 @@ public class UIPopupList : UIWidgetContainer
 	[NonSerialized]
 	protected int mOpenFrame;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
 	[SerializeField]
 	[HideInInspector]
 	private string functionName = "OnSelectionChange";
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float textScale;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIFont font;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel textLabel;
 
 	private UIPopupList.LegacyEvent mLegacyEvent;

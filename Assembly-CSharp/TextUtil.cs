@@ -104,73 +104,11 @@ public class TextUtil
 		return cidx;
 	}
 
-	public static string GetFormatDate(DateTime dt)
-	{
-		int year = dt.Year;
-		int month = dt.Month;
-		int day = dt.Day;
-		int hour = dt.Hour;
-		int minute = dt.Minute;
-		string str = string.Empty;
-		str = str + day.ToString() + " ";
-		str = str + TextUtil.GetMonthStringFromNum(month) + " ";
-		str = str + year.ToString() + " at ";
-		return str + hour.ToString() + ":" + minute.ToString("D2");
-	}
-
-	private static string GetMonthStringFromNum(int m)
-	{
-		string result = string.Empty;
-		switch (m)
-		{
-		case 1:
-			result = "January";
-			break;
-		case 2:
-			result = "February";
-			break;
-		case 3:
-			result = "March";
-			break;
-		case 4:
-			result = "April";
-			break;
-		case 5:
-			result = "May";
-			break;
-		case 6:
-			result = "June";
-			break;
-		case 7:
-			result = "July";
-			break;
-		case 8:
-			result = "August";
-			break;
-		case 9:
-			result = "September";
-			break;
-		case 10:
-			result = "October";
-			break;
-		case 11:
-			result = "November";
-			break;
-		case 12:
-			result = "December";
-			break;
-		default:
-			result = string.Empty;
-			break;
-		}
-		return result;
-	}
-
 	public static bool SurrogateCheck(string s)
 	{
 		foreach (char c in s)
 		{
-			if (char.IsSurrogate(c))
+			if (TextUtil.IsEmojiCheck(c))
 			{
 				return true;
 			}
@@ -178,18 +116,302 @@ public class TextUtil
 		return false;
 	}
 
-	public static bool IsHalfChar(char c)
+	public static bool IsEmojiCheck(char c)
+	{
+		if (char.IsSurrogate(c))
+		{
+			return true;
+		}
+		if (c != '‍' && c != '⃣' && c != '️')
+		{
+			switch (c)
+			{
+			case '⏩':
+			case '⏪':
+			case '⏫':
+			case '⏬':
+			case '⏭':
+			case '⏮':
+			case '⏯':
+			case '⏰':
+			case '⏱':
+			case '⏲':
+			case '⏳':
+			case '⏸':
+			case '⏹':
+			case '⏺':
+				break;
+			default:
+				switch (c)
+				{
+				case '↔':
+				case '↕':
+				case '↖':
+				case '↗':
+				case '↘':
+				case '↙':
+					break;
+				default:
+					switch (c)
+					{
+					case '◻':
+					case '◼':
+					case '◽':
+					case '◾':
+						break;
+					default:
+						if (c != '↩' && c != '↪' && c != '⌚' && c != '⌛' && c != '▪' && c != '▫' && c != '©' && c != '®' && c != '‼' && c != '⁉' && c != '™' && c != 'ℹ' && c != '⌨' && c != '⏏' && c != 'Ⓜ' && c != '▶' && c != '◀')
+						{
+							switch (c)
+							{
+							case '♈':
+							case '♉':
+							case '♊':
+							case '♋':
+							case '♌':
+							case '♍':
+							case '♎':
+							case '♏':
+							case '♐':
+							case '♑':
+							case '♒':
+							case '♓':
+							case '♠':
+							case '♣':
+							case '♥':
+							case '♦':
+							case '♨':
+								break;
+							default:
+								switch (c)
+								{
+								case '⚒':
+								case '⚓':
+								case '⚔':
+								case '⚕':
+								case '⚖':
+								case '⚗':
+								case '⚙':
+								case '⚛':
+								case '⚜':
+								case '⚠':
+								case '⚡':
+								case '⚪':
+								case '⚫':
+									break;
+								default:
+									switch (c)
+									{
+									case '⛩':
+									case '⛪':
+									case '⛰':
+									case '⛱':
+									case '⛲':
+									case '⛳':
+									case '⛴':
+									case '⛵':
+									case '⛷':
+									case '⛸':
+									case '⛹':
+									case '⛺':
+									case '⛽':
+										break;
+									default:
+										switch (c)
+										{
+										case '☝':
+										case '☠':
+										case '☢':
+										case '☣':
+										case '☦':
+											break;
+										default:
+											switch (c)
+											{
+											case '⛎':
+											case '⛏':
+											case '⛑':
+											case '⛓':
+											case '⛔':
+												break;
+											default:
+												switch (c)
+												{
+												case '☪':
+												case '☮':
+												case '☯':
+													break;
+												default:
+													switch (c)
+													{
+													case '☀':
+													case '☁':
+													case '☂':
+													case '☃':
+													case '☄':
+														break;
+													default:
+														switch (c)
+														{
+														case '☔':
+														case '☕':
+														case '☘':
+															break;
+														default:
+															switch (c)
+															{
+															case '⛄':
+															case '⛅':
+															case '⛈':
+																break;
+															default:
+																switch (c)
+																{
+																case '☎':
+																case '☑':
+																	break;
+																default:
+																	switch (c)
+																	{
+																	case '☸':
+																	case '☹':
+																	case '☺':
+																		break;
+																	default:
+																		switch (c)
+																		{
+																		case '♀':
+																		case '♂':
+																			break;
+																		default:
+																			if (c != '⚰' && c != '⚱' && c != '⚽' && c != '⚾' && c != '♻' && c != '♿')
+																			{
+																				switch (c)
+																				{
+																				case '✈':
+																				case '✉':
+																				case '✊':
+																				case '✋':
+																				case '✌':
+																				case '✍':
+																				case '✏':
+																				case '✒':
+																				case '✔':
+																				case '✖':
+																				case '✝':
+																					break;
+																				default:
+																					switch (c)
+																					{
+																					case '❌':
+																					case '❎':
+																					case '❓':
+																					case '❔':
+																					case '❕':
+																					case '❗':
+																						break;
+																					default:
+																						switch (c)
+																						{
+																						case '✂':
+																						case '✅':
+																							break;
+																						default:
+																							switch (c)
+																							{
+																							case '❄':
+																							case '❇':
+																								break;
+																							default:
+																								switch (c)
+																								{
+																								case '➕':
+																								case '➖':
+																								case '➗':
+																									break;
+																								default:
+																									switch (c)
+																									{
+																									case '⬅':
+																									case '⬆':
+																									case '⬇':
+																										break;
+																									default:
+																										switch (c)
+																										{
+																										case '㊗':
+																										case '㊙':
+																											break;
+																										default:
+																											if (c != '✳' && c != '✴' && c != '❣' && c != '❤' && c != '⤴' && c != '⤵' && c != '⬛' && c != '⬜' && c != '✡' && c != '✨' && c != '➡' && c != '➰' && c != '➿' && c != '⭐' && c != '⭕' && c != '〰' && c != '〽')
+																											{
+																												return false;
+																											}
+																											break;
+																										}
+																										break;
+																									}
+																									break;
+																								}
+																								break;
+																							}
+																							break;
+																						}
+																						break;
+																					}
+																					break;
+																				}
+																				return true;
+																			}
+																			break;
+																		}
+																		break;
+																	}
+																	break;
+																}
+																break;
+															}
+															break;
+														}
+														break;
+													}
+													break;
+												}
+												break;
+											}
+											break;
+										}
+										break;
+									}
+									break;
+								}
+								break;
+							}
+							return true;
+						}
+						break;
+					}
+					break;
+				}
+				break;
+			}
+			return true;
+		}
+		return true;
+	}
+
+	private static bool IsHalfChar(char c)
 	{
 		return TextUtil.IsHalfChar(char.ToString(c));
 	}
 
-	public static bool IsHalfChar(string s)
+	private static bool IsHalfChar(string s)
 	{
 		string pattern = "^[^ -~｡-ﾟ]+$";
 		return Regex.IsMatch(s, pattern);
 	}
 
-	public static int TextLengthFullAndHalf(string str)
+	private static int TextLengthFullAndHalf(string str)
 	{
 		int num = 0;
 		int num2 = 0;

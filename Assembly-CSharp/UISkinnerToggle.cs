@@ -1,12 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UISpriteSkinnerBase))]
+[ExecuteInEditMode]
 public class UISkinnerToggle : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UISpriteSkinnerBase spriteSkinner;
 
 	[SerializeField]

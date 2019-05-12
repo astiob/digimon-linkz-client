@@ -147,24 +147,24 @@ public class AssetDataMng : MonoBehaviour
 
 	public UnityEngine.Object LoadObject(string path, Action<UnityEngine.Object> actEnd = null, bool showAlert = true)
 	{
+		UnityEngine.Object @object;
 		if (actEnd == null && AssetDataCacheMng.Instance() != null)
 		{
-			bool flag = AssetDataCacheMng.Instance().IsCacheExist(path);
-			if (flag)
+			@object = this.GetFromCache(path);
+			if (@object != null)
 			{
-				return AssetDataCacheMng.Instance().GetCache(path);
+				return @object;
 			}
 		}
-		UnityEngine.Object @object;
 		if (this.USE_ASSET_BUNDLE == ABPrefabType.None)
 		{
-			@object = Resources.Load(path);
+			@object = this.GetFromInternalResource(path);
 		}
 		else
 		{
 			if (this.USE_RESOURCE_DATA_FOR_AB)
 			{
-				@object = Resources.Load(path);
+				@object = this.GetFromInternalResource(path);
 			}
 			else if (this.IsAssetBundleData(path))
 			{
@@ -172,31 +172,24 @@ public class AssetDataMng : MonoBehaviour
 			}
 			else
 			{
-				@object = Resources.Load(path);
+				@object = this.GetFromInternalResource(path);
 			}
 			if (@object == null)
 			{
-				string objName = string.Empty;
-				for (int i = 0; i < this.abidList.Count; i++)
+				AssetDataMng.FindABInfoResult findABInfoResult = this.FindAssetBundleInfo(path);
+				if (findABInfoResult != null)
 				{
-					if (path.Length > this.abidList[i].abPath.Length && path.StartsWith(this.abidList[i].abPath))
+					if (actEnd != null)
 					{
-						objName = path.Substring(this.abidList[i].abPath.Length);
-						if (actEnd != null)
+						bool flag = AssetBundleMng.Instance().LoadObjectASync(findABInfoResult.abInfoData, findABInfoResult.objName, actEnd);
+						if (flag)
 						{
-							if (AssetBundleMng.Instance().LoadObjectASync(this.abidList[i], objName, actEnd))
-							{
-								return null;
-							}
+							return null;
 						}
-						else
-						{
-							@object = AssetBundleMng.Instance().LoadObject(this.abidList[i], objName);
-							if (!(@object == null))
-							{
-								break;
-							}
-						}
+					}
+					else
+					{
+						@object = AssetBundleMng.Instance().LoadObject(findABInfoResult.abInfoData, findABInfoResult.objName);
 					}
 				}
 				if (@object == null)
@@ -225,6 +218,93 @@ public class AssetDataMng : MonoBehaviour
 		return @object;
 	}
 
+	private AssetDataMng.FindABInfoResult FindAssetBundleInfo(string path)
+	{
+		string localizedPath = AssetDataMng.GetLocalizedPath(path);
+		AssetDataMng.FindABInfoResult findABInfoResult = this._FindAssetBundleInfo(localizedPath);
+		if (!localizedPath.Equals(path) && findABInfoResult == null)
+		{
+			findABInfoResult = this._FindAssetBundleInfo(path);
+		}
+		return findABInfoResult;
+	}
+
+	private AssetDataMng.FindABInfoResult _FindAssetBundleInfo(string path)
+	{
+		string text = string.Empty;
+		for (int i = 0; i < this.abidList.Count; i++)
+		{
+			if (path.Length > this.abidList[i].abPath.Length && path.StartsWith(this.abidList[i].abPath))
+			{
+				text = path.Substring(this.abidList[i].abPath.Length);
+				List<AssetBundleInfo> assetBundleInfoList = this.abidList[i].assetBundleInfoList;
+				for (int j = 0; j < assetBundleInfoList.Count; j++)
+				{
+					int k;
+					for (k = 0; k < assetBundleInfoList[j].objNameList.Count; k++)
+					{
+						if (text == assetBundleInfoList[j].objNameList[k])
+						{
+							break;
+						}
+					}
+					if (k < assetBundleInfoList[j].objNameList.Count && assetBundleInfoList[j].ContainsPath(text))
+					{
+						return new AssetDataMng.FindABInfoResult
+						{
+							abInfoData = this.abidList[i],
+							objName = text
+						};
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private UnityEngine.Object GetFromCache(string path)
+	{
+		string localizedPath = AssetDataMng.GetLocalizedPath(path);
+		UnityEngine.Object @object = this._GetFromCache(localizedPath);
+		if (!localizedPath.Equals(path) && @object == null)
+		{
+			@object = this._GetFromCache(path);
+		}
+		return @object;
+	}
+
+	private UnityEngine.Object _GetFromCache(string path)
+	{
+		bool flag = AssetDataCacheMng.Instance().IsCacheExist(path);
+		if (flag)
+		{
+			return AssetDataCacheMng.Instance().GetCache(path);
+		}
+		return null;
+	}
+
+	private UnityEngine.Object GetFromInternalResource(string path)
+	{
+		string localizedPath = AssetDataMng.GetLocalizedPath(path);
+		UnityEngine.Object @object = Resources.Load(localizedPath);
+		if (!localizedPath.Equals(path) && @object == null)
+		{
+			@object = Resources.Load(path);
+		}
+		return @object;
+	}
+
+	public static string GetLocalizedPath(string path)
+	{
+		string countryPrefix = CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN);
+		return (!string.IsNullOrEmpty(countryPrefix)) ? string.Format("{0}/{1}", countryPrefix, path) : path;
+	}
+
+	public bool IsIncludedInAssetBundle(string path)
+	{
+		return this._FindAssetBundleInfo(path) != null;
+	}
+
 	public bool AB_Init(Action<int> actCallBack)
 	{
 		if (this.USE_ASSET_BUNDLE == ABPrefabType.None)
@@ -245,8 +325,8 @@ public class AssetDataMng : MonoBehaviour
 	private void LoadABInfo_FromWWW()
 	{
 		string version = DataMng.Instance().RespDataCM_ABVersion.assetBundleVersionList[0].version;
-		string url = AssetBundleMng.Instance().GetAB_ROOT_PATH() + "AB_info.txt?" + version;
-		WWWHelper wwwhelper = new WWWHelper(url, null, null, 40f);
+		string accessPath = DataMng.Instance().RespDataCM_ABVersion.assetBundleVersionList[0].accessPath;
+		WWWHelper wwwhelper = new WWWHelper(accessPath, null, null, 40f);
 		base.StartCoroutine(wwwhelper.StartRequest(new Action<string, string, WWWHelper.TimeOut>(this.OnReceivedAssetBundleInfo)));
 	}
 
@@ -537,5 +617,17 @@ public class AssetDataMng : MonoBehaviour
 				this.curInfoIDX = -1;
 			}
 		}
+	}
+
+	public static string GetWebAssetImagePath()
+	{
+		return ConstValue.APP_ASSET_DOMAIN + "/asset/img/" + CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN);
+	}
+
+	private class FindABInfoResult
+	{
+		public AssetBundleInfoData abInfoData;
+
+		public string objName;
 	}
 }

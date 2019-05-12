@@ -27,8 +27,8 @@ public class UIGrid : UIWidgetContainer
 
 	public Comparison<Transform> onCustomSort;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool sorted;
 
 	protected bool mReposition;

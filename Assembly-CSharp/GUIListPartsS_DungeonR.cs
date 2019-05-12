@@ -10,20 +10,20 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("NEWの画像")]
 	private GameObject goNEW;
 
-	[Header("ドロップの画像")]
 	[SerializeField]
+	[Header("ドロップの画像")]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
-	[Header("ステージ数用のラベル")]
 	[SerializeField]
+	[Header("ステージ数用のラベル")]
 	private UILabel ngTXT_STAGE;
 
 	[SerializeField]
 	[Header("ステージ名用のラベル")]
 	private UILabel ngTXT_STAGE_NAME;
 
-	[SerializeField]
 	[Header("消費スタミナ用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAMINA;
 
 	[SerializeField]
@@ -42,16 +42,16 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private Color colorMultiStage;
 
-	[Header("ソロ専用のステージ色")]
 	[SerializeField]
+	[Header("ソロ専用のステージ色")]
 	private Color colorSoloStage;
 
-	[SerializeField]
 	[Header("イベント用のステージ背景色")]
+	[SerializeField]
 	private Color colorEventStageBackground;
 
-	[Header("####ソロとマルチステージ名装飾色")]
 	[SerializeField]
+	[Header("####ソロとマルチステージ名装飾色")]
 	private Color colorSoloMultiStageNameOutline;
 
 	[SerializeField]
@@ -62,36 +62,36 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("####ソロ専用ステージ名装飾色")]
 	private Color colorSoloStageNameOutline;
 
-	[SerializeField]
 	[Header("イベント用のステージ名装飾色")]
+	[SerializeField]
 	private Color colorEventStageNameOutline;
 
 	[SerializeField]
 	[Header("背景色のパーツ（板）")]
 	private UISprite backgroundBord;
 
-	[Header("背景色のパーツ（ライン）")]
 	[SerializeField]
+	[Header("背景色のパーツ（ライン）")]
 	private UITexture backgroundLine;
 
-	[SerializeField]
 	[Header("残回数無しラベル")]
+	[SerializeField]
 	private UILabel ngTXT_PLAY_LIMIT;
 
-	[SerializeField]
 	[Header("回数限定用グレーアウトSPR素材")]
+	[SerializeField]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
 	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	[SerializeField]
+	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	private UISprite ngSPR_LOCK;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[Header("ステージギミック表記Obj")]

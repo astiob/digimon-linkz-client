@@ -10,12 +10,12 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("消費クラスタのラベル")]
 	[SerializeField]
+	[Header("消費クラスタのラベル")]
 	private UILabel useClusterLabel;
 
 	[Header("強化前のレベルのラベル")]
@@ -26,8 +26,8 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private UILabel afterLevelLabel;
 
-	[SerializeField]
 	[Header("上昇値のレベルのラベル")]
+	[SerializeField]
 	private UILabel plusLevelLabel;
 
 	[Header("基本的なメッセージのラベル")]

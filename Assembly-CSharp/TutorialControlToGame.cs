@@ -330,12 +330,16 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void StartManualBattle()
 	{
-		BattleTutorial tutorial = UnityEngine.Object.FindObjectOfType<BattleStateManager>().tutorial;
-		if (tutorial != null)
+		BattleStateManager battleStateManager = UnityEngine.Object.FindObjectOfType<BattleStateManager>();
+		if (null != battleStateManager)
 		{
-			tutorial.SetDeactiveTutorialInduction();
-			tutorial.isPossibleTargetSelect = true;
-			tutorial.SetEnableBackKey();
+			BattleTutorial tutorial = battleStateManager.tutorial;
+			if (tutorial != null)
+			{
+				tutorial.SetDeactiveTutorialInduction();
+				tutorial.isPossibleTargetSelect = true;
+				tutorial.SetEnableBackKey();
+			}
 		}
 	}
 

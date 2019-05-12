@@ -15,7 +15,7 @@ public class DMMain : MonoBehaviour
 		if (!DMMain.isJustOnce)
 		{
 			DMMain.isJustOnce = true;
-			Partytrack.start(5789, "07e569a17368b4a04e0eed94ee2937f3");
+			AdjustWrapper.Instance.StartAdjust();
 			AlertMaster.Initialize();
 			StringMaster.Initialize();
 		}

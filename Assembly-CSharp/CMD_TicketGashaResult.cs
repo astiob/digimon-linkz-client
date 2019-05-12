@@ -21,8 +21,8 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private int iconNumX;
 
-	[Header("アイコン登場時間(フレーム数)")]
 	[SerializeField]
+	[Header("アイコン登場時間(フレーム数)")]
 	private int showChipInterval = 16;
 
 	[SerializeField]
@@ -41,24 +41,24 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private UILabel ngTX_EXP_TEN;
 
-	[SerializeField]
 	[Header("シングルキャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteSingle;
 
-	[Header("10連キャプチャボタンSprite")]
 	[SerializeField]
+	[Header("10連キャプチャボタンSprite")]
 	private UISprite buttonSpriteTen;
 
-	[Header("TOPへボタンSprite")]
 	[SerializeField]
+	[Header("TOPへボタンSprite")]
 	private UISprite buttonSpriteTOP;
 
-	[SerializeField]
 	[Header("シングルキャプチャボタンGUICollider")]
+	[SerializeField]
 	private GUICollider buttonColliderSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンGUICollider")]
+	[SerializeField]
 	private GUICollider buttonColliderTen;
 
 	[SerializeField]
@@ -76,20 +76,20 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private UILabel lbCAMPAIGN_10;
 
-	[Header("WHITE エフェクト")]
 	[SerializeField]
+	[Header("WHITE エフェクト")]
 	private GameObject goEFC_WHITE;
 
 	[SerializeField]
 	[Header("GOLD エフェクト")]
 	private GameObject goEFC_GOLD;
 
-	[SerializeField]
 	[Header("RAINBOW エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_RAINBOW;
 
-	[Header("BG TEX")]
 	[SerializeField]
+	[Header("BG TEX")]
 	public UITexture txBG;
 
 	private bool isOnTapped;

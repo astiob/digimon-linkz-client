@@ -1,11 +1,12 @@
 ﻿using Secure;
 using System;
+using UnityEngine;
 
 public static class WebAPIPlatformValue
 {
-	private static readonly string COUNSUMER_KEY = Secure.ConstValue.AND_COUNSUMER_KEY;
+	private static readonly string COUNSUMER_KEY = Secure.ConstValue.MULTI_LANGUAGE_COUNSUMER_KEY;
 
-	private static readonly string COUNSUMER_SECRET = Secure.ConstValue.AND_COUNSUMER_SECRET;
+	private static readonly string COUNSUMER_SECRET = Secure.ConstValue.MULTI_LANGUAGE_COUNSUMER_SECRET;
 
 	private static readonly string HTTP_ADR_AUTH = global::ConstValue.APP_SITE_DOMAIN + "/appApi/AuthUserByUuid";
 
@@ -13,7 +14,7 @@ public static class WebAPIPlatformValue
 
 	public static string GetAppVersion()
 	{
-		return VersionManager.version;
+		return Application.version;
 	}
 
 	public static string GetCounsumerKey()

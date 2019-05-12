@@ -7,8 +7,8 @@ public class GUISelectPanelColosseumRanking : GUISelectPanelViewPartsUD
 {
 	public static List<GameWebAPI.RespDataCL_Ranking.RankingData> partsDataList;
 
-	[Header("コロシアム用パーツ")]
 	[SerializeField]
+	[Header("コロシアム用パーツ")]
 	private GameObject coSelectParts;
 
 	private float panelUpdateTime;
@@ -36,7 +36,14 @@ public class GUISelectPanelColosseumRanking : GUISelectPanelViewPartsUD
 
 	public void SetData(GameWebAPI.RespDataCL_Ranking data)
 	{
-		GUISelectPanelColosseumRanking.partsDataList = data.rankingMember.ToList<GameWebAPI.RespDataCL_Ranking.RankingData>();
+		if (data.rankingMember != null)
+		{
+			GUISelectPanelColosseumRanking.partsDataList = data.rankingMember.ToList<GameWebAPI.RespDataCL_Ranking.RankingData>();
+		}
+		else
+		{
+			GUISelectPanelColosseumRanking.partsDataList = new List<GameWebAPI.RespDataCL_Ranking.RankingData>();
+		}
 	}
 
 	public void DisableList()

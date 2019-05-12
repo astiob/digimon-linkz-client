@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class CMD_DeckList : CMD
 {
-	[Header("ベース用チップ装備")]
 	[SerializeField]
+	[Header("ベース用チップ装備")]
 	private ChipBaseSelect baseChipBaseSelect;
 
 	[Header("パートナー用チップ装備")]

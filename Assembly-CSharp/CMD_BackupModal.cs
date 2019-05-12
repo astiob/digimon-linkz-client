@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Master;
+using System;
 using UnityEngine;
 
 public class CMD_BackupModal : CMD
@@ -8,12 +9,6 @@ public class CMD_BackupModal : CMD
 
 	[SerializeField]
 	private UILabel textInfo;
-
-	[SerializeField]
-	private UILabel ngTX_BTN_YES;
-
-	[SerializeField]
-	private UILabel ngTX_BTN_NO;
 
 	[SerializeField]
 	private GUICollider cancelCollider;
@@ -33,13 +28,15 @@ public class CMD_BackupModal : CMD
 	[SerializeField]
 	private GameObject iCloudButtonObj;
 
+	[SerializeField]
+	private UILabel googleBackUpButtonText;
+
+	[SerializeField]
+	private UILabel iCloudBackUpButtonText;
+
 	private string title = string.Empty;
 
 	private string info = string.Empty;
-
-	private string btn_txt_yes = string.Empty;
-
-	private string btn_txt_no = string.Empty;
 
 	private Action actionYesButton;
 
@@ -68,38 +65,6 @@ public class CMD_BackupModal : CMD
 		{
 			this.info = TextUtil.GetWinTextSkipColorCode(value, 40);
 			this.textInfo.text = this.info;
-		}
-	}
-
-	public string BtnTextYes
-	{
-		get
-		{
-			return this.btn_txt_yes;
-		}
-		set
-		{
-			this.btn_txt_yes = value;
-			if (this.ngTX_BTN_YES != null)
-			{
-				this.ngTX_BTN_YES.text = this.btn_txt_yes;
-			}
-		}
-	}
-
-	public string BtnTextNo
-	{
-		get
-		{
-			return this.btn_txt_no;
-		}
-		set
-		{
-			this.btn_txt_no = value;
-			if (this.ngTX_BTN_NO != null)
-			{
-				this.ngTX_BTN_NO.text = this.btn_txt_no;
-			}
 		}
 	}
 
@@ -147,6 +112,7 @@ public class CMD_BackupModal : CMD
 		this.backupButtonObj.SetActive(true);
 		this.googleButtonObj.SetActive(true);
 		this.iCloudButtonObj.SetActive(false);
+		this.googleBackUpButtonText.text = StringMaster.GetString("BackupModalGoogle");
 	}
 
 	private void OnPushYesButton()

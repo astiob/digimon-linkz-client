@@ -84,6 +84,8 @@ public class GUIListHelpParts : GUIListPartBS
 			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow");
 			((CMDWebWindow)commonDialog).TitleText = this.ListData.helpTitle;
 			((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_HELP_DETAIL + this.ListData.helpId;
+			CMDWebWindow cmdwebWindow = (CMDWebWindow)commonDialog;
+			cmdwebWindow.Url = cmdwebWindow.Url + "&countryCode=" + CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN);
 		}
 	}
 

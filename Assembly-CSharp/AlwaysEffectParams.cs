@@ -2,8 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Always Effect Params")]
+[DisallowMultipleComponent]
 public class AlwaysEffectParams : EffectParamsGeneric
 {
 	[SerializeField]

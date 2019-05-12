@@ -8,8 +8,8 @@ public class CMD_ChipGashaResult : CMD
 {
 	public static CMD_ChipGashaResult instance;
 
-	[Header("アイコン開始位置")]
 	[SerializeField]
+	[Header("アイコン開始位置")]
 	private GameObject goICON_START_POS;
 
 	[Header("アイコンオフセット XY")]
@@ -20,8 +20,8 @@ public class CMD_ChipGashaResult : CMD
 	[Header("アイコンX方向の数")]
 	private int iconNumX;
 
-	[Header("アイコン登場時間(フレーム数)")]
 	[SerializeField]
+	[Header("アイコン登場時間(フレーム数)")]
 	private int showChipInterval = 16;
 
 	[SerializeField]
@@ -44,16 +44,16 @@ public class CMD_ChipGashaResult : CMD
 	[SerializeField]
 	private UISprite buttonSpriteTen;
 
-	[SerializeField]
 	[Header("TOPへボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTOP;
 
 	[Header("シングルキャプチャボタンGUICollider")]
 	[SerializeField]
 	private GUICollider buttonColliderSingle;
 
-	[Header("10連キャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("10連キャプチャボタンGUICollider")]
 	private GUICollider buttonColliderTen;
 
 	[SerializeField]
@@ -79,8 +79,8 @@ public class CMD_ChipGashaResult : CMD
 	[Header("GOLD エフェクト")]
 	private GameObject goEFC_GOLD;
 
-	[SerializeField]
 	[Header("RAINBOW エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_RAINBOW;
 
 	[Header("BG TEX")]
@@ -290,24 +290,24 @@ public class CMD_ChipGashaResult : CMD
 
 	private void ShowChipIcons()
 	{
-		CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey387 <ShowChipIcons>c__AnonStorey = new CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey387();
-		<ShowChipIcons>c__AnonStorey.<>f__this = this;
-		<ShowChipIcons>c__AnonStorey.m = 0;
-		while (<ShowChipIcons>c__AnonStorey.m < CMD_ChipGashaResult.DataList.Count)
+		CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey38A <ShowChipIcons>c__AnonStorey38A = new CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey38A();
+		<ShowChipIcons>c__AnonStorey38A.<>f__this = this;
+		<ShowChipIcons>c__AnonStorey38A.m = 0;
+		while (<ShowChipIcons>c__AnonStorey38A.m < CMD_ChipGashaResult.DataList.Count)
 		{
-			CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey386 <ShowChipIcons>c__AnonStorey2 = new CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey386();
-			<ShowChipIcons>c__AnonStorey2.<>f__ref$903 = <ShowChipIcons>c__AnonStorey;
-			<ShowChipIcons>c__AnonStorey2.<>f__this = this;
-			<ShowChipIcons>c__AnonStorey2.chipM = ChipDataMng.GetChipMainData(CMD_ChipGashaResult.DataList[<ShowChipIcons>c__AnonStorey.m].chipId.ToString());
-			<ShowChipIcons>c__AnonStorey2.vPos = this.goICON_START_POS.transform.localPosition;
-			float num = (float)(<ShowChipIcons>c__AnonStorey.m % this.iconNumX);
-			float num2 = (float)(<ShowChipIcons>c__AnonStorey.m / this.iconNumX);
-			CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey386 <ShowChipIcons>c__AnonStorey3 = <ShowChipIcons>c__AnonStorey2;
-			<ShowChipIcons>c__AnonStorey3.vPos.x = <ShowChipIcons>c__AnonStorey3.vPos.x + this.iconOffset.x * num;
-			CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey386 <ShowChipIcons>c__AnonStorey4 = <ShowChipIcons>c__AnonStorey2;
-			<ShowChipIcons>c__AnonStorey4.vPos.y = <ShowChipIcons>c__AnonStorey4.vPos.y + this.iconOffset.y * num2;
-			<ShowChipIcons>c__AnonStorey2.vPos.z = -5f;
-			ChipDataMng.MakePrefabByChipData(<ShowChipIcons>c__AnonStorey2.chipM, this.goICON_START_POS, <ShowChipIcons>c__AnonStorey2.vPos, Vector3.one, delegate(ChipIcon icon)
+			CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey389 <ShowChipIcons>c__AnonStorey = new CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey389();
+			<ShowChipIcons>c__AnonStorey.<>f__ref$906 = <ShowChipIcons>c__AnonStorey38A;
+			<ShowChipIcons>c__AnonStorey.<>f__this = this;
+			<ShowChipIcons>c__AnonStorey.chipM = ChipDataMng.GetChipMainData(CMD_ChipGashaResult.DataList[<ShowChipIcons>c__AnonStorey38A.m].chipId.ToString());
+			<ShowChipIcons>c__AnonStorey.vPos = this.goICON_START_POS.transform.localPosition;
+			float num = (float)(<ShowChipIcons>c__AnonStorey38A.m % this.iconNumX);
+			float num2 = (float)(<ShowChipIcons>c__AnonStorey38A.m / this.iconNumX);
+			CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey389 <ShowChipIcons>c__AnonStorey2 = <ShowChipIcons>c__AnonStorey;
+			<ShowChipIcons>c__AnonStorey2.vPos.x = <ShowChipIcons>c__AnonStorey2.vPos.x + this.iconOffset.x * num;
+			CMD_ChipGashaResult.<ShowChipIcons>c__AnonStorey389 <ShowChipIcons>c__AnonStorey3 = <ShowChipIcons>c__AnonStorey;
+			<ShowChipIcons>c__AnonStorey3.vPos.y = <ShowChipIcons>c__AnonStorey3.vPos.y + this.iconOffset.y * num2;
+			<ShowChipIcons>c__AnonStorey.vPos.z = -5f;
+			ChipDataMng.MakePrefabByChipData(<ShowChipIcons>c__AnonStorey.chipM, this.goICON_START_POS, <ShowChipIcons>c__AnonStorey.vPos, Vector3.one, delegate(ChipIcon icon)
 			{
 				GUIListChipParts component = icon.gameObject.GetComponent<GUIListChipParts>();
 				if (component != null)
@@ -315,47 +315,47 @@ public class CMD_ChipGashaResult : CMD
 					component.SetData(new GUIListChipParts.Data());
 					component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 					{
-						if (<ShowChipIcons>c__AnonStorey2.<>f__this.curChipInitNUM == CMD_ChipGashaResult.DataList.Count)
+						if (<ShowChipIcons>c__AnonStorey.<>f__this.curChipInitNUM == CMD_ChipGashaResult.DataList.Count)
 						{
-							CMD_QuestItemPOP.Create(<ShowChipIcons>c__AnonStorey2.chipM);
+							CMD_QuestItemPOP.Create(<ShowChipIcons>c__AnonStorey.chipM);
 						}
-						<ShowChipIcons>c__AnonStorey2.<>f__this.isOnTapped = true;
+						<ShowChipIcons>c__AnonStorey.<>f__this.isOnTapped = true;
 					};
 				}
 				Vector3 localScale = Vector3.one;
 				GameObject gameObject = null;
-				string effectType = CMD_ChipGashaResult.UserAssetList[<ShowChipIcons>c__AnonStorey2.<>f__ref$903.m].effectType;
+				string effectType = CMD_ChipGashaResult.UserAssetList[<ShowChipIcons>c__AnonStorey.<>f__ref$906.m].effectType;
 				switch (effectType)
 				{
 				case "1":
-					gameObject = UnityEngine.Object.Instantiate<GameObject>(<ShowChipIcons>c__AnonStorey2.<>f__this.goEFC_BLUE);
+					gameObject = UnityEngine.Object.Instantiate<GameObject>(<ShowChipIcons>c__AnonStorey.<>f__this.goEFC_BLUE);
 					break;
 				case "2":
-					gameObject = UnityEngine.Object.Instantiate<GameObject>(<ShowChipIcons>c__AnonStorey2.<>f__this.goEFC_GOLD);
+					gameObject = UnityEngine.Object.Instantiate<GameObject>(<ShowChipIcons>c__AnonStorey.<>f__this.goEFC_GOLD);
 					break;
 				case "3":
-					gameObject = UnityEngine.Object.Instantiate<GameObject>(<ShowChipIcons>c__AnonStorey2.<>f__this.goEFC_RAINBOW);
+					gameObject = UnityEngine.Object.Instantiate<GameObject>(<ShowChipIcons>c__AnonStorey.<>f__this.goEFC_RAINBOW);
 					break;
 				}
 				ChipEfc component2 = gameObject.GetComponent<ChipEfc>();
 				component2.enabled = true;
 				localScale = gameObject.transform.localScale;
-				gameObject.transform.parent = <ShowChipIcons>c__AnonStorey2.<>f__this.transform;
-				gameObject.transform.localPosition = <ShowChipIcons>c__AnonStorey2.vPos;
+				gameObject.transform.parent = <ShowChipIcons>c__AnonStorey.<>f__this.transform;
+				gameObject.transform.localPosition = <ShowChipIcons>c__AnonStorey.vPos;
 				gameObject.transform.localScale = localScale;
 				localScale = icon.transform.localScale;
 				icon.transform.parent = component2.goCHIP_THUMB.transform;
 				icon.transform.localPosition = component2.goCHIP_THUMB.transform.localPosition;
 				icon.transform.localScale = localScale;
 				component2.goCHIP_THUMB.GetComponent<UITexture>().enabled = false;
-				if (CMD_ChipGashaResult.UserAssetList[<ShowChipIcons>c__AnonStorey2.<>f__ref$903.m].isNew != 1)
+				if (CMD_ChipGashaResult.UserAssetList[<ShowChipIcons>c__AnonStorey.<>f__ref$906.m].isNew != 1)
 				{
 					component2.spNew.enabled = false;
 				}
 				gameObject.SetActive(true);
-				<ShowChipIcons>c__AnonStorey2.<>f__this.CHIP_EFC_LIST.Add(component2);
+				<ShowChipIcons>c__AnonStorey.<>f__this.CHIP_EFC_LIST.Add(component2);
 			}, -1, -1, true);
-			<ShowChipIcons>c__AnonStorey.m++;
+			<ShowChipIcons>c__AnonStorey38A.m++;
 		}
 	}
 

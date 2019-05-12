@@ -152,8 +152,8 @@ public class FarmColosseum : MonoBehaviour
 				{
 					FarmColosseum.Schedule item = new FarmColosseum.Schedule
 					{
-						start = DateTime.Parse(colosseumTimeSchedule.startHour),
-						end = DateTime.Parse(colosseumTimeSchedule.endHour)
+						start = TimeUtility.DateTimeDifferenceServer(DateTime.Parse(colosseumTimeSchedule.startHour)),
+						end = TimeUtility.DateTimeDifferenceServer(DateTime.Parse(colosseumTimeSchedule.endHour))
 					};
 					this.scheduleList.Add(item);
 				}

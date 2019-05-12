@@ -64,7 +64,7 @@ public sealed class MonsterStatusChangeValueList : MonoBehaviour
 
 	private void SetParameter(UILabel label, int value)
 	{
-		label.text = value.ToString("+0;-0");
+		label.text = value.ToString(StringMaster.GetString("MSChangeValueList_txt"));
 		if (value > 0)
 		{
 			label.color = this.colorUp;
