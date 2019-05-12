@@ -31,24 +31,24 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
-	[Header("足りないエッセージローカライズ(マルチバトル用)")]
 	[SerializeField]
+	[Header("足りないエッセージローカライズ(マルチバトル用)")]
 	private UILabel notEnoughConsumeMessageLocalize;
 
 	[Header("消費メッセージローカライズ")]
 	[SerializeField]
 	private UILabel consumeMessageLocalize;
 
-	[Header("所持ローカライズ")]
 	[SerializeField]
+	[Header("所持ローカライズ")]
 	private UILabel haveLocalize;
 
 	[Header("閉じるローカライズ")]
 	[SerializeField]
 	private UILabel closeLocalize;
 
-	[SerializeField]
 	[Header("復活予約ローカライズ")]
+	[SerializeField]
 	private UILabel bookRevivalLocalize;
 
 	[Header("ショップへローカライズ")]

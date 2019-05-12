@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[RequireComponent(typeof(Camera))]
-	[AddComponentMenu("Image Effects/Color Adjustments/Contrast Enhance (Unsharp Mask)")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Color Adjustments/Contrast Enhance (Unsharp Mask)")]
+	[RequireComponent(typeof(Camera))]
 	internal class ContrastEnhance : PostEffectsBase
 	{
 		public float intensity = 0.5f;

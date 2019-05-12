@@ -15,8 +15,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[Header("選択時の背景色")]
 	[SerializeField]
+	[Header("選択時の背景色")]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -43,8 +43,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
 	[SerializeField]
@@ -55,16 +55,16 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("クローズの時の色")]
 	private Color closeBannerCol;
 
-	[Header("オープンしてないを示す鍵")]
 	[SerializeField]
+	[Header("オープンしてないを示す鍵")]
 	private GameObject goCloseKey;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[Header("ステージギミック表記Obj")]

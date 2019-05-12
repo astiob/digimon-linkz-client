@@ -29,12 +29,12 @@ public class UIPlayAnimation : MonoBehaviour
 
 	public List<EventDelegate> onFinished = new List<EventDelegate>();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private string callWhenFinished;
 
 	private bool mStarted;

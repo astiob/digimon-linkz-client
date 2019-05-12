@@ -11,12 +11,12 @@ public sealed class CMD_Mission : CMD
 	[SerializeField]
 	private GUISelectPanelMission missionList;
 
-	[Header("ミッション選択のタッチ領域")]
 	[SerializeField]
+	[Header("ミッション選択のタッチ領域")]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[SerializeField]
 	[Header("ミッションの段階終了時カットイン演出コントローラ")]
+	[SerializeField]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]

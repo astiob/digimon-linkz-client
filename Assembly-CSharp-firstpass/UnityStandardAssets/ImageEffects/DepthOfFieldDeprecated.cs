@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Camera/Depth of Field (deprecated)")]
-	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
+	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Camera/Depth of Field (deprecated)")]
 	public class DepthOfFieldDeprecated : PostEffectsBase
 	{
 		private static int SMOOTH_DOWNSAMPLE_PASS = 6;

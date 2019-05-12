@@ -10,16 +10,16 @@ public sealed class ChipSphereIconButton : GUICollider
 
 	private ChipSphereIconButton.Parameter myParameter;
 
-	[Header("枠のスプライト")]
 	[SerializeField]
+	[Header("枠のスプライト")]
 	private UISprite frameSprite;
 
 	[SerializeField]
 	[Header("LOOKのオブジェクト")]
 	private GameObject lookGO;
 
-	[Header("Chargesのオブジェクト")]
 	[SerializeField]
+	[Header("Chargesのオブジェクト")]
 	private GameObject chargesGO;
 
 	[SerializeField]
@@ -30,20 +30,20 @@ public sealed class ChipSphereIconButton : GUICollider
 	[Header("チップの名前/拡張説明")]
 	private UILabel chipNameLabel;
 
-	[Header("チップの説明ラベル/拡張パッチの個数")]
 	[SerializeField]
+	[Header("チップの説明ラベル/拡張パッチの個数")]
 	private UILabel chipDescriptLabel;
 
-	[SerializeField]
 	[Header("チップのテクスチャ/枠")]
+	[SerializeField]
 	private UITexture chipTexture;
 
-	[Header("アイテムのスプライト")]
 	[SerializeField]
+	[Header("アイテムのスプライト")]
 	private UISprite itemSprite;
 
-	[Header("LOOKのスプライト")]
 	[SerializeField]
+	[Header("LOOKのスプライト")]
 	private UISprite lookSprite;
 
 	[SerializeField]

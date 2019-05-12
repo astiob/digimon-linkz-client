@@ -96,8 +96,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UISprite arousalIcon;
 
-	[SerializeField]
 	[Header("各才能メダルの表示切り替え")]
+	[SerializeField]
 	private MonsterMedalList MonsterMedalList;
 
 	[Header("Lvローカライズ")]
@@ -116,8 +116,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel atkLocalize;
 
-	[Header("DEFローカライズ")]
 	[SerializeField]
+	[Header("DEFローカライズ")]
 	private UILabel defLocalize;
 
 	[SerializeField]
@@ -132,16 +132,16 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel spdLocalize;
 
-	[Header("Luckローカライズ")]
 	[SerializeField]
+	[Header("Luckローカライズ")]
 	private UILabel luckLocalize;
 
 	[SerializeField]
 	[Header("リーダースキルローカライズ")]
 	private UILabel lSkillLocalize;
 
-	[Header("装着チップ")]
 	[SerializeField]
+	[Header("装着チップ")]
 	private ChipIcon[] chipIcons;
 
 	private void Awake()

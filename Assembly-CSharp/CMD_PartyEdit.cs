@@ -8,8 +8,8 @@ using UnityEngine;
 
 public sealed class CMD_PartyEdit : CMD
 {
-	[SerializeField]
 	[Header("スクロールビューの左右をクリッピングするオブジェクト")]
+	[SerializeField]
 	private GameObject[] clipObjects;
 
 	private Vector3 v3DPos = new Vector3(0f, 4000f, 0f);

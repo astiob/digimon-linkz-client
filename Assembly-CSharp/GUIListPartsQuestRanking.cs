@@ -13,8 +13,8 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
-	[SerializeField]
 	[Header("ユーザーネーム")]
+	[SerializeField]
 	private UILabel lbTX_UserName;
 
 	[Header("称号アイコン")]
@@ -25,16 +25,16 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[Header("Nextポイント")]
 	[SerializeField]
+	[Header("Nextポイント")]
 	private UILabel lbTX_NextPoint;
 
-	[Header("ランキング順位")]
 	[SerializeField]
+	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
-	[Header("ランキングアイコン")]
 	[SerializeField]
+	[Header("ランキングアイコン")]
 	private UISprite spRankingIcon;
 
 	private MonsterData digimonData;

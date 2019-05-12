@@ -1,20 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/NGUI Scroll Bar")]
+[ExecuteInEditMode]
 public class UIScrollBar : UISlider
 {
 	[HideInInspector]
 	[SerializeField]
 	protected float mSize = 1f;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mScroll;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIScrollBar.Direction mDir = UIScrollBar.Direction.Upgraded;
 
 	[Obsolete("Use 'value' instead")]

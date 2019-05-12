@@ -8,44 +8,44 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[Header("UIRoot")]
 	private UIRoot _uiRoot;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private Camera _uiCamera;
 
-	[Header("ロードUI")]
 	[SerializeField]
+	[Header("ロードUI")]
 	public BattleUIInitialize initializeUi;
 
-	[SerializeField]
 	[Header("AlwaysのPrefab")]
+	[SerializeField]
 	public BattleAlways battleAlwaysUi;
 
 	[Header("ボスウェーブ開始時のテロップ")]
 	[SerializeField]
 	private UIWidget _bossStartUi;
 
-	[Header("バトル開始時のテロップ")]
 	[SerializeField]
+	[Header("バトル開始時のテロップ")]
 	public BattleStartAction battleStartAction;
 
 	[Header("乱入ウェーブ開始時のテロップ")]
 	[SerializeField]
 	private UIWidget _extraStartUi;
 
-	[SerializeField]
 	[Header("ラウンド開始時のテロップ")]
+	[SerializeField]
 	public RoundStart roundStart;
 
 	[SerializeField]
 	[Header("ラウンド開始時のテロップ(制限ラウンド)")]
 	public RoundLimitStart roundLimitStart;
 
-	[Header("ラウンド開始時のテロップ(スピードクリア設定)")]
 	[SerializeField]
+	[Header("ラウンド開始時のテロップ(スピードクリア設定)")]
 	public RoundChallengeStart roundChallengeStart;
 
-	[SerializeField]
 	[Header("敵ターン開始時のテロップ")]
+	[SerializeField]
 	private UIWidget _enemyTurnUi;
 
 	[SerializeField]
@@ -72,12 +72,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private UIWidget _continueUi;
 
-	[Header("フェードUI")]
 	[SerializeField]
+	[Header("フェードUI")]
 	private BattleFadeout _fadeoutUi;
 
-	[SerializeField]
 	[Header("SkillSelect")]
+	[SerializeField]
 	private BattleSkillSelect _skillSelectUi;
 
 	[Header("復活ダイアログ")]
@@ -87,8 +87,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[NonSerialized]
 	public MenuDialog menuDialog;
 
-	[Header("コンテニューダイアログ")]
 	[SerializeField]
+	[Header("コンテニューダイアログ")]
 	public DialogContinue dialogContinue;
 
 	[Header("オートボタン")]
@@ -102,8 +102,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	public UIButton menuButton;
 
-	[SerializeField]
 	[Header("スキル発動時のテロップ")]
+	[SerializeField]
 	public TurnAction turnAction;
 
 	[SerializeField]
@@ -113,16 +113,16 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[NonSerialized]
 	public GameObject helpDialog;
 
-	[SerializeField]
 	[Header("初期誘導UI")]
+	[SerializeField]
 	public BattleUIInitialInduction initialInduction;
 
-	[Header("ヒットアイコンUI")]
 	[SerializeField]
+	[Header("ヒットアイコンUI")]
 	private GameObject _hitIconObject;
 
-	[SerializeField]
 	[Header("HUD")]
+	[SerializeField]
 	private GameObject _hudObject;
 
 	[Header("ビッグボス用のHUD")]
@@ -136,15 +136,15 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private GameObject _toleranceIconObject;
 
-	[SerializeField]
 	[Header("ドロップアイテム")]
+	[SerializeField]
 	private GameObject _droppingItemObject;
 
 	[Header("特効効果テロップ")]
 	public BattleExtraEffectUI battleExtraEffectUI;
 
-	[Header("Winのオブジェクト(PvP限定)")]
 	[SerializeField]
+	[Header("Winのオブジェクト(PvP限定)")]
 	public GameObject winGameObject;
 
 	[SerializeField]

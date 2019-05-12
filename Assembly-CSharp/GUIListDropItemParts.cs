@@ -21,24 +21,24 @@ public class GUIListDropItemParts : GUIListPartBS
 
 	private bool _LongTouch = true;
 
-	[Header("箱のアイコン")]
 	[SerializeField]
+	[Header("箱のアイコン")]
 	private UISprite boxIcons;
 
 	[SerializeField]
 	[Header("ドロップアイテム")]
 	private PresentBoxItem dropItemItems;
 
-	[SerializeField]
 	[Header("運の文字アイコン")]
+	[SerializeField]
 	private UILabel luckIcons;
 
 	[Header("マルチ運プレイヤーアイコン")]
 	[SerializeField]
 	private GameObject goLuckPlayerIcons;
 
-	[Header("マルチの文字アイコン")]
 	[SerializeField]
+	[Header("マルチの文字アイコン")]
 	private UILabel multiIcons;
 
 	[SerializeField]
@@ -53,8 +53,8 @@ public class GUIListDropItemParts : GUIListPartBS
 	[Header("チャレンジの文字アイコン")]
 	private UILabel challengeIcon;
 
-	[SerializeField]
 	[Header("イベントチップドロップのアイコン")]
+	[SerializeField]
 	private UILabel eventChipDropIcon;
 
 	[SerializeField]

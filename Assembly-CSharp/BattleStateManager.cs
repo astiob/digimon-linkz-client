@@ -12,8 +12,8 @@ public sealed class BattleStateManager : MonoBehaviour
 	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
-	[SerializeField]
 	[Header("マルチUI")]
+	[SerializeField]
 	private BattleUIComponentsMulti battleUIComponentsMulti;
 
 	[SerializeField]

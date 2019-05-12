@@ -10,8 +10,8 @@ public class BattleUIMultiSharedAP : MonoBehaviour
 	[Header("APアイコン")]
 	private SharedApNotes[] apNotes = new SharedApNotes[16];
 
-	[SerializeField]
 	[Header("AP値ラベル")]
+	[SerializeField]
 	private UILabel apLabel;
 
 	[SerializeField]

@@ -14,28 +14,28 @@ public sealed class CMD_SaleCheck : CMD
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("取得クラスタのタイトルラベル")]
 	[SerializeField]
+	[Header("取得クラスタのタイトルラベル")]
 	private UILabel getClusterTitleLabel;
 
 	[Header("取得クラスタのラベル")]
 	[SerializeField]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]
 	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)

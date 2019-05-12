@@ -9,48 +9,48 @@ public sealed class CMD_EvolutionItemList : CMD
 {
 	public static CMD_EvolutionItemList instance;
 
-	[Header("プラグインリストの親")]
 	[SerializeField]
+	[Header("プラグインリストの親")]
 	private GameObject pluginPartsParent;
 
-	[Header("ソウルリストの親")]
 	[SerializeField]
+	[Header("ソウルリストの親")]
 	private GameObject soulPartsParent;
 
-	[SerializeField]
 	[Header("バージョンアップの親")]
+	[SerializeField]
 	private GameObject verupPartsParent;
 
-	[Header("コアプラグインの親")]
 	[SerializeField]
+	[Header("コアプラグインの親")]
 	private GameObject corePluginPartsParent;
 
 	[Header("バージョンアップ耐性変化の親")]
 	[SerializeField]
 	private GameObject verupAttrChangePartsParent;
 
-	[Header("プラグインリストのwraper")]
 	[SerializeField]
+	[Header("プラグインリストのwraper")]
 	private GameObject goWrapPlugin;
 
-	[Header("ソウルリストのwraper")]
 	[SerializeField]
+	[Header("ソウルリストのwraper")]
 	private GameObject goWrapSoul;
 
-	[Header("バージョンアップリストのwraper")]
 	[SerializeField]
+	[Header("バージョンアップリストのwraper")]
 	private GameObject goWrapVerup;
 
-	[Header("コアプラグインリストのwraper")]
 	[SerializeField]
+	[Header("コアプラグインリストのwraper")]
 	private GameObject goWrapCorePlugin;
 
-	[Header("バージョンアップ耐性変化リストのwraper")]
 	[SerializeField]
+	[Header("バージョンアップ耐性変化リストのwraper")]
 	private GameObject goWrapVerupAttrChange;
 
-	[Header("ソウル用パーツ")]
 	[SerializeField]
+	[Header("ソウル用パーツ")]
 	private GameObject soulListParts;
 
 	[Header("進化素材未所持メッセージ")]

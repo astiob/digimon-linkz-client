@@ -52,6 +52,10 @@ public class FaceMission : GUICollider
 		{
 			this.SetActiveExclamationMark(true);
 		}
+		else
+		{
+			this.SetActiveExclamationMark(false);
+		}
 		if (showParticle)
 		{
 			this.ShowParticleMissionIcon(beginnerMissionNewCount, beginnerMissionRewardCount);

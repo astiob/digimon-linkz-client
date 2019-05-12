@@ -16,8 +16,8 @@ public sealed class BaseSelectChipCell : MonoBehaviour
 	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("非装着のラベル")]
+	[SerializeField]
 	private UILabel noChipLabel;
 
 	public void SetupIcon(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip)

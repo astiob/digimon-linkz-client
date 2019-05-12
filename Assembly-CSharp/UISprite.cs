@@ -13,8 +13,8 @@ public class UISprite : UIBasicSprite
 	[HideInInspector]
 	private string mSpriteName;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mFillCenter = true;
 
 	[NonSerialized]

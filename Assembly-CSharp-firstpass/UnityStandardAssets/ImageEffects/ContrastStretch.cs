@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Color Adjustments/Contrast Stretch")]
+	[ExecuteInEditMode]
 	public class ContrastStretch : MonoBehaviour
 	{
 		public float adaptationSpeed = 0.02f;

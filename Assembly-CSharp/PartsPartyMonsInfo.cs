@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[SerializeField]
 	[Header("チップの処理")]
+	[SerializeField]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
@@ -557,7 +557,7 @@ public class PartsPartyMonsInfo : GUICollider
 			}
 			for (int num3 = 0; num3 < list.Count; num3++)
 			{
-				bool flag3 = ExtraEffectUtil.CheckExtraParams(list[num3].targetSubType, list[num3].targetValue, list[num3].effectValue, this.Data);
+				bool flag3 = ExtraEffectUtil.CheckExtraParams(this.Data, list[num3]);
 				if (flag3)
 				{
 					this.bonusListText.Add(list[num3].detail);
@@ -565,7 +565,7 @@ public class PartsPartyMonsInfo : GUICollider
 			}
 			for (int num4 = 0; num4 < extraEffectDataList.Count; num4++)
 			{
-				bool flag4 = ExtraEffectUtil.CheckExtraParams(extraEffectDataList[num4].targetSubType, extraEffectDataList[num4].targetValue, extraEffectDataList[num4].effectValue, this.Data);
+				bool flag4 = ExtraEffectUtil.CheckExtraStageParams(this.Data, extraEffectDataList[num4]);
 				if (flag4)
 				{
 					this.bonusListText.Add(extraEffectDataList[num4].detail);

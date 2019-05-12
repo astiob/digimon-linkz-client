@@ -125,7 +125,6 @@
     <Compile Include="APIRequestTask.cs" />
     <Compile Include="APIUtil.cs" />
     <Compile Include="AppCoroutine.cs" />
-    <Compile Include="ApplicationMonitor.cs" />
     <Compile Include="AppThread.cs" />
     <Compile Include="AssetBundleDiskSpaceCheck.cs" />
     <Compile Include="AssetBundleDownloadFileInfo.cs" />
@@ -610,6 +609,10 @@
     <Compile Include="DataMng.cs" />
     <Compile Include="DebugLogScreen.cs" />
     <Compile Include="DebugLogText.cs" />
+    <Compile Include="DebugMonitor\ApplicationMonitor.cs" />
+    <Compile Include="DebugMonitor\ApplicationMonitorMode.cs" />
+    <Compile Include="DebugMonitor\ApplicationMonitorModeList.cs" />
+    <Compile Include="DebugMonitor\MonitorMode.cs" />
     <Compile Include="DepthController.cs" />
     <Compile Include="DepthControllerHash.cs" />
     <Compile Include="DialogContinue.cs" />
@@ -1074,6 +1077,7 @@
     <Compile Include="Master\StringMaster.cs" />
     <Compile Include="Master\StringMasterResource.cs" />
     <Compile Include="MaterialController.cs" />
+    <Compile Include="MeatFarmButton.cs" />
     <Compile Include="MedalInheritController.cs" />
     <Compile Include="MenuDialog.cs" />
     <Compile Include="MissionBannerCacheBuffer.cs" />

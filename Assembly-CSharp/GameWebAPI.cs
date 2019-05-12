@@ -2270,6 +2270,8 @@ public class GameWebAPI : WebAPI
 
 		public string priceNumber;
 
+		public string priceAmount;
+
 		public string signedData;
 
 		public string signature;

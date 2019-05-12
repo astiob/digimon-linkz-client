@@ -6,12 +6,12 @@ using UnityEngine;
 
 public sealed class CMD_VersionUpModal : CMD_ModalMessageBtn2
 {
-	[Header("バージョンアップ詳細スクリプト")]
 	[SerializeField]
+	[Header("バージョンアップ詳細スクリプト")]
 	private VersionUpDetail versionUpDitail;
 
-	[SerializeField]
 	[Header("説明文・警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel messageLabel;
 
 	protected override void Awake()

@@ -53,8 +53,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel aggregateLabel;
 
-	[Header("全国バトルボタン")]
 	[SerializeField]
+	[Header("全国バトルボタン")]
 	private GUICollider nationwideCollider;
 
 	[SerializeField]
@@ -134,12 +134,12 @@ public class CMD_PvPTop : CMD
 	[Header("スケジュール")]
 	private GameObject goTimeSchedule;
 
-	[Header("以下,○回目ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,○回目ラベル(昇順)")]
 	private UILabel[] spanTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] startTimeLabelArray = new UILabel[0];
 
 	[SerializeField]
@@ -158,8 +158,8 @@ public class CMD_PvPTop : CMD
 	[Header("以下,ヘルプの画像パス(表示順)")]
 	private List<string> helpImagePathList = new List<string>();
 
-	[Header("以下,UIテキスト")]
 	[SerializeField]
+	[Header("以下,UIテキスト")]
 	private UILabel toColiseumExitText;
 
 	[SerializeField]

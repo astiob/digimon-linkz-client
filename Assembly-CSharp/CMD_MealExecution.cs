@@ -75,8 +75,8 @@ public class CMD_MealExecution : CMD
 	[SerializeField]
 	private UILabel btnExecText;
 
-	[Header("高級肉関連")]
 	[SerializeField]
+	[Header("高級肉関連")]
 	private UILabel lbHQMeatNum;
 
 	[SerializeField]

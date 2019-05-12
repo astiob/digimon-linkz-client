@@ -24,20 +24,20 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private GameObject titleGO;
 
-	[SerializeField]
 	[Header("エリア名")]
+	[SerializeField]
 	private UILabel areaName;
 
 	[Header("ステージ名")]
 	[SerializeField]
 	private UILabel stageName;
 
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private GameObject[] lines;
 
-	[SerializeField]
 	[Header("クリッピングテクスチャ")]
+	[SerializeField]
 	private UITexture[] clipingTextures;
 
 	private DropItemResult.SkipCount skipCount;

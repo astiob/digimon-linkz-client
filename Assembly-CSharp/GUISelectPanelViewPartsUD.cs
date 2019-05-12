@@ -31,12 +31,12 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 	[Header("リサイクルビュー Y MAX")]
 	protected float fRecycleViewMaxY = 500f;
 
-	[SerializeField]
 	[Header("リサイクルビュー Y MIN")]
+	[SerializeField]
 	protected float fRecycleViewMinY = -500f;
 
-	[SerializeField]
 	[Header("リサイクルビュー セクターサイズ")]
+	[SerializeField]
 	protected int RecycleViewSectorSize = 4;
 
 	[SerializeField]

@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Standby : MonoBehaviour
 {
-	[Header("自分/仲間/敵コンテンツ(真ん中ターン表示)")]
 	[SerializeField]
+	[Header("自分/仲間/敵コンテンツ(真ん中ターン表示)")]
 	private Animator myAnimator;
 
 	public void PlayShowAnimation()

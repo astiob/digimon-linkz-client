@@ -28,13 +28,92 @@ public class ExtraEffectUtil
 		GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus[] eventPointBonuses = ExtraEffectUtil.GetEventPointBonuses(ExtraEffectUtil.GetDungeonId().ToString());
 		foreach (GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus in eventPointBonuses)
 		{
-			bool flag = ExtraEffectUtil.CheckExtraParams(eventPointBonus.targetSubType, eventPointBonus.targetValue, eventPointBonus.effectValue, monsterData);
+			bool flag = ExtraEffectUtil.CheckExtraParams(monsterData, eventPointBonus);
 			if (flag)
 			{
 				return true;
 			}
 		}
-		EffectStatusBase.ExtraEffectType[] array2 = new EffectStatusBase.ExtraEffectType[]
+		return ExtraEffectUtil.CheckExtraStageParams(monsterData, effectArray);
+	}
+
+	public static bool CheckExtraParams(MonsterData monsterData, GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus)
+	{
+		if (float.Parse(eventPointBonus.effectValue) < 0f)
+		{
+			return false;
+		}
+		ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType = (ExtraEffectUtil.EventPointBonusTargetSubType)int.Parse(eventPointBonus.targetSubType);
+		ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType2 = eventPointBonusTargetSubType;
+		switch (eventPointBonusTargetSubType2)
+		{
+		case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterTribe:
+			if (monsterData.monsterMG.tribe.Equals(eventPointBonus.targetValue))
+			{
+				return true;
+			}
+			break;
+		case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterGroup:
+			if (monsterData.monsterMG.monsterGroupId.Equals(eventPointBonus.targetValue))
+			{
+				return true;
+			}
+			break;
+		case ExtraEffectUtil.EventPointBonusTargetSubType.GrowStep:
+			if (monsterData.monsterMG.growStep.Equals(eventPointBonus.targetValue))
+			{
+				return true;
+			}
+			break;
+		case ExtraEffectUtil.EventPointBonusTargetSubType.SkillId:
+			if (monsterData.GetCommonSkill() != null && monsterData.GetCommonSkill().skillId.Equals(eventPointBonus.targetValue))
+			{
+				return true;
+			}
+			if (monsterData.GetLeaderSkill() != null && monsterData.GetLeaderSkill().skillId.Equals(eventPointBonus.targetValue))
+			{
+				return true;
+			}
+			break;
+		case ExtraEffectUtil.EventPointBonusTargetSubType.ChipId:
+		{
+			MonsterChipEquipData chipEquip = monsterData.GetChipEquip();
+			int[] chipIdList = chipEquip.GetChipIdList();
+			if (chipIdList.Where((int item) => item == eventPointBonus.targetValue.ToInt32()).Any<int>())
+			{
+				return true;
+			}
+			break;
+		}
+		default:
+			if (eventPointBonusTargetSubType2 == ExtraEffectUtil.EventPointBonusTargetSubType.MonsterIntegrationGroup)
+			{
+				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] monsterIntegrationGroupM = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster.monsterIntegrationGroupM;
+				for (int i = 0; i < monsterIntegrationGroupM.Length; i++)
+				{
+					if (eventPointBonus.targetValue.Equals(monsterIntegrationGroupM[i].monsterIntegrationId) && monsterIntegrationGroupM[i].monsterId.Equals(monsterData.monsterM.monsterId))
+					{
+						return true;
+					}
+				}
+			}
+			break;
+		}
+		return false;
+	}
+
+	public static bool CheckExtraStageParams(MonsterData monsterData, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM effect)
+	{
+		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray = new GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[]
+		{
+			effect
+		};
+		return ExtraEffectUtil.CheckExtraStageParams(monsterData, effectArray);
+	}
+
+	public static bool CheckExtraStageParams(MonsterData monsterData, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray)
+	{
+		EffectStatusBase.ExtraEffectType[] array = new EffectStatusBase.ExtraEffectType[]
 		{
 			EffectStatusBase.ExtraEffectType.Atk,
 			EffectStatusBase.ExtraEffectType.Def,
@@ -45,16 +124,16 @@ public class ExtraEffectUtil
 			EffectStatusBase.ExtraEffectType.SkillPower,
 			EffectStatusBase.ExtraEffectType.SkillHit
 		};
-		foreach (EffectStatusBase.ExtraEffectType extraEffectType in array2)
+		foreach (EffectStatusBase.ExtraEffectType extraEffectType in array)
 		{
+			int num = 0;
 			int num2 = 0;
-			int num3 = 0;
 			if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillPower || extraEffectType == EffectStatusBase.ExtraEffectType.SkillHit)
 			{
-				for (int l = 1; l <= 3; l++)
+				for (int j = 1; j <= 3; j++)
 				{
-					ExtraEffectUtil.GetExtraEffectFluctuationValue(out num2, out num3, monsterData, effectArray, extraEffectType, l);
-					if (num3 != 0)
+					ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, monsterData, effectArray, extraEffectType, j);
+					if (num2 != 0)
 					{
 						return true;
 					}
@@ -62,64 +141,12 @@ public class ExtraEffectUtil
 			}
 			else
 			{
-				ExtraEffectUtil.GetExtraEffectFluctuationValue(out num2, out num3, monsterData, effectArray, extraEffectType, 0);
-				if (num3 != 0)
+				ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, monsterData, effectArray, extraEffectType, 0);
+				if (num2 != 0)
 				{
 					return true;
 				}
 			}
-		}
-		return false;
-	}
-
-	public static bool CheckExtraParams(string targetSubType, string targetValue, string effectValue, MonsterData monsterData)
-	{
-		if (float.Parse(effectValue) < 0f)
-		{
-			return false;
-		}
-		switch (int.Parse(targetSubType))
-		{
-		case 2:
-			if (monsterData.monsterMG.tribe.Equals(targetValue))
-			{
-				return true;
-			}
-			break;
-		case 3:
-			if (monsterData.monsterMG.monsterGroupId.Equals(targetValue))
-			{
-				return true;
-			}
-			break;
-		case 4:
-			if (monsterData.monsterMG.growStep.Equals(targetValue))
-			{
-				return true;
-			}
-			break;
-		case 5:
-			if (monsterData.GetCommonSkill() != null && monsterData.GetCommonSkill().skillId.Equals(targetValue))
-			{
-				return true;
-			}
-			if (monsterData.GetLeaderSkill() != null && monsterData.GetLeaderSkill().skillId.Equals(targetValue))
-			{
-				return true;
-			}
-			break;
-		case 8:
-		{
-			GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] monsterIntegrationGroupM = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster.monsterIntegrationGroupM;
-			for (int i = 0; i < monsterIntegrationGroupM.Length; i++)
-			{
-				if (targetValue.Equals(monsterIntegrationGroupM[i].monsterIntegrationId) && monsterIntegrationGroupM[i].monsterId.Equals(monsterData.monsterM.monsterId))
-				{
-					return true;
-				}
-			}
-			break;
-		}
 		}
 		return false;
 	}
@@ -402,5 +429,25 @@ public class ExtraEffectUtil
 			}
 		}
 		return list.ToArray();
+	}
+
+	public enum EventPointBonusTargetSubType
+	{
+		Non,
+		MonsterResistance,
+		MonsterTribe,
+		MonsterGroup,
+		GrowStep,
+		SkillId,
+		ChipId,
+		NoContinue = 10,
+		ExtraWave,
+		MultiOwnerOld,
+		Luck,
+		Solo,
+		MultiOwner,
+		MultiGuest,
+		EnemyKill,
+		MonsterIntegrationGroup
 	}
 }

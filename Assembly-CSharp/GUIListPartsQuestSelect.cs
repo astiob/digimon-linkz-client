@@ -10,8 +10,8 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
 	[SerializeField]

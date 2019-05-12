@@ -22,16 +22,16 @@ public class CMD_Training_Menu : CMD
 	[SerializeField]
 	private GUISelectPanelViewPartsUD csSelectPanel;
 
-	[Header("非アクティブ ベース 色")]
 	[SerializeField]
+	[Header("非アクティブ ベース 色")]
 	private Color colBase;
 
 	[SerializeField]
 	[Header("非アクティブ タイトル 色")]
 	private Color colTitle;
 
-	[SerializeField]
 	[Header("非アクティブ 【】 色")]
+	[SerializeField]
 	private Color colLR;
 
 	[SerializeField]
@@ -42,8 +42,8 @@ public class CMD_Training_Menu : CMD
 
 	public static CMD_Training_Menu instance;
 
-	[Header("各パーツのデータ")]
 	[SerializeField]
+	[Header("各パーツのデータ")]
 	private List<GUIListPartsTrainingMenu.PartsData> TrainingMenuPartsDataL;
 
 	protected override void Awake()

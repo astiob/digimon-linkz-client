@@ -13,12 +13,12 @@ public class CMD_ModalPresentBox : CMD
 	[Header("タイトルラベル")]
 	private UILabel lbTitle;
 
-	[SerializeField]
 	[Header("残り受取件数")]
+	[SerializeField]
 	private UILabel lbSubtitle;
 
-	[SerializeField]
 	[Header("初期メッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -47,8 +47,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnHistory;
 
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partListParent;
 
 	[SerializeField]

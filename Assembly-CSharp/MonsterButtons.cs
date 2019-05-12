@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class MonsterButtons : MonoBehaviour
 {
-	[SerializeField]
 	[Header("モンスターボタン")]
+	[SerializeField]
 	private BattleMonsterButton[] monsterButton;
 
 	public void Hoge()

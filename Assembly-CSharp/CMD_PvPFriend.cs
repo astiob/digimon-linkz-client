@@ -10,15 +10,15 @@ using UnityEngine;
 
 public class CMD_PvPFriend : CMD
 {
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partFriendParent;
 
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[SerializeField]
 	[Header("デフォルトメッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]

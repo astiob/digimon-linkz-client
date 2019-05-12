@@ -9,8 +9,8 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 	[Header("素材アイコン")]
 	public UITexture texIcon;
 
-	[Header("選択アイコン")]
 	[SerializeField]
+	[Header("選択アイコン")]
 	public UISprite spSelectIcon;
 
 	[SerializeField]

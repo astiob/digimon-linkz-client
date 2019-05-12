@@ -115,8 +115,8 @@ public sealed class CMD_BaseSelect : CMD
 	[SerializeField]
 	private UILabel ngTX_SORT_DISP;
 
-	[Header("キャラクターのステータスPanel")]
 	[SerializeField]
+	[Header("キャラクターのステータスPanel")]
 	private StatusPanel statusPanel;
 
 	[SerializeField]

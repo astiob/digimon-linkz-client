@@ -104,7 +104,8 @@ namespace Colosseum.Matching
 				{
 					this.errorTitleKey = string.Empty;
 					this.errorInfoKey = string.Empty;
-					this.ClosePanel(true);
+					this.useCMDAnim = false;
+					GUIManager.CloseAllCommonDialog(null);
 				}, StringMaster.GetString(this.errorTitleKey), StringMaster.GetString(this.errorInfoKey), AlertManager.ButtonActionType.Close, false);
 				result = false;
 			}
@@ -114,7 +115,8 @@ namespace Colosseum.Matching
 				AlertManager.ShowAlertDialog(delegate(int noop)
 				{
 					this.alertErrorCode = string.Empty;
-					this.ClosePanel(true);
+					this.useCMDAnim = false;
+					GUIManager.CloseAllCommonDialog(null);
 				}, this.alertErrorCode);
 				result = false;
 			}
@@ -216,7 +218,7 @@ namespace Colosseum.Matching
 		public void SetErrorData(string titleKey, string infoKey)
 		{
 			this.errorTitleKey = titleKey;
-			this.errorInfoKey = infoKey;
+			this.errorInfoKey = "ColosseumGoTop";
 		}
 
 		public void SetAlertData(string errorCode)

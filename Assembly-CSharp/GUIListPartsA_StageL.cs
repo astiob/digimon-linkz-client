@@ -7,28 +7,28 @@ using UnityEngine;
 
 public class GUIListPartsA_StageL : GUIListPartBS
 {
-	[Header("デフォルトの進捗の画像")]
 	[SerializeField]
+	[Header("デフォルトの進捗の画像")]
 	private string normalProgress = "Common02_ProgressG";
 
-	[SerializeField]
 	[Header("クリア進捗の画像")]
+	[SerializeField]
 	private string clearProgress = "Common02_Progress";
 
 	[SerializeField]
 	[Header("進捗の四角")]
 	private List<GameObject> goPROGRESS_LIST;
 
-	[Header("NEWのGameObject")]
 	[SerializeField]
+	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
 	[SerializeField]
 	[Header("[の画像のGameObject")]
 	private GameObject goFRAME_L;
 
-	[Header("]の画像のGameObject")]
 	[SerializeField]
+	[Header("]の画像のGameObject")]
 	private GameObject goFRAME_R;
 
 	[SerializeField]
@@ -41,14 +41,14 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("選択時の背景色")]
 	private Color backgroundColor = Util.convertColor(0f, 100f, 0f, 200f);
 
-	[Header("非選択時の背景色")]
 	[SerializeField]
+	[Header("非選択時の背景色")]
 	private Color backgroundColorOff = Util.convertColor(0f, 200f, 0f, 70f);
 
 	private Color defalutBackground2Color;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite background;
 
 	private UILabel ngTXT_AREA;
@@ -58,8 +58,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("進捗マークのスプライト")]
 	private List<UISprite> progressSprites;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
 	[Header("クリアのマークの画像")]

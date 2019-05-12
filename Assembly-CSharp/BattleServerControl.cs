@@ -732,6 +732,13 @@ public class BattleServerControl : BattleFunctionBase
 				float num5 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect7, false);
 				float num6 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect8, false);
 				float num7 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect9, false);
+				float num8 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect10, false);
+				float num9 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect11, false);
+				float num10 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect12, false);
+				float num11 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect13, false);
+				float num12 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect14, false);
+				float num13 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect15, false);
+				float num14 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect16, false);
 				bool useDrainAffectEffect = ServerToBattleUtility.GetUseDrainAffectEffect(convertSkillDetailM[i].effectType);
 				PowerType powerType = ServerToBattleUtility.GetPowerType(convertSkillDetailM[i].effectType);
 				TechniqueType techniqueType = ServerToBattleUtility.GetTechniqueType(convertSkillDetailM[i].effectType);
@@ -749,7 +756,14 @@ public class BattleServerControl : BattleFunctionBase
 					num4,
 					num5,
 					num6,
-					num7
+					num7,
+					num8,
+					num9,
+					num10,
+					num11,
+					num12,
+					num13,
+					num14
 				}, useDrainAffectEffect, powerType, techniqueType, attribute, isMissThrough);
 				list.Add(item);
 			}

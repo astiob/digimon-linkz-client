@@ -3,6 +3,7 @@ using Neptune.OAuth;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TerminalIdentifier;
 using UnityEngine;
 
 public class WebAPI : MonoBehaviour
@@ -78,6 +79,7 @@ public class WebAPI : MonoBehaviour
 		parameters["assetVersion"] = AssetDataMng.assetVersion.ToString();
 		headers = NpOAuth.Instance.RequestHeaderDic(method, url, parameters);
 		headers["X-AppVer"] = WebAPIPlatformValue.GetAppVersion();
+		headers["x-puid"] = PlatformUserID.GetId();
 		form.AddField("activityList", json);
 		form.AddField("disabledVC", code);
 		form.AddField("appVersion", WebAPIPlatformValue.GetAppVersion());

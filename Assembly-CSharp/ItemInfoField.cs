@@ -9,16 +9,16 @@ public class ItemInfoField : MonoBehaviour
 	[SerializeField]
 	private GameObject normalBoxImage;
 
-	[Header("Box画像(レア)")]
 	[SerializeField]
+	[Header("Box画像(レア)")]
 	private GameObject rareBoxImage;
 
-	[SerializeField]
 	[Header("Box(ノーマル)")]
+	[SerializeField]
 	private GameObject normalBox;
 
-	[SerializeField]
 	[Header("Box(レア)")]
+	[SerializeField]
 	private GameObject rareBox;
 
 	[SerializeField]
@@ -29,8 +29,8 @@ public class ItemInfoField : MonoBehaviour
 	[SerializeField]
 	private UILabel remainingRoundText;
 
-	[SerializeField]
 	[Header("Box数テキスト(ノーマル)")]
+	[SerializeField]
 	private UILabel normalBoxNumberText;
 
 	[Header("Box数テキスト(レア)")]

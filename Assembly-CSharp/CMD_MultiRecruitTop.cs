@@ -20,12 +20,12 @@ public sealed class CMD_MultiRecruitTop : CMD
 	[SerializeField]
 	private UILabel friendLabel;
 
-	[Header("全国ラベル")]
 	[SerializeField]
+	[Header("全国ラベル")]
 	private UILabel nationwideLebel;
 
-	[Header("PASSラベル")]
 	[SerializeField]
+	[Header("PASSラベル")]
 	private UILabel passLabel;
 
 	[SerializeField]

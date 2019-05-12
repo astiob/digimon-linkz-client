@@ -13,8 +13,8 @@ public class PrizeEfcDirector : MonoBehaviour
 	[SerializeField]
 	private float valueA_Min;
 
-	[Header("フェードインのアルファ値")]
 	[SerializeField]
+	[Header("フェードインのアルファ値")]
 	private float valueA_Max = 1f;
 
 	[SerializeField]

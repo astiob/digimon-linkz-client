@@ -30,24 +30,24 @@ public sealed class CMD_ChipSphere : CMD
 	[Header("演出中に守るバリア")]
 	private GameObject barrierGO;
 
-	[Header("左下のベースを変更ボタンラベル")]
 	[SerializeField]
+	[Header("左下のベースを変更ボタンラベル")]
 	private UILabel changeBaseButtonLabel;
 
-	[Header("取外パッチの残り個数")]
 	[SerializeField]
+	[Header("取外パッチの残り個数")]
 	private UILabel ejectCountLabel;
 
-	[Header("拡張パッチの残り個数")]
 	[SerializeField]
+	[Header("拡張パッチの残り個数")]
 	private UILabel extraCountLabel;
 
 	[Header("右下の切り替わるメニューのオブジェクト")]
 	[SerializeField]
 	private ChipSphereStatus[] chipSphereStatus;
 
-	[SerializeField]
 	[Header("チップボタン達の親")]
+	[SerializeField]
 	private Transform sphereRoot;
 
 	[Header("左に出る3Dキャラの表示")]
@@ -58,8 +58,8 @@ public sealed class CMD_ChipSphere : CMD
 	[Header("ステータスのルート")]
 	private GameObject statusRoot;
 
-	[SerializeField]
 	[Header("装着アニメーションのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject partsUpperCutinGO;
 
 	[SerializeField]

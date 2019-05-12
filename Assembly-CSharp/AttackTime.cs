@@ -17,18 +17,18 @@ public sealed class AttackTime : MonoBehaviour
 	[SerializeField]
 	private int hurryUpAttackTime = 10;
 
-	[Header("攻撃のカウントダウンの急かす色")]
 	[SerializeField]
+	[Header("攻撃のカウントダウンの急かす色")]
 	private Color hurryUpColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	private int nowTime = 10;
 
-	[SerializeField]
 	[Header("'あと'ラベル")]
+	[SerializeField]
 	private UILabel afterLabel;
 
-	[Header("時間ラベル")]
 	[SerializeField]
+	[Header("時間ラベル")]
 	private UILabel timeLabel;
 
 	private IEnumerator cor;

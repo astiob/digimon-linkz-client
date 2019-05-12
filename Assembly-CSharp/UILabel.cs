@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Label")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Label")]
 public class UILabel : UIWidget
 {
 	public static Font defaultFont = null;
 
 	public UILabel.Crispness keepCrispWhenShrunk = UILabel.Crispness.OnDesktop;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Font mTrueTypeFont;
 
 	[SerializeField]
@@ -19,20 +19,20 @@ public class UILabel : UIWidget
 	private UIFont mFont;
 
 	[HideInInspector]
-	[Multiline(6)]
 	[SerializeField]
+	[Multiline(6)]
 	private string mText = string.Empty;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mFontSize = 16;
 
 	[HideInInspector]
 	[SerializeField]
 	private FontStyle mFontStyle;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private NGUIText.Alignment mAlignment;
 
 	[HideInInspector]
@@ -43,28 +43,28 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private int mMaxLineCount;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UILabel.Effect mEffectStyle;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Color mEffectColor = Color.black;
 
 	[SerializeField]
 	[HideInInspector]
 	private NGUIText.SymbolStyle mSymbols = NGUIText.SymbolStyle.Normal;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector2 mEffectDistance = Vector2.one;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel.Overflow mOverflow;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMaterial;
 
 	[HideInInspector]
@@ -79,48 +79,48 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingX;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mSpacingY;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mUseFloatSpacing;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mFloatSpacingX;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mFloatSpacingY;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mOverflowEllipsis;
 
 	[HideInInspector]
 	[SerializeField]
 	private bool mShrinkToFit;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mMaxLineWidth;
 
 	[HideInInspector]
 	[SerializeField]
 	private int mMaxLineHeight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mLineWidth;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mMultiline = true;
 
 	[NonSerialized]

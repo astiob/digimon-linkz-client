@@ -12,16 +12,16 @@ public class VersionUpDetail : MonoBehaviour
 	[SerializeField]
 	private UILabel lbTXT_VerUp;
 
-	[SerializeField]
 	[Header("バージョンアップ LEV BEFORE 表示")]
+	[SerializeField]
 	private UILabel lbTXT_LevBefore;
 
-	[SerializeField]
 	[Header("バージョンアップ LEV ⇒ 表示")]
+	[SerializeField]
 	private UILabel lbTXT_LevArrow;
 
-	[SerializeField]
 	[Header("バージョンアップ LEV AFTER 表示")]
+	[SerializeField]
 	private UILabel lbTXT_LevAfter;
 
 	[SerializeField]

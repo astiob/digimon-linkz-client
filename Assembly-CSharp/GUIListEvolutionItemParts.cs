@@ -12,20 +12,20 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[SerializeField]
 	private UITexture texSoul;
 
-	[Header("所持数のGameObject")]
 	[SerializeField]
+	[Header("所持数のGameObject")]
 	private GameObject goNum;
 
-	[SerializeField]
 	[Header("所持数のUIlabel")]
+	[SerializeField]
 	private UILabel lbNum;
 
 	[Header("所持数背景のGameObject")]
 	[SerializeField]
 	private GameObject goNumBG;
 
-	[Header("親のパネル")]
 	[SerializeField]
+	[Header("親のパネル")]
 	private GUISelectPanelEvolutionItemList parentPanel;
 
 	private string soulId;

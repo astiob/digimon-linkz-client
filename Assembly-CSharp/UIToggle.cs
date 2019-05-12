@@ -31,24 +31,24 @@ public class UIToggle : UIWidgetContainer
 
 	public UIToggle.Validate validator;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UISprite checkSprite;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Animation checkAnimation;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private string functionName = "OnActivate";
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool startsChecked;
 
 	private bool mIsActive = true;

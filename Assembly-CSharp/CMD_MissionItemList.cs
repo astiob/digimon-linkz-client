@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class CMD_MissionItemList : CMD
 {
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel lbTitle;
 
-	[Header("リストパーツ")]
 	[SerializeField]
+	[Header("リストパーツ")]
 	private GameObject partListParent;
 
 	[SerializeField]

@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UIWidget))]
+[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Localize")]
 public class UILocalize : MonoBehaviour
 {

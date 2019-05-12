@@ -4,16 +4,16 @@ using UnityEngine;
 
 public sealed class CMD_ModalGroup : CMD
 {
-	[Header("メインタイトルラベル")]
 	[SerializeField]
+	[Header("メインタイトルラベル")]
 	private UILabel titleLabel;
 
 	[SerializeField]
 	[Header("サブタイトルラベル")]
 	private UILabel subTitleLabel;
 
-	[Header("サブタイトルのGameObject")]
 	[SerializeField]
+	[Header("サブタイトルのGameObject")]
 	private GameObject subTitleGO;
 
 	[SerializeField]

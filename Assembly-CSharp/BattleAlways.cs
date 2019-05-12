@@ -13,12 +13,12 @@ public class BattleAlways : MonoBehaviour
 	[Header("Menuボタンのコライダー")]
 	protected Collider menuCollider;
 
-	[Header("Autoのコライダー")]
 	[SerializeField]
+	[Header("Autoのコライダー")]
 	protected Collider autoCollider;
 
-	[SerializeField]
 	[Header("Skipのコライダー")]
+	[SerializeField]
 	private Collider skipCollider;
 
 	public void SetColliderActive(bool isEnable)

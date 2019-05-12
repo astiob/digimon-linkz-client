@@ -15,8 +15,8 @@ public class ExperienceResult : ResultBase
 
 	private readonly Vector3 BIG_LABEL_SIZE = new Vector3(1.35f, 1.35f, 1f);
 
-	[SerializeField]
 	[Header("カウントアップするときのラベルの色")]
+	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -27,8 +27,8 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[SerializeField]
 	[Header("デジモンに吸収されるパーティクルを消す")]
+	[SerializeField]
 	private GameObject particleRemover;
 
 	[SerializeField]
@@ -51,16 +51,16 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private UILabel getFriendPointForLeader;
 
-	[Header("取得友情度【リーダー】の文言ラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】の文言ラベル")]
 	private UILabel getFriendPointForLeaderText;
 
 	[SerializeField]
 	[Header("取得友情度のラベル")]
 	private UILabel getFriendPoint;
 
-	[SerializeField]
 	[Header("取得友情度の文言ラベル")]
+	[SerializeField]
 	private UILabel getFriendPointText;
 
 	private ExperienceResult.SkipCount skipCount;

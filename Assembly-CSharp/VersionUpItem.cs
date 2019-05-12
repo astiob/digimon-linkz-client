@@ -16,8 +16,8 @@ public class VersionUpItem : GUICollider
 	[Header("素材選択")]
 	public UILabel lbSelect;
 
-	[Header("個数プレート")]
 	[SerializeField]
+	[Header("個数プレート")]
 	public UISprite spNumPlate;
 
 	[SerializeField]

@@ -4,8 +4,8 @@ using UnityEngine.TextReplacer;
 
 namespace UnityEngine
 {
-	[RequireComponent(typeof(UILabel))]
 	[DisallowMultipleComponent]
+	[RequireComponent(typeof(UILabel))]
 	public class UITextReplacer : MonoBehaviour
 	{
 		private UILabel _uiLabel;

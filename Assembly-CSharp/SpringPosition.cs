@@ -22,8 +22,8 @@ public class SpringPosition : MonoBehaviour
 	[SerializeField]
 	private GameObject eventReceiver;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	public string callWhenFinished;
 
 	private Transform mTrans;

@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class BattleUIInitialInduction : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("Rootのオブジェクト(Dialog)")]
 	[SerializeField]
+	[Header("Rootのオブジェクト(Dialog)")]
 	private GameObject rootObject;
 
-	[Header("ボタン")]
 	[SerializeField]
+	[Header("ボタン")]
 	private UIButton button;
 
 	[SerializeField]
@@ -29,16 +29,16 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private UITweener windowTween;
 
-	[SerializeField]
 	[Header("モニターTween")]
+	[SerializeField]
 	private UITweener monitorTween;
 
 	[Header("テキストTween")]
 	[SerializeField]
 	private UITweener textTween;
 
-	[Header("ヒナの名前")]
 	[SerializeField]
+	[Header("ヒナの名前")]
 	private UILabel hinaLocalize;
 
 	private void Awake()

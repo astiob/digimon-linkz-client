@@ -2,20 +2,20 @@
 using System.Diagnostics;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Widget")]
+[ExecuteInEditMode]
 public class UIWidget : UIRect
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected Color mColor = Color.white;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIWidget.Pivot mPivot = UIWidget.Pivot.Center;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mWidth = 100;
 
 	[HideInInspector]
@@ -675,8 +675,8 @@ public class UIWidget : UIRect
 		}
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int FullCompareFunc(UIWidget left, UIWidget right)
 	{
 		int num = UIPanel.CompareFunc(left.panel, right.panel);

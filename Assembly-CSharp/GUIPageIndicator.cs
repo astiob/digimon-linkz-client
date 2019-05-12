@@ -10,8 +10,8 @@ public class GUIPageIndicator : MonoBehaviour
 	[Header("●のゲームオブジェクトのNGUIスプライトの指定")]
 	private UISprite spParts;
 
-	[SerializeField]
 	[Header("オンの時のスプライト名")]
+	[SerializeField]
 	private string onSpriteName;
 
 	[Header("オフの時のスプライト名")]

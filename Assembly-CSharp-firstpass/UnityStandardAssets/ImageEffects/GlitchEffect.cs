@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/GlitchEffect")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/GlitchEffect")]
 	public class GlitchEffect : ImageEffectBase
 	{
 		public Texture2D displacementMap;

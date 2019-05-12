@@ -12,8 +12,8 @@ public class BillBoardController : MonoBehaviour
 	[SerializeField]
 	private BillBoardController.AXIS_TYPE type = BillBoardController.AXIS_TYPE.Y;
 
-	[SerializeField]
 	[Header("オフセット回転量 (0 90 -90 180 など)")]
+	[SerializeField]
 	private float offset;
 
 	[SerializeField]

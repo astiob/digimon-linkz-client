@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Unity2D Sprite")]
+[ExecuteInEditMode]
 public class UI2DSprite : UIBasicSprite
 {
 	[HideInInspector]
@@ -13,20 +13,20 @@ public class UI2DSprite : UIBasicSprite
 	[SerializeField]
 	private Material mMat;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Shader mShader;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
 	[HideInInspector]
 	[SerializeField]
 	private bool mFixedAspect;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mPixelSize = 1f;
 
 	public Sprite nextSprite;

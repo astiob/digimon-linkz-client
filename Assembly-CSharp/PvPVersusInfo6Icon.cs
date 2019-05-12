@@ -11,8 +11,8 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[SerializeField]
 	private TextMeshPro title;
 
-	[Header("ユーザー情報を表示するUIのルート")]
 	[SerializeField]
+	[Header("ユーザー情報を表示するUIのルート")]
 	private EffectAnimatorEventTime userDataUIRoot;
 
 	[SerializeField]

@@ -1115,8 +1115,8 @@ public static class NGUITools
 		}
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	private static void CallCreatePanel(Transform t)
 	{
 		UIWidget component = t.GetComponent<UIWidget>();
@@ -1173,15 +1173,15 @@ public static class NGUITools
 		return mb && mb.enabled && mb.gameObject.activeInHierarchy;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static bool GetActive(GameObject go)
 	{
 		return go && go.activeInHierarchy;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static void SetActiveSelf(GameObject go, bool state)
 	{
 		go.SetActive(state);

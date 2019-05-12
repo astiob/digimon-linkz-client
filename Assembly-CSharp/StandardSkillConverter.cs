@@ -111,7 +111,7 @@ public class StandardSkillConverter
 			result = StandardSkillConverter.ConvertToApConsumptionUpDown(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.CountGuard:
-			result = StandardSkillConverter.ConvertToCountGuard(subSkillDetails.ToArray());
+			result = StandardSkillConverter.ConvertToCaseDamageRateForCount(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.TurnBarrier:
 			result = StandardSkillConverter.ConvertToTurnBarrier(subSkillDetails.ToArray());
@@ -124,7 +124,7 @@ public class StandardSkillConverter
 			break;
 		case StandardSkillConverter.AffectEffect.DamageRateUp:
 		case StandardSkillConverter.AffectEffect.DamageRateDown:
-			result = StandardSkillConverter.ConvertToDamageRateUpDown(subSkillDetails.ToArray());
+			result = StandardSkillConverter.ConvertToCaseDamageRateForRound(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.RegeneratePercentage:
 			result = StandardSkillConverter.ConvertToRegeneratePercentage(subSkillDetails.ToArray());
@@ -220,7 +220,7 @@ public class StandardSkillConverter
 			effect3 = skillDetails[0].effect.ToInt32(),
 			effect4 = skillDetails[0].effect2.ToInt32(),
 			effect5 = skillDetails[0].effect3.ToInt32(),
-			effect6 = skillDetails[0].effect4.ToInt32()
+			effect16 = skillDetails[0].effect4.ToInt32()
 		};
 	}
 
@@ -592,24 +592,6 @@ public class StandardSkillConverter
 		};
 	}
 
-	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToCountGuard(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
-	{
-		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
-		{
-			skillId = skillDetails[0].skillId,
-			subId = skillDetails[0].subId,
-			effectType = skillDetails[0].effectType.ToInt32(),
-			hitRate = skillDetails[0].hitRate.ToInt32(),
-			target = skillDetails[0].target.ToInt32(),
-			targetType = skillDetails[0].targetType.ToInt32(),
-			attribute = skillDetails[0].attribute.ToInt32(),
-			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
-			effect1 = skillDetails[0].motionCount.ToInt32(),
-			effect2 = skillDetails[0].effect2.ToInt32(),
-			effect3 = skillDetails[0].effect.ToInt32()
-		};
-	}
-
 	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToTurnBarrier(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
 	{
 		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
@@ -691,27 +673,73 @@ public class StandardSkillConverter
 		};
 	}
 
-	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToDamageRateUpDown(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToCaseDamageRateForRound(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
 	{
-		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM skillDetailM = StandardSkillConverter.ConvertToCaseDamageRate(skillDetails);
+		skillDetailM.effect1 = skillDetails[0].continuousRound.ToInt32();
+		return skillDetailM;
+	}
+
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToCaseDamageRateForCount(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM skillDetailM = StandardSkillConverter.ConvertToCaseDamageRate(skillDetails);
+		skillDetailM.effect1 = skillDetails[0].motionCount.ToInt32();
+		return skillDetailM;
+	}
+
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToCaseDamageRate(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM skillDetailM = new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM();
+		skillDetailM.skillId = skillDetails[0].skillId;
+		skillDetailM.subId = skillDetails[0].subId;
+		skillDetailM.effectType = skillDetails[0].effectType.ToInt32();
+		skillDetailM.hitRate = skillDetails[0].hitRate.ToInt32();
+		skillDetailM.target = skillDetails[0].target.ToInt32();
+		skillDetailM.targetType = skillDetails[0].targetType.ToInt32();
+		skillDetailM.attribute = skillDetails[0].attribute.ToInt32();
+		skillDetailM.isMissTrough = skillDetails[0].isMissTrough.ToInt32();
+		skillDetailM.effect16 = skillDetails[0].subRate.ToInt32();
+		skillDetailM.effect1 = skillDetails[0].continuousRound.ToInt32();
+		skillDetailM.effect2 = skillDetails[0].effect2.ToInt32();
+		skillDetailM.effect3 = skillDetails[0].effect.ToInt32();
+		skillDetailM.effect10 = 10000 * skillDetails[0].effect3.ToInt32();
+		skillDetailM.effect11 = 10000 * skillDetails[0].effect4.ToInt32();
+		for (int i = 0; i < skillDetails.Length; i++)
 		{
-			skillId = skillDetails[0].skillId,
-			subId = skillDetails[0].subId,
-			effectType = skillDetails[0].effectType.ToInt32(),
-			hitRate = skillDetails[0].hitRate.ToInt32(),
-			target = skillDetails[0].target.ToInt32(),
-			targetType = skillDetails[0].targetType.ToInt32(),
-			attribute = skillDetails[0].attribute.ToInt32(),
-			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
-			effect1 = skillDetails[0].continuousRound.ToInt32(),
-			effect3 = skillDetails[1].effect.ToInt32(),
-			effect4 = skillDetails[2].effect.ToInt32(),
-			effect5 = skillDetails[3].effect.ToInt32(),
-			effect6 = skillDetails[4].effect.ToInt32(),
-			effect7 = skillDetails[5].effect.ToInt32(),
-			effect8 = skillDetails[6].effect.ToInt32(),
-			effect9 = skillDetails[7].effect.ToInt32()
-		};
+			if (skillDetails[i].effect5 == "1")
+			{
+				skillDetailM.effect3 = skillDetails[i].effect.ToInt32();
+			}
+			else if (skillDetails[i].effect5 == "2")
+			{
+				skillDetailM.effect4 = skillDetails[i].effect.ToInt32();
+			}
+			else if (skillDetails[i].effect5 == "3")
+			{
+				skillDetailM.effect5 = skillDetails[i].effect.ToInt32();
+			}
+			else if (skillDetails[i].effect5 == "4")
+			{
+				skillDetailM.effect6 = skillDetails[i].effect.ToInt32();
+			}
+			else if (skillDetails[i].effect5 == "5")
+			{
+				skillDetailM.effect7 = skillDetails[i].effect.ToInt32();
+			}
+			else if (skillDetails[i].effect5 == "6")
+			{
+				skillDetailM.effect8 = skillDetails[i].effect.ToInt32();
+			}
+			else if (skillDetails[i].effect5 == "7")
+			{
+				skillDetailM.effect9 = skillDetails[i].effect.ToInt32();
+			}
+			else
+			{
+				skillDetailM.effect3 = skillDetails[0].effect.ToInt32();
+			}
+		}
+		return skillDetailM;
 	}
 
 	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToRegeneratePercentage(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)

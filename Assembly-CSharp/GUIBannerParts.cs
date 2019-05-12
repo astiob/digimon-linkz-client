@@ -4,20 +4,20 @@ using UnityEngine;
 
 public sealed class GUIBannerParts : GUIListPartBS
 {
-	[Header("残り時間のラベル")]
 	[SerializeField]
+	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[Header("ガシャの背景色")]
 	[SerializeField]
+	[Header("ガシャの背景色")]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[Header("イベントの背景色")]
 	[SerializeField]
+	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
 	[Header("キャンペーンの背景色")]
@@ -28,8 +28,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private UISprite bgSprite;
 
-	[SerializeField]
 	[Header("外枠のスプライト")]
+	[SerializeField]
 	private UISprite frameSprite;
 
 	[SerializeField]
@@ -41,8 +41,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[Header("NEWのスプライト")]
 	private UISprite newSprite;
 
-	[Header("NEWをコントロールする")]
 	[SerializeField]
+	[Header("NEWをコントロールする")]
 	private bool doNewControl;
 
 	private static readonly int DAY_HOUR = 24;

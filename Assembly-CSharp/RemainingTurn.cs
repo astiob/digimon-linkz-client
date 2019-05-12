@@ -9,8 +9,8 @@ public sealed class RemainingTurn : MonoBehaviour
 	[Header("真ん中か右下かType")]
 	private RemainingTurn.Type myType;
 
-	[SerializeField]
 	[Header("あと(右下用)")]
+	[SerializeField]
 	private UILabel remainingLabel;
 
 	[Header("ターン(右下用/真ん中メッセージ)")]
@@ -25,16 +25,16 @@ public sealed class RemainingTurn : MonoBehaviour
 	[SerializeField]
 	private UILabel yourRemaingTurnLabel;
 
-	[SerializeField]
 	[Header("自分/仲間/敵メッセージ(右下用)")]
+	[SerializeField]
 	private UILabel[] messageLabels;
 
 	[SerializeField]
 	[Header("コンテンツ")]
 	private GameObject contains;
 
-	[Header("自分/仲間/敵コンテンツ(真ん中ターン表示)")]
 	[SerializeField]
+	[Header("自分/仲間/敵コンテンツ(真ん中ターン表示)")]
 	private Animator centerAnimator;
 
 	private void Awake()

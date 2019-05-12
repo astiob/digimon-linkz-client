@@ -7,13 +7,13 @@ public abstract class UIBasicSprite : UIWidget
 	[SerializeField]
 	protected UIBasicSprite.Type mType;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIBasicSprite.FillDirection mFillDirection = UIBasicSprite.FillDirection.Radial360;
 
-	[HideInInspector]
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
+	[HideInInspector]
 	protected float mFillAmount = 1f;
 
 	[HideInInspector]

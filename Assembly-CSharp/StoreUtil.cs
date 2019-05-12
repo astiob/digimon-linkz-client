@@ -299,6 +299,7 @@ public class StoreUtil : MonoBehaviour
 				param.countryCode = string.Empty;
 			}
 			param.priceNumber = this.GetPriceFromProductId(this._productId);
+			param.priceAmount = this.GetStorePriceFromProductId(this._productId).ToString();
 			param.signature = this.reqList[0];
 			param.signedData = this.reqList[1];
 		};

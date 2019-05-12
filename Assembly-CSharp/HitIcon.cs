@@ -23,8 +23,8 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
-	[SerializeField]
 	[Header("通常効果を表示するフォントテクスチャ")]
+	[SerializeField]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
 
 	[Header("ステージ効果を表示するフォントテクスチャ")]
@@ -35,20 +35,20 @@ public class HitIcon : MonoBehaviour
 
 	private Dictionary<string, string> dictionary;
 
-	[SerializeField]
 	[Header("ステージ効果上昇UI")]
+	[SerializeField]
 	private UISprite upSprite;
 
-	[Header("ステージ効果減少UI")]
 	[SerializeField]
+	[Header("ステージ効果減少UI")]
 	private UISprite downSprite;
 
 	[SerializeField]
 	[Header("国内用フォントデータ")]
 	private HitIcon.LanguageFont languageFont;
 
-	[Header("海外用フォントデータ")]
 	[SerializeField]
+	[Header("海外用フォントデータ")]
 	private HitIcon.LanguageFont usLanguageFont;
 
 	private void Awake()

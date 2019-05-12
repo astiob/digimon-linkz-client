@@ -1215,21 +1215,23 @@ public class CharacterStateControl
 		foreach (GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus2 in list)
 		{
 			eventPointBonus = eventPointBonus2;
-			switch (int.Parse(eventPointBonus.targetSubType))
+			ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType = (ExtraEffectUtil.EventPointBonusTargetSubType)int.Parse(eventPointBonus.targetSubType);
+			ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType2 = eventPointBonusTargetSubType;
+			switch (eventPointBonusTargetSubType2)
 			{
-			case 2:
+			case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterTribe:
 				if (this.characterDatas.tribe.Equals(eventPointBonus.targetValue))
 				{
 					return true;
 				}
 				break;
-			case 3:
+			case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterGroup:
 				if (this.characterStatus.groupId.Equals(eventPointBonus.targetValue))
 				{
 					return true;
 				}
 				break;
-			case 4:
+			case ExtraEffectUtil.EventPointBonusTargetSubType.GrowStep:
 			{
 				string text = MonsterGrowStepData.ToGrowStepString(this.characterDatas.growStep);
 				if (text.Equals(eventPointBonus.targetValue))
@@ -1238,7 +1240,7 @@ public class CharacterStateControl
 				}
 				break;
 			}
-			case 5:
+			case ExtraEffectUtil.EventPointBonusTargetSubType.SkillId:
 				if (this.skillStatus[2].skillId.Equals(eventPointBonus.targetValue))
 				{
 					return true;
@@ -1248,18 +1250,21 @@ public class CharacterStateControl
 					return true;
 				}
 				break;
-			case 6:
+			case ExtraEffectUtil.EventPointBonusTargetSubType.ChipId:
 				if (this.chipIds.Where((int item) => item == eventPointBonus.targetValue.ToInt32()).Any<int>())
 				{
 					return true;
 				}
 				break;
-			case 8:
-				foreach (string value in this.characterStatus.monsterIntegrationIds)
+			default:
+				if (eventPointBonusTargetSubType2 == ExtraEffectUtil.EventPointBonusTargetSubType.MonsterIntegrationGroup)
 				{
-					if (eventPointBonus.targetValue.Equals(value))
+					foreach (string value in this.characterStatus.monsterIntegrationIds)
 					{
-						return true;
+						if (eventPointBonus.targetValue.Equals(value))
+						{
+							return true;
+						}
 					}
 				}
 				break;

@@ -10,12 +10,12 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("NEWの画像")]
 	private GameObject goNEW;
 
-	[Header("ドロップの画像")]
 	[SerializeField]
+	[Header("ドロップの画像")]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
-	[SerializeField]
 	[Header("ステージ数用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAGE;
 
 	[SerializeField]
@@ -26,48 +26,48 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private UILabel ngTXT_STAMINA;
 
-	[SerializeField]
 	[Header("残回数 ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_TICKET_LEFT;
 
-	[Header("ノーコン ラベル")]
 	[SerializeField]
+	[Header("ノーコン ラベル")]
 	public UILabel ngTXT_NO_CONTINUE;
 
-	[Header("ソロとマルチができるステージ色")]
 	[SerializeField]
+	[Header("ソロとマルチができるステージ色")]
 	private Color colorNormalStage;
 
-	[SerializeField]
 	[Header("マルチ専用のステージ色")]
+	[SerializeField]
 	private Color colorMultiStage;
 
-	[SerializeField]
 	[Header("ソロ専用のステージ色")]
+	[SerializeField]
 	private Color colorSoloStage;
 
-	[Header("イベント用のステージ背景色")]
 	[SerializeField]
+	[Header("イベント用のステージ背景色")]
 	private Color colorEventStageBackground;
 
-	[Header("####ソロとマルチステージ名装飾色")]
 	[SerializeField]
+	[Header("####ソロとマルチステージ名装飾色")]
 	private Color colorSoloMultiStageNameOutline;
 
-	[Header("####マルチ専用名装飾色")]
 	[SerializeField]
+	[Header("####マルチ専用名装飾色")]
 	private Color colorMultiStageNameOutline;
 
-	[SerializeField]
 	[Header("####ソロ専用ステージ名装飾色")]
+	[SerializeField]
 	private Color colorSoloStageNameOutline;
 
 	[SerializeField]
 	[Header("イベント用のステージ名装飾色")]
 	private Color colorEventStageNameOutline;
 
-	[Header("背景色のパーツ（板）")]
 	[SerializeField]
+	[Header("背景色のパーツ（板）")]
 	private UISprite backgroundBord;
 
 	[Header("背景色のパーツ（ライン）")]
@@ -78,24 +78,24 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("残回数無しラベル")]
 	private UILabel ngTXT_PLAY_LIMIT;
 
-	[SerializeField]
 	[Header("回数限定用グレーアウトSPR素材")]
+	[SerializeField]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	[SerializeField]
+	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	private UISprite ngSPR_LOCK;
 
 	[Header("クリアのマークの画像")]
 	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

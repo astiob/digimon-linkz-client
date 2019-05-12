@@ -6,16 +6,16 @@ public sealed class CMD_InstallingPOP : CMD
 {
 	private Action _successCallback;
 
-	[Header("タイトルラベル")]
 	[SerializeField]
+	[Header("タイトルラベル")]
 	private UILabel titleLabel;
 
 	[SerializeField]
 	[Header("チップテクスチャ")]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("チップランクプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	[Header("はいラベル")]

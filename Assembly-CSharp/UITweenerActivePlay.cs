@@ -6,8 +6,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class UITweenerActivePlay : MonoBehaviour
 {
-	[Header("ONなら終了後、非表示にする")]
 	[SerializeField]
+	[Header("ONなら終了後、非表示にする")]
 	private bool autoDisable;
 
 	private List<UITweener> tween;

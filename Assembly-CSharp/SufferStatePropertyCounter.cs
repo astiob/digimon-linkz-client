@@ -15,11 +15,13 @@ public class SufferStatePropertyCounter
 		if (currentSufferState.FindSufferState(key))
 		{
 			SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
-			if (sufferStateProperty.isMultiHitThrough)
+			SufferStateProperty.Data[] isMultiHitThroughDatas = sufferStateProperty.GetIsMultiHitThroughDatas();
+			if (isMultiHitThroughDatas.Length > 0)
 			{
-				sufferStateProperty.AddCurrentKeepCount(-1);
+				sufferStateProperty.AddCurrentKeepCount(isMultiHitThroughDatas, -1);
 			}
-			else if (!this.countDictionary[key].Contains(value))
+			SufferStateProperty.Data[] notIsMultiHitThroughDatas = sufferStateProperty.GetNotIsMultiHitThroughDatas();
+			if (notIsMultiHitThroughDatas.Length > 0 && !this.countDictionary[key].Contains(value))
 			{
 				this.countDictionary[key].Add(value);
 			}
@@ -40,9 +42,10 @@ public class SufferStatePropertyCounter
 			if (currentSufferState.FindSufferState(key))
 			{
 				SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
-				if (!sufferStateProperty.isMultiHitThrough)
+				SufferStateProperty.Data[] notIsMultiHitThroughDatas = sufferStateProperty.GetNotIsMultiHitThroughDatas();
+				if (notIsMultiHitThroughDatas.Length > 0)
 				{
-					sufferStateProperty.AddCurrentKeepCount(-1);
+					sufferStateProperty.AddCurrentKeepCount(notIsMultiHitThroughDatas, -1);
 				}
 			}
 		}

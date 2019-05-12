@@ -12,16 +12,16 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
 	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択してないときの外枠色")]
+	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
 	[SerializeField]
@@ -32,20 +32,20 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[SerializeField]
 	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
-	[Header("外枠のスプライト")]
 	[SerializeField]
+	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
 	private GameWebAPI.RespDataGA_GetGachaInfo.Result data;

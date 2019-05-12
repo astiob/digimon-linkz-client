@@ -15,8 +15,8 @@ public sealed class CameraSwitcher : MonoBehaviour
 	[SerializeField]
 	private Camera subCamera;
 
-	[Header("カメラポジションルート")]
 	[SerializeField]
+	[Header("カメラポジションルート")]
 	private Transform[] cameraAnchorList;
 
 	private Transform target;

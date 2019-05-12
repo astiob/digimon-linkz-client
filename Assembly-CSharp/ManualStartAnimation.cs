@@ -1,19 +1,19 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("Digimon Effects/Tools/Manual Start Animation")]
 [RequireComponent(typeof(Animation))]
+[AddComponentMenu("Digimon Effects/Tools/Manual Start Animation")]
 public class ManualStartAnimation : MonoBehaviour
 {
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float _startAnimationTime;
 
 	[SerializeField]
 	private ManualStartAnimation.AnimateSign _animateSign;
 
-	[SerializeField]
 	[Range(0f, 10f)]
+	[SerializeField]
 	private float _speed = 1f;
 
 	private void Start()

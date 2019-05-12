@@ -6,20 +6,20 @@ using UnityEngine;
 
 public class PartsQuestPoint : MonoBehaviour
 {
-	[SerializeField]
 	[Header("ポイントのスプライト")]
+	[SerializeField]
 	private List<UISprite> spPointList;
 
-	[Header("ランキングのスプライト")]
 	[SerializeField]
+	[Header("ランキングのスプライト")]
 	private List<UISprite> spRankingList;
 
 	[Header("ランキングの位の文字 -> 圏外で消し")]
 	[SerializeField]
 	private UILabel lbTX_Ranking;
 
-	[Header("ランキング圏外")]
 	[SerializeField]
+	[Header("ランキング圏外")]
 	private UILabel lbTX_RankingOut;
 
 	public QuestData.WorldAreaData AreaData;

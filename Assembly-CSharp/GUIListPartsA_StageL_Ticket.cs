@@ -15,8 +15,8 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[Header("非選択時の背景色 (有償) ")]
 	private Color backgroundColorOff_Paid = Util.convertColor(180f, 0f, 0f, 230f);
 
-	[Header("非選択時の背景色 (無償・有効期限なし) ")]
 	[SerializeField]
+	[Header("非選択時の背景色 (無償・有効期限なし) ")]
 	private Color backgroundColorOff_NoLimit = Util.convertColor(0f, 0f, 180f, 230f);
 
 	[Header("非選択時の背景色 (無償・有効期限有り) ")]
@@ -27,16 +27,16 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[Header("サムネイル")]
 	private UITexture ngTICKET_THUMBNAIL;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite background;
 
 	[Header("チケット名ラベル")]
 	[SerializeField]
 	private UILabel ngTXT_TICKET_NAME;
 
-	[SerializeField]
 	[Header("チケット数ラベル")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_NUM;
 
 	[Header("チケット有効期限")]
@@ -47,8 +47,8 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[SerializeField]
 	private UILabel ngTXT_TICKET_UPDATE_TIME;
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

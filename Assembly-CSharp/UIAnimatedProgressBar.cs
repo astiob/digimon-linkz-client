@@ -16,8 +16,8 @@ public class UIAnimatedProgressBar : MonoBehaviour
 
 	private UIComponentSkinner _differenceSkinner;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float _value;
 
 	[SerializeField]

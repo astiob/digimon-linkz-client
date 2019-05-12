@@ -381,7 +381,7 @@ public class SkillStatus
 		}
 		if (!skillResults.onMissHit)
 		{
-			if (skillResults.onWeakHit == Strength.Invalid)
+			if (affectEffectProperty.powerType == PowerType.Percentage && skillResults.onWeakHit == Strength.Invalid)
 			{
 				skillResults.hitIconAffectEffect = AffectEffect.Invalid;
 				skillResults.onMissHit = false;
@@ -418,7 +418,7 @@ public class SkillStatus
 			}
 			else if (affectEffectProperty.type == AffectEffect.ReferenceTargetHpRate)
 			{
-				float reduceDamageRate = SkillStatus.GetReduceDamageRate(currentSufferState2);
+				float reduceDamageRate = SkillStatus.GetReduceDamageRate(affectEffectProperty, attackerCharacter, targetCharacter);
 				float attributeDamegeResult = SkillStatus.GetAttributeDamegeResult(skillResults.onWeakHit);
 				float num2 = 1f;
 				if (skillResults.onCriticalHit)
@@ -445,7 +445,7 @@ public class SkillStatus
 				{
 					num5 = UnityEngine.Random.Range(0.85f, 1f);
 				}
-				float reduceDamageRate2 = SkillStatus.GetReduceDamageRate(currentSufferState2);
+				float reduceDamageRate2 = SkillStatus.GetReduceDamageRate(affectEffectProperty, attackerCharacter, targetCharacter);
 				float num6 = 1f;
 				if (flag)
 				{
@@ -482,12 +482,12 @@ public class SkillStatus
 				SufferStateProperty sufferStateProperty6 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.DamageRateUp);
 				if (sufferStateProperty6.isActive)
 				{
-					num9 += sufferStateProperty6.GetTribeDamageRate(targetCharacter);
+					num9 += sufferStateProperty6.GetCaseDamageRate(affectEffectProperty, targetCharacter);
 				}
 				SufferStateProperty sufferStateProperty7 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.DamageRateDown);
 				if (sufferStateProperty7.isActive)
 				{
-					num10 += sufferStateProperty7.GetTribeDamageRate(targetCharacter);
+					num10 += sufferStateProperty7.GetCaseDamageRate(affectEffectProperty, targetCharacter);
 				}
 				num8 = Mathf.Max(0f, num8 + num9 - num10);
 				for (int j = 0; j < array.Length; j++)
@@ -629,11 +629,12 @@ public class SkillStatus
 			}
 			else if (affectEffectProperty.powerType == PowerType.Fixable)
 			{
-				float reduceDamageRate3 = SkillStatus.GetReduceDamageRate(currentSufferState2);
+				float reduceDamageRate3 = SkillStatus.GetReduceDamageRate(affectEffectProperty, attackerCharacter, targetCharacter);
 				for (int k = 0; k < array.Length; k++)
 				{
 					array[k] = (float)affectEffectProperty.damagePower * reduceDamageRate3;
 				}
+				skillResults.onWeakHit = Strength.None;
 			}
 		}
 		skillResults.originalAttackPower = Mathf.FloorToInt(array[0]);
@@ -679,7 +680,7 @@ public class SkillStatus
 		{
 			return skillResults;
 		}
-		if (skillResults.onWeakHit == Strength.Invalid)
+		if (affectEffectProperty.powerType == PowerType.Percentage && skillResults.onWeakHit == Strength.Invalid)
 		{
 			skillResults.hitIconAffectEffect = AffectEffect.Invalid;
 		}
@@ -701,15 +702,16 @@ public class SkillStatus
 		}
 		else
 		{
-			float reduceDamageRate = SkillStatus.GetReduceDamageRate(targetCharacter.currentSufferState);
-			float attributeDamegeResult = SkillStatus.GetAttributeDamegeResult(skillResults.onWeakHit);
+			float reduceDamageRate = SkillStatus.GetReduceDamageRate(affectEffectProperty, attackerCharacter, targetCharacter);
 			int num;
 			if (affectEffectProperty.powerType == PowerType.Fixable)
 			{
-				num = (int)((float)affectEffectProperty.damagePower * reduceDamageRate * attributeDamegeResult);
+				num = (int)((float)affectEffectProperty.damagePower * reduceDamageRate);
+				skillResults.onWeakHit = Strength.None;
 			}
 			else
 			{
+				float attributeDamegeResult = SkillStatus.GetAttributeDamegeResult(skillResults.onWeakHit);
 				num = (int)(affectEffectProperty.damagePercent * (float)targetCharacter.hp * reduceDamageRate * attributeDamegeResult);
 			}
 			if (skillResults.onWeakHit != Strength.Drain)
@@ -726,28 +728,15 @@ public class SkillStatus
 		return skillResults;
 	}
 
-	private static float GetReduceDamageRate(HaveSufferState targetSufferState)
+	private static float GetReduceDamageRate(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)
 	{
+		HaveSufferState currentSufferState = targetCharacter.currentSufferState;
 		float result = 1f;
-		if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.TurnBarrier))
+		if (affectEffectProperty.powerType == PowerType.Percentage && currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountGuard))
 		{
-			result = 0f;
-		}
-		else if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
-		{
-			result = 0f;
-		}
-		if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.TurnEvasion))
-		{
-			result = 0f;
-		}
-		else if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
-		{
-			result = 0f;
-		}
-		else if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.CountGuard))
-		{
-			result = 1f - targetSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.CountGuard).damagePercent;
+			SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.CountGuard);
+			float caseDamageRate = sufferStateProperty.GetCaseDamageRate(affectEffectProperty, attackerCharacter);
+			result = Mathf.Max(1f - caseDamageRate, 0f);
 		}
 		return result;
 	}
@@ -784,7 +773,7 @@ public class SkillStatus
 			if (affectEffectProperty != null)
 			{
 				Strength strength = Strength.None;
-				if (affectEffectProperty.ThisSkillIsAttack)
+				if (affectEffectProperty.ThisSkillIsAttack && affectEffectProperty.powerType == PowerType.Percentage)
 				{
 					strength = tolerance.GetAttributeStrength(affectEffectProperty.attribute);
 				}
@@ -825,7 +814,7 @@ public class SkillStatus
 		{
 			if (affectEffectProperty != null)
 			{
-				if (affectEffectProperty.ThisSkillIsAttack)
+				if (affectEffectProperty.ThisSkillIsAttack && affectEffectProperty.powerType == PowerType.Percentage)
 				{
 					Strength attributeStrength = tolerance.GetAttributeStrength(affectEffectProperty.attribute);
 					if (!list.Contains(attributeStrength))

@@ -17,15 +17,15 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbStageName;
 
-	[SerializeField]
 	[Header("リーダースキル名")]
+	[SerializeField]
 	private UILabel lbTXT_LEADERSKILL;
 
 	[SerializeField]
 	private UILabel lbTXT_LEADERSKILL_EXP;
 
-	[Header("ルームパスワード")]
 	[SerializeField]
+	[Header("ルームパスワード")]
 	private GameObject goPASSWORD_BOX;
 
 	[SerializeField]
@@ -42,8 +42,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[Header("チャットボタン")]
 	private GameObject goBTN_CHAT;
 
-	[SerializeField]
 	[Header("ステータス変更ボタン")]
+	[SerializeField]
 	private UILabel lbTXT_ST_EXCHANGE;
 
 	[Header("準備完了ボタン")]

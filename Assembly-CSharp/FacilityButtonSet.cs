@@ -26,11 +26,7 @@ public class FacilityButtonSet : MonoBehaviour
 
 	private BuildCostLabel buildCostLabel;
 
-	private BuildCostLabel buildMeatCostLabel;
-
 	private float buildCostLabelPosY;
-
-	private float buildMeatCostLabelPosY;
 
 	private void Start()
 	{
@@ -38,30 +34,17 @@ public class FacilityButtonSet : MonoBehaviour
 		localPosition.y -= GUIMain.VerticalSpaceSize;
 		base.transform.localPosition = localPosition;
 		GameObject gameObject = AssetDataMng.Instance().LoadObject("UICommon/Farm/BuildCostLabel", null, true) as GameObject;
-		GameObject gameObject2 = AssetDataMng.Instance().LoadObject("UICommon/Farm/BuildCostLabel", null, true) as GameObject;
 		if (null != gameObject)
 		{
 			this.buildCostLabelPosY = gameObject.transform.localPosition.y;
-			GameObject gameObject3 = UnityEngine.Object.Instantiate<GameObject>(gameObject);
-			this.buildCostLabel = gameObject3.GetComponent<BuildCostLabel>();
+			GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject);
+			this.buildCostLabel = gameObject2.GetComponent<BuildCostLabel>();
 			this.buildCostLabel.gameObject.SetActive(false);
-			Transform transform = gameObject3.transform;
+			Transform transform = gameObject2.transform;
 			transform.parent = base.transform;
 			transform.localScale = Vector3.one;
 			transform.localPosition = Vector3.zero;
 			transform.localRotation = Quaternion.identity;
-		}
-		if (null != gameObject2)
-		{
-			this.buildMeatCostLabelPosY = gameObject2.transform.localPosition.y;
-			GameObject gameObject4 = UnityEngine.Object.Instantiate<GameObject>(gameObject2);
-			this.buildMeatCostLabel = gameObject4.GetComponent<BuildCostLabel>();
-			this.buildMeatCostLabel.gameObject.SetActive(false);
-			Transform transform2 = gameObject4.transform;
-			transform2.parent = base.transform;
-			transform2.localScale = Vector3.one;
-			transform2.localPosition = Vector3.zero;
-			transform2.localRotation = Quaternion.identity;
 		}
 		GUICollider[] componentsInChildren = base.gameObject.GetComponentsInChildren<GUICollider>();
 		if (componentsInChildren != null)
@@ -92,10 +75,6 @@ public class FacilityButtonSet : MonoBehaviour
 				{
 					guicollider.onTouchEnded += this.OnPushedStockButton;
 					this.stockButton = guicollider;
-				}
-				if ("MeatShortCutButton" == guicollider.name)
-				{
-					guicollider.onTouchEnded += this.OnPushedMeatShortCutButton;
 				}
 			}
 		}
@@ -192,13 +171,9 @@ public class FacilityButtonSet : MonoBehaviour
 				this.shortCutButton.gameObject.SetActive(facilityUpgradeMaster.shorteningFlg == "1");
 			}
 		}
-		if (this.stockButton != null && this.stockButton.gameObject != null)
+		if (null != this.stockButton && null != this.stockButton.gameObject)
 		{
-			bool active2 = false;
-			if (facilityMaster.stockFlg == "1" && !flag)
-			{
-				active2 = true;
-			}
+			bool active2 = facilityMaster.stockFlg == "1" && !flag;
 			this.stockButton.gameObject.SetActive(active2);
 		}
 	}
@@ -219,12 +194,11 @@ public class FacilityButtonSet : MonoBehaviour
 	private void SetCostInfo()
 	{
 		DrawFacilityButton[] componentsInChildren = base.GetComponentsInChildren<DrawFacilityButton>();
-		if (componentsInChildren == null || null == this.buildCostLabel || null == this.buildMeatCostLabel)
+		if (componentsInChildren == null || null == this.buildCostLabel)
 		{
 			return;
 		}
 		this.buildCostLabel.gameObject.SetActive(false);
-		this.buildMeatCostLabel.gameObject.SetActive(false);
 		for (int i = 0; i < componentsInChildren.Length; i++)
 		{
 			Transform transform = componentsInChildren[i].transform;
@@ -233,8 +207,9 @@ public class FacilityButtonSet : MonoBehaviour
 				this.buildCostLabel.SetUpgradeCostDetail(this.farmObject.userFacilityID);
 				this.buildCostLabel.gameObject.SetActive(true);
 				this.SetBuildCostLabelPosition(transform.parent.gameObject);
+				break;
 			}
-			else if ("ShortCutButton" == transform.name)
+			if ("ShortCutButton" == transform.name)
 			{
 				if (this.farmObject.IsTutorialFacility())
 				{
@@ -247,13 +222,7 @@ public class FacilityButtonSet : MonoBehaviour
 				this.buildCostLabel.SetShortCutCostDetail(this.farmObject.userFacilityID);
 				this.buildCostLabel.gameObject.SetActive(true);
 				this.SetBuildCostLabelPosition(transform.parent.gameObject);
-			}
-			else if ("MeatShortCutButton" == transform.name)
-			{
-				int num = 2;
-				this.buildMeatCostLabel.SetMertShortCutCostDetail(ConstValue.MEAT_SHORTCUT_DEGISTONE_NUM, num.ToString());
-				this.buildMeatCostLabel.gameObject.SetActive(true);
-				this.MeatSetBuildCostLabelPosition(transform.parent.gameObject);
+				break;
 			}
 		}
 	}
@@ -264,22 +233,6 @@ public class FacilityButtonSet : MonoBehaviour
 		localPosition.x = relationButton.transform.localPosition.x;
 		localPosition.y = this.buildCostLabelPosY + relationButton.transform.localPosition.y;
 		this.buildCostLabel.transform.localPosition = localPosition;
-	}
-
-	private void MeatSetBuildCostLabelPosition(GameObject relationButton)
-	{
-		Vector3 localPosition = this.buildMeatCostLabel.transform.localPosition;
-		localPosition.x = 60f;
-		localPosition.y = this.buildMeatCostLabelPosY + relationButton.transform.localPosition.y;
-		GUICollider[] componentsInChildren = base.gameObject.GetComponentsInChildren<GUICollider>();
-		for (int i = 0; i < componentsInChildren.Length; i++)
-		{
-			if ("UpgradeButton" == componentsInChildren[i].name || "ShortCutButton" == componentsInChildren[i].name)
-			{
-				localPosition.x = relationButton.transform.localPosition.x;
-			}
-		}
-		this.buildMeatCostLabel.transform.localPosition = localPosition;
 	}
 
 	private void SetButtonAlign()
@@ -667,16 +620,6 @@ public class FacilityButtonSet : MonoBehaviour
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilityStockConfirmInfo"), facilityMaster.facilityName);
 		}
-	}
-
-	protected virtual void OnPushedMeatShortCutButton(Touch touch, Vector2 pos, bool touchOver)
-	{
-		FarmObject_MeatFarm component = this.farmObject.gameObject.GetComponent<FarmObject_MeatFarm>();
-		if (component == null)
-		{
-			return;
-		}
-		component.OnTapShortCutButton();
 	}
 
 	private void OnPushedStockYesButton(int selectButtonIndex)
