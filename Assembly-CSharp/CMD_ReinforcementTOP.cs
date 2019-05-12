@@ -39,8 +39,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private UILabel possessionClusterLabel;
 
-	[SerializeField]
 	[Header("消費クラスタ")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -49,8 +49,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private GUICollider clBTN_DECIDE;
 
-	[Header("決定ラベル")]
 	[SerializeField]
+	[Header("決定ラベル")]
 	private UILabelEx decideLabel;
 
 	[SerializeField]

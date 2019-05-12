@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class BattleRoundEndPvP : MonoBehaviour
 {
-	[Header("あと○ラウンド")]
 	[SerializeField]
+	[Header("あと○ラウンド")]
 	private UILabel remainingTime;
 
-	[Header("rootのオブジェクトラウンド")]
 	[SerializeField]
+	[Header("rootのオブジェクトラウンド")]
 	private GameObject rootObject;
 
 	public void ShowLeftRoundUI(int leftRound)

@@ -16,8 +16,8 @@ public sealed class MultiConnetionMessage : MonoBehaviour
 	[SerializeField]
 	private GameObject prepareStartGO;
 
-	[SerializeField]
 	[Header("コマンド入力中オブジェクト")]
+	[SerializeField]
 	private GameObject commandWaitingGO;
 
 	private string myWaitingCommand = string.Empty;

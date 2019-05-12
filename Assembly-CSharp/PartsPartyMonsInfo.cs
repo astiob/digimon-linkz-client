@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[Header("チップの処理")]
 	[SerializeField]
+	[Header("チップの処理")]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]

@@ -8,24 +8,24 @@ public class RoundStart : MonoBehaviour
 	[SerializeField]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("ApHpUp_Rootのスキナー")]
+	[SerializeField]
 	protected UIComponentSkinner apHpUpRootSkinner;
 
 	[Header("ラウンドのローカライズ")]
 	[SerializeField]
 	protected UILabel roundLocalize;
 
-	[SerializeField]
 	[Header("AP UPローカライズ(片方の時)")]
+	[SerializeField]
 	protected UILabel onlyApUpLocalize;
 
-	[Header("AP UPローカライズ(両方)")]
 	[SerializeField]
+	[Header("AP UPローカライズ(両方)")]
 	protected UILabel apUpLocalize;
 
-	[SerializeField]
 	[Header("HP回復ローカライズ")]
+	[SerializeField]
 	protected UILabel hpRecoverLocalize;
 
 	private void Awake()

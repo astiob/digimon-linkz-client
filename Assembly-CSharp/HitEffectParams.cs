@@ -6,8 +6,8 @@ using UnityEngine.Serialization;
 [DisallowMultipleComponent]
 public class HitEffectParams : EffectParams
 {
-	[SerializeField]
 	[FormerlySerializedAs("target")]
+	[SerializeField]
 	private CharacterTarget _target;
 
 	[SerializeField]

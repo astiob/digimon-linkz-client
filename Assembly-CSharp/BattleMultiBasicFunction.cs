@@ -550,6 +550,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 
 	public IEnumerator SendAdventureSceneData()
 	{
+		this.isAdventureSceneAllEnd = false;
 		string[] otherUsersIds = this.GetOtherUsersId().ToArray<string>();
 		if (otherUsersIds.Length > 0)
 		{
@@ -565,7 +566,10 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 					}
 				}
 			}
-			this.isAdventureSceneAllEnd = (otherUsersIds.Length == count);
+			if (!base.stateManager.battleAdventureSceneManager.isUpdate && count >= otherUsersIds.Length)
+			{
+				this.isAdventureSceneAllEnd = true;
+			}
 		}
 		else
 		{

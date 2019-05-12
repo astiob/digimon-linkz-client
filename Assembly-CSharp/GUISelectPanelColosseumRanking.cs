@@ -7,8 +7,8 @@ public class GUISelectPanelColosseumRanking : GUISelectPanelViewPartsUD
 {
 	public static List<GameWebAPI.RespDataCL_Ranking.RankingData> partsDataList;
 
-	[Header("コロシアム用パーツ")]
 	[SerializeField]
+	[Header("コロシアム用パーツ")]
 	private GameObject coSelectParts;
 
 	private float panelUpdateTime;

@@ -11,8 +11,8 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[Header("対人戦の名称を表示するスプライト")]
 	private TextMeshPro title;
 
-	[SerializeField]
 	[Header("ユーザー情報を表示するUIのルート")]
+	[SerializeField]
 	private EffectAnimatorEventTime userDataUIRoot;
 
 	[SerializeField]
@@ -23,8 +23,8 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[SerializeField]
 	private PvPVersusInfo6Icon.UserDataUI opponentDataUI;
 
-	[SerializeField]
 	[Header("背景のDepth値")]
+	[SerializeField]
 	private int backgroundDepth;
 
 	[SerializeField]

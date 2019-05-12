@@ -16,16 +16,16 @@ public class VersionUpDetail : MonoBehaviour
 	[Header("バージョンアップ LEV BEFORE 表示")]
 	private UILabel lbTXT_LevBefore;
 
-	[Header("バージョンアップ LEV ⇒ 表示")]
 	[SerializeField]
+	[Header("バージョンアップ LEV ⇒ 表示")]
 	private UILabel lbTXT_LevArrow;
 
-	[SerializeField]
 	[Header("バージョンアップ LEV AFTER 表示")]
+	[SerializeField]
 	private UILabel lbTXT_LevAfter;
 
-	[SerializeField]
 	[Header("バージョンアップ スキル追加文言")]
+	[SerializeField]
 	private UILabel lbTXT_SkillUp;
 
 	private GUIMonsterIcon csMonsterIcon;

@@ -10,8 +10,8 @@ public sealed class TicketGashaController : CutsceneBase
 	[Header("カードアニメフレーム間隔")]
 	private int cardAnimIntervalFrame;
 
-	[SerializeField]
 	[Header("メインカメラ")]
+	[SerializeField]
 	private Camera mainCam;
 
 	[SerializeField]

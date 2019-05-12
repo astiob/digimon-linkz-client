@@ -6,12 +6,12 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(UISprite))]
 public class UIAtlasSkinner : UISpriteSkinnerBase
 {
-	[SerializeField]
 	[FormerlySerializedAs("atlas")]
+	[SerializeField]
 	private List<UIAtlas> _atlas = new List<UIAtlas>();
 
-	[FormerlySerializedAs("spriteName")]
 	[SerializeField]
+	[FormerlySerializedAs("spriteName")]
 	private List<string> _spriteName = new List<string>();
 
 	public List<UIAtlas> atlas

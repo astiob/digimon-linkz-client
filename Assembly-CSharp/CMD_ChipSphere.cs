@@ -59,20 +59,20 @@ public sealed class CMD_ChipSphere : CMD
 	[Header("ステータスのルート")]
 	private GameObject statusRoot;
 
-	[Header("装着アニメーションのゲームオブジェクト")]
 	[SerializeField]
+	[Header("装着アニメーションのゲームオブジェクト")]
 	private GameObject partsUpperCutinGO;
 
-	[Header("装着アニメーションのテクスチャ")]
 	[SerializeField]
+	[Header("装着アニメーションのテクスチャ")]
 	private UITexture[] partsUpperCutinTextures;
 
 	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
 	[SerializeField]
 	private GameObject ejectItemCutinGO;
 
-	[Header("拡張/チップ取外アニメーションのテクスチャ")]
 	[SerializeField]
+	[Header("拡張/チップ取外アニメーションのテクスチャ")]
 	private UITexture[] ejectItemCutinTextures;
 
 	private CharacterCameraView characterCameraView;
@@ -123,8 +123,8 @@ public sealed class CMD_ChipSphere : CMD
 
 	private Action fusionSuccessCallback;
 
-	[Header("ライン達")]
 	[SerializeField]
+	[Header("ライン達")]
 	private ChipSphereLines chipSphereLines;
 
 	public static MonsterData DataChg { get; set; }

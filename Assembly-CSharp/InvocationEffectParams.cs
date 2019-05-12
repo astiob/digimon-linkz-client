@@ -13,16 +13,16 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private int _motionIndex;
 
-	[FormerlySerializedAs("cameraMotionId")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraMotionId")]
 	private string _cameraMotionId;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStage")]
+	[SerializeField]
 	private bool _hideStage;
 
-	[FormerlySerializedAs("hideStageBackgroundColor")]
 	[SerializeField]
+	[FormerlySerializedAs("hideStageBackgroundColor")]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]

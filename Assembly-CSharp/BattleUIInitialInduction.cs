@@ -13,16 +13,16 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private GameObject rootObject;
 
-	[SerializeField]
 	[Header("ボタン")]
+	[SerializeField]
 	private UIButton button;
 
-	[Header("テキスト")]
 	[SerializeField]
+	[Header("テキスト")]
 	private UILabel text;
 
-	[SerializeField]
 	[Header("モニター")]
+	[SerializeField]
 	private UIComponentSkinner monitorSkinner;
 
 	[Header("ウィンドウTween")]
@@ -33,12 +33,12 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private UITweener monitorTween;
 
-	[SerializeField]
 	[Header("テキストTween")]
+	[SerializeField]
 	private UITweener textTween;
 
-	[SerializeField]
 	[Header("ヒナの名前")]
+	[SerializeField]
 	private UILabel hinaLocalize;
 
 	private void Awake()

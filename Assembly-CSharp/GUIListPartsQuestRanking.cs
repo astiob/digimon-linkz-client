@@ -13,20 +13,20 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
-	[SerializeField]
 	[Header("ユーザーネーム")]
+	[SerializeField]
 	private UILabel lbTX_UserName;
 
-	[SerializeField]
 	[Header("称号アイコン")]
+	[SerializeField]
 	private GameObject goTITLE_ICON;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
-	[SerializeField]
 	[Header("Nextポイント")]
+	[SerializeField]
 	private UILabel lbTX_NextPoint;
 
 	[SerializeField]

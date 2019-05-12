@@ -89,15 +89,15 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance1;
 
-	[SerializeField]
 	[Header("継承技2")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance2;
 
 	[SerializeField]
 	private UISprite arousalIcon;
 
-	[Header("各才能メダルの表示切り替え")]
 	[SerializeField]
+	[Header("各才能メダルの表示切り替え")]
 	private MonsterMedalList MonsterMedalList;
 
 	[SerializeField]
@@ -108,32 +108,32 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("HPローカライズ")]
 	private UILabel hpLocalize;
 
-	[SerializeField]
 	[Header("友情度ローカライズ")]
+	[SerializeField]
 	private UILabel friendLocalize;
 
 	[SerializeField]
 	[Header("ATKローカライズ")]
 	private UILabel atkLocalize;
 
-	[Header("DEFローカライズ")]
 	[SerializeField]
+	[Header("DEFローカライズ")]
 	private UILabel defLocalize;
 
 	[SerializeField]
 	[Header("SATKローカライズ")]
 	private UILabel satkLocalize;
 
-	[SerializeField]
 	[Header("SDEFローカライズ")]
+	[SerializeField]
 	private UILabel sdefLocalize;
 
-	[Header("SPDローカライズ")]
 	[SerializeField]
+	[Header("SPDローカライズ")]
 	private UILabel spdLocalize;
 
-	[SerializeField]
 	[Header("Luckローカライズ")]
+	[SerializeField]
 	private UILabel luckLocalize;
 
 	[SerializeField]

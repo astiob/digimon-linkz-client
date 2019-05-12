@@ -740,8 +740,8 @@ public sealed class CMD_Succession : CMD
 	[Serializable]
 	private class SkillTab
 	{
-		[Header("スプライト")]
 		[SerializeField]
+		[Header("スプライト")]
 		private UISprite sprite;
 
 		[SerializeField]

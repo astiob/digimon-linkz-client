@@ -60,15 +60,21 @@ public class BattleAdventureSceneManager
 		{
 			yield break;
 		}
+		bool isShowLoading = false;
 		for (;;)
 		{
-			float time = 10f;
+			float time = 3f;
 			do
 			{
 				time -= Time.deltaTime;
 				yield return null;
 			}
 			while (time > 0f);
+			if (!this.isUpdate && !isShowLoading)
+			{
+				isShowLoading = true;
+				battleStateManager.uiControlMulti.ShowLoading(false);
+			}
 			if (battleStateManager.multiBasicFunction.IsOwner)
 			{
 				IEnumerator sendAdventureSceneData = battleStateManager.multiBasicFunction.SendAdventureSceneData();
@@ -100,6 +106,7 @@ public class BattleAdventureSceneManager
 				}
 			}
 		}
+		battleStateManager.uiControlMulti.HideLoading();
 		yield break;
 	}
 

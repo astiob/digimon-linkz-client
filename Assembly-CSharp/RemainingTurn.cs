@@ -5,12 +5,12 @@ using UnityEngine;
 
 public sealed class RemainingTurn : MonoBehaviour
 {
-	[Header("真ん中か右下かType")]
 	[SerializeField]
+	[Header("真ん中か右下かType")]
 	private RemainingTurn.Type myType;
 
-	[SerializeField]
 	[Header("あと(右下用)")]
+	[SerializeField]
 	private UILabel remainingLabel;
 
 	[Header("ターン(右下用/真ん中メッセージ)")]
@@ -21,8 +21,8 @@ public sealed class RemainingTurn : MonoBehaviour
 	[SerializeField]
 	private UILabel yourTurnLabel;
 
-	[Header("あなたのターンまで残り(真ん中メッセージ)")]
 	[SerializeField]
+	[Header("あなたのターンまで残り(真ん中メッセージ)")]
 	private UILabel yourRemaingTurnLabel;
 
 	[SerializeField]

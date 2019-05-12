@@ -20,8 +20,8 @@ public class CameraParams : MonoBehaviour
 	[FormerlySerializedAs("rootPosition")]
 	private CameraParams.RootPosition _rootPosition;
 
-	[SerializeField]
 	[FormerlySerializedAs("useAnimation")]
+	[SerializeField]
 	private bool _useAnimation = true;
 
 	[SerializeField]
@@ -33,12 +33,12 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private float _fieldOfView = 60f;
 
-	[FormerlySerializedAs("cameraAnimation")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraAnimation")]
 	private Animation _cameraAnimation;
 
-	[SerializeField]
 	[FormerlySerializedAs("animationEndStop")]
+	[SerializeField]
 	private bool _animationEndStop = true;
 
 	[FormerlySerializedAs("endTime")]
@@ -49,12 +49,12 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private Transform _cameraTarget;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraLookTarget")]
+	[SerializeField]
 	private Transform _cameraLookTarget;
 
-	[SerializeField]
 	[FormerlySerializedAs("onPossibleInverse")]
+	[SerializeField]
 	private bool _onPossibleInverse;
 
 	[SerializeField]

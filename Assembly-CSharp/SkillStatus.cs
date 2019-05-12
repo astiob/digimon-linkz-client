@@ -13,8 +13,8 @@ public class SkillStatus
 	[SerializeField]
 	private string _name = string.Empty;
 
-	[SerializeField]
 	[Multiline(2)]
+	[SerializeField]
 	private string _description = string.Empty;
 
 	[SerializeField]

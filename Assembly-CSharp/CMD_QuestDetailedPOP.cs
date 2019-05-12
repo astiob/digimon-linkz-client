@@ -19,8 +19,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
-	[Header("ドロップするアイテムリスト")]
 	[SerializeField]
+	[Header("ドロップするアイテムリスト")]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
 	[SerializeField]
@@ -33,39 +33,39 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
-	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	[SerializeField]
+	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	private GameObject goContentsROOT;
 
 	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	[SerializeField]
 	private GameObject goPointContentsROOT;
 
-	[Header("詳細説明 (ヒナの吹き出し)")]
 	[SerializeField]
+	[Header("詳細説明 (ヒナの吹き出し)")]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[Header("ポイント・タイトルのリスト)")]
 	[SerializeField]
+	[Header("ポイント・タイトルのリスト)")]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
 	private GameObject changeBonusButton;
 
-	[SerializeField]
 	[Header("取得できるEXPのタイトル")]
+	[SerializeField]
 	private UILabel getEXPTitleLabel;
 
 	[Header("取得できるEXP")]
 	[SerializeField]
 	private UILabel getEXPLabel;
 
-	[SerializeField]
 	[Header("取得できるクラスタタイトル")]
+	[SerializeField]
 	private UILabel getClusterTitleLabel;
 
-	[Header("取得できるクラスタ数")]
 	[SerializeField]
+	[Header("取得できるクラスタ数")]
 	private UILabel getClusterLabel;
 
 	[Header("消費するスタミナタイトル")]
@@ -82,15 +82,15 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private UISprite spBattleBtn;
 
-	[SerializeField]
 	[Header("マルチバトルボタン")]
+	[SerializeField]
 	private GameObject goMultiBattleBtn;
 
 	[SerializeField]
 	private RewardIconRoot rewardIconRoot;
 
-	[Header("初回報酬取得済みカラー")]
 	[SerializeField]
+	[Header("初回報酬取得済みカラー")]
 	private Color clearColor = Color.gray;
 
 	private QuestData.WorldDungeonData d_data;

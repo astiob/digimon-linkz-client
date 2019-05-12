@@ -16,24 +16,24 @@ public sealed class CMD_PvPBattleResult : CMD
 	[Header("Winのロゴ")]
 	private GameObject winLogo;
 
-	[Header("Loseのロゴ")]
 	[SerializeField]
+	[Header("Loseのロゴ")]
 	private GameObject loseLogo;
 
-	[Header("スキップ用Winのロゴ")]
 	[SerializeField]
+	[Header("スキップ用Winのロゴ")]
 	private GameObject winLogoForSkip;
 
-	[Header("獲得クラスタ表示ルート")]
 	[SerializeField]
+	[Header("獲得クラスタ表示ルート")]
 	private GameObject acquisitionRoot;
 
 	[Header("DP表示ルート")]
 	[SerializeField]
 	private GameObject dpRoot;
 
-	[Header("ランク表示用スプライト")]
 	[SerializeField]
+	[Header("ランク表示用スプライト")]
 	private UISprite rankSprite;
 
 	[SerializeField]
@@ -52,12 +52,12 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private UILabel totalWinNum;
 
-	[SerializeField]
 	[Header("次のランクアップまでの勝利数ラベル")]
+	[SerializeField]
 	private UILabel nextRankupWinNum;
 
-	[SerializeField]
 	[Header("ランクアップ用オブジェクト")]
+	[SerializeField]
 	private GameObject gaugeUp;
 
 	[Header("ランクダウン用オブジェクト")]
@@ -68,12 +68,12 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject rankUpEffect;
 
-	[Header("ランクダウン用エフェクト")]
 	[SerializeField]
+	[Header("ランクダウン用エフェクト")]
 	private GameObject rankDownEffect;
 
-	[Header("TAP NEXTのオブジェクト")]
 	[SerializeField]
+	[Header("TAP NEXTのオブジェクト")]
 	private GameObject tapNext;
 
 	[SerializeField]

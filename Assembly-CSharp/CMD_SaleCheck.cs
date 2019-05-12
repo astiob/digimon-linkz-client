@@ -34,8 +34,8 @@ public sealed class CMD_SaleCheck : CMD
 	[SerializeField]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)

@@ -15,6 +15,14 @@ public class CharacterStateControlChip
 
 	private BattleInvariant criticalTheTargetChip;
 
+	private CharacterStateControlChip()
+	{
+		this.hittingTheTargetChip = new BattleInvariant();
+		this.criticalTheTargetChip = new BattleInvariant();
+		this.stagingChipIdList = new Dictionary<int, int>();
+		this.potencyChipIdList = new Dictionary<int, int>();
+	}
+
 	public CharacterStateControlChip(CharacterStateControl characterStateControl)
 	{
 		this.characterStateControl = characterStateControl;
@@ -81,6 +89,11 @@ public class CharacterStateControlChip
 
 	public CharacterStateControlChip.GutsData gutsData { get; private set; }
 
+	public static CharacterStateControlChip GetNullObect()
+	{
+		return new CharacterStateControlChip();
+	}
+
 	public void SetCharacterState(CharacterStateControlStore savedCSC)
 	{
 		this.SetChipEffectCount(savedCSC.chipEffectCount);
@@ -94,7 +107,11 @@ public class CharacterStateControlChip
 				{
 					chipEffectDataToId
 				};
-				this.AddChipParam(true, chipEffects, true, false);
+				EffectStatusBase.EffectTriggerType effectTriggerType = (EffectStatusBase.EffectTriggerType)chipEffectDataToId.effectTrigger.ToInt32();
+				if (effectTriggerType != EffectStatusBase.EffectTriggerType.Usually && effectTriggerType != EffectStatusBase.EffectTriggerType.Area)
+				{
+					this.AddChipParam(true, chipEffects, true, false);
+				}
 			}
 		}
 	}
@@ -129,6 +146,10 @@ public class CharacterStateControlChip
 				{
 					this.chipEffectCount[key] = value;
 				}
+				else
+				{
+					this.chipEffectCount.Add(key, value);
+				}
 			}
 		}
 	}
@@ -146,6 +167,10 @@ public class CharacterStateControlChip
 				if (this.potencyChipIdList.ContainsKey(key))
 				{
 					this.potencyChipIdList[key] = value;
+				}
+				else
+				{
+					this.potencyChipIdList.Add(key, value);
 				}
 			}
 		}

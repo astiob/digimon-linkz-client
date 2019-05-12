@@ -9,7 +9,6 @@ public class BattleStateMultiTimeOver : BattleStateController
 
 	protected override void AwakeThisState()
 	{
-		base.AddState(new SubStateInitialIntroducionFunction(null));
 	}
 
 	protected override void EnabledThisState()
@@ -50,6 +49,11 @@ public class BattleStateMultiTimeOver : BattleStateController
 		{
 			yield return null;
 		}
+		IEnumerator wait = base.stateManager.multiFunction.SendTimeOut();
+		while (wait.MoveNext())
+		{
+			yield return null;
+		}
 		yield break;
 	}
 
@@ -78,11 +82,6 @@ public class BattleStateMultiTimeOver : BattleStateController
 		base.stateManager.cameraControl.PlayCameraMotionAction("0002_command", base.battleStateData.stageSpawnPoint, false);
 		SoundPlayer.PlayBattleFailBGM();
 		while (base.stateManager.cameraControl.IsPlaying("0002_command"))
-		{
-			yield return null;
-		}
-		IEnumerator wait = base.stateManager.multiFunction.SendTimeOut();
-		while (wait.MoveNext())
 		{
 			yield return null;
 		}

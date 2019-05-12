@@ -20,20 +20,20 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private GameObject winLogoForSkip;
 
-	[SerializeField]
 	[Header("エリア名とステージ名が入ってるGameObject")]
+	[SerializeField]
 	private GameObject titleGO;
 
-	[SerializeField]
 	[Header("エリア名")]
+	[SerializeField]
 	private UILabel areaName;
 
 	[Header("ステージ名")]
 	[SerializeField]
 	private UILabel stageName;
 
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private GameObject[] lines;
 
 	[Header("クリッピングテクスチャ")]

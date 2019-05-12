@@ -7,16 +7,16 @@ using UnityEngine.Serialization;
 [Serializable]
 public class CharacterAnimationClip
 {
-	[FormerlySerializedAs("idle")]
 	[SerializeField]
+	[FormerlySerializedAs("idle")]
 	private AnimationClip _idle;
 
 	[FormerlySerializedAs("hit")]
 	[SerializeField]
 	private AnimationClip _hit;
 
-	[SerializeField]
 	[FormerlySerializedAs("guard")]
+	[SerializeField]
 	private AnimationClip _guard;
 
 	[SerializeField]

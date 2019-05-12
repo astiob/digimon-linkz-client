@@ -19,12 +19,12 @@ public class BattleUIInitialize : MonoBehaviour
 	[SerializeField]
 	private UIGaugeManager loadingGauge;
 
-	[Header("ローディングのパーセンテージ")]
 	[SerializeField]
+	[Header("ローディングのパーセンテージ")]
 	private UITextReplacer loadingText;
 
-	[SerializeField]
 	[Header("ローディングのメッセージのローカライズ")]
+	[SerializeField]
 	private UITextReplacer loadingMessageText;
 
 	private int currentLoadingLevel = 1;

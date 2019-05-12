@@ -16,32 +16,32 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private UISprite rareSprite;
 
-	[Header("アイコンのlookテクスチャ")]
 	[SerializeField]
+	[Header("アイコンのlookテクスチャ")]
 	private UITexture chipLookTexture;
 
-	[Header("アイコンのテクスチャ")]
 	[SerializeField]
+	[Header("アイコンのテクスチャ")]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("アイコンの個数/名前/進化段階名")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[Header("右下のメッセージ")]
 	[SerializeField]
+	[Header("右下のメッセージ")]
 	private UILabel messageLabel;
 
-	[Header("ボタンのラベル")]
 	[SerializeField]
+	[Header("ボタンのラベル")]
 	private UILabel buttonLabel;
 
-	[Header("強化ボタンのラベル")]
 	[SerializeField]
+	[Header("強化ボタンのラベル")]
 	private UILabel reinforcementButtonLabel;
 
-	[SerializeField]
 	[Header("ボタンのスプライト")]
+	[SerializeField]
 	private UISprite buttonSprite;
 
 	[Header("強化ボタンのスプライト")]
@@ -52,8 +52,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private BoxCollider buttonCollider;
 
-	[SerializeField]
 	[Header("強化ボタンのコライダー")]
+	[SerializeField]
 	private BoxCollider reinforcementButtonCollider;
 
 	private Color defaultButtonLabelEffectColor;

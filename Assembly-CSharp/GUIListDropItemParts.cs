@@ -25,12 +25,12 @@ public class GUIListDropItemParts : GUIListPartBS
 	[SerializeField]
 	private UISprite boxIcons;
 
-	[Header("ドロップアイテム")]
 	[SerializeField]
+	[Header("ドロップアイテム")]
 	private PresentBoxItem dropItemItems;
 
-	[SerializeField]
 	[Header("運の文字アイコン")]
+	[SerializeField]
 	private UILabel luckIcons;
 
 	[SerializeField]

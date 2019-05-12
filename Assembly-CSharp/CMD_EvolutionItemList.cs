@@ -13,8 +13,8 @@ public sealed class CMD_EvolutionItemList : CMD
 	[Header("プラグインリストの親")]
 	private GameObject pluginPartsParent;
 
-	[Header("ソウルリストの親")]
 	[SerializeField]
+	[Header("ソウルリストの親")]
 	private GameObject soulPartsParent;
 
 	[Header("バージョンアップの親")]

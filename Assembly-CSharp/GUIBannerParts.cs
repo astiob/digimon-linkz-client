@@ -4,24 +4,24 @@ using UnityEngine;
 
 public sealed class GUIBannerParts : GUIListPartBS
 {
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("ガシャの背景色")]
+	[SerializeField]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("イベントの背景色")]
+	[SerializeField]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("キャンペーンの背景色")]
+	[SerializeField]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
 	[SerializeField]

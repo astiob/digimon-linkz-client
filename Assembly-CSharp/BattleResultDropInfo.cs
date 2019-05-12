@@ -15,8 +15,8 @@ public sealed class BattleResultDropInfo : MonoBehaviour
 	[SerializeField]
 	private PresentBoxItem[] dropItemItems;
 
-	[SerializeField]
 	[Header("運の文字アイコン")]
+	[SerializeField]
 	private UISprite[] luckIcons;
 
 	[Header("マルチ運プレイヤーアイコン")]

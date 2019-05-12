@@ -135,7 +135,7 @@ public class CharacterStateControl
 
 	public List<SufferStateProperty> hitSufferList = new List<SufferStateProperty>();
 
-	private CharacterStateControlChip chip;
+	private CharacterStateControlChip chip = CharacterStateControlChip.GetNullObect();
 
 	public bool isMultiAreaRandomDamageSkill;
 

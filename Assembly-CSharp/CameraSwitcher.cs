@@ -11,8 +11,8 @@ public sealed class CameraSwitcher : MonoBehaviour
 	[SerializeField]
 	private Camera mainCamera;
 
-	[Header("サブカメラ")]
 	[SerializeField]
+	[Header("サブカメラ")]
 	private Camera subCamera;
 
 	[SerializeField]

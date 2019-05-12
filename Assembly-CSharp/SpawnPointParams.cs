@@ -5,12 +5,12 @@ using UnityEngine.Serialization;
 
 public class SpawnPointParams : MonoBehaviour
 {
-	[FormerlySerializedAs("playersSpawnPoint")]
 	[SerializeField]
+	[FormerlySerializedAs("playersSpawnPoint")]
 	private Transform[] _playersSpawnPoint;
 
-	[SerializeField]
 	[FormerlySerializedAs("enemiesSpawnPoint")]
+	[SerializeField]
 	private Transform[] _enemiesSpawnPoint;
 
 	[SerializeField]

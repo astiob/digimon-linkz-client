@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class ScreenToWorld : MonoBehaviour
 {
-	[SerializeField]
 	[Header("固定する画面のスミの定義")]
+	[SerializeField]
 	private ScreenToWorld.CONSTRAINT_TYPE type;
 
-	[Header("オフセット(全て＋の値)")]
 	[SerializeField]
+	[Header("オフセット(全て＋の値)")]
 	private Vector2 offset;
 
-	[Header("カメラ")]
 	[SerializeField]
+	[Header("カメラ")]
 	private Camera cam;
 
 	private Vector3 v3 = new Vector3(0f, 0f, 1f);

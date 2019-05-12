@@ -78,8 +78,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーションコンポーネント")]
+	[SerializeField]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]

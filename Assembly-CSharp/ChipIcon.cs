@@ -10,16 +10,16 @@ public class ChipIcon : MonoBehaviour
 	[Header("装備アイコン")]
 	private UISprite equipment;
 
-	[Header("選択中のメッセージラベル")]
 	[SerializeField]
+	[Header("選択中のメッセージラベル")]
 	private UILabel dimMessage;
 
-	[SerializeField]
 	[Header("チップアイコン")]
+	[SerializeField]
 	private UITexture iconTexture;
 
-	[SerializeField]
 	[Header("ランクアイコン")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	[SerializeField]

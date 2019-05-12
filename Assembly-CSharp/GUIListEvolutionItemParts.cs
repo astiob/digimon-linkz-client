@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class GUIListEvolutionItemParts : GUIListPartBS
 {
-	[SerializeField]
 	[Header("素材用アイコンのGUICollider")]
+	[SerializeField]
 	private GUICollider colSoul;
 
-	[Header("素材用アイコンのUITexture")]
 	[SerializeField]
+	[Header("素材用アイコンのUITexture")]
 	private UITexture texSoul;
 
-	[SerializeField]
 	[Header("所持数のGameObject")]
+	[SerializeField]
 	private GameObject goNum;
 
 	[SerializeField]

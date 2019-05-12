@@ -9,8 +9,8 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("スキルボタンが2つのときの位置")]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
-	[Header("スキルボタンが3つのときの位置")]
 	[SerializeField]
+	[Header("スキルボタンが3つのときの位置")]
 	private Vector3 threeButtonPosition = Vector3.zero;
 
 	[Header("ボタン")]
@@ -37,12 +37,12 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UILabel power;
 
-	[SerializeField]
 	[Header("Tweener1（開く）")]
+	[SerializeField]
 	private UITweener rotationEffect1;
 
-	[SerializeField]
 	[Header("Tweener2（閉じる）")]
+	[SerializeField]
 	private UITweener rotationEffect2;
 
 	[SerializeField]
@@ -53,24 +53,24 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private HoldPressButton skillDescriptionSwitch;
 
-	[SerializeField]
 	[Header("属性アイコン")]
+	[SerializeField]
 	private UISprite attributeSprite;
 
-	[SerializeField]
 	[Header("スキル説明UIのルート")]
+	[SerializeField]
 	private GameObject skillDescriptionRoot;
 
-	[SerializeField]
 	[Header("スキルロックアイコン")]
+	[SerializeField]
 	private UISprite skillLockSprite;
 
 	[Header("スキルONボタン")]
 	[SerializeField]
 	private GameObject onSkillButton;
 
-	[Header("スキルOFfボタン")]
 	[SerializeField]
+	[Header("スキルOFfボタン")]
 	private GameObject offSkillButton;
 
 	[Header("スキルボタンスプライト")]

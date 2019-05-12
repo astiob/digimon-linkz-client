@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class EmotionButtonFront : MonoBehaviour
 {
-	[Header("エモーションを開くボタン")]
 	[SerializeField]
+	[Header("エモーションを開くボタン")]
 	private UIButton openEmotionButton;
 
 	[SerializeField]
 	[Header("スタンプのラベル")]
 	private UILabel stampLabel;
 
-	[SerializeField]
 	[Header("スタンプの本体")]
+	[SerializeField]
 	private UITexture[] stampTextureList;
 
 	[Header("スタンプの画像名")]

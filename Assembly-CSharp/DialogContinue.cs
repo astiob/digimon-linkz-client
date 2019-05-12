@@ -17,24 +17,24 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("復活ボタン")]
 	private UIButton revivalButton;
 
-	[SerializeField]
 	[Header("所持デジストーンの数")]
+	[SerializeField]
 	private UILabel digistoneNumLabel;
 
-	[SerializeField]
 	[Header("バックグラウンドのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner backgroundSkinner;
 
-	[SerializeField]
 	[Header("コンティニューかショップ切り替えスキナー")]
+	[SerializeField]
 	private UIComponentSkinner revivalOrShowShopButtonSwitch;
 
 	[Header("デジストーン説明Replacer")]
 	[SerializeField]
 	private UILabel digistoneDescription;
 
-	[Header("特定商取引ボタンのコライダー")]
 	[SerializeField]
+	[Header("特定商取引ボタンのコライダー")]
 	private Collider specificTradeCollider;
 
 	[Header("リタイアボタンのコライダー")]
@@ -53,24 +53,24 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
-	[SerializeField]
 	[Header("諦めるローカライズ")]
+	[SerializeField]
 	private UILabel retireLocalize;
 
-	[SerializeField]
 	[Header("コンティニューのタイトルのローカライズ")]
+	[SerializeField]
 	private UILabel continueTitleLocalize;
 
-	[SerializeField]
 	[Header("復活する/ショップへ移動ローカライズ")]
+	[SerializeField]
 	private UITextReplacer revivalOrShopLocalize;
 
 	[Header("復活する/ショップへ移動ローカライズ(マルチのみ)")]
 	[SerializeField]
 	private UITextReplacer multiRevivalOrShopLocalize;
 
-	[Header("所持デジストーンローカライズ")]
 	[SerializeField]
+	[Header("所持デジストーンローカライズ")]
 	private UILabel haveDigistoneLocalize;
 
 	public void ApplySpecificTrade(bool isShow)

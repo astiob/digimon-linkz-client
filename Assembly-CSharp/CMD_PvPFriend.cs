@@ -10,8 +10,8 @@ using UnityEngine;
 
 public class CMD_PvPFriend : CMD
 {
-	[Header("リストパーツ")]
 	[SerializeField]
+	[Header("リストパーツ")]
 	private GameObject partFriendParent;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class CMD_PvPFriend : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("誘うボタン")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]

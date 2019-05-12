@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class IsWarning : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
 	[Header("Allyのタイトルバーのスキナー")]

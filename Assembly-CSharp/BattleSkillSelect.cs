@@ -32,32 +32,32 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	private Collider[] colliderValues;
 
-	[Header("タッチ判定")]
 	[SerializeField]
+	[Header("タッチ判定")]
 	public UITouchChecker[] touchChecker;
 
-	[Header("スキル説明1の命中率のローカライズ")]
 	[SerializeField]
+	[Header("スキル説明1の命中率のローカライズ")]
 	private UILabel skillDesc1HitRateLocalize;
 
-	[Header("スキル説明2の命中率のローカライズ")]
 	[SerializeField]
+	[Header("スキル説明2の命中率のローカライズ")]
 	private UILabel skillDesc2HitRateLocalize;
 
 	[Header("スキル説明1の威力のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc1PowerLocalize;
 
-	[SerializeField]
 	[Header("スキル説明2の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc2PowerLocalize;
 
 	[Header("Leftの親")]
 	[SerializeField]
 	private Transform leftParent;
 
-	[Header("スキルボタン")]
 	[SerializeField]
+	[Header("スキルボタン")]
 	public BattleSkillBtn[] skillButton;
 
 	[Header("デジモンボタン")]

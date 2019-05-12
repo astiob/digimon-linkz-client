@@ -7,8 +7,8 @@ using UnityEngine.Serialization;
 [AddComponentMenu("Digimon Effects/Effect Params")]
 public class EffectParams : EffectParamsGeneric
 {
-	[SerializeField]
 	[FormerlySerializedAs("autoDisable")]
+	[SerializeField]
 	private bool _autoDisable;
 
 	protected IEnumerator _PlayAnimation;

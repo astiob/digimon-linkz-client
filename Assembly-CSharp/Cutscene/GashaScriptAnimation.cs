@@ -72,8 +72,8 @@ namespace Cutscene
 		[SerializeField]
 		private UITexture[] textImageHybrid;
 
-		[Header("レアリティの文字画像一覧")]
 		[SerializeField]
+		[Header("レアリティの文字画像一覧")]
 		private UITexture[] rareLow;
 
 		[SerializeField]

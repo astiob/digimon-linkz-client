@@ -14,8 +14,8 @@ public class BattleUIMultiSharedAP : MonoBehaviour
 	[SerializeField]
 	private UILabel apLabel;
 
-	[SerializeField]
 	[Header("AP Maxエフェクト")]
+	[SerializeField]
 	private GameObject apMaxEffect;
 
 	private int currentAp;

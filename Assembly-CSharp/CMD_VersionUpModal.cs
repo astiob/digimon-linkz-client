@@ -6,8 +6,8 @@ using UnityEngine;
 
 public sealed class CMD_VersionUpModal : CMD_ModalMessageBtn2
 {
-	[Header("バージョンアップ詳細スクリプト")]
 	[SerializeField]
+	[Header("バージョンアップ詳細スクリプト")]
 	private VersionUpDetail versionUpDitail;
 
 	[SerializeField]

@@ -57,28 +57,28 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[Header("取り消しボタンスプライト")]
 	[SerializeField]
+	[Header("取り消しボタンスプライト")]
 	private UISprite spCancelBtn;
 
-	[Header("取り消しボタンラベル")]
 	[SerializeField]
+	[Header("取り消しボタンラベル")]
 	private UILabel lbCancelBtn;
 
-	[Header("モンスター表示")]
 	[SerializeField]
+	[Header("モンスター表示")]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
-	[Header("マッチング中アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング中アニメオブジェクト")]
 	private GameObject goMatchingNowAnim;
 
-	[Header("マッチング完了アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング完了アニメオブジェクト")]
 	private GameObject goMatchingEndAnim;
 
-	[SerializeField]
 	[Header("マッチング完了エフェクト")]
+	[SerializeField]
 	private Animator MatchingEffectAnimator;
 
 	[SerializeField]
@@ -88,20 +88,20 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private Color renderTextureColor;
 
-	[SerializeField]
 	[Header("キャラの勝利アニメを見せる時間（秒）")]
+	[SerializeField]
 	private float winAnimationWait;
 
-	[SerializeField]
 	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
+	[SerializeField]
 	private float transferWait;
 
-	[SerializeField]
 	[Header("３対選択画面")]
+	[SerializeField]
 	private PVPPartySelect3 partySelect;
 
-	[SerializeField]
 	[Header("演出チェック用")]
+	[SerializeField]
 	private bool debugAnimation;
 
 	private Coroutine matchingFinishAnimation;

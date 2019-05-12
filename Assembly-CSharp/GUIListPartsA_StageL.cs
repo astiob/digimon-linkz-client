@@ -19,12 +19,12 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[SerializeField]
 	private List<GameObject> goPROGRESS_LIST;
 
-	[SerializeField]
 	[Header("NEWのGameObject")]
+	[SerializeField]
 	private GameObject goNEW;
 
-	[Header("[の画像のGameObject")]
 	[SerializeField]
+	[Header("[の画像のGameObject")]
 	private GameObject goFRAME_L;
 
 	[SerializeField]
@@ -37,18 +37,18 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[SerializeField]
 	private GameObject goTXT_AREA_NAME;
 
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color backgroundColor = Util.convertColor(0f, 100f, 0f, 200f);
 
-	[Header("非選択時の背景色")]
 	[SerializeField]
+	[Header("非選択時の背景色")]
 	private Color backgroundColorOff = Util.convertColor(0f, 200f, 0f, 70f);
 
 	private Color defalutBackground2Color;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite background;
 
 	private UILabel ngTXT_AREA;
@@ -58,12 +58,12 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("進捗マークのスプライト")]
 	private List<UISprite> progressSprites;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[SerializeField]

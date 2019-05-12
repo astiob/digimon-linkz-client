@@ -16,16 +16,16 @@ public sealed class CMD_MultiRecruitTop : CMD
 
 	private int worldDungeonId;
 
-	[SerializeField]
 	[Header("フレンドラベル")]
+	[SerializeField]
 	private UILabel friendLabel;
 
 	[Header("全国ラベル")]
 	[SerializeField]
 	private UILabel nationwideLebel;
 
-	[SerializeField]
 	[Header("PASSラベル")]
+	[SerializeField]
 	private UILabel passLabel;
 
 	[SerializeField]

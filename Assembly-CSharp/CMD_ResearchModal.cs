@@ -21,8 +21,8 @@ public sealed class CMD_ResearchModal : CMD_ModalMessageBtn2
 	[SerializeField]
 	private LaboratoryPartsStatusDetail statusDetail;
 
-	[SerializeField]
 	[Header("説明文・警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel messageLabel;
 
 	protected override void Awake()

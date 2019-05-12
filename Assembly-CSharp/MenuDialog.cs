@@ -48,12 +48,12 @@ public class MenuDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel retireLocalize;
 
-	[Header("獲得EXPローカライズ")]
 	[SerializeField]
+	[Header("獲得EXPローカライズ")]
 	private UILabel expLocalize;
 
-	[Header("獲得コインローカライズ")]
 	[SerializeField]
+	[Header("獲得コインローカライズ")]
 	private UILabel coinLocalize;
 
 	[SerializeField]

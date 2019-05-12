@@ -19,28 +19,28 @@ public class HitIcon : MonoBehaviour
 	[Header("ステージ効果用のUI")]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
-	[Header("耐性結果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("耐性結果を表示するフォントテクスチャ")]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
-	[Header("通常効果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("通常効果を表示するフォントテクスチャ")]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
 
-	[SerializeField]
 	[Header("ステージ効果を表示するフォントテクスチャ")]
+	[SerializeField]
 	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
 
 	private MaterialPropertyBlock materialPropertyBlock;
 
 	private static Dictionary<string, string> dictionary = new Dictionary<string, string>();
 
-	[SerializeField]
 	[Header("ステージ効果上昇UI")]
+	[SerializeField]
 	private UISprite upSprite;
 
-	[SerializeField]
 	[Header("ステージ効果減少UI")]
+	[SerializeField]
 	private UISprite downSprite;
 
 	private void Awake()

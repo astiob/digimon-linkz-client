@@ -19,8 +19,8 @@ namespace BattleStateMachineInternal
 		[SerializeField]
 		private float rotationSpeed = 2f;
 
-		[SerializeField]
 		[FormerlySerializedAs("minDistance")]
+		[SerializeField]
 		private float selectPointMinDistance = 0.5f;
 
 		[SerializeField]
