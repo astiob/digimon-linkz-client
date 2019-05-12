@@ -75,9 +75,9 @@ public class TutorialCreateRestartScreen
 			string text = openUI[k];
 			if (text != null)
 			{
-				if (TutorialCreateRestartScreen.<>f__switch$map23 == null)
+				if (TutorialCreateRestartScreen.<>f__switch$map25 == null)
 				{
-					TutorialCreateRestartScreen.<>f__switch$map23 = new Dictionary<string, int>(1)
+					TutorialCreateRestartScreen.<>f__switch$map25 = new Dictionary<string, int>(1)
 					{
 						{
 							"CMD_MealExecution",
@@ -86,7 +86,7 @@ public class TutorialCreateRestartScreen
 					};
 				}
 				int num;
-				if (TutorialCreateRestartScreen.<>f__switch$map23.TryGetValue(text, out num))
+				if (TutorialCreateRestartScreen.<>f__switch$map25.TryGetValue(text, out num))
 				{
 					if (num == 0)
 					{

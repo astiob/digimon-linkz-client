@@ -233,6 +233,8 @@ namespace BattleStateMachineInternal
 
 		private bool isChipSkill;
 
+		public List<ChipEffectStatus.EffectTriggerType> reqestStageEffectTriggerList = new List<ChipEffectStatus.EffectTriggerType>();
+
 		public bool isTutorialInduction;
 
 		public int turnUseDigiStoneCount;
@@ -242,8 +244,6 @@ namespace BattleStateMachineInternal
 		public Action SEStopFunction;
 
 		public Action cameraMotionChangeFunction;
-
-		public Action UpdateHitIconCharacter;
 
 		public Dictionary<string, object> sendValues = new Dictionary<string, object>();
 
@@ -340,6 +340,8 @@ namespace BattleStateMachineInternal
 				this._stageObject = value;
 			}
 		}
+
+		public int leaderCharacterIndex { get; set; }
 
 		public void ApplySpawnPoint(SpawnPointParams spawnPoint)
 		{
@@ -635,6 +637,36 @@ namespace BattleStateMachineInternal
 				}
 			}
 			return false;
+		}
+
+		public void ChangePlayerLeader(int index)
+		{
+			BattleStateManager current = BattleStateManager.current;
+			current.hierarchyData.leaderCharacter = index;
+			this.leaderCharacter = this.playerCharacters[index];
+			this.leaderCharacterIndex = index;
+			LeaderSkillStatus leaderSkillStatus = this.playerCharacters[index].leaderSkillStatus;
+			CharacterDatas characterDatas = this.playerCharacters[index].characterDatas;
+			for (int i = 0; i < this.playerCharacters.Length; i++)
+			{
+				bool isLeader = i == index;
+				current.uiControl.ApplyLeaderIcon(i, isLeader);
+				this.playerCharacters[i].isLeader = isLeader;
+				this.playerCharacters[i].ChangeLeaderSkill(leaderSkillStatus, characterDatas);
+			}
+		}
+
+		public void ChangeEnemyLeader(int index)
+		{
+			this.leaderEnemyCharacter = this.enemies[index];
+			LeaderSkillStatus leaderSkillStatus = this.enemies[index].leaderSkillStatus;
+			CharacterDatas characterDatas = this.enemies[index].characterDatas;
+			for (int i = 0; i < this.enemies.Length; i++)
+			{
+				bool isLeader = i == index;
+				this.enemies[i].isLeader = isLeader;
+				this.enemies[i].ChangeLeaderSkill(leaderSkillStatus, characterDatas);
+			}
 		}
 
 		public UnityObjectPooler<SkillStatus> skillStatus
@@ -1762,19 +1794,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public void UpdateHitIconCharacterCall()
-		{
-			if (this.UpdateHitIconCharacter != null)
-			{
-				this.UpdateHitIconCharacter();
-			}
-		}
-
-		public void EndHitIconCharacterCall()
-		{
-			this.UpdateHitIconCharacter = null;
-		}
-
 		public void SetInitializeSufferState()
 		{
 			SufferStateProperty.InitializeSufferState(this.currentLastGenerateStartTimingSufferState, () => this.currentLastGenerateStartTimingSufferState, delegate(int val)
@@ -1783,13 +1802,14 @@ namespace BattleStateMachineInternal
 			});
 		}
 
-		public void SetPlayAnimationActionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, AffectEffect affectEffect, float waitTime, bool[] onMissHit, AffectEffectProperty status = null, bool useSlowMotion = false, ExtraEffectType extraEffectType = ExtraEffectType.Non)
+		public void SetPlayAnimationActionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, AffectEffect affectEffect, float waitTime, bool[] onMissHit, HitIcon[] hitIconList, AffectEffectProperty status = null, bool useSlowMotion = false, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 		{
 			this.sendValues["currentCharacter"] = currentCharacter;
 			this.sendValues["isTargetsStatus"] = isTargetsStatus;
 			this.sendValues["affectEffect"] = affectEffect;
 			this.sendValues["waitTime"] = waitTime;
 			this.sendValues["onMissHit"] = onMissHit;
+			this.sendValues["hitIconList"] = hitIconList;
 			this.sendValues["status"] = status;
 			this.sendValues["useSlowMotion"] = useSlowMotion;
 			this.sendValues["extraEffectType"] = extraEffectType;

@@ -8,6 +8,8 @@ public class CMD_PartsFriendCheckScreen : CMD
 
 	public GameObject goTX_NICKNAME;
 
+	public GameObject goTITLE_ICON;
+
 	public GameObject goTX_EXP;
 
 	public GameObject goTX_LAST_LOGIN;
@@ -104,6 +106,7 @@ public class CMD_PartsFriendCheckScreen : CMD
 			component3.AddWidgetDepth(guimonsterIcon.transform, add);
 		}
 		this.goMN_ICON.SetActive(false);
+		TitleDataMng.SetTitleIcon(CMD_PartsFriendCheckScreen.data.userData.titleId, this.goTITLE_ICON.GetComponent<UITexture>());
 		this.ngTX_NICKNAME.text = CMD_PartsFriendCheckScreen.data.userData.nickname;
 		this.ngTX_EXP.text = CMD_PartsFriendCheckScreen.data.userData.description;
 		this.ngTX_LAST_LOGIN.text = StringMaster.GetString("Friend-12") + CMD_PartsFriendCheckScreen.data.userData.loginTime;

@@ -43,8 +43,8 @@ public class GashaController : MonoBehaviour
 
 	private GameObject obj_mons;
 
-	[SerializeField]
 	[Header("メインカメラ")]
+	[SerializeField]
 	private GameObject obj_cam;
 
 	[SerializeField]
@@ -59,12 +59,12 @@ public class GashaController : MonoBehaviour
 	[Header("UIカメラ")]
 	private GameObject obj_uicam;
 
-	[Header("カメラスイッチャー")]
 	[SerializeField]
+	[Header("カメラスイッチャー")]
 	private GameObject obj_cs;
 
-	[SerializeField]
 	[Header("魔方陣")]
+	[SerializeField]
 	private GameObject obj_mc;
 
 	[SerializeField]
@@ -144,8 +144,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_sr3;
 
-	[SerializeField]
 	[Header("完全体")]
+	[SerializeField]
 	private GameObject obj_ssr1;
 
 	[SerializeField]
@@ -154,8 +154,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_ssr3;
 
-	[Header("究極体")]
 	[SerializeField]
+	[Header("究極体")]
 	private GameObject obj_lr1;
 
 	[SerializeField]
@@ -164,8 +164,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_lr3;
 
-	[SerializeField]
 	[Header("アーマー体")]
+	[SerializeField]
 	private GameObject obj_sr1b;
 
 	[SerializeField]
@@ -180,8 +180,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_sr5b;
 
-	[Header("激レア")]
 	[SerializeField]
+	[Header("激レア")]
 	private GameObject obj_sr1_r;
 
 	[SerializeField]
@@ -190,8 +190,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_sr3_r;
 
-	[SerializeField]
 	[Header("超激レア")]
+	[SerializeField]
 	private GameObject obj_ssr1_r;
 
 	[SerializeField]
@@ -203,8 +203,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_ssr4_r;
 
-	[Header("超絶レア")]
 	[SerializeField]
+	[Header("超絶レア")]
 	private GameObject obj_lr1_r;
 
 	[SerializeField]
@@ -216,8 +216,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_lr4_r;
 
-	[SerializeField]
 	[Header("キラキラ")]
+	[SerializeField]
 	private GameObject obj_newfx10;
 
 	[SerializeField]

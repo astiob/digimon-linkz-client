@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("NGUI/Interaction/Toggled Components")]
 [RequireComponent(typeof(UIToggle))]
 [ExecuteInEditMode]
-[AddComponentMenu("NGUI/Interaction/Toggled Components")]
 public class UIToggledComponents : MonoBehaviour
 {
 	public List<MonoBehaviour> activate;

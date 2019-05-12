@@ -11,8 +11,8 @@ public class UISpriteAnimation : MonoBehaviour
 	[HideInInspector]
 	protected int mFPS = 30;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected string mPrefix = string.Empty;
 
 	[SerializeField]

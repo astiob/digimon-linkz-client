@@ -10,8 +10,8 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	[Header("ベースのスプライト")]
 	private UISprite spBase;
 
-	[Header("ベースのSabスプライト")]
 	[SerializeField]
+	[Header("ベースのSabスプライト")]
 	private UISprite spBaseSab;
 
 	[Header("ベースのLineスプライト")]
@@ -26,12 +26,12 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[SerializeField]
 	[Header("ランキング順位")]
+	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
-	[SerializeField]
 	[Header("ランキング順位")]
+	[SerializeField]
 	private GameObject goIsMine;
 
 	private string[] keyData = new string[2];
@@ -79,9 +79,18 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 
 	public override void SetData()
 	{
-		this.keyData = CMD_PointQuestRanking.instance.GetPointRankingKey(base.IDX);
-		this.valueData = CMD_PointQuestRanking.instance.GetPointRankingValue(base.IDX);
-		this.isMine = CMD_PointQuestRanking.instance.GetIsMine(base.IDX);
+		if (CMD_PointQuestRanking.instance != null)
+		{
+			this.keyData = CMD_PointQuestRanking.instance.GetPointRankingKey(base.IDX);
+			this.valueData = CMD_PointQuestRanking.instance.GetPointRankingValue(base.IDX);
+			this.isMine = CMD_PointQuestRanking.instance.GetIsMine(base.IDX);
+		}
+		if (CMD_ColosseumRanking.instance != null)
+		{
+			this.keyData = CMD_ColosseumRanking.instance.GetRankingKey(base.IDX);
+			this.valueData = CMD_ColosseumRanking.instance.GetRankingValue(base.IDX);
+			this.isMine = CMD_ColosseumRanking.instance.GetIsMine(base.IDX);
+		}
 	}
 
 	public override void RefreshParts()
@@ -114,7 +123,14 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 		this.spBaseGlow.gameObject.SetActive(false);
 		if (this.isMine)
 		{
-			this.goIsMine.SetActive(true);
+			if (CMD_ColosseumRanking.instance != null && CMD_ColosseumRanking.instance.dispRankingType != CMD_ColosseumRanking.ColosseumRankingType.THIS_TIME)
+			{
+				this.goIsMine.SetActive(false);
+			}
+			else
+			{
+				this.goIsMine.SetActive(true);
+			}
 			this.spBaseGlow.gameObject.SetActive(true);
 		}
 		if (base.IDX < this.hexColors.Length - 1)
@@ -205,6 +221,10 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 
 	private void OnClickedBtnSelect()
 	{
+		if (CMD_ColosseumRanking.instance != null)
+		{
+			CMD_ColosseumRanking.instance.DispRankingList(int.Parse(this.keyData[0]), int.Parse(this.keyData[0]) + 99);
+		}
 	}
 
 	protected override void OnDestroy()

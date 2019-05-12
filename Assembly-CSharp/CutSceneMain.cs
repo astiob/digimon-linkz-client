@@ -32,6 +32,8 @@ public class CutSceneMain : MonoBehaviour
 
 	private static InharitanceController csInharitanceScene;
 
+	private static MedalInheritController csMedalInheritController;
+
 	private static FusionController csFusionScene;
 
 	private static TrainingController csTrainingScene;
@@ -211,6 +213,20 @@ public class CutSceneMain : MonoBehaviour
 				CutSceneMain.csInharitanceScene.monsterLevelClass2 = int.Parse(MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterGroupId).growStep);
 			}
 			CutSceneMain.csInharitanceScene.EndCallBack = CutSceneMain.cs_endSceneCallBack;
+			break;
+		case "Cutscenes/MedalInherit":
+			CutSceneMain.csMedalInheritController = CutSceneMain.goCutScene.GetComponent<MedalInheritController>();
+			if (CutSceneMain.cs_fusionNum_bk == 3)
+			{
+				int[] array = new int[]
+				{
+					CutSceneMain.cs_umidList_bk0[0],
+					CutSceneMain.cs_umidList_bk1[0],
+					CutSceneMain.cs_umidList_bk0[0]
+				};
+				CutSceneMain.csMedalInheritController.target = array;
+			}
+			CutSceneMain.csMedalInheritController.EndCallBack = CutSceneMain.cs_endSceneCallBack;
 			break;
 		case "Cutscenes/Fusion":
 			CutSceneMain.csFusionScene = CutSceneMain.goCutScene.GetComponent<FusionController>();

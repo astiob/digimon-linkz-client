@@ -64,12 +64,12 @@ public sealed class CMD_ArousalTOP : CMD
 	[Header("チップ装備の処理は分離")]
 	private ChipBaseSelect chipBaseSelect;
 
-	[Header("パートナーデジモンのラベル")]
 	[SerializeField]
+	[Header("パートナーデジモンのラベル")]
 	private UILabel partnerTitleLabel;
 
-	[Header("決定ボタンのラベル")]
 	[SerializeField]
+	[Header("決定ボタンのラベル")]
 	private UILabel buttonSubmitLabel;
 
 	[SerializeField]

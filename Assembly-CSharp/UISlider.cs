@@ -1,20 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/NGUI Slider")]
+[ExecuteInEditMode]
 public class UISlider : UIProgressBar
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Transform foreground;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float rawValue = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UISlider.Direction direction = UISlider.Direction.Upgraded;
 
 	[HideInInspector]

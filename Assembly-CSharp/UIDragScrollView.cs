@@ -6,8 +6,8 @@ public class UIDragScrollView : MonoBehaviour
 {
 	public UIScrollView scrollView;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIScrollView draggablePanel;
 
 	private Transform mTrans;

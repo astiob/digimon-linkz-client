@@ -111,6 +111,28 @@ public sealed class TCPMessageSender : Singleton<TCPMessageSender>
 		yield break;
 	}
 
+	public IEnumerator CountTimeOutMember()
+	{
+		this.IsRetireWaitOver = false;
+		this.waitRetireTime = 0f;
+		while (!this.IsRetireWaitOver)
+		{
+			IEnumerator wait = Util.WaitForRealTime(1f);
+			while (wait.MoveNext())
+			{
+				object obj = wait.Current;
+				yield return obj;
+			}
+			this.waitRetireTime += 1f;
+			Debug.LogFormat("waitRetireTime:{0}", new object[]
+			{
+				this.waitRetireTime
+			});
+		}
+		yield break;
+		yield break;
+	}
+
 	public IEnumerator SendRetireOwner(CharacterStateControl[] playerCharacters, string[] userMonsterIds, int startId, int clearFlag, List<int> ogis)
 	{
 		this.IsRetireWaitOver = false;
@@ -329,6 +351,7 @@ public sealed class TCPMessageSender : Singleton<TCPMessageSender>
 			cf = clearFlag,
 			amis = list,
 			ogis = ogis.Distinct<int>().ToList<int>(),
+			clearRound = DataMng.Instance().WD_ReqDngResult.clearRound,
 			uniqueRequestId = num
 		};
 		dictionary.Add("820102", value3);

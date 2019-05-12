@@ -8,23 +8,23 @@ using WebAPIRequest;
 
 public class CMD_ModalPresentBox : CMD
 {
-	[Header("タイトルラベル")]
 	[SerializeField]
+	[Header("タイトルラベル")]
 	private UILabel lbTitle;
 
 	[Header("残り受取件数")]
 	[SerializeField]
 	private UILabel lbSubtitle;
 
-	[Header("初期メッセージ")]
 	[SerializeField]
+	[Header("初期メッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[Header("一括受取ボタン")]
 	[SerializeField]
+	[Header("一括受取ボタン")]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]
@@ -36,8 +36,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnGetAll;
 
-	[Header("履歴ボタン")]
 	[SerializeField]
+	[Header("履歴ボタン")]
 	private GameObject goBtnHistory;
 
 	[SerializeField]
@@ -46,8 +46,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnHistory;
 
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partListParent;
 
 	[SerializeField]
@@ -106,7 +106,7 @@ public class CMD_ModalPresentBox : CMD
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
 			APIRequestTask apirequestTask = Singleton<UserDataMng>.Instance.RequestPlayerInfo(true);
-			apirequestTask.Add(Singleton<UserDataMng>.Instance.RequestUserSoulData(true)).Add(DataMng.Instance().RequestUserMonster(null, true)).Add(DataMng.Instance().RequestMyPageData(true)).Add(ChipDataMng.RequestAPIChipList(true)).Add(ChipDataMng.RequestAPIMonsterSlotInfoList(true));
+			apirequestTask.Add(Singleton<UserDataMng>.Instance.RequestUserSoulData(true)).Add(DataMng.Instance().RequestUserMonster(null, true)).Add(DataMng.Instance().RequestMyPageData(true)).Add(ChipDataMng.RequestAPIChipList(true)).Add(ChipDataMng.RequestAPIMonsterSlotInfoList(true)).Add(TitleDataMng.RequestAPIUsetTitleList(true));
 			base.StartCoroutine(apirequestTask.Run(delegate
 			{
 				GUIPlayerStatus.RefreshParams_S(true);

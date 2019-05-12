@@ -19,12 +19,12 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("進捗の四角")]
 	private List<GameObject> goPROGRESS_LIST;
 
-	[SerializeField]
 	[Header("NEWのGameObject")]
+	[SerializeField]
 	private GameObject goNEW;
 
-	[Header("[の画像のGameObject")]
 	[SerializeField]
+	[Header("[の画像のGameObject")]
 	private GameObject goFRAME_L;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[SerializeField]
 	private GameObject goTXT_AREA_NAME;
 
-	[Header("選択時の背景色")]
 	[SerializeField]
+	[Header("選択時の背景色")]
 	private Color backgroundColor = Util.convertColor(0f, 100f, 0f, 200f);
 
 	[SerializeField]
@@ -47,8 +47,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 
 	private Color defalutBackground2Color;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite background;
 
 	private UILabel ngTXT_AREA;

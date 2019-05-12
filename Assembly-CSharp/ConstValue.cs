@@ -12,6 +12,10 @@ public class ConstValue
 
 	public const string RESISTANCE_STRONG_VALUE = "1";
 
+	public const string RESISTANCE_DRAIN_VALUE = "2";
+
+	public const string RESISTANCE_INVALID_VALUE = "99";
+
 	public const int AROUSAL_MIN_VALUE = 2;
 
 	public const int AROUSAL_MAX_VALUE = 5;
@@ -744,6 +748,70 @@ public class ConstValue
 		get
 		{
 			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.BUY_HQMEAT_DIGISTONE_NUM;
+		}
+	}
+
+	public static float ABILITY_UPGRADE_MULRATE_GROWING
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_UPGRADE_MULRATE_GROWING;
+		}
+	}
+
+	public static float ABILITY_UPGRADE_MULRATE_RIPE
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_UPGRADE_MULRATE_RIPE;
+		}
+	}
+
+	public static float ABILITY_UPGRADE_MULRATE_PERFECT
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_UPGRADE_MULRATE_PERFECT;
+		}
+	}
+
+	public static float ABILITY_UPGRADE_MULRATE_ULTIMATE
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_UPGRADE_MULRATE_ULTIMATE;
+		}
+	}
+
+	public static int ABILITY_INHERITRATE_GROWING
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_INHERITRATE_GROWING;
+		}
+	}
+
+	public static int ABILITY_INHERITRATE_RIPE
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_INHERITRATE_RIPE;
+		}
+	}
+
+	public static int ABILITY_INHERITRATE_PERFECT
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_INHERITRATE_PERFECT;
+		}
+	}
+
+	public static int ABILITY_INHERITRATE_ULTIMATE
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_INHERITRATE_ULTIMATE;
 		}
 	}
 

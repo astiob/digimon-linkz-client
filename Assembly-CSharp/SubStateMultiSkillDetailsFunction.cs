@@ -27,9 +27,9 @@ public class SubStateMultiSkillDetailsFunction : SubStateSkillDetailsFunction
 		currentSuffer.SetRandomSeed(UnityEngine.Random.seed);
 	}
 
-	protected override IEnumerator AffectEffectApDrain(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, CameraParams cameraMotion)
+	protected override IEnumerator AffectEffectApDrain(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
 	{
-		IEnumerator function = base.AffectEffectApDrain(currentCharacter, targetDataList, currentSuffer, cameraMotion);
+		IEnumerator function = base.AffectEffectApDrain(currentCharacter, targetDataList, currentSuffer);
 		while (function.MoveNext())
 		{
 			yield return null;

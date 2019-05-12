@@ -91,9 +91,7 @@ public class BattleStateInitialize : BattleStateController
 		LoadObjectStore.Add(base.stateManager.initialize.LoadBattleInternalResources("WinCameraMotion", delegate(GameObject g)
 		{
 			base.battleStateData.winCameraMotionInternalResources = g.GetComponent<BattleCameraSwitcher>();
-			base.battleStateData.winCameraMotionInternalResources.isFollowing = false;
-			base.battleStateData.winCameraMotionInternalResources.camera = base.hierarchyData.cameraObject.camera3D;
-			base.battleStateData.winCameraMotionInternalResources.Initialize();
+			base.battleStateData.winCameraMotionInternalResources.Initialize(base.hierarchyData.cameraObject.camera3D);
 		}));
 		LoadObjectStore.Add(base.stateManager.initialize.LoadBattleInternalResources("CommandSelectCameraMotion", delegate(GameObject g)
 		{
@@ -412,6 +410,7 @@ public class BattleStateInitialize : BattleStateController
 			IEnumerator droppingItemRareAlwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(droppingItemRareKey, m, droppingItemRareCallback);
 			list.Add(droppingItemRareAlwaysEffect);
 		}
+		base.battleStateData.leaderEnemyCharacter = base.battleStateData.enemies[base.hierarchyData.leaderCharacter];
 		base.battleStateData.insertEnemyEffect = new AlwaysEffectParams[maxEnemiesLength];
 		for (int n = 0; n < maxEnemiesLength; n++)
 		{
@@ -501,32 +500,49 @@ public class BattleStateInitialize : BattleStateController
 				}
 			}
 		}
+		if (base.battleStateData.extraEffectStatus != null)
+		{
+			foreach (ExtraEffectStatus extraEffectStatus in base.battleStateData.extraEffectStatus)
+			{
+				int effectType2 = extraEffectStatus.EffectType;
+				string effectValue2 = extraEffectStatus.EffectValue.ToString();
+				if (effectType2 == 60 && !skillList.Contains(effectValue2))
+				{
+					skillList.Add(effectValue2);
+					if (!base.stateManager.serverControl._cachedSkillStatus.ContainsKey(effectValue2))
+					{
+						SkillStatus skillStatus2 = base.stateManager.serverControl.SkillMToSkillStatus(effectValue2);
+						base.stateManager.serverControl._cachedSkillStatus.Add(effectValue2, skillStatus2);
+					}
+				}
+			}
+		}
 		List<SkillStatus> skillStatusTemp = new List<SkillStatus>();
 		List<string> skillInvocation = new List<string>();
 		List<string> skillPassive = new List<string>();
 		for (int l = 0; l < skillList.Count; l++)
 		{
-			SkillStatus skillStatus2 = base.stateManager.serverControl.GetSkillStatus(skillList[l]);
-			if (skillStatus2 != null)
+			SkillStatus skillStatus3 = base.stateManager.serverControl.GetSkillStatus(skillList[l]);
+			if (skillStatus3 != null)
 			{
-				skillStatusTemp.Add(skillStatus2);
+				skillStatusTemp.Add(skillStatus3);
 				string invocationId = "none";
 				string passiveId = "none";
-				SkillType skillType = skillStatus2.skillType;
+				SkillType skillType = skillStatus3.skillType;
 				if (skillType != SkillType.Deathblow)
 				{
 					if (skillType == SkillType.InheritanceTechnique)
 					{
 						invocationId = "EFF_COM_SKILL";
-						passiveId = skillStatus2.prefabId;
+						passiveId = skillStatus3.prefabId;
 					}
 				}
 				else
 				{
-					invocationId = skillStatus2.prefabId;
+					invocationId = skillStatus3.prefabId;
 					passiveId = "none";
 				}
-				base.battleStateData.skillStatus.Add(skillList[l], skillStatus2);
+				base.battleStateData.skillStatus.Add(skillList[l], skillStatus3);
 				if (!skillInvocation.Contains(invocationId))
 				{
 					skillInvocation.Add(invocationId);
@@ -535,7 +551,7 @@ public class BattleStateInitialize : BattleStateController
 				{
 					skillPassive.Add(passiveId);
 				}
-				base.stateManager.soundPlayer.AddEffectSe(skillStatus2.seId);
+				base.stateManager.soundPlayer.AddEffectSe(skillStatus3.seId);
 			}
 		}
 		List<IEnumerator> cameraMotions = base.stateManager.cameraControl.LoadCameraMotions();

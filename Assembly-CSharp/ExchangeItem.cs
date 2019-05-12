@@ -129,10 +129,6 @@ public class ExchangeItem : GUIListPartBS
 	private void OnExecute(bool IsCountUp, int VariationValue = 1)
 	{
 		int maxExchangeNum = this.GetMaxExchangeNum();
-		int num = int.Parse(this.exchangeInfoData.limitNum);
-		int remainCount = this.exchangeInfoData.remainCount;
-		int count = this.exchangeInfoData.item.count;
-		int num2 = int.Parse(this.exchangeInfoData.needNum);
 		if (IsCountUp && maxExchangeNum - VariationValue < 0 && this.updateExCT != 0)
 		{
 			VariationValue = maxExchangeNum;

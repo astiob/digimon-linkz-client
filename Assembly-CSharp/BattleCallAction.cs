@@ -88,6 +88,10 @@ public class BattleCallAction : BattleFunctionBase
 		{
 			return;
 		}
+		if (!base.hierarchyData.isPossibleContinue)
+		{
+			return;
+		}
 		SoundPlayer.PlayButtonEnter();
 		base.battleStateData.isShowRevivalWindow = true;
 		base.battleStateData.currentSelectRevivalCharacter = index;

@@ -105,17 +105,22 @@ public class BattleStateBattleStartAction : BattleStateBase
 		}
 		if (this.is1stStart && !this.isBigBoss)
 		{
-			if (base.battleMode == BattleMode.PvP)
-			{
-				GameObject go = (base.stateManager.battleUiComponents as BattleUIComponentsPvP).pvpVSUi.gameObject;
-				NGUITools.SetActiveSelf(go, true);
-				SoundPlayer.PlayBattleVSSE();
-			}
 			base.stateManager.threeDAction.ShowAliveCharactersAction(base.battleStateData.playerCharacters);
 			base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(base.battleStateData.playerCharacters);
 			this.cameraKey = "0002_roundStart";
 			base.stateManager.cameraControl.PlayCameraMotionAction(this.cameraKey, base.battleStateData.stageSpawnPoint, true);
 			base.stateManager.SetBattleScreen(BattleScreen.StartAction);
+			base.stateManager.uiControl.ApplyBattleStartAction(true);
+			if (base.battleMode == BattleMode.PvP)
+			{
+				base.stateManager.uiControl.ApplyVSUI(true);
+				base.stateManager.uiControl.ApplyPlayerLeaderSkill(base.battleStateData.leaderCharacter.isHavingLeaderSkill, base.battleStateData.leaderCharacter.leaderSkillStatus.name, false);
+				base.stateManager.uiControl.ApplyEnemyLeaderSkill(base.battleStateData.leaderEnemyCharacter.isHavingLeaderSkill, base.battleStateData.leaderEnemyCharacter.leaderSkillStatus.name, false);
+			}
+			else
+			{
+				base.stateManager.uiControl.ApplyPlayerLeaderSkill(base.battleStateData.leaderCharacter.isHavingLeaderSkill, base.battleStateData.leaderCharacter.leaderSkillStatus.name, false);
+			}
 			IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.battleStartActionWaitSecond, null, null);
 			while (wait.MoveNext())
 			{
@@ -137,6 +142,7 @@ public class BattleStateBattleStartAction : BattleStateBase
 
 	protected override void DisabledThisState()
 	{
+		base.stateManager.uiControl.ApplyBattleStartAction(false);
 		base.stateManager.soundPlayer.TryStopSE(base.battleStateData.insertCharacterEffect);
 		if (this.isFindBoss)
 		{
@@ -145,6 +151,7 @@ public class BattleStateBattleStartAction : BattleStateBase
 		base.stateManager.time.SetPlaySpeed(this.currentSpeed2x, false);
 		if (base.battleMode == BattleMode.PvP)
 		{
+			base.stateManager.uiControl.ApplyVSUI(false);
 			base.stateManager.uiControlPvP.ApplySetAlwaysUIColliders(true);
 		}
 		else

@@ -1,5 +1,6 @@
 ﻿using Master;
 using MultiBattle.Tools;
+using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,8 +23,8 @@ public class CMD_PvPFriend : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("誘うボタン")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]
@@ -179,6 +180,7 @@ public class CMD_PvPFriend : CMD
 	private void OnClickedPvPFriendExec(string userCode)
 	{
 		this.pvpMockTargetUserCode = userCode;
+		GameWebAPI.RespData_ColosseumMatchingValidateLogic responseData = null;
 		GameWebAPI.ColosseumMatchingValidateLogic request = new GameWebAPI.ColosseumMatchingValidateLogic
 		{
 			SetSendData = delegate(GameWebAPI.ReqData_ColosseumMatchingValidateLogic param)
@@ -187,9 +189,16 @@ public class CMD_PvPFriend : CMD
 				param.isMockBattle = 1;
 				param.targetUserCode = userCode;
 			},
-			OnReceived = new Action<GameWebAPI.RespData_ColosseumMatchingValidateLogic>(this.EndValidate)
+			OnReceived = delegate(GameWebAPI.RespData_ColosseumMatchingValidateLogic response)
+			{
+				responseData = response;
+			}
 		};
-		base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		base.StartCoroutine(request.RunOneTime(delegate()
+		{
+			RestrictionInput.EndLoad();
+			this.EndValidate(responseData);
+		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null));
@@ -218,6 +227,7 @@ public class CMD_PvPFriend : CMD
 		{
 			global::Debug.Log("対戦相手UserCode: " + this.pvpMockTargetUserCode);
 			ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode = this.pvpMockTargetUserCode;
+			ClassSingleton<QuestData>.Instance.SelectDungeon = null;
 			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
 			GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
 		}

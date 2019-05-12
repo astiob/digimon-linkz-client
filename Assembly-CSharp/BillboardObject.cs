@@ -40,9 +40,9 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private Vector3 _manualDistanceLocalPosition = Vector3.zero;
 
-	[FormerlySerializedAs("distance")]
 	[SerializeField]
 	[FormerlySerializedAs("_distance")]
+	[FormerlySerializedAs("distance")]
 	private float _localDistance;
 
 	[SerializeField]
@@ -58,19 +58,19 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private bool _onUseLocalScaleAnimation;
 
-	[SerializeField]
 	[FormerlySerializedAs("onBillboard")]
+	[SerializeField]
 	private bool _onBillboard;
 
 	[SerializeField]
 	private bool _freezeDistanceThisVector;
 
-	[SerializeField]
 	[FormerlySerializedAs("xFreeze")]
+	[SerializeField]
 	private bool _xFreeze;
 
-	[SerializeField]
 	[FormerlySerializedAs("yFreeze")]
+	[SerializeField]
 	private bool _yFreeze;
 
 	[SerializeField]

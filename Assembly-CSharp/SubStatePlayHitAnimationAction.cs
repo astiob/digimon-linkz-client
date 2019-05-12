@@ -23,6 +23,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		AffectEffect affectEffect = (AffectEffect)((int)base.battleStateData.sendValues["affectEffect"]);
 		float waitTime = (float)base.battleStateData.sendValues["waitTime"];
 		bool[] onMissHit = base.battleStateData.sendValues["onMissHit"] as bool[];
+		HitIcon[] hitIconList = base.battleStateData.sendValues["hitIconList"] as HitIcon[];
 		AffectEffectProperty status = base.battleStateData.sendValues["status"] as AffectEffectProperty;
 		bool useSlowMotion = (bool)base.battleStateData.sendValues["useSlowMotion"];
 		ExtraEffectType extraEffectType = (ExtraEffectType)((int)base.battleStateData.sendValues["extraEffectType"]);
@@ -47,7 +48,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		bool isPlayedHitEffectSE = false;
 		for (int i = 0; i < isTargetsStatus.Length; i++)
 		{
-			if (currentCharacter.Contains(new CharacterStateControl[]
+			if (currentCharacter != null && currentCharacter.Contains(new CharacterStateControl[]
 			{
 				isTargetsStatus[i]
 			}) && !isTargetsStatus[i].isDied)
@@ -80,12 +81,22 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 					}
 					else if (!onMissHit[i])
 					{
-						switch (affectEffect)
+						AffectEffect affectEffect2 = affectEffect;
+						switch (affectEffect2)
 						{
 						case AffectEffect.Damage:
-							if (isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute) == Strength.Weak)
+						{
+							Strength strength = isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute);
+							if (strength == Strength.Weak)
 							{
 								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.strongHit, new CharacterStateControl[]
+								{
+									isTargetsStatus[i]
+								});
+							}
+							else if (strength == Strength.Drain)
+							{
+								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 								{
 									isTargetsStatus[i]
 								});
@@ -98,26 +109,17 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 								});
 							}
 							break;
-						case AffectEffect.AttackUp:
-						case AffectEffect.DefenceUp:
-						case AffectEffect.SpAttackUp:
-						case AffectEffect.SpDefenceUp:
-						case AffectEffect.SpeedUp:
-						case AffectEffect.CorrectionDownReset:
-						case AffectEffect.HpRevival:
-						case AffectEffect.Counter:
-						case AffectEffect.Reflection:
-						case AffectEffect.Protect:
-						case AffectEffect.HateDown:
-						case AffectEffect.PowerCharge:
-						case AffectEffect.Destruct:
-						case AffectEffect.HitRateUp:
-						case AffectEffect.InstantDeath:
-						case AffectEffect.SufferStatusClear:
-						case AffectEffect.SatisfactionRateUp:
-						case AffectEffect.ApRevival:
-						case AffectEffect.ApUp:
-							goto IL_54C;
+						}
+						default:
+							if (affectEffect2 != AffectEffect.ReferenceTargetHpRate)
+							{
+								goto IL_604;
+							}
+							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+							{
+								isTargetsStatus[i]
+							});
+							break;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
 						case AffectEffect.SpAttackDown:
@@ -140,11 +142,14 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 								isTargetsStatus[i]
 							});
 							break;
-						default:
-							goto IL_54C;
+						case AffectEffect.Counter:
+						case AffectEffect.Reflection:
+						case AffectEffect.PowerCharge:
+						case AffectEffect.Destruct:
+							goto IL_604;
 						}
-						goto IL_5AE;
-						IL_54C:
+						goto IL_666;
+						IL_604:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							isTargetsStatus[i]
@@ -157,7 +162,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							isTargetsStatus[i]
 						});
 					}
-					IL_5AE:;
+					IL_666:;
 				}
 				else
 				{
@@ -194,7 +199,11 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 			{
 				slowMotion.MoveNext();
 			}
-			base.stateManager.onPreRenderJustOnce.Add(new Action(base.battleStateData.UpdateHitIconCharacterCall));
+			for (int j = 0; j < isTargetsStatus.Length; j++)
+			{
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(isTargetsStatus[j]);
+				hitIconList[j].HitIconReposition(fixableCharacterCenterPosition2DFunction);
+			}
 		};
 		if (isBigBossFindDeathCharacter)
 		{
@@ -351,7 +360,6 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	protected override void DisabledThisState()
 	{
-		base.battleStateData.EndHitIconCharacterCall();
 		CharacterStateControl[] array = base.battleStateData.sendValues["isTargetsStatus"] as CharacterStateControl[];
 		for (int i = 0; i < array.Length; i++)
 		{

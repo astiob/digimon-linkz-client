@@ -9,8 +9,8 @@ namespace BattleStateMachineInternal
 		[SerializeField]
 		private InitialIntroductionFace _faceType;
 
-		[SerializeField]
 		[TextArea(1, 3)]
+		[SerializeField]
 		private string _message = string.Empty;
 
 		public InitialIntroductionBox()

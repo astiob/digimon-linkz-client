@@ -7,8 +7,8 @@ public class BattleDigimonStatusBase : MonoBehaviour
 	[SerializeField]
 	protected UILabel monsterName;
 
-	[Header("耐性ローカライズ")]
 	[SerializeField]
+	[Header("耐性ローカライズ")]
 	protected UILabel toleranceLocalize;
 
 	[SerializeField]
@@ -117,6 +117,10 @@ public class BattleDigimonStatusBase : MonoBehaviour
 				break;
 			case Strength.Weak:
 				this.icon.color = new Color(0f, 0.5882353f, 1f, 1f);
+				this.invalid.gameObject.SetActive(false);
+				break;
+			case Strength.Drain:
+				this.icon.color = new Color(0f, 1f, 0f, 1f);
 				this.invalid.gameObject.SetActive(false);
 				break;
 			case Strength.Invalid:

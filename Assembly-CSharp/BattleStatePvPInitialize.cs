@@ -83,6 +83,10 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		string enemyName = base.stateManager.pvpFunction.GetEnemyName();
 		base.stateManager.uiControlPvP.SetPlayerName(playerName);
 		base.stateManager.uiControlPvP.SetEnemyName(enemyName);
+		string playerTitleId = base.stateManager.pvpFunction.GetPlayerTitleId();
+		string enemyTitleId = base.stateManager.pvpFunction.GetEnemyTitleId();
+		base.stateManager.uiControlPvP.SetPlayerTitle(playerTitleId);
+		base.stateManager.uiControlPvP.SetEnemyTitle(enemyTitleId);
 		yield break;
 	}
 }

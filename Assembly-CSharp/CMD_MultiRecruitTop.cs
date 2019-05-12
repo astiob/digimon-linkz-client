@@ -235,6 +235,7 @@ public class CMD_MultiRecruitTop : CMD
 						}
 					}
 				}
+				ClassSingleton<QuestData>.Instance.SelectDungeon = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(this.passInputJoinData.multiRoomInfo.worldDungeonId);
 				CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
 				CMD_MultiRecruitPartyWait.roomJoinData = this.passInputJoinData;
 				GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait");

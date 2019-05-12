@@ -5,28 +5,28 @@ using UnityEngine;
 [Serializable]
 public class BMFont
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mSize = 16;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mBase;
 
 	[HideInInspector]
 	[SerializeField]
 	private int mWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mHeight;
 
 	[SerializeField]
 	[HideInInspector]
 	private string mSpriteName;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private List<BMGlyph> mSaved = new List<BMGlyph>();
 
 	private Dictionary<int, BMGlyph> mDict = new Dictionary<int, BMGlyph>();

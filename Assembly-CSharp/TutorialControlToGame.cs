@@ -200,7 +200,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			GUIMain.ReqScreen("UIIdle", string.Empty);
 			GUIFace.ForceHideDigiviceBtn_S();
 			BattleStateManager.onAutoServerConnect = true;
-			Application.LoadLevel(BattleStateManager.GetBattleSceneName(BattleMode.Tutorial));
+			Application.LoadLevel(BattleStateManager.BattleSceneName);
 			if (completed != null)
 			{
 				completed();

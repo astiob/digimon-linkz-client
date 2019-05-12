@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExtension;
 
-[RequireComponent(typeof(CapsuleCollider))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(CapsuleCollider))]
 public class CharacterParams : MonoBehaviour
 {
 	public const float DeathEffectGenerationInterval = 1f;
@@ -496,7 +496,12 @@ public class CharacterParams : MonoBehaviour
 				}
 				else if (this._characterAnimation.clip != clip)
 				{
-					this._characterAnimation.CrossFade(this._characterAnimation.clip.name, 0.5f);
+					QueueMode queue = QueueMode.CompleteOthers;
+					if (type != CharacterAnimationType.idle)
+					{
+						queue = QueueMode.PlayNow;
+					}
+					this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, 0.5f, queue);
 				}
 			}
 			else if (isSmooth)

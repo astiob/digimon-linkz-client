@@ -36,4 +36,15 @@ public sealed class MonsterThumbnail : MonoBehaviour
 		GrowStep growStep2 = MonsterData.ToGrowStepId(growStep);
 		GUIMonsterIcon.SetThumbnailFrame(component, this.frameImage, growStep2);
 	}
+
+	public void SetSize(int width, int height)
+	{
+		UISprite component = base.gameObject.GetComponent<UISprite>();
+		component.width = width;
+		component.height = height;
+		this.monsterImage.width = width;
+		this.monsterImage.height = height;
+		this.frameImage.width = width;
+		this.frameImage.height = height;
+	}
 }

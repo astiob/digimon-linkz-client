@@ -18,7 +18,11 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	private UILabel lbTX_UserName;
 
 	[SerializeField]
+	[Header("称号アイコン")]
+	private GameObject goTITLE_ICON;
+
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
 	[Header("Nextポイント")]
@@ -29,8 +33,8 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
-	[Header("ランキングアイコン")]
 	[SerializeField]
+	[Header("ランキングアイコン")]
 	private UISprite spRankingIcon;
 
 	private MonsterData digimonData;
@@ -45,9 +49,25 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 
 	public override void SetData()
 	{
-		this.data = CMD_PointQuestRanking.instance.GetData();
-		this.nextPoint = CMD_PointQuestRanking.instance.GetNextPoint();
-		this.limitRank = CMD_PointQuestRanking.instance.GetlimitRank();
+		if (CMD_PointQuestRanking.instance != null)
+		{
+			this.data = CMD_PointQuestRanking.instance.GetData();
+			this.data.titleId = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.titleId;
+			this.nextPoint = CMD_PointQuestRanking.instance.GetNextPoint();
+			this.limitRank = CMD_PointQuestRanking.instance.GetlimitRank();
+		}
+		if (CMD_ColosseumRanking.instance != null)
+		{
+			this.data = default(GameWebAPI.RespDataMS_PointQuestRankingList.RankingData);
+			this.data.iconId = CMD_ColosseumRanking.instance.myData.leaderMonsterId.ToString();
+			this.data.nickname = CMD_ColosseumRanking.instance.myData.nickname;
+			this.data.titleId = CMD_ColosseumRanking.instance.myData.titleId;
+			this.data.userId = CMD_ColosseumRanking.instance.myData.userId.ToString();
+			this.data.score = CMD_ColosseumRanking.instance.myData.point.ToString();
+			this.data.rank = CMD_ColosseumRanking.instance.myData.rank.ToString();
+			this.nextPoint = CMD_ColosseumRanking.instance.GetNextPoint();
+			this.limitRank = CMD_ColosseumRanking.instance.GetlimitRank();
+		}
 	}
 
 	public override void InitParts()
@@ -75,6 +95,7 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	{
 		this.SetDigimonIcon();
 		this.lbTX_UserName.text = this.data.nickname;
+		TitleDataMng.SetTitleIcon(this.data.titleId, this.goTITLE_ICON.GetComponent<UITexture>());
 		this.lbTX_DuelPoint.text = this.data.score;
 		this.lbTX_NextPoint.text = this.nextPoint.ToString();
 		int num = int.Parse(this.data.rank);
@@ -187,7 +208,14 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 
 	protected virtual void OnTouchEndedProcess()
 	{
-		AppCoroutine.Start(this.OpenProfileFriend(), false);
+		if (this.data.userId == DataMng.Instance().RespDataCM_Login.playerInfo.userId)
+		{
+			GUIMain.ShowCommonDialog(null, "CMD_Profile");
+		}
+		else
+		{
+			AppCoroutine.Start(this.OpenProfileFriend(), false);
+		}
 	}
 
 	private IEnumerator OpenProfileFriend()

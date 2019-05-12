@@ -35,28 +35,28 @@ public class CMD_PvPMatchingWait : CMD
 
 	private GameWebAPI.ColosseumUserStatus colosseumUserStatus;
 
-	[SerializeField]
 	[Header("取り消しボタンコライダー")]
+	[SerializeField]
 	private BoxCollider coCancelBtn;
 
-	[Header("取り消しボタンスプライト")]
 	[SerializeField]
+	[Header("取り消しボタンスプライト")]
 	private UISprite spCancelBtn;
 
 	[SerializeField]
 	[Header("取り消しボタンラベル")]
 	private UILabel lbCancelBtn;
 
-	[Header("モンスター表示")]
 	[SerializeField]
+	[Header("モンスター表示")]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
-	[SerializeField]
 	[Header("マッチング中アニメオブジェクト")]
+	[SerializeField]
 	private GameObject goMatchingNowAnim;
 
-	[Header("マッチング完了アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング完了アニメオブジェクト")]
 	private GameObject goMatchingEndAnim;
 
 	[SerializeField]
@@ -74,12 +74,12 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("キャラの勝利アニメを見せる時間（秒）")]
 	private float winAnimationWait;
 
-	[SerializeField]
 	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
+	[SerializeField]
 	private float transferWait;
 
-	[SerializeField]
 	[Header("演出チェック用")]
+	[SerializeField]
 	private bool debugAnimation;
 
 	private PvPVersusInfo versusInfo;
@@ -122,7 +122,10 @@ public class CMD_PvPMatchingWait : CMD
 				CMD_PartyEdit.instance.ReloadAllCharacters(true);
 				CMD_PartyEdit.instance.DispClips();
 			}
-			base.ClosePanel(animation);
+			if (CMD_PvPMatchingWait.instance != null)
+			{
+				base.ClosePanel(animation);
+			}
 		}
 	}
 
@@ -298,10 +301,16 @@ public class CMD_PvPMatchingWait : CMD
 
 	private void SendTCPPvPBattleStart()
 	{
+		int entranceType = 1;
+		if (CMD_PvPTop.Instance != null && CMD_PvPTop.Instance.isExtraBattle)
+		{
+			entranceType = 2;
+		}
 		Dictionary<string, object> dictionary = new Dictionary<string, object>();
 		PvPBattleStart value = new PvPBattleStart
 		{
 			isMockBattle = this.isMockBattle,
+			entranceType = entranceType,
 			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
 		};
 		dictionary.Add("080108", value);
@@ -324,9 +333,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_291;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map34 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map36 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map34 = new Dictionary<string, int>(9)
+							CMD_PvPMatchingWait.<>f__switch$map36 = new Dictionary<string, int>(9)
 							{
 								{
 									"0",
@@ -367,7 +376,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map34.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map36.TryGetValue(text, out num))
 						{
 							goto IL_291;
 						}
@@ -454,9 +463,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_13D;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map35 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map37 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map35 = new Dictionary<string, int>(3)
+							CMD_PvPMatchingWait.<>f__switch$map37 = new Dictionary<string, int>(3)
 							{
 								{
 									"1",
@@ -473,7 +482,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map35.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map37.TryGetValue(text, out num))
 						{
 							goto IL_13D;
 						}

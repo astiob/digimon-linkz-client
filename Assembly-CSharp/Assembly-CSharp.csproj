@@ -37,6 +37,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbilityUpgradeDetail.cs" />
+    <Compile Include="Ability\AbilityData.cs" />
+    <Compile Include="Ability\MonsterAbilityStatusInfo.cs" />
     <Compile Include="ABPrefabType.cs" />
     <Compile Include="AB_DL_RecordC.cs" />
     <Compile Include="AB_DL_RecordVal.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Algorithm.cs" />
     <Compile Include="ALMLConstants.cs" />
     <Compile Include="AlphaTweener.cs" />
+    <Compile Include="AlphaTweenerController.cs" />
     <Compile Include="AlwaysEffectParams.cs" />
     <Compile Include="AlwaysEffectParamsRelay.cs" />
     <Compile Include="AlwaysEffectState.cs" />
@@ -138,7 +142,6 @@
     <Compile Include="BattleAlways.cs" />
     <Compile Include="BattleAutoMenu.cs" />
     <Compile Include="BattleCallAction.cs" />
-    <Compile Include="BattleCameraCallMonoCodes.cs" />
     <Compile Include="BattleCameraControl.cs" />
     <Compile Include="BattleCameraObject.cs" />
     <Compile Include="BattleDataStore.cs" />
@@ -182,6 +185,7 @@
     <Compile Include="BattleScreen.cs" />
     <Compile Include="BattleServerControl.cs" />
     <Compile Include="BattleSimulator.cs" />
+    <Compile Include="BattleSimulatorManager.cs" />
     <Compile Include="BattleSkillBtn.cs" />
     <Compile Include="BattleSkillDetails.cs" />
     <Compile Include="BattleSkillSelect.cs" />
@@ -224,6 +228,7 @@
     <Compile Include="BattleStateMultiPlayerFailed.cs" />
     <Compile Include="BattleStateMultiPlayerWinner.cs" />
     <Compile Include="BattleStateMultiRoundStartToRoundEnd.cs" />
+    <Compile Include="BattleStateMultiTimeOver.cs" />
     <Compile Include="BattleStateMultiWaveController.cs" />
     <Compile Include="BattleStatePlayerFailed.cs" />
     <Compile Include="BattleStatePlayerWinner.cs" />
@@ -270,6 +275,7 @@
     <Compile Include="BMFont.cs" />
     <Compile Include="BMGlyph.cs" />
     <Compile Include="BMSymbol.cs" />
+    <Compile Include="BossThumbnail.cs" />
     <Compile Include="BtnFareWell.cs" />
     <Compile Include="BtnSort.cs" />
     <Compile Include="BuildCostLabel.cs" />
@@ -336,6 +342,7 @@
     <Compile Include="CMDWebWindow.cs" />
     <Compile Include="CMDWrapper.cs" />
     <Compile Include="CMD_10gashaResult.cs" />
+    <Compile Include="CMD_AbilityModal.cs" />
     <Compile Include="CMD_AgeConfirmation.cs" />
     <Compile Include="CMD_AgreementChat.cs" />
     <Compile Include="CMD_AgreementConfirmation.cs" />
@@ -374,6 +381,7 @@
     <Compile Include="CMD_ClearingHouse.cs" />
     <Compile Include="CMD_ClearingHouseTop.cs" />
     <Compile Include="CMD_ColosseumBonus.cs" />
+    <Compile Include="CMD_ColosseumRanking.cs" />
     <Compile Include="CMD_Confirm.cs" />
     <Compile Include="CMD_CreateChatGroup.cs" />
     <Compile Include="CMD_DeckList.cs" />
@@ -405,6 +413,7 @@
     <Compile Include="CMD_LoginNormal.cs" />
     <Compile Include="CMD_maintenance.cs" />
     <Compile Include="CMD_MealExecution.cs" />
+    <Compile Include="CMD_MedalInherit.cs" />
     <Compile Include="CMD_Mission.cs" />
     <Compile Include="CMD_MockBattleMenu.cs" />
     <Compile Include="CMD_ModalGroup.cs" />
@@ -423,6 +432,7 @@
     <Compile Include="CMD_NewsALL.cs" />
     <Compile Include="CMD_OptionSettings.cs" />
     <Compile Include="CMD_OtherTOP.cs" />
+    <Compile Include="CMD_PairSelectBase.cs" />
     <Compile Include="CMD_PartsFriendCheckScreen.cs" />
     <Compile Include="CMD_PartsFriendIDSearch.cs" />
     <Compile Include="CMD_PartyEdit.cs" />
@@ -438,7 +448,6 @@
     <Compile Include="CMD_PvPFriend.cs" />
     <Compile Include="CMD_PvPMatchingWait.cs" />
     <Compile Include="CMD_PvPMockTargetInputModal.cs" />
-    <Compile Include="CMD_PvPRanking.cs" />
     <Compile Include="CMD_PvPTop.cs" />
     <Compile Include="CMD_QuestDetailedPOP.cs" />
     <Compile Include="CMD_QuestEvent.cs" />
@@ -462,6 +471,7 @@
     <Compile Include="CMD_TicketGashaResult.cs" />
     <Compile Include="CMD_ticketPOP.cs" />
     <Compile Include="CMD_Tips.cs" />
+    <Compile Include="CMD_TitleSelect.cs" />
     <Compile Include="CMD_Training_Menu.cs" />
     <Compile Include="CMD_UpgradeConfirmation.cs" />
     <Compile Include="CMD_UpgradeConfirmationDigistone.cs" />
@@ -726,6 +736,7 @@
     <Compile Include="GUIListPartsA_StageL_Banner.cs" />
     <Compile Include="GUIListPartsA_StageL_Ticket.cs" />
     <Compile Include="GUIListPartsBlock.cs" />
+    <Compile Include="GUIListPartsColosseumRanking.cs" />
     <Compile Include="GUIListPartsDigiGarden.cs" />
     <Compile Include="GUIListPartsEvolution.cs" />
     <Compile Include="GUIListPartsFriend.cs" />
@@ -734,7 +745,6 @@
     <Compile Include="GUIListPartsItemList.cs" />
     <Compile Include="GUIListPartsMissionSelect.cs" />
     <Compile Include="GUIListPartsPartyEdit.cs" />
-    <Compile Include="GUIListPartsPvPRanking.cs" />
     <Compile Include="GUIListPartsPvPRankingReward.cs" />
     <Compile Include="GUIListPartsQuestRanking.cs" />
     <Compile Include="GUIListPartsQuestRankingList.cs" />
@@ -784,6 +794,7 @@
     <Compile Include="GUISelectPanelBSRT.cs" />
     <Compile Include="GUISelectPanelBSUD.cs" />
     <Compile Include="GUISelectPanelChipList.cs" />
+    <Compile Include="GUISelectPanelColosseumRanking.cs" />
     <Compile Include="GUISelectPanelDigiGarden.cs" />
     <Compile Include="GUISelectPanelDropItemList.cs" />
     <Compile Include="GUISelectPanelEvolution.cs" />
@@ -800,12 +811,12 @@
     <Compile Include="GUISelectPanelMonsterIcon.cs" />
     <Compile Include="GUISelectPanelPartyEdit.cs" />
     <Compile Include="GUISelectPanelPicturebookIcon.cs" />
-    <Compile Include="GUISelectPanelPvPRanking.cs" />
     <Compile Include="GUISelectPanelQuestRanking.cs" />
     <Compile Include="GUISelectPanelRank.cs" />
     <Compile Include="GUISelectPanelStone.cs" />
     <Compile Include="GUISelectPanelS_DungeonR.cs" />
     <Compile Include="GUISelectPanelText.cs" />
+    <Compile Include="GUISelectPanelTitle.cs" />
     <Compile Include="GUISelectPanelViewControlUD.cs" />
     <Compile Include="GUISelectPanelViewPartsUD.cs" />
     <Compile Include="GUISelectPanelViewUD.cs" />
@@ -841,12 +852,12 @@
     <Compile Include="iTween.cs" />
     <Compile Include="JitterMotion.cs" />
     <Compile Include="JogressController.cs" />
-    <Compile Include="LaboratoryAccessor.cs" />
     <Compile Include="LaboratoryButton.cs" />
     <Compile Include="LaboratoryPartsStatusDetail.cs" />
     <Compile Include="LanguageSelection.cs" />
     <Compile Include="LastConfirmationData.cs" />
     <Compile Include="LeadCapture.cs" />
+    <Compile Include="LeaderChangeData.cs" />
     <Compile Include="LeaderSkillResult.cs" />
     <Compile Include="LeaderSkillStatus.cs" />
     <Compile Include="LeaderSkillType.cs" />
@@ -873,6 +884,7 @@
     <Compile Include="Master\MasterDataVersionInfo.cs" />
     <Compile Include="Master\MasterDataVersionUpCheck.cs" />
     <Compile Include="Master\MasterId.cs" />
+    <Compile Include="Master\MA_AbilityUpgradeM.cs" />
     <Compile Include="Master\MA_AssetCategoryMaster.cs" />
     <Compile Include="Master\MA_ChipEffectMaster.cs" />
     <Compile Include="Master\MA_ChipMaster.cs" />
@@ -917,19 +929,23 @@
     <Compile Include="Master\MA_SkillMaster.cs" />
     <Compile Include="Master\MA_SoulMaster.cs" />
     <Compile Include="Master\MA_TipsMaster.cs" />
+    <Compile Include="Master\MA_TitleMaster.cs" />
     <Compile Include="Master\MA_TutorialNaviMaster.cs" />
     <Compile Include="Master\MA_WorldAreaMaster.cs" />
     <Compile Include="Master\MA_WorldDungeonExtraEffectManageMaster.cs" />
     <Compile Include="Master\MA_WorldDungeonExtraEffectMaster.cs" />
+    <Compile Include="Master\MA_WorldDungeonSortieLimitMaster.cs" />
     <Compile Include="Master\MA_WorldDungeonStartCondition.cs" />
     <Compile Include="Master\MA_WorldEventAreaMaster.cs" />
     <Compile Include="Master\MA_WorldEventMaster.cs" />
     <Compile Include="Master\MA_WorldMaster.cs" />
     <Compile Include="Master\MA_WorldStageMaster.cs" />
+    <Compile Include="Master\MA_WorldStageOptionRewardMaster.cs" />
     <Compile Include="Master\MA_WorldStageRewardMaster.cs" />
     <Compile Include="Master\StringMaster.cs" />
     <Compile Include="Master\StringMasterResource.cs" />
     <Compile Include="MaterialController.cs" />
+    <Compile Include="MedalInheritController.cs" />
     <Compile Include="MenuDialog.cs" />
     <Compile Include="MissionData\Button.cs" />
     <Compile Include="MissionData\Icon.cs" />
@@ -953,6 +969,7 @@
     <Compile Include="MonsterLeaderSkill.cs" />
     <Compile Include="MonsterLearnSkill.cs" />
     <Compile Include="MonsterMedalList.cs" />
+    <Compile Include="MonsterMedalRateList.cs" />
     <Compile Include="MonsterResistanceList.cs" />
     <Compile Include="MonsterStatusChangeValueList.cs" />
     <Compile Include="MonsterStatusList.cs" />
@@ -1142,6 +1159,13 @@
     <Compile Include="PartyBossIcons.cs" />
     <Compile Include="PartyBossIconsAccessor.cs" />
     <Compile Include="PartyBossRegistance.cs" />
+    <Compile Include="PartyEditBattleInfo.cs" />
+    <Compile Include="PartyEditPartyInfo.cs" />
+    <Compile Include="PartyEditPartyMember.cs" />
+    <Compile Include="PartyEdit\PartyEditAction.cs" />
+    <Compile Include="PartyEdit\PartyEditActionBattle.cs" />
+    <Compile Include="PartyEdit\PartyEditActionMulti.cs" />
+    <Compile Include="PartyEdit\PartyEditActionPvP.cs" />
     <Compile Include="PartyUtil.cs" />
     <Compile Include="PassiveEffectParams.cs" />
     <Compile Include="PicturebookDetailController.cs" />
@@ -1206,6 +1230,8 @@
     <Compile Include="RevivalData.cs" />
     <Compile Include="RewardIconRoot.cs" />
     <Compile Include="RotationFixer.cs" />
+    <Compile Include="RoundChallengeStart.cs" />
+    <Compile Include="RoundLimitStart.cs" />
     <Compile Include="RoundStart.cs" />
     <Compile Include="Scene\SceneController.cs" />
     <Compile Include="ScreenController.cs" />
@@ -1222,6 +1248,7 @@
     <Compile Include="SharedApNotes.cs" />
     <Compile Include="SharedStatus.cs" />
     <Compile Include="ShopStoneIconList.cs" />
+    <Compile Include="SignalColosseumEvent.cs" />
     <Compile Include="SignalMeatHarvest.cs" />
     <Compile Include="SingleBattleState.cs" />
     <Compile Include="Singleton.cs" />
@@ -1230,6 +1257,8 @@
     <Compile Include="SkillStatus.cs" />
     <Compile Include="SkillTestor.cs" />
     <Compile Include="SkillType.cs" />
+    <Compile Include="SortieLimitList.cs" />
+    <Compile Include="SortieLimitListItem.cs" />
     <Compile Include="SoundCtr.cs" />
     <Compile Include="SoundMng.cs" />
     <Compile Include="SoundPlayer.cs" />
@@ -1281,6 +1310,7 @@
     <Compile Include="SubStatePlayHitAnimationAction.cs" />
     <Compile Include="SubStatePlayInvocationEffectAction.cs" />
     <Compile Include="SubStatePlayPassiveEffectFunction.cs" />
+    <Compile Include="SubStatePlayStageEffect.cs" />
     <Compile Include="SubStatePvPAreaRandomDamageHitFunction.cs" />
     <Compile Include="SubStatePvPCharacterDeadCheckFunction.cs" />
     <Compile Include="SubStatePvPRoundStartAction.cs" />
@@ -1298,7 +1328,6 @@
     <Compile Include="TakeoverIssue.cs" />
     <Compile Include="TakeoverMenu.cs" />
     <Compile Include="Talent.cs" />
-    <Compile Include="TalentLevel.cs" />
     <Compile Include="TargetData.cs" />
     <Compile Include="TaskBase.cs" />
     <Compile Include="TaskExecutor.cs" />
@@ -1328,9 +1357,11 @@
     <Compile Include="TimeUtility.cs" />
     <Compile Include="TipsLoading.cs" />
     <Compile Include="TipsQuestSelect.cs" />
+    <Compile Include="TitleDataMng.cs" />
+    <Compile Include="TitleListItem.cs" />
+    <Compile Include="Title\AgreementConsent.cs" />
     <Compile Include="Tolerance.cs" />
     <Compile Include="ToleranceIcon.cs" />
-    <Compile Include="ToleranceShifter.cs" />
     <Compile Include="TrainingController.cs" />
     <Compile Include="TrainingHouseButton.cs" />
     <Compile Include="TranslateObject.cs" />

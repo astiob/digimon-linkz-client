@@ -19,6 +19,9 @@ public class GUIListChatGroupParts : GUIListPartBS
 	private GameObject goTX_NAME;
 
 	[SerializeField]
+	private GameObject goICON_TITLE;
+
+	[SerializeField]
 	private GameObject goTX_APPROVALTYPE;
 
 	[SerializeField]
@@ -46,6 +49,8 @@ public class GUIListChatGroupParts : GUIListPartBS
 	private UILabel ngTX_GRPNAME;
 
 	private UILabel ngTX_NAME;
+
+	private UITexture ngICON_TITLE;
 
 	private UILabel ngTX_APPROVALTYPE;
 
@@ -95,6 +100,7 @@ public class GUIListChatGroupParts : GUIListPartBS
 		this.ngTX_NUMBER = this.goTX_NUMBER.GetComponent<UILabel>();
 		this.ngTX_MASTER = this.goTX_MASTER.GetComponent<UILabel>();
 		this.ngTX_NAME = this.goTX_NAME.GetComponent<UILabel>();
+		this.ngICON_TITLE = this.goICON_TITLE.GetComponent<UITexture>();
 		this.ngTX_APPROVALTYPE = this.goTX_APPROVALTYPE.GetComponent<UILabel>();
 		this.ngTX_COMMENT = this.goTX_COMMENT.GetComponent<UILabel>();
 		this.ngICON_CATEGORY = this.goICON_CATEGORY.GetComponent<UISprite>();
@@ -144,6 +150,7 @@ public class GUIListChatGroupParts : GUIListPartBS
 				this.groupMasterIcon.SetActive(true);
 			}
 			this.ngTX_NAME.text = this.Data.ownerInfo.nickname;
+			TitleDataMng.SetTitleIcon(this.Data.ownerInfo.titleId, this.ngICON_TITLE);
 			this.ngTX_COMMENT.text = this.Data.comment;
 		}
 	}

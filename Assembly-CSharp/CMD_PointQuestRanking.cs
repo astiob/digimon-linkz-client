@@ -165,7 +165,6 @@ public class CMD_PointQuestRanking : CMD
 
 	private void InitUI()
 	{
-		CMD_PvPRanking.Mode = CMD_PvPRanking.MODE.PointQuest;
 		this.myData = this.GetMyData();
 		this.csParts.SetData();
 		this.csParts.ShowGUI();

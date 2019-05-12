@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Font")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Font")]
 public class UIFont : MonoBehaviour
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material mMat;
 
 	[HideInInspector]
@@ -18,8 +18,8 @@ public class UIFont : MonoBehaviour
 	[HideInInspector]
 	private BMFont mFont = new BMFont();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIAtlas mAtlas;
 
 	[HideInInspector]
@@ -34,8 +34,8 @@ public class UIFont : MonoBehaviour
 	[HideInInspector]
 	private Font mDynamicFont;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mDynamicFontSize = 16;
 
 	[HideInInspector]

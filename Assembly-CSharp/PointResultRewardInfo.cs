@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PointResultRewardInfo : MonoBehaviour
 {
-	[Header("報酬アイテム")]
 	[SerializeField]
+	[Header("報酬アイテム")]
 	private PresentBoxItem[] rewards;
 
 	public void SetDetail(int rewardNo, string assetCategoryId, string assetValue)

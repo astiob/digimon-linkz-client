@@ -17,16 +17,14 @@ public class SubStateMultiWaitEnemySkillSelect : SubStateMultiPlayerCharacterAnd
 
 	protected override IEnumerator MainRoutine()
 	{
-		IEnumerator coroutine = base.MainRoutine();
-		base.StartCoroutine(coroutine);
 		base.stateManager.multiFunction.CurrentEnemyMyIndex = this.currentCharacter.myIndex;
+		IEnumerator coroutine = base.MainRoutine();
 		IEnumerator action = base.stateManager.multiFunction.WaitAllPlayers(TCPMessageType.Attack);
-		while (action.MoveNext())
+		while (coroutine.MoveNext())
 		{
-			object obj = action.Current;
-			yield return obj;
+			action.MoveNext();
+			yield return null;
 		}
-		base.StopCoroutine(coroutine);
 		base.stateManager.uiControlMulti.HideRemainingTurnRightDown();
 		base.stateManager.targetSelect.TargetManualSelectAndApplyUIFunction(null);
 		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));

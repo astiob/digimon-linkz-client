@@ -5,40 +5,40 @@ using UnityEngine;
 
 public class ItemInfoField : MonoBehaviour
 {
-	[Header("Box画像(ノーマル)")]
 	[SerializeField]
+	[Header("Box画像(ノーマル)")]
 	private GameObject normalBoxImage;
 
 	[SerializeField]
 	[Header("Box画像(レア)")]
 	private GameObject rareBoxImage;
 
-	[SerializeField]
 	[Header("Box(ノーマル)")]
+	[SerializeField]
 	private GameObject normalBox;
 
-	[SerializeField]
 	[Header("Box(レア)")]
+	[SerializeField]
 	private GameObject rareBox;
 
 	[Header("Wave & Roundのテキスト")]
 	[SerializeField]
 	private UILabel waveAndRoundText;
 
-	[SerializeField]
 	[Header("残りRoundのテキスト")]
+	[SerializeField]
 	private UILabel remainingRoundText;
 
-	[SerializeField]
 	[Header("Box数テキスト(ノーマル)")]
+	[SerializeField]
 	private UILabel normalBoxNumberText;
 
 	[Header("Box数テキスト(レア)")]
 	[SerializeField]
 	private UILabel rareBoxNumberText;
 
-	[Header("BoxのTween(ノーマル)")]
 	[SerializeField]
+	[Header("BoxのTween(ノーマル)")]
 	private UITweener normalBoxTween;
 
 	[Header("BoxのTween(レア)")]
@@ -99,7 +99,7 @@ public class ItemInfoField : MonoBehaviour
 		{
 			if (value > 0)
 			{
-				this.remainingRoundText.text = string.Format(StringMaster.GetString("BattleUI-50"), value);
+				this.remainingRoundText.text = string.Format(StringMaster.GetString("BattleUI-51"), value);
 			}
 			else
 			{

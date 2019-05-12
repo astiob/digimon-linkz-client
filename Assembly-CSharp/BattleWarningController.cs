@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class BattleWarningController : MonoBehaviour
 {
-	[SerializeField]
 	[Header("サブサークルオブジェクト")]
+	[SerializeField]
 	private GameObject[] Subcircles = new GameObject[0];
 
-	[Header("サブサークルの回転制御")]
 	[SerializeField]
+	[Header("サブサークルの回転制御")]
 	private float[] SubcircleRotate = new float[0];
 
 	private int circleIndex;

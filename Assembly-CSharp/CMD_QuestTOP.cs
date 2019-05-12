@@ -28,12 +28,12 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private UserStamina userStamina;
 
-	[SerializeField]
 	[Header("クリッピングしているオブジェクト達")]
+	[SerializeField]
 	private GameObject[] clipObjects;
 
-	[Header("ポイントクエスト用 ROOT")]
 	[SerializeField]
+	[Header("ポイントクエスト用 ROOT")]
 	private GameObject goPartsPointROOT;
 
 	[SerializeField]
@@ -55,6 +55,8 @@ public class CMD_QuestTOP : CMD
 	private GUISelectPanelS_DungeonR csSelectPanelS_DungeonR;
 
 	private List<QuestData.WorldDungeonData> worldDungeonData;
+
+	public int battlePartyDeckNo;
 
 	private List<QuestData.WorldStageData> worldStageData;
 
@@ -668,8 +670,10 @@ public class CMD_QuestTOP : CMD
 			}
 			if (this.needLife <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina)
 			{
+				ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
 				CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.SELECT;
-				GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit");
+				CMD_PartyEdit cmd_PartyEdit = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit") as CMD_PartyEdit;
+				cmd_PartyEdit.parentCMD = this;
 			}
 			else
 			{
@@ -742,6 +746,7 @@ public class CMD_QuestTOP : CMD
 	{
 		if (this.needLife <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina)
 		{
+			ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
 			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
 			GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit");
 		}
@@ -767,8 +772,7 @@ public class CMD_QuestTOP : CMD
 	{
 		ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult = null;
 		ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic = null;
-		string deckNum = CMD_PartyEdit.SelectedParty.ToString();
-		if (CMD_PartyEdit.SelectedParty < 0)
+		if (0 >= this.battlePartyDeckNo)
 		{
 			if (GameObject.FindGameObjectWithTag("FarmRoot") == null)
 			{
@@ -780,7 +784,7 @@ public class CMD_QuestTOP : CMD
 			GameWebAPI.WD_Req_DngStart sendData = new GameWebAPI.WD_Req_DngStart
 			{
 				dungeonId = this.StageDataBk.worldDungeonM.worldDungeonId,
-				deckNum = deckNum,
+				deckNum = this.battlePartyDeckNo.ToString(),
 				userDungeonTicketId = this.StageDataBk.dungeon.userDungeonTicketId
 			};
 			GameWebAPI.RequestWD_WorldStart requestWD_WorldStart = new GameWebAPI.RequestWD_WorldStart();

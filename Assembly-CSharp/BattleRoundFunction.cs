@@ -76,7 +76,29 @@ public class BattleRoundFunction : BattleFunctionBase
 			}
 		}
 		base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(true);
-		base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+		if (base.hierarchyData.limitRound > 0)
+		{
+			base.stateManager.uiControl.ApplyRoundLimitStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			base.stateManager.uiControl.ApplyRoundChallengeStartRevivalText(false, false);
+		}
+		else if (base.hierarchyData.speedClearRound > 0)
+		{
+			int speedLimitRoundCount = base.hierarchyData.speedClearRound - base.battleStateData.totalRoundNumber;
+			speedLimitRoundCount++;
+			bool spFlag = speedLimitRoundCount > 0;
+			if (spFlag)
+			{
+				base.stateManager.uiControl.ApplyRoundChallengeStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			}
+			else
+			{
+				base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			}
+		}
+		else
+		{
+			base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+		}
 		yield break;
 	}
 

@@ -29,24 +29,24 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_TITLE;
 
-	[Header("ステージの数字のラベル")]
 	[SerializeField]
+	[Header("ステージの数字のラベル")]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
 	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	[SerializeField]
 	private GameObject goContentsROOT;
 
-	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	[SerializeField]
+	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	private GameObject goPointContentsROOT;
 
 	[SerializeField]
 	[Header("詳細説明 (ヒナの吹き出し)")]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[SerializeField]
 	[Header("ポイント・タイトルのリスト)")]
+	[SerializeField]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getEXPTitleLabel;
 
-	[SerializeField]
 	[Header("取得できるEXP")]
+	[SerializeField]
 	private UILabel getEXPLabel;
 
 	[SerializeField]
@@ -72,12 +72,12 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("消費するスタミナタイトル")]
 	private UILabel getStaminaTitleLabel;
 
-	[SerializeField]
 	[Header("消費するスタミナ")]
+	[SerializeField]
 	private UILabel getStaminaLabel;
 
-	[SerializeField]
 	[Header("バトルボタン")]
+	[SerializeField]
 	private GameObject goBattleBtn;
 
 	private UISprite spBattleBtn;
@@ -89,8 +89,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private RewardIconRoot rewardIconRoot;
 
-	[SerializeField]
 	[Header("初回報酬取得済みカラー")]
+	[SerializeField]
 	private Color clearColor = Color.gray;
 
 	private QuestData.WorldDungeonData d_data;
@@ -386,9 +386,8 @@ public class CMD_QuestDetailedPOP : CMD
 		{
 			return;
 		}
-		CMD_QuestMonsterPOP.MonsterData = md;
-		CMD_QuestMonsterPOP.ResistanceId = resistanceId;
-		GUIMain.ShowCommonDialog(null, "CMD_QuestMonsterPOP");
+		CMD_QuestMonsterPOP cmd_QuestMonsterPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestMonsterPOP") as CMD_QuestMonsterPOP;
+		cmd_QuestMonsterPOP.SetBossDetails(md, resistanceId);
 	}
 
 	private void ActCallBackDropItem(int idx)

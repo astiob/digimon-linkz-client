@@ -1,5 +1,4 @@
-﻿using BattleStateMachineInternal;
-using Master;
+﻿using Master;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -68,13 +67,11 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 	public override void ApplySetBattleStateRegistration()
 	{
 		base.ApplySetBattleStateRegistration();
-		this.battleScreenDetails.Add(BattleScreen.TimeOver, new BattleScreenDetail(this.ui.timeOverUi, false));
 	}
 
 	protected override void SetInitActive()
 	{
 		base.SetInitActive();
-		NGUITools.SetActiveSelf(this.ui.timeOverUi.gameObject, false);
 	}
 
 	private void CreateBattleRoundEnd()
@@ -199,9 +196,19 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		this.ui.playerNameLabel.text = playerName;
 	}
 
+	public void SetPlayerTitle(string playerTitleId)
+	{
+		TitleDataMng.SetTitleIcon(playerTitleId, this.ui.playerTitleIcon);
+	}
+
 	public void SetEnemyName(string enemyName)
 	{
 		this.ui.enemyNameLabel.text = enemyName;
+	}
+
+	public void SetEnemyTitle(string enemyTitleId)
+	{
+		TitleDataMng.SetTitleIcon(enemyTitleId, this.ui.enemyTitleIcon);
 	}
 
 	public void ShowAlwaysUI()

@@ -5,19 +5,19 @@ using UnityEngine;
 
 public sealed class EmotionSenderMulti : MonoBehaviour
 {
-	[SerializeField]
 	[Header("受信用の各々のエモーションアイコンのスプライト")]
+	[SerializeField]
 	private UIAtlasSkinner[] iconSprites;
 
-	[Header("受信用の各々のエモーションアイコンのスプライト(PvP用)")]
 	[SerializeField]
+	[Header("受信用の各々のエモーションアイコンのスプライト(PvP用)")]
 	private UISprite[] emotionSprites;
 
 	[NonSerialized]
 	public List<GameObject> iconSpriteParents = new List<GameObject>();
 
-	[SerializeField]
 	[Header("送信用アイコンたちが載ってる親")]
+	[SerializeField]
 	private GameObject dialog;
 
 	[SerializeField]

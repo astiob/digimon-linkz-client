@@ -40,8 +40,8 @@ public sealed class CMD_Evolution : CMD
 	[SerializeField]
 	private UILabel ngTXT_CHIP;
 
-	[Header("キャラクターのステータスPanel")]
 	[SerializeField]
+	[Header("キャラクターのステータスPanel")]
 	private StatusPanel statusPanel;
 
 	[Header("各進化先のリンク")]

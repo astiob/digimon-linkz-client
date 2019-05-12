@@ -139,6 +139,10 @@ public class BattleInputMulti : BattleInputBasic
 		{
 			return;
 		}
+		if (!base.hierarchyData.isPossibleContinue)
+		{
+			return;
+		}
 		SoundPlayer.PlayButtonEnter();
 		base.battleStateData.isShowRevivalWindow = true;
 		base.battleStateData.currentSelectRevivalCharacter = index;

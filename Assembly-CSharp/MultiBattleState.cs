@@ -50,7 +50,7 @@ public class MultiBattleState : BattleStateMainController
 			}
 		}, delegate(bool isNextWave)
 		{
-			base.SetState(typeof(BattleStateTimeOver));
+			base.SetState(typeof(BattleStateMultiTimeOver));
 		}, new Action<EventState>(this.ExitGotEvent)));
 		base.AddState(new BattleStateMultiPlayerWinner(delegate()
 		{
@@ -63,7 +63,10 @@ public class MultiBattleState : BattleStateMainController
 		{
 			base.SetState(typeof(BattleStateMultiFadeOut));
 		}));
-		base.AddState(new BattleStateTimeOver(delegate()
+		base.AddState(new BattleStateMultiTimeOver(delegate()
+		{
+			base.SetState(typeof(BattleStateMultiFadeOut));
+		}, delegate(EventState eventState)
 		{
 			base.SetState(typeof(BattleStateMultiFadeOut));
 		}));

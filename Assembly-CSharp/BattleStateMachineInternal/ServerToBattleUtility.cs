@@ -414,22 +414,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public static TalentLevel IntToTalentLevel(int value)
-		{
-			switch (value)
-			{
-			case 0:
-				return TalentLevel.None;
-			case 1:
-				return TalentLevel.High;
-			case 2:
-				return TalentLevel.Normal;
-			default:
-				global::Debug.LogError("TalentLevelの値が不正です. (" + value + ")");
-				return TalentLevel.None;
-			}
-		}
-
 		public static Species IntToSpecies(int value)
 		{
 			switch (value)
@@ -480,11 +464,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public static ToleranceShifter IntToToleranceShifter(int noneValue, int redValue, int blueValue, int yellowValue, int greenValue, int whiteValue, int blackValue, int poisonValue, int confusionValue, int paralysisValue, int sleepValue, int stunValue, int skillLockValue, int instantDeathValue)
-		{
-			return new ToleranceShifter(noneValue, redValue, blueValue, yellowValue, greenValue, whiteValue, blackValue, poisonValue, confusionValue, paralysisValue, sleepValue, stunValue, skillLockValue, instantDeathValue);
-		}
-
 		public static Strength IntToStrength(int value)
 		{
 			switch (value + 1)
@@ -495,6 +474,8 @@ namespace BattleStateMachineInternal
 				return Strength.None;
 			case 2:
 				return Strength.Strong;
+			case 3:
+				return Strength.Drain;
 			default:
 				if (value != 99)
 				{
@@ -515,11 +496,6 @@ namespace BattleStateMachineInternal
 			return ServerToBattleUtility.IntToSkillType(int.Parse(value));
 		}
 
-		public static TalentLevel IntToTalentLevel(string value)
-		{
-			return ServerToBattleUtility.IntToTalentLevel(int.Parse(value));
-		}
-
 		public static Species IntToSpecies(string value)
 		{
 			return ServerToBattleUtility.IntToSpecies(int.Parse(value));
@@ -527,7 +503,21 @@ namespace BattleStateMachineInternal
 
 		public static Strength IntToStrength(string value)
 		{
-			return ServerToBattleUtility.IntToStrength(int.Parse(value));
+			switch (value)
+			{
+			case "-1":
+				return Strength.Weak;
+			case "0":
+				return Strength.None;
+			case "1":
+				return Strength.Strong;
+			case "2":
+				return Strength.Drain;
+			case "99":
+				return Strength.Invalid;
+			}
+			global::Debug.LogError("Strengthの値が不正です. (" + value + ")");
+			return Strength.None;
 		}
 
 		public static EvolutionStep IntToEvolutionStep(string value)

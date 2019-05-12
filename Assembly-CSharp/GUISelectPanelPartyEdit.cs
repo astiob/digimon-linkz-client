@@ -40,11 +40,11 @@ public class GUISelectPanelPartyEdit : GUISelectPanelBSPartsLR
 				{
 					component.SetOriginalPos(new Vector3(num3, y, -5f));
 					component.SetDeck(dts[i]);
+					component.partyEdit = this.partyEdit;
+					component.selectPanelParty = this;
 					component.ShowGUI();
 					int partyNumber = int.Parse(dts[i].deckNum);
 					component.partyNumber = partyNumber;
-					component.partyEdit = this.partyEdit;
-					component.selectPanelParty = this;
 					this.fastSetPartObjs.Add(component);
 				}
 				num3 -= num;

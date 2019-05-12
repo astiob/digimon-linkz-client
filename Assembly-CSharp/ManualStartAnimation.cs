@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("Digimon Effects/Tools/Manual Start Animation")]
 [RequireComponent(typeof(Animation))]
+[AddComponentMenu("Digimon Effects/Tools/Manual Start Animation")]
 public class ManualStartAnimation : MonoBehaviour
 {
 	[Range(0f, 1f)]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ability;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,6 +36,16 @@ public sealed class CalculatorUtil
 			num += num3 * ConstValue.LABORATORY_PARTNER_COEFFICIENT;
 		}
 		return num;
+	}
+
+	public static int CalcClusterForAbilityUpgrade(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList baseUserMonster, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList materialUserMonster)
+	{
+		float maxAbility = ClassSingleton<AbilityData>.Instance.GetMaxAbility(baseUserMonster);
+		float num = Mathf.Pow(1.15f, maxAbility);
+		float num2 = Mathf.Floor(num * 10f) / 10f * 500f;
+		int totalAbilityCount = ClassSingleton<AbilityData>.Instance.GetTotalAbilityCount(materialUserMonster);
+		float num3 = 1f + 0.1f * (float)(totalAbilityCount - 1);
+		return (int)Mathf.Floor(num2 * num3);
 	}
 
 	public static int CalcClusterForReinforcement(List<MonsterData> partnerDigimons)

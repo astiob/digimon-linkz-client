@@ -13,6 +13,8 @@ public class BattleResult : TCPData<BattleResult>
 
 	public List<int> ogis;
 
+	public int clearRound;
+
 	public int uniqueRequestId;
 
 	public int requestStatus;

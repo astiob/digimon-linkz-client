@@ -9,8 +9,6 @@ public class BattleHelp : BattleFunctionBase
 {
 	private const string tutorialInfoDirectory = "Tutorial_info/{0}";
 
-	private int currentHelpImage;
-
 	private TutorialUI tutorialUI;
 
 	private List<string> imageNames = new List<string>();

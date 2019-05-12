@@ -8,32 +8,32 @@ public class ModeChangeController : CutsceneControllerBase
 	[SerializeField]
 	private GameObject[] charaStand;
 
-	[SerializeField]
 	[Header("スタンドの回転速度")]
+	[SerializeField]
 	private float[] standRollSpeed;
 
-	[SerializeField]
 	[Header("UIカメラ")]
+	[SerializeField]
 	private GameObject camera2D;
 
-	[SerializeField]
 	[Header("スフィア")]
+	[SerializeField]
 	private GameObject[] breakSphere;
 
 	[SerializeField]
 	[Header("スフィアの回転速度")]
 	private float[] sphereSpeed;
 
-	[Header("青いデジタルなマテリアル")]
 	[SerializeField]
+	[Header("青いデジタルなマテリアル")]
 	private Material afterConversionMaterialA;
 
 	[Header("黄色いデジタルなマテリアル")]
 	[SerializeField]
 	private Material afterConversionMaterialB;
 
-	[Header("カメラの回転速度")]
 	[SerializeField]
+	[Header("カメラの回転速度")]
 	private float cameraRollSpeed;
 
 	[Header("カメラの親")]

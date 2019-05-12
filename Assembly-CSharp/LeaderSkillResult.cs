@@ -279,15 +279,15 @@ public class LeaderSkillResult
 		}
 	}
 
-	public ToleranceShifter toleranceUp
+	public int[] addTolerances
 	{
 		get
 		{
 			if (this._leaderSkillStatus != null && this._leaderSkillStatus.type == LeaderSkillType.ToleranceUp)
 			{
-				return this._leaderSkillStatus.tolerance;
+				return this._leaderSkillStatus.addTolerances;
 			}
-			return new ToleranceShifter();
+			return null;
 		}
 	}
 }

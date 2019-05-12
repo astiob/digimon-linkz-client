@@ -299,6 +299,7 @@ public sealed class FarmRoot : MonoBehaviour
 			this.farmVisitFace = FarmVisitFace.Create();
 		}
 		this.farmVisitFace.friendUserName = friendData.userData.nickname;
+		TitleDataMng.SetTitleIcon(friendData.userData.titleId, this.farmVisitFace.friendUserTitleIcon);
 		this.farmVisitFace.onFriendProfile = onFriendProfile;
 		this.farmVisitFace.onFriendList = onFriendList;
 		this.farmVisitFace.onBackFarm = onBackFarm;

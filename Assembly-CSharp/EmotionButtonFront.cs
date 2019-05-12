@@ -4,21 +4,13 @@ using UnityEngine;
 
 public class EmotionButtonFront : MonoBehaviour
 {
-	[Header("エモーションのホルダー")]
 	[SerializeField]
-	private GameObject emotionFolder;
-
 	[Header("エモーションを開くボタン")]
-	[SerializeField]
 	private UIButton openEmotionButton;
 
-	[SerializeField]
 	[Header("スタンプのラベル")]
-	private UILabel stampLabel;
-
-	[Header("エモーションを開くコライダー")]
 	[SerializeField]
-	private Collider openEmotionCollider;
+	private UILabel stampLabel;
 
 	private void Awake()
 	{

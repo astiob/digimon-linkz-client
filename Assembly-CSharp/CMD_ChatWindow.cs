@@ -424,6 +424,10 @@ public class CMD_ChatWindow : CMD
 								{
 									common_MessageData.userInfo.monsterId = keyValuePair3.Value.ToString();
 								}
+								else if (keyValuePair3.Key.ToString() == "ti")
+								{
+									common_MessageData.userInfo.titleId = keyValuePair3.Value.ToString();
+								}
 							}
 						}
 						continue;

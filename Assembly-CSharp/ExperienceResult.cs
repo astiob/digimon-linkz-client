@@ -18,32 +18,32 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
-	[Header("経験値などが入ってる")]
 	[SerializeField]
+	[Header("経験値などが入ってる")]
 	private GameObject acquisitionGO;
 
 	[Header("デジモン部分")]
 	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[Header("デジモンに吸収されるパーティクルを消す")]
 	[SerializeField]
+	[Header("デジモンに吸収されるパーティクルを消す")]
 	private GameObject particleRemover;
 
-	[SerializeField]
 	[Header("取得経験値のラベル")]
+	[SerializeField]
 	private UILabel getExp;
 
-	[SerializeField]
 	[Header("取得経験値の文言ラベル")]
+	[SerializeField]
 	private UILabel getExpText;
 
-	[SerializeField]
 	[Header("取得クラスタのラベル")]
+	[SerializeField]
 	private UILabel getCluster;
 
-	[SerializeField]
 	[Header("取得クラスタの文言ラベル")]
+	[SerializeField]
 	private UILabel getClusterText;
 
 	[Header("取得友情度【リーダー】のラベル")]
@@ -333,6 +333,7 @@ public class ExperienceResult : ResultBase
 		};
 		this.countUpRewards = new Coroutine[labels.Length];
 		int endCount = 0;
+		this.PlayCountUpSound();
 		for (int j = 0; j < labels.Length; j++)
 		{
 			IEnumerator routine = this.CountUpReward(labels[j], array[j], delegate
@@ -346,7 +347,6 @@ public class ExperienceResult : ResultBase
 			}, 0);
 			this.countUpRewards[j] = AppCoroutine.Start(routine, false);
 		}
-		this.PlayCountUpSound();
 		this.restRewardExp = this.totalExp;
 	}
 

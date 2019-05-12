@@ -28,5 +28,6 @@ public enum TCPMessageType
 	PvPBattleStart,
 	Targat,
 	RevivalCancel,
-	ConnectionRecover
+	ConnectionRecover,
+	LeaderChange
 }

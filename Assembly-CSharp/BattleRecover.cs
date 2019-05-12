@@ -30,6 +30,8 @@ public class BattleRecover : BattleFunctionBase
 			BattleDataStore instance = ClassSingleton<BattleDataStore>.Instance;
 			instance.Load(base.stateManager.battleStateData);
 			base.battleStateData.beforeConfirmDigiStoneNumber = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
+			base.battleStateData.ChangePlayerLeader(base.battleStateData.leaderCharacterIndex);
+			base.battleStateData.ChangeEnemyLeader(base.battleStateData.leaderCharacterIndex);
 		}
 	}
 

@@ -71,8 +71,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[Header("お別れボタンのラベル")]
 	[SerializeField]
+	[Header("お別れボタンのラベル")]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]

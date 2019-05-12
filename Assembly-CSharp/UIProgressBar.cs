@@ -12,8 +12,8 @@ public class UIProgressBar : UIWidgetContainer
 
 	public Transform thumb;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIWidget mBG;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class UIProgressBar : UIWidgetContainer
 	[HideInInspector]
 	protected float mValue = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIProgressBar.FillDirection mFill;
 
 	protected Transform mTrans;

@@ -4,36 +4,36 @@ using UnityEngine;
 
 public class BattleUIHUD : UITweener
 {
-	[Header("[マルチバトル用]AP UP用オブジェクト")]
 	[SerializeField]
+	[Header("[マルチバトル用]AP UP用オブジェクト")]
 	public GameObject apUpObject;
 
 	[SerializeField]
 	[Header("[マルチバトル用]HP UP用オブジェクト")]
 	public GameObject hpUpObject;
 
-	[Header("ターン数のラベル")]
 	[SerializeField]
+	[Header("ターン数のラベル")]
 	private UILabel turnNumber;
 
-	[Header("[マルチバトル用]AP数")]
 	[SerializeField]
+	[Header("[マルチバトル用]AP数")]
 	public UILabel multiAPNumber;
 
 	[SerializeField]
 	[Header("HPゲージ")]
 	private UIGaugeManager hpGauge;
 
-	[Header("APゲージ")]
 	[SerializeField]
+	[Header("APゲージ")]
 	private UIGaugeManager apGauge;
 
-	[Header("押しっぱなしのボタン")]
 	[SerializeField]
+	[Header("押しっぱなしのボタン")]
 	private HoldPressButton holdPressButton;
 
-	[Header("アイコン画像(Group01)")]
 	[SerializeField]
+	[Header("アイコン画像(Group01)")]
 	private UISprite[] iconImageGroup01;
 
 	[SerializeField]
@@ -48,16 +48,16 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UIComponentSkinner pnSpriteComponentSkinner;
 
-	[Header("[マルチバトル用]AP UP Rootのコンポーネントのスキナー")]
 	[SerializeField]
+	[Header("[マルチバトル用]AP UP Rootのコンポーネントのスキナー")]
 	public UIComponentSkinner apUpRootComponentSkinner;
 
-	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
 	[SerializeField]
+	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
-	[Header("ターン数Tween")]
 	[SerializeField]
+	[Header("ターン数Tween")]
 	private UITweener turnNumberTween;
 
 	[SerializeField]
@@ -72,12 +72,12 @@ public class BattleUIHUD : UITweener
 	[Range(0f, 1f)]
 	private float from = 1f;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float to = 1f;
 
-	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
 	[SerializeField]
+	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
 	private List<UIWidget> viewWidgets = new List<UIWidget>();
 
 	private Dictionary<SufferStateProperty.SufferType, string> iconSpriteNames = new Dictionary<SufferStateProperty.SufferType, string>();

@@ -8,7 +8,7 @@ public class DropItemList
 
 	private GUISelectPanelDropItemList guiSelectPanelChipList;
 
-	public DropItemList(GameObject parent, int widthLength, Vector2 windowSize, GameWebAPI.RespDataWD_DungeonStart.Drop[] standardDrops, GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] ownerMultiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] multiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] multiLuckDrops)
+	public DropItemList(GameObject parent, int widthLength, Vector2 windowSize, GameWebAPI.RespDataWD_DungeonStart.Drop[] standardDrops, GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] ownerMultiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] multiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] multiLuckDrops, GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrops)
 	{
 		this.gameObject = new GameObject();
 		this.gameObject.name = "DropListBase";
@@ -20,7 +20,7 @@ public class DropItemList
 		this.guiSelectPanelChipList = gameObject.GetComponent<GUISelectPanelDropItemList>();
 		this.guiSelectPanelChipList.selectParts = gameObject2;
 		gameObject2.SetActive(false);
-		this.guiSelectPanelChipList.AllBuild(widthLength, windowSize, standardDrops, luckDrop, ownerMultiDrops, multiDrops, multiLuckDrops);
+		this.guiSelectPanelChipList.AllBuild(widthLength, windowSize, standardDrops, luckDrop, ownerMultiDrops, multiDrops, multiLuckDrops, optionDrops);
 	}
 
 	public IEnumerator SetDrops(bool isSkip = false, Action callBack = null)

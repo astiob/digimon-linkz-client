@@ -687,9 +687,16 @@ public class CMD_GashaTOP : CMD
 				break;
 			}
 		}
-		else if (result.appealTextDisplayType1 == "0")
+		else
 		{
-			result.appealText1 = string.Empty;
+			if (result.appealTextDisplayType1 == "0")
+			{
+				result.appealText1 = string.Empty;
+			}
+			if (result.appealTextDisplayType1 == "2" && result.isFirstGacha1.total == 0)
+			{
+				result.appealText1 = string.Empty;
+			}
 		}
 		if (flag2)
 		{
@@ -705,9 +712,16 @@ public class CMD_GashaTOP : CMD
 				break;
 			}
 		}
-		else if (result.appealTextDisplayType10 == "0")
+		else
 		{
-			result.appealText10 = string.Empty;
+			if (result.appealTextDisplayType10 == "0")
+			{
+				result.appealText10 = string.Empty;
+			}
+			if (result.appealTextDisplayType10 == "2" && result.isFirstGacha10.total == 0)
+			{
+				result.appealText10 = string.Empty;
+			}
 		}
 		if (string.IsNullOrEmpty(result.appealText1) || result.appealText1 == "null")
 		{

@@ -8,8 +8,8 @@ public class CMD_TicketGashaResult : CMD
 {
 	public static CMD_TicketGashaResult instance;
 
-	[SerializeField]
 	[Header("アイコン中心位置")]
+	[SerializeField]
 	private GameObject goICON_CENTER_POS;
 
 	[SerializeField]
@@ -20,8 +20,8 @@ public class CMD_TicketGashaResult : CMD
 	[Header("アイコンX方向の数")]
 	private int iconNumX;
 
-	[Header("アイコン登場時間(フレーム数)")]
 	[SerializeField]
+	[Header("アイコン登場時間(フレーム数)")]
 	private int showChipInterval = 16;
 
 	[SerializeField]
@@ -44,12 +44,12 @@ public class CMD_TicketGashaResult : CMD
 	[Header("シングルキャプチャボタンSprite")]
 	private UISprite buttonSpriteSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTen;
 
-	[Header("TOPへボタンSprite")]
 	[SerializeField]
+	[Header("TOPへボタンSprite")]
 	private UISprite buttonSpriteTOP;
 
 	[Header("シングルキャプチャボタンGUICollider")]
@@ -87,8 +87,8 @@ public class CMD_TicketGashaResult : CMD
 	[Header("RAINBOW エフェクト")]
 	private GameObject goEFC_RAINBOW;
 
-	[SerializeField]
 	[Header("BG TEX")]
+	[SerializeField]
 	public UITexture txBG;
 
 	private bool isOnTapped;

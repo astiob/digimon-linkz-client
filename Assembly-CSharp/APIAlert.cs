@@ -98,6 +98,10 @@ public sealed class APIAlert
 		{
 			onClosed = new Action<int>(this.BackToTop);
 		}
+		else if (!string.IsNullOrEmpty(errorData.GetPolicyVersion()))
+		{
+			onClosed = new Action<int>(this.BackToTop);
+		}
 		else
 		{
 			global::Debug.LogError("VenusStatus.RESPONSE_OLDVERSION なのにバージョン情報が無い");

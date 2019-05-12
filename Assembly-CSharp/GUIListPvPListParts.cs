@@ -1,6 +1,7 @@
 ﻿using Master;
 using MultiBattle.Tools;
 using PvP;
+using Quest;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -15,6 +16,9 @@ public class GUIListPvPListParts : GUIListPartBS
 
 	[SerializeField]
 	private GameObject goMasterIcon;
+
+	[SerializeField]
+	private GameObject goTitleIcon;
 
 	private GameWebAPI.RespData_ColosseumMockBattleRequestListLogic.MemberList data;
 
@@ -97,6 +101,7 @@ public class GUIListPvPListParts : GUIListPartBS
 	{
 		this.lbUserName.text = this.data.userInfo.nickname;
 		this.lbComment.text = string.Format(StringMaster.GetString("ColosseumMockInvitation"), this.data.userInfo.nickname);
+		TitleDataMng.SetTitleIcon(this.data.userInfo.titleId, this.goTitleIcon.GetComponent<UITexture>());
 		if (this.data.userInfo.monsterId != null)
 		{
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.userInfo.monsterId);
@@ -182,6 +187,7 @@ public class GUIListPvPListParts : GUIListPartBS
 		}
 		else
 		{
+			ClassSingleton<QuestData>.Instance.SelectDungeon = null;
 			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
 			GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
 		}

@@ -5,32 +5,32 @@ using UnityEngine;
 
 public class GUIListPartsTrainingMenu : GUIListPartBS
 {
-	[Header("ベースのスプライト")]
 	[SerializeField]
+	[Header("ベースのスプライト")]
 	private UISprite spBase;
 
-	[SerializeField]
 	[Header("NEWを示すアイコン")]
+	[SerializeField]
 	private UISprite spNew;
 
-	[SerializeField]
 	[Header("ビックリマーク")]
+	[SerializeField]
 	private UISprite spInfo;
 
-	[Header("タイトルラベル")]
 	[SerializeField]
+	[Header("タイトルラベル")]
 	private UILabel lbTX_Title;
 
-	[SerializeField]
 	[Header("タイトル左")]
+	[SerializeField]
 	private UISprite spL_Title;
 
-	[Header("タイトル右")]
 	[SerializeField]
+	[Header("タイトル右")]
 	private UISprite spR_Title;
 
-	[SerializeField]
 	[Header("キャンペーンラベル")]
+	[SerializeField]
 	private UILabel lbTX_Campaign;
 
 	private GUIListPartsTrainingMenu.PartsData data;
@@ -41,9 +41,9 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 		string strTitle = this.data.strTitle;
 		if (strTitle != null)
 		{
-			if (GUIListPartsTrainingMenu.<>f__switch$map38 == null)
+			if (GUIListPartsTrainingMenu.<>f__switch$map3A == null)
 			{
-				GUIListPartsTrainingMenu.<>f__switch$map38 = new Dictionary<string, int>(2)
+				GUIListPartsTrainingMenu.<>f__switch$map3A = new Dictionary<string, int>(2)
 				{
 					{
 						"MealTitle",
@@ -56,7 +56,7 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 				};
 			}
 			int num;
-			if (GUIListPartsTrainingMenu.<>f__switch$map38.TryGetValue(strTitle, out num))
+			if (GUIListPartsTrainingMenu.<>f__switch$map3A.TryGetValue(strTitle, out num))
 			{
 				if (num != 0)
 				{

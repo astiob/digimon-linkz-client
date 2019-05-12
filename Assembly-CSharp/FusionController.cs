@@ -37,20 +37,20 @@ public class FusionController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_camrig;
 
-	[SerializeField]
 	[Header("サブカメラ")]
+	[SerializeField]
 	private GameObject obj_cam2;
 
 	[Header("UIカメラ")]
 	[SerializeField]
 	private GameObject obj_uicam;
 
-	[Header("カメラスイッチャー")]
 	[SerializeField]
+	[Header("カメラスイッチャー")]
 	private GameObject obj_cs;
 
-	[Header("魔方陣")]
 	[SerializeField]
+	[Header("魔方陣")]
 	private GameObject obj_mc;
 
 	[SerializeField]
@@ -60,12 +60,12 @@ public class FusionController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_aura1;
 
-	[Header("スピン")]
 	[SerializeField]
+	[Header("スピン")]
 	private GameObject obj_spin;
 
-	[SerializeField]
 	[Header("覚醒")]
+	[SerializeField]
 	private GameObject obj_k1;
 
 	[SerializeField]

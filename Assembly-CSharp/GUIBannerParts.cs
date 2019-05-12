@@ -8,16 +8,16 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[Header("ガシャの背景色")]
 	[SerializeField]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[Header("イベントの背景色")]
 	[SerializeField]
+	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
 	[Header("キャンペーンの背景色")]
@@ -28,8 +28,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
-	[Header("外枠のスプライト")]
 	[SerializeField]
+	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
 	[SerializeField]
@@ -37,12 +37,12 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[Header("NEWのスプライト")]
 	[SerializeField]
+	[Header("NEWのスプライト")]
 	private UISprite newSprite;
 
-	[Header("NEWをコントロールする")]
 	[SerializeField]
+	[Header("NEWをコントロールする")]
 	private bool doNewControl;
 
 	private static readonly int DAY_SECONDS = 86400;

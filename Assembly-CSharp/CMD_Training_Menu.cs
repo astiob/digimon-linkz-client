@@ -22,16 +22,16 @@ public class CMD_Training_Menu : CMD
 	[SerializeField]
 	private GUISelectPanelViewPartsUD csSelectPanel;
 
-	[SerializeField]
 	[Header("非アクティブ ベース 色")]
+	[SerializeField]
 	private Color colBase;
 
-	[SerializeField]
 	[Header("非アクティブ タイトル 色")]
+	[SerializeField]
 	private Color colTitle;
 
-	[SerializeField]
 	[Header("非アクティブ 【】 色")]
+	[SerializeField]
 	private Color colLR;
 
 	public static CMD_Training_Menu instance;
@@ -215,6 +215,12 @@ public class CMD_Training_Menu : CMD
 					};
 					break;
 				case "LaboratoryTitle":
+					partsData.actCallBack = delegate()
+					{
+						GUIMain.ShowCommonDialog(null, "CMD_Laboratory");
+					};
+					break;
+				case "MedalInheritTitle":
 				{
 					GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfo = DataMng.Instance().GetCampaignInfo(GameWebAPI.RespDataCP_Campaign.CampaignType.MedalTakeOverUp);
 					if (campaignInfo != null)
@@ -231,17 +237,10 @@ public class CMD_Training_Menu : CMD
 					}
 					partsData.actCallBack = delegate()
 					{
-						GUIMain.ShowCommonDialog(null, "CMD_Laboratory");
+						GUIMain.ShowCommonDialog(null, "CMD_MedalInherit");
 					};
 					break;
 				}
-				case "DigimonListTitle":
-					partsData.actCallBack = delegate()
-					{
-						CMD_FarewellListRun.Mode = CMD_FarewellListRun.MODE.SHOW;
-						GUIMain.ShowCommonDialog(null, "CMD_FarewellListRun");
-					};
-					break;
 				case "ChipSphereTitle":
 					if (chipFactoryCT <= 0)
 					{
@@ -332,6 +331,12 @@ public class CMD_Training_Menu : CMD
 		{
 			this.ShowDatas();
 		}, "CMD_Shop");
+	}
+
+	private void OnClickedFarewellList()
+	{
+		CMD_FarewellListRun.Mode = CMD_FarewellListRun.MODE.SHOW;
+		GUIMain.ShowCommonDialog(null, "CMD_FarewellListRun");
 	}
 
 	private int GetFacilityCount(int facilityID)

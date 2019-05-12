@@ -49,6 +49,30 @@ public sealed class MonsterResistanceList : MonoBehaviour
 	[SerializeField]
 	private UISprite deathIcon;
 
+	private void SetResistanceIcon(ConstValue.ResistanceType type, string value, UISprite icon)
+	{
+		if (null != icon)
+		{
+			icon.spriteName = MonsterDetailUtil.GetResistanceSpriteName(type);
+			icon.color = MonsterDetailUtil.GetResistanceSpriteColor(value);
+		}
+	}
+
+	private void SetInvalidIcon(string value, GameObject icon)
+	{
+		if ("99" == value)
+		{
+			if (!icon.activeSelf)
+			{
+				icon.SetActive(true);
+			}
+		}
+		else if (icon.activeSelf)
+		{
+			icon.SetActive(false);
+		}
+	}
+
 	public void Start()
 	{
 		if (null != this.resistanceTitle)
@@ -151,12 +175,21 @@ public sealed class MonsterResistanceList : MonoBehaviour
 		this.SetResistanceIcon(type, value, icon);
 	}
 
-	private void SetResistanceIcon(ConstValue.ResistanceType type, string value, UISprite icon)
+	public void SetInvalid(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistance)
 	{
-		if (null != icon)
-		{
-			icon.spriteName = MonsterDetailUtil.GetResistanceSpriteName(type);
-			icon.color = MonsterDetailUtil.GetResistanceSpriteColor(value);
-		}
+		this.SetInvalidIcon(resistance.none, this.nothingnessIcon.gameObject);
+		this.SetInvalidIcon(resistance.fire, this.fireIcon.gameObject);
+		this.SetInvalidIcon(resistance.water, this.waterIcon.gameObject);
+		this.SetInvalidIcon(resistance.thunder, this.thunderIcon.gameObject);
+		this.SetInvalidIcon(resistance.nature, this.natureIcon.gameObject);
+		this.SetInvalidIcon(resistance.light, this.lightIcon.gameObject);
+		this.SetInvalidIcon(resistance.dark, this.darkIcon.gameObject);
+		this.SetInvalidIcon(resistance.stun, this.stunIcon.gameObject);
+		this.SetInvalidIcon(resistance.skillLock, this.skillLockIcon.gameObject);
+		this.SetInvalidIcon(resistance.sleep, this.sleepIcon.gameObject);
+		this.SetInvalidIcon(resistance.paralysis, this.paralysisIcon.gameObject);
+		this.SetInvalidIcon(resistance.confusion, this.confusionIcon.gameObject);
+		this.SetInvalidIcon(resistance.poison, this.poisonIcon.gameObject);
+		this.SetInvalidIcon(resistance.death, this.deathIcon.gameObject);
 	}
 }

@@ -222,6 +222,15 @@ public class WebAPI : MonoBehaviour
 			return null;
 		}
 
+		public string GetPolicyVersion()
+		{
+			if (this.updateVersionManager != null && !string.IsNullOrEmpty(this.updateVersionManager.policyVersion))
+			{
+				return this.updateVersionManager.policyVersion;
+			}
+			return string.Empty;
+		}
+
 		public sealed class UpdateVersionManager
 		{
 			public string appVersion;
@@ -229,6 +238,8 @@ public class WebAPI : MonoBehaviour
 			public string dataVersion;
 
 			public string assetVersion;
+
+			public string policyVersion;
 		}
 
 		public sealed class Maintenance

@@ -49,11 +49,15 @@ public class FaceMission : GUICollider
 		{
 			return;
 		}
-		int missionNewCount = respDataMP_MyPage.userNewsCountList.missionNewCount;
-		int missionRewardCount = respDataMP_MyPage.userNewsCountList.missionRewardCount;
-		if (missionNewCount > 0)
+		int num = respDataMP_MyPage.userNewsCountList.missionNewCount;
+		int num2 = respDataMP_MyPage.userNewsCountList.missionRewardCount;
+		int beginnerMissionNewCount = respDataMP_MyPage.userNewsCountList.beginnerMissionNewCount;
+		int beginnerMissionRewardCount = respDataMP_MyPage.userNewsCountList.beginnerMissionRewardCount;
+		num += beginnerMissionNewCount;
+		num2 += beginnerMissionRewardCount;
+		if (num > 0)
 		{
-			this.SetActive(missionNewCount);
+			this.SetActive(num);
 		}
 		else if (this.dayChangeflg)
 		{
@@ -61,19 +65,15 @@ public class FaceMission : GUICollider
 		}
 		else
 		{
-			this.SetActive(missionRewardCount);
+			this.SetActive(num2);
 		}
-		int beginnerMissionNewCount = respDataMP_MyPage.userNewsCountList.beginnerMissionNewCount;
-		int beginnerMissionRewardCount = respDataMP_MyPage.userNewsCountList.beginnerMissionRewardCount;
 		if (beginnerMissionNewCount > 0 || beginnerMissionRewardCount > 0)
 		{
 			this.goEffectBeginner.SetActive(true);
-			this.SetActive(1);
 		}
 		else
 		{
 			this.goEffectBeginner.SetActive(false);
-			this.SetActive(0);
 		}
 	}
 

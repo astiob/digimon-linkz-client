@@ -1,20 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Sprite")]
+[ExecuteInEditMode]
 public class UISprite : UIBasicSprite
 {
 	[SerializeField]
 	[HideInInspector]
 	private UIAtlas mAtlas;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private string mSpriteName;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mFillCenter = true;
 
 	[NonSerialized]

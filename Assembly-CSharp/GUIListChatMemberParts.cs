@@ -22,6 +22,9 @@ public class GUIListChatMemberParts : GUIListPartBS
 	private GameObject goMONSTER_ICON;
 
 	[SerializeField]
+	private GameObject goTITLE_ICON;
+
+	[SerializeField]
 	private Color activeListColor;
 
 	[SerializeField]
@@ -46,6 +49,8 @@ public class GUIListChatMemberParts : GUIListPartBS
 	private UILabel ngTX_COMMENT;
 
 	private GameObject ngMONSTER_ICON;
+
+	private GameObject ngTITLE_ICON;
 
 	private string thumbMid;
 
@@ -94,9 +99,11 @@ public class GUIListChatMemberParts : GUIListPartBS
 		this.ngTX_LOGIN = this.goTX_LOGIN.GetComponent<UILabel>();
 		this.ngTX_COMMENT = this.goTX_COMMENT.GetComponent<UILabel>();
 		this.ngMONSTER_ICON = this.goMONSTER_ICON;
+		this.ngTITLE_ICON = this.goTITLE_ICON;
 		if (CMD_ChatMenu.instance.openMemberListType == 1)
 		{
 			this.ngTX_NAME.text = this.FriendData.userData.nickname;
+			TitleDataMng.SetTitleIcon(this.FriendData.userData.titleId, this.ngTITLE_ICON.GetComponent<UITexture>());
 			this.ngTX_LOGIN.text = this.FriendData.userData.loginTime;
 			this.ngTX_COMMENT.text = this.FriendData.userData.description;
 			this.thumbMid = this.FriendData.monsterData.monsterId;
@@ -104,6 +111,7 @@ public class GUIListChatMemberParts : GUIListPartBS
 		else
 		{
 			this.ngTX_NAME.text = this.Data.userInfo.nickname;
+			TitleDataMng.SetTitleIcon(this.Data.userInfo.titleId, this.ngTITLE_ICON.GetComponent<UITexture>());
 			this.ngTX_LOGIN.text = string.Format(StringMaster.GetString("ChatUserLastLogin"), this.Data.userInfo.loginTime);
 			this.ngTX_COMMENT.text = this.Data.userInfo.description;
 			this.thumbMid = this.Data.userInfo.monsterId;

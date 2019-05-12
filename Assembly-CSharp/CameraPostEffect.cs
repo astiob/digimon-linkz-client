@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(MaterialController))]
 [RequireComponent(typeof(Camera))]
+[RequireComponent(typeof(MaterialController))]
 public class CameraPostEffect : MonoBehaviour
 {
 	public static CameraPostEffect current;

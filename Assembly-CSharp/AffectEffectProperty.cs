@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityExtension;
@@ -14,8 +15,8 @@ public class AffectEffectProperty
 
 	private float _hitRate;
 
-	[FormerlySerializedAs("_numbers")]
 	[SerializeField]
+	[FormerlySerializedAs("_numbers")]
 	private EffectNumbers _effectNumbers;
 
 	[SerializeField]
@@ -34,8 +35,8 @@ public class AffectEffectProperty
 	[FormerlySerializedAs("intValue")]
 	private int[] _intValue = new int[2];
 
-	[FormerlySerializedAs("floatValue")]
 	[SerializeField]
+	[FormerlySerializedAs("floatValue")]
 	private float[] _floatValue = new float[6];
 
 	private System.Random _random = new System.Random();
@@ -570,7 +571,9 @@ public class AffectEffectProperty
 			return true;
 		}
 		float num = this.hitRate;
-		num = ExtraEffectStatus.GetSkillHitRateCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, this, attacker);
+		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
+		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
+		num = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, this, attacker);
 		num += attacker.chipAddHit;
 		foreach (int num2 in attacker.potencyChipIdList.Keys)
 		{
@@ -594,8 +597,8 @@ public class AffectEffectProperty
 			num += attacker.leaderSkillResult.hitRateUpPercent;
 			if (Tolerance.OnInfluenceToleranceAffectEffect(this.type))
 			{
-				Tolerance shiftedTolerance = target.leaderSkillResult.toleranceUp.GetShiftedTolerance(target.tolerance);
-				Strength affectEffectStrength = shiftedTolerance.GetAffectEffectStrength(this.type);
+				Tolerance tolerance = target.tolerance;
+				Strength affectEffectStrength = tolerance.GetAffectEffectStrength(this.type);
 				if (affectEffectStrength == Strength.Strong)
 				{
 					num *= 0.5f;
@@ -608,6 +611,33 @@ public class AffectEffectProperty
 				{
 					num *= 0f;
 				}
+			}
+		}
+		return RandomExtension.Switch(Mathf.Clamp01(num), this._random);
+	}
+
+	public bool OnHit(CharacterStateControl target)
+	{
+		if (SkillStatus.onHitRate100Percent)
+		{
+			return true;
+		}
+		float num = this.hitRate;
+		if (this.powerType != PowerType.Fixable && Tolerance.OnInfluenceToleranceAffectEffect(this.type))
+		{
+			Tolerance tolerance = target.tolerance;
+			Strength affectEffectStrength = tolerance.GetAffectEffectStrength(this.type);
+			if (affectEffectStrength == Strength.Strong)
+			{
+				num *= 0.5f;
+			}
+			else if (affectEffectStrength == Strength.Weak)
+			{
+				num *= 1.5f;
+			}
+			else if (affectEffectStrength == Strength.Invalid)
+			{
+				num *= 0f;
 			}
 		}
 		return RandomExtension.Switch(Mathf.Clamp01(num), this._random);

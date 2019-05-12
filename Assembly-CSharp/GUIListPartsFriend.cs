@@ -6,6 +6,8 @@ public class GUIListPartsFriend : GUIListPartBS
 {
 	public GameObject goMN_ICON;
 
+	public GameObject goTL_ICON;
+
 	public GameObject goTX_NICKNAME;
 
 	public GameObject goTX_EXP;
@@ -78,6 +80,7 @@ public class GUIListPartsFriend : GUIListPartBS
 			str = StringMaster.GetString("Friend-13");
 		}
 		this.ngTX_NICKNAME.text = this.data.userData.nickname;
+		TitleDataMng.SetTitleIcon(this.data.userData.titleId, this.goTL_ICON.GetComponent<UITexture>());
 		this.ngTX_EXP.text = this.data.userData.description;
 		this.ngTX_LAST_LOGIN.text = StringMaster.GetString("Friend-12") + this.data.userData.loginTime + str;
 		this.lastLoginTime = this.data.userData.loginTime;

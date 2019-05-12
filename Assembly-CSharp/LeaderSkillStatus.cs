@@ -7,8 +7,8 @@ public class LeaderSkillStatus
 	[SerializeField]
 	private string _name;
 
-	[SerializeField]
 	[Multiline(1)]
+	[SerializeField]
 	private string _description;
 
 	[SerializeField]
@@ -18,7 +18,7 @@ public class LeaderSkillStatus
 	private float[] _floatValue;
 
 	[SerializeField]
-	private ToleranceShifter _tolerance;
+	private int[] _addTolerances;
 
 	private bool _isHaving;
 
@@ -34,11 +34,11 @@ public class LeaderSkillStatus
 		this._type = LeaderSkillType.HpFollowingDamageUp;
 		this._floatValue[0] = 0f;
 		this._floatValue[1] = 0f;
-		this._tolerance = new ToleranceShifter();
+		this._addTolerances = null;
 		this._isHaving = true;
 	}
 
-	public LeaderSkillStatus(string name, string description, LeaderSkillType type, float hpFollowingPercent, float upPercent, ToleranceShifter tolerance)
+	public LeaderSkillStatus(string name, string description, LeaderSkillType type, float hpFollowingPercent, float upPercent, Tolerance tolerance)
 	{
 		float[] array = new float[2];
 		array[0] = 1f;
@@ -50,7 +50,7 @@ public class LeaderSkillStatus
 		this._type = type;
 		this._floatValue[0] = Mathf.Clamp01(hpFollowingPercent);
 		this._floatValue[1] = Mathf.Clamp01(upPercent);
-		this._tolerance = tolerance;
+		this._addTolerances = this.addTolerances;
 		this._isHaving = (name != null);
 	}
 
@@ -83,11 +83,11 @@ public class LeaderSkillStatus
 		}
 	}
 
-	public ToleranceShifter tolerance
+	public int[] addTolerances
 	{
 		get
 		{
-			return this._tolerance;
+			return this._addTolerances;
 		}
 	}
 

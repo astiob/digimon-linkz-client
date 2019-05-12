@@ -14,8 +14,8 @@ public class InharitanceController : CutsceneControllerBase
 	[Header("カメラの注視点")]
 	private Transform cameraTarget;
 
-	[Header("カメラ1")]
 	[SerializeField]
+	[Header("カメラ1")]
 	private GameObject inharitanceCamera;
 
 	[Header("カメラ2")]

@@ -40,13 +40,6 @@ public class FarmColosseum : MonoBehaviour
 
 	private void Update()
 	{
-		if (this.constructionName == null && FarmRoot.Instance.farmUI != null)
-		{
-			GameObject gameObject = GUIManager.LoadCommonGUI("Farm/ConstructionName", FarmRoot.Instance.farmUI.gameObject);
-			gameObject.name = "FacilityNamePlate_Colosseum";
-			this.constructionName = gameObject.GetComponent<ConstructionName>();
-			this.constructionName.farmObject = base.gameObject;
-		}
 		bool flag = this.IsOpen() && DataMng.Instance().IsReleaseColosseum;
 		if (this.colosseums[0].activeSelf != flag)
 		{
@@ -55,6 +48,17 @@ public class FarmColosseum : MonoBehaviour
 		if (this.colosseums[1].activeSelf != !flag)
 		{
 			this.colosseums[1].SetActive(!flag);
+		}
+		if (this.constructionName == null && FarmRoot.Instance.farmUI != null)
+		{
+			GameObject gameObject = GUIManager.LoadCommonGUI("Farm/ConstructionName", FarmRoot.Instance.farmUI.gameObject);
+			gameObject.name = "FacilityNamePlate_Colosseum";
+			this.constructionName = gameObject.GetComponent<ConstructionName>();
+			this.constructionName.farmObject = base.gameObject;
+			if (flag && DataMng.Instance().RespData_ColosseumInfo.openAllDay > 0)
+			{
+				this.CreateSignalColosseumEvent();
+			}
 		}
 		GameWebAPI.RespDataCL_GetColosseumReward respData_ColosseumReward = DataMng.Instance().RespData_ColosseumReward;
 		bool flag2 = respData_ColosseumReward != null && respData_ColosseumReward.rewardList != null;
@@ -96,7 +100,7 @@ public class FarmColosseum : MonoBehaviour
 
 	public static void ShowPvPTop()
 	{
-		if (DataMng.Instance().IsReleaseColosseum)
+		if (DataMng.Instance().IsReleaseColosseum && DataMng.Instance().RespData_ColosseumInfo.colosseumId > 0)
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_PvPTop");
 		}
@@ -104,7 +108,14 @@ public class FarmColosseum : MonoBehaviour
 		{
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ColosseumTitle");
-			cmd_ModalMessage.Info = StringMaster.GetString("ColosseumLimit");
+			if (DataMng.Instance().IsReleaseColosseum)
+			{
+				cmd_ModalMessage.Info = StringMaster.GetString("ColosseumCloseTime");
+			}
+			else
+			{
+				cmd_ModalMessage.Info = StringMaster.GetString("ColosseumLimit");
+			}
 		}
 	}
 
@@ -144,10 +155,14 @@ public class FarmColosseum : MonoBehaviour
 	private bool IsOpen()
 	{
 		GameWebAPI.RespData_ColosseumInfoLogic respData_ColosseumInfo = DataMng.Instance().RespData_ColosseumInfo;
-		if (respData_ColosseumInfo == null || respData_ColosseumInfo.colosseumIdList == null || respData_ColosseumInfo.colosseumIdList.Count<int>() == 0)
+		if (respData_ColosseumInfo == null || respData_ColosseumInfo.colosseumId == 0)
 		{
 			this.scheduleList.Clear();
 			return false;
+		}
+		if (DataMng.Instance().RespData_ColosseumInfo.openAllDay > 0)
+		{
+			return true;
 		}
 		if (this.scheduleList.Count<FarmColosseum.Schedule>() == 0)
 		{
@@ -156,7 +171,7 @@ public class FarmColosseum : MonoBehaviour
 			{
 				return false;
 			}
-			string b = respData_ColosseumInfo.colosseumIdList[0].ToString();
+			string b = respData_ColosseumInfo.colosseumId.ToString();
 			foreach (GameWebAPI.RespDataMA_ColosseumTimeScheduleM.ColosseumTimeSchedule colosseumTimeSchedule in respDataMA_ColosseumTimeScheduleMaster.colosseumTimeScheduleM)
 			{
 				if (colosseumTimeSchedule.colosseumId == b)
@@ -178,6 +193,29 @@ public class FarmColosseum : MonoBehaviour
 			}
 		}
 		return false;
+	}
+
+	public void CreateSignalColosseumEvent()
+	{
+		if (null != this.constructionName)
+		{
+			SignalColosseumEvent[] componentsInChildren = this.constructionName.GetComponentsInChildren<SignalColosseumEvent>(true);
+			if (componentsInChildren != null && 0 < componentsInChildren.Length)
+			{
+				componentsInChildren[0].SetDisplay(true);
+			}
+			else
+			{
+				GameObject gameObject = GUIManager.LoadCommonGUI("Farm/SignalColosseumEvent", this.constructionName.gameObject);
+				if (gameObject != null)
+				{
+					gameObject.name = "SignalColosseumEvent";
+					SignalColosseumEvent component = gameObject.GetComponent<SignalColosseumEvent>();
+					component.SetNamePlate(this.constructionName);
+					component.SetDisplay(true);
+				}
+			}
+		}
 	}
 
 	private struct Schedule

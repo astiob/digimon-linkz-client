@@ -13,40 +13,40 @@ public sealed class ChipSphereIconButton : GUICollider
 	[Header("枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("LOOKのオブジェクト")]
 	[SerializeField]
+	[Header("LOOKのオブジェクト")]
 	private GameObject lookGO;
 
-	[Header("Chargesのオブジェクト")]
 	[SerializeField]
+	[Header("Chargesのオブジェクト")]
 	private GameObject chargesGO;
 
-	[Header("選択中(Chip_choosing)")]
 	[SerializeField]
+	[Header("選択中(Chip_choosing)")]
 	private GameObject choosingGO;
 
 	[SerializeField]
 	[Header("チップの名前/拡張説明")]
 	private UILabel chipNameLabel;
 
-	[Header("チップの説明ラベル/拡張パッチの個数")]
 	[SerializeField]
+	[Header("チップの説明ラベル/拡張パッチの個数")]
 	private UILabel chipDescriptLabel;
 
-	[Header("チップのテクスチャ/枠")]
 	[SerializeField]
+	[Header("チップのテクスチャ/枠")]
 	private UITexture chipTexture;
 
-	[Header("アイテムのスプライト")]
 	[SerializeField]
+	[Header("アイテムのスプライト")]
 	private UISprite itemSprite;
 
-	[Header("LOOKのスプライト")]
 	[SerializeField]
+	[Header("LOOKのスプライト")]
 	private UISprite lookSprite;
 
-	[SerializeField]
 	[Header("チップランクのスプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	public CMD_ChipSphere cmdChipSphere { private get; set; }
@@ -106,7 +106,7 @@ public sealed class ChipSphereIconButton : GUICollider
 			this.SetupNotYet();
 			break;
 		case CMD_ChipSphere.MenuType.Detail:
-			global::Debug.LogError("ここから呼ばれるのはありえない.");
+			this.SetupDetail(this.myParameter.userChipId, this.myParameter.GetChipMainData());
 			break;
 		default:
 			global::Debug.LogError("ありえない.");
@@ -161,6 +161,7 @@ public sealed class ChipSphereIconButton : GUICollider
 
 	public void SetupDetail(int userChipId, GameWebAPI.RespDataMA_ChipM.Chip chipData)
 	{
+		this.isOpened = true;
 		this.SetupOnlyDetailParams(userChipId, chipData);
 		this.frameSprite.spriteName = "Chip_Sphere_Thumbnail_ON";
 		NGUITools.SetActiveSelf(this.chargesGO, false);
@@ -221,7 +222,7 @@ public sealed class ChipSphereIconButton : GUICollider
 
 		public int userChipId;
 
-		private GameWebAPI.RespDataMA_ChipM.Chip GetChipMainData()
+		public GameWebAPI.RespDataMA_ChipM.Chip GetChipMainData()
 		{
 			GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipDataByUserChipId = ChipDataMng.GetUserChipDataByUserChipId(this.userChipId);
 			return ChipDataMng.GetChipMainData(userChipDataByUserChipId);

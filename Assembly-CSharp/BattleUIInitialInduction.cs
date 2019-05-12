@@ -21,16 +21,16 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private UILabel text;
 
-	[SerializeField]
 	[Header("モニター")]
+	[SerializeField]
 	private UIComponentSkinner monitorSkinner;
 
 	[Header("ウィンドウTween")]
 	[SerializeField]
 	private UITweener windowTween;
 
-	[Header("モニターTween")]
 	[SerializeField]
+	[Header("モニターTween")]
 	private UITweener monitorTween;
 
 	[Header("テキストTween")]

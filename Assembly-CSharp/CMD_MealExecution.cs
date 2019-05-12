@@ -498,16 +498,14 @@ public class CMD_MealExecution : CMD
 			{
 				this.spBtnHQMeat.spriteName = "Common02_Btn_Red";
 				this.lbBtnHQMeatExec.text = StringMaster.GetString("UseHQMeal");
-				this.coBtnHQMeat.enabled = true;
-				this.lbBtnHQMeatExec.color = Color.white;
 			}
 			else
 			{
-				this.spBtnHQMeat.spriteName = "Common02_Btn_Gray";
-				this.lbBtnHQMeatExec.text = StringMaster.GetString("UseHQMeal");
-				this.lbBtnHQMeatExec.color = Color.gray;
-				this.coBtnHQMeat.enabled = false;
+				this.spBtnHQMeat.spriteName = "Common02_Btn_Green";
+				this.lbBtnHQMeatExec.text = StringMaster.GetString("BuyHQMeal");
 			}
+			this.coBtnHQMeat.enabled = true;
+			this.lbBtnHQMeatExec.color = Color.white;
 		}
 		else
 		{
@@ -704,6 +702,7 @@ public class CMD_MealExecution : CMD
 					this.labelBtnExec.color = Color.gray;
 					CMD_MealExecution.execMeatNum_bk = 0;
 					this.isExecHQMeat = true;
+					this.statusAnime.Displaylevel = int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel);
 					NGUIUtil.ChangeUITextureFromFile(this.meat.txMeat, "UITexture/Common02_Meal_Meat2", false);
 				}
 			}

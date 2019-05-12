@@ -1,5 +1,6 @@
 ﻿using Master;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleSkillBtn : MonoBehaviour
@@ -23,8 +24,8 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UILabel power;
 
-	[SerializeField]
 	[Header("スキナー")]
+	[SerializeField]
 	public UISpriteSkinnerBase attributeIcon;
 
 	[SerializeField]
@@ -58,11 +59,13 @@ public class BattleSkillBtn : MonoBehaviour
 		AffectEffectProperty affectEffectFirst = skills.GetAffectEffectFirst();
 		if (affectEffectFirst != null)
 		{
+			List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
+			List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
 			if (affectEffectFirst.type == AffectEffect.Damage)
 			{
-				skillPowerCorrectionValue = ExtraEffectStatus.GetSkillPowerCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, affectEffectFirst, selectCharacter);
+				skillPowerCorrectionValue = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst, selectCharacter);
 			}
-			value = ExtraEffectStatus.GetSkillHitRateCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, affectEffectFirst, selectCharacter);
+			value = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectFirst, selectCharacter);
 			value = Mathf.Clamp01(value);
 		}
 		this.skillButtonMode.isLock = false;

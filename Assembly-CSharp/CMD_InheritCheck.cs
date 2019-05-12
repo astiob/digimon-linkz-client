@@ -5,12 +5,12 @@ using UnityEngine;
 
 public sealed class CMD_InheritCheck : CMD
 {
-	[Header("タイトルのラベル")]
 	[SerializeField]
+	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
-	[Header("継承技タイトルラベル")]
 	[SerializeField]
+	[Header("継承技タイトルラベル")]
 	private UILabel inheritTitleLabel;
 
 	[SerializeField]
@@ -20,20 +20,20 @@ public sealed class CMD_InheritCheck : CMD
 	[Header("消費クラスタのラベル")]
 	private UILabel useClusterLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[SerializeField]
 	[Header("警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
+	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string useCluster)

@@ -1166,15 +1166,15 @@ public static class NGUITools
 		return mb != null && mb.enabled && mb.gameObject.activeInHierarchy;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static bool GetActive(Behaviour mb)
 	{
 		return mb && mb.enabled && mb.gameObject.activeInHierarchy;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static bool GetActive(GameObject go)
 	{
 		return go && go.activeInHierarchy;

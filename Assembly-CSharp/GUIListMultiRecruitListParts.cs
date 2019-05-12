@@ -11,6 +11,9 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 	private UILabel lbUserName;
 
 	[SerializeField]
+	private GameObject goTitleIcon;
+
+	[SerializeField]
 	private UILabel lbQuestName;
 
 	[SerializeField]
@@ -113,6 +116,7 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 	{
 		this.lbUserName.text = this.data.ownerName;
 		this.lbComment.text = this.data.introduction;
+		TitleDataMng.SetTitleIcon(this.data.titleId, this.goTitleIcon.GetComponent<UITexture>());
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == this.data.worldStageId);
 		this.lbQuestName.text = worldStageM2.name + "\n" + this.data.dungeonName;
@@ -121,13 +125,13 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 		{
 		case "1":
 			this.lbMoodType.text = StringMaster.GetString("RecruitRule-06");
-			goto IL_142;
+			goto IL_15D;
 		case "2":
 			this.lbMoodType.text = StringMaster.GetString("RecruitRule-07");
-			goto IL_142;
+			goto IL_15D;
 		}
 		this.lbMoodType.text = StringMaster.GetString("RecruitRule-08");
-		IL_142:
+		IL_15D:
 		this.lbNowMemberNum.text = string.Format(StringMaster.GetString("SystemFraction"), this.data.memberCount, 3);
 		if (!this.isOpenedQuest)
 		{
@@ -191,6 +195,7 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 								}
 							}
 						}
+						ClassSingleton<QuestData>.Instance.SelectDungeon = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(this.data.worldDungeonId);
 						GameWebAPI.MultiRoomJoin multiRoomJoin = new GameWebAPI.MultiRoomJoin();
 						multiRoomJoin.SetSendData = delegate(GameWebAPI.ReqData_MultiRoomJoin param)
 						{

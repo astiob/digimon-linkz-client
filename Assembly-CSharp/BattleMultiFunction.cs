@@ -297,6 +297,8 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = base.stateManager.serverControl.GetWorldDungeonM(respData_WorldMultiStartInfo.worldDungeonId);
 		base.hierarchyData.useStageId = worldDungeonM.background;
 		base.hierarchyData.areaName = worldDungeonM.name;
+		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
 		{
@@ -307,6 +309,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			}
 		}
 		base.hierarchyData.extraEffectsId = base.SetWorldDungeonExtraEffect(worldDungeonM.worldDungeonId);
+		base.hierarchyData.isPossibleContinue = (int.Parse(worldDungeonM.canContinue) == 1);
 		base.hierarchyData.battleNum = worldDungeonM.battleNum;
 		base.hierarchyData.batteWaves = base.stateManager.serverControl.DungeonFloorToBattleWave(respData_WorldMultiStartInfo.dungeonFloor, respData_WorldMultiStartInfo.worldDungeonId);
 		base.hierarchyData.digiStoneNumber = DataMng.Instance().GetStone();
@@ -528,10 +531,21 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				{
 					this.recieveChecks[TCPMessageType.Retire] = true;
 					this.isDisconnected = true;
-					this.ShowDisconnectOwnerRetireDialog(delegate
+					if (!base.hierarchyData.isPossibleContinue)
 					{
 						this.RunRetire(false, null);
-					});
+					}
+					else if (base.hierarchyData.limitRound > 0)
+					{
+						this.RunRetire(false, null);
+					}
+					else
+					{
+						this.ShowDisconnectOwnerRetireDialog(delegate
+						{
+							this.RunRetire(false, null);
+						});
+					}
 				};
 				base.SendConfirmation(TCPMessageType.Retire, ownerPlayer.userStatus.userId);
 			}
@@ -845,6 +859,9 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			break;
 		case TCPMessageType.ConnectionRecover:
 			this.RecieveConnectionRecover(tcpMessageType, messageObj);
+			break;
+		case TCPMessageType.LeaderChange:
+			base.RecieveLeaderChange(tcpMessageType, messageObj);
 			break;
 		}
 	}
@@ -1461,6 +1478,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 					attacker.ap = 0;
 					base.stateManager.targetSelect.AutoPlayCharacterAndSkillSelectFunction(attacker);
 					attacker.ap = tempAP;
+					base.battleStateData.onSkillTrigger = true;
 				}
 				IEnumerator check = this.DisconnectAction(userId, isOwner, null);
 				while (check.MoveNext())
@@ -1646,6 +1664,42 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		{
 			this.GotoFarm(true, callback);
 		}
+	}
+
+	public IEnumerator SendTimeOut()
+	{
+		if (base.IsOwner)
+		{
+			IEnumerator coroutine = this.RunRetireByOwner(ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, null);
+			while (coroutine.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		else
+		{
+			IEnumerator coroutine2 = Singleton<TCPMessageSender>.Instance.CountTimeOutMember();
+			while (coroutine2.MoveNext())
+			{
+				while (this.isDisconnected)
+				{
+					yield return null;
+				}
+				if (Singleton<TCPMessageSender>.Instance.IsFinalTimeoutForRetire)
+				{
+					this.ShowDisconnectOwnerDialog(null);
+					for (;;)
+					{
+						yield return null;
+					}
+				}
+				else
+				{
+					yield return coroutine2.Current;
+				}
+			}
+		}
+		yield break;
 	}
 
 	public IEnumerator SendContinue()

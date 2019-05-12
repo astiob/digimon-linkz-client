@@ -65,6 +65,8 @@ public sealed class MasterDataMng : MonoBehaviour
 		this.CreateMasterData<MA_WorldAreaMaster>();
 		this.CreateMasterData<MA_WorldStageMaster>();
 		this.CreateMasterData<MA_WorldStageRewardMaster>();
+		this.CreateMasterData<MA_WorldStageOptionRewardMaster>();
+		this.CreateMasterData<MA_WorldDungeonSortieLimitMaster>();
 		this.CreateMasterData<MA_WorldDungeonExtraEffectMaster>();
 		this.CreateMasterData<MA_WorldDungeonExtraEffectManageMaster>();
 		this.CreateMasterData<MA_HelpCategoryMaster>();
@@ -84,6 +86,8 @@ public sealed class MasterDataMng : MonoBehaviour
 		this.CreateMasterData<MA_DungeonTicketMaster>();
 		this.CreateMasterData<MA_WorldDungeonStartCondition>();
 		this.CreateMasterData<MA_NavigationMessageMaster>();
+		this.CreateMasterData<MA_TitleMaster>();
+		this.CreateMasterData<MA_AbilityUpgradeM>();
 	}
 
 	private void CreateMasterData<MasterT>() where MasterT : MasterBase, new()
@@ -326,6 +330,24 @@ public sealed class MasterDataMng : MonoBehaviour
 		}
 	}
 
+	public GameWebAPI.RespDataMA_GetWorldDungeonOptionRewardM RespDataMA_WorldDungeonOptionRewardM
+	{
+		get
+		{
+			MA_WorldStageOptionRewardMaster ma_WorldStageOptionRewardMaster = this.GetMaster(MasterId.WORLD_DUNGEON_OPTION_REWARD) as MA_WorldStageOptionRewardMaster;
+			return ma_WorldStageOptionRewardMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_WorldDungeonSortieLimit WorldDungeonSortieLimitMaster
+	{
+		get
+		{
+			MA_WorldDungeonSortieLimitMaster ma_WorldDungeonSortieLimitMaster = this.GetMaster(MasterId.WORLD_DUNGEON_SORTIE_LIMIT) as MA_WorldDungeonSortieLimitMaster;
+			return ma_WorldDungeonSortieLimitMaster.GetMasterData();
+		}
+	}
+
 	public GameWebAPI.RespDataMA_GetHelpCategoryM RespDataMA_HelpCategoryM
 	{
 		get
@@ -469,12 +491,32 @@ public sealed class MasterDataMng : MonoBehaviour
 		}
 	}
 
+	public GameWebAPI.RespDataMA_TitleMaster RespDataMA_TitleMaster
+	{
+		get
+		{
+			MA_TitleMaster ma_TitleMaster = this.GetMaster(MasterId.TITLE) as MA_TitleMaster;
+			return ma_TitleMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_AbilityUpgradeM RespDataMA_AbilityUpgradeM
+	{
+		get
+		{
+			MA_AbilityUpgradeM ma_AbilityUpgradeM = this.GetMaster(MasterId.ABILITY_MEDAL_UPGRADE) as MA_AbilityUpgradeM;
+			return ma_AbilityUpgradeM.GetMasterData();
+		}
+	}
+
 	public void ClearCache()
 	{
 		AlertMaster.ClearCache();
 		StringMaster.ClearCache();
 		MonsterEvolutionUtil.ClearCache();
 		CommonSentenceData.ClearCache();
+		ChipDataMng.ClearCache();
+		TitleDataMng.ClearCache();
 		DataMng.Instance().StageGimmick.ZeroClear();
 		MasterBase[] array = this.masterList.Values.ToArray<MasterBase>();
 		for (int i = 0; i < array.Length; i++)
@@ -584,6 +626,7 @@ public sealed class MasterDataMng : MonoBehaviour
 		PLUGIN,
 		FACILITY_KEY,
 		CHIP,
-		DUNGEON_TICKET
+		DUNGEON_TICKET,
+		TITLE
 	}
 }

@@ -38,8 +38,8 @@ public sealed class CMD_ChipSphere : CMD
 	[Header("取外パッチの残り個数")]
 	private UILabel ejectCountLabel;
 
-	[Header("拡張パッチの残り個数")]
 	[SerializeField]
+	[Header("拡張パッチの残り個数")]
 	private UILabel extraCountLabel;
 
 	[Header("右下の切り替わるメニューのオブジェクト")]
@@ -50,20 +50,20 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private Transform sphereRoot;
 
-	[Header("左に出る3Dキャラの表示")]
 	[SerializeField]
+	[Header("左に出る3Dキャラの表示")]
 	private UITexture character3DTexture;
 
-	[SerializeField]
 	[Header("ステータスのルート")]
+	[SerializeField]
 	private GameObject statusRoot;
 
-	[Header("装着アニメーションのゲームオブジェクト")]
 	[SerializeField]
+	[Header("装着アニメーションのゲームオブジェクト")]
 	private GameObject partsUpperCutinGO;
 
-	[Header("装着アニメーションのテクスチャ")]
 	[SerializeField]
+	[Header("装着アニメーションのテクスチャ")]
 	private UITexture[] partsUpperCutinTextures;
 
 	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
@@ -240,7 +240,6 @@ public sealed class CMD_ChipSphere : CMD
 		{
 			this.myMaxChipSlot = 5;
 			int num = 0;
-			int num2 = 0;
 			if (CMD_ChipSphere.DataChg.userMonsterSlotInfo.manage == null)
 			{
 				global::Debug.LogError("DataChg.userMonsterSlotInfo.manage == null");
@@ -255,8 +254,7 @@ public sealed class CMD_ChipSphere : CMD
 					manage.extraSlotNum,
 					manage.maxExtraSlotNum
 				});
-				num = manage.maxSlotNum + manage.extraSlotNum;
-				num2 = manage.extraSlotNum;
+				num = manage.extraSlotNum;
 				this.myMaxChipSlot = manage.maxSlotNum + manage.maxExtraSlotNum;
 				if (this.myMaxChipSlot != 5 && this.myMaxChipSlot != 10)
 				{
@@ -279,53 +277,29 @@ public sealed class CMD_ChipSphere : CMD
 				transform.SetParent(this.sphereRoot);
 				transform.localScale = Vector3.one;
 				transform.localPosition = this.chipButtonsPositions[i];
-				int num3 = i + 1;
-				ChipSphereIconButton.Parameter parameter = this.CreateParameter(myGrowStep, arousal, num3);
+				int num2 = i + 1;
+				ChipSphereIconButton.Parameter parameter = this.CreateParameter(myGrowStep, arousal, num2);
 				component2.SetupChip(parameter);
 				component2.RefreshItemCountColor(this.extraPatchCount);
 				component2.SetUnChoose();
 				this.chipSphereIconButtons[i] = component2;
-				if (num3 >= 6)
+				if (num2 >= 6)
 				{
-					if (num3 <= num)
+					if (num >= 0)
 					{
-						this.chipSphereIconButtons[num3 - 1].SetupEmpty();
-					}
-					if (num2 >= 0)
-					{
-						this.chipSphereIconButtons[num3 - 1].SetChipColor(true);
+						this.chipSphereIconButtons[num2 - 1].SetChipColor(true);
 					}
 					else
 					{
-						this.chipSphereIconButtons[num3 - 1].SetChipColor(false);
+						this.chipSphereIconButtons[num2 - 1].SetChipColor(false);
 					}
-					num2--;
-				}
-			}
-			if (CMD_ChipSphere.DataChg.userMonsterSlotInfo.equip == null)
-			{
-				global::Debug.Log("装着はありません.");
-			}
-			else
-			{
-				foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip2 in CMD_ChipSphere.DataChg.userMonsterSlotInfo.equip)
-				{
-					int num4 = ChipTools.ConvertToButtonNo(equip2);
-					global::Debug.Log("buttonNo: " + num4);
-					GameWebAPI.RespDataMA_ChipM.Chip chipData = ChipTools.GetChipData(equip2);
-					this.SetChipButton(num4, equip2.userChipId, chipData);
+					num--;
 				}
 			}
 		}
 		this.RefreshYellowLines();
 		this.RefreshStatus();
 		this.chipSphereIconButtons[0].OnTouch();
-	}
-
-	private void SetChipButton(int buttonNo, int userChipId, GameWebAPI.RespDataMA_ChipM.Chip chipMainData)
-	{
-		int num = buttonNo - 1;
-		this.chipSphereIconButtons[num].SetupDetail(userChipId, chipMainData);
 	}
 
 	private void RefreshItemCountColor()
@@ -342,7 +316,10 @@ public sealed class CMD_ChipSphere : CMD
 		CMD_ChipSphere.MenuType menuType = CMD_ChipSphere.MenuType.Empty;
 		string chipName = string.Empty;
 		string chipDetail = string.Empty;
+		int userChipId = 0;
 		int itemCount = 0;
+		GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage manage = CMD_ChipSphere.DataChg.userMonsterSlotInfo.manage;
+		int num = manage.maxSlotNum + manage.extraSlotNum;
 		if (buttonNo == 1)
 		{
 			if (myGrowStep >= 5)
@@ -423,7 +400,31 @@ public sealed class CMD_ChipSphere : CMD
 		{
 			type = 1;
 			itemCount = ConstValue.CHIP_EXTEND_SLOT_NEEDS[buttonNo - 6];
-			menuType = CMD_ChipSphere.MenuType.Extendable;
+			if (buttonNo <= num)
+			{
+				menuType = CMD_ChipSphere.MenuType.Empty;
+			}
+			else
+			{
+				menuType = CMD_ChipSphere.MenuType.Extendable;
+			}
+		}
+		if (CMD_ChipSphere.DataChg.userMonsterSlotInfo.equip == null)
+		{
+			global::Debug.Log("装着はありません.");
+		}
+		else
+		{
+			foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip2 in CMD_ChipSphere.DataChg.userMonsterSlotInfo.equip)
+			{
+				int num2 = ChipTools.ConvertToButtonNo(equip2);
+				if (buttonNo == num2)
+				{
+					menuType = CMD_ChipSphere.MenuType.Detail;
+					userChipId = equip2.userChipId;
+					break;
+				}
+			}
 		}
 		return new ChipSphereIconButton.Parameter
 		{
@@ -432,7 +433,8 @@ public sealed class CMD_ChipSphere : CMD
 			menuType = menuType,
 			itemCount = itemCount,
 			chipName = chipName,
-			chipDetail = chipDetail
+			chipDetail = chipDetail,
+			userChipId = userChipId
 		};
 	}
 

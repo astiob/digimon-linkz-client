@@ -11,6 +11,9 @@ public sealed class BattleResultFriendReqInfo : MonoBehaviour
 	private UILabel TXT_LV;
 
 	[SerializeField]
+	private UITexture titleIcon;
+
+	[SerializeField]
 	private UISprite buttonSprite;
 
 	[SerializeField]
@@ -24,11 +27,12 @@ public sealed class BattleResultFriendReqInfo : MonoBehaviour
 
 	private string userId;
 
-	public void SetStatusInfo(string user_id, string user_name, int leader_lv, string leader_monster_id, BattleResultFriendReqInfo.FRIEND_TYPE friend_type)
+	public void SetStatusInfo(string user_id, string user_name, int leader_lv, string leader_monster_id, string title_id, BattleResultFriendReqInfo.FRIEND_TYPE friend_type)
 	{
 		this.userId = user_id;
 		this.TXT_NAME.text = user_name;
 		this.TXT_LV.text = leader_lv.ToString();
+		TitleDataMng.SetTitleIcon(title_id, this.titleIcon);
 		MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(leader_monster_id);
 		GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.iconAnchor.localScale, this.iconAnchor.localPosition, this.iconAnchor.parent, true, false);
 		guimonsterIcon.name = "DigimonIcon";

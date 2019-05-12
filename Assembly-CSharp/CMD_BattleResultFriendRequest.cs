@@ -57,7 +57,7 @@ public class CMD_BattleResultFriendRequest : CMD
 				if (DataMng.Instance().RespDataCM_Login.playerInfo.UserId != int.Parse(respData_WorldMultiStartInfo.party[i].userId))
 				{
 					this.battleResultFriendReqInfoWrap.gameObject.SetActive(true);
-					this.battleResultFriendReqInfo[num2].SetStatusInfo(respData_WorldMultiStartInfo.party[i].userId, respData_WorldMultiStartInfo.party[i].nickname, int.Parse(respData_WorldMultiStartInfo.party[i].userMonsters[0].level), respData_WorldMultiStartInfo.party[i].userMonsters[0].monsterId, this.GetFriendType(respData_WorldMultiStartInfo.party[i].userId));
+					this.battleResultFriendReqInfo[num2].SetStatusInfo(respData_WorldMultiStartInfo.party[i].userId, respData_WorldMultiStartInfo.party[i].nickname, int.Parse(respData_WorldMultiStartInfo.party[i].userMonsters[0].level), respData_WorldMultiStartInfo.party[i].userMonsters[0].monsterId, respData_WorldMultiStartInfo.party[i].titleId, this.GetFriendType(respData_WorldMultiStartInfo.party[i].userId));
 					num2++;
 				}
 			}
@@ -69,7 +69,7 @@ public class CMD_BattleResultFriendRequest : CMD
 				if (DataMng.Instance().RespDataCM_Login.playerInfo.UserId != int.Parse(respData_WorldMultiStartInfo.party[j].userId))
 				{
 					this.battleResultFriendReqInfoSingleWrap.gameObject.SetActive(true);
-					this.battleResultFriendReqInfoSingle.SetStatusInfo(respData_WorldMultiStartInfo.party[j].userId, respData_WorldMultiStartInfo.party[j].nickname, int.Parse(respData_WorldMultiStartInfo.party[j].userMonsters[0].level), respData_WorldMultiStartInfo.party[j].userMonsters[0].monsterId, this.GetFriendType(respData_WorldMultiStartInfo.party[j].userId));
+					this.battleResultFriendReqInfoSingle.SetStatusInfo(respData_WorldMultiStartInfo.party[j].userId, respData_WorldMultiStartInfo.party[j].nickname, int.Parse(respData_WorldMultiStartInfo.party[j].userMonsters[0].level), respData_WorldMultiStartInfo.party[j].userMonsters[0].monsterId, respData_WorldMultiStartInfo.party[j].titleId, this.GetFriendType(respData_WorldMultiStartInfo.party[j].userId));
 				}
 			}
 		}

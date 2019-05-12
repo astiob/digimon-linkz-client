@@ -30,24 +30,24 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("残回数 ラベル")]
 	public UILabel ngTXT_TICKET_LEFT;
 
-	[SerializeField]
 	[Header("ノーコン ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_NO_CONTINUE;
 
-	[Header("ソロとマルチができるステージ色")]
 	[SerializeField]
+	[Header("ソロとマルチができるステージ色")]
 	private Color colorNormalStage;
 
-	[SerializeField]
 	[Header("マルチ専用のステージ色")]
+	[SerializeField]
 	private Color colorMultiStage;
 
-	[Header("ソロ専用のステージ色")]
 	[SerializeField]
+	[Header("ソロ専用のステージ色")]
 	private Color colorSoloStage;
 
-	[Header("イベント用のステージ背景色")]
 	[SerializeField]
+	[Header("イベント用のステージ背景色")]
 	private Color colorEventStageBackground;
 
 	[SerializeField]
@@ -62,36 +62,36 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private Color colorSoloStageNameOutline;
 
-	[SerializeField]
 	[Header("イベント用のステージ名装飾色")]
+	[SerializeField]
 	private Color colorEventStageNameOutline;
 
-	[SerializeField]
 	[Header("背景色のパーツ（板）")]
+	[SerializeField]
 	private UISprite backgroundBord;
 
-	[Header("背景色のパーツ（ライン）")]
 	[SerializeField]
+	[Header("背景色のパーツ（ライン）")]
 	private UITexture backgroundLine;
 
 	[Header("残回数無しラベル")]
 	[SerializeField]
 	private UILabel ngTXT_PLAY_LIMIT;
 
-	[Header("回数限定用グレーアウトSPR素材")]
 	[SerializeField]
+	[Header("回数限定用グレーアウトSPR素材")]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
-	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
+	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
 	[SerializeField]
 	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	private UISprite ngSPR_LOCK;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[Header("ステージギミック表記Obj")]
@@ -176,13 +176,13 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		}
 		if (this.ngTXT_STAGE != null)
 		{
-			if (CMD_QuestTOP.instance.IsSpecialDungeon())
+			if (ClassSingleton<QuestData>.Instance.ExistSortieLimit(this.Data.dungeon.worldDungeonId))
+			{
+				this.ngTXT_STAGE.text = StringMaster.GetString("QuestLimited");
+			}
+			else if (CMD_QuestTOP.instance.IsSpecialDungeon())
 			{
 				this.ngTXT_STAGE.text = StringMaster.GetString("QuestSpecial");
-			}
-			else if (int.Parse(this.Data.worldDungeonM.entryPhaseLimit) > 0 || int.Parse(this.Data.worldDungeonM.entryTribeLimit) > 0)
-			{
-				this.ngTXT_STAGE.text = "LIMIT";
 			}
 			else
 			{

@@ -8,8 +8,8 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[SerializeField]
 	private GUICollider colSoul;
 
-	[Header("素材用アイコンのUITexture")]
 	[SerializeField]
+	[Header("素材用アイコンのUITexture")]
 	private UITexture texSoul;
 
 	[Header("所持数のGameObject")]

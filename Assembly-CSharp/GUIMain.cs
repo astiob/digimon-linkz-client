@@ -597,9 +597,9 @@ public class GUIMain : Singleton<GUIMain>
 		string screenName2 = screenName;
 		if (screenName2 != null)
 		{
-			if (GUIMain.<>f__switch$map1B == null)
+			if (GUIMain.<>f__switch$map1C == null)
 			{
-				GUIMain.<>f__switch$map1B = new Dictionary<string, int>(3)
+				GUIMain.<>f__switch$map1C = new Dictionary<string, int>(3)
 				{
 					{
 						"UIResult",
@@ -616,7 +616,7 @@ public class GUIMain : Singleton<GUIMain>
 				};
 			}
 			int num;
-			if (GUIMain.<>f__switch$map1B.TryGetValue(screenName2, out num))
+			if (GUIMain.<>f__switch$map1C.TryGetValue(screenName2, out num))
 			{
 				if (num == 0)
 				{
@@ -651,9 +651,9 @@ public class GUIMain : Singleton<GUIMain>
 			string screenName3 = screenName;
 			if (screenName3 != null)
 			{
-				if (GUIMain.<>f__switch$map1D == null)
+				if (GUIMain.<>f__switch$map1E == null)
 				{
-					GUIMain.<>f__switch$map1D = new Dictionary<string, int>(1)
+					GUIMain.<>f__switch$map1E = new Dictionary<string, int>(1)
 					{
 						{
 							"UIPvPResult",
@@ -662,7 +662,7 @@ public class GUIMain : Singleton<GUIMain>
 					};
 				}
 				int num2;
-				if (GUIMain.<>f__switch$map1D.TryGetValue(screenName3, out num2))
+				if (GUIMain.<>f__switch$map1E.TryGetValue(screenName3, out num2))
 				{
 					if (num2 == 0)
 					{
@@ -733,9 +733,9 @@ public class GUIMain : Singleton<GUIMain>
 		string screenName2 = screenName;
 		if (screenName2 != null)
 		{
-			if (GUIMain.<>f__switch$map1E == null)
+			if (GUIMain.<>f__switch$map1F == null)
 			{
-				GUIMain.<>f__switch$map1E = new Dictionary<string, int>(3)
+				GUIMain.<>f__switch$map1F = new Dictionary<string, int>(3)
 				{
 					{
 						"UIResult",
@@ -752,7 +752,7 @@ public class GUIMain : Singleton<GUIMain>
 				};
 			}
 			int num;
-			if (GUIMain.<>f__switch$map1E.TryGetValue(screenName2, out num))
+			if (GUIMain.<>f__switch$map1F.TryGetValue(screenName2, out num))
 			{
 				if (num == 0)
 				{

@@ -91,7 +91,7 @@ public sealed class PresentBoxItem : MonoBehaviour
 		}
 		if (this.itemNameLabel != null)
 		{
-			if (assetCategory2 == MasterDataMng.AssetCategory.FACILITY_KEY)
+			if (assetCategory2 == MasterDataMng.AssetCategory.FACILITY_KEY || assetCategory2 == MasterDataMng.AssetCategory.TITLE)
 			{
 				this.itemNameLabel.text = this.itemName;
 			}
@@ -176,6 +176,14 @@ public sealed class PresentBoxItem : MonoBehaviour
 			}, this.iconSprite.width, this.iconSprite.height, true);
 			break;
 		}
+		case MasterDataMng.AssetCategory.TITLE:
+			this.iconSprite.enabled = true;
+			this.iconSprite.spriteName = this.GetSpriteName(assetCategory2);
+			if (callback != null)
+			{
+				callback();
+			}
+			break;
 		}
 		this.uiBasicSprites = base.transform.GetComponentsInParent<UIBasicSprite>(true);
 	}
@@ -244,6 +252,15 @@ public sealed class PresentBoxItem : MonoBehaviour
 			}
 			break;
 		}
+		case MasterDataMng.AssetCategory.TITLE:
+		{
+			GameWebAPI.RespDataMA_TitleMaster.TitleM titleM = TitleDataMng.GetDictionaryTitleM()[int.Parse(objectId)];
+			if (titleM != null)
+			{
+				result = titleM.name;
+			}
+			break;
+		}
 		}
 		return result;
 	}
@@ -305,7 +322,14 @@ public sealed class PresentBoxItem : MonoBehaviour
 			result = "Common02_Drop_Exp";
 			break;
 		default:
-			if (assetCategoryId == MasterDataMng.AssetCategory.MEAT)
+			if (assetCategoryId != MasterDataMng.AssetCategory.MEAT)
+			{
+				if (assetCategoryId == MasterDataMng.AssetCategory.TITLE)
+				{
+					result = "Common02_item_title";
+				}
+			}
+			else
 			{
 				result = "Common02_item_meat";
 			}

@@ -95,9 +95,11 @@ public class CMD_DeckList : CMD
 
 	private static CMD_DeckList instance;
 
-	[Header("キャラクターのステータスPanel")]
 	[SerializeField]
+	[Header("キャラクターのステータスPanel")]
 	private StatusPanel statusPanel;
+
+	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
 
 	private GameObject goMN_ICON_NOW_2;
 
@@ -185,17 +187,7 @@ public class CMD_DeckList : CMD
 		FarmCameraControlForCMD.Off();
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void ClosePanel(bool animation = true)
-	{
-		this.CloseAndFarmCamOn(animation);
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
 	{
 		FarmCameraControlForCMD.On();
 		base.ClosePanel(animation);
@@ -344,6 +336,10 @@ public class CMD_DeckList : CMD
 		monsterDataMng.SetDimmByMonsterDataList(this.mdSelectList, GUIMonsterIcon.DIMM_LEVEL.DISABLE, CMD_DeckList.OriginMonsterData);
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+		if (this.sortieLimitList != null)
+		{
+			this.csSelectPanelMonsterIcon.SetIconSortieLimitParts(this.sortieLimitList);
+		}
 	}
 
 	private void ActMIconShort(MonsterData tappedMonsterData)
@@ -534,5 +530,11 @@ public class CMD_DeckList : CMD
 		{
 			CMD_MultiRecruitPartyWait.Instance.OnApplicationPause(pauseStatus);
 		}
+	}
+
+	public void SetSortieLimit(List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> limitList)
+	{
+		this.sortieLimitList = limitList;
+		this.csSelectPanelMonsterIcon.SetIconSortieLimitParts(this.sortieLimitList);
 	}
 }

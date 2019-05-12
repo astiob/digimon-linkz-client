@@ -105,6 +105,14 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	private bool _LongTouch = true;
 
+	private Color dimmMessColorNormal = new Color(0f, 0.784313738f, 1f, 1f);
+
+	private Color dimmMessEffectColorNormal = new Color(0.274509817f, 0.274509817f, 0.274509817f, 0.784313738f);
+
+	private Color dimmMessColorSortieLimit = new Color(1f, 0f, 0f, 1f);
+
+	private Color dimmMessEffectColorSortieLimit = new Color(0.235294119f, 0.117647059f, 0.117647059f, 0.784313738f);
+
 	public GUIMonsterIcon.DIMM_LEVEL DimmLevel
 	{
 		get
@@ -180,6 +188,8 @@ public class GUIMonsterIcon : GUIListPartBS
 			{
 				this.dimm_mess = value;
 				this.ngTX_DIMM_MESS.text = this.dimm_mess;
+				this.ngTX_DIMM_MESS.color = this.dimmMessColorNormal;
+				this.ngTX_DIMM_MESS.effectColor = this.dimmMessEffectColorNormal;
 			}
 		}
 	}
@@ -632,11 +642,57 @@ public class GUIMonsterIcon : GUIListPartBS
 		base.gameObject.transform.localScale = new Vector3(x2, y2, 1f);
 	}
 
+	public void SetCenterText(string text, GUIMonsterIcon.DimmMessColorType colorType)
+	{
+		this.dimm_mess = text;
+		this.ngTX_DIMM_MESS.text = text;
+		if (colorType != GUIMonsterIcon.DimmMessColorType.NORMAL)
+		{
+			if (colorType == GUIMonsterIcon.DimmMessColorType.SORTIE_LIMIT)
+			{
+				this.ngTX_DIMM_MESS.color = this.dimmMessColorSortieLimit;
+				this.ngTX_DIMM_MESS.effectColor = this.dimmMessEffectColorSortieLimit;
+			}
+		}
+		else
+		{
+			this.ngTX_DIMM_MESS.color = this.dimmMessColorNormal;
+			this.ngTX_DIMM_MESS.effectColor = this.dimmMessEffectColorNormal;
+		}
+	}
+
+	public void SetGrayout(GUIMonsterIcon.DIMM_LEVEL type)
+	{
+		this.dimm_level = type;
+		switch (type)
+		{
+		case GUIMonsterIcon.DIMM_LEVEL.ACTIVE:
+			GUIManager.SetColorAll(base.transform, this.colAct);
+			break;
+		case GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE:
+			GUIManager.SetColorAll(base.transform, this.colNon);
+			break;
+		case GUIMonsterIcon.DIMM_LEVEL.DISABLE:
+			GUIManager.SetColorAll(base.transform, this.colDis);
+			break;
+		}
+		if (this.goSELECT_BASE.activeSelf)
+		{
+			this.spSELECT_BASE.color = this.colAct;
+		}
+	}
+
 	public enum DIMM_LEVEL
 	{
 		INVALID,
 		ACTIVE,
 		NOTACTIVE,
 		DISABLE
+	}
+
+	public enum DimmMessColorType
+	{
+		NORMAL,
+		SORTIE_LIMIT
 	}
 }

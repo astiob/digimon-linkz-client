@@ -21,8 +21,6 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 
 	private List<string> cachedJsonForSave;
 
-	private bool isFileExist;
-
 	public bool IsBattleRecoverable;
 
 	private bool isRecoverSuccessWebAPI;
@@ -79,6 +77,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		"isMustLoad",
 		"calledBattleStartAction",
 		"isBattleRetired",
+		"leaderCharacter",
 		"leaderEnemyCharacter",
 		"useInheritanceSkillPlayers",
 		"extraEffectStatus"
@@ -575,63 +574,62 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 					if (!this.variableNameBlackList.Any((string c) => c == propInfoName))
 					{
 						string text = this.cachedJsonArr[num];
-						if (propInfoType == typeof(CharacterStateControl))
+						if (propInfoType != typeof(CharacterStateControl))
 						{
-							this.ManageCharacterStateControlForJsonToValue(text, battleStateData.leaderCharacter, battleStateData);
-						}
-						else if (propInfoType == typeof(CharacterStateControl[]))
-						{
-							if (propInfoName == "playerCharacters")
+							if (propInfoType == typeof(CharacterStateControl[]))
 							{
-								string[] array2 = JsonReader.Deserialize(text, typeof(string[])) as string[];
-								int num2 = 0;
-								foreach (string json in array2)
+								if (propInfoName == "playerCharacters")
 								{
-									this.ManageCharacterStateControlForJsonToValue(json, battleStateData.playerCharacters[num2], battleStateData);
-									num2++;
+									string[] array2 = JsonReader.Deserialize(text, typeof(string[])) as string[];
+									int num2 = 0;
+									foreach (string json in array2)
+									{
+										this.ManageCharacterStateControlForJsonToValue(json, battleStateData.playerCharacters[num2], battleStateData);
+										num2++;
+									}
+								}
+								else
+								{
+									if (propInfoName == "enemies")
+									{
+										goto IL_286;
+									}
+									global::Debug.LogErrorFormat("ありえない変数名:{0}です。", new object[]
+									{
+										propInfoName
+									});
+									goto IL_286;
 								}
 							}
-							else
+							else if (propInfoType == typeof(CharacterStateControl[][]))
 							{
-								if (propInfoName == "enemies")
+								string[][] array4 = JsonReader.Deserialize(text, typeof(string[][])) as string[][];
+								int num3 = 0;
+								foreach (string array6 in array4)
 								{
-									goto IL_295;
+									int num4 = 0;
+									foreach (string json2 in array6)
+									{
+										this.ManageCharacterStateControlForJsonToValue(json2, battleStateData.preloadEnemies[num3][num4], battleStateData);
+										num4++;
+									}
+									num3++;
 								}
-								global::Debug.LogErrorFormat("ありえない変数名:{0}です。", new object[]
-								{
-									propInfoName
-								});
-								goto IL_295;
 							}
-						}
-						else if (propInfoType == typeof(CharacterStateControl[][]))
-						{
-							string[][] array4 = JsonReader.Deserialize(text, typeof(string[][])) as string[][];
-							int num3 = 0;
-							foreach (string array6 in array4)
+							else if (propInfoType == typeof(List<ItemDropResult>))
 							{
-								int num4 = 0;
-								foreach (string json2 in array6)
-								{
-									this.ManageCharacterStateControlForJsonToValue(json2, battleStateData.preloadEnemies[num3][num4], battleStateData);
-									num4++;
-								}
-								num3++;
+								this.ManageItemDropResultForJsonToValue(text, battleStateData);
 							}
-						}
-						else if (propInfoType == typeof(List<ItemDropResult>))
-						{
-							this.ManageItemDropResultForJsonToValue(text, battleStateData);
-						}
-						else if (!(propertyInfo.Name == "currentDigiStoneNumber"))
-						{
-							object value = JsonReader.Deserialize(text, propInfoType);
-							propertyInfo.SetValue(battleStateData, value, null);
+							else if (!(propertyInfo.Name == "currentDigiStoneNumber"))
+							{
+								object value = JsonReader.Deserialize(text, propInfoType);
+								propertyInfo.SetValue(battleStateData, value, null);
+							}
 						}
 						num++;
 					}
 				}
-				IL_295:;
+				IL_286:;
 			}
 		}
 		catch (Exception ex)
@@ -672,12 +670,6 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 					{
 						if (propInfoName == "leaderCharacter")
 						{
-							CharacterStateControl characterStateControl = propertyInfo.GetValue(battleStateData, null) as CharacterStateControl;
-							if (characterStateControl != null)
-							{
-								string item = this.ManageCharacterStateControlForValueToJson(characterStateControl);
-								list.Add(item);
-							}
 						}
 					}
 					else if (propInfoType == typeof(CharacterStateControl[]))
@@ -688,11 +680,11 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 							CharacterStateControl[] array2 = propertyInfo.GetValue(battleStateData, null) as CharacterStateControl[];
 							foreach (CharacterStateControl csc in array2)
 							{
-								string item2 = this.ManageCharacterStateControlForValueToJson(csc);
-								list2.Add(item2);
+								string item = this.ManageCharacterStateControlForValueToJson(csc);
+								list2.Add(item);
 							}
-							string item3 = JsonWriter.Serialize(list2.ToArray());
-							list.Add(item3);
+							string item2 = JsonWriter.Serialize(list2.ToArray());
+							list.Add(item2);
 						}
 						else if (!(propInfoName == "enemies"))
 						{
@@ -711,25 +703,25 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 							List<string> list4 = new List<string>();
 							foreach (CharacterStateControl csc2 in array6)
 							{
-								string item4 = this.ManageCharacterStateControlForValueToJson(csc2);
-								list4.Add(item4);
+								string item3 = this.ManageCharacterStateControlForValueToJson(csc2);
+								list4.Add(item3);
 							}
 							list3.Add(list4.ToArray());
 						}
-						string item5 = JsonWriter.Serialize(list3.ToArray());
-						list.Add(item5);
+						string item4 = JsonWriter.Serialize(list3.ToArray());
+						list.Add(item4);
 					}
 					else if (propInfoType == typeof(List<ItemDropResult>))
 					{
 						List<ItemDropResult> idrs = propertyInfo.GetValue(battleStateData, null) as List<ItemDropResult>;
-						string item6 = this.ManageItemDropResultForValueToJson(idrs);
-						list.Add(item6);
+						string item5 = this.ManageItemDropResultForValueToJson(idrs);
+						list.Add(item5);
 					}
 					else
 					{
 						object value = propertyInfo.GetValue(battleStateData, null);
-						string item7 = JsonWriter.Serialize(value);
-						list.Add(item7);
+						string item6 = JsonWriter.Serialize(value);
+						list.Add(item6);
 					}
 				}
 			}

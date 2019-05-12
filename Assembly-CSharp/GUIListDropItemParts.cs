@@ -29,25 +29,29 @@ public class GUIListDropItemParts : GUIListPartBS
 	[SerializeField]
 	private PresentBoxItem dropItemItems;
 
-	[SerializeField]
 	[Header("運の文字アイコン")]
+	[SerializeField]
 	private UISprite luckIcons;
 
 	[SerializeField]
 	[Header("マルチ運プレイヤーアイコン")]
 	private GameObject goLuckPlayerIcons;
 
-	[Header("マルチの文字アイコン")]
 	[SerializeField]
+	[Header("マルチの文字アイコン")]
 	private UISprite multiIcons;
 
-	[Header("マルチのオーナー報酬アイコン")]
 	[SerializeField]
+	[Header("マルチのオーナー報酬アイコン")]
 	private UISprite ownerRewardIcon;
 
-	[Header("マルチのゲスト報酬アイコン")]
 	[SerializeField]
+	[Header("マルチのゲスト報酬アイコン")]
 	private UISprite guestRewardIcon;
+
+	[SerializeField]
+	[Header("チャレンジの文字アイコン")]
+	private UISprite challengeIcon;
 
 	[SerializeField]
 	[Header("ドロップ数のラベル")]
@@ -88,6 +92,7 @@ public class GUIListDropItemParts : GUIListPartBS
 		this.multiIcons.gameObject.SetActive(false);
 		this.ownerRewardIcon.gameObject.SetActive(false);
 		this.guestRewardIcon.gameObject.SetActive(false);
+		this.challengeIcon.gameObject.SetActive(false);
 		this.dropNumLabel.gameObject.SetActive(false);
 	}
 
@@ -263,6 +268,9 @@ public class GUIListDropItemParts : GUIListPartBS
 			}
 			break;
 		}
+		case GUIListDropItemParts.DropType.Challenge:
+			this.AddIconAnimationList(this.challengeIcon);
+			break;
 		}
 		PresentBoxItem presentBoxItem = this.dropItemItems;
 		int assetCategoryId = (int)this.data.assetCategoryId;
@@ -330,6 +338,7 @@ public class GUIListDropItemParts : GUIListPartBS
 		this.ownerRewardIcon.alpha = 1f;
 		this.multiIcons.alpha = 1f;
 		this.luckIcons.alpha = 1f;
+		this.challengeIcon.alpha = 1f;
 		this.dropNumLabel.alpha = 0f;
 	}
 
@@ -443,7 +452,8 @@ public class GUIListDropItemParts : GUIListPartBS
 		Luck,
 		Owner,
 		Multi,
-		LuckMulti
+		LuckMulti,
+		Challenge
 	}
 
 	public enum BoxType

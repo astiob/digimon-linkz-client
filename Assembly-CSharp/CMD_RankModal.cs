@@ -26,7 +26,7 @@ public class CMD_RankModal : CMD
 	private void Start()
 	{
 		this.titleLabel.text = StringMaster.GetString("ColosseumRankListTitle");
-		this.pointTitleLabel.text = StringMaster.GetString("ColosseumRankListDP");
+		this.pointTitleLabel.text = StringMaster.GetString("ColosseumRankListTotalWin");
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)

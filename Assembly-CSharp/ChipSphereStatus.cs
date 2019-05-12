@@ -8,16 +8,16 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private CMD_ChipSphere.MenuType myMenuType;
 
-	[SerializeField]
 	[Header("Lookのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("アイコン右下のレア度")]
+	[SerializeField]
 	private UISprite rareSprite;
 
-	[Header("アイコンのlookテクスチャ")]
 	[SerializeField]
+	[Header("アイコンのlookテクスチャ")]
 	private UITexture chipLookTexture;
 
 	[SerializeField]
@@ -44,16 +44,16 @@ public class ChipSphereStatus : MonoBehaviour
 	[Header("ボタンのスプライト")]
 	private UISprite buttonSprite;
 
-	[Header("強化ボタンのスプライト")]
 	[SerializeField]
+	[Header("強化ボタンのスプライト")]
 	private UISprite reinforcementButtonSprite;
 
-	[Header("ボタンのコライダー")]
 	[SerializeField]
+	[Header("ボタンのコライダー")]
 	private BoxCollider buttonCollider;
 
-	[SerializeField]
 	[Header("強化ボタンのコライダー")]
+	[SerializeField]
 	private BoxCollider reinforcementButtonCollider;
 
 	private Color defaultButtonLabelEffectColor;

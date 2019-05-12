@@ -18,12 +18,12 @@ public class SpringPosition : MonoBehaviour
 
 	public SpringPosition.OnFinished onFinished;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	public string callWhenFinished;
 
 	private Transform mTrans;

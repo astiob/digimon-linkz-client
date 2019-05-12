@@ -31,9 +31,9 @@ namespace PvP
 		public static APIRequestTask RequestColosseumEntry(GameWebAPI.RespData_ColosseumInfoLogic colosseumInfo, Action<GameWebAPI.RespDataCL_ColosseumEntry> onReceived, bool isMockBattle = false, bool requestRetry = false)
 		{
 			int colosseumId = 0;
-			if (colosseumInfo != null && colosseumInfo.colosseumIdList != null && 0 < colosseumInfo.colosseumIdList.Length)
+			if (colosseumInfo != null && colosseumInfo.colosseumId != 0)
 			{
-				colosseumId = colosseumInfo.colosseumIdList[0];
+				colosseumId = colosseumInfo.colosseumId;
 			}
 			GameWebAPI.RequestCL_ColosseumEntry request = new GameWebAPI.RequestCL_ColosseumEntry
 			{

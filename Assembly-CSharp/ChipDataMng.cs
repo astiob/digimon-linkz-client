@@ -13,6 +13,20 @@ public class ChipDataMng
 
 	public static GameWebAPI.RespDataCS_ChipListLogic userChipData { get; set; }
 
+	public static void ClearCache()
+	{
+		if (ChipDataMng.ChipM != null)
+		{
+			ChipDataMng.ChipM.Clear();
+			ChipDataMng.ChipM = null;
+		}
+		if (ChipDataMng.ChipEffectM != null)
+		{
+			ChipDataMng.ChipEffectM.Clear();
+			ChipDataMng.ChipEffectM = null;
+		}
+	}
+
 	public static GameWebAPI.RespDataCS_ChipListLogic.UserChipList GetUserChipDataByUserChipId(int userChipId)
 	{
 		GameWebAPI.RespDataCS_ChipListLogic.UserChipList result = null;

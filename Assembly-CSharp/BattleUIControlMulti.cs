@@ -119,16 +119,8 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		}, false));
 		this.battleScreenDetails.Add(BattleScreen.StartAction, new BattleScreenDetail(delegate()
 		{
-			BattleScreenDetail.DeactiveObjects(new UIWidget[]
-			{
-				this.ui.battleStartUi
-			});
 		}, delegate()
 		{
-			BattleScreenDetail.ActiveObjects(new UIWidget[]
-			{
-				this.ui.battleStartUi
-			});
 			BattleScreenDetail.DeactiveObjects(new UIWidget[]
 			{
 				this.ui.skillSelectUi.widget
@@ -159,6 +151,9 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 				});
 			}
 		}, true));
+		this.battleScreenDetails.Add(BattleScreen.RoundStartActionsLimit, new BattleScreenDetail(this.ui.roundLimitStart.widget, true));
+		this.battleScreenDetails.Add(BattleScreen.RoundStartActionsChallenge, new BattleScreenDetail(this.ui.roundChallengeStart.widget, true));
+		this.battleScreenDetails.Add(BattleScreen.TimeOver, new BattleScreenDetail(this.ui.timeOverUi, false));
 		this.battleScreenDetails.Add(BattleScreen.RoundActions, new BattleScreenDetail(delegate()
 		{
 			BattleScreenDetail.DeactiveObjects(new UIWidget[]
@@ -383,7 +378,6 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		this.SetupRemaining();
 		this.SetWinner();
 		base.stateManager.uiControlMulti.ShowSharedAP();
-		base.ApplyBattleStartActionText(base.battleStateData.leaderCharacter.isHavingLeaderSkill, base.battleStateData.leaderCharacter.leaderSkillStatus.name);
 		IEnumerator helpInitialize = base.stateManager.help.HelpInitialize();
 		while (helpInitialize.MoveNext())
 		{

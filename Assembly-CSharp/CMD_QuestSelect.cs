@@ -2,6 +2,7 @@
 using Quest;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CMD_QuestSelect : CMD
@@ -40,6 +41,16 @@ public class CMD_QuestSelect : CMD
 				}
 			}
 		}
+		bool flag = this.IsColosseumOpen() && DataMng.Instance().IsReleaseColosseum;
+		if (flag)
+		{
+			GameWebAPI.RespDataMA_GetWorldAreaM respDataMA_WorldAreaM = MasterDataMng.Instance().RespDataMA_WorldAreaM;
+			GameWebAPI.RespDataMA_GetWorldAreaM.WorldAreaM data = respDataMA_WorldAreaM.worldAreaM.Where((GameWebAPI.RespDataMA_GetWorldAreaM.WorldAreaM x) => x.worldAreaId == "5").FirstOrDefault<GameWebAPI.RespDataMA_GetWorldAreaM.WorldAreaM>();
+			QuestData.WorldAreaData worldAreaData = new QuestData.WorldAreaData();
+			worldAreaData.data = data;
+			worldAreaData.isActive = true;
+			this.worldAreaMList.Add(worldAreaData);
+		}
 		base.PartsTitle.SetTitle(StringMaster.GetString("QuestTopTitle"));
 		this.InitUI();
 		base.Show(f, sizeX, sizeY, aT);
@@ -74,5 +85,56 @@ public class CMD_QuestSelect : CMD
 	{
 		base.OnDestroy();
 		CMD_QuestSelect.instance = null;
+	}
+
+	private bool IsColosseumOpen()
+	{
+		GameWebAPI.RespData_ColosseumInfoLogic respData_ColosseumInfo = DataMng.Instance().RespData_ColosseumInfo;
+		List<CMD_QuestSelect.Schedule> list = new List<CMD_QuestSelect.Schedule>();
+		if (respData_ColosseumInfo == null || respData_ColosseumInfo.colosseumId == 0)
+		{
+			list.Clear();
+			return false;
+		}
+		if (respData_ColosseumInfo.openAllDay > 0)
+		{
+			return true;
+		}
+		if (list.Count<CMD_QuestSelect.Schedule>() == 0)
+		{
+			GameWebAPI.RespDataMA_ColosseumTimeScheduleM respDataMA_ColosseumTimeScheduleMaster = MasterDataMng.Instance().RespDataMA_ColosseumTimeScheduleMaster;
+			if (respDataMA_ColosseumTimeScheduleMaster == null)
+			{
+				return false;
+			}
+			string b = respData_ColosseumInfo.colosseumId.ToString();
+			foreach (GameWebAPI.RespDataMA_ColosseumTimeScheduleM.ColosseumTimeSchedule colosseumTimeSchedule in respDataMA_ColosseumTimeScheduleMaster.colosseumTimeScheduleM)
+			{
+				if (colosseumTimeSchedule.colosseumId == b)
+				{
+					CMD_QuestSelect.Schedule item = new CMD_QuestSelect.Schedule
+					{
+						start = DateTime.Parse(colosseumTimeSchedule.startHour),
+						end = DateTime.Parse(colosseumTimeSchedule.endHour)
+					};
+					list.Add(item);
+				}
+			}
+		}
+		foreach (CMD_QuestSelect.Schedule schedule in list)
+		{
+			if (schedule.start < ServerDateTime.Now && ServerDateTime.Now < schedule.end)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private struct Schedule
+	{
+		public DateTime start;
+
+		public DateTime end;
 	}
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleSkillSelect : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[SerializeField]
@@ -32,20 +32,20 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	public UITouchChecker[] touchChecker;
 
-	[Header("スキル説明1の命中率のローカライズ")]
 	[SerializeField]
+	[Header("スキル説明1の命中率のローカライズ")]
 	private UILabel skillDesc1HitRateLocalize;
 
-	[Header("スキル説明2の命中率のローカライズ")]
 	[SerializeField]
+	[Header("スキル説明2の命中率のローカライズ")]
 	private UILabel skillDesc2HitRateLocalize;
 
 	[SerializeField]
 	[Header("スキル説明1の威力のローカライズ")]
 	private UILabel skillDesc1PowerLocalize;
 
-	[SerializeField]
 	[Header("スキル説明2の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc2PowerLocalize;
 
 	[Header("Leftの親")]

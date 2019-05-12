@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class AlwaysPvP : BattleAlways
 {
-	[SerializeField]
 	[Header("エモーションを開くボタン")]
+	[SerializeField]
 	private UIButton openEmotionButton;
 
-	[Header("ガードのオブジェクト/未使用")]
 	[SerializeField]
+	[Header("ガードのオブジェクト/未使用")]
 	public GameObject guardObject;
 
-	[SerializeField]
 	[Header("右下のメッセージ")]
+	[SerializeField]
 	public MultiConnetionMessage connetionMessage;
 
 	[SerializeField]

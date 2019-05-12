@@ -54,13 +54,20 @@ public class CMD_AgreementConsent : CMD
 	protected virtual void OnAgreementOK()
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-		TutorialStatusSave tutorialStatusSave = new TutorialStatusSave();
-		tutorialStatusSave.SetSendData = delegate(TutorialStatusSaveQuery param)
+		GameWebAPI.RequestUS_UserUpdatePolicy request = new GameWebAPI.RequestUS_UserUpdatePolicy();
+		APIRequestTask apirequestTask = new APIRequestTask(request, true);
+		GameWebAPI.RespDataCM_Login.TutorialStatus tutorialStatus = DataMng.Instance().RespDataCM_Login.tutorialStatus;
+		if ("0" == tutorialStatus.endFlg && "0" == tutorialStatus.statusId)
 		{
-			param.statusId = 10;
-		};
-		TutorialStatusSave request = tutorialStatusSave;
-		base.StartCoroutine(request.Run(delegate()
+			TutorialStatusSave tutorialStatusSave = new TutorialStatusSave();
+			tutorialStatusSave.SetSendData = delegate(TutorialStatusSaveQuery param)
+			{
+				param.statusId = 10;
+			};
+			TutorialStatusSave request2 = tutorialStatusSave;
+			apirequestTask.Add(new APIRequestTask(request2, true));
+		}
+		base.StartCoroutine(apirequestTask.Run(delegate
 		{
 			RestrictionInput.EndLoad();
 			this.Close(true);

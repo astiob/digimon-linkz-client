@@ -29,11 +29,11 @@ namespace CharacterDetailsUI
 			switch (lockMode)
 			{
 			case CMD_CharacterDetailed.LockMode.Laboratory:
-				if (CMD_Laboratory.instance.baseDigimon != null && CMD_Laboratory.instance.baseDigimon == CMD_CharacterDetailed.DataChg)
+				if (CMD_PairSelectBase.instance.baseDigimon != null && CMD_PairSelectBase.instance.baseDigimon == CMD_CharacterDetailed.DataChg)
 				{
 					dialog.Info = StringMaster.GetString("CharaDetailsNotLockBase");
 				}
-				else if (CMD_Laboratory.instance.partnerDigimon != null && CMD_Laboratory.instance.partnerDigimon == CMD_CharacterDetailed.DataChg)
+				else if (CMD_PairSelectBase.instance.partnerDigimon != null && CMD_PairSelectBase.instance.partnerDigimon == CMD_CharacterDetailed.DataChg)
 				{
 					dialog.Info = StringMaster.GetString("CharaDetailsNotLockPartner");
 				}

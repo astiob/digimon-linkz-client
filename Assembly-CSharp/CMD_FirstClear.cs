@@ -22,7 +22,13 @@ public sealed class CMD_FirstClear : CMD
 	[SerializeField]
 	private ParticleSystem particle;
 
-	public static bool isRewardBattlePoint;
+	[SerializeField]
+	private GameObject goRankupRewardTitle;
+
+	[SerializeField]
+	private GameObject goWinRewardTitle;
+
+	public static bool isNormalReward;
 
 	private bool isParticleStopped;
 
@@ -93,9 +99,10 @@ public sealed class CMD_FirstClear : CMD
 				}
 			}
 		}
-		else if (CMD_FirstClear.isRewardBattlePoint)
+		else if (CMD_FirstClear.isNormalReward)
 		{
-			CMD_FirstClear.isRewardBattlePoint = false;
+			global::Debug.Log("通常報酬を取得しました");
+			CMD_FirstClear.isNormalReward = false;
 			if (ClassSingleton<MultiBattleData>.Instance.BattleEndResponse == null || ClassSingleton<MultiBattleData>.Instance.BattleEndResponse.reward == null || ClassSingleton<MultiBattleData>.Instance.BattleEndResponse.reward.Length == 0)
 			{
 				global::Debug.LogError("表示する報酬が見つかりませんでした");
@@ -104,15 +111,12 @@ public sealed class CMD_FirstClear : CMD
 			MultiBattleData.BattleEndResponseData.Reward[] reward = ClassSingleton<MultiBattleData>.Instance.BattleEndResponse.reward;
 			foreach (MultiBattleData.BattleEndResponseData.Reward reward2 in reward)
 			{
-				if (reward2.assetCategoryId == 6 && reward2.assetValue == 2)
+				list.Add(new GameWebAPI.RespDataWD_DungeonResult.DungeonReward
 				{
-					list.Add(new GameWebAPI.RespDataWD_DungeonResult.DungeonReward
-					{
-						assetCategoryId = reward2.assetCategoryId.ToString(),
-						assetNum = reward2.assetNum,
-						assetValue = reward2.assetValue
-					});
-				}
+					assetCategoryId = reward2.assetCategoryId.ToString(),
+					assetNum = reward2.assetNum,
+					assetValue = reward2.assetValue
+				});
 			}
 			if (list.Count == 0)
 			{
@@ -138,6 +142,10 @@ public sealed class CMD_FirstClear : CMD
 					assetValue = reward3.assetValue
 				});
 			}
+		}
+		if (list.Count > 5)
+		{
+			list.RemoveRange(5, list.Count - 5);
 		}
 		this.rewardIconRootList[list.Count - 1].SetRewardList(list);
 	}
@@ -191,5 +199,17 @@ public sealed class CMD_FirstClear : CMD
 		{
 			this.ClosePanel(true);
 		}
+	}
+
+	public void SetRankUpRewardTitle()
+	{
+		this.goRankupRewardTitle.SetActive(true);
+		this.goWinRewardTitle.SetActive(false);
+	}
+
+	public void SetWinRewardTitle()
+	{
+		this.goRankupRewardTitle.SetActive(false);
+		this.goWinRewardTitle.SetActive(true);
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Master;
 using MultiBattle.Tools;
+using Quest;
 using System;
 using UnityEngine;
 
@@ -57,6 +58,7 @@ public class CMD_PvPMockTargetInputModal : CMD
 	private void ClickDecisionBtn()
 	{
 		MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		GameWebAPI.RespData_ColosseumMatchingValidateLogic responseData = null;
 		GameWebAPI.ColosseumMatchingValidateLogic request = new GameWebAPI.ColosseumMatchingValidateLogic
 		{
 			SetSendData = delegate(GameWebAPI.ReqData_ColosseumMatchingValidateLogic param)
@@ -65,9 +67,16 @@ public class CMD_PvPMockTargetInputModal : CMD
 				param.isMockBattle = 1;
 				param.targetUserCode = this.pvpMockTargetInput.value;
 			},
-			OnReceived = new Action<GameWebAPI.RespData_ColosseumMatchingValidateLogic>(this.EndValidate)
+			OnReceived = delegate(GameWebAPI.RespData_ColosseumMatchingValidateLogic response)
+			{
+				responseData = response;
+			}
 		};
-		base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		base.StartCoroutine(request.RunOneTime(delegate()
+		{
+			RestrictionInput.EndLoad();
+			this.EndValidate(responseData);
+		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null));
@@ -90,6 +99,7 @@ public class CMD_PvPMockTargetInputModal : CMD
 			{
 				global::Debug.Log("対戦相手UserCode: " + this.pvpMockTargetInput.value);
 				ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode = this.pvpMockTargetInput.value;
+				ClassSingleton<QuestData>.Instance.SelectDungeon = null;
 				CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
 				GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
 				return;

@@ -31,7 +31,7 @@ public class GUIListPartsRank : GUIListPartBS
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
-		this.pointTitleLabel.text = StringMaster.GetString("ColosseumRankListNeedTitle");
+		this.pointTitleLabel.text = StringMaster.GetString("ColosseumRankListNeedTitle2");
 		if (!this.data.isHideMaximum)
 		{
 			this.pointLabel.text = string.Format(StringMaster.GetString("ColosseumRankListNeedInfo"), this.data.lowerPoint, this.data.upperPoint);

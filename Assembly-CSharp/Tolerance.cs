@@ -334,19 +334,65 @@ public class Tolerance
 		return affectEffect == AffectEffect.Poison || affectEffect == AffectEffect.Paralysis || affectEffect == AffectEffect.Sleep || affectEffect == AffectEffect.Stun || affectEffect == AffectEffect.SkillLock || affectEffect == AffectEffect.InstantDeath || affectEffect == AffectEffect.Confusion;
 	}
 
-	public int GetAttributeGoodWeak(global::Attribute attribute)
+	public Tolerance CreateAddTolerance(int[] addTolerances)
 	{
-		Strength attributeStrength = this.GetAttributeStrength(attribute);
-		return attributeStrength.ToInverseInt();
-	}
-
-	private static int GetDifference(Strength based, Strength overrided)
-	{
-		return overrided.ToInt() - based.ToInt();
-	}
-
-	public static ToleranceShifter operator -(Tolerance overrideTolerance, Tolerance toleranceBase)
-	{
-		return new ToleranceShifter(Tolerance.GetDifference(toleranceBase.none, overrideTolerance.none), Tolerance.GetDifference(toleranceBase.red, overrideTolerance.red), Tolerance.GetDifference(toleranceBase.blue, overrideTolerance.blue), Tolerance.GetDifference(toleranceBase.yellow, overrideTolerance.yellow), Tolerance.GetDifference(toleranceBase.green, overrideTolerance.green), Tolerance.GetDifference(toleranceBase.white, overrideTolerance.white), Tolerance.GetDifference(toleranceBase.black, overrideTolerance.black), Tolerance.GetDifference(toleranceBase.poison, overrideTolerance.poison), Tolerance.GetDifference(toleranceBase.confusion, overrideTolerance.confusion), Tolerance.GetDifference(toleranceBase.paralysis, overrideTolerance.paralysis), Tolerance.GetDifference(toleranceBase.sleep, overrideTolerance.sleep), Tolerance.GetDifference(toleranceBase.stun, overrideTolerance.stun), Tolerance.GetDifference(toleranceBase.skillLock, overrideTolerance.skillLock), Tolerance.GetDifference(toleranceBase.instantDeath, overrideTolerance.instantDeath));
+		if (addTolerances != null)
+		{
+			Strength[] array = new Strength[]
+			{
+				this.none,
+				this.red,
+				this.blue,
+				this.yellow,
+				this.green,
+				this.white,
+				this.black,
+				this.poison,
+				this.confusion,
+				this.paralysis,
+				this.sleep,
+				this.stun,
+				this.skillLock,
+				this.instantDeath
+			};
+			for (int i = 0; i < addTolerances.Length; i++)
+			{
+				switch (array[i])
+				{
+				case Strength.None:
+					if (addTolerances[i] > 0)
+					{
+						array[i] = Strength.Strong;
+					}
+					else if (addTolerances[i] < 0)
+					{
+						array[i] = Strength.Weak;
+					}
+					break;
+				case Strength.Strong:
+					if (addTolerances[i] > 0)
+					{
+						array[i] = Strength.Strong;
+					}
+					else if (addTolerances[i] < 0)
+					{
+						array[i] = Strength.None;
+					}
+					break;
+				case Strength.Weak:
+					if (addTolerances[i] > 0)
+					{
+						array[i] = Strength.None;
+					}
+					else if (addTolerances[i] < 0)
+					{
+						array[i] = Strength.Weak;
+					}
+					break;
+				}
+			}
+			return new Tolerance(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13]);
+		}
+		return this;
 	}
 }

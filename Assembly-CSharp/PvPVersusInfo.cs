@@ -70,9 +70,10 @@ public sealed class PvPVersusInfo : MonoBehaviour
 	private void SetUserInfo(MultiBattleData.PvPUserData userData, PvPVersusInfo.UserDataUI ui)
 	{
 		ui.name.text = userData.userStatus.nickname;
+		TitleDataMng.SetTitleIcon(userData.userStatus.titleId, ui.title);
 		ui.rank.spriteName = MultiTools.GetPvPRankSpriteName(userData.userStatus.colosseumRankId);
 		ui.koTitle.text = StringMaster.GetString("ColosseumScoreTitle");
-		ui.koValue.text = string.Format(StringMaster.GetString("ColosseumScore"), userData.userStatus.winWeek, userData.userStatus.loseWeek);
+		ui.koValue.text = string.Format(StringMaster.GetString("ColosseumScore"), userData.userStatus.winTotal, userData.userStatus.loseTotal);
 		ui.dpTitle.text = StringMaster.GetString("ColosseumDuelPoint");
 		ui.dpValue.text = userData.userStatus.score.ToString();
 		for (int i = 0; i < userData.monsterData.Length; i++)
@@ -160,6 +161,8 @@ public sealed class PvPVersusInfo : MonoBehaviour
 	public class UserDataUI
 	{
 		public UILabel name;
+
+		public UITexture title;
 
 		public UISprite rank;
 

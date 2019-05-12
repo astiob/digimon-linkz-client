@@ -7,19 +7,12 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	private Transform menuPanelTransform;
 
-	[SerializeField]
-	private UIWidget _timeOverUi;
-
-	[Header("VSの時のメッセージ")]
-	[SerializeField]
-	private UIWidget _pvpVSUi;
-
 	[Header("味方のPvP用上に出る文字")]
 	[SerializeField]
 	private UIWidget _pvpBattleYourPartyUi;
 
-	[SerializeField]
 	[Header("敵のPvP用上に出る文字")]
+	[SerializeField]
 	private UIWidget _pvpBattleEnemyPartyUi;
 
 	[SerializeField]
@@ -30,7 +23,13 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	public UILabel playerNameLabel;
 
 	[SerializeField]
+	public UITexture playerTitleIcon;
+
+	[SerializeField]
 	public UILabel enemyNameLabel;
+
+	[SerializeField]
+	public UITexture enemyTitleIcon;
 
 	[NonSerialized]
 	public EmotionSenderMulti emotionSenderMulti;
@@ -39,8 +38,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	public UIButton winNextButton;
 
-	[Header("Loseの次のボタン")]
 	[SerializeField]
+	[Header("Loseの次のボタン")]
 	public UIButton loseNextButton;
 
 	public override GameObject enemyStatusDescriptionGO
@@ -48,22 +47,6 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 		get
 		{
 			return base.pvpEnemyStatusDescription.gameObject;
-		}
-	}
-
-	public UIWidget timeOverUi
-	{
-		get
-		{
-			return this._timeOverUi;
-		}
-	}
-
-	public UIWidget pvpVSUi
-	{
-		get
-		{
-			return this._pvpVSUi;
 		}
 	}
 

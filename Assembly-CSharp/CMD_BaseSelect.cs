@@ -1,4 +1,5 @@
-﻿using FarmData;
+﻿using Ability;
+using FarmData;
 using Master;
 using System;
 using System.Collections;
@@ -253,6 +254,23 @@ public sealed class CMD_BaseSelect : CMD
 			base.PartsTitle.SetTitle(StringMaster.GetString("ChipInstalling-02"));
 			this.chipBaseSelect.InitBaseSelect();
 			break;
+		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
+		{
+			success = true;
+			this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
+			this.campaignLabel.Refresh();
+			string _elementTypeName = string.Empty;
+			if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
+			{
+				_elementTypeName = StringMaster.GetString("SystemBase");
+			}
+			else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
+			{
+				_elementTypeName = StringMaster.GetString("SystemPartner");
+			}
+			base.PartsTitle.SetTitle(string.Format(StringMaster.GetString("BaseSelect-09"), _elementTypeName));
+			break;
+		}
 		default:
 			success = true;
 			this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
@@ -290,6 +308,9 @@ public sealed class CMD_BaseSelect : CMD
 			this.ngTXT_MEAT.color = ((int.Parse(playerInfo.meatNum) > 0) ? Color.white : Color.red);
 			break;
 		case CMD_BaseSelect.BASE_TYPE.LABO:
+			this.ngTXT_CHIP.text = StringFormat.Cluster(playerInfo.gamemoney);
+			break;
+		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
 			this.ngTXT_CHIP.text = StringFormat.Cluster(playerInfo.gamemoney);
 			break;
 		}
@@ -352,7 +373,7 @@ public sealed class CMD_BaseSelect : CMD
 
 	private void CloseAndFarmCamOn(bool animation)
 	{
-		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
 		{
 			FarmCameraControlForCMD.On();
 			base.ClosePanel(animation);
@@ -450,8 +471,9 @@ public sealed class CMD_BaseSelect : CMD
 			break;
 		}
 		case CMD_BaseSelect.BASE_TYPE.LABO:
+		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
 		{
-			MonsterData partnerDigimon = CMD_Laboratory.instance.partnerDigimon;
+			MonsterData partnerDigimon = CMD_PairSelectBase.instance.partnerDigimon;
 			if (CMD_BaseSelect.DataChg == null)
 			{
 				if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
@@ -459,15 +481,22 @@ public sealed class CMD_BaseSelect : CMD
 					if (partnerDigimon != null)
 					{
 						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
-						cmd_ModalMessage.Title = StringMaster.GetString("Laboratory-04");
+						if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+						{
+							cmd_ModalMessage.Title = StringMaster.GetString("LaboratoryTitle");
+						}
+						else if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
+						{
+							cmd_ModalMessage.Title = StringMaster.GetString("MedalInheritTitle");
+						}
 						cmd_ModalMessage.Info = StringMaster.GetString("Laboratory-06");
 						return;
 					}
-					CMD_Laboratory.instance.RemoveBaseDigimon();
+					CMD_PairSelectBase.instance.RemoveBaseDigimon();
 				}
 				else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
 				{
-					CMD_Laboratory.instance.RemovePartnerDigimon();
+					CMD_PairSelectBase.instance.RemovePartnerDigimon();
 				}
 			}
 			base.SetForceReturnValue(1);
@@ -516,33 +545,51 @@ public sealed class CMD_BaseSelect : CMD
 			list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.CAN_EVOLVE);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.EVOLVE;
 			monsterDataMng.MyCluster = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
-			break;
+			goto IL_FC;
 		case CMD_BaseSelect.BASE_TYPE.MEAL:
 			list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
-			break;
+			goto IL_FC;
 		case CMD_BaseSelect.BASE_TYPE.LABO:
 			list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.RESEARCH_TARGET);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.LABO;
-			break;
-		default:
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-			break;
+			goto IL_FC;
+		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
+			if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
+			{
+				list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
+			}
+			else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
+			{
+				list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
+				list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.HAVE_MEDALS);
+			}
+			goto IL_FC;
 		}
+		list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
+		IL_FC:
 		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
 		list = monsterDataMng.SortMDList(list, isEvolvePage);
 		this.csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
 		monsterDataMng.SetSelectOffAll();
 		monsterDataMng.ClearDimmMessAll();
-		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+		List<MonsterData> deckMonsterDataList = monsterDataMng.GetDeckMonsterDataList(false);
+		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
 		{
-			MonsterData baseDigimon = CMD_Laboratory.instance.baseDigimon;
-			MonsterData partnerDigimon = CMD_Laboratory.instance.partnerDigimon;
-			List<MonsterData> deckMonsterDataList = monsterDataMng.GetDeckMonsterDataList(false);
-			for (int i = 0; i < deckMonsterDataList.Count; i++)
+			MonsterData baseDigimon = CMD_PairSelectBase.instance.baseDigimon;
+			MonsterData partnerDigimon = CMD_PairSelectBase.instance.partnerDigimon;
+			bool flag = false;
+			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT && CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
 			{
-				PartyUtil.SetDimIcon(true, deckMonsterDataList[i], StringMaster.GetString("CharaIcon-04"), false);
+				flag = true;
+			}
+			if (!flag)
+			{
+				for (int i = 0; i < deckMonsterDataList.Count; i++)
+				{
+					PartyUtil.SetDimIcon(true, deckMonsterDataList[i], StringMaster.GetString("CharaIcon-04"), false);
+				}
 			}
 			this.PrepareLaboBaseIcon(baseDigimon);
 			this.PrepareLaboPartnerIcon(partnerDigimon);
@@ -558,13 +605,47 @@ public sealed class CMD_BaseSelect : CMD
 		}
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
-		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
 		{
-			foreach (MonsterData monsterData in list)
+			bool flag2 = false;
+			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT && CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
 			{
-				if (monsterData.userMonster.IsLocked)
+				flag2 = true;
+			}
+			if (!flag2)
+			{
+				foreach (MonsterData monsterData in list)
 				{
-					PartyUtil.SetDimIcon(true, monsterData, string.Empty, true);
+					if (monsterData.userMonster.IsLocked)
+					{
+						PartyUtil.SetDimIcon(true, monsterData, string.Empty, true);
+					}
+					if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT && CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
+					{
+						MonsterData baseDigimon2 = CMD_PairSelectBase.instance.baseDigimon;
+						if (baseDigimon2 != null && baseDigimon2 != monsterData)
+						{
+							bool flag3 = false;
+							for (int j = 0; j < deckMonsterDataList.Count; j++)
+							{
+								if (deckMonsterDataList[j] == monsterData)
+								{
+									flag3 = true;
+									break;
+								}
+							}
+							if (!flag3)
+							{
+								bool flag4 = false;
+								MonsterAbilityStatusInfo mas = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon2, monsterData, ref flag4);
+								float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(mas);
+								if (totalAbilityRate <= 0f)
+								{
+									PartyUtil.SetDimIcon(true, monsterData, StringMaster.GetString("MedalInherit_NoPossibility"), false);
+								}
+							}
+						}
+					}
 				}
 			}
 			if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
@@ -631,14 +712,49 @@ public sealed class CMD_BaseSelect : CMD
 	private void ActMIconLong(MonsterData tappedMonsterData)
 	{
 		CMD_CharacterDetailed.DataChg = tappedMonsterData;
-		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
 		{
 			bool flag = false;
 			bool isCheckDim = true;
-			if (tappedMonsterData == CMD_BaseSelect.DataChg || tappedMonsterData == CMD_Laboratory.instance.baseDigimon || tappedMonsterData == CMD_Laboratory.instance.partnerDigimon)
+			if (tappedMonsterData == CMD_BaseSelect.DataChg || tappedMonsterData == CMD_PairSelectBase.instance.baseDigimon || tappedMonsterData == CMD_PairSelectBase.instance.partnerDigimon)
 			{
-				flag = true;
 				isCheckDim = false;
+			}
+			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+			{
+				if (tappedMonsterData == CMD_BaseSelect.DataChg || tappedMonsterData == CMD_PairSelectBase.instance.baseDigimon || tappedMonsterData == CMD_PairSelectBase.instance.partnerDigimon)
+				{
+					flag = true;
+				}
+			}
+			else if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
+			{
+				if (tappedMonsterData == CMD_PairSelectBase.instance.partnerDigimon)
+				{
+					flag = true;
+				}
+				if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
+				{
+					if (tappedMonsterData == CMD_BaseSelect.DataChg)
+					{
+						flag = true;
+					}
+					MonsterData baseDigimon = CMD_PairSelectBase.instance.baseDigimon;
+					if (baseDigimon != null && baseDigimon != tappedMonsterData)
+					{
+						bool flag2 = false;
+						MonsterAbilityStatusInfo mas = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon, tappedMonsterData, ref flag2);
+						float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(mas);
+						if (totalAbilityRate <= 0f)
+						{
+							isCheckDim = false;
+						}
+					}
+				}
+				else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE && isCheckDim)
+				{
+					isCheckDim = false;
+				}
 			}
 			List<MonsterData> deckMonsterDataList = MonsterDataMng.Instance().GetDeckMonsterDataList(false);
 			foreach (MonsterData monsterData in deckMonsterDataList)
@@ -706,7 +822,7 @@ public sealed class CMD_BaseSelect : CMD
 			this.goLeftLargeMonsterIcon.SetActive(true);
 			this.leftLargeMonsterIcon.Data = CMD_BaseSelect.DataChg;
 			this.chipBaseSelect.SetSelectedCharChg(CMD_BaseSelect.DataChg);
-			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
+			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT)
 			{
 				if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
 				{
@@ -929,7 +1045,8 @@ public sealed class CMD_BaseSelect : CMD
 		EVOLVE,
 		MEAL,
 		LABO,
-		CHIP
+		CHIP,
+		MEDAL_INHERIT
 	}
 
 	public enum ELEMENT_TYPE

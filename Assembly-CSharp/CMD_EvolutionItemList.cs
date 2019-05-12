@@ -16,8 +16,8 @@ public sealed class CMD_EvolutionItemList : CMD
 	[Header("通常プラグイン用parts")]
 	private GameObject pluginListParts;
 
-	[SerializeField]
 	[Header("究極体ソウル用parent")]
+	[SerializeField]
 	private GameObject soulPartsParent;
 
 	[Header("究極体ソウル用parts")]
@@ -36,8 +36,8 @@ public sealed class CMD_EvolutionItemList : CMD
 	[Header("究極体進化素材未所持メッセージGameObject")]
 	private GameObject goNoEvolutionItem;
 
-	[SerializeField]
 	[Header("究極体進化素材未所持メッセージLabel")]
+	[SerializeField]
 	private UILabel lbNoEvolutionItem;
 
 	private GUISelectPanelEvolutionItemList csPluginPartParent;

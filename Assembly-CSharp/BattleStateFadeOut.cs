@@ -49,7 +49,7 @@ public class BattleStateFadeOut : BattleStateController
 		else
 		{
 			this.BattleEndResourcesCleaning();
-			Application.LoadLevelAsync(base.stateManager.GetBattleSceneName());
+			Application.LoadLevelAsync(BattleStateManager.BattleSceneName);
 		}
 	}
 

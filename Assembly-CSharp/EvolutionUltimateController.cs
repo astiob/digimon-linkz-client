@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EvolutionUltimateController : CutsceneControllerBase
 {
-	[SerializeField]
 	[Header("キャラクターのスタンド")]
+	[SerializeField]
 	private GameObject[] charaStand;
 
 	[SerializeField]
@@ -16,24 +16,24 @@ public class EvolutionUltimateController : CutsceneControllerBase
 	[Header("UIカメラ")]
 	private GameObject camera2D;
 
-	[Header("3Dカメラ")]
 	[SerializeField]
+	[Header("3Dカメラ")]
 	private GameObject camera3D_1;
 
 	[SerializeField]
 	[Header("黄色いデジタルなマテリアル")]
 	private Material afterConversionMaterialB;
 
-	[SerializeField]
 	[Header("ライン時のマテリアル")]
+	[SerializeField]
 	private Material afterConversionMaterialC;
 
-	[Header("デジ文字螺旋")]
 	[SerializeField]
+	[Header("デジ文字螺旋")]
 	private GameObject spiral;
 
-	[Header("最後のカメラ")]
 	[SerializeField]
+	[Header("最後のカメラ")]
 	private GameObject lastCamera;
 
 	public float rollSpeed = 1f;

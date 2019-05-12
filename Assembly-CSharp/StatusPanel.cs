@@ -7,8 +7,8 @@ public sealed class StatusPanel : MonoBehaviour
 	[SerializeField]
 	private GameObject switchButton;
 
-	[Header("ボタンのラベル")]
 	[SerializeField]
+	[Header("ボタンのラベル")]
 	private UILabel switchButtonLabel;
 
 	[SerializeField]

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Quest;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[Header("チップの処理")]
 	[SerializeField]
+	[Header("チップの処理")]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
@@ -27,6 +29,9 @@ public class PartsPartyMonsInfo : GUICollider
 
 	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
+
+	[SerializeField]
+	protected GameObject sortieNG;
 
 	[SerializeField]
 	private GameObject goArousal;
@@ -65,12 +70,12 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject gimmickSkillSucceedDown;
 
-	[Header("左クリップのOBJ")]
 	[SerializeField]
+	[Header("左クリップのOBJ")]
 	private GameObject goL_CLIP;
 
-	[SerializeField]
 	[Header("右クリップのOBJ")]
+	[SerializeField]
 	private GameObject goR_CLIP;
 
 	[SerializeField]
@@ -133,8 +138,9 @@ public class PartsPartyMonsInfo : GUICollider
 			}
 		}, "CMD_DeckList") as CMD_DeckList;
 		cmd_DeckList.PPMI_Instance = this;
-		GUIListPartsPartyEdit component = base.gameObject.transform.parent.gameObject.GetComponent<GUIListPartsPartyEdit>();
-		cmd_DeckList.ppmiList = component.ppmiList;
+		cmd_DeckList.SetSortieLimit(this.guiListPartsPartyEdit.partyEdit.GetWorldSortieLimit());
+		GUIListPartsPartyEdit guilistPartsPartyEdit = this.guiListPartsPartyEdit;
+		cmd_DeckList.ppmiList = guilistPartsPartyEdit.ppmiList;
 		this.HideStatusPanel();
 	}
 
@@ -353,6 +359,10 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.chipBaseSelect.ClearChipIcons();
 			this.monsterGimickEffectStatusList.ClearValues();
+			if (this.sortieNG.activeSelf)
+			{
+				this.sortieNG.SetActive(false);
+			}
 			return;
 		}
 		this.SetSelectedCharChg(this.Data);
@@ -369,6 +379,30 @@ public class PartsPartyMonsInfo : GUICollider
 			this.stageGimmickObj.SetActive(true);
 		}
 		this.monsterResistanceList.SetValues(this.Data);
+		this.SetSortieLimitCondition(this.Data);
+	}
+
+	protected virtual void SetSortieLimitCondition(MonsterData monsterData)
+	{
+		bool flag = true;
+		List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> worldSortieLimit = this.guiListPartsPartyEdit.partyEdit.GetWorldSortieLimit();
+		if (worldSortieLimit != null && 0 < worldSortieLimit.Count)
+		{
+			string tribe = monsterData.monsterMG.tribe;
+			string growStep = monsterData.monsterMG.growStep;
+			flag = ClassSingleton<QuestData>.Instance.CheckSortieLimit(worldSortieLimit, tribe, growStep);
+		}
+		if (!flag)
+		{
+			if (!this.sortieNG.activeSelf)
+			{
+				this.sortieNG.SetActive(true);
+			}
+		}
+		else if (this.sortieNG.activeSelf)
+		{
+			this.sortieNG.SetActive(false);
+		}
 	}
 
 	public void HideStatusPanel()

@@ -20,8 +20,8 @@ public class JogressController : CutsceneControllerBase
 	[Header("スタンドの回転速度")]
 	private float[] standRollSpeed;
 
-	[Header("デジ文字リング")]
 	[SerializeField]
+	[Header("デジ文字リング")]
 	private GameObject ringSet;
 
 	[Header("UIカメラ")]

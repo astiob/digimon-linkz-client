@@ -11,4 +11,9 @@ public sealed class LaboratoryButton : FacilityButtonSet
 	{
 		GUIMain.ShowCommonDialog(null, "CMD_DigiGarden");
 	}
+
+	private void OnPushedTransitionButtonOfMedalInherit()
+	{
+		GUIMain.ShowCommonDialog(null, "CMD_MedalInherit");
+	}
 }

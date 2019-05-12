@@ -6,14 +6,11 @@ using UnityEngine.Serialization;
 public class PlayerStatus : CharacterStatus
 {
 	[SerializeField]
-	private ToleranceShifter _arousalTolerance;
-
-	[SerializeField]
 	private int _luck = 1;
 
-	[FormerlySerializedAs("_rarity")]
-	[SerializeField]
 	[Range(0f, 4f)]
+	[SerializeField]
+	[FormerlySerializedAs("_rarity")]
 	private int _arousal;
 
 	[SerializeField]
@@ -32,7 +29,7 @@ public class PlayerStatus : CharacterStatus
 	[SerializeField]
 	private FriendshipStatus _friendshipStatus;
 
-	public PlayerStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, ToleranceShifter arousalTolerance, int luck, string deathblowId, string inheritanceTechniqueId, string leaderSkillId, string thumbnailId, Talent talent, int arousal, FriendshipStatus friendshipStatus, int[] chipIds) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, chipIds)
+	public PlayerStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, int luck, string deathblowId, string inheritanceTechniqueId, string leaderSkillId, string thumbnailId, Talent talent, int arousal, FriendshipStatus friendshipStatus, int[] chipIds) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, chipIds)
 	{
 		this._luck = luck;
 		this._arousal = arousal;
@@ -44,7 +41,7 @@ public class PlayerStatus : CharacterStatus
 		this._leaderSkillId = leaderSkillId;
 		this._thumbnailId = thumbnailId;
 		this._talent = talent;
-		this._arousalTolerance = arousalTolerance;
+		this.tolerance = tolerance;
 		this._friendshipStatus = friendshipStatus;
 	}
 
@@ -60,7 +57,6 @@ public class PlayerStatus : CharacterStatus
 		this._leaderSkillId = string.Empty;
 		this._thumbnailId = string.Empty;
 		this._talent = new Talent();
-		this._arousalTolerance = new ToleranceShifter();
 		this._friendshipStatus = new FriendshipStatus();
 	}
 
@@ -120,14 +116,6 @@ public class PlayerStatus : CharacterStatus
 		}
 	}
 
-	public ToleranceShifter arousalTolerance
-	{
-		get
-		{
-			return this._arousalTolerance;
-		}
-	}
-
 	public FriendshipStatus friendshipStatus
 	{
 		get
@@ -135,6 +123,8 @@ public class PlayerStatus : CharacterStatus
 			return this._friendshipStatus;
 		}
 	}
+
+	public Tolerance tolerance { get; private set; }
 
 	public static bool Match(CharacterStatus characterStatus)
 	{

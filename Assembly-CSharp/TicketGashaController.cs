@@ -5,28 +5,28 @@ using UnityEngine;
 
 public class TicketGashaController : MonoBehaviour
 {
-	[Header("カードアニメフレーム間隔")]
 	[SerializeField]
+	[Header("カードアニメフレーム間隔")]
 	private int cardAnimIntervalFrame;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	public Camera mainCam;
 
 	[Header("2Dカメラ")]
 	[SerializeField]
 	public Camera camUI;
 
-	[Header("白フェード板")]
 	[SerializeField]
+	[Header("白フェード板")]
 	private GUISprite spFade;
 
-	[SerializeField]
 	[Header("白フェード速度")]
+	[SerializeField]
 	private float fadeSpeed = 0.05f;
 
-	[Header("スキップ・コリダー")]
 	[SerializeField]
+	[Header("スキップ・コリダー")]
 	private BoxCollider skipCollider;
 
 	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]

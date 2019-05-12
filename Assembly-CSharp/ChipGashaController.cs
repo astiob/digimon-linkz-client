@@ -6,31 +6,31 @@ public class ChipGashaController : MonoBehaviour
 {
 	private Action<int> endCallBack;
 
+	[SerializeField]
 	[Header("動作ロケーターのゲームオブジェクト、のリスト")]
 	[Header("MAX １０個")]
-	[SerializeField]
 	private List<GameObject> goLocatorList;
 
-	[Header("動作ロケーターライト用のゲームオブジェクト、のリスト")]
-	[Header("MAX １０個")]
 	[SerializeField]
+	[Header("MAX １０個")]
+	[Header("動作ロケーターライト用のゲームオブジェクト、のリスト")]
 	private List<GameObject> goLightLocatorList;
 
-	[SerializeField]
-	[Header("素材のゲームオブジェクト、のリスト、順番は以下")]
 	[Header("ライト")]
+	[Header("素材のゲームオブジェクト、のリスト、順番は以下")]
+	[SerializeField]
 	private GameObject goPartsLight;
 
-	[Header("青→青")]
 	[SerializeField]
+	[Header("青→青")]
 	private GameObject goPartsBlue;
 
-	[Header("青→黄")]
 	[SerializeField]
+	[Header("青→黄")]
 	private GameObject goPartsYellow;
 
-	[Header("青→虹")]
 	[SerializeField]
+	[Header("青→虹")]
 	private GameObject goPartsRainbow;
 
 	[SerializeField]
@@ -45,8 +45,8 @@ public class ChipGashaController : MonoBehaviour
 	[SerializeField]
 	public Camera camUI;
 
-	[SerializeField]
 	[Header("白フェード板")]
+	[SerializeField]
 	private GUISprite spFade;
 
 	[SerializeField]

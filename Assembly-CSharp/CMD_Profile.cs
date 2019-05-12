@@ -39,15 +39,25 @@ public sealed class CMD_Profile : CMD_ProfileBase
 	[SerializeField]
 	private GameObject playHistoryButton;
 
+	[SerializeField]
+	private GameObject titleSelectButton;
+
 	private Vector3 vOrgSCR_HISTORY = Vector3.zero;
 
 	private Vector3 vPosSCR_HISTORY = Vector3.zero;
+
+	private Vector3 vOrgSCR_TITLE = Vector3.zero;
+
+	private Vector3 vPosSCR_TITLE = Vector3.zero;
 
 	[SerializeField]
 	private UILabel userCodeText;
 
 	[SerializeField]
 	private UILabel userNameText;
+
+	[SerializeField]
+	private UITexture titleIcon;
 
 	[SerializeField]
 	private UILabel copyText;
@@ -128,6 +138,15 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		this.labelCollection.text = string.Format(StringMaster.GetString("SystemFraction"), this.userProfile.collection.possessionNum, this.userProfile.collection.totalNum);
 		this.inputComment.value = this.userProfile.userData.description;
 		this.inputNickName.value = this.userProfile.userData.nickname;
+		TitleDataMng.SetTitleIcon(this.userProfile.userData.titleId, this.titleIcon);
+	}
+
+	public static void RefreshParams()
+	{
+		if (CMD_Profile.instance != null)
+		{
+			CMD_Profile.instance.RefreshComponents();
+		}
 	}
 
 	public void OnSelectComment()
@@ -353,11 +372,13 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		{
 			base.MoveTo(this.OPEN_BLOCK_LIST.transform.parent.gameObject, this.vPosSCR_BLOCK, 0.18f, null, iTween.EaseType.linear);
 			base.MoveTo(this.playHistoryButton, this.vPosSCR_HISTORY, 0.18f, null, iTween.EaseType.linear);
+			base.MoveTo(this.titleSelectButton, this.vPosSCR_TITLE, 0.18f, null, iTween.EaseType.linear);
 		}
 		else
 		{
 			base.MoveTo(this.OPEN_BLOCK_LIST.transform.parent.gameObject, this.vOrgSCR_BLOCK, 0.18f, null, iTween.EaseType.linear);
 			base.MoveTo(this.playHistoryButton, this.vOrgSCR_HISTORY, 0.18f, null, iTween.EaseType.linear);
+			base.MoveTo(this.titleSelectButton, this.vOrgSCR_TITLE, 0.18f, null, iTween.EaseType.linear);
 		}
 		base.OnClickedScreen();
 	}
@@ -367,10 +388,13 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		base.WindowOpened();
 		this.vOrgSCR_BLOCK = this.OPEN_BLOCK_LIST.transform.parent.localPosition;
 		this.vOrgSCR_HISTORY = this.playHistoryButton.transform.localPosition;
+		this.vOrgSCR_TITLE = this.titleSelectButton.transform.localPosition;
 		this.vPosSCR_BLOCK = this.vOrgSCR_BLOCK;
 		this.vPosSCR_BLOCK.x = 1000f;
 		this.vPosSCR_HISTORY = this.vOrgSCR_HISTORY;
 		this.vPosSCR_HISTORY.x = 1000f;
+		this.vPosSCR_TITLE = this.vOrgSCR_TITLE;
+		this.vPosSCR_TITLE.x = 1000f;
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
 		if (tutorialObserver != null)
 		{
@@ -433,6 +457,11 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	protected override void SetColosseumUserStatus()
 	{
+	}
+
+	private void OnTitleSelect()
+	{
+		GUIMain.ShowCommonDialog(null, "CMD_TitleSelect");
 	}
 
 	private enum CheckInputCharResult

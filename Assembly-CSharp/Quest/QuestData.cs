@@ -29,6 +29,8 @@ namespace Quest
 
 		private GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo wdi_bk;
 
+		public GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM SelectDungeon { get; set; }
+
 		private QuestEventInfoList GetEventInfo()
 		{
 			if (null == this.eventInfoList)
@@ -66,6 +68,72 @@ namespace Quest
 			{
 				string encryptoDungeonId = this.GetEncryptoDungeonId(dungeonId);
 				result = eventInfo.GetEventInfo(encryptoDungeonId);
+			}
+			return result;
+		}
+
+		public GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM GetWorldDungeonMaster(string worldDungeonId)
+		{
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM result = null;
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
+			for (int i = 0; i < worldDungeonM.Length; i++)
+			{
+				if (worldDungeonId == worldDungeonM[i].worldDungeonId)
+				{
+					result = worldDungeonM[i];
+					break;
+				}
+			}
+			return result;
+		}
+
+		public List<GameWebAPI.RespDataWD_GetDungeonInfo.EncountEnemy> GetBossMonsterList(GameWebAPI.RespDataWD_GetDungeonInfo.EncountEnemy[] enemyList)
+		{
+			List<GameWebAPI.RespDataWD_GetDungeonInfo.EncountEnemy> list = new List<GameWebAPI.RespDataWD_GetDungeonInfo.EncountEnemy>();
+			if (enemyList != null)
+			{
+				for (int i = 0; i < enemyList.Length; i++)
+				{
+					if (enemyList[i].type == 2)
+					{
+						list.Add(enemyList[i]);
+					}
+				}
+			}
+			return list;
+		}
+
+		public bool ExistSortieLimit(int worldDungeonId)
+		{
+			bool result = false;
+			GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit[] worldDungeonSortieLimitM = MasterDataMng.Instance().WorldDungeonSortieLimitMaster.worldDungeonSortieLimitM;
+			string b = worldDungeonId.ToString();
+			for (int i = 0; i < worldDungeonSortieLimitM.Length; i++)
+			{
+				if (worldDungeonSortieLimitM[i].worldDungeonId == b)
+				{
+					result = true;
+					break;
+				}
+			}
+			return result;
+		}
+
+		public bool CheckSortieLimit(List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> limitList, string tribe, string growStep)
+		{
+			bool result = true;
+			if (limitList != null && 0 < limitList.Count)
+			{
+				bool flag = false;
+				for (int i = 0; i < limitList.Count; i++)
+				{
+					if (limitList[i].tribe == tribe && limitList[i].growStep == growStep)
+					{
+						flag = true;
+						break;
+					}
+				}
+				result = flag;
 			}
 			return result;
 		}

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EvolutionController : CutsceneControllerBase
 {
-	[SerializeField]
 	[Header("キャラクターのスタンド")]
+	[SerializeField]
 	private GameObject[] charaStand;
 
 	[SerializeField]
@@ -16,8 +16,8 @@ public class EvolutionController : CutsceneControllerBase
 	[SerializeField]
 	private GameObject camera2D;
 
-	[Header("3Dカメラ")]
 	[SerializeField]
+	[Header("3Dカメラ")]
 	private GameObject camera3D_1;
 
 	public float rollSpeed = 1f;

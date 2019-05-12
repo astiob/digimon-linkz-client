@@ -42,8 +42,8 @@ public class UIPanel : UIRect
 
 	public UIPanel.OnClippingMoved onClipMove;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Texture2D mClipTexture;
 
 	[HideInInspector]
@@ -66,8 +66,8 @@ public class UIPanel : UIRect
 	[SerializeField]
 	private int mDepth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSortingOrder;
 
 	private bool mRebuild;

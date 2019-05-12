@@ -54,6 +54,8 @@ public class CMD_MultiRecruitSettingModal : CMD
 
 	private GameWebAPI.RespData_MultiRoomCreate MultiRoomCreateData;
 
+	public int deckNum { get; set; }
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -285,7 +287,7 @@ public class CMD_MultiRecruitSettingModal : CMD
 				param.moodType = CMD_MultiRecruitSettingModal.selectedMoodType;
 				param.announceType = CMD_MultiRecruitSettingModal.selectedPublishedType;
 				param.introduction = this.recruitMessageInput.value;
-				param.deckNum = CMD_PartyEdit.SelectedParty;
+				param.deckNum = this.deckNum;
 			},
 			OnReceived = delegate(GameWebAPI.RespData_MultiRoomCreate response)
 			{

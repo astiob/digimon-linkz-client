@@ -12,8 +12,8 @@ public class DropItemResult : ResultBase
 
 	public const int MAX_SCROLL_HEIGHT = 2;
 
-	[SerializeField]
 	[Header("Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogo;
 
 	[SerializeField]
@@ -28,16 +28,16 @@ public class DropItemResult : ResultBase
 	[Header("エリア名")]
 	private UILabel areaName;
 
-	[Header("ステージ名")]
 	[SerializeField]
+	[Header("ステージ名")]
 	private UILabel stageName;
 
-	[Header("ライン達")]
 	[SerializeField]
+	[Header("ライン達")]
 	private GameObject[] lines;
 
-	[SerializeField]
 	[Header("クリッピングテクスチャ")]
+	[SerializeField]
 	private UITexture[] clipingTextures;
 
 	private DropItemResult.SkipCount skipCount;
@@ -121,14 +121,19 @@ public class DropItemResult : ResultBase
 		this.skipCount = DropItemResult.SkipCount.Drops;
 		GameWebAPI.RespDataWD_DungeonStart.Drop[] array = null;
 		GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop = null;
-		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] array2 = null;
+		GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] array2 = null;
 		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] array3 = null;
-		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] array4 = null;
+		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] array4 = null;
+		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] array5 = null;
 		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 		if (respDataWD_DungeonStart != null)
 		{
 			array = respDataWD_DungeonStart.dungeonFloor.Where((GameWebAPI.RespDataWD_DungeonStart.DungeonFloor x) => null != x.enemy).SelectMany((GameWebAPI.RespDataWD_DungeonStart.DungeonFloor x) => x.enemy.Where((GameWebAPI.RespDataWD_DungeonStart.Enemy e) => null != e.drop).Select((GameWebAPI.RespDataWD_DungeonStart.Enemy e) => e.drop)).ToArray<GameWebAPI.RespDataWD_DungeonStart.Drop[]>().SelectMany((GameWebAPI.RespDataWD_DungeonStart.Drop[] x) => x).ToArray<GameWebAPI.RespDataWD_DungeonStart.Drop>();
 			luckDrop = respDataWD_DungeonStart.luckDrop;
+			if (ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult != null)
+			{
+				array2 = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult.optionDrop;
+			}
 		}
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		if (respData_WorldMultiStartInfo != null)
@@ -139,15 +144,16 @@ public class DropItemResult : ResultBase
 			GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
 			if (respData_WorldMultiResultInfoLogic.dungeonReward != null)
 			{
-				array4 = respData_WorldMultiResultInfoLogic.dungeonReward.luckDrop;
+				array5 = respData_WorldMultiResultInfoLogic.dungeonReward.luckDrop;
 				GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo2 = DataMng.Instance().RespData_WorldMultiStartInfo;
 				bool flag = respData_WorldMultiStartInfo2.party[0].userId == DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 				if (flag)
 				{
-					array2 = respData_WorldMultiResultInfoLogic.dungeonReward.ownerDropReward;
+					array3 = respData_WorldMultiResultInfoLogic.dungeonReward.ownerDropReward;
 				}
-				array3 = respData_WorldMultiResultInfoLogic.dungeonReward.multiReward;
+				array4 = respData_WorldMultiResultInfoLogic.dungeonReward.multiReward;
 			}
+			array2 = respData_WorldMultiResultInfoLogic.optionDrop;
 		}
 		List<DropItemTotalParts.Data> list = new List<DropItemTotalParts.Data>();
 		if (array != null)
@@ -171,9 +177,9 @@ public class DropItemResult : ResultBase
 				num = luckDrop.assetNum
 			});
 		}
-		if (array2 != null)
+		if (array3 != null)
 		{
-			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward in array2)
+			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward in array3)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{
@@ -183,9 +189,9 @@ public class DropItemResult : ResultBase
 				});
 			}
 		}
-		if (array3 != null)
+		if (array4 != null)
 		{
-			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward2 in array3)
+			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward2 in array4)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{
@@ -195,15 +201,27 @@ public class DropItemResult : ResultBase
 				});
 			}
 		}
-		if (array4 != null)
+		if (array5 != null)
 		{
-			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop luckDrop2 in array4)
+			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop luckDrop2 in array5)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{
 					assetCategoryId = luckDrop2.assetCategoryId,
 					objectId = luckDrop2.assetValue.ToString(),
 					num = luckDrop2.assetNum
+				});
+			}
+		}
+		if (array2 != null)
+		{
+			foreach (GameWebAPI.RespDataWD_DungeonResult.OptionDrop optionDrop in array2)
+			{
+				list.Add(new DropItemTotalParts.Data
+				{
+					assetCategoryId = optionDrop.assetCategoryId,
+					objectId = optionDrop.assetValue.ToString(),
+					num = optionDrop.assetNum.ToInt32()
 				});
 			}
 		}
@@ -228,7 +246,7 @@ public class DropItemResult : ResultBase
 		}
 		this.dropItemTotalList = new DropItemTotalList(base.gameObject, list2.ToArray());
 		this.dropItemTotalList.SetActive(false);
-		this.dropItemList = new DropItemList(base.gameObject, 10, new Vector2(890f, 250f), array, luckDrop, array2, array3, array4);
+		this.dropItemList = new DropItemList(base.gameObject, 10, new Vector2(890f, 250f), array, luckDrop, array3, array4, array5, array2);
 		this.dropItemList.SetScrollBarPosX(550f);
 		this.dropItemList.SetPosition(new Vector3(0f, 40f, 100f));
 		if (this.clipingTextures != null)

@@ -2,16 +2,16 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[ExecuteInEditMode]
 [AddComponentMenu("GUI/GameStrings Font")]
+[ExecuteInEditMode]
 public sealed class GameStringsFont : MonoBehaviour
 {
 	private TextMesh textMesh;
 
 	private UILabel NGFont;
 
-	[FormerlySerializedAs("color_")]
 	[SerializeField]
+	[FormerlySerializedAs("color_")]
 	private Color _color = new Color(1f, 1f, 1f, 1f);
 
 	private bool first = true;

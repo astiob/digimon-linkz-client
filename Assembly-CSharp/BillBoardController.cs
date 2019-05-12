@@ -4,16 +4,16 @@ using UnityEngine;
 [AddComponentMenu("GUI/BillBoardController")]
 public class BillBoardController : MonoBehaviour
 {
-	[Header("必要ならカメラ設定")]
 	[SerializeField]
+	[Header("必要ならカメラ設定")]
 	private Camera cam;
 
 	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]
 	[SerializeField]
 	private BillBoardController.AXIS_TYPE type = BillBoardController.AXIS_TYPE.Y;
 
-	[SerializeField]
 	[Header("オフセット回転量 (0 90 -90 180 など)")]
+	[SerializeField]
 	private float offset;
 
 	public void SetUp(Camera c)

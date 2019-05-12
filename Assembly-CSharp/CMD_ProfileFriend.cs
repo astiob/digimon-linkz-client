@@ -13,6 +13,9 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 	private UILabel lbName;
 
 	[SerializeField]
+	private UITexture iconTitle;
+
+	[SerializeField]
 	private UILabel lbLastLogin;
 
 	[SerializeField]
@@ -176,6 +179,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 			{
 				userId = this.userProfile.userData.userId,
 				nickname = this.userProfile.userData.nickname,
+				titleId = this.userProfile.userData.titleId,
 				description = this.userProfile.userData.description,
 				loginTimeSort = this.userProfile.userData.loginTimeSort,
 				loginTime = ((!string.IsNullOrEmpty(this.lbLastLogin.text)) ? this.lbLastLogin.text : this.userProfile.userData.loginTime)
@@ -193,6 +197,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 		this.dataReload();
 		this.lbName.text = this.userProfile.userData.nickname;
 		this.lbDescription.text = this.userProfile.userData.description;
+		TitleDataMng.SetTitleIcon(this.userProfile.userData.titleId, this.iconTitle);
 		if (string.IsNullOrEmpty(this.lbLastLogin.text))
 		{
 			this.lbLastLogin.text = this.userProfile.userData.loginTime;

@@ -133,6 +133,11 @@ public class DataMng : MonoBehaviour
 		this.result_from_battle.enemyAliveInfo = enemyAliveList;
 	}
 
+	public void SetClearRound(int clearRound)
+	{
+		this.result_from_battle.clearRound = clearRound;
+	}
+
 	public GameWebAPI.RespDataCM_Login RespDataCM_Login
 	{
 		get
@@ -518,6 +523,8 @@ public class DataMng : MonoBehaviour
 			this.resp_data_mn_laboexec = value;
 		}
 	}
+
+	public GameWebAPI.RespDataMN_MedalInherit RespDataMN_MedalInherit { get; set; }
 
 	public GameWebAPI.RespDataMN_GetDeckList RespDataMN_DeckList
 	{

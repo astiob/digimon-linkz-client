@@ -30,6 +30,12 @@ public class ExtraEffectStatus
 	[SerializeField]
 	private float _effectValue;
 
+	[SerializeField]
+	private int _effectTrigger;
+
+	[SerializeField]
+	private string _effectTriggerValue;
+
 	public ExtraEffectStatus()
 	{
 	}
@@ -43,6 +49,8 @@ public class ExtraEffectStatus
 		this._effectType = worldDungeonExtraEffectM.effectType.ToInt32();
 		this._effectSubType = worldDungeonExtraEffectM.effectSubType.ToInt32();
 		this._effectValue = worldDungeonExtraEffectM.effectValue.ToFloat();
+		this._effectTrigger = worldDungeonExtraEffectM.effectTrigger.ToInt32();
+		this._effectTriggerValue = worldDungeonExtraEffectM.effectTriggerValue;
 	}
 
 	public string name
@@ -109,36 +117,125 @@ public class ExtraEffectStatus
 		}
 	}
 
+	public int EffectTrigger
+	{
+		get
+		{
+			return this._effectTrigger;
+		}
+	}
+
+	public string EffectTriggerValue
+	{
+		get
+		{
+			return this._effectTriggerValue;
+		}
+	}
+
+	public static List<ExtraEffectStatus> GetInvocationList(List<ExtraEffectStatus> extraEffectStatuses, ChipEffectStatus.EffectTriggerType effectTriggerType)
+	{
+		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
+		foreach (ExtraEffectStatus extraEffectStatus in extraEffectStatuses)
+		{
+			ChipEffectStatus.EffectTriggerType effectTrigger = (ChipEffectStatus.EffectTriggerType)extraEffectStatus.EffectTrigger;
+			if (effectTrigger == effectTriggerType)
+			{
+				list.Add(extraEffectStatus);
+			}
+		}
+		List<ExtraEffectStatus> list2 = new List<ExtraEffectStatus>();
+		if (effectTriggerType != ChipEffectStatus.EffectTriggerType.WaveStarted)
+		{
+			if (effectTriggerType != ChipEffectStatus.EffectTriggerType.RoundEnd)
+			{
+				list2.AddRange(list);
+			}
+			else
+			{
+				List<ExtraEffectStatus> loopPlayExtraEffectStatusList = ExtraEffectStatus.GetLoopPlayExtraEffectStatusList(list, BattleStateManager.current.battleStateData.currentRoundNumber);
+				list2.AddRange(loopPlayExtraEffectStatusList);
+			}
+		}
+		else
+		{
+			int targetNumber = BattleStateManager.current.battleStateData.currentWaveNumber + 1;
+			List<ExtraEffectStatus> loopPlayExtraEffectStatusList2 = ExtraEffectStatus.GetLoopPlayExtraEffectStatusList(list, targetNumber);
+			list2.AddRange(loopPlayExtraEffectStatusList2);
+		}
+		return list2;
+	}
+
+	private static List<ExtraEffectStatus> GetLoopPlayExtraEffectStatusList(List<ExtraEffectStatus> list, int targetNumber)
+	{
+		List<ExtraEffectStatus> list2 = new List<ExtraEffectStatus>();
+		foreach (ExtraEffectStatus extraEffectStatus in list)
+		{
+			if (string.IsNullOrEmpty(extraEffectStatus.EffectTriggerValue) || extraEffectStatus.EffectTriggerValue == "0")
+			{
+				list2.Add(extraEffectStatus);
+			}
+			else
+			{
+				string[] array = extraEffectStatus.EffectTriggerValue.Split(new char[]
+				{
+					','
+				});
+				if (array.Length == 1)
+				{
+					if (array[0].ToInt32() == targetNumber)
+					{
+						list2.Add(extraEffectStatus);
+					}
+				}
+				else
+				{
+					int num = array[1].ToInt32();
+					int num2 = targetNumber % num;
+					if (num2 == 0)
+					{
+						num2 = num;
+					}
+					if (array[0].ToInt32() == num2)
+					{
+						list2.Add(extraEffectStatus);
+					}
+				}
+			}
+		}
+		return list2;
+	}
+
 	public static List<ExtraEffectStatus> GetExtraEffectStatusList(List<ExtraEffectStatus> extraEffectStatusList, ExtraEffectStatus.ExtraTargetType targetType, ExtraEffectStatus.ExtraTargetSubType targetSubType, int targetValue, ConstValue.ResistanceType resistanceType, ExtraEffectStatus.ExtraEffectType effectType)
 	{
-		ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2BD <GetExtraEffectStatusList>c__AnonStorey2BD = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2BD();
-		<GetExtraEffectStatusList>c__AnonStorey2BD.effectType = effectType;
-		<GetExtraEffectStatusList>c__AnonStorey2BD.targetType = targetType;
-		<GetExtraEffectStatusList>c__AnonStorey2BD.targetSubType = targetSubType;
-		<GetExtraEffectStatusList>c__AnonStorey2BD.targetValue = targetValue;
+		ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2D1 <GetExtraEffectStatusList>c__AnonStorey2D = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2D1();
+		<GetExtraEffectStatusList>c__AnonStorey2D.effectType = effectType;
+		<GetExtraEffectStatusList>c__AnonStorey2D.targetType = targetType;
+		<GetExtraEffectStatusList>c__AnonStorey2D.targetSubType = targetSubType;
+		<GetExtraEffectStatusList>c__AnonStorey2D.targetValue = targetValue;
 		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
 		if (extraEffectStatusList.Count == 0)
 		{
 			return list;
 		}
-		<GetExtraEffectStatusList>c__AnonStorey2BD.searchEffectType = ((int x) => x == (int)<GetExtraEffectStatusList>c__AnonStorey2BD.effectType);
-		if (ExtraEffectStatus.ExtraEffectType.Atk <= <GetExtraEffectStatusList>c__AnonStorey2BD.effectType && <GetExtraEffectStatusList>c__AnonStorey2BD.effectType < ExtraEffectStatus.ExtraEffectType.AllStatus)
+		<GetExtraEffectStatusList>c__AnonStorey2D.searchEffectType = ((int x) => x == (int)<GetExtraEffectStatusList>c__AnonStorey2D.effectType);
+		if (ExtraEffectStatus.ExtraEffectType.Atk <= <GetExtraEffectStatusList>c__AnonStorey2D.effectType && <GetExtraEffectStatusList>c__AnonStorey2D.effectType < ExtraEffectStatus.ExtraEffectType.AllStatus)
 		{
-			<GetExtraEffectStatusList>c__AnonStorey2BD.searchEffectType = ((int x) => x == (int)<GetExtraEffectStatusList>c__AnonStorey2BD.effectType || x == 27);
+			<GetExtraEffectStatusList>c__AnonStorey2D.searchEffectType = ((int x) => x == (int)<GetExtraEffectStatusList>c__AnonStorey2D.effectType || x == 27);
 		}
 		IEnumerable<ExtraEffectStatus> enumerable;
 		if (resistanceType == ConstValue.ResistanceType.NONE)
 		{
-			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2BD.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2BD.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2BD.targetValue && <GetExtraEffectStatusList>c__AnonStorey2BD.searchEffectType(x.EffectType));
+			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2D.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2D.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2D.targetValue && <GetExtraEffectStatusList>c__AnonStorey2D.searchEffectType(x.EffectType));
 		}
 		else
 		{
-			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2BE <GetExtraEffectStatusList>c__AnonStorey2BE = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2BE();
-			<GetExtraEffectStatusList>c__AnonStorey2BE.<>f__ref$701 = <GetExtraEffectStatusList>c__AnonStorey2BD;
-			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2BE <GetExtraEffectStatusList>c__AnonStorey2BE2 = <GetExtraEffectStatusList>c__AnonStorey2BE;
+			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2D2 <GetExtraEffectStatusList>c__AnonStorey2D2 = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2D2();
+			<GetExtraEffectStatusList>c__AnonStorey2D2.<>f__ref$721 = <GetExtraEffectStatusList>c__AnonStorey2D;
+			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2D2 <GetExtraEffectStatusList>c__AnonStorey2D3 = <GetExtraEffectStatusList>c__AnonStorey2D2;
 			int num = (int)resistanceType;
-			<GetExtraEffectStatusList>c__AnonStorey2BE2.resistance = num.ToString();
-			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2BE.<>f__ref$701.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2BE.<>f__ref$701.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2BE.<>f__ref$701.targetValue && x.TargetValue2.Contains(<GetExtraEffectStatusList>c__AnonStorey2BE.resistance) && <GetExtraEffectStatusList>c__AnonStorey2BE.<>f__ref$701.searchEffectType(x.EffectType));
+			<GetExtraEffectStatusList>c__AnonStorey2D3.resistance = num.ToString();
+			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2D2.<>f__ref$721.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2D2.<>f__ref$721.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2D2.<>f__ref$721.targetValue && x.TargetValue2.Contains(<GetExtraEffectStatusList>c__AnonStorey2D2.resistance) && <GetExtraEffectStatusList>c__AnonStorey2D2.<>f__ref$721.searchEffectType(x.EffectType));
 		}
 		foreach (ExtraEffectStatus item in enumerable)
 		{
@@ -149,36 +246,10 @@ public class ExtraEffectStatus
 
 	public static int GetExtraEffectValue(List<ExtraEffectStatus> extraEffectStatusList, int baseValue, CharacterStateControl character, ExtraEffectStatus.ExtraEffectType effectType)
 	{
-		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
-		ConstValue.ResistanceType resistanceType = ConstValue.ResistanceType.NONE;
-		ExtraEffectStatus.ExtraTargetType targetType = ExtraEffectStatus.ExtraTargetType.Player;
-		if (character != null && character.isEnemy)
+		List<ExtraEffectStatus> totalExtraEffectStatusList = ExtraEffectStatus.GetTotalExtraEffectStatusList(extraEffectStatusList, character, effectType);
+		if (totalExtraEffectStatusList.Count > 0)
 		{
-			targetType = ExtraEffectStatus.ExtraTargetType.Enemy;
-		}
-		if (BattleStateManager.current != null && BattleStateManager.current.battleMode == BattleMode.PvP)
-		{
-			targetType = ExtraEffectStatus.ExtraTargetType.All;
-		}
-		if (character != null)
-		{
-			List<ConstValue.ResistanceType> attributeStrengthList = character.tolerance.GetAttributeStrengthList();
-			foreach (ConstValue.ResistanceType resistanceType2 in attributeStrengthList)
-			{
-				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterResistance, 0, resistanceType2, effectType));
-				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterResistance, (int)resistanceType2, ConstValue.ResistanceType.NONE, effectType));
-				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterResistance, (int)resistanceType2, resistanceType2, effectType));
-			}
-		}
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterTribe, 0, resistanceType, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterTribe, (int)character.species, ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterGroup, 0, ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterGroup, character.prefabId.ToInt32(), ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.GrowStep, 0, ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.GrowStep, ExtraEffectStatus.EvolutionStepToMasterId(character.evolutionStep), ConstValue.ResistanceType.NONE, effectType));
-		if (list.Count > 0)
-		{
-			return ExtraEffectStatus.GetCorrectionValue(baseValue, list);
+			return ExtraEffectStatus.GetCorrectionValue(baseValue, totalExtraEffectStatusList);
 		}
 		return baseValue;
 	}
@@ -404,6 +475,47 @@ public class ExtraEffectStatus
 		return (int)(evolutionStep + 2);
 	}
 
+	public bool IsHitExtraEffect(CharacterStateControl character, ExtraEffectStatus.ExtraEffectType extraEffectType)
+	{
+		List<ExtraEffectStatus> totalExtraEffectStatusList = ExtraEffectStatus.GetTotalExtraEffectStatusList(new List<ExtraEffectStatus>
+		{
+			this
+		}, character, extraEffectType);
+		return totalExtraEffectStatusList.Count > 0;
+	}
+
+	private static List<ExtraEffectStatus> GetTotalExtraEffectStatusList(List<ExtraEffectStatus> extraEffectStatusList, CharacterStateControl character, ExtraEffectStatus.ExtraEffectType effectType)
+	{
+		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
+		ConstValue.ResistanceType resistanceType = ConstValue.ResistanceType.NONE;
+		ExtraEffectStatus.ExtraTargetType targetType = ExtraEffectStatus.ExtraTargetType.Player;
+		if (character != null && character.isEnemy)
+		{
+			targetType = ExtraEffectStatus.ExtraTargetType.Enemy;
+		}
+		if (BattleStateManager.current != null && BattleStateManager.current.battleMode == BattleMode.PvP)
+		{
+			targetType = ExtraEffectStatus.ExtraTargetType.All;
+		}
+		if (character != null)
+		{
+			List<ConstValue.ResistanceType> attributeStrengthList = character.tolerance.GetAttributeStrengthList();
+			foreach (ConstValue.ResistanceType resistanceType2 in attributeStrengthList)
+			{
+				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterResistance, 0, resistanceType2, effectType));
+				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterResistance, (int)resistanceType2, ConstValue.ResistanceType.NONE, effectType));
+				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterResistance, (int)resistanceType2, resistanceType2, effectType));
+			}
+		}
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterTribe, 0, resistanceType, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterTribe, (int)character.species, ConstValue.ResistanceType.NONE, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterGroup, 0, ConstValue.ResistanceType.NONE, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.MonsterGroup, character.prefabId.ToInt32(), ConstValue.ResistanceType.NONE, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.GrowStep, 0, ConstValue.ResistanceType.NONE, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, ExtraEffectStatus.ExtraTargetSubType.GrowStep, ExtraEffectStatus.EvolutionStepToMasterId(character.evolutionStep), ConstValue.ResistanceType.NONE, effectType));
+		return list;
+	}
+
 	public enum ExtraTargetType
 	{
 		All,
@@ -448,7 +560,8 @@ public class ExtraEffectStatus
 		Counter,
 		Guts,
 		HittingTheTarget,
-		Skill = 60
+		Skill = 60,
+		LeaderChange = 70
 	}
 
 	public enum ExtraEffectSubType

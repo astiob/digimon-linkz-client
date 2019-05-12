@@ -7,6 +7,9 @@ public class GUIListPvPFriendParts : GUIListPartBS
 	private UILabel lbUserName;
 
 	[SerializeField]
+	private GameObject goTitleIcon;
+
+	[SerializeField]
 	private UILabel lbUserComment;
 
 	[SerializeField]
@@ -65,6 +68,7 @@ public class GUIListPvPFriendParts : GUIListPartBS
 		this.lbUserName.text = this.friendData.userData.nickname;
 		this.lbUserComment.text = this.friendData.userData.description;
 		this.lbLastLogin.text = this.friendData.userData.loginTime;
+		TitleDataMng.SetTitleIcon(this.friendData.userData.titleId, this.goTitleIcon.GetComponent<UITexture>());
 		MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.friendData.monsterData.monsterId);
 		if (monsterData != null)
 		{

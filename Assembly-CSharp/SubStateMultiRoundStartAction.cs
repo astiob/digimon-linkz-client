@@ -59,8 +59,8 @@ public class SubStateMultiRoundStartAction : SubStateRoundStartAction
 				}
 			}
 		}
-		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.RoundStartActionWaitSecond, null, null);
-		while (wait.MoveNext())
+		IEnumerator waitRoundStartAction = base.WaitRoundStartAction();
+		while (waitRoundStartAction.MoveNext())
 		{
 			yield return null;
 		}

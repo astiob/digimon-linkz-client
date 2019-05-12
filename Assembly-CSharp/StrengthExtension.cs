@@ -10,6 +10,8 @@ public static class StrengthExtension
 			return 1;
 		case Strength.Weak:
 			return -1;
+		case Strength.Drain:
+			return 2;
 		case Strength.Invalid:
 			return 99;
 		default:

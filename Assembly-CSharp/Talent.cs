@@ -1,92 +1,77 @@
 ﻿using System;
-using UnityEngine;
 
 [Serializable]
 public class Talent
 {
-	[SerializeField]
-	private TalentLevel _hp;
+	public string hpAbilityFlg;
 
-	[SerializeField]
-	private TalentLevel _attack;
+	public string hpAbility;
 
-	[SerializeField]
-	private TalentLevel _defence;
+	public string attackAbilityFlg;
 
-	[SerializeField]
-	private TalentLevel _specialAttack;
+	public string attackAbility;
 
-	[SerializeField]
-	private TalentLevel _specialDefence;
+	public string defenseAbilityFlg;
 
-	[SerializeField]
-	private TalentLevel _speed;
+	public string defenseAbility;
+
+	public string spAttackAbilityFlg;
+
+	public string spAttackAbility;
+
+	public string spDefenseAbilityFlg;
+
+	public string spDefenseAbility;
+
+	public string speedAbilityFlg;
+
+	public string speedAbility;
 
 	public Talent()
 	{
-		this._hp = TalentLevel.None;
-		this._attack = TalentLevel.None;
-		this._defence = TalentLevel.None;
-		this._specialAttack = TalentLevel.None;
-		this._specialDefence = TalentLevel.None;
-		this._speed = TalentLevel.None;
+		this.hpAbilityFlg = "0";
+		this.hpAbility = "0";
+		this.attackAbilityFlg = "0";
+		this.attackAbility = "0";
+		this.defenseAbilityFlg = "0";
+		this.defenseAbility = "0";
+		this.spAttackAbilityFlg = "0";
+		this.spAttackAbility = "0";
+		this.spDefenseAbilityFlg = "0";
+		this.spDefenseAbility = "0";
+		this.speedAbilityFlg = "0";
+		this.speedAbility = "0";
 	}
 
-	public Talent(TalentLevel hp, TalentLevel attack, TalentLevel defence, TalentLevel specialAttack, TalentLevel specialDefence, TalentLevel speed)
+	public Talent(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
 	{
-		this._hp = hp;
-		this._attack = attack;
-		this._defence = defence;
-		this._specialAttack = specialAttack;
-		this._specialDefence = specialDefence;
-		this._speed = speed;
+		this.hpAbilityFlg = userMonster.hpAbilityFlg;
+		this.hpAbility = userMonster.hpAbility;
+		this.attackAbilityFlg = userMonster.attackAbilityFlg;
+		this.attackAbility = userMonster.attackAbility;
+		this.defenseAbilityFlg = userMonster.defenseAbilityFlg;
+		this.defenseAbility = userMonster.defenseAbility;
+		this.spAttackAbilityFlg = userMonster.spAttackAbilityFlg;
+		this.spAttackAbility = userMonster.spAttackAbility;
+		this.spDefenseAbilityFlg = userMonster.spDefenseAbilityFlg;
+		this.spDefenseAbility = userMonster.spDefenseAbility;
+		this.speedAbilityFlg = userMonster.speedAbilityFlg;
+		this.speedAbility = userMonster.speedAbility;
 	}
 
-	public TalentLevel hp
+	public Talent(GameWebAPI.Common_MonsterData commonMonsterData)
 	{
-		get
-		{
-			return this._hp;
-		}
-	}
-
-	public TalentLevel attack
-	{
-		get
-		{
-			return this._attack;
-		}
-	}
-
-	public TalentLevel defence
-	{
-		get
-		{
-			return this._defence;
-		}
-	}
-
-	public TalentLevel specialAttack
-	{
-		get
-		{
-			return this._specialAttack;
-		}
-	}
-
-	public TalentLevel specialDefence
-	{
-		get
-		{
-			return this._specialDefence;
-		}
-	}
-
-	public TalentLevel speed
-	{
-		get
-		{
-			return this._speed;
-		}
+		this.hpAbilityFlg = commonMonsterData.hpAbilityFlg;
+		this.hpAbility = commonMonsterData.hpAbility;
+		this.attackAbilityFlg = commonMonsterData.attackAbilityFlg;
+		this.attackAbility = commonMonsterData.attackAbility;
+		this.defenseAbilityFlg = commonMonsterData.defenseAbilityFlg;
+		this.defenseAbility = commonMonsterData.defenseAbility;
+		this.spAttackAbilityFlg = commonMonsterData.spAttackAbilityFlg;
+		this.spAttackAbility = commonMonsterData.spAttackAbility;
+		this.spDefenseAbilityFlg = commonMonsterData.spDefenseAbilityFlg;
+		this.spDefenseAbility = commonMonsterData.spDefenseAbility;
+		this.speedAbilityFlg = commonMonsterData.speedAbilityFlg;
+		this.speedAbility = commonMonsterData.speedAbility;
 	}
 }

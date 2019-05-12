@@ -8,8 +8,8 @@ public class TicketEfc : MonoBehaviour
 	[Header("サムネイル TEX")]
 	public UITexture ngTICKET_THUMB;
 
-	[SerializeField]
 	[Header("チケット TEX")]
+	[SerializeField]
 	public UITexture ngTICKET;
 
 	[SerializeField]
@@ -20,8 +20,8 @@ public class TicketEfc : MonoBehaviour
 	[Header("NEW スプライト")]
 	public UISprite spNew;
 
-	[Header("枚数ラベル")]
 	[SerializeField]
+	[Header("枚数ラベル")]
 	public UILabel ngTXT_TICKET_NUM;
 
 	private int playFrameCT;

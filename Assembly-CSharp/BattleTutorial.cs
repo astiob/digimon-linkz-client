@@ -1,5 +1,4 @@
-﻿using BattleStateMachineInternal;
-using System;
+﻿using System;
 using UnityEngine;
 
 public class BattleTutorial : BattleFunctionBase
@@ -23,11 +22,6 @@ public class BattleTutorial : BattleFunctionBase
 			base.hierarchyData.isPossibleRetire = false;
 			base.battleStateData.isPossibleShowDescription = false;
 			base.battleStateData.isTutorialInduction = true;
-			BattleSecureRoutine component = base.stateManager.GetComponent<BattleSecureRoutine>();
-			if (component)
-			{
-				component.DestroyThisObject();
-			}
 		}
 	}
 

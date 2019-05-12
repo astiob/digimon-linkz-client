@@ -2,6 +2,7 @@
 using Master;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -443,8 +444,9 @@ public class CMD_ClearingHouse : CMD
 			break;
 		}
 		}
+		int num3 = int.Parse(exchangeItem.exchangeDetailNum, NumberStyles.AllowThousands);
 		string exchangeDetailName = exchangeItem.exchangeDetailName;
-		string arg = (int.Parse(exchangeItem.exchangeDetailNum) * exchangeItem.numCounter).ToString();
+		string arg = StringFormat.Cluster(num3 * exchangeItem.numCounter);
 		string info = string.Format(StringMaster.GetString("ExchangeSuccessInfo"), exchangeDetailName, arg);
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.RunReExchangeInfoLogicAPI), "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("ExchangeSuccessTitle");

@@ -23,12 +23,17 @@ public sealed class CampaignLabelArea : PartsMenuNotfIcon
 
 	protected override void Start()
 	{
+		this.InitUI();
+		base.Start();
+	}
+
+	public void InitUI()
+	{
 		this.lbContent.text = string.Empty;
 		if (this.spBaloon != null)
 		{
 			this.spBaloon.gameObject.SetActive(false);
 		}
-		base.Start();
 	}
 
 	protected override void SetCampaignData(List<GameWebAPI.RespDataCP_Campaign.CampaignInfo> infos)

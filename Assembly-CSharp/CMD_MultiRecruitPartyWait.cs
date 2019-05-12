@@ -1,5 +1,6 @@
 ﻿using Master;
 using MultiBattle.Tools;
+using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,18 +11,14 @@ using WebAPIRequest;
 public class CMD_MultiRecruitPartyWait : CMD
 {
 	[SerializeField]
-	[Header("ボスアイコン")]
-	private PartyBossIcons partyBossIcons;
-
 	[Header("エリア名 ステージ名")]
-	[SerializeField]
 	private UILabel lbAreaName;
 
 	[SerializeField]
 	private UILabel lbStageName;
 
-	[Header("リーダースキル名")]
 	[SerializeField]
+	[Header("リーダースキル名")]
 	private UILabel lbTXT_LEADERSKILL;
 
 	[SerializeField]
@@ -41,8 +38,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private GameObject goBTN_FRIEND;
 
-	[Header("チャットボタン")]
 	[SerializeField]
+	[Header("チャットボタン")]
 	private GameObject goBTN_CHAT;
 
 	[Header("ステータス変更ボタン")]
@@ -57,7 +54,10 @@ public class CMD_MultiRecruitPartyWait : CMD
 	private UISprite spBTN_READY;
 
 	[SerializeField]
+	private BoxCollider coBTN_READY;
+
 	[Header("決定ボタン")]
+	[SerializeField]
 	private GameObject goBTN_DECIDE;
 
 	[SerializeField]
@@ -74,19 +74,30 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[Header("エモーション処理")]
 	[SerializeField]
+	[Header("エモーション処理")]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーションコンポーネント")]
+	[SerializeField]
 	private EmotionButtonFront emotionButtonCP;
+
+	[SerializeField]
+	private GameObject bossIconRootObject;
+
+	[SerializeField]
+	private BossThumbnail[] bossIconList;
+
+	[SerializeField]
+	private SortieLimitList sortieLimitList;
 
 	private static CMD_MultiRecruitPartyWait instance;
 
 	private string myUserId;
 
 	private string myNickname;
+
+	private string myTitleId;
 
 	private List<MonsterData> monsterDataList;
 
@@ -157,6 +168,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		CMD_MultiRecruitPartyWait.instance = this;
 		this.myUserId = DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 		this.myNickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
+		this.myTitleId = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.titleId;
 	}
 
 	protected override void Update()
@@ -187,7 +199,17 @@ public class CMD_MultiRecruitPartyWait : CMD
 			SoundMng.Instance().PlayGameBGM("bgm_301");
 		}
 		base.SetOpendAction(new Action<int>(this.OpendAction));
-		this.partyBossIcons.SetBossIconAndTolerances();
+		for (int i = 0; i < this.bossIconList.Length; i++)
+		{
+			this.bossIconList[i].Initialize();
+		}
+		this.SetBossMonsterIcon(ClassSingleton<QuestData>.Instance.GetBossMonsterList(ClassSingleton<PartyBossIconsAccessor>.Instance.StageEnemies));
+		this.sortieLimitList.Initialize();
+		this.SetSortieLimit();
+		if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
+		{
+			this.sortieLimitList.gameObject.SetActive(false);
+		}
 		this.InitData();
 		this.SetMonsterUI();
 		this.isEndFirstSetMonsterUI = true;
@@ -324,7 +346,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			this.goBTN_DECIDE.SetActive(false);
 			this.isReady = false;
 		}
-		this.SetReadyBtnLabel();
+		this.SetReadyBtnLabel(this.CheckSortieLimit());
 		this.UpdateReadyState(this.myUserId, this.isReady);
 		this.SetBtnDecide();
 		this.RefreshLeaderSkillText();
@@ -388,6 +410,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		{
 			this.monsterDataList[positionNumber] = md;
 		}
+		this.SetReadyBtnLabel(this.CheckSortieLimit());
 		base.StartCoroutine(this.SendTCPShareUserInfo(md, false, isOwnerSubMonster));
 	}
 
@@ -543,18 +566,49 @@ public class CMD_MultiRecruitPartyWait : CMD
 		BattleStateManager.StartMulti(0.5f, 0.5f, true, null);
 	}
 
-	private void SetReadyBtnLabel()
+	private void SetReadyBtnLabel(bool isClearSortieLimit)
 	{
 		if (this.isReady)
 		{
 			this.lbTXT_BTN_READY.text = StringMaster.GetString("MultiRecruit-03");
+			this.lbTXT_BTN_READY.color = Color.white;
 			this.spBTN_READY.spriteName = "Common02_Btn_Green";
+			this.coBTN_READY.enabled = true;
+		}
+		else if (isClearSortieLimit)
+		{
+			this.lbTXT_BTN_READY.text = StringMaster.GetString("MultiRecruit-05");
+			this.lbTXT_BTN_READY.color = Color.white;
+			this.spBTN_READY.spriteName = "Common02_Btn_Red";
+			this.coBTN_READY.enabled = true;
 		}
 		else
 		{
 			this.lbTXT_BTN_READY.text = StringMaster.GetString("MultiRecruit-05");
-			this.spBTN_READY.spriteName = "Common02_Btn_Red";
+			this.lbTXT_BTN_READY.color = Color.gray;
+			this.spBTN_READY.spriteName = "Common02_Btn_Gray";
+			this.coBTN_READY.enabled = false;
 		}
+	}
+
+	private bool CheckSortieLimit()
+	{
+		string tribe = string.Empty;
+		string growStep = string.Empty;
+		if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
+		{
+			if (this.leaderMonsterData != null)
+			{
+				tribe = this.leaderMonsterData.monsterMG.tribe;
+				growStep = this.leaderMonsterData.monsterMG.growStep;
+			}
+		}
+		else if (this.myMonsterData != null)
+		{
+			tribe = this.myMonsterData.monsterMG.tribe;
+			growStep = this.myMonsterData.monsterMG.growStep;
+		}
+		return ClassSingleton<QuestData>.Instance.CheckSortieLimit(this.sortieLimitList.GetSortieLimitList(), tribe, growStep);
 	}
 
 	private void UpdateReadyState(string userId, bool isReady)
@@ -607,6 +661,10 @@ public class CMD_MultiRecruitPartyWait : CMD
 			{
 				flag = false;
 			}
+			else if (!this.CheckWorldDungeonSortieLimit())
+			{
+				flag = false;
+			}
 			else
 			{
 				foreach (PartsMultiRecruitMonsInfo partsMultiRecruitMonsInfo in this.partsMonsInfoList)
@@ -633,13 +691,38 @@ public class CMD_MultiRecruitPartyWait : CMD
 		}
 	}
 
+	private bool CheckWorldDungeonSortieLimit()
+	{
+		bool result = true;
+		List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> list = this.sortieLimitList.GetSortieLimitList();
+		if (list != null && 0 < list.Count)
+		{
+			for (int i = 0; i < this.partsMonsInfoList.Count; i++)
+			{
+				MonsterData data = this.partsMonsInfoList[i].Data;
+				if (data != null)
+				{
+					string tribe = data.monsterMG.tribe;
+					string growStep = data.monsterMG.growStep;
+					if (!ClassSingleton<QuestData>.Instance.CheckSortieLimit(list, tribe, growStep))
+					{
+						result = false;
+						break;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
 	private void SetMonsterUI()
 	{
 		this.TCPSendUserIdList = new List<int>();
 		this.partsMonsInfoList = new List<PartsMultiRecruitMonsInfo>();
 		if (this.monsterInfoList == null)
 		{
-			this.monsterInfoList = this.partyUI.CreateMonsterInfo();
+			List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> limitList = this.sortieLimitList.GetSortieLimitList();
+			this.monsterInfoList = this.partyUI.CreateMonsterInfo(limitList);
 		}
 		else
 		{
@@ -666,18 +749,28 @@ public class CMD_MultiRecruitPartyWait : CMD
 		{
 			if (this.isEndFirstSetMonsterUI || this.monsterDataList[updatePosition].userMonster.userId == this.myUserId)
 			{
+				partsMultiRecruitMonsInfo.ChangeRecruitMode(false);
+				if (this.monsterDataList[updatePosition].userMonster.userId == this.leaderMonsterData.userMonster.userId)
+				{
+					partsMultiRecruitMonsInfo.SetMonsterUserType(CMD_MultiRecruitPartyWait.USER_TYPE.OWNER);
+				}
+				else
+				{
+					partsMultiRecruitMonsInfo.SetMonsterUserType(CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER);
+				}
 				partsMultiRecruitMonsInfo.Data = this.monsterDataList[updatePosition];
 				partsMultiRecruitMonsInfo.ShowGUI();
-				partsMultiRecruitMonsInfo.ChangeRecruitMode(false);
 			}
 			else
 			{
 				partsMultiRecruitMonsInfo.ChangeWaitMode();
 			}
 			string nickname;
+			string titleId;
 			if (this.memberList[updatePosition] != null)
 			{
 				nickname = this.memberList[updatePosition].nickname;
+				titleId = this.memberList[updatePosition].titleId;
 				if (this.memberList[updatePosition].userId != this.myUserId && isReset)
 				{
 					this.TCPSendUserIdList.Add(int.Parse(this.memberList[updatePosition].userId));
@@ -686,6 +779,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			else
 			{
 				nickname = this.memberList[0].nickname;
+				titleId = this.memberList[0].titleId;
 			}
 			CMD_MultiRecruitPartyWait.USER_TYPE playerNum;
 			if (this.monsterDataList[updatePosition].userMonster.userId == this.leaderMonsterData.userMonster.userId)
@@ -700,7 +794,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			{
 				playerNum = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER2;
 			}
-			partsMultiRecruitMonsInfo.AddInitLabel(nickname, playerNum, updatePosition == 0);
+			partsMultiRecruitMonsInfo.AddInitLabel(nickname, titleId, playerNum, updatePosition == 0);
 			if (this.monsterDataList[updatePosition].userMonster.userId != this.myUserId || (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER && updatePosition == 2))
 			{
 				partsMultiRecruitMonsInfo.GetComponent<BoxCollider>().enabled = false;
@@ -828,7 +922,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		if (idx == 0)
 		{
 			this.isReady = !this.isReady;
-			this.SetReadyBtnLabel();
+			this.SetReadyBtnLabel(this.CheckSortieLimit());
 			this.UpdateReadyState(this.myUserId, this.isReady);
 			this.SetBtnDecide();
 			base.StartCoroutine(this.SendTCPReady());
@@ -962,6 +1056,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			message.userId = this.myUserId;
 			message.isReady = this.isReady;
 			message.nickname = this.myNickname;
+			message.titleId = this.myTitleId;
 			message.isRequestMemberData = isRequestMemberData;
 			message.hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.RecruitShareUserInfo, this.myUserId, TCPMessageType.None);
 			message.positionNumber = this.myPositionNumber;
@@ -1341,6 +1436,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				GameWebAPI.Common_MultiMemberList common_MultiMemberList = new GameWebAPI.Common_MultiMemberList();
 				common_MultiMemberList.nickname = recruitShareUserInfo.nickname;
 				common_MultiMemberList.userId = recruitShareUserInfo.userId;
+				common_MultiMemberList.titleId = recruitShareUserInfo.titleId;
 				MonsterData value = recruitShareUserInfo.monsInfo.ToMonsterData();
 				this.memberList[recruitShareUserInfo.positionNumber] = common_MultiMemberList;
 				this.monsterDataList[recruitShareUserInfo.positionNumber] = value;
@@ -1640,6 +1736,31 @@ public class CMD_MultiRecruitPartyWait : CMD
 		if (this.cmdModalMessage != null && this.cmdModalMessage.enabled)
 		{
 			this.cmdModalMessage.ClosePanel(false);
+		}
+	}
+
+	private void SetBossMonsterIcon(List<GameWebAPI.RespDataWD_GetDungeonInfo.EncountEnemy> enemyList)
+	{
+		int num = Mathf.Min(enemyList.Count, this.bossIconList.Length);
+		if (0 < num)
+		{
+			this.bossIconRootObject.SetActive(true);
+		}
+		for (int i = 0; i < num; i++)
+		{
+			this.bossIconList[i].SetBossInfo(enemyList[i]);
+		}
+	}
+
+	public void SetSortieLimit()
+	{
+		if (ClassSingleton<QuestData>.Instance.SelectDungeon != null)
+		{
+			string worldDungeonId = ClassSingleton<QuestData>.Instance.SelectDungeon.worldDungeonId;
+			if (!string.IsNullOrEmpty(worldDungeonId))
+			{
+				this.sortieLimitList.SetSortieLimit(worldDungeonId.ToInt32());
+			}
 		}
 	}
 

@@ -3,70 +3,52 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class GUIListPartsPvPRanking : GUIListPartBS
+public class GUIListPartsColosseumRanking : GUIListPartBS
 {
-	[SerializeField]
-	[Header("ベースのスプライト")]
-	private UISprite spBase;
-
-	[Header("わたしのカラー")]
-	[SerializeField]
-	private Color myColor;
-
-	[SerializeField]
-	[Header("ほかのカラー")]
-	private Color youColor;
-
-	[SerializeField]
 	[Header("あなたを示すアイコン")]
+	[SerializeField]
 	private UISprite spYouIcon;
 
-	[Header("キャラサムネの位置")]
 	[SerializeField]
+	[Header("キャラサムネの位置")]
 	private GameObject goMONSTER_ICON;
 
-	[Header("ユーザーネーム")]
 	[SerializeField]
+	[Header("ユーザーネーム")]
 	private UILabel lbTX_UserName;
+
+	[Header("称号アイコン")]
+	[SerializeField]
+	private GameObject goTITLE_ICON;
 
 	[SerializeField]
 	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
-	[Header("戦歴")]
-	[SerializeField]
-	private UILabel lbTX_Record;
-
 	[Header("ランキング順位")]
 	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
-	[Header("ランキングアイコン")]
 	[SerializeField]
+	[Header("ランキングアイコン")]
 	private UISprite spRankingIcon;
+
+	[Header("背景スプライト")]
+	[SerializeField]
+	private UISprite spWindow;
 
 	private MonsterData digimonData;
 
 	private GUIMonsterIcon csMonsIcon;
 
-	private GameWebAPI.RespDataCL_Ranking.RankingDataList data;
+	private int limitRank;
 
-	public GameWebAPI.RespDataCL_Ranking.RankingDataList Data
-	{
-		get
-		{
-			return this.data;
-		}
-		set
-		{
-			this.data = value;
-			this.ShowGUI();
-		}
-	}
+	public GameWebAPI.RespDataCL_Ranking.RankingData data { get; set; }
 
 	public override void SetData()
 	{
-		this.data = CMD_PvPRanking.instance.GetData(base.IDX);
+		this.data = GUISelectPanelColosseumRanking.partsDataList[base.IDX];
+		this.limitRank = CMD_ColosseumRanking.instance.GetlimitRank();
 	}
 
 	public override void InitParts()
@@ -77,10 +59,6 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 	public override void RefreshParts()
 	{
 		this.ShowGUI();
-	}
-
-	public override void InactiveParts()
-	{
 	}
 
 	protected override void Awake()
@@ -96,33 +74,20 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 
 	private void ShowData()
 	{
-		this.SetBG();
 		this.SetDigimonIcon();
-		this.lbTX_UserName.text = this.data.nickname;
-		if (CMD_PvPRanking.Mode == CMD_PvPRanking.MODE.PvP)
+		if (this.data.userId.ToString() == DataMng.Instance().RespDataCM_Login.playerInfo.userId)
 		{
-			if (CMD_PvPTop.Instance != null && CMD_PvPTop.Instance.IsAggregate)
-			{
-				this.lbTX_DuelPoint.text = StringMaster.GetString("PvpAggregate");
-				this.lbTX_Record.text = StringMaster.GetString("PvpAggregate");
-			}
-			else
-			{
-				this.lbTX_DuelPoint.text = this.data.score;
-				float num = float.Parse(this.data.winRate);
-				this.lbTX_Record.text = string.Format(StringMaster.GetString("ColosseumRankRate"), this.data.totalBattleCount, this.data.winCount, num.ToString("0.0"));
-			}
+			this.SetMine(true);
 		}
 		else
 		{
-			this.lbTX_DuelPoint.text = this.data.score;
-			if (this.lbTX_Record != null)
-			{
-				this.lbTX_Record.text = string.Empty;
-			}
+			this.SetMine(false);
 		}
-		int num2 = int.Parse(this.data.rank);
-		switch (num2)
+		this.lbTX_UserName.text = this.data.nickname;
+		TitleDataMng.SetTitleIcon(this.data.titleId, this.goTITLE_ICON.GetComponent<UITexture>());
+		this.lbTX_DuelPoint.text = this.data.point.ToString();
+		int rank = this.data.rank;
+		switch (rank)
 		{
 		case 1:
 			this.spRankingIcon.gameObject.SetActive(true);
@@ -141,9 +106,9 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 			break;
 		default:
 			this.spRankingIcon.gameObject.SetActive(false);
-			if (1 <= num2 && num2 <= 100)
+			if (1 <= rank && rank <= this.limitRank)
 			{
-				this.lbTX_RankingNumber.text = this.data.rank;
+				this.lbTX_RankingNumber.text = rank.ToString();
 			}
 			else
 			{
@@ -153,26 +118,28 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 		}
 	}
 
-	private void SetBG()
+	private void SetMine(bool isMine)
 	{
-		if (this.data.isMine)
+		this.spYouIcon.gameObject.SetActive(isMine);
+		if (isMine)
 		{
-			this.spBase.color = this.myColor;
-			global::Debug.Log(base.name);
-			this.spYouIcon.gameObject.SetActive(true);
+			this.spWindow.color = new Color32(0, 100, 0, byte.MaxValue);
 		}
 		else
 		{
-			this.spBase.color = this.youColor;
-			this.spYouIcon.gameObject.SetActive(false);
+			this.spWindow.color = new Color32(0, 100, byte.MaxValue, 200);
 		}
 	}
 
 	private void SetDigimonIcon()
 	{
+		if (this.data.leaderMonsterId == "0")
+		{
+			this.data.leaderMonsterId = "81";
+		}
 		if (this.digimonData == null)
 		{
-			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.iconId);
+			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.leaderMonsterId);
 			this.csMonsIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.digimonData, this.goMONSTER_ICON.transform.localScale, this.goMONSTER_ICON.transform.localPosition, this.goMONSTER_ICON.transform.parent, true, true);
 			UIWidget component = this.goMONSTER_ICON.GetComponent<UIWidget>();
 			UIWidget component2 = this.csMonsIcon.gameObject.GetComponent<UIWidget>();
@@ -186,7 +153,7 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 		}
 		else
 		{
-			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.iconId);
+			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.leaderMonsterId);
 			MonsterDataMng.Instance().RefreshPrefabByMonsterData(this.digimonData, this.csMonsIcon, true, true);
 		}
 	}
@@ -241,7 +208,7 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 
 	protected virtual void OnTouchEndedProcess()
 	{
-		if (this.data.isMine)
+		if (this.data.userId.ToString() == DataMng.Instance().RespDataCM_Login.playerInfo.userId)
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_Profile");
 		}
@@ -277,7 +244,7 @@ public class GUIListPartsPvPRanking : GUIListPartBS
 				monsterData = new GameWebAPI.FriendList.MonsterData(),
 				userData = 
 				{
-					userId = this.data.userId
+					userId = this.data.userId.ToString()
 				}
 			};
 			GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend");

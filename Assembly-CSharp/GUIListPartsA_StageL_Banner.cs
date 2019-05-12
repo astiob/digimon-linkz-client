@@ -19,24 +19,24 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[Header("選択してないときの外枠色")]
 	[SerializeField]
+	[Header("選択してないときの外枠色")]
 	private Color normalFrameColor = Color.white;
 
 	[SerializeField]
 	[Header("選択時の外枠色")]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
 	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[SerializeField]
@@ -51,24 +51,24 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color openBannerCol;
 
-	[SerializeField]
 	[Header("クローズの時の色")]
+	[SerializeField]
 	private Color closeBannerCol;
 
 	[SerializeField]
 	[Header("オープンしてないを示す鍵")]
 	private GameObject goCloseKey;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("クリアのマークの画像")]
+	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -412,11 +412,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 		{
 			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(delegate(int i)
 			{
-				CMD_QuestTOP componentInParent = this.parent.GetComponentInParent<CMD_QuestTOP>();
-				if (null != componentInParent)
-				{
-					componentInParent.ClosePanel(true);
-				}
+				GUIManager.CloseAllCommonDialog(null);
 			}, "CMD_Alert") as CMD_Alert;
 			cmd_Alert.Title = StringMaster.GetString("QuestEventTitle");
 			cmd_Alert.Info = StringMaster.GetString("QuestEventInfo");

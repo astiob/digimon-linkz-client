@@ -158,8 +158,6 @@ public class SubStateMultiCharacterDeadCheckFunction : BattleStateController
 				}
 				base.battleStateData.turnUseDigiStoneCount = 5;
 				base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
-				base.stateManager.uiControl.HideCharacterHUDFunction();
-				base.stateManager.uiControlMulti.HideSharedAP();
 				base.stateManager.uiControl.SetTouchEnable(false);
 				IEnumerator wait = base.stateManager.multiFunction.SendContinue();
 				IEnumerator waitDialogClose = base.stateManager.uiControl.HideContinueDialog();
@@ -179,14 +177,36 @@ public class SubStateMultiCharacterDeadCheckFunction : BattleStateController
 					yield return obj2;
 				}
 			}
+			base.stateManager.uiControl.HideCharacterHUDFunction();
 			base.SetState(typeof(SubStateMultiCharacterRevivalFunction));
 			while (base.isWaitState)
+			{
+				yield return null;
+			}
+			IEnumerator playCamera = this.PlayCamera();
+			while (playCamera.MoveNext())
+			{
+				yield return null;
+			}
+			IEnumerator playAPAnimation = this.PlayAPAnimation();
+			while (playAPAnimation.MoveNext())
 			{
 				yield return null;
 			}
 			this.isContinue = true;
 			yield break;
 		}
+		bool isEnd = false;
+		base.stateManager.uiControl.SetTouchEnable(false);
+		base.stateManager.multiFunction.SendRetire(delegate
+		{
+			isEnd = true;
+		});
+		while (!isEnd)
+		{
+			yield return null;
+		}
+		base.stateManager.uiControl.SetTouchEnable(true);
 		base.battleStateData.unFightLoss = true;
 		for (int j = base.battleStateData.currentWaveNumber + 1; j < base.hierarchyData.batteWaves.Length; j++)
 		{
@@ -195,6 +215,56 @@ public class SubStateMultiCharacterDeadCheckFunction : BattleStateController
 			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, true, base.battleStateData.isBattleRetired);
 		}
 		this.isContinue = false;
+		yield break;
+	}
+
+	private IEnumerator PlayCamera()
+	{
+		string cameraKey = string.Empty;
+		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
+		{
+			cameraKey = "BigBoss/0002_command";
+		}
+		else
+		{
+			cameraKey = "0002_command";
+		}
+		base.stateManager.cameraControl.PlayCameraMotionAction(cameraKey, base.battleStateData.stageSpawnPoint, true);
+		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.RoundStartActionWaitSecond, null, null);
+		while (wait.MoveNext())
+		{
+			yield return null;
+		}
+		base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
+		yield break;
+	}
+
+	private IEnumerator PlayAPAnimation()
+	{
+		for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
+		{
+			if (!base.battleStateData.playerCharacters[i].isDied)
+			{
+				base.stateManager.uiControlMulti.ApplyHUDRecoverMulti(i, true, false, base.battleStateData.playerCharacters[i].upAp);
+			}
+		}
+		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
+		base.stateManager.uiControlMulti.isPlayingSharedAp = true;
+		HitEffectParams hitEffectParams = base.battleStateData.roundChangeApRevivalEffect[0];
+		base.stateManager.uiControlMulti.APEffectCallBackMulti(hitEffectParams);
+		base.stateManager.uiControlMulti.ResetHUD(totalCharacters);
+		base.stateManager.uiControl.ShowCharacterHUDFunction(totalCharacters);
+		base.stateManager.uiControlMulti.RefreshSharedAP(false);
+		for (int j = 0; j < totalCharacters.Length; j++)
+		{
+			totalCharacters[j].skillOrder = -1;
+		}
+		yield return null;
+		base.stateManager.uiControl.RepositionCharacterHUDPosition(totalCharacters);
+		while (base.stateManager.uiControlMulti.isPlayingSharedAp)
+		{
+			yield return null;
+		}
 		yield break;
 	}
 }

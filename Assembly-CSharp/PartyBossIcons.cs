@@ -12,7 +12,7 @@ public sealed class PartyBossIcons : MonoBehaviour
 	public void SetBossIconAndTolerances()
 	{
 		GameWebAPI.RespDataWD_GetDungeonInfo.EncountEnemy[] bosses = this.GetBosses();
-		if (bosses == null && bosses.Length == 0)
+		if (bosses == null || bosses.Length == 0)
 		{
 			foreach (PartyBossRegistance partyBossRegistance in this.partyBossRegistances)
 			{

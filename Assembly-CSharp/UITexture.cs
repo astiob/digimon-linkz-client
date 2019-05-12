@@ -21,8 +21,8 @@ public class UITexture : UIBasicSprite
 	[SerializeField]
 	private Shader mShader;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector4 mBorder = Vector4.zero;
 
 	[HideInInspector]

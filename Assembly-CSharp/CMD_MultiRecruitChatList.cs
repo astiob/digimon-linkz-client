@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class CMD_MultiRecruitChatList : CMD
 {
-	[Header("リストパーツ")]
 	[SerializeField]
+	[Header("リストパーツ")]
 	private GameObject partChatListParent;
 
 	[SerializeField]
@@ -30,8 +30,8 @@ public class CMD_MultiRecruitChatList : CMD
 	[SerializeField]
 	private UISprite spBtnSelectAll;
 
-	[SerializeField]
 	[Header("誘うボタン")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]
@@ -103,6 +103,12 @@ public class CMD_MultiRecruitChatList : CMD
 		this.lbDefaultMessage.text = StringMaster.GetString("MultiRecruitChat-01");
 		this.lbBtnRecruit.text = StringMaster.GetString("MultiRecruitChat-02");
 		this.SetBtnSelectAll(this.isSelectedAll);
+		if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.joinGroupData.groupList == null)
+		{
+			this.goDefaultMessage.SetActive(true);
+			this.goBtnRecruit.SetActive(false);
+			this.goBtnSelectAll.SetActive(false);
+		}
 	}
 
 	private void SetBtnRecruit(bool isEnable)

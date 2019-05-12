@@ -13,6 +13,8 @@ public class SubStateSkillDetailsFunction : BattleStateController
 
 	private bool isBigBoss;
 
+	private string cameraKey = string.Empty;
+
 	public SubStateSkillDetailsFunction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
@@ -28,7 +30,6 @@ public class SubStateSkillDetailsFunction : BattleStateController
 
 	protected override void EnabledThisState()
 	{
-		base.battleStateData.UpdateHitIconCharacter = null;
 		this.countBarrierList = new List<CharacterStateControl>();
 		this.countEvasionList = new List<CharacterStateControl>();
 	}
@@ -47,7 +48,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			currentCharacter = base.battleStateData.currentSelectCharacterState;
 			status = currentCharacter.currentSkillStatus;
 		}
-		if (!currentCharacter.isMultiAreaRandomDamageSkill && currentCharacter.isSelectSkill == 0)
+		if (!base.battleStateData.IsChipSkill() && !currentCharacter.isMultiAreaRandomDamageSkill && currentCharacter.isSelectSkill == 0)
 		{
 			currentCharacter.OnChipTrigger(ChipEffectStatus.EffectTriggerType.AttackHit, false);
 		}
@@ -60,7 +61,6 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		AffectEffectProperty lastSuffer = null;
 		for (int i = 0; i < status.affectEffect.Count; i++)
 		{
-			base.battleStateData.UpdateHitIconCharacter = null;
 			AffectEffectProperty currentSuffer = status.affectEffect[i];
 			this.SetRandomSeed(currentSuffer);
 			if (lastSuffer != null && lastSuffer.target != currentSuffer.target)
@@ -77,53 +77,13 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			{
 				break;
 			}
+			base.stateManager.threeDAction.MotionResetAliveCharacterActionVoid(new CharacterStateControl[]
+			{
+				currentCharacter
+			});
 			base.stateManager.threeDAction.MotionResetAliveCharacterActionVoid(targetDataList.Select((SubStateSkillDetailsFunction.TargetData item) => item.target).ToArray<CharacterStateControl>());
-			yield return null;
-			CameraParams currentTargetCamera = null;
-			string cameraKey = "skillF";
-			if (currentSuffer.effectNumbers == EffectNumbers.All)
-			{
-				if (targetDataList[0].target.isEnemy && this.isBigBoss)
-				{
-					cameraKey = "BigBoss/skillA";
-				}
-				else
-				{
-					cameraKey = "skillA";
-				}
-			}
-			else if (targetDataList[0].target.isEnemy && this.isBigBoss)
-			{
-				cameraKey = "BigBoss/skillF";
-			}
-			else
-			{
-				cameraKey = "skillF";
-			}
-			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, targetDataList[0].target);
-			CharacterStateControl[] showList = null;
-			CharacterStateControl[] hideList = null;
-			if (targetDataList[0].target.isEnemy)
-			{
-				showList = base.battleStateData.enemies.Where((CharacterStateControl x) => !x.isDied).ToArray<CharacterStateControl>();
-				hideList = base.battleStateData.playerCharacters.Where((CharacterStateControl x) => !x.isDied).ToArray<CharacterStateControl>();
-			}
-			else
-			{
-				showList = base.battleStateData.playerCharacters.Where((CharacterStateControl x) => !x.isDied).ToArray<CharacterStateControl>();
-				hideList = base.battleStateData.enemies.Where((CharacterStateControl x) => !x.isDied).ToArray<CharacterStateControl>();
-			}
-			base.stateManager.threeDAction.HideAllCharactersAction(hideList);
-			base.stateManager.threeDAction.ShowAllCharactersAction(showList);
-			base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(showList);
-			if (!targetDataList[0].target.isEnemy)
-			{
-				this.ShowRevivalEffect();
-			}
-			else
-			{
-				this.HideRevivalEffect();
-			}
+			this.PlayCamera(targetDataList.Select((SubStateSkillDetailsFunction.TargetData item) => item.target).ToArray<CharacterStateControl>());
+			this.ShowDigimon(targetDataList[0].target);
 			foreach (SubStateSkillDetailsFunction.TargetData targetData in targetDataList)
 			{
 				if (targetData.target == currentCharacter)
@@ -161,7 +121,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			if (currentSuffer.type == AffectEffect.Damage || currentSuffer.type == AffectEffect.ReferenceTargetHpRate)
 			{
-				IEnumerator function = this.AffectEffectDamage(currentCharacter, targetDataList, currentSuffer, status, currentTargetCamera, i);
+				IEnumerator function = this.AffectEffectDamage(currentCharacter, targetDataList, currentSuffer, status, i);
 				while (function.MoveNext())
 				{
 					object obj = function.Current;
@@ -170,7 +130,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			else if (currentSuffer.type == AffectEffect.Destruct)
 			{
-				IEnumerator function2 = this.AffectEffectDestruct(currentCharacter, targetDataList, currentSuffer, currentTargetCamera);
+				IEnumerator function2 = this.AffectEffectDestruct(currentCharacter, targetDataList, currentSuffer);
 				while (function2.MoveNext())
 				{
 					object obj2 = function2.Current;
@@ -179,7 +139,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			else if (currentSuffer.type == AffectEffect.ApDrain)
 			{
-				IEnumerator function3 = this.AffectEffectApDrain(currentCharacter, targetDataList, currentSuffer, currentTargetCamera);
+				IEnumerator function3 = this.AffectEffectApDrain(currentCharacter, targetDataList, currentSuffer);
 				while (function3.MoveNext())
 				{
 					object obj3 = function3.Current;
@@ -188,7 +148,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			else if (Tolerance.OnInfluenceToleranceAffectEffect(currentSuffer.type))
 			{
-				IEnumerator function4 = this.ToleranceOnInfluenceToleranceAffectEffect(currentCharacter, targetDataList, currentSuffer, currentTargetCamera);
+				IEnumerator function4 = this.ToleranceOnInfluenceToleranceAffectEffect(currentCharacter, targetDataList, currentSuffer);
 				while (function4.MoveNext())
 				{
 					object obj4 = function4.Current;
@@ -197,7 +157,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			else
 			{
-				IEnumerator function5 = this.Other(currentCharacter, targetDataList, currentSuffer, currentTargetCamera);
+				IEnumerator function5 = this.Other(currentCharacter, targetDataList, currentSuffer);
 				while (function5.MoveNext())
 				{
 					object obj5 = function5.Current;
@@ -225,7 +185,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.GetTotalCharacters());
 			base.battleStateData.currentLastGenerateStartTimingSufferState++;
-			base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
+			this.StopCamera();
 			base.stateManager.uiControl.HideCharacterHUDFunction();
 			base.stateManager.uiControl.ApplyHideHitIcon();
 			if (base.stateManager.IsLastBattleAndAllDeath())
@@ -244,7 +204,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		{
 			character2.hitSufferList = new List<SufferStateProperty>();
 		}
-		if (!currentCharacter.isMultiAreaRandomDamageSkill && currentCharacter.isSelectSkill == 0)
+		if (!base.battleStateData.IsChipSkill() && !currentCharacter.isMultiAreaRandomDamageSkill && currentCharacter.isSelectSkill == 0)
 		{
 			currentCharacter.currentSkillStatus.ClearAffectEffect();
 		}
@@ -337,7 +297,14 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		return list;
 	}
 
-	private IEnumerator AffectEffectDamage(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, SkillStatus status, CameraParams cameraMotion, int currentSkillDetails)
+	private void ShowDigimon(CharacterStateControl target)
+	{
+		CharacterStateControl[] characters = base.battleStateData.GetTotalCharacters().Where((CharacterStateControl x) => !x.isDied).ToArray<CharacterStateControl>();
+		base.stateManager.threeDAction.ShowAllCharactersAction(characters);
+		base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(characters);
+	}
+
+	private IEnumerator AffectEffectDamage(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, SkillStatus status, int currentSkillDetails)
 	{
 		int hate = 0;
 		int totalDamage = 0;
@@ -545,13 +512,6 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				}
 			}
 			this.AfterEnemyDeadFunction(currentDeathCharacters.ToArray());
-			Action<Vector3[]> updateMethd = delegate(Vector3[] positions)
-			{
-				for (int m = 0; m < hitIconlist.Count; m++)
-				{
-					hitIconlist[m].HitIconReposition(positions[m]);
-				}
-			};
 			CharacterStateControl[] skillResultTargets = skillResults.Select((SkillResults item) => item.targetCharacter).ToArray<CharacterStateControl>();
 			bool[] skillResultMissHits = skillResults.Select((SkillResults item) => item.onMissHit).ToArray<bool>();
 			bool isAllTargetDeath = true;
@@ -563,11 +523,10 @@ public class SubStateSkillDetailsFunction : BattleStateController
 					break;
 				}
 			}
-			base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, skillResultTargets, hitIconlist.Count);
 			this.ApplyMonsterIconEnabled(currentCharacter);
-			if (cameraMotion != null && !base.stateManager.IsLastBattleAndAllDeath())
+			if (!base.stateManager.IsLastBattleAndAllDeath())
 			{
-				cameraMotion.PlayCameraShake();
+				base.stateManager.cameraControl.PlayCameraShake();
 			}
 			int hitLength = currentSuffer.hitNumber;
 			foreach (SubStateSkillDetailsFunction.TargetData targetData in targetDataList)
@@ -587,7 +546,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			{
 				interval = base.stateManager.stateProperty.multiHitIntervalWaitSecond / (float)hitLength;
 			}
-			base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets, currentSuffer.type, interval, skillResultMissHits, currentSuffer, true, sendExtraEffectType);
+			base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets, currentSuffer.type, interval, skillResultMissHits, hitIconlist.ToArray(), currentSuffer, true, sendExtraEffectType);
 			base.SetState(typeof(SubStatePlayHitAnimationAction));
 			while (base.isWaitState)
 			{
@@ -606,15 +565,14 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				isAllTargetDeathBreak = true;
 				break;
 			}
-			base.battleStateData.UpdateHitIconCharacter = null;
 		}
 		if (currentDeathCharacters.Count > 0)
 		{
 			currentCharacter.OnChipTrigger(ChipEffectStatus.EffectTriggerType.Kill, false);
 		}
-		if (cameraMotion != null && !base.stateManager.IsLastBattleAndAllDeath())
+		if (!base.stateManager.IsLastBattleAndAllDeath())
 		{
-			cameraMotion.StopCameraShake();
+			base.stateManager.cameraControl.StopCameraShake();
 		}
 		base.stateManager.skillDetails.NotToCounterReflectionMonsterWhoDiedOnTheWay(totalCounterReflectionDamage);
 		if (this.isBigBoss && isAllTargetDeathBreak)
@@ -642,7 +600,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				value = Mathf.FloorToInt((float)totalDamage * currentSuffer.revivalPercent)
 			};
 			buffLog.Add(drainLog);
-			IEnumerator function2 = this.DrainRecovery(currentCharacter, currentSuffer, cameraMotion, totalDamage);
+			IEnumerator function2 = this.DrainRecovery(currentCharacter, currentSuffer, totalDamage);
 			while (function2.MoveNext())
 			{
 				object obj2 = function2.Current;
@@ -664,7 +622,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				}
 			}
 			buffLog.Add(reflectionLog);
-			IEnumerator function3 = this.TotalCounterReflectionDamage(currentCharacter, currentSuffer, cameraMotion, counterReflectionAffectType, totalCounterReflectionDamage);
+			IEnumerator function3 = this.TotalCounterReflectionDamage(currentCharacter, currentSuffer, counterReflectionAffectType, totalCounterReflectionDamage);
 			while (function3.MoveNext())
 			{
 				object obj3 = function3.Current;
@@ -707,7 +665,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 	{
 	}
 
-	private IEnumerator DrainRecovery(CharacterStateControl currentCharacter, AffectEffectProperty currentSuffer, CameraParams cameraMotion, int totalDamage)
+	private IEnumerator DrainRecovery(CharacterStateControl currentCharacter, AffectEffectProperty currentSuffer, int totalDamage)
 	{
 		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.skillAfterWaitSecond, null, null);
 		while (wait.MoveNext())
@@ -716,36 +674,20 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			yield return obj;
 		}
 		base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.GetTotalCharacters());
-		string cameraKey = "skillF";
-		if (currentCharacter.isEnemy && this.isBigBoss)
+		this.PlayCamera(new CharacterStateControl[]
 		{
-			cameraKey = "BigBoss/skillF";
-		}
-		else
-		{
-			cameraKey = "skillF";
-		}
-		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, currentCharacter);
-		if (!currentCharacter.isEnemy)
-		{
-			this.ShowRevivalEffect();
-		}
-		else
-		{
-			this.HideRevivalEffect();
-		}
+			currentCharacter
+		});
 		int recoveryDamage = Mathf.FloorToInt((float)totalDamage * currentSuffer.revivalPercent);
 		currentCharacter.hp += recoveryDamage;
 		HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(0, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(currentCharacter), currentSuffer.type, recoveryDamage, Strength.None, false, false, true, true, ExtraEffectType.Non);
-		Action<Vector3> updateMethd = delegate(Vector3 position)
-		{
-			hitIcon.HitIconReposition(position);
-		};
-		base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, currentCharacter);
 		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, new CharacterStateControl[]
 		{
 			currentCharacter
-		}, AffectEffect.HpRevival, base.stateManager.stateProperty.attackerCharacterDrainActionWaitSecond, new bool[1], currentSuffer, false, ExtraEffectType.Non);
+		}, AffectEffect.HpRevival, base.stateManager.stateProperty.attackerCharacterDrainActionWaitSecond, new bool[1], new HitIcon[]
+		{
+			hitIcon
+		}, currentSuffer, false, ExtraEffectType.Non);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -754,7 +696,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		yield break;
 	}
 
-	private IEnumerator TotalCounterReflectionDamage(CharacterStateControl currentCharacter, AffectEffectProperty currentSuffer, CameraParams cameraMotion, AffectEffect counterReflectionAffectType, List<int[]> totalCounterReflectionDamage)
+	private IEnumerator TotalCounterReflectionDamage(CharacterStateControl currentCharacter, AffectEffectProperty currentSuffer, AffectEffect counterReflectionAffectType, List<int[]> totalCounterReflectionDamage)
 	{
 		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.skillAfterWaitSecond, null, null);
 		while (wait.MoveNext())
@@ -771,24 +713,10 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			object obj2 = wait.Current;
 			yield return obj2;
 		}
-		string cameraKey = "skillF";
-		if (currentCharacter.isEnemy && this.isBigBoss)
+		this.PlayCamera(new CharacterStateControl[]
 		{
-			cameraKey = "BigBoss/skillF";
-		}
-		else
-		{
-			cameraKey = "skillF";
-		}
-		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, currentCharacter);
-		if (!currentCharacter.isEnemy)
-		{
-			this.ShowRevivalEffect();
-		}
-		else
-		{
-			this.HideRevivalEffect();
-		}
+			currentCharacter
+		});
 		int[] isDamage = new int[currentSuffer.hitNumber];
 		for (int i = 0; i < totalCounterReflectionDamage.Count; i++)
 		{
@@ -823,15 +751,13 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				currentCharacter.hp -= isDamage[j];
 			}
 			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(currentCharacter), affectEffect, (isDamage == null || j >= isDamage.Length) ? -1 : isDamage[j], Strength.None, false, false, false, true, ExtraEffectType.Non);
-			Action<Vector3> updateMethd = delegate(Vector3 position)
-			{
-				hitIcon.HitIconReposition(position);
-			};
-			base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, currentCharacter);
 			base.battleStateData.SetPlayAnimationActionValues(currentCharacter, new CharacterStateControl[]
 			{
 				currentCharacter
-			}, AffectEffect.Damage, base.stateManager.stateProperty.targetCounterReflectionActionWaitSecond / (float)isDamage.Length, new bool[1], currentSuffer, true, ExtraEffectType.Non);
+			}, AffectEffect.Damage, base.stateManager.stateProperty.targetCounterReflectionActionWaitSecond / (float)isDamage.Length, new bool[1], new HitIcon[]
+			{
+				hitIcon
+			}, currentSuffer, true, ExtraEffectType.Non);
 			base.SetState(typeof(SubStatePlayHitAnimationAction));
 			while (base.isWaitState)
 			{
@@ -861,36 +787,26 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		yield break;
 	}
 
-	private IEnumerator AffectEffectDestruct(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, CameraParams cameraMotion)
+	private IEnumerator AffectEffectDestruct(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
 	{
-		string cameraKey = "skillF";
-		if (currentCharacter.isEnemy && this.isBigBoss)
+		this.PlayCamera(new CharacterStateControl[]
 		{
-			cameraKey = "BigBoss/skillF";
-		}
-		else
-		{
-			cameraKey = "skillF";
-		}
-		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, currentCharacter);
-		if (!currentCharacter.isEnemy)
-		{
-			this.ShowRevivalEffect();
-		}
-		else
-		{
-			this.HideRevivalEffect();
-		}
+			currentCharacter
+		});
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		currentCharacter.Kill();
 		this.AfterEnemyDeadFunction(new CharacterStateControl[]
 		{
 			currentCharacter
 		});
+		HitIcon selfHitIcon = base.stateManager.uiControl.ApplyShowHitIcon(0, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(currentCharacter), currentSuffer.type, -1, Strength.None, false, false, false, false, ExtraEffectType.Non);
 		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, new CharacterStateControl[]
 		{
 			currentCharacter
-		}, currentSuffer.type, base.stateManager.stateProperty.destructCharacterDeathActionWaitSecond, new bool[1], null, false, ExtraEffectType.Non);
+		}, currentSuffer.type, base.stateManager.stateProperty.destructCharacterDeathActionWaitSecond, new bool[1], new HitIcon[]
+		{
+			selfHitIcon
+		}, null, false, ExtraEffectType.Non);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -906,26 +822,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			yield return obj;
 		}
 		base.battleStateData.SEStopFunctionCall();
-		if (currentSuffer.effectNumbers == EffectNumbers.All)
-		{
-			if (targetDataList[0].target.isEnemy && this.isBigBoss)
-			{
-				cameraKey = "BigBoss/skillA";
-			}
-			else
-			{
-				cameraKey = "skillA";
-			}
-		}
-		else if (targetDataList[0].target.isEnemy && this.isBigBoss)
-		{
-			cameraKey = "BigBoss/skillF";
-		}
-		else
-		{
-			cameraKey = "skillF";
-		}
-		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, currentCharacter.targetCharacter);
+		this.PlayCamera(targetDataList.Select((SubStateSkillDetailsFunction.TargetData item) => item.target).ToArray<CharacterStateControl>());
 		if (!targetDataList[0].target.isEnemy)
 		{
 			this.ShowRevivalEffect();
@@ -961,17 +858,9 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 		}
 		this.AfterEnemyDeadFunction(currentDeathCharacters.ToArray());
-		Action<Vector3[]> updateMethd = delegate(Vector3[] positions)
-		{
-			for (int i = 0; i < hitIconList.Count; i++)
-			{
-				hitIconList[i].HitIconReposition(positions[i]);
-			}
-		};
-		base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, skillResultTargets.ToArray(), hitIconList.Count);
 		base.stateManager.cameraControl.PlayCameraShake();
 		base.stateManager.soundPlayer.StopHitEffectSE();
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), null, false, ExtraEffectType.Non);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, ExtraEffectType.Non);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -995,7 +884,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		yield break;
 	}
 
-	protected virtual IEnumerator AffectEffectApDrain(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, CameraParams cameraMotion)
+	protected virtual IEnumerator AffectEffectApDrain(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
 	{
 		List<BattleLogData.BuffLog> buffLog = new List<BattleLogData.BuffLog>();
 		List<CharacterStateControl> skillResultTargets = new List<CharacterStateControl>();
@@ -1043,15 +932,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 		}
 		this.SendBattleLogs(currentCharacter, null, buffLog);
-		Action<Vector3[]> updateMethd = delegate(Vector3[] positions)
-		{
-			for (int j = 0; j < hitIconList.Count; j++)
-			{
-				hitIconList[j].HitIconReposition(positions[j]);
-			}
-		};
-		base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, skillResultTargets.ToArray(), hitIconList.Count);
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), AffectEffect.ApDown, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), null, false, ExtraEffectType.Non);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), AffectEffect.ApDown, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, ExtraEffectType.Non);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -1074,35 +955,19 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				object obj2 = wait.Current;
 				yield return obj2;
 			}
-			string cameraKey = "skillF";
-			if (currentCharacter.isEnemy && this.isBigBoss)
+			this.PlayCamera(new CharacterStateControl[]
 			{
-				cameraKey = "BigBoss/skillF";
-			}
-			else
-			{
-				cameraKey = "skillF";
-			}
-			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, currentCharacter);
-			if (!currentCharacter.isEnemy)
-			{
-				this.ShowRevivalEffect();
-			}
-			else
-			{
-				this.HideRevivalEffect();
-			}
+				currentCharacter
+			});
 			currentCharacter.ap += totalApDrain;
 			HitIcon hitIcon2 = base.stateManager.uiControl.ApplyShowHitIcon(0, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(currentCharacter), currentSuffer.type, 0, Strength.None, false, false, true, true, ExtraEffectType.Non);
-			Action<Vector3> updateMethd2 = delegate(Vector3 position)
-			{
-				hitIcon2.HitIconReposition(position);
-			};
-			base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd2, currentCharacter);
 			base.battleStateData.SetPlayAnimationActionValues(currentCharacter, new CharacterStateControl[]
 			{
 				currentCharacter
-			}, AffectEffect.ApDrain, base.stateManager.stateProperty.attackerCharacterDrainActionWaitSecond, new bool[1], currentSuffer, false, ExtraEffectType.Non);
+			}, AffectEffect.ApDrain, base.stateManager.stateProperty.attackerCharacterDrainActionWaitSecond, new bool[1], new HitIcon[]
+			{
+				hitIcon2
+			}, currentSuffer, false, ExtraEffectType.Non);
 			base.SetState(typeof(SubStatePlayHitAnimationAction));
 			while (base.isWaitState)
 			{
@@ -1112,7 +977,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		yield break;
 	}
 
-	private IEnumerator ToleranceOnInfluenceToleranceAffectEffect(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, CameraParams cameraMotion)
+	private IEnumerator ToleranceOnInfluenceToleranceAffectEffect(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
 	{
 		List<CharacterStateControl> instantDeathCharacters = new List<CharacterStateControl>();
 		List<BattleLogData.BuffLog> buffLog = new List<BattleLogData.BuffLog>();
@@ -1226,27 +1091,19 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			currentCharacter.OnChipTrigger(ChipEffectStatus.EffectTriggerType.Kill, false);
 		}
 		this.AfterEnemyDeadFunction(instantDeathCharacters.ToArray());
-		Action<Vector3[]> updateMethd = delegate(Vector3[] positions)
+		if (currentSuffer.type == AffectEffect.InstantDeath)
 		{
-			for (int k = 0; k < hitIconList.Count; k++)
-			{
-				hitIconList[k].HitIconReposition(positions[k]);
-			}
-		};
-		base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, skillResultTargets.ToArray(), hitIconList.Count);
-		if (currentSuffer.type == AffectEffect.InstantDeath && cameraMotion != null)
-		{
-			cameraMotion.PlayCameraShake();
+			base.stateManager.cameraControl.PlayCameraShake();
 		}
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), null, false, ExtraEffectType.Non);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, ExtraEffectType.Non);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
 			yield return null;
 		}
-		if (currentSuffer.type == AffectEffect.InstantDeath && cameraMotion != null)
+		if (currentSuffer.type == AffectEffect.InstantDeath)
 		{
-			cameraMotion.StopCameraShake();
+			base.stateManager.cameraControl.StopCameraShake();
 		}
 		IEnumerator function = this.DropItem(instantDeathCharacters.ToArray());
 		while (function.MoveNext())
@@ -1257,11 +1114,10 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		yield break;
 	}
 
-	private IEnumerator Other(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer, CameraParams cameraMotion)
+	private IEnumerator Other(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
 	{
 		List<CharacterStateControl> deadCharacters = new List<CharacterStateControl>();
 		int hate = 0;
-		bool isPlayCameraShake = false;
 		List<BattleLogData.BuffLog> buffLog = new List<BattleLogData.BuffLog>();
 		List<CharacterStateControl> skillResultTargets = new List<CharacterStateControl>();
 		List<bool> skillResultMisses = new List<bool>();
@@ -1392,27 +1248,11 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				targetData.target.hitSufferList.Add(suffer2);
 			}
 		}
-		if (isPlayCameraShake && cameraMotion != null)
-		{
-			cameraMotion.PlayCameraShake();
-		}
-		Action<Vector3[]> updateMethd = delegate(Vector3[] positions)
-		{
-			for (int j = 0; j < hitIconList.Count; j++)
-			{
-				hitIconList[j].HitIconReposition(positions[j]);
-			}
-		};
-		base.battleStateData.UpdateHitIconCharacter = base.stateManager.threeDAction.GetUpdateHitIconCharacters(updateMethd, skillResultTargets.ToArray(), hitIconList.Count);
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), null, false, ExtraEffectType.Non);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, ExtraEffectType.Non);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
 			yield return null;
-		}
-		if (isPlayCameraShake && cameraMotion != null)
-		{
-			cameraMotion.StopCameraShake();
 		}
 		IEnumerator function = this.DropItem(deadCharacters.ToArray());
 		while (function.MoveNext())
@@ -1426,12 +1266,52 @@ public class SubStateSkillDetailsFunction : BattleStateController
 
 	protected override void DisabledThisState()
 	{
-		base.battleStateData.UpdateHitIconCharacter = null;
 		this.ShowRevivalEffect();
 	}
 
 	protected override void GetEventThisState(EventState eventState)
 	{
+	}
+
+	private void PlayCamera(CharacterStateControl[] targets)
+	{
+		if (targets == null || targets.Length == 0)
+		{
+			return;
+		}
+		if (targets.Length > 1)
+		{
+			if (targets[0].isEnemy && this.isBigBoss)
+			{
+				this.cameraKey = "BigBoss/skillA";
+			}
+			else
+			{
+				this.cameraKey = "skillA";
+			}
+		}
+		else if (targets[0].isEnemy && this.isBigBoss)
+		{
+			this.cameraKey = "BigBoss/skillF";
+		}
+		else
+		{
+			this.cameraKey = "skillF";
+		}
+		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.cameraKey, targets[0]);
+		if (!targets[0].isEnemy)
+		{
+			this.ShowRevivalEffect();
+		}
+		else
+		{
+			this.HideRevivalEffect();
+		}
+	}
+
+	private void StopCamera()
+	{
+		base.stateManager.cameraControl.StopCameraMotionAction(this.cameraKey);
 	}
 
 	private void AddCountBarrierList(CharacterStateControl value)

@@ -52,6 +52,7 @@ public class BattleStateMultiRoundStartToRoundEnd : BattleStateRoundStartToRound
 		base.AddState(this.subStateMultiAreaRandomDamageHitFunction);
 		this.subStateWaitForCertainPeriodTimeAction = new SubStateWaitForCertainPeriodTimeAction(null, new Action<EventState>(base.SendEventState));
 		base.AddState(this.subStateWaitForCertainPeriodTimeAction);
+		base.AddState(new SubStatePlayStageEffect(null, new Action<EventState>(base.SendEventState)));
 	}
 
 	protected override IEnumerator MainRoutine()

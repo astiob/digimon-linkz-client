@@ -1,5 +1,6 @@
 ﻿using BattleStateMachineInternal;
 using Master;
+using MultiBattle.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -261,7 +262,6 @@ public class BattleUIControlBasic : BattleUIControl
 		}
 		base.ui.initialInduction.AddEvent(new Action(base.input.OnClickCloseInitialInductionButton));
 		base.ui.playerWinnerUi.AddEvent(new Action(base.input.OnClickSkipWinnerAction));
-		this.ApplyBattleStartActionText(base.battleStateData.leaderCharacter.isHavingLeaderSkill, base.battleStateData.leaderCharacter.leaderSkillStatus.name);
 		IEnumerator hitIconInitialize = this.HitIconInitialize();
 		while (hitIconInitialize.MoveNext())
 		{
@@ -362,7 +362,7 @@ public class BattleUIControlBasic : BattleUIControl
 		{
 			this.battleScreenDetails.Add(BattleScreen.ExtraStartAction, new BattleScreenDetail(base.ui.extraStartUi, false));
 		}
-		this.battleScreenDetails.Add(BattleScreen.StartAction, new BattleScreenDetail(base.ui.battleStartUi, false));
+		this.battleScreenDetails.Add(BattleScreen.StartAction, new BattleScreenDetail(false));
 		this.battleScreenDetails.Add(BattleScreen.SkillSelects, new BattleScreenDetail(delegate()
 		{
 			BattleScreenDetail.DeactiveObjects(new UIWidget[]
@@ -384,7 +384,10 @@ public class BattleUIControlBasic : BattleUIControl
 		this.battleScreenDetails.Add(BattleScreen.PoisonHit, new BattleScreenDetail(true));
 		this.battleScreenDetails.Add(BattleScreen.RevivalCharacter, new BattleScreenDetail(true));
 		this.battleScreenDetails.Add(BattleScreen.RoundStartActions, new BattleScreenDetail(base.ui.roundStart.widget, true));
+		this.battleScreenDetails.Add(BattleScreen.RoundStartActionsLimit, new BattleScreenDetail(base.ui.roundLimitStart.widget, true));
+		this.battleScreenDetails.Add(BattleScreen.RoundStartActionsChallenge, new BattleScreenDetail(base.ui.roundChallengeStart.widget, true));
 		this.battleScreenDetails.Add(BattleScreen.NextBattle, new BattleScreenDetail(base.ui.nextWaveUi, false));
+		this.battleScreenDetails.Add(BattleScreen.TimeOver, new BattleScreenDetail(base.ui.timeOverUi, false));
 		this.battleScreenDetails.Add(BattleScreen.PlayerWinner, new BattleScreenDetail(new UIWidget[]
 		{
 			base.ui.playerWinnerUi.widget,
@@ -424,12 +427,12 @@ public class BattleUIControlBasic : BattleUIControl
 			NGUITools.SetActiveSelf(base.ui.extraStartUi.gameObject, false);
 		}
 		NGUITools.SetActiveSelf(base.ui.bossStartUi.gameObject, false);
-		NGUITools.SetActiveSelf(base.ui.battleStartUi.gameObject, false);
 		NGUITools.SetActiveSelf(base.ui.skillSelectUi.gameObject, false);
 		NGUITools.SetActiveSelf(base.ui.roundStart.gameObject, false);
 		NGUITools.SetActiveSelf(base.ui.turnAction.gameObject, false);
 		NGUITools.SetActiveSelf(base.ui.enemyTurnUi.gameObject, false);
 		NGUITools.SetActiveSelf(base.ui.isWarning.gameObject, false);
+		NGUITools.SetActiveSelf(base.ui.timeOverUi.gameObject, false);
 		if (base.ui.playerWinnerUi != null)
 		{
 			NGUITools.SetActiveSelf(base.ui.playerWinnerUi.gameObject, false);
@@ -467,9 +470,39 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.roundStart.ApplyRoundStartRevivalText(onRevivalAp, onRevivalHp);
 	}
 
-	protected void ApplyBattleStartActionText(bool isHavingLeaderSkill, string leaderSkillName = "")
+	public void ApplyRoundLimitStartRevivalText(bool onRevivalAp, bool onRevivalHp)
 	{
-		base.ui.battleStartAction.ApplyBattleStartActionText(isHavingLeaderSkill, leaderSkillName);
+		base.ui.roundLimitStart.ApplyRoundStartRevivalText(onRevivalAp, onRevivalHp);
+	}
+
+	public void ApplyRoundChallengeStartRevivalText(bool onRevivalAp, bool onRevivalHp)
+	{
+		base.ui.roundChallengeStart.ApplyRoundStartRevivalText(onRevivalAp, onRevivalHp);
+	}
+
+	public void ApplyBattleStartAction(bool value)
+	{
+		base.ui.battleStartAction.SetActive(value);
+	}
+
+	public void ApplyBattleStartActionTitle(bool value)
+	{
+		base.ui.battleStartAction.ApplyBattleStartActionTitle(value);
+	}
+
+	public void ApplyPlayerLeaderSkill(bool isHavingLeaderSkill, string leaderSkillName, bool isChange = false)
+	{
+		base.ui.battleStartAction.ApplyPlayerLeaderSkill(isHavingLeaderSkill, leaderSkillName, isChange);
+	}
+
+	public void ApplyEnemyLeaderSkill(bool isHavingLeaderSkill, string leaderSkillName, bool isChange = false)
+	{
+		base.ui.battleStartAction.ApplyEnemyLeaderSkill(isHavingLeaderSkill, leaderSkillName, isChange);
+	}
+
+	public void ApplyVSUI(bool value)
+	{
+		base.ui.battleStartAction.ApplyVSUI(value);
 	}
 
 	public void ApplySkillButtonData(int index, SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl character)
@@ -524,6 +557,14 @@ public class BattleUIControlBasic : BattleUIControl
 		}
 	}
 
+	public void ApplyAllMonsterButtonEnable(bool value)
+	{
+		foreach (BattleMonsterButton battleMonsterButton in base.ui.monsterButton)
+		{
+			battleMonsterButton.gameObject.SetActive(value);
+		}
+	}
+
 	public void ApplyMonsterButtonEnable(int index, bool isSelect, bool isDead)
 	{
 		if (isDead)
@@ -547,6 +588,11 @@ public class BattleUIControlBasic : BattleUIControl
 	public void ApplyMonsterButtonIcon(int index, Sprite image, CharacterStateControl characterStatus, bool isLeader)
 	{
 		base.ui.monsterButton[index].ApplyMonsterButtonIcon(image, characterStatus, isLeader);
+	}
+
+	public void ApplyLeaderIcon(int index, bool isLeader)
+	{
+		base.ui.monsterButton[index].ApplyLeaderIcon(isLeader);
 	}
 
 	public void ApplySkillName(bool isShow, string skillName = "", CharacterStateControl characterStateControl = null)
@@ -965,6 +1011,7 @@ public class BattleUIControlBasic : BattleUIControl
 
 	public void ApplyWaveAndRound(int wave, int round)
 	{
+		base.ui.itemInfoField.SetRemainingRoundText(-1);
 		if (base.hierarchyData.batteWaves.Length == 0 || base.hierarchyData.batteWaves.Length <= wave)
 		{
 			base.ui.itemInfoField.ApplyWaveAndRound(wave, round, base.hierarchyData.batteWaves.Length);
@@ -981,8 +1028,28 @@ public class BattleUIControlBasic : BattleUIControl
 			if (base.ui.menuDialog != null && BattleStateManager.current.battleMode != BattleMode.PvP)
 			{
 				base.ui.menuDialog.SetValuetextReplacer(battleWave, round, maxWave);
+				if (base.hierarchyData.limitRound > 0)
+				{
+					base.ui.itemInfoField.SetRemainingRoundText(base.hierarchyData.limitRound - base.battleStateData.totalRoundNumber + 1);
+				}
+				else
+				{
+					base.ui.itemInfoField.SetRemainingRoundText(-1);
+				}
 			}
-			base.ui.itemInfoField.SetRemainingRoundText(-1);
+			else
+			{
+				base.ui.itemInfoField.SetRemainingRoundText(ClassSingleton<MultiBattleData>.Instance.MaxRoundNum - base.battleStateData.totalRoundNumber);
+			}
+		}
+		if (base.hierarchyData.limitRound > 0 || base.hierarchyData.speedClearRound > 0)
+		{
+			int num = base.hierarchyData.limitRound - base.battleStateData.totalRoundNumber;
+			int num2 = base.hierarchyData.speedClearRound - base.battleStateData.totalRoundNumber;
+			num++;
+			num2++;
+			base.ui.roundLimitStart.ApplyWaveAndRound(round, num);
+			base.ui.roundChallengeStart.ApplyWaveAndRoundSpeed(num2);
 		}
 		base.ui.roundStart.ApplyWaveAndRound(round);
 	}
@@ -1077,6 +1144,14 @@ public class BattleUIControlBasic : BattleUIControl
 		if (base.ui.battleStageEffectObject != null)
 		{
 			base.ui.battleStageEffectObject.SetActive(true);
+		}
+	}
+
+	public void HideBattleStageEffect()
+	{
+		if (base.ui.battleStageEffectObject != null)
+		{
+			base.ui.battleStageEffectObject.SetActive(false);
 		}
 	}
 
@@ -1428,18 +1503,5 @@ public class BattleUIControlBasic : BattleUIControl
 	public static int GetSpeciesSetTextReplacer(Species species)
 	{
 		return (int)species;
-	}
-
-	public static int[] GetTalentSetSkin(Talent talent)
-	{
-		return new int[]
-		{
-			(int)talent.hp,
-			(int)talent.attack,
-			(int)talent.defence,
-			(int)talent.specialAttack,
-			(int)talent.specialDefence,
-			(int)talent.speed
-		};
 	}
 }

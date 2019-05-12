@@ -6,8 +6,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[SerializeField]
 	public UIButton button;
 
-	[Header("アイコン画像")]
 	[SerializeField]
+	[Header("アイコン画像")]
 	public UI2DSprite monsterIcon;
 
 	[SerializeField]
@@ -42,13 +42,11 @@ public class BattleMonsterButton : MonoBehaviour
 		this.monsterIcon.sprite2D = image;
 		this.evolutionStep.SetSkins(BattleUIControlBasic.GetEvolutionStepSetSkinner(characterStatus.evolutionStep));
 		this.arousal.SetSkins(characterStatus.arousal);
-		if (isLeader)
-		{
-			this.leaderDisplay.SetSkins(0);
-		}
-		else
-		{
-			this.leaderDisplay.SetSkins(1);
-		}
+		this.ApplyLeaderIcon(isLeader);
+	}
+
+	public void ApplyLeaderIcon(bool isLeader)
+	{
+		this.leaderDisplay.SetSkins((!isLeader) ? 1 : 0);
 	}
 }

@@ -26,6 +26,10 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 
 	private IEnumerator PlayerWinnerAction()
 	{
+		if (base.battleStateData.totalRoundNumber <= base.hierarchyData.speedClearRound && base.hierarchyData.speedClearRound > 0)
+		{
+			base.stateManager.battleUiComponents.playerWinnerUi.SpeedClearObjActive(true);
+		}
 		float startTime = Time.time;
 		base.stateManager.soundPlayer.TryStopBGM();
 		foreach (AlwaysEffectParams a in base.battleStateData.revivalReservedEffect)
@@ -65,9 +69,7 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 				}
 			}
 		}
-		base.battleStateData.winCameraMotionInternalResources.SetCharacter(cameraTargetCharacter.CharacterParams);
-		base.battleStateData.winCameraMotionInternalResources.isFollowing = true;
-		base.battleStateData.winCameraMotionInternalResources.StartAutoChange();
+		base.battleStateData.winCameraMotionInternalResources.StartAutoChange(cameraTargetCharacter.CharacterParams);
 		SoundPlayer.PlayBattleWinBGM();
 		if (base.stateManager.onServerConnect)
 		{

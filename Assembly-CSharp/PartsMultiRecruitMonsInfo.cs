@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quest;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,12 +24,28 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 	private UILabel lbTXT_NICKNAME;
 
 	[SerializeField]
+	private GameObject goTITLE_ICON;
+
+	[SerializeField]
 	private UISprite spTAG_PLAYER;
 
 	[SerializeField]
 	private GameObject emotionParent;
 
+	[SerializeField]
+	private GameObject sortieNG_Label;
+
+	[SerializeField]
+	private float sortieNgLabelPositionY_Member;
+
+	[SerializeField]
+	private float sortieNgLabelPositionY_Owner;
+
 	private MonsterData baseMonster;
+
+	private CMD_MultiRecruitPartyWait.USER_TYPE monsterUserType;
+
+	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
 
 	public int positionNumber { get; set; }
 
@@ -57,6 +74,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 		cmd_DeckList.PartsTitle.DisableCloseBtn(true);
 		cmd_DeckList.PPMI_Instance = this;
 		cmd_DeckList.ppmiList = new List<PartsPartyMonsInfo>();
+		cmd_DeckList.SetSortieLimit(this.sortieLimitList);
 		if (PartsMenu.instance != null)
 		{
 			PartsMenu.instance.Active(false);
@@ -123,9 +141,10 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 		}
 	}
 
-	public void AddInitLabel(string nickname, CMD_MultiRecruitPartyWait.USER_TYPE playerNum, bool leaderFlg)
+	public void AddInitLabel(string nickname, string titleId, CMD_MultiRecruitPartyWait.USER_TYPE playerNum, bool leaderFlg)
 	{
 		this.lbTXT_NICKNAME.text = nickname;
+		TitleDataMng.SetTitleIcon(titleId, this.goTITLE_ICON.GetComponent<UITexture>());
 		this.spTAG_PLAYER.spriteName = "MultiBattle_P" + ((int)(playerNum + 1)).ToString();
 	}
 
@@ -133,25 +152,41 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 	{
 		if (isRecruit)
 		{
-			this.goUSER_DATA.SetActive(false);
-			this.goANIM_RECRUIT_TXT.SetActive(true);
-			this.goANIM_RECRUIT_OUT_CIRCLE.SetActive(true);
-			this.goANIM_RECRUIT.SetActive(true);
-			this.stageGimmickObj.SetActive(false);
+			this.ChangeWaitMode();
 		}
 		else
 		{
-			this.goUSER_DATA.SetActive(true);
-			this.goANIM_RECRUIT.SetActive(false);
+			if (!this.goUSER_DATA.activeSelf)
+			{
+				this.goUSER_DATA.SetActive(true);
+			}
+			if (this.goANIM_RECRUIT.activeSelf)
+			{
+				this.goANIM_RECRUIT.SetActive(false);
+			}
 		}
 	}
 
 	public void ChangeWaitMode()
 	{
-		this.goUSER_DATA.SetActive(false);
-		this.goANIM_RECRUIT_TXT.SetActive(false);
-		this.goANIM_RECRUIT_OUT_CIRCLE.SetActive(false);
-		this.goANIM_RECRUIT.SetActive(true);
+		if (this.goUSER_DATA.activeSelf)
+		{
+			this.goUSER_DATA.SetActive(false);
+		}
+		if (!this.goANIM_RECRUIT.activeSelf)
+		{
+			this.goANIM_RECRUIT_TXT.SetActive(true);
+			this.goANIM_RECRUIT_OUT_CIRCLE.SetActive(true);
+			this.goANIM_RECRUIT.SetActive(true);
+		}
+		if (this.stageGimmickObj.activeSelf)
+		{
+			this.stageGimmickObj.SetActive(false);
+		}
+		if (this.sortieNG.activeSelf)
+		{
+			this.sortieNG.SetActive(false);
+		}
 	}
 
 	public void SetStatusPanelActiveCollider(bool active)
@@ -169,5 +204,51 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 	public GameObject GetEmotionParentObject()
 	{
 		return this.emotionParent;
+	}
+
+	public void SetSortieLimit(List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> limitList)
+	{
+		this.sortieLimitList = limitList;
+	}
+
+	protected override void SetSortieLimitCondition(MonsterData monsterData)
+	{
+		bool flag = true;
+		if (this.sortieLimitList != null && 0 < this.sortieLimitList.Count)
+		{
+			string tribe = monsterData.monsterMG.tribe;
+			string growStep = monsterData.monsterMG.growStep;
+			flag = ClassSingleton<QuestData>.Instance.CheckSortieLimit(this.sortieLimitList, tribe, growStep);
+		}
+		if (!flag)
+		{
+			if (!this.sortieNG.activeSelf)
+			{
+				this.sortieNG.SetActive(true);
+				if (this.monsterUserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
+				{
+					if (!this.goANIM_RECRUIT.activeSelf)
+					{
+						this.goANIM_RECRUIT_TXT.SetActive(true);
+						this.goANIM_RECRUIT_OUT_CIRCLE.SetActive(true);
+						this.goANIM_RECRUIT.SetActive(true);
+					}
+					this.sortieNG_Label.transform.localPosition = new Vector3(0f, this.sortieNgLabelPositionY_Owner, 0f);
+				}
+				else
+				{
+					this.sortieNG_Label.transform.localPosition = new Vector3(0f, this.sortieNgLabelPositionY_Member, 0f);
+				}
+			}
+		}
+		else if (this.sortieNG.activeSelf)
+		{
+			this.sortieNG.SetActive(false);
+		}
+	}
+
+	public void SetMonsterUserType(CMD_MultiRecruitPartyWait.USER_TYPE type)
+	{
+		this.monsterUserType = type;
 	}
 }

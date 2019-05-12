@@ -217,4 +217,12 @@ public class GUIListPartsPartyEdit : GUIListPartBS
 			}
 		}
 	}
+
+	public void HideClipObjects()
+	{
+		for (int i = 0; i < this.ppmiList.Count; i++)
+		{
+			this.ppmiList[i].HideClips();
+		}
+	}
 }

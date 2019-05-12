@@ -16,12 +16,18 @@ public class MissionItem : GUIListPartBS
 	[SerializeField]
 	private UISprite rewardIcon;
 
-	[Header("報酬アイテム名")]
 	[SerializeField]
+	[Header("報酬アイテム名")]
 	private UILabel rewardName;
 
 	[SerializeField]
 	private UILabel quantity;
+
+	[SerializeField]
+	private UILabel lbRewardDetail;
+
+	[SerializeField]
+	private GameObject GoOperatorMsg;
 
 	[SerializeField]
 	private UILabel achievementRate;
@@ -103,8 +109,8 @@ public class MissionItem : GUIListPartBS
 		this.conditionTitle.text = missionInfo.detail.missionDetail;
 		string text = string.Empty;
 		int num = 0;
-		string objectId = string.Empty;
 		string text2 = string.Empty;
+		string text3 = string.Empty;
 		GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission.Reward[] reward = missionInfo.reward;
 		foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission.Reward reward2 in reward)
 		{
@@ -112,15 +118,30 @@ public class MissionItem : GUIListPartBS
 			{
 				int.TryParse(reward2.assetCategoryId, out num);
 				text = DataMng.Instance().GetAssetTitle(reward2.assetCategoryId, reward2.assetValue);
-				objectId = reward2.assetValue;
-				text2 = reward2.assetNum;
+				text2 = reward2.assetValue;
+				text3 = reward2.assetNum;
 				break;
 			}
 		}
-		AppCoroutine.Start(this.csItem.SetItemWithWaitASync(num.ToString(), objectId, text2, false, delegate
+		AppCoroutine.Start(this.csItem.SetItemWithWaitASync(num.ToString(), text2, text3, false, delegate
 		{
 		}), false);
-		this.quantity.text = ((!(this.rewardIcon.spriteName == "Common02_Icon_Chip")) ? text2 : StringFormat.Cluster(text2));
+		if (num == 19)
+		{
+			GameWebAPI.RespDataMA_TitleMaster.TitleM titleM;
+			TitleDataMng.GetDictionaryTitleM().TryGetValue(int.Parse(text2), out titleM);
+			this.lbRewardDetail.text = ((titleM == null) ? StringMaster.GetString("AlertDataErrorTitle") : titleM.name);
+			this.lbRewardDetail.gameObject.SetActive(true);
+			this.GoOperatorMsg.SetActive(false);
+			this.quantity.gameObject.SetActive(false);
+		}
+		else
+		{
+			this.quantity.text = ((!(this.rewardIcon.spriteName == "Common02_Icon_Chip")) ? text3 : StringFormat.Cluster(text3));
+			this.lbRewardDetail.gameObject.SetActive(false);
+			this.GoOperatorMsg.SetActive(true);
+			this.quantity.gameObject.SetActive(true);
+		}
 		int num2 = 0;
 		string missionValue = missionInfo.detail.missionValue;
 		int.TryParse(missionValue, out num2);

@@ -649,6 +649,8 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		}
 		base.hierarchyData.useStageId = worldDungeonM.background;
 		base.hierarchyData.areaName = worldDungeonM.name;
+		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
 		{
@@ -658,6 +660,7 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 				break;
 			}
 		}
+		base.hierarchyData.isPossibleContinue = (int.Parse(worldDungeonM.canContinue) == 1);
 		base.hierarchyData.extraEffectsId = base.SetWorldDungeonExtraEffect(worldDungeonM.worldDungeonId);
 		base.hierarchyData.battleNum = worldDungeonM.battleNum;
 		base.hierarchyData.batteWaves = this.DungeonFloorToBattleWave(ClassSingleton<MultiBattleData>.Instance.PvPField.worldDungeonId);
@@ -960,6 +963,12 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 		case TCPMessageType.None:
 			return;
+		default:
+			if (tcpMessageType == TCPMessageType.LeaderChange)
+			{
+				base.RecieveLeaderChange(tcpMessageType, messageObj);
+			}
+			break;
 		case TCPMessageType.RandomSeedSync:
 		{
 			global::Debug.Log("RandomSeedSync: 受信");

@@ -6,8 +6,8 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/NGUI Widget")]
 public class UIWidget : UIRect
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected Color mColor = Color.white;
 
 	[SerializeField]
@@ -22,8 +22,8 @@ public class UIWidget : UIRect
 	[SerializeField]
 	protected int mHeight = 100;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mDepth;
 
 	public UIWidget.OnDimensionsChanged onChange;
@@ -675,8 +675,8 @@ public class UIWidget : UIRect
 		}
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int FullCompareFunc(UIWidget left, UIWidget right)
 	{
 		int num = UIPanel.CompareFunc(left.panel, right.panel);

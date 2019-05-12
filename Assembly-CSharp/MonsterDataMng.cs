@@ -692,6 +692,9 @@ public class MonsterDataMng : MonoBehaviour
 				}
 			}
 			break;
+		case MonsterDataMng.SELECT_TYPE.HAVE_MEDALS:
+			this.monsterDataListBK = this.SelectionMedal(monsterDataList, true);
+			break;
 		}
 		return this.monsterDataListBK;
 	}
@@ -761,6 +764,12 @@ public class MonsterDataMng : MonoBehaviour
 				}
 			}
 			break;
+		case MonsterDataMng.SELECT_TYPE.HAVE_MEDALS:
+		{
+			List<MonsterData> list = this.SelectionMedal(monsterDataList, true);
+			num = list.Count;
+			break;
+		}
 		}
 		return num;
 	}
@@ -1950,7 +1959,8 @@ public class MonsterDataMng : MonoBehaviour
 		ALL_OUT_GARDEN,
 		RESEARCH_TARGET,
 		CAN_EVOLVE,
-		ALL_IN_GARDEN
+		ALL_IN_GARDEN,
+		HAVE_MEDALS
 	}
 
 	public enum SORT_TYPE

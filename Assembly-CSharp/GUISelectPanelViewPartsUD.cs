@@ -27,8 +27,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 	[Header("リサイクルビュー X方向 パーツカウント")]
 	protected int PARTS_CT_MN = 1;
 
-	[Header("リサイクルビュー Y MAX")]
 	[SerializeField]
+	[Header("リサイクルビュー Y MAX")]
 	protected float fRecycleViewMaxY = 500f;
 
 	[Header("リサイクルビュー Y MIN")]
@@ -609,7 +609,6 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 		if (flag)
 		{
 			float pitchH = this._pbd.pitchH;
-			float pitchH2 = this._pbd.pitchH;
 			this._pbd.lenH += pitchH;
 			base.maxLocate = base.minLocate + this._pbd.lenH - base.ListWindowViewRect.height;
 			if (base.maxLocate <= base.minLocate)

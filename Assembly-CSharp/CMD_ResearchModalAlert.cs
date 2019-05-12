@@ -1,5 +1,4 @@
-﻿using Master;
-using System;
+﻿using System;
 using UnityEngine;
 
 public sealed class CMD_ResearchModalAlert : CMD_ModalMessageBtn2
@@ -10,10 +9,6 @@ public sealed class CMD_ResearchModalAlert : CMD_ModalMessageBtn2
 	protected override void Awake()
 	{
 		base.Awake();
-		base.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
-		base.SetExp(StringMaster.GetString("LaboratoryResearchAlertInfo"));
-		base.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
-		base.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
 	}
 
 	public void SetDigimonIcon(MonsterData monsterData)

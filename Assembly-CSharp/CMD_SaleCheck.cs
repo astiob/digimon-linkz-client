@@ -21,12 +21,12 @@ public sealed class CMD_SaleCheck : CMD
 	[SerializeField]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
+	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
 	[SerializeField]

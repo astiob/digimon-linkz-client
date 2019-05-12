@@ -8,11 +8,7 @@ public class TurnAction : MonoBehaviour
 	public UIWidget widget;
 
 	[SerializeField]
-	[Header("トップのオブジェクト(未使用)")]
-	private GameObject topGameObject;
-
 	[Header("スキル名のスキナー")]
-	[SerializeField]
 	private UIComponentSkinner skillNameSkinner;
 
 	[Header("スキル名のTween")]

@@ -9,12 +9,12 @@ public sealed class CMD_BattleResult : CMD
 
 	private Action<CMD_BattleResult> actionEffectFinished;
 
-	[Header("ドロップアイテム結果")]
 	[SerializeField]
+	[Header("ドロップアイテム結果")]
 	private DropItemResult dropItemResult;
 
-	[SerializeField]
 	[Header("経験値結果")]
+	[SerializeField]
 	private ExperienceResult experienceResult;
 
 	private Dictionary<CMD_BattleResult.State, ResultBase> results = new Dictionary<CMD_BattleResult.State, ResultBase>();

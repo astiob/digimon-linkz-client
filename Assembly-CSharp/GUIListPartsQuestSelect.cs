@@ -64,6 +64,8 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 		}
 		CampaignLabelArea component = base.gameObject.GetComponent<CampaignLabelArea>();
 		component.StageDataList = worldStageData_ByAreaID;
+		component.InitUI();
+		component.Refresh();
 	}
 
 	private IEnumerator DownloadBannerTexture()
@@ -157,27 +159,34 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 
 	private void OnTouchEndedProcess()
 	{
-		CMD_QuestTOP.AreaData = this.areaData;
-		if (GUIMain.GetNowGUIName() == "UIResult")
+		if (this.areaData.data.worldAreaId == "5")
 		{
-			CMD cmd = GUIMain.ShowCommonDialog(delegate(int idx)
-			{
-				CMD_BattleNextChoice.OnCloseQuestTOP(idx);
-			}, "CMD_QuestTOP") as CMD;
-			cmd.SetForceReturnValue(1);
-			PartsTitleBase partsTitle = cmd.PartsTitle;
-			if (partsTitle != null)
-			{
-				partsTitle.SetReturnAct(delegate(int i)
-				{
-					cmd.SetCloseAction(null);
-					cmd.ClosePanel(true);
-				});
-			}
+			GUIMain.ShowCommonDialog(null, "CMD_PvPTop");
 		}
 		else
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_QuestTOP");
+			CMD_QuestTOP.AreaData = this.areaData;
+			if (GUIMain.GetNowGUIName() == "UIResult")
+			{
+				CMD cmd = GUIMain.ShowCommonDialog(delegate(int idx)
+				{
+					CMD_BattleNextChoice.OnCloseQuestTOP(idx);
+				}, "CMD_QuestTOP") as CMD;
+				cmd.SetForceReturnValue(1);
+				PartsTitleBase partsTitle = cmd.PartsTitle;
+				if (partsTitle != null)
+				{
+					partsTitle.SetReturnAct(delegate(int i)
+					{
+						cmd.SetCloseAction(null);
+						cmd.ClosePanel(true);
+					});
+				}
+			}
+			else
+			{
+				GUIMain.ShowCommonDialog(null, "CMD_QuestTOP");
+			}
 		}
 	}
 

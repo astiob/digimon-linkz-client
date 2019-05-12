@@ -12,6 +12,9 @@ public class ManualSelectTarget : MonoBehaviour
 	[SerializeField]
 	private GameObject weakTarget;
 
+	[SerializeField]
+	private GameObject drainTarget;
+
 	public void SetActive(bool value)
 	{
 		if (base.gameObject.activeSelf != value)
@@ -25,5 +28,6 @@ public class ManualSelectTarget : MonoBehaviour
 		this.defaultTarget.SetActive(iconType == Strength.None);
 		this.strongTarget.SetActive(iconType == Strength.Strong || iconType == Strength.Invalid);
 		this.weakTarget.SetActive(iconType == Strength.Weak);
+		this.drainTarget.SetActive(iconType == Strength.Drain);
 	}
 }

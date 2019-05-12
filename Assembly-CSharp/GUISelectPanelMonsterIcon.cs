@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Master;
+using Quest;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -240,5 +242,29 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 	public void ReAllBuild(List<MonsterData> dts)
 	{
 		this.AllBuild(dts, this.vScl_bak, this.actL_bak, this.actS_bak, true);
+	}
+
+	public void SetIconSortieLimitParts(List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> limitList)
+	{
+		if (limitList == null || limitList.Count == 0)
+		{
+			return;
+		}
+		for (int i = 0; i < this.partObjs.Count; i++)
+		{
+			GUIMonsterIcon guimonsterIcon = this.partObjs[i] as GUIMonsterIcon;
+			if (null != guimonsterIcon)
+			{
+				MonsterData data = guimonsterIcon.Data;
+				if (data != null && !ClassSingleton<QuestData>.Instance.CheckSortieLimit(limitList, data.monsterMG.tribe, data.monsterMG.growStep))
+				{
+					data.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.DISABLE;
+					data.dimmMess = StringMaster.GetString("PartySortieLimitNG");
+					guimonsterIcon.SetCenterText(StringMaster.GetString("PartySortieLimitNG"), GUIMonsterIcon.DimmMessColorType.SORTIE_LIMIT);
+					guimonsterIcon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.DISABLE);
+					guimonsterIcon.SetTouchAct_S(null);
+				}
+			}
+		}
 	}
 }

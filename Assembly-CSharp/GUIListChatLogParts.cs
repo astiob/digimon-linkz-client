@@ -30,6 +30,9 @@ public class GUIListChatLogParts : GUIListPartBS
 	private GameObject goMONSTER_ICON;
 
 	[SerializeField]
+	private GameObject goTITLE_ICON;
+
+	[SerializeField]
 	private GameObject goSELF_CONTENT_WRAP;
 
 	[SerializeField]
@@ -49,6 +52,9 @@ public class GUIListChatLogParts : GUIListPartBS
 
 	[SerializeField]
 	private GameObject goSELF_MONSTER_ICON;
+
+	[SerializeField]
+	private GameObject goSELF_TITLE_ICON;
 
 	[SerializeField]
 	private GameObject goSYS_CONTENT_WRAP;
@@ -72,6 +78,8 @@ public class GUIListChatLogParts : GUIListPartBS
 	private UILabel ngTX_COMMENT;
 
 	private GameObject ngMONSTER_ICON;
+
+	private GameObject ngTITLE_ICON;
 
 	private GUICollider ngMULTICODE_COL;
 
@@ -126,6 +134,7 @@ public class GUIListChatLogParts : GUIListPartBS
 			this.ngTX_DATE = this.goSELF_TX_DATE.GetComponent<UILabel>();
 			this.ngTX_COMMENT = this.goSELF_TX_COMMENT.GetComponent<UILabel>();
 			this.ngMONSTER_ICON = this.goSELF_MONSTER_ICON;
+			this.ngTITLE_ICON = this.goSELF_TITLE_ICON;
 			this.goCONTENT_WRAP.SetActive(false);
 			this.goSYS_CONTENT_WRAP.SetActive(false);
 		}
@@ -135,6 +144,7 @@ public class GUIListChatLogParts : GUIListPartBS
 			this.ngTX_DATE = this.goTX_DATE.GetComponent<UILabel>();
 			this.ngTX_COMMENT = this.goTX_COMMENT.GetComponent<UILabel>();
 			this.ngMONSTER_ICON = this.goMONSTER_ICON;
+			this.ngTITLE_ICON = this.goTITLE_ICON;
 			if (this.RespDataChatMessageDataResult.type == 4)
 			{
 				this.ngMULTICODE_COL = this.goBG_BALLOON.GetComponent<GUICollider>();
@@ -209,6 +219,7 @@ public class GUIListChatLogParts : GUIListPartBS
 			if (this.RespDataChatMessageDataResult.type != 3)
 			{
 				this.ngTX_USERNAME.text = this.RespDataChatMessageDataResult.userInfo.nickname;
+				TitleDataMng.SetTitleIcon(this.RespDataChatMessageDataResult.userInfo.titleId, this.ngTITLE_ICON.GetComponent<UITexture>());
 				this.thumbMid = this.RespDataChatMessageDataResult.userInfo.monsterId;
 				MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.thumbMid);
 				if (monsterData != null)
@@ -311,6 +322,7 @@ public class GUIListChatLogParts : GUIListPartBS
 								}
 							}
 						}
+						ClassSingleton<QuestData>.Instance.SelectDungeon = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(this.multiWorldDungeonId);
 						GameWebAPI.MultiRoomJoin multiRoomJoin = new GameWebAPI.MultiRoomJoin();
 						multiRoomJoin.SetSendData = delegate(GameWebAPI.ReqData_MultiRoomJoin param)
 						{

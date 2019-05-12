@@ -103,6 +103,8 @@ public class PartsUpperCutinController : MonoBehaviour
 		AwakeningComplete,
 		ResearchComplete,
 		Jogress,
-		Combine
+		Combine,
+		TalentBlooms,
+		BloomsFailed
 	}
 }

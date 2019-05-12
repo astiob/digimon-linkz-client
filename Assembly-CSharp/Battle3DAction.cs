@@ -5,28 +5,6 @@ using UnityEngine;
 
 public class Battle3DAction : BattleFunctionBase
 {
-	public Action GetUpdateHitIconCharacters(Action<Vector3> updateMethod, CharacterStateControl targets)
-	{
-		return delegate()
-		{
-			updateMethod(this.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(targets));
-		};
-	}
-
-	public Action GetUpdateHitIconCharacters(Action<Vector3[]> updateMethod, CharacterStateControl[] targets, int arrayLength)
-	{
-		List<Vector3> positions = new List<Vector3>();
-		return delegate()
-		{
-			positions.Clear();
-			for (int i = 0; i < arrayLength; i++)
-			{
-				positions.Add(this.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(targets[i]));
-			}
-			updateMethod(positions.ToArray());
-		};
-	}
-
 	public void BigBossInsertAction(CharacterStateControl cState, CharacterStateControl[] playerCharacters)
 	{
 		this.PlayIdleAnimationActiveCharacterAction(new CharacterStateControl[]
@@ -131,7 +109,7 @@ public class Battle3DAction : BattleFunctionBase
 		this.SmallToBigTransitionAfter(characters, list.ToArray());
 	}
 
-	public void SmallToBigTransitionAfter(CharacterStateControl[] characters, bool[] isPlayedAttack)
+	private void SmallToBigTransitionAfter(CharacterStateControl[] characters, bool[] isPlayedAttack)
 	{
 		for (int i = 0; i < characters.Length; i++)
 		{
@@ -143,7 +121,7 @@ public class Battle3DAction : BattleFunctionBase
 		}
 	}
 
-	public void SmoothIncreaseCharacterInitializeAction(params CharacterStateControl[] characters)
+	private void SmoothIncreaseCharacterInitializeAction(params CharacterStateControl[] characters)
 	{
 		foreach (CharacterStateControl characterStateControl in characters)
 		{

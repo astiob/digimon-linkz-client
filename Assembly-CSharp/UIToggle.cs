@@ -47,8 +47,8 @@ public class UIToggle : UIWidgetContainer
 	[SerializeField]
 	private string functionName = "OnActivate";
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool startsChecked;
 
 	private bool mIsActive = true;

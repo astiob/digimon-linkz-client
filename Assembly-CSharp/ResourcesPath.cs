@@ -411,6 +411,8 @@ public struct ResourcesPath
 
 			public const string damageInvalid = "EFF_COM_HIT_WEAK";
 
+			public const string damageDrain = "EFF_COM_S_HEAL";
+
 			public const string attack = "EFF_COM_HIT_NORMAL";
 
 			public const string poison = "EFF_COM_POISONATTACK";

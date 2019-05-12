@@ -17,8 +17,8 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private string _cameraMotionId;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStage")]
+	[SerializeField]
 	private bool _hideStage;
 
 	[SerializeField]
@@ -158,8 +158,13 @@ public class InvocationEffectParams : EffectParamsGeneric
 				ParticleScaler.Scale(particleSystem, this._scale, true, null);
 			}
 		}
-		while (this._effectAnimation.isPlaying)
+		float time = (!(attacker != null)) ? 0f : attacker.AnimationClipLength;
+		while (this._effectAnimation.isPlaying || time > 0f)
 		{
+			if (time > 0f)
+			{
+				time -= Time.deltaTime;
+			}
 			yield return null;
 		}
 		yield break;

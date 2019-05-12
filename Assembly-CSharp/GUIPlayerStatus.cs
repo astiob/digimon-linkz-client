@@ -10,6 +10,9 @@ public sealed class GUIPlayerStatus : MonoBehaviour
 	private UILabel userName;
 
 	[SerializeField]
+	private UITexture titleIcon;
+
+	[SerializeField]
 	private UILabel userDigiStone;
 
 	[SerializeField]
@@ -83,6 +86,7 @@ public sealed class GUIPlayerStatus : MonoBehaviour
 		}
 		GameWebAPI.RespDataUS_GetPlayerInfo.PlayerInfo playerInfo = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo;
 		this.userName.text = playerInfo.nickname;
+		TitleDataMng.SetTitleIcon(playerInfo.titleId, this.titleIcon);
 		UserStamina componentInChildren = this.userStaminaPrefabFolder.Target.GetComponentInChildren<UserStamina>();
 		if (null != componentInChildren)
 		{

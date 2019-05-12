@@ -6,6 +6,9 @@ public class FarmVisitFace : MonoBehaviour
 	[SerializeField]
 	private UILabel friendUserNameLabel;
 
+	[SerializeField]
+	public UITexture friendUserTitleIcon;
+
 	public static FarmVisitFace Create()
 	{
 		string path = "UICommon/Farm/FarmVisit";

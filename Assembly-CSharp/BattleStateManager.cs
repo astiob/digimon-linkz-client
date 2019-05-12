@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(BattleInputFunctionBase))]
 public sealed class BattleStateManager : MonoBehaviour
 {
-	[SerializeField]
 	[Header("シングルUI")]
+	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
 	[SerializeField]
@@ -18,7 +18,6 @@ public sealed class BattleStateManager : MonoBehaviour
 	[Header("PvPUI")]
 	private BattleUIComponentsPvP battleUIComponentsPvP;
 
-	[SerializeField]
 	private static BattleMode _battleMode;
 
 	[SerializeField]
@@ -47,13 +46,11 @@ public sealed class BattleStateManager : MonoBehaviour
 	[SerializeField]
 	private BattleStateUIProperty _uiProperty;
 
-	private BattleCameraCallMonoCodes cameraCallMonoCodes;
+	public static string BattleSceneName = "Battle";
 
 	public List<Action<bool>> onApplicationPause = new List<Action<bool>>();
 
 	public List<Action> lateUpdateJustOnce = new List<Action>();
-
-	public List<Action> onPreRenderJustOnce = new List<Action>();
 
 	private bool onCalledBattleTrigger;
 
@@ -337,24 +334,6 @@ public sealed class BattleStateManager : MonoBehaviour
 		return this.isLastBattle && this.battleStateData.GetCharactersDeath(true);
 	}
 
-	public string GetBattleSceneName()
-	{
-		return BattleStateManager.GetBattleSceneName(this.battleMode);
-	}
-
-	public static string GetBattleSceneName(BattleMode battleMode)
-	{
-		if (battleMode == BattleMode.Multi)
-		{
-			return "Battle_Multi";
-		}
-		if (battleMode != BattleMode.PvP)
-		{
-			return "Battle_Re";
-		}
-		return "Battle_PvP";
-	}
-
 	public static BattleStateManager current { get; private set; }
 
 	public bool isShowAlwaysScreen { get; private set; }
@@ -366,19 +345,19 @@ public sealed class BattleStateManager : MonoBehaviour
 	public static void StartSingle(float outSec = 0.5f, float inSec = 0.5f, bool destroyMonsterIcon = true, Action<int> actionEnd = null)
 	{
 		BattleStateManager._battleMode = BattleMode.Single;
-		GUIMain.FadeBlackLoadScene("Battle_Re", outSec, inSec, destroyMonsterIcon, actionEnd);
+		GUIMain.FadeBlackLoadScene(BattleStateManager.BattleSceneName, outSec, inSec, destroyMonsterIcon, actionEnd);
 	}
 
 	public static void StartMulti(float outSec = 0.5f, float inSec = 0.5f, bool destroyMonsterIcon = true, Action<int> actionEnd = null)
 	{
 		BattleStateManager._battleMode = BattleMode.Multi;
-		GUIMain.FadeBlackLoadScene("Battle_Re", outSec, inSec, destroyMonsterIcon, actionEnd);
+		GUIMain.FadeBlackLoadScene(BattleStateManager.BattleSceneName, outSec, inSec, destroyMonsterIcon, actionEnd);
 	}
 
 	public static void StartPvP(float outSec = 0.5f, float inSec = 0.5f, bool destroyMonsterIcon = true, Action<int> actionEnd = null)
 	{
 		BattleStateManager._battleMode = BattleMode.PvP;
-		GUIMain.FadeBlackLoadScene("Battle_Re", outSec, inSec, destroyMonsterIcon, actionEnd);
+		GUIMain.FadeBlackLoadScene(BattleStateManager.BattleSceneName, outSec, inSec, destroyMonsterIcon, actionEnd);
 	}
 
 	private void Awake()
@@ -398,8 +377,6 @@ public sealed class BattleStateManager : MonoBehaviour
 		}
 		this.soundManager = SoundMng.Instance();
 		this.hierarchyData.Initialize();
-		this.cameraCallMonoCodes = this.hierarchyData.cameraObject.camera3D.gameObject.AddComponent<BattleCameraCallMonoCodes>();
-		this.cameraCallMonoCodes.stateManager = BattleStateManager.current;
 		Input.multiTouchEnabled = false;
 		this.battleUiComponents = base.GetComponent<BattleUIComponents>();
 		this.input = base.GetComponent<BattleInputBasic>();
@@ -470,7 +447,7 @@ public sealed class BattleStateManager : MonoBehaviour
 			{
 				base.gameObject.AddComponent<TCPMessageSender>();
 			}
-			goto IL_3CA;
+			goto IL_39A;
 		case BattleMode.PvP:
 			this.uiControl = new BattleUIControlPvP();
 			this.multiBasicFunction = new BattlePvPFunction();
@@ -479,16 +456,16 @@ public sealed class BattleStateManager : MonoBehaviour
 			{
 				base.gameObject.AddComponent<TCPMessageSender>();
 			}
-			goto IL_3CA;
+			goto IL_39A;
 		case BattleMode.Tutorial:
 			this.tutorial = new BattleTutorial();
 			this.uiControl = new BattleUIControlSingle();
 			this._rootState = new SingleBattleState();
-			goto IL_3CA;
+			goto IL_39A;
 		}
 		this.uiControl = new BattleUIControlSingle();
 		this._rootState = new SingleBattleState();
-		IL_3CA:
+		IL_39A:
 		this.uiControl.ApplySetBattleStateRegistration();
 		foreach (IBattleFunctionInput battleFunctionInput in this.GetAllBattleFunctions())
 		{

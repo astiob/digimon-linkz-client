@@ -25,9 +25,7 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		IEnumerator[] functions = new IEnumerator[]
 		{
 			this.RegenerateFunction(),
-			this.PoisonFunction(),
-			this.UpFunction(),
-			this.DownFunction()
+			this.PoisonFunction()
 		};
 		foreach (IEnumerator function in functions)
 		{
@@ -120,8 +118,11 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 					characterStateControl
 				});
 			}
-			Action updateHitIconCharacters = base.stateManager.threeDAction.GetUpdateHitIconCharacters(reposition, characters.ToArray(), hitIconlist.Count);
-			base.stateManager.onPreRenderJustOnce.Add(updateHitIconCharacters);
+			for (int k = 0; k < characters.Count; k++)
+			{
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[k]);
+				hitIconlist[k].HitIconReposition(fixableCharacterCenterPosition2DFunction);
+			}
 		};
 		float waitSecond = base.stateManager.stateProperty.poisonHitEffectWaitSecond;
 		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(waitSecond, hudReposition, null);
@@ -230,8 +231,11 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 					characterStateControl
 				});
 			}
-			Action updateHitIconCharacters = base.stateManager.threeDAction.GetUpdateHitIconCharacters(reposition, characters.ToArray(), hitIconlist.Count);
-			base.stateManager.onPreRenderJustOnce.Add(updateHitIconCharacters);
+			for (int k = 0; k < characters.Count; k++)
+			{
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[k]);
+				hitIconlist[k].HitIconReposition(fixableCharacterCenterPosition2DFunction);
+			}
 		};
 		if (currentDeathBigBoss != null)
 		{
@@ -267,105 +271,6 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 				base.stateManager.cameraControl.StopCameraMotionAction("skillA");
 			}
 		}
-		yield break;
-	}
-
-	private IEnumerator UpFunction()
-	{
-		SufferStateProperty.SufferType[] sufferTypes = new SufferStateProperty.SufferType[]
-		{
-			SufferStateProperty.SufferType.AttackUp,
-			SufferStateProperty.SufferType.DefenceUp,
-			SufferStateProperty.SufferType.SpAttackUp,
-			SufferStateProperty.SufferType.SpDefenceUp,
-			SufferStateProperty.SufferType.SpeedUp,
-			SufferStateProperty.SufferType.HitRateUp,
-			SufferStateProperty.SufferType.SatisfactionRateUp
-		};
-		IEnumerator function = this.HitEffectFunction(sufferTypes, CharacterAnimationType.revival);
-		while (function.MoveNext())
-		{
-			yield return null;
-		}
-		yield break;
-	}
-
-	private IEnumerator DownFunction()
-	{
-		SufferStateProperty.SufferType[] sufferTypes = new SufferStateProperty.SufferType[]
-		{
-			SufferStateProperty.SufferType.AttackDown,
-			SufferStateProperty.SufferType.DefenceDown,
-			SufferStateProperty.SufferType.SpAttackDown,
-			SufferStateProperty.SufferType.SpDefenceDown,
-			SufferStateProperty.SufferType.SpeedDown,
-			SufferStateProperty.SufferType.HitRateDown,
-			SufferStateProperty.SufferType.SatisfactionRateDown
-		};
-		IEnumerator function = this.HitEffectFunction(sufferTypes, CharacterAnimationType.hit);
-		while (function.MoveNext())
-		{
-			yield return null;
-		}
-		yield break;
-	}
-
-	private IEnumerator HitEffectFunction(SufferStateProperty.SufferType[] sufferTypes, CharacterAnimationType characterAnimationType)
-	{
-		List<CharacterStateControl> characters = new List<CharacterStateControl>();
-		foreach (SufferStateProperty.SufferType sufferType in sufferTypes)
-		{
-			List<CharacterStateControl> temp = this.GetSufferCharacters(sufferType);
-			foreach (CharacterStateControl character in temp)
-			{
-				SufferStateProperty property = character.currentSufferState.GetSufferStateProperty(sufferType);
-				if (property.turnRate > 0f && !characters.Contains(character))
-				{
-					characters.Add(character);
-				}
-			}
-		}
-		if (characters.Count == 0)
-		{
-			yield break;
-		}
-		base.stateManager.uiControl.HideCharacterHUDFunction();
-		base.stateManager.SetBattleScreen(BattleScreen.PoisonHit);
-		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
-		{
-			base.stateManager.cameraControl.PlayCameraMotionAction("BigBoss/0002_command", base.battleStateData.stageSpawnPoint, true);
-		}
-		else
-		{
-			base.stateManager.cameraControl.PlayCameraMotionAction("0002_command", base.battleStateData.stageSpawnPoint, true);
-		}
-		foreach (SufferStateProperty.SufferType sufferType2 in sufferTypes)
-		{
-			string key = sufferType2.ToString();
-			HitEffectParams[] temp2 = base.battleStateData.hitEffects.GetObject(key);
-			if (temp2 != null)
-			{
-				this.hitEffectParams = temp2;
-				break;
-			}
-		}
-		base.stateManager.soundPlayer.TryPlaySE(this.hitEffectParams[0]);
-		for (int i = 0; i < characters.Count; i++)
-		{
-			base.stateManager.threeDAction.PlayAnimationCharacterAction(characterAnimationType, new CharacterStateControl[]
-			{
-				characters[i]
-			});
-			base.stateManager.threeDAction.PlayHitEffectAction(this.hitEffectParams[i], characters[i]);
-		}
-		float waitSecond = base.stateManager.stateProperty.poisonHitEffectWaitSecond;
-		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(waitSecond, null, null);
-		while (wait.MoveNext())
-		{
-			yield return null;
-		}
-		base.stateManager.soundPlayer.TryStopSE(this.hitEffectParams[0]);
-		base.stateManager.soundPlayer.StopHitEffectSE();
 		yield break;
 	}
 

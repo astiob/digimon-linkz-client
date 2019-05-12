@@ -1,6 +1,7 @@
 ﻿using Enemy.AI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityExtension;
 
@@ -49,13 +50,16 @@ public class BattleTargetSelect : BattleFunctionBase
 			characterStatus = base.battleStateData.playerCharacters;
 			break;
 		case EffectTarget.Attacker:
-			characterStatus = base.battleStateData.playerCharacters;
+			characterStatus = new CharacterStateControl[]
+			{
+				currentCharacter
+			};
 			break;
 		case EffectTarget.EnemyWithoutAttacker:
-			characterStatus = base.battleStateData.enemies;
+			characterStatus = base.battleStateData.enemies.Where((CharacterStateControl item) => item.myIndex != currentCharacter.myIndex).ToArray<CharacterStateControl>();
 			break;
 		case EffectTarget.AllyWithoutAttacker:
-			characterStatus = base.battleStateData.playerCharacters;
+			characterStatus = base.battleStateData.playerCharacters.Where((CharacterStateControl item) => item.myIndex != currentCharacter.myIndex).ToArray<CharacterStateControl>();
 			break;
 		}
 		CharacterStateControl[] aliveCharacters = CharacterStateControl.GetAliveCharacters(characterStatus);

@@ -214,18 +214,13 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		string commonSkillId = commonMonsterData.commonSkillId;
 		string text = commonMonsterData.leaderSkillId.Equals("0") ? string.Empty : commonMonsterData.leaderSkillId;
 		string iconId = monsterData.monsterM.iconId;
-		TalentLevel hp2 = ServerToBattleUtility.IntToTalentLevel(commonMonsterData.hpAbilityFlg);
-		TalentLevel attack = ServerToBattleUtility.IntToTalentLevel(commonMonsterData.attackAbilityFlg);
-		TalentLevel defence = ServerToBattleUtility.IntToTalentLevel(commonMonsterData.defenseAbilityFlg);
-		TalentLevel specialAttack = ServerToBattleUtility.IntToTalentLevel(commonMonsterData.spAttackAbilityFlg);
-		TalentLevel specialDefence = ServerToBattleUtility.IntToTalentLevel(commonMonsterData.spDefenseAbilityFlg);
-		TalentLevel speed2 = ServerToBattleUtility.IntToTalentLevel(commonMonsterData.speedAbilityFlg);
-		Talent talent = new Talent(hp2, attack, defence, specialAttack, specialDefence, speed2);
+		Talent talent = new Talent(commonMonsterData);
 		if (!this.cachedTolerances.ContainsKey(resistanceId.Trim()))
 		{
 			this.cachedTolerances.Add(resistanceId.Trim(), base.stateManager.serverControl.ResistanceToTolerance(resistanceId));
 		}
-		ToleranceShifter arousalTolerance = base.stateManager.serverControl.GetArousalTolerance(monsterData, this.cachedTolerances[resistanceId]);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = monsterData.AddResistanceFromMultipleTranceData();
+		Tolerance tolerance = base.stateManager.serverControl.ResistanceToTolerance(data);
 		FriendshipStatus friendshipStatus = new FriendshipStatus(friendshipLevel, maxAttackPower, maxDefencePower, maxSpecialAttackPower, maxSpecialDefencePower, maxSpeed);
 		List<int> list = new List<int>();
 		if (commonMonsterData.chipIdList != null && commonMonsterData.chipIdList.Length > 0)
@@ -235,7 +230,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 				list.Add(item);
 			}
 		}
-		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, arousalTolerance, luck, uniqueSkillId, commonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
+		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
 		if (!this.cachedSkillStatuses.ContainsKey(uniqueSkillId.Trim()))
 		{
 			this.cachedSkillStatuses.Add(uniqueSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(uniqueSkillId));
@@ -418,6 +413,11 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		return text;
 	}
 
+	public string GetPlayerTitleId()
+	{
+		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.titleId).FirstOrDefault<string>();
+	}
+
 	public string GetEnemyName()
 	{
 		string text = this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.nickname).FirstOrDefault<string>();
@@ -426,6 +426,11 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			return "-";
 		}
 		return text;
+	}
+
+	public string GetEnemyTitleId()
+	{
+		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.titleId).FirstOrDefault<string>();
 	}
 
 	protected abstract IEnumerable<string> GetOtherUsersId();
@@ -442,6 +447,42 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		}
 		NGUITools.SetActiveSelf(base.stateManager.battleUiComponents.skillSelectUi.gameObject, false);
 		base.battleStateData.isPossibleTargetSelect = false;
+	}
+
+	public IEnumerator SendLeaderChange(int leaderindex)
+	{
+		LeaderChangeData message = new LeaderChangeData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LeaderChange, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			leaderIndex = leaderindex
+		};
+		IEnumerator wait = this.SendMessageInsistently<LeaderChangeData>(TCPMessageType.LeaderChange, message, 1f);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		base.battleStateData.ChangePlayerLeader(message.leaderIndex);
+		base.battleStateData.ChangeEnemyLeader(message.leaderIndex);
+		yield break;
+	}
+
+	protected void RecieveLeaderChange(TCPMessageType tcpMessageType, object messageObj)
+	{
+		global::Debug.Log("LeaderChange: 受信");
+		LeaderChangeData data = TCPData<LeaderChangeData>.Convert(messageObj);
+		if (this.CheckHash(data.hashValue))
+		{
+			return;
+		}
+		this.lastAction[tcpMessageType] = delegate()
+		{
+			this.battleStateData.ChangePlayerLeader(data.leaderIndex);
+			this.battleStateData.ChangeEnemyLeader(data.leaderIndex);
+			this.recieveChecks[tcpMessageType] = true;
+		};
+		this.SendConfirmation(tcpMessageType, data.playerUserId);
 	}
 
 	protected void SendConfirmation(TCPMessageType tcpMessageType, string targetId)

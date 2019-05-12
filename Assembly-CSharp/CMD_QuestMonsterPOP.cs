@@ -1,6 +1,4 @@
-﻿using Master;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 public class CMD_QuestMonsterPOP : CMD
@@ -9,58 +7,46 @@ public class CMD_QuestMonsterPOP : CMD
 	private UILabel digimonNameLabel;
 
 	[SerializeField]
-	private UILabel digimonRaceLabel;
+	private UILabel tribeLabel;
 
 	[SerializeField]
-	private UILabel toleranceLabel;
+	private UILabel growStepLabel;
 
 	[SerializeField]
-	private UILabel digimonGradeLabel;
-
-	public List<GameObject> toleranceGOList;
+	private MonsterResistanceList monsterResistanceList;
 
 	[SerializeField]
-	private List<GameObject> invalidToleranceGOList;
+	private MonsterResistanceList monsterInvalidResistanceList;
 
-	public static int ResistanceId { private get; set; }
-
-	public static MonsterData MonsterData { private get; set; }
-
-	protected override void Awake()
+	public void SetBossDetails(MonsterData monsterData, int resistanceId)
 	{
-		base.Awake();
-		this.toleranceLabel.text = StringMaster.GetString("CharaStatus-22");
+		this.digimonNameLabel.text = monsterData.monsterMG.monsterName;
+		this.tribeLabel.text = monsterData.tribeM.monsterTribeName;
+		this.growStepLabel.text = monsterData.growStepM.monsterGrowStepName;
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = monsterData.SerchResistanceById(resistanceId.ToString());
+		this.monsterResistanceList.SetValues(monsterResistanceM);
+		this.monsterInvalidResistanceList.SetInvalid(monsterResistanceM);
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public void SetBossDetails(int monsterId, int resistanceId)
 	{
-		this.ShowChgInfoUP();
-		base.Show(f, sizeX, sizeY, aT);
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
-	}
-
-	protected override void OnDestroy()
-	{
-		CMD_QuestMonsterPOP.MonsterData = null;
-		base.OnDestroy();
-	}
-
-	private void ShowChgInfoUP()
-	{
-		this.digimonNameLabel.text = CMD_QuestMonsterPOP.MonsterData.monsterMG.monsterName;
-		this.digimonGradeLabel.text = CMD_QuestMonsterPOP.MonsterData.growStepM.monsterGrowStepName;
-		this.digimonRaceLabel.text = CMD_QuestMonsterPOP.MonsterData.tribeM.monsterTribeName;
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceM = CMD_QuestMonsterPOP.MonsterData.SerchResistanceById(CMD_QuestMonsterPOP.ResistanceId.ToString());
-		MonsterDetailUtil.SetTolerances(resistanceM, this.toleranceGOList);
-		MonsterDetailUtil.SetInvalidTolerances(resistanceM, this.invalidToleranceGOList);
+		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId.ToString());
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
+		this.digimonNameLabel.text = monsterGroupMasterByMonsterGroupId.monsterName;
+		this.tribeLabel.text = CommonSentenceData.GetTribe(monsterGroupMasterByMonsterGroupId.tribe);
+		this.growStepLabel.text = CommonSentenceData.GetGrade(monsterGroupMasterByMonsterGroupId.growStep);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = null;
+		string b = resistanceId.ToString();
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM[] monsterResistanceM2 = MasterDataMng.Instance().RespDataMA_MonsterResistanceM.monsterResistanceM;
+		for (int i = 0; i < monsterResistanceM2.Length; i++)
+		{
+			if (monsterResistanceM2[i].monsterResistanceId == b)
+			{
+				monsterResistanceM = monsterResistanceM2[i];
+				break;
+			}
+		}
+		this.monsterResistanceList.SetValues(monsterResistanceM);
+		this.monsterInvalidResistanceList.SetInvalid(monsterResistanceM);
 	}
 }

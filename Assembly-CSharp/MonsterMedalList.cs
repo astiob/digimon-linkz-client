@@ -49,14 +49,37 @@ public sealed class MonsterMedalList : MonoBehaviour
 	public void SetActive(bool isActive)
 	{
 		this.hpIcon.gameObject.SetActive(isActive);
+		this.FixAlpha(this.hpIcon, 1f);
 		this.attackIcon.gameObject.SetActive(isActive);
+		this.FixAlpha(this.attackIcon, 1f);
 		this.defenseIcon.gameObject.SetActive(isActive);
+		this.FixAlpha(this.defenseIcon, 1f);
 		this.magicAttackIcon.gameObject.SetActive(isActive);
+		this.FixAlpha(this.magicAttackIcon, 1f);
 		this.magicDefenseIcon.gameObject.SetActive(isActive);
+		this.FixAlpha(this.magicDefenseIcon, 1f);
 		this.speedIcon.gameObject.SetActive(isActive);
+		this.FixAlpha(this.speedIcon, 1f);
+	}
+
+	private void FixAlpha(UIWidget wdg, float alpha = 1f)
+	{
+		Color color = wdg.color;
+		color.a = alpha;
+		wdg.color = color;
 	}
 
 	public void SetValues(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterData)
+	{
+		this.SetMedalIcon(userMonsterData.hpAbilityFlg, userMonsterData.hpAbility, this.hpIcon);
+		this.SetMedalIcon(userMonsterData.attackAbilityFlg, userMonsterData.attackAbility, this.attackIcon);
+		this.SetMedalIcon(userMonsterData.defenseAbilityFlg, userMonsterData.defenseAbility, this.defenseIcon);
+		this.SetMedalIcon(userMonsterData.spAttackAbilityFlg, userMonsterData.spAttackAbility, this.magicAttackIcon);
+		this.SetMedalIcon(userMonsterData.spDefenseAbilityFlg, userMonsterData.spDefenseAbility, this.magicDefenseIcon);
+		this.SetMedalIcon(userMonsterData.speedAbilityFlg, userMonsterData.speedAbility, this.speedIcon);
+	}
+
+	public void SetValues(Talent userMonsterData)
 	{
 		this.SetMedalIcon(userMonsterData.hpAbilityFlg, userMonsterData.hpAbility, this.hpIcon);
 		this.SetMedalIcon(userMonsterData.attackAbilityFlg, userMonsterData.attackAbility, this.attackIcon);
@@ -87,6 +110,54 @@ public sealed class MonsterMedalList : MonoBehaviour
 		{
 			iconSprite.spriteName += empty;
 			iconSprite.gameObject.SetActive(true);
+		}
+	}
+
+	public UISprite HpIcon
+	{
+		get
+		{
+			return this.hpIcon;
+		}
+	}
+
+	public UISprite AttackIcon
+	{
+		get
+		{
+			return this.attackIcon;
+		}
+	}
+
+	public UISprite DefenseIcon
+	{
+		get
+		{
+			return this.defenseIcon;
+		}
+	}
+
+	public UISprite MagicAttackIcon
+	{
+		get
+		{
+			return this.magicAttackIcon;
+		}
+	}
+
+	public UISprite MagicDefenseIcon
+	{
+		get
+		{
+			return this.magicDefenseIcon;
+		}
+	}
+
+	public UISprite SpeedIcon
+	{
+		get
+		{
+			return this.speedIcon;
 		}
 	}
 }

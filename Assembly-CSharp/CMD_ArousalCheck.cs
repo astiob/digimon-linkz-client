@@ -11,12 +11,12 @@ public sealed class CMD_ArousalCheck : CMD
 	[SerializeField]
 	private MonsterResistanceList monsterResistanceList;
 
-	[Header("タイトルのラベル")]
 	[SerializeField]
+	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]

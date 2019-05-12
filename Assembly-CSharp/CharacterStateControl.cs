@@ -482,6 +482,14 @@ public class CharacterStateControl
 		}
 	}
 
+	public CharacterDatas characterDatas
+	{
+		get
+		{
+			return this._characterDatas;
+		}
+	}
+
 	public string name
 	{
 		get
@@ -610,7 +618,7 @@ public class CharacterStateControl
 	{
 		get
 		{
-			return this.extraSpeed + this.m_chipAddSpeed;
+			return this._characterStatus.speed;
 		}
 	}
 
@@ -674,7 +682,11 @@ public class CharacterStateControl
 	{
 		get
 		{
-			return (!PlayerStatus.Match(this._characterStatus)) ? this._tolerance : this.playerStatus.arousalTolerance.GetShiftedTolerance(this._tolerance);
+			if (this.leaderSkillResult.addTolerances != null)
+			{
+				return this._tolerance.CreateAddTolerance(this._leaderSkillResult.addTolerances);
+			}
+			return this._tolerance;
 		}
 	}
 
@@ -1211,17 +1223,19 @@ public class CharacterStateControl
 		int baseValue3 = (!PlayerStatus.Match(this._characterStatus)) ? this._characterStatus.specialAttackPower : this.playerStatus.friendshipStatus.GetCorrectedSpecialAttackPower(this._characterStatus.specialAttackPower);
 		int baseValue4 = (!PlayerStatus.Match(this._characterStatus)) ? this._characterStatus.specialDefencePower : this.playerStatus.friendshipStatus.GetCorrectedSpecialDefencePower(this._characterStatus.specialDefencePower);
 		int baseValue5 = (!PlayerStatus.Match(this._characterStatus)) ? this._characterStatus.speed : this.playerStatus.friendshipStatus.GetCorrectedSpeed(this._characterStatus.speed);
-		this.m_extraMaxHp = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, this._maxHp, this, ExtraEffectStatus.ExtraEffectType.Hp);
-		this.m_extraAttackPower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, baseValue, this, ExtraEffectStatus.ExtraEffectType.Atk);
-		this.m_extraDefencePower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, baseValue2, this, ExtraEffectStatus.ExtraEffectType.Def);
-		this.m_extraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, baseValue3, this, ExtraEffectStatus.ExtraEffectType.Satk);
-		this.m_extraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, baseValue4, this, ExtraEffectStatus.ExtraEffectType.Sdef);
-		this.m_extraSpeed = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, baseValue5, this, ExtraEffectStatus.ExtraEffectType.Speed);
-		this.m_defaultExtraAttackPower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, this._characterStatus.attackPower, this, ExtraEffectStatus.ExtraEffectType.Atk);
-		this.m_defaultExtraDefencePower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, this._characterStatus.defencePower, this, ExtraEffectStatus.ExtraEffectType.Def);
-		this.m_defaultExtraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, this._characterStatus.specialAttackPower, this, ExtraEffectStatus.ExtraEffectType.Satk);
-		this.m_defaultExtraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, this._characterStatus.specialDefencePower, this, ExtraEffectStatus.ExtraEffectType.Sdef);
-		this.m_defaultExtraSpeed = ExtraEffectStatus.GetExtraEffectValue(BattleStateManager.current.battleStateData.extraEffectStatus, this._characterStatus.speed, this, ExtraEffectStatus.ExtraEffectType.Speed);
+		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
+		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
+		this.m_extraMaxHp = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._maxHp, this, ExtraEffectStatus.ExtraEffectType.Hp);
+		this.m_extraAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue, this, ExtraEffectStatus.ExtraEffectType.Atk);
+		this.m_extraDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue2, this, ExtraEffectStatus.ExtraEffectType.Def);
+		this.m_extraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue3, this, ExtraEffectStatus.ExtraEffectType.Satk);
+		this.m_extraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue4, this, ExtraEffectStatus.ExtraEffectType.Sdef);
+		this.m_extraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue5, this, ExtraEffectStatus.ExtraEffectType.Speed);
+		this.m_defaultExtraAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.attackPower, this, ExtraEffectStatus.ExtraEffectType.Atk);
+		this.m_defaultExtraDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.defencePower, this, ExtraEffectStatus.ExtraEffectType.Def);
+		this.m_defaultExtraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.specialAttackPower, this, ExtraEffectStatus.ExtraEffectType.Satk);
+		this.m_defaultExtraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.specialDefencePower, this, ExtraEffectStatus.ExtraEffectType.Sdef);
+		this.m_defaultExtraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.speed, this, ExtraEffectStatus.ExtraEffectType.Speed);
 	}
 
 	public void InitializeSkillExtraStatus()
@@ -1231,11 +1245,13 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst = this.skillStatus[1].GetAffectEffectFirst();
 			if (affectEffectFirst != null)
 			{
+				List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
+				List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
 				if (affectEffectFirst.type == AffectEffect.Damage)
 				{
-					this.m_extraDeathblowSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, affectEffectFirst, this);
+					this.m_extraDeathblowSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst, this);
 				}
-				this.m_extraDeathblowSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, affectEffectFirst, this);
+				this.m_extraDeathblowSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectFirst, this);
 			}
 		}
 		if (this.skillStatus.Length > 2)
@@ -1243,11 +1259,13 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst2 = this.skillStatus[2].GetAffectEffectFirst();
 			if (affectEffectFirst2 != null)
 			{
+				List<ExtraEffectStatus> extraEffectStatus2 = BattleStateManager.current.battleStateData.extraEffectStatus;
+				List<ExtraEffectStatus> invocationList2 = ExtraEffectStatus.GetInvocationList(extraEffectStatus2, ChipEffectStatus.EffectTriggerType.Usually);
 				if (affectEffectFirst2.type == AffectEffect.Damage)
 				{
-					this.m_extraInheritanceSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, affectEffectFirst2, this);
+					this.m_extraInheritanceSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList2, affectEffectFirst2, this);
 				}
-				this.m_extraInheritanceSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(BattleStateManager.current.battleStateData.extraEffectStatus, affectEffectFirst2, this);
+				this.m_extraInheritanceSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList2, affectEffectFirst2, this);
 			}
 		}
 	}
@@ -1401,7 +1419,7 @@ public class CharacterStateControl
 
 	public void SpeedRandomize(bool onEnableSpeedRandomize)
 	{
-		this.randomedSpeed = (float)this.speed + (float)this.speed * this.leaderSkillResult.speedUpPercent;
+		this.randomedSpeed = (float)this.extraSpeed + (float)this.extraSpeed * this.leaderSkillResult.speedUpPercent;
 		if (onEnableSpeedRandomize)
 		{
 			this.randomedSpeed *= UnityEngine.Random.Range(0.9f, 1f);
@@ -1938,6 +1956,17 @@ public class CharacterStateControl
 			Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
 			int num = dictionary2[chipEffectId];
 			dictionary[chipEffectId] = num + value;
+		}
+	}
+
+	public void ChangeLeaderSkill(LeaderSkillStatus leaderSkillStatus, CharacterDatas characterDatas)
+	{
+		this._leaderSkillResult = new LeaderSkillResult(this, leaderSkillStatus, characterDatas);
+		this._maxHp = this.defaultMaxHp + Mathf.FloorToInt((float)this.defaultMaxHp * this.leaderSkillResult.hpUpPercent);
+		this.m_extraMaxHp = this._maxHp;
+		if (this._currentHp > this._maxHp)
+		{
+			this._currentHp = this._maxHp;
 		}
 	}
 

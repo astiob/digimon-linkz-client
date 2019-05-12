@@ -10,8 +10,8 @@ public class StageParams : MonoBehaviour
 	[SerializeField]
 	private Color skyColor = Color.black;
 
-	[SerializeField]
 	[Range(0f, 8f)]
+	[SerializeField]
 	private float sunLightIntensity = 1f;
 
 	[Range(0f, 8f)]
@@ -33,8 +33,8 @@ public class StageParams : MonoBehaviour
 	[SerializeField]
 	private Color ambientGroundColor = Color.black;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float ambientIntensity = 1f;
 
 	[SerializeField]

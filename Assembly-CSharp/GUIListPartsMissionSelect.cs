@@ -4,32 +4,32 @@ using UnityEngine;
 
 public sealed class GUIListPartsMissionSelect : GUIListPartBS
 {
-	[Header("NEWの スプライト")]
 	[SerializeField]
+	[Header("NEWの スプライト")]
 	private UISprite newSprite;
 
 	[Header("回数表示")]
 	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択してないときの外枠色")]
+	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
 	[Header("選択時の外枠色")]
 	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
 	[Header("バナー読み込み失敗時のテキスト")]

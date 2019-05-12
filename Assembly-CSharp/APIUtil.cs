@@ -286,6 +286,10 @@ public sealed class APIUtil : MonoBehaviour
 		{
 			OnReceived = new Action<GameWebAPI.RespDataUS_GetPlayerInfo>(this.OnRecievedUserStatus)
 		});
+		requestList.AddRequest(new GameWebAPI.RequestTL_GetUserTitleList
+		{
+			OnReceived = new Action<GameWebAPI.RespDataTL_GetUserTitleList>(this.OnRecievedUserTitleList)
+		});
 		if (DataMng.Instance().RespDataUS_MonsterList == null || DataMng.Instance().RespDataUS_MonsterList.userMonsterList == null || DataMng.Instance().RespDataUS_MonsterList.userMonsterList.Length == 0)
 		{
 			requestList.AddRequest(new GameWebAPI.RequestMonsterList
@@ -438,6 +442,18 @@ public sealed class APIUtil : MonoBehaviour
 		return new APIRequestTask(requestList, true);
 	}
 
+	private void OnRecievedUserTitleList(GameWebAPI.RespDataTL_GetUserTitleList responseData)
+	{
+		if (responseData.userTitleList != null)
+		{
+			TitleDataMng.userTitleList = new List<GameWebAPI.RespDataTL_GetUserTitleList.UserTitleList>(responseData.userTitleList);
+		}
+		else
+		{
+			TitleDataMng.userTitleList = new List<GameWebAPI.RespDataTL_GetUserTitleList.UserTitleList>();
+		}
+	}
+
 	private void OnRecievedDeckList(GameWebAPI.RespDataMN_GetDeckList responseData)
 	{
 		DataMng.Instance().RespDataMN_DeckList = responseData;
@@ -551,6 +567,7 @@ public sealed class APIUtil : MonoBehaviour
 			param.dungeonId = DataMng.Instance().WD_ReqDngResult.dungeonId;
 			param.clear = DataMng.Instance().WD_ReqDngResult.clear;
 			param.aliveInfo = DataMng.Instance().WD_ReqDngResult.aliveInfo;
+			param.clearRound = DataMng.Instance().WD_ReqDngResult.clearRound;
 		};
 		worldResultLogic.OnReceived = delegate(GameWebAPI.RespDataWD_DungeonResult response)
 		{
@@ -571,6 +588,7 @@ public sealed class APIUtil : MonoBehaviour
 		worldMultiResultInfoLogic.SetSendData = delegate(GameWebAPI.ReqData_WorldMultiResultInfoLogic param)
 		{
 			param.startId = startId;
+			param.clearRound = DataMng.Instance().WD_ReqDngResult.clearRound;
 		};
 		worldMultiResultInfoLogic.OnReceived = delegate(GameWebAPI.RespData_WorldMultiResultInfoLogic response)
 		{

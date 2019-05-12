@@ -36,12 +36,12 @@ public class CameraSwitcher : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_cam;
 
-	[SerializeField]
 	[Header("サブカメラ")]
+	[SerializeField]
 	private GameObject obj_cam2;
 
-	[Header("カメラポジションルート")]
 	[SerializeField]
+	[Header("カメラポジションルート")]
 	private GameObject obj_camposroot;
 
 	private void Start()

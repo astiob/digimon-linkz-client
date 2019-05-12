@@ -19,6 +19,8 @@ public enum BattleScreen
 	RevivalCharacter,
 	Continue,
 	RoundStartActions,
+	RoundStartActionsLimit,
+	RoundStartActionsChallenge,
 	NextBattle,
 	PlayerWinner,
 	PlayerFailed,

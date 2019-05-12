@@ -94,10 +94,6 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 			this.currentCharacter.CharacterParams.gameObject.SetActive(false);
 			StopSkillAnim();
 		};
-		base.stateManager.threeDAction.MotionResetAliveCharacterActionVoid(new CharacterStateControl[]
-		{
-			this.currentCharacter
-		});
 		yield break;
 	}
 

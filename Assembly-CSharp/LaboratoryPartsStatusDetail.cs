@@ -47,7 +47,10 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			this.monsterBasicInfo.ClearMonsterData();
 		}
 		this.statusList.ClearValues();
-		this.medalList.SetActive(false);
+		if (this.medalList != null)
+		{
+			this.medalList.SetActive(false);
+		}
 		if (null != this.resistanceList)
 		{
 			this.resistanceList.ClearValues();
@@ -69,14 +72,20 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			this.statusList.SetValues(monsterData, false);
 			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = monsterData.AddResistanceFromMultipleTranceData();
 			this.resistanceList.SetValues(values);
-			this.medalList.SetValues(monsterData.userMonster);
+			if (this.medalList != null)
+			{
+				this.medalList.SetValues(monsterData.userMonster);
+			}
 		}
 	}
 
 	public void ClearDigitamaStatus()
 	{
 		this.statusList.ClearEggCandidateMedalValues();
-		this.eggMedalList.SetActive(false);
+		if (this.eggMedalList != null)
+		{
+			this.eggMedalList.SetActive(false);
+		}
 		this.charaIcon.spriteName = "Common02_Thumbnail_none";
 	}
 
@@ -92,8 +101,11 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			this.digitamaFrame.spriteName = "Common02_Thumbnail_wakuQ";
 			this.statusList.FriendshipLabel.text = "0";
 			this.statusList.LuckLabel.text = eggStatus.luck;
-			this.eggMedalList.SetValues(eggStatus);
-			this.statusList.SetEggCandidateMedalValues(eggStatus);
+			if (this.eggMedalList != null)
+			{
+				this.eggMedalList.SetValues(eggStatus);
+				this.statusList.SetEggCandidateMedalValues(eggStatus);
+			}
 			if (this.eggArousalIcon != null)
 			{
 				this.SetArousalValue(eggStatus.isArousal, eggStatus.rare);

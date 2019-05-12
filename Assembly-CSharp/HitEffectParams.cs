@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Hit Effect Params")]
+[DisallowMultipleComponent]
 public class HitEffectParams : EffectParams
 {
-	[SerializeField]
 	[FormerlySerializedAs("target")]
+	[SerializeField]
 	private CharacterTarget _target;
 
 	[SerializeField]

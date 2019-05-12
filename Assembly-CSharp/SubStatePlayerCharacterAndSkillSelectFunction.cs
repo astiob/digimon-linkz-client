@@ -14,14 +14,6 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 	{
 	}
 
-	public bool enableRotateCam
-	{
-		get
-		{
-			return base.battleStateData.enableRotateCam;
-		}
-	}
-
 	protected override void EnabledThisState()
 	{
 		this.isOutCharacterView = false;
@@ -43,7 +35,7 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			base.stateManager.uiControl.HideCharacterHUDFunction();
 			base.stateManager.SetBattleScreen(BattleScreen.SkillSelects);
 			base.stateManager.uiControl.ShowCharacterHUDFunction(base.battleStateData.GetTotalCharacters());
-			if (this.enableRotateCam)
+			if (base.battleStateData.enableRotateCam)
 			{
 				if (base.battleMode != BattleMode.PvP)
 				{
@@ -85,7 +77,7 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			if (!this.isOutCharacterView && !base.stateManager.time.isPause && Input.GetKeyUp(KeyCode.Mouse0))
 			{
 				this.isOutCharacterView = true;
-				if (this.enableRotateCam)
+				if (base.battleStateData.enableRotateCam)
 				{
 					base.stateManager.cameraControl.StopCameraMotionAction("0007_commandCharaView");
 					base.stateManager.cameraControl.StopCameraMotionAction("BigBoss/0007_commandCharaView");

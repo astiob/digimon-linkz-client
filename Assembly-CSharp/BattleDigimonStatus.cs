@@ -104,41 +104,27 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	private UIComponentSkinner arousal;
 
 	[SerializeField]
-	private UIComponentSkinner talentHP;
-
-	[SerializeField]
-	private UIComponentSkinner talentATK;
-
-	[SerializeField]
-	private UIComponentSkinner talentDEF;
-
-	[SerializeField]
-	private UIComponentSkinner talentSATK;
-
-	[SerializeField]
-	private UIComponentSkinner talentSDEF;
-
-	[SerializeField]
-	private UIComponentSkinner talentSPD;
+	[Header("各才能メダルの表示切り替え")]
+	private MonsterMedalList MonsterMedalList;
 
 	[SerializeField]
 	[Header("Lvローカライズ")]
 	private UILabel lvLocalize;
 
-	[Header("HPローカライズ")]
 	[SerializeField]
+	[Header("HPローカライズ")]
 	private UILabel hpLocalize;
 
 	[Header("友情度ローカライズ")]
 	[SerializeField]
 	private UILabel friendLocalize;
 
-	[SerializeField]
 	[Header("ATKローカライズ")]
+	[SerializeField]
 	private UILabel atkLocalize;
 
-	[Header("DEFローカライズ")]
 	[SerializeField]
+	[Header("DEFローカライズ")]
 	private UILabel defLocalize;
 
 	[Header("SATKローカライズ")]
@@ -165,8 +151,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel skill1Localize;
 
-	[Header("継承技ローカライズ")]
 	[SerializeField]
+	[Header("継承技ローカライズ")]
 	private UILabel skill2Localize;
 
 	[SerializeField]
@@ -258,13 +244,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 		this.stageGimmickObject.SetActive(num > 0);
 		this.arousal.SetSkins(characterStatus.arousal);
 		base.SetupTolerance(characterStatus);
-		int[] talentSetSkin = BattleUIControlBasic.GetTalentSetSkin(characterStatus.talent);
-		this.talentHP.SetSkins(talentSetSkin[0]);
-		this.talentATK.SetSkins(talentSetSkin[1]);
-		this.talentDEF.SetSkins(talentSetSkin[2]);
-		this.talentSATK.SetSkins(talentSetSkin[3]);
-		this.talentSDEF.SetSkins(talentSetSkin[4]);
-		this.talentSPD.SetSkins(talentSetSkin[5]);
+		this.MonsterMedalList.SetValues(characterStatus.talent);
 		for (int i = 0; i < this.chipIcons.Length; i++)
 		{
 			if (i < characterStatus.chipIds.Length)

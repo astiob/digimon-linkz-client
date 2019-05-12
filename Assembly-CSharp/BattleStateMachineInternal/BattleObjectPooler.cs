@@ -10,8 +10,6 @@ namespace BattleStateMachineInternal
 
 		private static BattleObjectPoolerManager manager = null;
 
-		private static Dictionary<string, CameraParams> cameraParamsCache = new Dictionary<string, CameraParams>();
-
 		private static Dictionary<string, List<HitEffectParams>> hitEffectParamsCache = new Dictionary<string, List<HitEffectParams>>();
 
 		private static Dictionary<string, List<AlwaysEffectParams>> alwaysEffectParamsCache = new Dictionary<string, List<AlwaysEffectParams>>();
@@ -99,28 +97,29 @@ namespace BattleStateMachineInternal
 		private static void CheckAndRemoveNull()
 		{
 			List<string> list = new List<string>();
-			string[] array = new string[BattleObjectPooler.cameraParamsCache.Keys.Count];
-			if (BattleObjectPooler.cameraParamsCache.ContainsValue(null))
-			{
-				array = new string[BattleObjectPooler.cameraParamsCache.Keys.Count];
-				BattleObjectPooler.cameraParamsCache.Keys.CopyTo(array, 0);
-				list.AddRange(array);
-				foreach (KeyValuePair<string, CameraParams> keyValuePair in BattleObjectPooler.cameraParamsCache)
-				{
-					if (keyValuePair.Value != null)
-					{
-						list.Remove(keyValuePair.Key);
-					}
-				}
-				foreach (string key in array)
-				{
-					BattleObjectPooler.cameraParamsCache.Remove(key);
-				}
-			}
+			string[] array = null;
 			list.Clear();
 			array = new string[BattleObjectPooler.hitEffectParamsCache.Keys.Count];
 			BattleObjectPooler.hitEffectParamsCache.Keys.CopyTo(array, 0);
-			foreach (KeyValuePair<string, List<HitEffectParams>> keyValuePair2 in BattleObjectPooler.hitEffectParamsCache)
+			foreach (KeyValuePair<string, List<HitEffectParams>> keyValuePair in BattleObjectPooler.hitEffectParamsCache)
+			{
+				if (keyValuePair.Value.Count <= 0)
+				{
+					list.Add(keyValuePair.Key);
+				}
+				else
+				{
+					keyValuePair.Value.Remove(null);
+				}
+			}
+			foreach (string key in array)
+			{
+				BattleObjectPooler.hitEffectParamsCache.Remove(key);
+			}
+			list.Clear();
+			array = new string[BattleObjectPooler.alwaysEffectParamsCache.Keys.Count];
+			BattleObjectPooler.alwaysEffectParamsCache.Keys.CopyTo(array, 0);
+			foreach (KeyValuePair<string, List<AlwaysEffectParams>> keyValuePair2 in BattleObjectPooler.alwaysEffectParamsCache)
 			{
 				if (keyValuePair2.Value.Count <= 0)
 				{
@@ -133,47 +132,24 @@ namespace BattleStateMachineInternal
 			}
 			foreach (string key2 in array)
 			{
-				BattleObjectPooler.hitEffectParamsCache.Remove(key2);
-			}
-			list.Clear();
-			array = new string[BattleObjectPooler.alwaysEffectParamsCache.Keys.Count];
-			BattleObjectPooler.alwaysEffectParamsCache.Keys.CopyTo(array, 0);
-			foreach (KeyValuePair<string, List<AlwaysEffectParams>> keyValuePair3 in BattleObjectPooler.alwaysEffectParamsCache)
-			{
-				if (keyValuePair3.Value.Count <= 0)
-				{
-					list.Add(keyValuePair3.Key);
-				}
-				else
-				{
-					keyValuePair3.Value.Remove(null);
-				}
-			}
-			foreach (string key3 in array)
-			{
-				BattleObjectPooler.alwaysEffectParamsCache.Remove(key3);
+				BattleObjectPooler.alwaysEffectParamsCache.Remove(key2);
 			}
 		}
 
 		public static void SetAllDeactive()
 		{
 			BattleObjectPooler.CheckAndRemoveNull();
-			foreach (KeyValuePair<string, CameraParams> keyValuePair in BattleObjectPooler.cameraParamsCache)
+			foreach (KeyValuePair<string, List<HitEffectParams>> keyValuePair in BattleObjectPooler.hitEffectParamsCache)
 			{
-				keyValuePair.Value.transform.SetParent(BattleObjectPooler.cacheRoot);
-				keyValuePair.Value.gameObject.SetActive(false);
-			}
-			foreach (KeyValuePair<string, List<HitEffectParams>> keyValuePair2 in BattleObjectPooler.hitEffectParamsCache)
-			{
-				foreach (HitEffectParams hitEffectParams in keyValuePair2.Value)
+				foreach (HitEffectParams hitEffectParams in keyValuePair.Value)
 				{
 					hitEffectParams.transform.SetParent(BattleObjectPooler.cacheRoot);
 					hitEffectParams.gameObject.SetActive(false);
 				}
 			}
-			foreach (KeyValuePair<string, List<AlwaysEffectParams>> keyValuePair3 in BattleObjectPooler.alwaysEffectParamsCache)
+			foreach (KeyValuePair<string, List<AlwaysEffectParams>> keyValuePair2 in BattleObjectPooler.alwaysEffectParamsCache)
 			{
-				foreach (AlwaysEffectParams alwaysEffectParams in keyValuePair3.Value)
+				foreach (AlwaysEffectParams alwaysEffectParams in keyValuePair2.Value)
 				{
 					alwaysEffectParams.transform.SetParent(BattleObjectPooler.cacheRoot);
 					alwaysEffectParams.gameObject.SetActive(false);
@@ -208,17 +184,9 @@ namespace BattleStateMachineInternal
 		public static void AllUnloadAssets()
 		{
 			BattleObjectPooler.CheckAndRemoveNull();
-			foreach (KeyValuePair<string, CameraParams> keyValuePair in BattleObjectPooler.cameraParamsCache)
+			foreach (KeyValuePair<string, List<HitEffectParams>> keyValuePair in BattleObjectPooler.hitEffectParamsCache)
 			{
-				if (keyValuePair.Value.gameObject != null)
-				{
-					UnityEngine.Object.Destroy(keyValuePair.Value.gameObject);
-				}
-			}
-			BattleObjectPooler.cameraParamsCache.Clear();
-			foreach (KeyValuePair<string, List<HitEffectParams>> keyValuePair2 in BattleObjectPooler.hitEffectParamsCache)
-			{
-				foreach (HitEffectParams hitEffectParams in keyValuePair2.Value)
+				foreach (HitEffectParams hitEffectParams in keyValuePair.Value)
 				{
 					if (hitEffectParams.gameObject != null)
 					{
@@ -227,9 +195,9 @@ namespace BattleStateMachineInternal
 				}
 			}
 			BattleObjectPooler.hitEffectParamsCache.Clear();
-			foreach (KeyValuePair<string, List<AlwaysEffectParams>> keyValuePair3 in BattleObjectPooler.alwaysEffectParamsCache)
+			foreach (KeyValuePair<string, List<AlwaysEffectParams>> keyValuePair2 in BattleObjectPooler.alwaysEffectParamsCache)
 			{
-				foreach (AlwaysEffectParams alwaysEffectParams in keyValuePair3.Value)
+				foreach (AlwaysEffectParams alwaysEffectParams in keyValuePair2.Value)
 				{
 					if (alwaysEffectParams.gameObject != null)
 					{

@@ -4,6 +4,7 @@ using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Title;
 using UnityEngine;
 
 public sealed class GUIScreenTitle : GUIScreen
@@ -186,8 +187,9 @@ public sealed class GUIScreenTitle : GUIScreen
 		APIUtil.Instance().alertOnlyCloseButton = true;
 		yield return base.StartCoroutine(StoreInit.Instance().InitRestoreOperation());
 		APIUtil.Instance().alertOnlyCloseButton = false;
+		AgreementConsent agreementConsent = new AgreementConsent();
 		bool isAgreement = false;
-		yield return base.StartCoroutine(this.AgreementConsent(delegate(bool result)
+		yield return base.StartCoroutine(agreementConsent.CheckAgreement(delegate(bool result)
 		{
 			isAgreement = result;
 		}));
@@ -209,38 +211,6 @@ public sealed class GUIScreenTitle : GUIScreen
 			yield break;
 		}
 		ScreenController.ChangeHomeScreen(CMD_Tips.DISPLAY_PLACE.TitleToFarm);
-		yield break;
-	}
-
-	private IEnumerator AgreementConsent(Action<bool> completed)
-	{
-		bool agreement = true;
-		GameWebAPI.RespDataCM_Login.TutorialStatus tutorialStatus = DataMng.Instance().RespDataCM_Login.tutorialStatus;
-		if ("0" == tutorialStatus.endFlg && "0" == tutorialStatus.statusId)
-		{
-			RestrictionInput.SuspensionLoad();
-			bool popupOpen = true;
-			CMD_AgreementConsent popDialog = GUIMain.ShowCommonDialog(delegate(int x)
-			{
-				popupOpen = false;
-			}, "CMD_AgreementConsent") as CMD_AgreementConsent;
-			popDialog.SetActionAgreementPopupClosed(delegate(bool x)
-			{
-				agreement = x;
-			});
-			while (popupOpen)
-			{
-				yield return null;
-			}
-			if (agreement)
-			{
-				RestrictionInput.ResumeLoad();
-			}
-		}
-		if (completed != null)
-		{
-			completed(agreement);
-		}
 		yield break;
 	}
 

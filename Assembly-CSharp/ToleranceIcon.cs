@@ -12,6 +12,9 @@ public class ToleranceIcon : MonoBehaviour
 	[SerializeField]
 	private GameObject weakIcon;
 
+	[SerializeField]
+	private GameObject drainIcon;
+
 	public void SetActive(bool value)
 	{
 		if (base.gameObject.activeSelf != value)
@@ -25,5 +28,6 @@ public class ToleranceIcon : MonoBehaviour
 		this.defaultIcon.SetActive(iconType == Strength.None);
 		this.strongIcon.SetActive(iconType == Strength.Strong || iconType == Strength.Invalid);
 		this.weakIcon.SetActive(iconType == Strength.Weak);
+		this.drainIcon.SetActive(iconType == Strength.Drain);
 	}
 }

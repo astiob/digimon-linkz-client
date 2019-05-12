@@ -26,16 +26,16 @@ public sealed class ChipBaseSelect : MonoBehaviour
 	[SerializeField]
 	private BaseSelectChipCell[] chipCells;
 
-	[Header("チップのラベル")]
 	[SerializeField]
+	[Header("チップのラベル")]
 	private UILabel chipLabel;
 
-	[SerializeField]
 	[Header("チップがないメッセージ")]
+	[SerializeField]
 	private UILabel noChipLabel;
 
-	[SerializeField]
 	[Header("分数ラベル(パーティ編成限定)")]
+	[SerializeField]
 	private UILabel fractionLabel;
 
 	private int myMaxChipSlot;

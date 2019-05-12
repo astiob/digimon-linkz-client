@@ -76,6 +76,8 @@ public class BattleServerControl : BattleFunctionBase
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.GetWorldDungeonM(respDataWD_DungeonStart.worldDungeonId);
 		base.hierarchyData.useStageId = worldDungeonM.background;
 		base.hierarchyData.areaName = worldDungeonM.name;
+		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
 		{
@@ -90,6 +92,7 @@ public class BattleServerControl : BattleFunctionBase
 		base.hierarchyData.batteWaves = this.DungeonFloorToBattleWave(respDataWD_DungeonStart.dungeonFloor, respDataWD_DungeonStart.worldDungeonId);
 		base.hierarchyData.digiStoneNumber = DataMng.Instance().GetStone();
 		base.battleStateData.beforeConfirmDigiStoneNumber = base.hierarchyData.digiStoneNumber;
+		base.hierarchyData.isPossibleContinue = (int.Parse(worldDungeonM.canContinue) == 1);
 		string[] array2 = new string[this._cachedLeaderSkillM.Keys.Count];
 		this._cachedLeaderSkillM.Keys.CopyTo(array2, 0);
 		base.hierarchyData.useInitialIntroduction = DataMng.Instance().IsBattleFailShowDungeon;
@@ -231,19 +234,14 @@ public class BattleServerControl : BattleFunctionBase
 		string commonSkillId = monsterDataByUserMonsterID.userMonster.commonSkillId;
 		string text = monsterDataByUserMonsterID.userMonster.leaderSkillId.Equals("0") ? string.Empty : monsterDataByUserMonsterID.userMonster.leaderSkillId;
 		string iconId = monsterDataByUserMonsterID.monsterM.iconId;
-		TalentLevel hp2 = ServerToBattleUtility.IntToTalentLevel(monsterDataByUserMonsterID.userMonster.hpAbilityFlg);
-		TalentLevel attack = ServerToBattleUtility.IntToTalentLevel(monsterDataByUserMonsterID.userMonster.attackAbilityFlg);
-		TalentLevel defence = ServerToBattleUtility.IntToTalentLevel(monsterDataByUserMonsterID.userMonster.defenseAbilityFlg);
-		TalentLevel specialAttack = ServerToBattleUtility.IntToTalentLevel(monsterDataByUserMonsterID.userMonster.spAttackAbilityFlg);
-		TalentLevel specialDefence = ServerToBattleUtility.IntToTalentLevel(monsterDataByUserMonsterID.userMonster.spDefenseAbilityFlg);
-		TalentLevel speed2 = ServerToBattleUtility.IntToTalentLevel(monsterDataByUserMonsterID.userMonster.speedAbilityFlg);
-		Talent talent = new Talent(hp2, attack, defence, specialAttack, specialDefence, speed2);
+		Talent talent = new Talent(monsterDataByUserMonsterID.userMonster);
 		FriendshipStatus friendshipStatus = new FriendshipStatus(friendshipLevel, maxAttackPower, maxDefencePower, maxSpecialAttackPower, maxSpecialDefencePower, maxSpeed);
 		if (!this._cachedTolerance.ContainsKey(resistanceId.Trim()))
 		{
 			this._cachedTolerance.Add(resistanceId.Trim(), this.ResistanceToTolerance(resistanceId));
 		}
-		ToleranceShifter arousalTolerance = this.GetArousalTolerance(monsterDataByUserMonsterID, this._cachedTolerance[resistanceId]);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = monsterDataByUserMonsterID.AddResistanceFromMultipleTranceData();
+		Tolerance tolerance = this.ResistanceToTolerance(data);
 		List<int> list = new List<int>();
 		if (monsterDataByUserMonsterID.userMonsterSlotInfo != null && monsterDataByUserMonsterID.userMonsterSlotInfo.equip != null)
 		{
@@ -253,7 +251,7 @@ public class BattleServerControl : BattleFunctionBase
 				list.Add(userChipDataByUserChipId.chipId);
 			}
 		}
-		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, arousalTolerance, luck, uniqueSkillId, commonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
+		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
 		if (!this._cachedSkillStatus.ContainsKey(uniqueSkillId.Trim()))
 		{
 			this._cachedSkillStatus.Add(uniqueSkillId.Trim(), this.SkillMToSkillStatus(uniqueSkillId));
@@ -362,7 +360,11 @@ public class BattleServerControl : BattleFunctionBase
 			ItemDropResult item3 = new ItemDropResult(false);
 			list3.Add(item3);
 		}
-		int[] chipIdList = new int[0];
+		int[] chipIdList = enemy.chipIdList;
+		if (enemy.chipIdList == null)
+		{
+			chipIdList = new int[0];
+		}
 		EnemyStatus result = new EnemyStatus(monsterGroupId, hp, attack, defense, spAttack, spDefense, speed, level, resistanceId, enemyAiPattern, fixedMoney, fixedExp, list3, chipIdList);
 		if (!this._cachedTolerance.ContainsKey(resistanceId.Trim()))
 		{
@@ -432,7 +434,15 @@ public class BattleServerControl : BattleFunctionBase
 							LeaderSkillType leaderSkillType = ServerToBattleUtility.IntToLeaderSkillType(skillDetailM[j].effectType);
 							float hpFollowingPercent = (!ServerToBattleUtility.GetOnHpFollowingLeaderSkill(leaderSkillType)) ? 0f : ServerToBattleUtility.PermillionToPercentage(skillDetailM[j].effect2);
 							float upPercent = ServerToBattleUtility.PermillionToPercentage(skillDetailM[j].effect1);
-							ToleranceShifter tolerance = (leaderSkillType != LeaderSkillType.ToleranceUp) ? new ToleranceShifter() : ServerToBattleUtility.IntToToleranceShifter(skillDetailM[j].effect3, skillDetailM[j].effect4, skillDetailM[j].effect5, skillDetailM[j].effect6, skillDetailM[j].effect7, skillDetailM[j].effect8, skillDetailM[j].effect9, skillDetailM[j].effect10, skillDetailM[j].effect11, skillDetailM[j].effect12, skillDetailM[j].effect13, skillDetailM[j].effect14, skillDetailM[j].effect15, skillDetailM[j].effect16);
+							Tolerance tolerance;
+							if (leaderSkillType == LeaderSkillType.ToleranceUp)
+							{
+								tolerance = new Tolerance((Strength)skillDetailM[j].effect3, (Strength)skillDetailM[j].effect4, (Strength)skillDetailM[j].effect5, (Strength)skillDetailM[j].effect6, (Strength)skillDetailM[j].effect7, (Strength)skillDetailM[j].effect8, (Strength)skillDetailM[j].effect9, (Strength)skillDetailM[j].effect10, (Strength)skillDetailM[j].effect11, (Strength)skillDetailM[j].effect12, (Strength)skillDetailM[j].effect13, (Strength)skillDetailM[j].effect14, (Strength)skillDetailM[j].effect15, (Strength)skillDetailM[j].effect16);
+							}
+							else
+							{
+								tolerance = Tolerance.GetNutralTolerance();
+							}
 							leaderSkillStatus = new LeaderSkillStatus(name, description, leaderSkillType, hpFollowingPercent, upPercent, tolerance);
 							break;
 						}
@@ -496,12 +506,23 @@ public class BattleServerControl : BattleFunctionBase
 		return tolerance;
 	}
 
-	public ToleranceShifter GetArousalTolerance(MonsterData monsterData, Tolerance basedTolerance)
+	public Tolerance ResistanceToTolerance(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data)
 	{
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM userMonsterTranceData = monsterData.GetUserMonsterTranceData();
-		Strength strength = ServerToBattleUtility.IntToStrength(1);
-		Tolerance overrideTolerance = new Tolerance((userMonsterTranceData.none.ToInt32() == 0) ? basedTolerance.none : strength, (userMonsterTranceData.fire.ToInt32() == 0) ? basedTolerance.red : strength, (userMonsterTranceData.water.ToInt32() == 0) ? basedTolerance.blue : strength, (userMonsterTranceData.thunder.ToInt32() == 0) ? basedTolerance.yellow : strength, (userMonsterTranceData.nature.ToInt32() == 0) ? basedTolerance.green : strength, (userMonsterTranceData.light.ToInt32() == 0) ? basedTolerance.white : strength, (userMonsterTranceData.dark.ToInt32() == 0) ? basedTolerance.black : strength, (userMonsterTranceData.poison.ToInt32() == 0) ? basedTolerance.poison : strength, (userMonsterTranceData.confusion.ToInt32() == 0) ? basedTolerance.confusion : strength, (userMonsterTranceData.paralysis.ToInt32() == 0) ? basedTolerance.paralysis : strength, (userMonsterTranceData.sleep.ToInt32() == 0) ? basedTolerance.sleep : strength, (userMonsterTranceData.stun.ToInt32() == 0) ? basedTolerance.stun : strength, (userMonsterTranceData.skillLock.ToInt32() == 0) ? basedTolerance.skillLock : strength, (userMonsterTranceData.death.ToInt32() == 0) ? basedTolerance.instantDeath : strength);
-		return overrideTolerance - basedTolerance;
+		Strength noneValue = ServerToBattleUtility.IntToStrength(data.none);
+		Strength redValue = ServerToBattleUtility.IntToStrength(data.fire);
+		Strength blueValue = ServerToBattleUtility.IntToStrength(data.water);
+		Strength yellowValue = ServerToBattleUtility.IntToStrength(data.thunder);
+		Strength greenValue = ServerToBattleUtility.IntToStrength(data.nature);
+		Strength whiteValue = ServerToBattleUtility.IntToStrength(data.light);
+		Strength blackValue = ServerToBattleUtility.IntToStrength(data.dark);
+		Strength poisonValue = ServerToBattleUtility.IntToStrength(data.poison);
+		Strength confusionValue = ServerToBattleUtility.IntToStrength(data.confusion);
+		Strength paralysisValue = ServerToBattleUtility.IntToStrength(data.paralysis);
+		Strength sleepValue = ServerToBattleUtility.IntToStrength(data.sleep);
+		Strength stunValue = ServerToBattleUtility.IntToStrength(data.stun);
+		Strength skillLockValue = ServerToBattleUtility.IntToStrength(data.skillLock);
+		Strength instantDeathValue = ServerToBattleUtility.IntToStrength(data.death);
+		return new Tolerance(noneValue, redValue, blueValue, yellowValue, greenValue, whiteValue, blackValue, poisonValue, confusionValue, paralysisValue, sleepValue, stunValue, skillLockValue, instantDeathValue);
 	}
 
 	public string[] SetWorldDungeonExtraEffect(string dungeonId)

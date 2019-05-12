@@ -43,6 +43,10 @@ public class BattleStatePvPTimeOver : BattleStateController
 
 	private IEnumerator PlayerFailedAction()
 	{
+		if (BattleStateManager.current.onServerConnect)
+		{
+			DataMng.Instance().WD_ReqDngResult.clearRound = 0;
+		}
 		base.stateManager.soundPlayer.TryStopBGM();
 		base.stateManager.time.SetPlaySpeed(false, false);
 		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();

@@ -7,8 +7,8 @@ public class BattleAutoMenu : MonoBehaviour
 	[Header("Autoボタン")]
 	private UIButton autoButton;
 
-	[Header("Autoのスキナー")]
 	[SerializeField]
+	[Header("Autoのスキナー")]
 	private UIComponentSkinner autoSkinner;
 
 	public void AddEvent(Action callback)

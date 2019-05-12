@@ -10,30 +10,30 @@ public class RoundStart : MonoBehaviour
 
 	[SerializeField]
 	[Header("ApHpUp_Rootのスキナー")]
-	private UIComponentSkinner apHpUpRootSkinner;
+	protected UIComponentSkinner apHpUpRootSkinner;
 
 	[Header("ラウンドのローカライズ")]
 	[SerializeField]
-	private UILabel roundLocalize;
+	protected UILabel roundLocalize;
 
-	[Header("AP UPローカライズ(片方の時)")]
 	[SerializeField]
-	private UILabel onlyApUpLocalize;
+	[Header("AP UPローカライズ(片方の時)")]
+	protected UILabel onlyApUpLocalize;
 
 	[Header("AP UPローカライズ(両方)")]
 	[SerializeField]
-	private UILabel apUpLocalize;
+	protected UILabel apUpLocalize;
 
 	[Header("HP回復ローカライズ")]
 	[SerializeField]
-	private UILabel hpRecoverLocalize;
+	protected UILabel hpRecoverLocalize;
 
 	private void Awake()
 	{
 		this.SetupLocalize();
 	}
 
-	private void SetupLocalize()
+	protected void SetupLocalize()
 	{
 		this.onlyApUpLocalize.text = StringMaster.GetString("BattleNotice-03");
 		this.apUpLocalize.text = StringMaster.GetString("BattleNotice-03");

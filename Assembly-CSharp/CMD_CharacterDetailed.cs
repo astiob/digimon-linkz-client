@@ -11,21 +11,21 @@ public sealed class CMD_CharacterDetailed : CMD
 {
 	private static CMD_CharacterDetailed instance;
 
-	[SerializeField]
 	[Header("チップ")]
+	[SerializeField]
 	private ChipBaseSelect chipBaseSelect;
 
-	[Header("パーティクルの位置")]
 	[SerializeField]
+	[Header("パーティクルの位置")]
 	private Vector3 particlePos = new Vector3(340f, 30f, 0f);
 
 	[SerializeField]
 	[Header("覚醒パーティクルの位置")]
 	private Vector3 particleAwakeningPos = new Vector3(235f, 30f, 0f);
 
-	[Header("覚醒アイコンパーティクルの位置")]
 	[SerializeField]
 	[Header("レベルアップの位置")]
+	[Header("覚醒アイコンパーティクルの位置")]
 	private Vector3 levelUpPos;
 
 	[SerializeField]

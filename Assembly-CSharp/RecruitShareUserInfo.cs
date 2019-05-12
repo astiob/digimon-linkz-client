@@ -8,6 +8,8 @@ public sealed class RecruitShareUserInfo : TCPData<RecruitShareUserInfo>
 
 	public string nickname;
 
+	public string titleId;
+
 	public int positionNumber;
 
 	public bool isRequestMemberData;

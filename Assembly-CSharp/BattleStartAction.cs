@@ -4,44 +4,100 @@ using UnityEngine;
 
 public class BattleStartAction : MonoBehaviour
 {
-	[Header("味方スキル発動ローカライズ")]
+	[Header("タイトル")]
 	[SerializeField]
-	private UILabel leaderSkillLocalize;
+	private GameObject titleRoot;
+
+	[Header("味方のリーダースキルのUI")]
+	[SerializeField]
+	private BattleStartAction.LeaderSkillUI playerLeaderSkillUI;
+
+	[Header("敵のリーダースキルのUI")]
+	[SerializeField]
+	private BattleStartAction.LeaderSkillUI enemyLeaderSkillUI;
 
 	[SerializeField]
-	[Header("敵スキル発動ローカライズ(PvPのみ)")]
-	private UILabel leaderSkillEnemyLocalize;
+	[Header("VSの時のメッセージ")]
+	public UIWidget pvpVSUi;
 
-	[SerializeField]
-	[Header("リーダースキルのオブジェクト")]
-	private GameObject leaderSkillUIPlayer;
-
-	[SerializeField]
-	[Header("敵のリーダースキルのオブジェクト(PvPのみ)")]
-	private GameObject leaderSkillUIEnemy;
-
-	[Header("リーダースキルの名前")]
-	[SerializeField]
-	private UILabel leaderSkillNamePlayer;
-
-	[Header("敵のリーダースキルの名前(PvPのみ)")]
-	[SerializeField]
-	private UILabel leaderSkillNameEnemy;
-
-	public void ApplyBattleStartActionText(bool isHavingLeaderSkill, string leaderSkillName = "")
+	public void SetActive(bool value)
 	{
-		this.leaderSkillLocalize.text = StringMaster.GetString("BattleNotice-05");
-		this.leaderSkillNamePlayer.text = leaderSkillName;
-		this.leaderSkillUIPlayer.SetActive(isHavingLeaderSkill);
+		if (!value)
+		{
+			this.playerLeaderSkillUI.leaderSkillLocalize.text = string.Empty;
+			this.playerLeaderSkillUI.leaderSkillNamePlayer.text = string.Empty;
+			this.playerLeaderSkillUI.leaderSkillUIPlayer.SetActive(false);
+			this.enemyLeaderSkillUI.leaderSkillLocalize.text = string.Empty;
+			this.enemyLeaderSkillUI.leaderSkillNamePlayer.text = string.Empty;
+			this.enemyLeaderSkillUI.leaderSkillUIPlayer.SetActive(false);
+		}
+		base.gameObject.SetActive(value);
 	}
 
-	public void ApplyBattleStartActionText(bool isHavingLeaderSkill, string leaderSkillName, bool isHavingEnemyLeaderSkill, string enemyLeaderSkillName)
+	public void ApplyBattleStartActionTitle(bool value)
 	{
-		this.leaderSkillLocalize.text = StringMaster.GetString("BattleNotice-05");
-		this.leaderSkillEnemyLocalize.text = StringMaster.GetString("BattleNotice-05");
-		this.leaderSkillNamePlayer.text = leaderSkillName;
-		this.leaderSkillUIPlayer.SetActive(isHavingLeaderSkill);
-		this.leaderSkillNameEnemy.text = enemyLeaderSkillName;
-		this.leaderSkillUIEnemy.SetActive(isHavingEnemyLeaderSkill);
+		this.titleRoot.SetActive(value);
+	}
+
+	public void ApplyPlayerLeaderSkill(bool isHavingLeaderSkill, string leaderSkillName, bool isChange = false)
+	{
+		this.ApplyLeaderSkill(this.playerLeaderSkillUI, isHavingLeaderSkill, leaderSkillName, isChange);
+	}
+
+	public void ApplyEnemyLeaderSkill(bool isHavingLeaderSkill, string leaderSkillName, bool isChange = false)
+	{
+		this.ApplyLeaderSkill(this.enemyLeaderSkillUI, isHavingLeaderSkill, leaderSkillName, isChange);
+	}
+
+	private void ApplyLeaderSkill(BattleStartAction.LeaderSkillUI leaderSkillUI, bool isHavingLeaderSkill, string leaderSkillName, bool isChange = false)
+	{
+		if (isChange)
+		{
+			leaderSkillUI.leaderSkillLocalize.text = StringMaster.GetString("BattleNotice-17");
+		}
+		else
+		{
+			leaderSkillUI.leaderSkillLocalize.text = StringMaster.GetString("BattleNotice-05");
+		}
+		if (string.IsNullOrEmpty(leaderSkillName))
+		{
+			leaderSkillUI.leaderSkillNamePlayer.text = StringMaster.GetString("BattleNotice-18");
+		}
+		else
+		{
+			leaderSkillUI.leaderSkillNamePlayer.text = leaderSkillName;
+		}
+		leaderSkillUI.leaderSkillLocalize.gameObject.SetActive(isHavingLeaderSkill);
+		leaderSkillUI.leaderSkillNamePlayer.gameObject.SetActive(isHavingLeaderSkill);
+		leaderSkillUI.leaderSkillUIPlayer.SetActive(isHavingLeaderSkill);
+	}
+
+	public void ApplyVSUI(bool value)
+	{
+		if (value)
+		{
+			this.pvpVSUi.gameObject.SetActive(value);
+			SoundPlayer.PlayBattleVSSE();
+		}
+		else
+		{
+			this.pvpVSUi.gameObject.SetActive(value);
+		}
+	}
+
+	[Serializable]
+	private struct LeaderSkillUI
+	{
+		[SerializeField]
+		[Header("味方スキル発動ローカライズ")]
+		public UILabel leaderSkillLocalize;
+
+		[Header("リーダースキルのオブジェクト")]
+		[SerializeField]
+		public GameObject leaderSkillUIPlayer;
+
+		[SerializeField]
+		[Header("リーダースキルの名前")]
+		public UILabel leaderSkillNamePlayer;
 	}
 }

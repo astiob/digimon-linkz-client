@@ -56,6 +56,8 @@ namespace BattleStateMachineInternal
 
 		public int limitRound = -1;
 
+		public int speedClearRound = -1;
+
 		public bool onAutoPlay;
 
 		public bool on2xSpeedPlay;

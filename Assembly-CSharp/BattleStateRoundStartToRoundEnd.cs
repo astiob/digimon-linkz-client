@@ -104,6 +104,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		base.AddState(this.subStateWaitRandomSeedSync);
 		this.subStateWaitForCertainPeriodTimeAction = new SubStateWaitForCertainPeriodTimeAction(null, new Action<EventState>(base.SendEventState));
 		base.AddState(this.subStateWaitForCertainPeriodTimeAction);
+		base.AddState(new SubStatePlayStageEffect(null, new Action<EventState>(base.SendEventState)));
 	}
 
 	protected override void EnabledThisState()
@@ -266,6 +267,12 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			yield return null;
 		}
+		base.battleStateData.reqestStageEffectTriggerList.Add(ChipEffectStatus.EffectTriggerType.RoundEnd);
+		base.SetState(typeof(SubStatePlayStageEffect));
+		while (base.isWaitState)
+		{
+			yield return null;
+		}
 		base.SetState(this.subStateCharacterDeadCheckFunction.GetType());
 		while (base.isWaitState)
 		{
@@ -403,6 +410,15 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		this.isSkillEnd = false;
 		if (base.isGotEvent)
 		{
+			return;
+		}
+		if (BattleStateManager.current.onServerConnect)
+		{
+			DataMng.Instance().WD_ReqDngResult.clearRound = base.battleStateData.totalRoundNumber;
+		}
+		if (base.battleStateData.totalRoundNumber > base.hierarchyData.limitRound && base.hierarchyData.limitRound > 0)
+		{
+			this.onTimeOver(false);
 			return;
 		}
 		if (this.isExit)

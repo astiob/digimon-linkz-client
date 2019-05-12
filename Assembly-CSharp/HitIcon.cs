@@ -11,6 +11,8 @@ public class HitIcon : MonoBehaviour
 
 	private const string STRONG_NAME = "Battle_text_Half";
 
+	private const string DRAIN_NAME = "Battle_text_Drain";
+
 	private const string CRITICAL_NAME = "Battle_text_CRITICAL";
 
 	private const string INVALID_NAME = "Battle_text_Invalid";
@@ -278,6 +280,9 @@ public class HitIcon : MonoBehaviour
 		case Strength.Weak:
 			uitweener2 = this.tween[2];
 			break;
+		case Strength.Drain:
+			uitweener2 = this.tween[2];
+			break;
 		case Strength.Invalid:
 			uitweener2 = this.tween[1];
 			break;
@@ -300,6 +305,8 @@ public class HitIcon : MonoBehaviour
 			return "Battle_text_Half";
 		case Strength.Weak:
 			return "Battle_text_Preeminent";
+		case Strength.Drain:
+			return "Battle_text_Drain";
 		case Strength.Invalid:
 			return "Battle_text_Half";
 		default:
@@ -317,6 +324,8 @@ public class HitIcon : MonoBehaviour
 			return HitIcon.FontType.Minus;
 		case Strength.Weak:
 			return HitIcon.FontType.Plus;
+		case Strength.Drain:
+			return HitIcon.FontType.Drain;
 		case Strength.Invalid:
 			return HitIcon.FontType.Minus;
 		default:
