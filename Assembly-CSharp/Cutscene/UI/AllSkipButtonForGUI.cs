@@ -10,6 +10,9 @@ namespace Cutscene.UI
 		protected override void OnInitialize()
 		{
 			this.buttonMeshRenderer = base.GetComponent<MeshRenderer>();
+			BoxCollider component = base.GetComponent<BoxCollider>();
+			GUISprite component2 = base.GetComponent<GUISprite>();
+			component2.SetBoardSize(component.size.x, component.size.y);
 		}
 
 		public void TouchButton(ButtonTouchObserver obsever)

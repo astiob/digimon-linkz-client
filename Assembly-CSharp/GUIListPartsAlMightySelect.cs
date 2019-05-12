@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class GUIListPartsAlMightySelect : GUIListPartBS
 {
-	[Header("素材アイコン")]
 	[SerializeField]
+	[Header("素材アイコン")]
 	public UITexture texIcon;
 
-	[SerializeField]
 	[Header("選択アイコン")]
+	[SerializeField]
 	public UISprite spSelectIcon;
 
-	[SerializeField]
 	[Header("個数プレート")]
+	[SerializeField]
 	public UISprite spNumPlate;
 
-	[Header("個数表示")]
 	[SerializeField]
+	[Header("個数表示")]
 	public UILabel lbNum;
 
 	private Vector2 beganPosition;

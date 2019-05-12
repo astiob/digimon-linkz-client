@@ -77,10 +77,6 @@ public class BattleStatePvPPlayerFailed : BattleStateController
 		{
 			yield return null;
 		}
-		while (!base.battleStateData.isSkipWinnerAction)
-		{
-			yield return null;
-		}
 		SoundPlayer.StopBattleFailBGM();
 		yield break;
 	}

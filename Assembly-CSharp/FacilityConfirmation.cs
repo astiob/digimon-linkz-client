@@ -29,8 +29,8 @@ public class FacilityConfirmation : MonoBehaviour
 		if (null != this.farmObject)
 		{
 			Vector3 position = this.farmCamera.WorldToScreenPoint(this.farmObject.transform.position);
-			Camera componentInParent = base.GetComponentInParent<Camera>();
-			Vector3 vector = componentInParent.ScreenToWorldPoint(position);
+			Camera orthoCamera = GUIMain.GetOrthoCamera();
+			Vector3 vector = orthoCamera.ScreenToWorldPoint(position);
 			Vector3 position2 = base.transform.position;
 			position2.x = vector.x;
 			position2.y = vector.y;
@@ -161,10 +161,11 @@ public class FacilityConfirmation : MonoBehaviour
 		{
 			GUIFace.instance.ShowGUI();
 			GUIFaceIndicator.instance.ShowLocator();
-			GUIFace.ShowLocator();
+			PartsMenu.instance.gameObject.SetActive(true);
 		}
 		else
 		{
+			PartsMenu.instance.gameObject.SetActive(true);
 			this.BackToUI();
 		}
 		GUIScreenHome.enableBackKeyAndroid = true;
@@ -172,7 +173,7 @@ public class FacilityConfirmation : MonoBehaviour
 
 	protected virtual void BackToUI()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_FacilityShop");
+		GUIMain.ShowCommonDialog(null, "CMD_FacilityShop", null);
 	}
 
 	public void DeleteObject()
@@ -223,7 +224,7 @@ public class FacilityConfirmation : MonoBehaviour
 			return false;
 		}
 		int num = instance.Scenery.GetFacilityCount(this.farmObject.facilityID);
-		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(this.farmObject.facilityID, -1);
+		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(this.farmObject.facilityID);
 		int count = stockFacilityListByfacilityIdAndLevel.Count;
 		num += count;
 		FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(this.farmObject.facilityID);

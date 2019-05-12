@@ -13,16 +13,16 @@ namespace PartyEdit
 
 		private void OnClosedMultiRecruitSettingModal(int selectButtonIndex)
 		{
-			if (selectButtonIndex == 0)
+			if (selectButtonIndex == 0 && CMD_MultiRecruitPartyWait.roomCreateData != null)
 			{
 				CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.OWNER;
-				GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait");
+				GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait", null);
 			}
 		}
 
 		private void OpenMultiRecruitSettingModal()
 		{
-			CMD_MultiRecruitSettingModal cmd_MultiRecruitSettingModal = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedMultiRecruitSettingModal), "CMD_MultiRecruitSettingModal") as CMD_MultiRecruitSettingModal;
+			CMD_MultiRecruitSettingModal cmd_MultiRecruitSettingModal = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedMultiRecruitSettingModal), "CMD_MultiRecruitSettingModal", null) as CMD_MultiRecruitSettingModal;
 			cmd_MultiRecruitSettingModal.deckNum = this.battlePartyDeckNo;
 			cmd_MultiRecruitSettingModal.SetCallbackAction(delegate(GameWebAPI.RespData_MultiRoomCreate roomData)
 			{
@@ -56,7 +56,7 @@ namespace PartyEdit
 				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
 				{
 					this.OpenMultiRecruitSettingModal();
-				}, "CMD_ModalMessage") as CMD_ModalMessage;
+				}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 				cmd_ModalMessage.Info = StringMaster.GetString("PartySortieLimitConfirmInfo");
 			}

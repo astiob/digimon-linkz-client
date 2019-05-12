@@ -63,7 +63,7 @@ namespace Quest
 						{
 							int useStoneNum = playLimit.recoveryAssetNum;
 							int hasStoneNum = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-							CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+							CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 							cd.Title = StringMaster.GetString("QuestPlayLimitNoneTitle");
 							cd.OnPushedYesAction = delegate()
 							{
@@ -92,7 +92,7 @@ namespace Quest
 							GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(playLimit.recoveryAssetValue.ToString());
 							int useItemNum = playLimit.recoveryAssetNum;
 							int hasItemNum = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(playLimit.recoveryAssetValue);
-							CMD_ChangePOP cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP") as CMD_ChangePOP;
+							CMD_ChangePOP cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP", null) as CMD_ChangePOP;
 							cd.Title = StringMaster.GetString("QuestPlayLimitNoneTitle");
 							cd.OnPushedYesAction = delegate()
 							{
@@ -134,7 +134,7 @@ namespace Quest
 					}
 					else
 					{
-						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 						cmd_ModalMessage.Title = StringMaster.GetString("QuestPlayLimitTitle");
 						cmd_ModalMessage.Info = StringMaster.GetString("QuestPlayLimitZeroInfo");
 					}

@@ -21,11 +21,13 @@ public class BattleTargetSelect : BattleFunctionBase
 		}
 		else
 		{
-			SkillStatus[] removedAttackSkillStatus = currentCharacter.GetRemovedAttackSkillStatus(base.stateManager.publicAttackSkillId);
-			SkillStatus skillStatus = currentCharacter.skillStatus[currentCharacter.SkillIdToIndexOf(base.stateManager.publicAttackSkillId)];
-			foreach (SkillStatus skillStatus2 in removedAttackSkillStatus)
+			currentCharacter.isSelectSkill = 0;
+			SkillStatus[] array = currentCharacter.skillStatus.Where((SkillStatus item) => item.skillId != this.stateManager.publicAttackSkillId).ToArray<SkillStatus>();
+			int num = currentCharacter.SkillIdToIndexOf(base.stateManager.publicAttackSkillId);
+			SkillStatus skillStatus = currentCharacter.skillStatus[num];
+			foreach (SkillStatus skillStatus2 in array)
 			{
-				if (skillStatus2.skillType == SkillType.Deathblow && skillStatus2.needAp <= currentCharacter.ap)
+				if (skillStatus2.skillType == SkillType.Deathblow)
 				{
 					skillStatus = skillStatus2;
 					break;
@@ -33,7 +35,7 @@ public class BattleTargetSelect : BattleFunctionBase
 			}
 			for (int j = 0; j < currentCharacter.skillStatus.Length; j++)
 			{
-				if (currentCharacter.skillStatus[j] == skillStatus)
+				if (currentCharacter.skillStatus[j] == skillStatus && currentCharacter.isUseSkill(j))
 				{
 					currentCharacter.isSelectSkill = j;
 					break;
@@ -63,8 +65,8 @@ public class BattleTargetSelect : BattleFunctionBase
 			break;
 		}
 		CharacterStateControl[] aliveCharacters = CharacterStateControl.GetAliveCharacters(characterStatus);
-		CharacterStateControl[] array2 = CharacterStateControlSorter.SortedTargetSelect(aliveCharacters, currentCharacter.currentSkillStatus, null);
-		currentCharacter.targetCharacter = array2[0];
+		CharacterStateControl[] array3 = CharacterStateControlSorter.SortedTargetSelect(aliveCharacters, currentCharacter.currentSkillStatus, null);
+		currentCharacter.targetCharacter = array3[0];
 	}
 
 	public void AutoPlayCharacterAndAttackSelectFunction(CharacterStateControl currentCharacter)
@@ -84,7 +86,7 @@ public class BattleTargetSelect : BattleFunctionBase
 		if (!currentCharacters.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock))
 		{
 			int num = currentCharacters.SkillIdToIndexOf(randomActionClip.useSkillId);
-			if (!currentCharacters.isApShortness(num))
+			if (currentCharacters.isUseSkill(num))
 			{
 				isSelectSkill = num;
 			}

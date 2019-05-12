@@ -166,9 +166,7 @@ public sealed class CMD_FacilityShop : CMD
 			this.facilityList.gameObject.SetActive(false);
 		}
 		base.Show(closeEvent, sizeX, sizeY, showTime);
-		GUIFace.instance.ShowGUI();
-		GUIFace.instance.HideHeaderBtns();
-		GUIFace.HideLocator();
+		GUIFace.instance.HideGUI();
 		GUIFaceIndicator.instance.HideLocator(true);
 		this.playerInfo.SetPlayerInfo();
 	}
@@ -178,7 +176,7 @@ public sealed class CMD_FacilityShop : CMD
 		base.WindowOpened();
 		FarmCameraControlForCMD.Off();
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
+		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
 			tutorialObserver.StartSecondTutorial("second_tutorial_facility_shop", new Action(GUIMain.BarrierOFF), delegate
@@ -216,7 +214,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetFacilityDetail(GUISelectPanelFacility listUI, FacilityM[] facilityData)
 	{
-		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey389 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey389();
+		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey384 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey384();
 		<SetFacilityDetail>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>();
 		if (<SetFacilityDetail>c__AnonStorey.items == null)
 		{
@@ -250,21 +248,21 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetNewIcon(GUISelectPanelFacility listUI)
 	{
-		CMD_FacilityShop.<SetNewIcon>c__AnonStorey38B <SetNewIcon>c__AnonStorey38B = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey38B();
-		<SetNewIcon>c__AnonStorey38B.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
-		if (<SetNewIcon>c__AnonStorey38B.items == null)
+		CMD_FacilityShop.<SetNewIcon>c__AnonStorey386 <SetNewIcon>c__AnonStorey = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey386();
+		<SetNewIcon>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
+		if (<SetNewIcon>c__AnonStorey.items == null)
 		{
 			return;
 		}
 		int i;
-		for (i = 0; i < <SetNewIcon>c__AnonStorey38B.items.Length; i++)
+		for (i = 0; i < <SetNewIcon>c__AnonStorey.items.Length; i++)
 		{
 			bool newIcon = false;
 			if (this.newFacilityItemList != null)
 			{
-				newIcon = this.newFacilityItemList.Any((int id) => id == <SetNewIcon>c__AnonStorey38B.items[i].facilityID);
+				newIcon = this.newFacilityItemList.Any((int id) => id == <SetNewIcon>c__AnonStorey.items[i].facilityID);
 			}
-			<SetNewIcon>c__AnonStorey38B.items[i].SetNewIcon(newIcon);
+			<SetNewIcon>c__AnonStorey.items[i].SetNewIcon(newIcon);
 		}
 		this.newFacilityItemList = null;
 	}
@@ -319,11 +317,8 @@ public sealed class CMD_FacilityShop : CMD
 			instance.farmUI.CreateFacilityConfirmation();
 			instance.SetActiveNotTouchObject(false);
 		}
-		this.ClosePanel(true);
-		GUIFace.instance.HideGUI();
-		GUIFace.instance.HideHeaderBtns();
-		GUIFace.HideLocator();
-		GUIFaceIndicator.instance.HideLocator(true);
+		PartsMenu.instance.gameObject.SetActive(false);
+		this.CloseAction(true);
 	}
 
 	private void OnTouchedTabFacility(int noop)
@@ -408,15 +403,19 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void OnClicedStoneShop()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_Shop");
+		GUIMain.ShowCommonDialog(null, "CMD_Shop", null);
 	}
 
 	public override void ClosePanel(bool animation = true)
 	{
 		GUIFace.instance.ShowGUI();
 		GUIFaceIndicator.instance.ShowLocator();
-		GUIFace.ShowLocator();
 		GUIFace.SetFacilityShopButtonBadge();
+		this.CloseAction(animation);
+	}
+
+	private void CloseAction(bool animation)
+	{
 		FarmCameraControlForCMD.On();
 		base.ClosePanel(animation);
 		if (this.facilityList != null)
@@ -447,7 +446,7 @@ public sealed class CMD_FacilityShop : CMD
 			{
 				int id = facilityList[i].facilityId.ToInt32();
 				int num = FarmRoot.Instance.Scenery.GetFacilityCount(id);
-				List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(id, -1);
+				List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(id);
 				int count = stockFacilityListByfacilityIdAndLevel.Count;
 				num += count;
 				FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(facilityList[i].releaseId);
@@ -462,7 +461,7 @@ public sealed class CMD_FacilityShop : CMD
 						if (facilityCondition.Any((FacilityConditionM x) => !FacilityShopFilter.CheckFacilityCondition(x)))
 						{
 							list3.Add(facilityList[i]);
-							goto IL_132;
+							goto IL_131;
 						}
 					}
 					if (num < facilityList[i].maxNum.ToInt32())
@@ -474,7 +473,7 @@ public sealed class CMD_FacilityShop : CMD
 						list4.Add(facilityList[i]);
 					}
 				}
-				IL_132:;
+				IL_131:;
 			}
 		}
 		List<FacilityM> list5 = new List<FacilityM>(facilityList.Length);

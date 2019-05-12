@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_Training_Menu : CMD
+public sealed class CMD_Training_Menu : CMD
 {
 	[SerializeField]
 	private UILabel lbTX_Stone;
@@ -26,12 +26,12 @@ public class CMD_Training_Menu : CMD
 	[SerializeField]
 	private Color colBase;
 
-	[Header("非アクティブ タイトル 色")]
 	[SerializeField]
+	[Header("非アクティブ タイトル 色")]
 	private Color colTitle;
 
-	[Header("非アクティブ 【】 色")]
 	[SerializeField]
+	[Header("非アクティブ 【】 色")]
 	private Color colLR;
 
 	[SerializeField]
@@ -133,7 +133,7 @@ public class CMD_Training_Menu : CMD
 					partsData.actCallBack = delegate()
 					{
 						CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
-						GUIMain.ShowCommonDialog(null, "CMD_BaseSelect");
+						GUIMain.ShowCommonDialog(null, "CMD_BaseSelect", null);
 					};
 					break;
 				}
@@ -175,7 +175,7 @@ public class CMD_Training_Menu : CMD
 					}
 					partsData.actCallBack = delegate()
 					{
-						GUIMain.ShowCommonDialog(null, "CMD_ReinforcementTOP");
+						GUIMain.ShowCommonDialog(null, "CMD_ReinforcementTOP", null);
 					};
 					break;
 				}
@@ -190,11 +190,11 @@ public class CMD_Training_Menu : CMD
 					{
 						if (trainHouseCT > 0)
 						{
-							GUIMain.ShowCommonDialog(null, "CMD_Succession");
+							GUIMain.ShowCommonDialog(null, "CMD_Succession", null);
 						}
 						else
 						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 							cmd_ModalMessage.Title = StringMaster.GetString("TrainingMissingAlertTitle");
 							cmd_ModalMessage.Info = StringMaster.GetString("TrainingMissingAlertInfo-01");
 						}
@@ -211,11 +211,11 @@ public class CMD_Training_Menu : CMD
 					{
 						if (trainHouseCT > 0)
 						{
-							GUIMain.ShowCommonDialog(null, "CMD_ArousalTOP");
+							GUIMain.ShowCommonDialog(null, "CMD_ArousalTOP", null);
 						}
 						else
 						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 							cmd_ModalMessage.Title = StringMaster.GetString("TrainingMissingAlertTitle");
 							cmd_ModalMessage.Info = StringMaster.GetString("TrainingMissingAlertInfo-02");
 						}
@@ -224,7 +224,7 @@ public class CMD_Training_Menu : CMD
 				case "LaboratoryTitle":
 					partsData.actCallBack = delegate()
 					{
-						GUIMain.ShowCommonDialog(null, "CMD_Laboratory");
+						GUIMain.ShowCommonDialog(null, "CMD_Laboratory", null);
 					};
 					break;
 				case "MedalInheritTitle":
@@ -244,7 +244,7 @@ public class CMD_Training_Menu : CMD
 					}
 					partsData.actCallBack = delegate()
 					{
-						GUIMain.ShowCommonDialog(null, "CMD_MedalInherit");
+						GUIMain.ShowCommonDialog(null, "CMD_MedalInherit", null);
 					};
 					break;
 				}
@@ -261,11 +261,11 @@ public class CMD_Training_Menu : CMD
 						{
 							CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.CHIP;
 							CMD_BaseSelect.ElementType = CMD_BaseSelect.ELEMENT_TYPE.BASE;
-							GUIMain.ShowCommonDialog(null, "CMD_BaseSelect");
+							GUIMain.ShowCommonDialog(null, "CMD_BaseSelect", null);
 						}
 						else
 						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 							cmd_ModalMessage.Title = StringMaster.GetString("ChipFactoryMissingAlertTitle");
 							cmd_ModalMessage.Info = StringMaster.GetString("ChipFactoryMissingAlertInfo-1");
 						}
@@ -286,7 +286,7 @@ public class CMD_Training_Menu : CMD
 						}
 						else
 						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 							cmd_ModalMessage.Title = StringMaster.GetString("ChipFactoryMissingAlertTitle");
 							cmd_ModalMessage.Info = StringMaster.GetString("ChipFactoryMissingAlertInfo-2");
 						}
@@ -295,11 +295,11 @@ public class CMD_Training_Menu : CMD
 				case "VersionUpTitle":
 					partsData.actCallBack = delegate()
 					{
-						GUIMain.ShowCommonDialog(null, "CMD_VersionUP");
+						GUIMain.ShowCommonDialog(null, "CMD_VersionUP", null);
 					};
 					break;
 				}
-				if (partsData.strCampaign != string.Empty)
+				if (string.Empty != partsData.strCampaign)
 				{
 					partsData.isInfo = true;
 				}
@@ -322,13 +322,13 @@ public class CMD_Training_Menu : CMD
 		GUIMain.ShowCommonDialog(delegate(int idx)
 		{
 			this.ShowDatas();
-		}, "CMD_Shop");
+		}, "CMD_Shop", null);
 	}
 
 	private void OnClickedFarewellList()
 	{
 		CMD_FarewellListRun.Mode = CMD_FarewellListRun.MODE.SHOW;
-		GUIMain.ShowCommonDialog(null, "CMD_FarewellListRun");
+		GUIMain.ShowCommonDialog(null, "CMD_FarewellListRun", null);
 	}
 
 	private int GetFacilityCount(int facilityID)
@@ -340,7 +340,7 @@ public class CMD_Training_Menu : CMD
 			return -1;
 		}
 		int facilityCount = farmRoot.Scenery.GetFacilityCount(facilityID);
-		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(facilityID, -1);
+		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(facilityID);
 		int count = stockFacilityListByfacilityIdAndLevel.Count;
 		return facilityCount + count;
 	}
@@ -348,13 +348,13 @@ public class CMD_Training_Menu : CMD
 	private void OnClickedChipList()
 	{
 		int facilityCount = this.GetFacilityCount(25);
-		if (facilityCount > 0)
+		if (0 < facilityCount)
 		{
 			CMD_ChipAdministration.Create(null);
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ChipFactoryMissingAlertTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChipFactoryMissingAlertInfo-3");
 		}
@@ -363,7 +363,7 @@ public class CMD_Training_Menu : CMD
 	private void OnClickedChipList(UISprite sp, UILabel lb)
 	{
 		int facilityCount = this.GetFacilityCount(25);
-		if (facilityCount > 0)
+		if (0 < facilityCount)
 		{
 			sp.color = new Color(1f, 1f, 1f, 1f);
 			lb.color = new Color(1f, 1f, 1f, 1f);

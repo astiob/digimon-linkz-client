@@ -36,20 +36,20 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private GameObject[] clipObjects;
 
-	[Header("ポイントクエスト用 ROOT")]
 	[SerializeField]
+	[Header("ポイントクエスト用 ROOT")]
 	private GameObject goPartsPointROOT;
 
-	[Header("ポイントクエスト用（ランキングなし） ROOT")]
 	[SerializeField]
+	[Header("ポイントクエスト用（ランキングなし） ROOT")]
 	private GameObject goPartsPointWithoutRankingROOT;
 
 	[SerializeField]
 	[Header("詳細ボタン用 ROOT")]
 	private GameObject goPartsDetailsROOT;
 
-	[SerializeField]
 	[Header("ポイントクエスト用 BG")]
+	[SerializeField]
 	private UITexture txEVENT_BG;
 
 	[Header("降臨エリア用 スケジュールバナー領域")]
@@ -210,7 +210,7 @@ public class CMD_QuestTOP : CMD
 		}
 		base.SetCloseAction(delegate(int idx)
 		{
-			CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestSelect") as CMD;
+			CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestSelect", null) as CMD;
 			cmd.SetForceReturnValue(1);
 		});
 		this.ClosePanel(false);
@@ -576,17 +576,17 @@ public class CMD_QuestTOP : CMD
 		if (data.worldDungeonM.IsSoloMulti())
 		{
 			CMD_QuestDetailedPOP.CampaignInfo = campaignInfo;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestDetailedPOP");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestDetailedPOP", null);
 		}
 		else if (data.worldDungeonM.IsMultiOnly())
 		{
 			CMD_QuestDetailedPOP.CampaignInfo = campaignInfo;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestMultiDetailedPOP), "CMD_QuestMultiDetailedPOP");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestMultiDetailedPOP), "CMD_QuestMultiDetailedPOP", null);
 		}
 		else if (data.worldDungeonM.IsSoloOnly())
 		{
 			CMD_QuestDetailedPOP.CampaignInfo = campaignInfo;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestSoloDetailedPOP");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestSoloDetailedPOP", null);
 		}
 	}
 
@@ -604,7 +604,7 @@ public class CMD_QuestTOP : CMD
 		int point = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 		if (num < this.needLife)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("QuestNormal");
 			cmd_ModalMessage.Info = StringMaster.GetString("QuestStaminaOver");
 		}
@@ -612,7 +612,7 @@ public class CMD_QuestTOP : CMD
 		{
 			if (point >= ConstValue.RECOVER_STAMINA_DIGISTONE_NUM)
 			{
-				CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+				CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 				cmd_ChangePOP_STONE.Title = StringMaster.GetString("StaminaShortageTitle");
 				cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnSelectedRecover);
 				cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("StaminaShortageInfo"), new object[]
@@ -628,7 +628,7 @@ public class CMD_QuestTOP : CMD
 			}
 			else
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("StaminaShortageTitle");
 				cmd_Confirm.Info = string.Format(StringMaster.GetString("StaminaShortageGoShop"), ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
@@ -648,13 +648,13 @@ public class CMD_QuestTOP : CMD
 		int count = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON;
 		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(count))
 		{
-			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
+			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit", null) as CMD_UpperLimit;
 			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
 			result = false;
 		}
 		else if (Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
 		{
-			CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
+			CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip", null) as CMD_UpperlimitChip;
 			cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
 			result = false;
 		}
@@ -672,7 +672,7 @@ public class CMD_QuestTOP : CMD
 				{
 					this.OnClickedDungeon(this.StageDataBk, this.StageNumBk, null);
 				}
-			}, "CMD_Shop");
+			}, "CMD_Shop", null);
 		}
 	}
 
@@ -738,7 +738,7 @@ public class CMD_QuestTOP : CMD
 				else if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 6)
 				{
 					GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.StageDataBk.dungeon.playLimit.recoveryAssetValue.ToString());
-					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage2.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
 					cmd_ModalMessage2.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
 				}
@@ -782,12 +782,12 @@ public class CMD_QuestTOP : CMD
 			{
 				ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
 				CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.SELECT;
-				CMD_PartyEdit cmd_PartyEdit = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit") as CMD_PartyEdit;
+				CMD_PartyEdit cmd_PartyEdit = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit", null) as CMD_PartyEdit;
 				cmd_PartyEdit.parentCMD = this;
 			}
 			else
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("StaminaShortageTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("QuestStaminaShortage");
 			}
@@ -811,7 +811,7 @@ public class CMD_QuestTOP : CMD
 				else if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 6)
 				{
 					GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.StageDataBk.dungeon.playLimit.recoveryAssetValue.ToString());
-					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
 					cmd_ModalMessage.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
 				}
@@ -865,11 +865,11 @@ public class CMD_QuestTOP : CMD
 			ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
 			DataMng.Instance().GetResultUtilData().SetLastDngReq(this.StageDataBk.worldDungeonM.worldDungeonId, "-1", this.StageDataBk.dungeon.userDungeonTicketId);
 			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit", null);
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("StaminaShortageTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("QuestStaminaShortage");
 		}

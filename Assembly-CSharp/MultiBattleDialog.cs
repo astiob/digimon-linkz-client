@@ -33,8 +33,8 @@ public class MultiBattleDialog : MonoBehaviour
 	[SerializeField]
 	private GameObject[] bg;
 
-	[Header("閉じるローカライズ")]
 	[SerializeField]
+	[Header("閉じるローカライズ")]
 	private UILabel closeLocalize;
 
 	private int failedLeftTime;
@@ -61,7 +61,7 @@ public class MultiBattleDialog : MonoBehaviour
 	{
 		get
 		{
-			if (!BattleStateManager.current.onServerConnect)
+			if (BattleStateManager.current == null || !BattleStateManager.current.onServerConnect)
 			{
 				return 15;
 			}

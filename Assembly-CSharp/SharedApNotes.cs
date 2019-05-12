@@ -14,19 +14,19 @@ public sealed class SharedApNotes : MonoBehaviour
 	[FormerlySerializedAs("iconDeactive")]
 	private UIBasicSprite _iconDeactive;
 
-	[SerializeField]
-	[FormerlySerializedAs("tweenerActivePlays")]
 	[Header("AP UITweenerActivePlay")]
+	[FormerlySerializedAs("tweenerActivePlays")]
+	[SerializeField]
 	private UITweenerActivePlay _tweenerActivePlays;
 
+	[FormerlySerializedAs("multiAPUpEffects")]
 	[SerializeField]
 	[Header("AP UPエフェクト")]
-	[FormerlySerializedAs("multiAPUpEffects")]
 	private GameObject _multiAPUpEffect;
 
-	[SerializeField]
-	[Header("AP Activeエフェクト")]
 	[FormerlySerializedAs("multiAPActiveEffects")]
+	[Header("AP Activeエフェクト")]
+	[SerializeField]
 	private GameObject _multiAPActiveEffect;
 
 	private SharedApNotes.State state;

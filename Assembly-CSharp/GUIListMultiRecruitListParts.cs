@@ -201,7 +201,7 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 							RestrictionInput.EndLoad();
 							CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
 							CMD_MultiRecruitPartyWait.StageDataBk = this.data;
-							CMD_MultiRecruitPartyWait cmd_MultiRecruitPartyWait = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait") as CMD_MultiRecruitPartyWait;
+							CMD_MultiRecruitPartyWait cmd_MultiRecruitPartyWait = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait", null) as CMD_MultiRecruitPartyWait;
 							cmd_MultiRecruitPartyWait.SetParentDialog(this.parentDialog);
 						}, delegate(Exception noop)
 						{
@@ -215,20 +215,20 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 					}
 					else
 					{
-						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 						cmd_ModalMessage.Title = StringMaster.GetString("QuestEventTitle");
 						cmd_ModalMessage.Info = StringMaster.GetString("QuestEventInfo2");
 					}
 				}
 				else
 				{
-					CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
+					CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip", null) as CMD_UpperlimitChip;
 					cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
 				}
 			}
 			else
 			{
-				CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
+				CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit", null) as CMD_UpperLimit;
 				cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
 			}
 		}

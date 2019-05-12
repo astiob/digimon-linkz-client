@@ -267,7 +267,7 @@ public class GUIListChatMemberParts : GUIListPartBS
 		CMD_ProfileFriend cmd_ProfileFriend = GUIMain.ShowCommonDialog(delegate(int x)
 		{
 			this.ShowGUI();
-		}, "CMD_ProfileFriend") as CMD_ProfileFriend;
+		}, "CMD_ProfileFriend", null) as CMD_ProfileFriend;
 		cmd_ProfileFriend.SetLastLoginTime(this.lastLoginTime);
 	}
 
@@ -288,7 +288,7 @@ public class GUIListChatMemberParts : GUIListPartBS
 		CMD_ChatInvitationModalAlert cmd_ChatInvitationModalAlert = GUIMain.ShowCommonDialog(delegate(int x)
 		{
 			this.ShowGUI();
-		}, "CMD_ChatInvitationModalAlert") as CMD_ChatInvitationModalAlert;
+		}, "CMD_ChatInvitationModalAlert", null) as CMD_ChatInvitationModalAlert;
 		cmd_ChatInvitationModalAlert.SetUserData(this.Data);
 	}
 
@@ -327,7 +327,7 @@ public class GUIListChatMemberParts : GUIListPartBS
 			}
 			else
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 				cmd_ModalMessage.Info = StringMaster.GetString("ChatInvitation-03");
 			}
@@ -335,13 +335,13 @@ public class GUIListChatMemberParts : GUIListPartBS
 		}
 		else if (CMD_ChatMenu.instance.openMemberListType == 2)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnHandoverOwnerExec), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnHandoverOwnerExec), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = StringMaster.GetString("ChatTransferConfirmInfo");
 		}
 		else if (CMD_ChatMenu.instance.openMemberListType == 4)
 		{
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_ChatModal");
+			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_ChatModal", null);
 			((CMD_ChatModal)commonDialog).SetTitle(string.Format(StringMaster.GetString("ChatApply-01"), this.Data.userInfo.nickname));
 			((CMD_ChatModal)commonDialog).SetBtn_CLOSE(true, StringMaster.GetString("SystemButtonClose"), null);
 			((CMD_ChatModal)commonDialog).SetBtn_YES(true, StringMaster.GetString("SystemButtonYes"), new Action(this.OnReplyToRequestApproval));
@@ -349,7 +349,7 @@ public class GUIListChatMemberParts : GUIListPartBS
 		}
 		else if (CMD_ChatMenu.instance.openMemberListType == 5)
 		{
-			CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCancelMemberInviteExec), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCancelMemberInviteExec), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm2.Title = StringMaster.GetString("ChatInviteCancelTitle");
 			cmd_Confirm2.Info = string.Format(StringMaster.GetString("ChatInviteCancelInfo"), this.Data.userInfo.nickname, ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName);
 		}

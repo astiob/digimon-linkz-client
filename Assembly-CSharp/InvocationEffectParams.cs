@@ -13,16 +13,16 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private int _motionIndex;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraMotionId")]
+	[SerializeField]
 	private string _cameraMotionId;
 
 	[SerializeField]
 	[FormerlySerializedAs("hideStage")]
 	private bool _hideStage;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStageBackgroundColor")]
+	[SerializeField]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]
@@ -33,6 +33,9 @@ public class InvocationEffectParams : EffectParamsGeneric
 
 	[SerializeField]
 	private InvocationEffectParams.AttachEffects[] _attachEffects;
+
+	[SerializeField]
+	private bool _isVoice;
 
 	private GameObject _stageObject;
 
@@ -61,6 +64,14 @@ public class InvocationEffectParams : EffectParamsGeneric
 		get
 		{
 			return this._cameraMotionId;
+		}
+	}
+
+	public bool isVoice
+	{
+		get
+		{
+			return this._isVoice;
 		}
 	}
 
@@ -135,7 +146,7 @@ public class InvocationEffectParams : EffectParamsGeneric
 		this._effectAnimation.PlayQueued(this._effectAnimation.clip.name, QueueMode.PlayNow);
 		if (attacker != null && attacker.GetFindAttackMotion(this._motionIndex))
 		{
-			attacker.PlayAttackAnimation(this._attackAnimationType, this._motionIndex);
+			attacker.PlayAnimation(CharacterAnimationType.attacks, this._attackAnimationType, this._motionIndex, null, null);
 			this.CharacterFollowingInitializeInternal(attacker);
 			this.BillboardObjectInitializeInternal(attacker.transform, attacker.RootToCenterDistance());
 			this.ParticheControllerInitializeInternal();

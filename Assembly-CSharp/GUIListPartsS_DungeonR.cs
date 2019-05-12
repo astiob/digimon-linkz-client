@@ -6,24 +6,24 @@ using UnityEngine;
 
 public class GUIListPartsS_DungeonR : GUIListPartBS
 {
-	[Header("NEWの画像")]
 	[SerializeField]
+	[Header("NEWの画像")]
 	private GameObject goNEW;
 
 	[SerializeField]
 	[Header("ドロップの画像")]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
-	[Header("ステージ数用のラベル")]
 	[SerializeField]
+	[Header("ステージ数用のラベル")]
 	private UILabel ngTXT_STAGE;
 
-	[Header("ステージ名用のラベル")]
 	[SerializeField]
+	[Header("ステージ名用のラベル")]
 	private UILabel ngTXT_STAGE_NAME;
 
-	[Header("消費スタミナ用のラベル")]
 	[SerializeField]
+	[Header("消費スタミナ用のラベル")]
 	private UILabel ngTXT_STAMINA;
 
 	[SerializeField]
@@ -38,12 +38,12 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("ソロとマルチができるステージ色")]
 	private Color colorNormalStage;
 
-	[SerializeField]
 	[Header("マルチ専用のステージ色")]
+	[SerializeField]
 	private Color colorMultiStage;
 
-	[Header("ソロ専用のステージ色")]
 	[SerializeField]
+	[Header("ソロ専用のステージ色")]
 	private Color colorSoloStage;
 
 	[Header("イベント用のステージ背景色")]
@@ -54,28 +54,28 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private Color colorSoloMultiStageNameOutline;
 
-	[SerializeField]
 	[Header("####マルチ専用名装飾色")]
+	[SerializeField]
 	private Color colorMultiStageNameOutline;
 
-	[SerializeField]
 	[Header("####ソロ専用ステージ名装飾色")]
+	[SerializeField]
 	private Color colorSoloStageNameOutline;
 
 	[SerializeField]
 	[Header("イベント用のステージ名装飾色")]
 	private Color colorEventStageNameOutline;
 
-	[Header("背景色のパーツ（板）")]
 	[SerializeField]
+	[Header("背景色のパーツ（板）")]
 	private UISprite backgroundBord;
 
 	[SerializeField]
 	[Header("背景色のパーツ（ライン）")]
 	private UITexture backgroundLine;
 
-	[SerializeField]
 	[Header("残回数無しラベル")]
+	[SerializeField]
 	private UILabel ngTXT_PLAY_LIMIT;
 
 	[Header("回数限定用グレーアウトSPR素材")]
@@ -86,16 +86,16 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
+	[SerializeField]
 	private UISprite ngSPR_LOCK;
 
 	[Header("クリアのマークの画像")]
 	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -500,7 +500,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 					string text = this.MakeStringLockStatus();
 					if (!string.IsNullOrEmpty(text))
 					{
-						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 						cmd_ModalMessage.Title = StringMaster.GetString("QuestClearConditionTitle");
 						cmd_ModalMessage.InfoWithNoReturn = text;
 					}
@@ -587,24 +587,18 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	{
 		GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dungeon = this.WorldDungeonData.dungeon;
 		List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset> list = new List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset>();
-		for (int i = 0; i < dungeon.dropAssets.Length; i++)
+		QuestData.CreateDropAssetList(dungeon, list);
+		for (int i = 0; i < this.itemDROP_ITEM_LIST.Count; i++)
 		{
-			if (dungeon.dropAssets[i].assetCategoryId != 4 && dungeon.dropAssets[i].assetCategoryId != 5)
+			if (i < list.Count)
 			{
-				list.Add(dungeon.dropAssets[i]);
-			}
-		}
-		for (int j = 0; j < this.itemDROP_ITEM_LIST.Count; j++)
-		{
-			if (j < list.Count)
-			{
-				string assetCategoryId = list[j].assetCategoryId.ToString();
-				string objectId = list[j].assetValue.ToString();
-				this.itemDROP_ITEM_LIST[j].SetItem(assetCategoryId, objectId, "1", true, new Action(this.ScaleEnd));
+				string assetCategoryId = list[i].assetCategoryId.ToString();
+				string objectId = list[i].assetValue.ToString();
+				this.itemDROP_ITEM_LIST[i].SetItem(assetCategoryId, objectId, "1", true, new Action(this.ScaleEnd));
 			}
 			else
 			{
-				this.itemDROP_ITEM_LIST[j].enabled = false;
+				this.itemDROP_ITEM_LIST[i].enabled = false;
 			}
 		}
 	}

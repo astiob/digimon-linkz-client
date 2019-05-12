@@ -20,42 +20,42 @@ public class CMD_QuestItemPOP : CMD
 
 	public static CMD_QuestItemPOP Create(GameWebAPI.RespDataMA_GetSoulM.SoulM data)
 	{
-		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP") as CMD_QuestItemPOP;
+		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP", null) as CMD_QuestItemPOP;
 		cmd_QuestItemPOP.SetParam(data);
 		return cmd_QuestItemPOP;
 	}
 
 	public static CMD_QuestItemPOP Create(GameWebAPI.RespDataMA_ChipM.Chip data)
 	{
-		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP") as CMD_QuestItemPOP;
+		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP", null) as CMD_QuestItemPOP;
 		cmd_QuestItemPOP.SetParam(data);
 		return cmd_QuestItemPOP;
 	}
 
 	public static CMD_QuestItemPOP Create(GameWebAPI.RespDataMA_GetItemM.ItemM data)
 	{
-		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP") as CMD_QuestItemPOP;
+		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP", null) as CMD_QuestItemPOP;
 		cmd_QuestItemPOP.SetParam(data);
 		return cmd_QuestItemPOP;
 	}
 
 	public static CMD_QuestItemPOP Create(FacilityConditionM data, string assetValue, FacilityM faciltyData)
 	{
-		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP") as CMD_QuestItemPOP;
+		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP", null) as CMD_QuestItemPOP;
 		cmd_QuestItemPOP.SetParam(data, assetValue, faciltyData);
 		return cmd_QuestItemPOP;
 	}
 
 	public static CMD_QuestItemPOP Create(GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM data)
 	{
-		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP") as CMD_QuestItemPOP;
+		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP", null) as CMD_QuestItemPOP;
 		cmd_QuestItemPOP.SetParam(data);
 		return cmd_QuestItemPOP;
 	}
 
 	public static CMD_QuestItemPOP Create(GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM data)
 	{
-		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP") as CMD_QuestItemPOP;
+		CMD_QuestItemPOP cmd_QuestItemPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestItemPOP", null) as CMD_QuestItemPOP;
 		cmd_QuestItemPOP.SetParam(data);
 		return cmd_QuestItemPOP;
 	}
@@ -93,7 +93,7 @@ public class CMD_QuestItemPOP : CMD
 			this.titleLabel.text = facilityKeyMaster.facilityKeyName;
 		}
 		this.textLabel.text = faciltyData.description;
-		FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(int.Parse(data.releaseId));
+		FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(data.releaseId);
 		string iconPath = facilityMasterByReleaseId.GetIconPath();
 		this.iconSprite.gameObject.SetActive(false);
 		this.iconTexture.gameObject.SetActive(true);

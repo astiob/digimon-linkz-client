@@ -9,6 +9,36 @@ public class CMD : CommonDialog
 
 	private GUIMultiTab multiTab;
 
+	private Action<int> actCBSetOpendAction;
+
+	private Func<int, bool> actCBSetReOpendAction;
+
+	private Color onCol = new Color(1f, 1f, 1f, 1f);
+
+	private Color offCol = new Color(1f, 1f, 1f, 0f);
+
+	private Color tempCol = new Color(1f, 1f, 1f, 0f);
+
+	private CMD _CMD_Parent;
+
+	private bool isParentDeactive;
+
+	private Action<int> f_cmdbk;
+
+	private float sizeX_cmdbk;
+
+	private float sizeY_cmdbk;
+
+	private float aT_cmdbk;
+
+	private bool animation_bk;
+
+	private int hideDelayCT_S;
+
+	private int hideDelayCT;
+
+	private bool isBusyHideDelay;
+
 	public bool requestMenu;
 
 	public bool useCMDAnim;
@@ -73,36 +103,6 @@ public class CMD : CommonDialog
 
 	private bool isParentActing;
 
-	private Color onCol = new Color(1f, 1f, 1f, 1f);
-
-	private Color ofCol = new Color(1f, 1f, 1f, 0f);
-
-	private Color tempCol = new Color(1f, 1f, 1f, 0f);
-
-	private CMD _CMD_Parent;
-
-	private bool isParentDeactive;
-
-	private Action<int> f_cmdbk;
-
-	private float sizeX_cmdbk;
-
-	private float sizeY_cmdbk;
-
-	private float aT_cmdbk;
-
-	private bool animation_bk;
-
-	private int hideDelayCT_S;
-
-	private int hideDelayCT;
-
-	private bool isBusyHideDelay;
-
-	private Action<int> actCBSetOpendAction;
-
-	private Func<int, bool> actCBSetReOpendAction;
-
 	public PartsTitleBase PartsTitle
 	{
 		get
@@ -127,29 +127,6 @@ public class CMD : CommonDialog
 		}
 	}
 
-	public void SetTutorialAnyTime(string tutorialName)
-	{
-		this.PartsTitle.SetTutorialAct(delegate(int i)
-		{
-			this.tutorialAnyTime(tutorialName);
-		});
-	}
-
-	private void tutorialAnyTime(string tutorialName)
-	{
-		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
-		{
-			GUIMain.BarrierON(null);
-			tutorialObserver.StartHelp(tutorialName, new Action(GUIMain.BarrierOFF));
-		}
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
 	protected override void WindowOpened()
 	{
 		base.WindowOpened();
@@ -167,7 +144,7 @@ public class CMD : CommonDialog
 		base.Update();
 	}
 
-	private void actEndEfc(int i)
+	private void actEndEfc(int noop)
 	{
 		this.actCt--;
 		GUICollider.EnableAllCollider("CMD");
@@ -177,14 +154,6 @@ public class CMD : CommonDialog
 	{
 		this.actCt++;
 		GUICollider.DisableAllCollider("CMD");
-	}
-
-	private void ClearActStart()
-	{
-		while (this.actCt > 0)
-		{
-			this.actEndEfc(0);
-		}
 	}
 
 	public bool HideFromChild { get; set; }
@@ -198,90 +167,90 @@ public class CMD : CommonDialog
 
 	private void InitEFC()
 	{
-		if (this.goEFC_HEADER != null)
+		if (null != this.goEFC_HEADER)
 		{
 			this.ecEFC_HEADER = this.goEFC_HEADER.GetComponent<EfcCont>();
-			if (this.ecEFC_HEADER == null)
+			if (null == this.ecEFC_HEADER)
 			{
 				this.ecEFC_HEADER = this.goEFC_HEADER.AddComponent<EfcCont>();
 			}
 			this.vORG_HEADER = this.goEFC_HEADER.transform.localPosition;
 		}
-		if (this.goEFC_FOOTER != null)
+		if (null != this.goEFC_FOOTER)
 		{
 			this.ecEFC_FOOTER = this.goEFC_FOOTER.GetComponent<EfcCont>();
-			if (this.ecEFC_FOOTER == null)
+			if (null == this.ecEFC_FOOTER)
 			{
 				this.ecEFC_FOOTER = this.goEFC_FOOTER.AddComponent<EfcCont>();
 			}
 			this.vORG_FOOTER = this.goEFC_FOOTER.transform.localPosition;
 		}
-		if (this.goEFC_RIGHT != null)
+		if (null != this.goEFC_RIGHT)
 		{
 			this.ecEFC_RIGHT = this.goEFC_RIGHT.GetComponent<EfcCont>();
-			if (this.ecEFC_RIGHT == null)
+			if (null == this.ecEFC_RIGHT)
 			{
 				this.ecEFC_RIGHT = this.goEFC_RIGHT.AddComponent<EfcCont>();
 			}
 			this.vORG_RIGHT = this.goEFC_RIGHT.transform.localPosition;
 		}
-		if (this.goEFC_LEFT != null)
+		if (null != this.goEFC_LEFT)
 		{
 			this.ecEFC_LEFT = this.goEFC_LEFT.GetComponent<EfcCont>();
-			if (this.ecEFC_LEFT == null)
+			if (null == this.ecEFC_LEFT)
 			{
 				this.ecEFC_LEFT = this.goEFC_LEFT.AddComponent<EfcCont>();
 			}
 			this.vORG_LEFT = this.goEFC_LEFT.transform.localPosition;
 		}
-		if (this.goEFC_BG != null)
+		if (null != this.goEFC_BG)
 		{
 			foreach (object obj in this.goEFC_BG.transform)
 			{
 				Transform transform = (Transform)obj;
 				this.ecEFC_BG = transform.gameObject.GetComponent<EfcCont>();
-				if (this.ecEFC_BG == null)
+				if (null == this.ecEFC_BG)
 				{
 					this.ecEFC_BG = transform.gameObject.AddComponent<EfcCont>();
 				}
 			}
 		}
-		if (this.goEFC_CTR != null)
+		if (null != this.goEFC_CTR)
 		{
 			foreach (object obj2 in this.goEFC_CTR.transform)
 			{
 				Transform transform2 = (Transform)obj2;
 				this.ecEFC_CTR = transform2.gameObject.GetComponent<EfcCont>();
-				if (this.ecEFC_CTR == null)
+				if (null == this.ecEFC_CTR)
 				{
 					this.ecEFC_CTR = transform2.gameObject.AddComponent<EfcCont>();
 				}
 			}
 		}
-		if (this.goEFC_PARAM_HEADER != null)
+		if (null != this.goEFC_PARAM_HEADER)
 		{
 			this.epEFC_PARAM_HEADER = this.goEFC_PARAM_HEADER.GetComponent<EfcParam>();
 		}
-		if (this.goEFC_PARAM_FOOTER != null)
+		if (null != this.goEFC_PARAM_FOOTER)
 		{
 			this.epEFC_PARAM_FOOTER = this.goEFC_PARAM_FOOTER.GetComponent<EfcParam>();
 		}
-		if (this.goEFC_PARAM_RIGHT != null)
+		if (null != this.goEFC_PARAM_RIGHT)
 		{
 			this.epEFC_PARAM_RIGHT = this.goEFC_PARAM_RIGHT.GetComponent<EfcParam>();
 		}
-		if (this.goEFC_PARAM_LEFT != null)
+		if (null != this.goEFC_PARAM_LEFT)
 		{
 			this.epEFC_PARAM_LEFT = this.goEFC_PARAM_LEFT.GetComponent<EfcParam>();
 		}
 	}
 
-	private void EFC_FadeIn(bool flg, EfcCont ec, Vector3 vORG, EfcParam param)
+	private void EFC_FadeIn(bool isFadeIn, EfcCont ec, Vector3 vORG, EfcParam param)
 	{
-		if (ec != null)
+		if (null != ec)
 		{
 			this.actStartEfc();
-			if (flg)
+			if (isFadeIn)
 			{
 				Vector3 pos = vORG + param.vOffset;
 				ec.SetPos(pos);
@@ -290,54 +259,54 @@ public class CMD : CommonDialog
 			}
 			else
 			{
-				Vector3 pos = vORG + param.vOffsetEnd;
-				Vector2 vP = new Vector2(pos.x, pos.y);
-				ec.MoveTo(vP, param.time, new Action<int>(this.actEndEfc), param.typeEnd, param.delay);
+				Vector3 vector = vORG + param.vOffsetEnd;
+				Vector2 vP2 = new Vector2(vector.x, vector.y);
+				ec.MoveTo(vP2, param.time, new Action<int>(this.actEndEfc), param.typeEnd, param.delay);
 			}
 		}
 	}
 
-	public void EFC_HEADER_FadeIn(bool flg)
+	public void EFC_HEADER_FadeIn(bool isFadeIn)
 	{
-		if (this.epEFC_PARAM_HEADER != null)
+		if (null != this.epEFC_PARAM_HEADER)
 		{
-			this.EFC_FadeIn(flg, this.ecEFC_HEADER, this.vORG_HEADER, this.epEFC_PARAM_HEADER);
+			this.EFC_FadeIn(isFadeIn, this.ecEFC_HEADER, this.vORG_HEADER, this.epEFC_PARAM_HEADER);
 		}
 	}
 
-	public void EFC_FOOTER_FadeIn(bool flg)
+	public void EFC_FOOTER_FadeIn(bool isFadeIn)
 	{
-		if (this.epEFC_PARAM_FOOTER != null)
+		if (null != this.epEFC_PARAM_FOOTER)
 		{
-			this.EFC_FadeIn(flg, this.ecEFC_FOOTER, this.vORG_FOOTER, this.epEFC_PARAM_FOOTER);
+			this.EFC_FadeIn(isFadeIn, this.ecEFC_FOOTER, this.vORG_FOOTER, this.epEFC_PARAM_FOOTER);
 		}
 	}
 
-	public void EFC_RIGHT_FadeIn(bool flg)
+	public void EFC_RIGHT_FadeIn(bool isFadeIn)
 	{
-		if (this.epEFC_PARAM_RIGHT != null)
+		if (null != this.epEFC_PARAM_RIGHT)
 		{
-			this.EFC_FadeIn(flg, this.ecEFC_RIGHT, this.vORG_RIGHT, this.epEFC_PARAM_RIGHT);
+			this.EFC_FadeIn(isFadeIn, this.ecEFC_RIGHT, this.vORG_RIGHT, this.epEFC_PARAM_RIGHT);
 		}
 	}
 
-	public void EFC_LEFT_FadeIn(bool flg)
+	public void EFC_LEFT_FadeIn(bool isFadeIn)
 	{
-		if (this.epEFC_PARAM_LEFT != null)
+		if (null != this.epEFC_PARAM_LEFT)
 		{
-			this.EFC_FadeIn(flg, this.ecEFC_LEFT, this.vORG_LEFT, this.epEFC_PARAM_LEFT);
+			this.EFC_FadeIn(isFadeIn, this.ecEFC_LEFT, this.vORG_LEFT, this.epEFC_PARAM_LEFT);
 		}
 	}
 
-	private void EFC_FadeInCol(bool flg, EfcCont ec)
+	private void EFC_FadeInCol(bool isFadeIn, EfcCont ec)
 	{
-		if (ec != null)
+		if (null != ec)
 		{
 			this.actStartEfc();
-			if (flg)
+			if (isFadeIn)
 			{
 				this.tempCol = ec.GetColor();
-				this.tempCol.a = this.ofCol.a;
+				this.tempCol.a = this.offCol.a;
 				ec.SetColor(this.tempCol);
 				this.tempCol.a = this.onCol.a;
 				ec.ColorTo(this.tempCol, this.fadeInTime, new Action<int>(this.actEndEfc), iTween.EaseType.linear, 0f);
@@ -345,40 +314,38 @@ public class CMD : CommonDialog
 			else
 			{
 				this.tempCol = ec.GetColor();
-				this.tempCol.a = this.ofCol.a;
+				this.tempCol.a = this.offCol.a;
 				ec.ColorTo(this.tempCol, this.fadeOutTime, new Action<int>(this.actEndEfc), iTween.EaseType.linear, 0f);
 			}
 		}
 	}
 
-	public void EFC_BG_FadeIn(bool flg)
+	public void EFC_BG_FadeIn(bool isFadeIn)
 	{
-		this.EFC_FadeInCol(flg, this.ecEFC_BG);
+		this.EFC_FadeInCol(isFadeIn, this.ecEFC_BG);
 	}
 
-	public void EFC_CTR_FadeIn(bool flg)
+	public void EFC_CTR_FadeIn(bool isFadeIn)
 	{
-		this.EFC_FadeInCol(flg, this.ecEFC_CTR);
+		this.EFC_FadeInCol(isFadeIn, this.ecEFC_CTR);
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		this.InitEFC();
-		this.f_cmdbk = f;
+		this.f_cmdbk = closeEvent;
 		this.sizeX_cmdbk = sizeX;
 		this.sizeY_cmdbk = sizeY;
-		this.aT_cmdbk = aT;
+		this.aT_cmdbk = showAnimationTime;
 		if (this.useCMDAnim)
 		{
 			CMD parentDialog = this.GetParentDialog(true);
-			if (parentDialog != null && parentDialog.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
+			if (null != parentDialog && parentDialog.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
 			{
 				this._CMD_Parent = parentDialog;
 				this.isParentActing = true;
 				AppCoroutine.Start(this.HideParentWithDelay(), false);
-				Vector3 localPosition = base.gameObject.transform.localPosition;
-				localPosition.x = 8000f;
-				base.gameObject.transform.localPosition = localPosition;
+				base.HideDLG();
 			}
 			else
 			{
@@ -400,7 +367,7 @@ public class CMD : CommonDialog
 
 	private void UpdateBaseShowWithDelay()
 	{
-		if (this.hideDelayCT_S > 0)
+		if (0 < this.hideDelayCT_S)
 		{
 			this.hideDelayCT_S--;
 			if (this.hideDelayCT_S == 0)
@@ -426,7 +393,7 @@ public class CMD : CommonDialog
 	{
 		this.isBusyHideDelay = true;
 		this.hideDelayCT = 1;
-		while (this.hideDelayCT > 0)
+		while (0 < this.hideDelayCT)
 		{
 			this.hideDelayCT--;
 			yield return null;
@@ -448,7 +415,7 @@ public class CMD : CommonDialog
 			{
 				this.isActing = true;
 				CMD parentDialog = this.GetParentDialog(false);
-				if (!(parentDialog != null))
+				if (null == parentDialog)
 				{
 					this.EFC_HEADER_FadeIn(false);
 				}
@@ -458,7 +425,7 @@ public class CMD : CommonDialog
 				this.EFC_CTR_FadeIn(false);
 				this.EFC_LEFT_FadeIn(false);
 			}
-			if (this._CMD_Parent != null && this.IsExistDialog(this._CMD_Parent))
+			if (null != this._CMD_Parent && this.IsExistDialog(this._CMD_Parent))
 			{
 				this._CMD_Parent.gameObject.SetActive(true);
 			}
@@ -479,7 +446,7 @@ public class CMD : CommonDialog
 			{
 				this.isActing = true;
 				CMD parentDialog = this.GetParentDialog(false);
-				if (!(parentDialog != null))
+				if (null == parentDialog)
 				{
 					this.EFC_HEADER_FadeIn(false);
 				}
@@ -489,7 +456,7 @@ public class CMD : CommonDialog
 				this.EFC_CTR_FadeIn(false);
 				this.EFC_LEFT_FadeIn(false);
 			}
-			if (this._CMD_Parent != null && this.IsExistDialog(this._CMD_Parent))
+			if (null != this._CMD_Parent && this.IsExistDialog(this._CMD_Parent))
 			{
 				this._CMD_Parent.gameObject.SetActive(true);
 			}
@@ -506,24 +473,20 @@ public class CMD : CommonDialog
 		if (this.useCMDAnim)
 		{
 			CMD parentDialog = this.GetParentDialog(false);
-			if (parentDialog != null)
+			if (null != parentDialog && parentDialog.IsOpened() && this.animation_bk)
 			{
-				if (parentDialog.IsOpened() && this.animation_bk)
-				{
-					parentDialog.EFC_FOOTER_FadeIn(true);
-					parentDialog.EFC_RIGHT_FadeIn(true);
-					parentDialog.EFC_CTR_FadeIn(true);
-					parentDialog.EFC_LEFT_FadeIn(true);
-					parentDialog.isReActing = true;
-				}
+				parentDialog.EFC_FOOTER_FadeIn(true);
+				parentDialog.EFC_RIGHT_FadeIn(true);
+				parentDialog.EFC_CTR_FadeIn(true);
+				parentDialog.EFC_LEFT_FadeIn(true);
+				parentDialog.isReActing = true;
 			}
-			base.OnDestroy();
 		}
-		else
+		base.OnDestroy();
+		while (0 < this.actCt)
 		{
-			base.OnDestroy();
+			this.actEndEfc(0);
 		}
-		this.ClearActStart();
 	}
 
 	private CMD GetParentDialog(bool open)
@@ -537,7 +500,7 @@ public class CMD : CommonDialog
 			if (gameObject.transform.localPosition.z < num && this != dialogDic[key])
 			{
 				CMD cmd2 = (CMD)dialogDic[key];
-				if (cmd2 != null && cmd2.useCMDAnim && cmd2.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN && !this.DontLookParent)
+				if (null != cmd2 && cmd2.useCMDAnim && cmd2.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN && !this.DontLookParent)
 				{
 					num = gameObject.transform.localPosition.z;
 					if (!cmd2.HideFromChild)
@@ -551,7 +514,7 @@ public class CMD : CommonDialog
 				}
 			}
 		}
-		if (!(cmd != null) || !cmd.useCMDAnim)
+		if (!(null != cmd) || !cmd.useCMDAnim)
 		{
 			return null;
 		}
@@ -590,7 +553,7 @@ public class CMD : CommonDialog
 			if (this != dialogDic[key])
 			{
 				CMD cmd = (CMD)dialogDic[key];
-				if (cmd != null && cmd.useCMDAnim && cmd.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
+				if (null != cmd && cmd.useCMDAnim && cmd.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
 				{
 					gameObject.SetActive(true);
 				}
@@ -605,7 +568,7 @@ public class CMD : CommonDialog
 		{
 			base.MakeAnimation(open, atime, type);
 		}
-		else if (atime <= 0f)
+		else if (0f >= atime)
 		{
 			base.MakeAnimation(open, atime, type);
 		}
@@ -635,9 +598,7 @@ public class CMD : CommonDialog
 		{
 			if (this._CMD_Parent.GetActCount() == 0)
 			{
-				Vector3 localPosition = base.gameObject.transform.localPosition;
-				localPosition.x = 0f;
-				base.gameObject.transform.localPosition = localPosition;
+				base.ShowDLG();
 				this.isActing = true;
 				this.EFC_BG_FadeIn(true);
 				this.EFC_FOOTER_FadeIn(true);
@@ -655,7 +616,7 @@ public class CMD : CommonDialog
 		}
 		else if (this.GetActCount() == 0)
 		{
-			if (!this.isParentDeactive && this._CMD_Parent != null && this.IsExistDialog(this._CMD_Parent) && !GUICollider.IsAllColliderDisable())
+			if (!this.isParentDeactive && null != this._CMD_Parent && this.IsExistDialog(this._CMD_Parent) && !GUICollider.IsAllColliderDisable())
 			{
 				this._CMD_Parent.gameObject.SetActive(false);
 				this.isParentDeactive = true;
@@ -693,5 +654,23 @@ public class CMD : CommonDialog
 	public void SetReOpendAction(Func<int, bool> act)
 	{
 		this.actCBSetReOpendAction = act;
+	}
+
+	public void SetTutorialAnyTime(string tutorialName)
+	{
+		this.PartsTitle.SetTutorialAct(delegate(int i)
+		{
+			this.TutorialAnyTime(tutorialName);
+		});
+	}
+
+	private void TutorialAnyTime(string tutorialName)
+	{
+		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
+		if (null != tutorialObserver)
+		{
+			GUIMain.BarrierON(null);
+			tutorialObserver.StartHelp(tutorialName, new Action(GUIMain.BarrierOFF));
+		}
 	}
 }

@@ -1,8 +1,9 @@
 ﻿using Master;
 using System;
+using UI.Common;
 using UnityEngine;
 
-public class CMD_ChangePOP : CMD
+public sealed class CMD_ChangePOP : CMD, IPayConfirmNotice
 {
 	[SerializeField]
 	private UILabel titleLabel;
@@ -11,10 +12,10 @@ public class CMD_ChangePOP : CMD
 	private UILabel infoLabel;
 
 	[SerializeField]
-	private UILabel possessionTitle;
+	private UILabel possessionNum;
 
 	[SerializeField]
-	private UILabel possessionNum;
+	private UILabel costNum;
 
 	[SerializeField]
 	private UISprite possessionIconSprite;
@@ -23,26 +24,22 @@ public class CMD_ChangePOP : CMD
 	private UITexture possessionIconTexture;
 
 	[SerializeField]
-	private UILabel costTitle;
-
-	[SerializeField]
-	private UILabel costNum;
-
-	[SerializeField]
 	private UISprite costIconSprite;
 
 	[SerializeField]
 	private UITexture costIconTexture;
 
 	[SerializeField]
-	private UILabel yesButtonLabel;
+	private UIAssetsIcon assetsNumberIcon;
 
 	[SerializeField]
-	private UILabel noButtonLabel;
+	private UIAssetsIcon assetsCostIcon;
 
 	public Action OnPushedYesAction;
 
 	public Action OnPushedNoAction;
+
+	private object useDetail;
 
 	public string Title
 	{
@@ -68,33 +65,9 @@ public class CMD_ChangePOP : CMD
 		}
 	}
 
-	public string BtnTextYes
-	{
-		get
-		{
-			return this.yesButtonLabel.text;
-		}
-		set
-		{
-			this.yesButtonLabel.text = value;
-		}
-	}
-
-	public string BtnTextNo
-	{
-		get
-		{
-			return this.noButtonLabel.text;
-		}
-		set
-		{
-			this.noButtonLabel.text = value;
-		}
-	}
-
 	public static CMD_ChangePOP CreateExtendChipPOP(int possessionNum, int consumePrice, Action onPushedYesAction)
 	{
-		CMD_ChangePOP cmd_ChangePOP = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP") as CMD_ChangePOP;
+		CMD_ChangePOP cmd_ChangePOP = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP", null) as CMD_ChangePOP;
 		cmd_ChangePOP.Title = StringMaster.GetString("ChipInstalling-05");
 		cmd_ChangePOP.Info = string.Format(StringMaster.GetString("ChipInstalling-06"), consumePrice);
 		cmd_ChangePOP.OnPushedYesAction = onPushedYesAction;
@@ -104,20 +77,12 @@ public class CMD_ChangePOP : CMD
 
 	public static CMD_ChangePOP CreateEjectChipPOP(int possessionNum, int consumePrice, Action onPushedYesAction)
 	{
-		CMD_ChangePOP cmd_ChangePOP = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP") as CMD_ChangePOP;
+		CMD_ChangePOP cmd_ChangePOP = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP", null) as CMD_ChangePOP;
 		cmd_ChangePOP.Title = StringMaster.GetString("ChipInstalling-09");
 		cmd_ChangePOP.Info = string.Format(StringMaster.GetString("ChipInstalling-12"), consumePrice);
 		cmd_ChangePOP.OnPushedYesAction = onPushedYesAction;
 		cmd_ChangePOP.SetPoint(possessionNum, consumePrice);
 		return cmd_ChangePOP;
-	}
-
-	private void Start()
-	{
-		this.possessionTitle.text = StringMaster.GetString("SystemPossession");
-		this.costTitle.text = StringMaster.GetString("SystemCost");
-		this.BtnTextYes = StringMaster.GetString("SystemButtonYes");
-		this.BtnTextNo = StringMaster.GetString("SystemButtonNo");
 	}
 
 	public void SetPoint(int possession, int cost)
@@ -157,5 +122,23 @@ public class CMD_ChangePOP : CMD
 			this.OnPushedNoAction();
 		}
 		this.ClosePanel(true);
+	}
+
+	public void SetUseDetail(object detail)
+	{
+		this.useDetail = detail;
+	}
+
+	public object GetUseDetail()
+	{
+		return this.useDetail;
+	}
+
+	public void SetAsset(MasterDataMng.AssetCategory category, string assetsValue)
+	{
+		this.assetsNumberIcon.SetAssetsCategory(category, assetsValue);
+		this.assetsNumberIcon.SetIcon();
+		this.assetsCostIcon.SetAssetsCategory(category, assetsValue);
+		this.assetsCostIcon.SetIcon();
 	}
 }

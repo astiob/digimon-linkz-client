@@ -21,6 +21,8 @@ public class GUIScreenHome : GUIScreen
 
 	public static Action homeOpenCallback;
 
+	protected GameObject faceUI;
+
 	private List<CampaignFacilityIcon> campaignFacilityIconList;
 
 	public static bool enableBackKeyAndroid = true;
@@ -33,8 +35,7 @@ public class GUIScreenHome : GUIScreen
 		GameObject gameObject = GUIManager.LoadCommonGUI("Parts/PartsMenu", base.gameObject);
 		gameObject.transform.localPosition = new Vector3(0f, 0f, -300f);
 		this.partsMenu = gameObject.GetComponent<PartsMenu>();
-		base.ShowGUI();
-		GUIFace.ForceShowDigiviceBtn_S();
+		this.CreateHomeUI();
 		this.ServerRequest();
 	}
 
@@ -110,7 +111,9 @@ public class GUIScreenHome : GUIScreen
 	public IEnumerator StartScreenFadeIn(Action finish = null)
 	{
 		GUIFadeControll.StartFadeIn(0f);
-		GameObject fadeObj = GUIManager.LoadCommonGUI("Render2D/SquaresROOT", base.gameObject);
+		GameObject fadeObj = GUIManager.LoadCommonGUI("Render2D/SquaresROOT", Singleton<GUIMain>.Instance.gameObject);
+		SquaresEffect squaresEffect = fadeObj.GetComponent<SquaresEffect>();
+		squaresEffect.Initialize();
 		while (fadeObj != null)
 		{
 			yield return null;
@@ -280,11 +283,11 @@ public class GUIScreenHome : GUIScreen
 				GameWebAPI.RespDataCM_LoginBonus.LoginBonus loginBonus = respDataCM_LoginBonus.loginBonus.campaign[DataMng.Instance().ShowLoginBonusNumC];
 				if (loginBonus.loginBonusId != "2")
 				{
-					GUIMain.ShowCommonDialog(onClosedAction, "CMD_LoginAnimator");
+					GUIMain.ShowCommonDialog(onClosedAction, "CMD_LoginAnimator", null);
 				}
 				else
 				{
-					GUIMain.ShowCommonDialog(onClosedAction, "CMD_CampaignLogin");
+					GUIMain.ShowCommonDialog(onClosedAction, "CMD_CampaignLogin", null);
 				}
 				while (!isClose)
 				{
@@ -314,7 +317,7 @@ public class GUIScreenHome : GUIScreen
 					isClose = true;
 					DataMng.Instance().ShowLoginBonusNumN++;
 				};
-				GUIMain.ShowCommonDialog(action, "CMD_NormalLogin");
+				GUIMain.ShowCommonDialog(action, "CMD_NormalLogin", null);
 				while (!isClose)
 				{
 					yield return null;
@@ -326,11 +329,6 @@ public class GUIScreenHome : GUIScreen
 			}
 		}
 		yield break;
-	}
-
-	public void SetActiveOfPartsMenu(bool active)
-	{
-		this.partsMenu.gameObject.SetActive(active);
 	}
 
 	private IEnumerator CheckRecoverBattle()
@@ -367,7 +365,7 @@ public class GUIScreenHome : GUIScreen
 				{
 					base.StartCoroutine(this.ShowExtraPopupInformations());
 				};
-				CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(action, "CMDWebWindow") as CMDWebWindow;
+				CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(action, "CMDWebWindow", null) as CMDWebWindow;
 				cmdwebWindow.TitleText = StringMaster.GetString("InfomationTitle");
 				cmdwebWindow.Url = WebAddress.EXT_ADR_INFO;
 				CMDWebWindow cmdwebWindow2 = cmdwebWindow;
@@ -404,7 +402,7 @@ public class GUIScreenHome : GUIScreen
 					isClose = true;
 					DataMng.Instance().ShowPopupInfoNum++;
 				};
-				CMDWebWindowPopup cd = GUIMain.ShowCommonDialog(action, "CMDWebWindowPopup") as CMDWebWindowPopup;
+				CMDWebWindowPopup cd = GUIMain.ShowCommonDialog(action, "CMDWebWindowPopup", null) as CMDWebWindowPopup;
 				cd.setLinkCategoryType(int.Parse(dt.linkCategoryType));
 				cd.userInfoId = int.Parse(dt.userInfoId);
 				cd.TitleText = dt.title;
@@ -442,7 +440,7 @@ public class GUIScreenHome : GUIScreen
 	{
 		if (GUIScreenHome.enableBackKeyAndroid && GUIManager.IsEnableBackKeyAndroid() && Input.GetKeyDown(KeyCode.Escape))
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.BackToTitle), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.BackToTitle), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = StringMaster.GetString("BackKeyConfirmGoTitle");
 			this.partsMenu.ForceHide(false);
@@ -515,5 +513,37 @@ public class GUIScreenHome : GUIScreen
 			yield return base.StartCoroutine(request.Run(null, null, null));
 		}
 		yield break;
+	}
+
+	public void CreateHomeUI()
+	{
+		if (null == this.faceUI)
+		{
+			GameObject gameObject = AssetDataMng.Instance().LoadObject("UIPrefab/GUI/Face", null, true) as GameObject;
+			this.faceUI = UnityEngine.Object.Instantiate<GameObject>(gameObject);
+			if (null != this.faceUI)
+			{
+				Transform transform = this.faceUI.transform;
+				transform.parent = Singleton<GUIMain>.Instance.transform;
+				transform.localScale = Vector3.one;
+				transform.localPosition = Vector3.zero;
+				transform.localRotation = Quaternion.identity;
+				transform.name = gameObject.name;
+				if (null != GUIFaceIndicator.instance && null != GUIFace.instance)
+				{
+					GUIFaceIndicator.instance.gameObject.SetActive(true);
+					GUIFace.instance.gameObject.SetActive(true);
+				}
+			}
+		}
+	}
+
+	public override void HideGUI()
+	{
+		if (null != this.faceUI)
+		{
+			UnityEngine.Object.Destroy(this.faceUI);
+			this.faceUI = null;
+		}
 	}
 }

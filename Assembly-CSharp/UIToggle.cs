@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Toggle")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Toggle")]
 public class UIToggle : UIWidgetContainer
 {
 	public static BetterList<UIToggle> list = new BetterList<UIToggle>();
@@ -39,12 +39,12 @@ public class UIToggle : UIWidgetContainer
 	[SerializeField]
 	private Animation checkAnimation;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string functionName = "OnActivate";
 
 	[SerializeField]

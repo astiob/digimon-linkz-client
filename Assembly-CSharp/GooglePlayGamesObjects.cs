@@ -24,6 +24,12 @@ public class GooglePlayGamesObjects : MonoBehaviour
 
 	private bool isLock;
 
+	private void Awake()
+	{
+		this.googlePlayMenu.SetActive(false);
+		this.googlePlayBtnSprite.gameObject.SetActive(false);
+	}
+
 	public void Bootup()
 	{
 		if (!this.Lock())
@@ -59,7 +65,7 @@ public class GooglePlayGamesObjects : MonoBehaviour
 			GooglePlayGamesTool.Instance.SignOut();
 			PlayerPrefs.SetInt("IsSignOutGoogle", 1);
 			this.googlePlayBtnSprite.spriteName = this.SIGNOUT_PLAY_GAMES_SPRITE_NAME;
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("GoogleLogoutTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("GoogleLogoutInfo");
 		}
@@ -112,7 +118,7 @@ public class GooglePlayGamesObjects : MonoBehaviour
 	public void OnClickedSignOut()
 	{
 		this.EnableMenu(false);
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.ReactionSignOutConfirm), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.ReactionSignOutConfirm), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("GoogleLogoutConfirmTitle");
 		cmd_Confirm.Info = StringMaster.GetString("GoogleLogoutConfirmInfo");
 	}

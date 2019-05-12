@@ -7,15 +7,15 @@ using UnityEngine;
 
 public sealed class CMD_PointResult : CMD
 {
-	private const int bonusUiNum = 5;
+	private const int BONUS_UI_MAX = 5;
 
-	private const float bonusChangeTime = 0.2f;
+	private const float BONUS_CHANGE_TIME = 0.2f;
 
-	private const float bonusCurveTime = 1f;
+	private const float BONUS_CURVE_TIME = 1f;
 
-	private const float bonusViewTime = 0.5f;
+	private const float BONUS_VIEW_TIME = 0.5f;
 
-	private const float bonusEndWaitTime = 1.5f;
+	private const float BONUS_END_WAIT_TIME = 1.5f;
 
 	private CMD_PointResult.Proccess currentProccess;
 
@@ -91,12 +91,6 @@ public sealed class CMD_PointResult : CMD
 
 	private int itemListFrame;
 
-	private float halfPitch;
-
-	private int addPitch;
-
-	private bool isItemGetDisplayed;
-
 	private Action task;
 
 	private Action finished;
@@ -104,6 +98,12 @@ public sealed class CMD_PointResult : CMD
 	private float waitTime;
 
 	private float currentWaitTime;
+
+	private float halfPitch;
+
+	private int addPitch;
+
+	private bool isItemGetDisplayed;
 
 	protected override void Awake()
 	{
@@ -123,18 +123,17 @@ public sealed class CMD_PointResult : CMD
 		this.changeTapObj.SetActive(false);
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float ShowAnimationTime)
 	{
 		this.ConnectEventPointResult(delegate
 		{
 			RestrictionInput.EndLoad();
 			this.isDispItemGet = (this.eventResult.reward != null && this.eventResult.reward.Length > 0);
-			aT = 0f;
 			this.Wait(0.5f, delegate
 			{
 				this.DispPoint();
 			});
-			this.Show(f, sizeX, sizeY, aT);
+			this.Show(closeEvent, sizeX, sizeY, 0f);
 		});
 	}
 
@@ -161,7 +160,7 @@ public sealed class CMD_PointResult : CMD
 		{
 			return;
 		}
-		if (this.basePoint.gameObject.transform.localPosition.x >= -392f && this.basePointAnima == null)
+		if (-392f <= this.basePoint.gameObject.transform.localPosition.x && null == this.basePointAnima)
 		{
 			this.basePointAnima = this.pointRoot.gameObject.GetComponent<Animation>();
 			this.basePointAnima[this.basePointAnima.clip.name].speed = 0f;
@@ -274,7 +273,7 @@ public sealed class CMD_PointResult : CMD
 			this.bonusCoroutine = this.ViewBonusPointReStartAnima();
 			base.StartCoroutine(this.bonusCoroutine);
 		}
-		else if (this.basePointAnima[this.basePointAnima.clip.name].speed < 1f)
+		else if (1f > this.basePointAnima[this.basePointAnima.clip.name].speed)
 		{
 			this.basePointAnima[this.basePointAnima.clip.name].speed = 1f;
 			base.StartCoroutine(this.WaitStartCountUp());
@@ -307,7 +306,7 @@ public sealed class CMD_PointResult : CMD
 			this.bonusCoroutine = this.ViewBonusPointReStartAnima();
 			base.StartCoroutine(this.bonusCoroutine);
 		}
-		else if (this.basePointAnima[this.basePointAnima.clip.name].speed < 1f)
+		else if (1f > this.basePointAnima[this.basePointAnima.clip.name].speed)
 		{
 			this.basePointAnima[this.basePointAnima.clip.name].speed = 1f;
 			base.StartCoroutine(this.WaitStartCountUp());
@@ -341,7 +340,7 @@ public sealed class CMD_PointResult : CMD
 			return;
 		}
 		this.isItemGetDisplayed = true;
-		if (this.eventResult.reward.Length >= 5)
+		if (5 <= this.eventResult.reward.Length)
 		{
 			this.itemGetListRoot.SetActive(true);
 			this.itemGetRoot.SetActive(false);
@@ -381,7 +380,7 @@ public sealed class CMD_PointResult : CMD
 				if (flag)
 				{
 					this.csSelectPanelItemList.UpdateBarrier();
-					if (this.addPitch > 0)
+					if (0 < this.addPitch)
 					{
 						Vector3 localPosition = this.itemGetMoveRoot.transform.localPosition;
 						localPosition.y += this.halfPitch;
@@ -410,13 +409,15 @@ public sealed class CMD_PointResult : CMD
 		if (list == null || list.Count<GameWebAPI.RespData_AreaEventResult.Reward>() == 0)
 		{
 			this.OnFinishedDispNextItem();
-			return;
 		}
-		this.nextItemRoot.SetActive(true);
-		this.nextItemRoot.GetComponent<EffectAnimatorEventTime>().SetEvent(0, new Action(this.OnFinishedDispNextItem));
-		int num = (list.Count <= 0) ? 0 : (int.Parse(list[0].point) - this.eventResult.point.eventPoint);
-		this.nextItemPointText.text = string.Format(StringMaster.GetString("BattleResult-14"), num);
-		this.SetNextItemInfo(list);
+		else
+		{
+			this.nextItemRoot.SetActive(true);
+			this.nextItemRoot.GetComponent<EffectAnimatorEventTime>().SetEvent(0, new Action(this.OnFinishedDispNextItem));
+			int num = (list.Count <= 0) ? 0 : (int.Parse(list[0].point) - this.eventResult.point.eventPoint);
+			this.nextItemPointText.text = string.Format(StringMaster.GetString("BattleResult-14"), num);
+			this.SetNextItemInfo(list);
+		}
 	}
 
 	private string GetWorldEventId(string worldDungeonId)
@@ -441,7 +442,7 @@ public sealed class CMD_PointResult : CMD
 			if (!(list[i].worldEventId != worldEventId))
 			{
 				int num2 = int.Parse(list[i].point);
-				if (num > 0)
+				if (0 < num)
 				{
 					if (num2 == num)
 					{
@@ -481,7 +482,7 @@ public sealed class CMD_PointResult : CMD
 		{
 			this.changeTapObj.SetActive(true);
 			TweenAlpha component = this.changeTapObj.gameObject.GetComponent<TweenAlpha>();
-			if (component != null)
+			if (null != component)
 			{
 				component.PlayForward();
 			}
@@ -553,7 +554,8 @@ public sealed class CMD_PointResult : CMD
 			this.pointBonusList[i].SetLabelAlpha(1f);
 		}
 		int num = 0;
-		for (int j = 5 * (this.dataPageNum - 1) + 1; j <= 5 * this.dataPageNum; j++)
+		int num2 = 5 * (this.dataPageNum - 1) + 1;
+		for (int j = num2; j <= 5 * this.dataPageNum; j++)
 		{
 			if (j >= this.eventResult.point.bonusPoint.Length)
 			{
@@ -564,11 +566,11 @@ public sealed class CMD_PointResult : CMD
 			this.pointBonusList[num].SetLabelAlpha(1f);
 			num++;
 		}
-		if (this.basePointAnima == null)
+		if (null == this.basePointAnima)
 		{
 			this.basePointAnima = this.pointRoot.gameObject.GetComponent<Animation>();
 		}
-		if (this.basePointAnima[this.basePointAnima.clip.name].speed < 1f)
+		if (null != this.basePointAnima && 1f > this.basePointAnima[this.basePointAnima.clip.name].speed)
 		{
 			this.basePointAnima[this.basePointAnima.clip.name].speed = 1f;
 			base.StartCoroutine(this.WaitStartCountUp());
@@ -624,7 +626,8 @@ public sealed class CMD_PointResult : CMD
 		{
 			this.pointBonusList[i].gameObject.SetActive(false);
 		}
-		for (int j = 5 * viewNum + 1; j <= 5 * (viewNum + 1); j++)
+		int offset = 5 * viewNum + 1;
+		for (int j = offset; j <= 5 * (viewNum + 1); j++)
 		{
 			if (j >= this.eventResult.point.bonusPoint.Length)
 			{

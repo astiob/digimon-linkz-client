@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LeadReview
+public sealed class LeadReview
 {
 	public static readonly string DISPLAY_DATETIME_PREFS_KEY = "DateTimeDisplayLeadReview";
 
@@ -22,7 +22,7 @@ public class LeadReview
 			{
 				return false;
 			}
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.ConfirmReaction), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.ConfirmReaction), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("GashaReviewTitle");
 			cmd_Confirm.Info = StringMaster.GetString("GashaReviewInfo");
 			PlayerPrefs.SetString(LeadReview.DISPLAY_DATETIME_PREFS_KEY, ServerDateTime.Now.ToString());
@@ -58,7 +58,7 @@ public class LeadReview
 		}
 		DateTime d = DateTime.Parse(@string);
 		DateTime d2 = DateTime.Parse(CodeM);
-		if ((d - d2).TotalSeconds < 0.0)
+		if (0.0 > (d - d2).TotalSeconds)
 		{
 			PlayerPrefs.DeleteKey(LeadReview.DISPLAY_DATETIME_PREFS_KEY);
 			return true;
@@ -68,7 +68,7 @@ public class LeadReview
 
 	private bool JudgeHaveMedal(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList UserMonsterData)
 	{
-		return UserMonsterData.hpAbilityFlg == "1" || UserMonsterData.hpAbilityFlg == "2" || (UserMonsterData.attackAbilityFlg == "1" || UserMonsterData.attackAbilityFlg == "2") || (UserMonsterData.defenseAbilityFlg == "1" || UserMonsterData.defenseAbilityFlg == "2") || (UserMonsterData.spAttackAbilityFlg == "1" || UserMonsterData.spAttackAbilityFlg == "2") || (UserMonsterData.spDefenseAbilityFlg == "1" || UserMonsterData.spDefenseAbilityFlg == "2") || (UserMonsterData.speedAbilityFlg == "1" || UserMonsterData.speedAbilityFlg == "2");
+		return "1" == UserMonsterData.hpAbilityFlg || "2" == UserMonsterData.hpAbilityFlg || ("1" == UserMonsterData.attackAbilityFlg || "2" == UserMonsterData.attackAbilityFlg) || ("1" == UserMonsterData.defenseAbilityFlg || "2" == UserMonsterData.defenseAbilityFlg) || ("1" == UserMonsterData.spAttackAbilityFlg || "2" == UserMonsterData.spAttackAbilityFlg) || ("1" == UserMonsterData.spDefenseAbilityFlg || "2" == UserMonsterData.spDefenseAbilityFlg) || ("1" == UserMonsterData.speedAbilityFlg || "2" == UserMonsterData.speedAbilityFlg);
 	}
 
 	private void ConfirmReaction(int index)
@@ -115,7 +115,7 @@ public class LeadReview
 				}
 				return;
 			}
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(LeadReview.OnButtonReviewConfirm), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(LeadReview.OnButtonReviewConfirm), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = @string;
 			cmd_Confirm.Info = string2;
 			LeadReview.onFinishedAction = finishedAction;

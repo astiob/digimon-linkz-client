@@ -1,5 +1,4 @@
 ﻿using LitJson;
-using Master;
 using Neptune.Cloud;
 using Neptune.Cloud.Core;
 using System;
@@ -385,14 +384,7 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		}
 		if (this.onExceptionAction == null)
 		{
-			if (exitCode != 741)
-			{
-				AlertManager.ShowAlertDialog(new Action<int>(this.TCPReConnection), StringMaster.GetString("AlertNetworkErrorTitle"), StringMaster.GetString("AlertNetworkErrorTimeOut"), AlertManager.ButtonActionType.Close, false);
-			}
-			else
-			{
-				AlertManager.ShowAlertDialog(new Action<int>(this.TCPReConnection), StringMaster.GetString("AlertNetworkErrorTitle"), StringMaster.GetString("AlertNetworkErrorTimeOut"), AlertManager.ButtonActionType.Close, false);
-			}
+			global::Debug.Log("コールバックはありません");
 		}
 		else
 		{

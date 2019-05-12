@@ -9,42 +9,32 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 
 	private AlwaysEffectParams[] currentActiveRevivalEffect;
 
-	private CharacterStateControl currentCharacter;
-
-	private CharacterStateControl[] sortedCharacters;
-
 	private SkillStatus skillStatus;
 
 	public SubStatePlayInvocationEffectAction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
 
-	protected override void EnabledThisState()
-	{
-		this.currentCharacter = base.battleStateData.currentSelectCharacterState;
-		this.sortedCharacters = base.battleStateData.GetTotalCharacters();
-	}
-
 	protected override IEnumerator MainRoutine()
 	{
+		CharacterStateControl currentCharacter = base.battleStateData.currentSelectCharacterState;
 		if (base.battleStateData.IsChipSkill())
 		{
-			this.currentCharacter = base.battleStateData.GetAutoCounterCharacter();
+			currentCharacter = base.battleStateData.GetAutoCounterCharacter();
 		}
 		string applyName = string.Empty;
 		if (base.battleStateData.IsChipSkill())
 		{
-			this.skillStatus = base.hierarchyData.GetSkillStatus(this.currentCharacter.chipSkillId);
-			GameWebAPI.RespDataMA_ChipM.Chip chipData = ChipDataMng.GetChipMainData(this.currentCharacter.currentChipId);
+			this.skillStatus = base.hierarchyData.GetSkillStatus(currentCharacter.chipSkillId);
+			GameWebAPI.RespDataMA_ChipM.Chip chipData = ChipDataMng.GetChipMainData(currentCharacter.currentChipId);
 			applyName = chipData.name;
 		}
 		else
 		{
-			this.skillStatus = this.currentCharacter.currentSkillStatus;
+			this.skillStatus = currentCharacter.currentSkillStatus;
 			applyName = this.skillStatus.name;
 		}
-		base.stateManager.uiControl.ApplySkillName(true, applyName, this.currentCharacter);
-		base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(this.sortedCharacters);
+		base.stateManager.uiControl.ApplySkillName(true, applyName, currentCharacter);
 		this.cameraKey = "skillF";
 		if (!this.skillStatus.invocationEffectParams.cameraMotionId.Equals(string.Empty))
 		{
@@ -57,7 +47,7 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 			{
 				isBigBoss = true;
 			}
-			if (this.currentCharacter.isEnemy && isBigBoss)
+			if (currentCharacter.isEnemy && isBigBoss)
 			{
 				this.cameraKey = "BigBoss/skillF";
 			}
@@ -66,8 +56,6 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 				this.cameraKey = "skillF";
 			}
 		}
-		base.stateManager.threeDAction.HideAllCharactersAction(this.sortedCharacters);
-		this.currentCharacter.CharacterParams.gameObject.SetActive(true);
 		this.currentActiveRevivalEffect = base.battleStateData.GetIsActiveRevivalReservedEffect();
 		foreach (AlwaysEffectParams a in this.currentActiveRevivalEffect)
 		{
@@ -81,12 +69,34 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 		{
 			base.stateManager.soundPlayer.TryPlaySE(this.gettedId, 0f, false);
 		}
-		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.cameraKey, this.currentCharacter);
-		IEnumerator playSkillAnimation = this.skillStatus.invocationEffectParams.PlaySkillAnimation(this.currentCharacter.CharacterParams);
-		while (playSkillAnimation.MoveNext())
+		base.stateManager.threeDAction.HideAllCharactersAction(base.stateManager.battleStateData.GetTotalCharacters());
+		currentCharacter.CharacterParams.gameObject.SetActive(true);
+		currentCharacter.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.cameraKey, currentCharacter);
+		if (this.skillStatus.invocationEffectParams.isVoice)
 		{
-			object obj = playSkillAnimation.Current;
-			yield return obj;
+			bool lastOn2xSpeedPlay = base.stateManager.hierarchyData.on2xSpeedPlay;
+			base.stateManager.soundPlayer.SetVolumeSE(lastOn2xSpeedPlay);
+			IEnumerator playSkillAnimation = this.skillStatus.invocationEffectParams.PlaySkillAnimation(currentCharacter.CharacterParams);
+			while (playSkillAnimation.MoveNext())
+			{
+				if (lastOn2xSpeedPlay != base.stateManager.hierarchyData.on2xSpeedPlay)
+				{
+					lastOn2xSpeedPlay = base.stateManager.hierarchyData.on2xSpeedPlay;
+					base.stateManager.soundPlayer.SetVolumeSE(lastOn2xSpeedPlay);
+				}
+				yield return playSkillAnimation.Current;
+			}
+			base.stateManager.soundPlayer.SetVolumeSE(false);
+		}
+		else
+		{
+			IEnumerator playSkillAnimation2 = this.skillStatus.invocationEffectParams.PlaySkillAnimation(currentCharacter.CharacterParams);
+			while (playSkillAnimation2.MoveNext())
+			{
+				object obj = playSkillAnimation2.Current;
+				yield return obj;
+			}
 		}
 		yield break;
 	}

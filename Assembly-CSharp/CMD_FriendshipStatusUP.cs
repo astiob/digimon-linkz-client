@@ -30,7 +30,7 @@ public class CMD_FriendshipStatusUP : CMD
 		{
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
 			icon.Lock = monsterData.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed");
+		}, "CMD_CharacterDetailed", null);
 	}
 
 	public void SetData(MonsterData monsterData)

@@ -25,34 +25,28 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 	private UILabel lbCollection;
 
 	[SerializeField]
-	private BoxCollider colCloseBtn;
-
-	[SerializeField]
-	private BoxCollider colBackBtn;
-
-	[SerializeField]
-	private BoxCollider colLinkBtn;
-
-	[SerializeField]
 	private BoxCollider colBlockBtn;
-
-	[SerializeField]
-	private BoxCollider colVisitBtn;
-
-	[SerializeField]
-	private UISprite btnLink;
 
 	[SerializeField]
 	private UISprite btnBlock;
 
 	[SerializeField]
-	private UISprite btnVisit;
+	private UILabel lbBlock;
+
+	[SerializeField]
+	private BoxCollider colLinkBtn;
+
+	[SerializeField]
+	private UISprite btnLink;
 
 	[SerializeField]
 	private UILabel lbLink;
 
 	[SerializeField]
-	private UILabel lbBlock;
+	private BoxCollider colVisitBtn;
+
+	[SerializeField]
+	private UISprite btnVisit;
 
 	[SerializeField]
 	private UILabel lbVisit;
@@ -109,13 +103,13 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		if (GUIManager.GetTopDialog(null, false) != null && GUIManager.GetTopDialog(null, false).name == "CMD_FriendTop")
+		if (null != GUIManager.GetTopDialog(null, false) && "CMD_FriendTop" == GUIManager.GetTopDialog(null, false).name)
 		{
 			CMD_PartsFriendIDSearch.SaveInputId();
 		}
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		if (CMD_ProfileFriend.friendData == null && CMD_ProfileFriend.chatMemberData == null && CMD_ProfileFriend.chatLogData == null)
 		{
@@ -145,7 +139,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 				{
 					this.SetCloseAction(delegate(int idx)
 					{
-						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 						cmd_ModalMessage.Title = StringMaster.GetString("UserDontExistTitle");
 						cmd_ModalMessage.Info = StringMaster.GetString("UserDontExistInfo");
 					});
@@ -154,7 +148,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 				else
 				{
 					this.ShowDLG();
-					this.Show(f, sizeX, sizeY, aT);
+					this.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 					this.monsterParam = this.characterCameraView.csRender3DRT.GetCharacterParams();
 				}
 			}, delegate(Exception nop)
@@ -187,14 +181,9 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 		};
 	}
 
-	protected override void dataReload()
-	{
-		this.userProfile = this.friendProfile;
-	}
-
 	protected override void RefreshComponents()
 	{
-		this.dataReload();
+		this.userProfile = this.friendProfile;
 		this.lbName.text = this.userProfile.userData.nickname;
 		this.lbDescription.text = this.userProfile.userData.description;
 		TitleDataMng.SetTitleIcon(this.userProfile.userData.titleId, this.iconTitle);
@@ -266,7 +255,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 
 	private void OnTouchEndLinkBtn()
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendLink), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendLink), "CMD_Confirm", null) as CMD_Confirm;
 		if (null != cmd_Confirm)
 		{
 			switch (this.userProfile.friendStatus)
@@ -341,11 +330,11 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 	{
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int index)
 		{
-			if (CMD_FriendTop.instance != null)
+			if (null != CMD_FriendTop.instance)
 			{
 				CMD_FriendTop.instance.CloseFriendProfile(0);
 			}
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		if (null != cmd_ModalMessage)
 		{
 			switch (this.prevFriendStatus)
@@ -385,13 +374,13 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 	{
 		if (BlockManager.instance().CheckBlock(this.userProfile.userData.userId))
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBlock), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBlock), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("Profile-01");
 			cmd_Confirm.Info = StringMaster.GetString("Profile-06");
 		}
 		else if (BlockManager.instance().enableBlock)
 		{
-			CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBlock), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBlock), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm2.Title = StringMaster.GetString("Profile-01");
 			cmd_Confirm2.Info = StringMaster.GetString("Profile-02");
 		}
@@ -432,7 +421,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 
 	private void OpenResultBlockAPI()
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		if (null != cmd_ModalMessage)
 		{
 			cmd_ModalMessage.Title = StringMaster.GetString("Profile-01");
@@ -449,10 +438,10 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 
 	private void OnTouchEndVisitBtn()
 	{
-		if (FarmRoot.Instance == null)
+		if (null == FarmRoot.Instance)
 		{
 			GUIManager.CloseAllCommonDialog(null);
-			if (CMD_PvPTop.Instance != null)
+			if (null != CMD_PvPTop.Instance)
 			{
 				CMD_BattleNextChoice.GoToFarm();
 			}
@@ -462,17 +451,17 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 				{
 					CMD_FriendTop.instance.ShowFriendFarm(this.CreateFriendData(), null);
 				};
-				GUIMain.ShowCommonDialog(null, "CMD_FriendTop");
+				GUIMain.ShowCommonDialog(null, "CMD_FriendTop", null);
 			};
 		}
-		else if (CMD_FriendTop.instance == null)
+		else if (null == CMD_FriendTop.instance)
 		{
 			GUIManager.CloseAllCommonDialog(null);
 			CMD_FriendTop.onWindowOpened = delegate()
 			{
 				CMD_FriendTop.instance.ShowFriendFarm(this.CreateFriendData(), null);
 			};
-			GUIMain.ShowCommonDialog(null, "CMD_FriendTop");
+			GUIMain.ShowCommonDialog(null, "CMD_FriendTop", null);
 		}
 		else
 		{
@@ -525,7 +514,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 			},
 			OnReceived = delegate(GameWebAPI.RespDataBL_BlockSet nop)
 			{
-				if (CMD_FriendTop.instance != null)
+				if (null != CMD_FriendTop.instance)
 				{
 					CMD_FriendTop.instance.OnBlockSet(this.userProfile.userData.userId);
 				}
@@ -562,7 +551,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 
 	private IEnumerator RandomAnimateModel()
 	{
-		if (this.monsterParam == null || this.isAnimation)
+		if (null == this.monsterParam || this.isAnimation)
 		{
 			yield break;
 		}

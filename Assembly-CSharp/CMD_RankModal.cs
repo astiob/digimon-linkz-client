@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_RankModal : CMD
+public sealed class CMD_RankModal : CMD
 {
 	[SerializeField]
 	private GUISelectPanelRank guiSelectPanelRank;
@@ -12,49 +12,27 @@ public class CMD_RankModal : CMD
 	private GUIListPartsRank guiListPartsRank;
 
 	[SerializeField]
-	private UILabel titleLabel;
-
-	[SerializeField]
-	private UILabel pointTitleLabel;
-
-	[SerializeField]
 	private UILabel pointLabel;
 
 	[SerializeField]
 	private UISprite rankSprite;
 
-	private void Start()
-	{
-		this.titleLabel.text = StringMaster.GetString("ColosseumRankListTitle");
-		this.pointTitleLabel.text = StringMaster.GetString("ColosseumRankListTotalWin");
-	}
-
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
 		this.moveBehavior = CommonDialog.MOVE_BEHAVIOUR.NONE;
-		base.Show(f, sizeX, sizeY, aT);
-	}
-
-	protected override void Update()
-	{
-		base.Update();
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 	}
 
 	public override void ClosePanel(bool animation = true)
 	{
-		if (this.guiSelectPanelRank != null)
+		if (null != this.guiSelectPanelRank)
 		{
 			this.guiSelectPanelRank.FadeOutAllListParts(null, false);
 			this.guiSelectPanelRank.SetHideScrollBarAllWays(true);
 		}
 		base.ClosePanel(animation);
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 
 	public void Initialize(List<GUIListPartsRank.RankData> RankDataList, int UserRankID, int UserScore, bool IsAggregate)
@@ -63,7 +41,7 @@ public class CMD_RankModal : CMD
 		List<GUIListPartsRank.RankData> list = new List<GUIListPartsRank.RankData>();
 		foreach (GUIListPartsRank.RankData rankData in RankDataList)
 		{
-			if (rankData.id <= 4)
+			if (4 >= rankData.id)
 			{
 				if (rankData.id == 4)
 				{
@@ -87,6 +65,7 @@ public class CMD_RankModal : CMD
 			position.x += num;
 			this.guiSelectPanelRank.transform.position = position;
 		}
+		this.rankSprite.spriteName = string.Empty;
 		foreach (GUIListPartsRank.RankData rankData2 in RankDataList)
 		{
 			if (rankData2.id == UserRankID)

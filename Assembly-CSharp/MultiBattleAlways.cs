@@ -15,16 +15,16 @@ public sealed class MultiBattleAlways : BattleAlways
 	[Header("右下のメッセージ")]
 	public MultiConnetionMessage connectionMessage;
 
-	[Header("マルチバトルのダイアログ")]
 	[SerializeField]
+	[Header("マルチバトルのダイアログ")]
 	public MultiBattleDialog multiBattleDialog;
 
 	[SerializeField]
 	[Header("共有AP")]
 	public BattleUIMultiSharedAP sharedAP;
 
-	[SerializeField]
 	[Header("残りターン(右下)")]
+	[SerializeField]
 	public RemainingTurn remainingTurn;
 
 	public void ShowWinnerUI()

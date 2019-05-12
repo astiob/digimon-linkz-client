@@ -29,12 +29,12 @@ public class GUIListDropItemParts : GUIListPartBS
 	[SerializeField]
 	private PresentBoxItem dropItemItems;
 
-	[SerializeField]
 	[Header("運の文字アイコン")]
+	[SerializeField]
 	private UILabel luckIcons;
 
-	[SerializeField]
 	[Header("マルチ運プレイヤーアイコン")]
+	[SerializeField]
 	private GameObject goLuckPlayerIcons;
 
 	[Header("マルチの文字アイコン")]
@@ -57,8 +57,8 @@ public class GUIListDropItemParts : GUIListPartBS
 	[SerializeField]
 	private UILabel eventChipDropIcon;
 
-	[Header("ドロップ数のラベル")]
 	[SerializeField]
+	[Header("ドロップ数のラベル")]
 	private UILabel dropNumLabel;
 
 	private ParticleSystem dropParticleSystem;

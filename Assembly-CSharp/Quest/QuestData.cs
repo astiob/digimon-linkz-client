@@ -1,6 +1,7 @@
 ﻿using PersistentData;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeSerialize;
 using UnityEngine;
 using WebAPIRequest;
@@ -238,7 +239,7 @@ namespace Quest
 				this.worldAreaMList = this.GetWorldAreaM("2", true, false);
 			}
 			this.InitWD_DngInfoDataList();
-			RequestList requestList = new RequestList();
+			List<RequestBase> list = new List<RequestBase>();
 			for (int i = 0; i < worldIdList.Count; i++)
 			{
 				string worldId = worldIdList[i];
@@ -252,7 +253,7 @@ namespace Quest
 					}
 					else
 					{
-						RequestBase addRequest = new GameWebAPI.RequestWD_WorldDungeonInfo
+						RequestBase item = new GameWebAPI.RequestWD_WorldDungeonInfo
 						{
 							SetSendData = delegate(GameWebAPI.WD_Req_DngInfo param)
 							{
@@ -264,37 +265,71 @@ namespace Quest
 								this.dngDataCacheList.Add(worldId, response);
 							}
 						};
-						requestList.AddRequest(addRequest);
+						list.Add(item);
 					}
 					break;
 				case "3":
 				{
-					RequestBase addRequest = new GameWebAPI.RequestWD_WorldEventDungeonInfo
+					RequestBase item = new GameWebAPI.RequestWD_WorldEventDungeonInfo
 					{
 						OnReceived = delegate(GameWebAPI.RespDataWD_GetDungeonInfo response)
 						{
 							this.AddWD_DngInfoDataList(worldId, response);
 						}
 					};
-					requestList.AddRequest(addRequest);
+					list.Add(item);
 					break;
 				}
 				case "8":
 				{
 					this.ResetWorldAreaActiveFlg("8");
-					RequestBase addRequest = new GameWebAPI.RequestWD_WorldTicketDungeonInfo
+					RequestBase item = new GameWebAPI.RequestWD_WorldTicketDungeonInfo
 					{
 						OnReceived = delegate(GameWebAPI.RespDataWD_GetDungeonInfo response)
 						{
 							this.AddWD_DngInfoDataList(worldId, response);
 						}
 					};
-					requestList.AddRequest(addRequest);
+					list.Add(item);
 					break;
 				}
 				}
 			}
-			AppCoroutine.Start(requestList.RunOneTime(delegate()
+			if (list.Count > 0)
+			{
+				this.Request(list, 0, completed);
+			}
+			else
+			{
+				completed(false);
+			}
+		}
+
+		private void Request(List<RequestBase> list, int index, Action<bool> completed)
+		{
+			if (list.Count - 1 == index)
+			{
+				this.Request(list[index], completed);
+			}
+			else
+			{
+				this.Request(list[index], delegate(bool flg)
+				{
+					if (flg)
+					{
+						this.Request(list, ++index, completed);
+					}
+					else
+					{
+						completed(false);
+					}
+				});
+			}
+		}
+
+		private void Request(RequestBase request, Action<bool> completed)
+		{
+			AppCoroutine.Start(request.RunOneTime(delegate()
 			{
 				completed(true);
 			}, delegate(Exception noop)
@@ -967,6 +1002,19 @@ namespace Quest
 				OnReceived = onResponse
 			};
 			return new APIRequestTask(request, requestRetry);
+		}
+
+		public static void CreateDropAssetList(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons questStage, List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset> dropAssetList)
+		{
+			int i;
+			for (i = 0; i < questStage.dropAssets.Length; i++)
+			{
+				int assetCategoryId = questStage.dropAssets[i].assetCategoryId;
+				if (assetCategoryId != 4 && assetCategoryId != 5 && !dropAssetList.Any((GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset x) => x.assetCategoryId == assetCategoryId && x.assetValue == questStage.dropAssets[i].assetValue))
+				{
+					dropAssetList.Add(questStage.dropAssets[i]);
+				}
+			}
 		}
 
 		public enum WORLD_STATUS

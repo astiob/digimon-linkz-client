@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RoundStart : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[Header("ApHpUp_Rootのスキナー")]
@@ -20,16 +20,16 @@ public class RoundStart : MonoBehaviour
 	[Header("AP UPローカライズ(片方の時)")]
 	protected UILabel onlyApUpLocalize;
 
-	[SerializeField]
 	[Header("AP UPローカライズ(両方)")]
+	[SerializeField]
 	protected UILabel apUpLocalize;
 
 	[SerializeField]
 	[Header("HP回復ローカライズ(片方の時)")]
 	protected UILabel onlyHpRecoverLocalize;
 
-	[SerializeField]
 	[Header("HP回復ローカライズ(両方)")]
+	[SerializeField]
 	protected UILabel hpRecoverLocalize;
 
 	private void Awake()

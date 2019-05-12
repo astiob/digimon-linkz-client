@@ -10,8 +10,8 @@ public sealed class CMD_BattleResult : CMD
 
 	private Action<CMD_BattleResult> actionEffectFinished;
 
-	[Header("ドロップアイテム結果")]
 	[SerializeField]
+	[Header("ドロップアイテム結果")]
 	private DropItemResult dropItemResult;
 
 	[SerializeField]

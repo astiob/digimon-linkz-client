@@ -24,15 +24,10 @@ public class CMD_Takeover : CMD
 		FarmCameraControlForCMD.Off();
 	}
 
-	private void CloseAndFarmCamOn(bool animation)
+	public override void ClosePanel(bool animation = true)
 	{
 		FarmCameraControlForCMD.On();
 		base.ClosePanel(animation);
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		this.CloseAndFarmCamOn(animation);
 	}
 
 	private void Initialize()

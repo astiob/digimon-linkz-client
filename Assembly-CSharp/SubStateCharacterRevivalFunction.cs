@@ -72,12 +72,6 @@ public class SubStateCharacterRevivalFunction : BattleStateController
 		else
 		{
 			this.cameraKey = "skillF";
-			IEnumerator cameraWait = base.stateManager.threeDAction.MotionResetAliveCharacterAction(characters.ToArray());
-			while (cameraWait.MoveNext())
-			{
-				object obj = cameraWait.Current;
-				yield return obj;
-			}
 		}
 		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.cameraKey, characters[0]);
 		for (int j = 0; j < characters.Count; j++)
@@ -88,7 +82,7 @@ public class SubStateCharacterRevivalFunction : BattleStateController
 			characters[j].CharacterParams.transform.localScale = Vector3.one;
 			base.stateManager.threeDAction.PlayHitEffectAction(base.battleStateData.revivalEffect[j], characters[j]);
 			characters[j].CharacterParams.transform.localScale = Vector3.zero;
-			characters[j].CharacterParams.PlayRevivalAnimation();
+			characters[j].CharacterParams.PlayAnimation(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
 		}
 		base.stateManager.soundPlayer.TryPlaySE(base.battleStateData.revivalReservedEffect[0], AlwaysEffectState.Out);
 		base.stateManager.soundPlayer.TryPlaySE(base.battleStateData.revivalEffect[0]);
@@ -96,8 +90,8 @@ public class SubStateCharacterRevivalFunction : BattleStateController
 		IEnumerator wait = base.stateManager.threeDAction.SmoothIncreaseCharactersAction(base.stateManager.stateProperty.revivalActionWaitSecond, characters.ToArray());
 		while (wait.MoveNext())
 		{
-			object obj2 = wait.Current;
-			yield return obj2;
+			object obj = wait.Current;
+			yield return obj;
 		}
 		yield break;
 	}

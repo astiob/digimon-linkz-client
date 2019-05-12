@@ -89,7 +89,7 @@ public class GUIListPartsFriend : GUIListPartBS
 	private void actMIconLong(MonsterData md)
 	{
 		CMD_CharacterDetailed.DataChg = md;
-		GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed");
+		GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
 	}
 
 	private void UpdateMonsterIcon()

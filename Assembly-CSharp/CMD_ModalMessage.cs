@@ -15,7 +15,7 @@ public sealed class CMD_ModalMessage : CMD
 
 	public static CMD_ModalMessage Create(string title, string info, Action<int> onCloseAction = null)
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(onCloseAction, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(onCloseAction, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = title;
 		cmd_ModalMessage.Info = info;
 		cmd_ModalMessage.BtnText = StringMaster.GetString("SystemButtonClose");

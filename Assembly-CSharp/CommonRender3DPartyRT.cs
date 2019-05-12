@@ -12,8 +12,8 @@ public class CommonRender3DPartyRT : MonoBehaviour
 
 	private List<CharacterParams> cpParamList;
 
-	[SerializeField]
 	[Header("モンスター配置用Locater")]
+	[SerializeField]
 	private GameObject[] Locater;
 
 	protected virtual void Awake()
@@ -46,7 +46,7 @@ public class CommonRender3DPartyRT : MonoBehaviour
 			GameObject original = AssetDataMng.Instance().LoadObject(text, null, true) as GameObject;
 			this.goCharaList.Add(UnityEngine.Object.Instantiate<GameObject>(original));
 			CharacterParams component = this.goCharaList[num].GetComponent<CharacterParams>();
-			component.PlayIdleAnimation();
+			component.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 			this.cpParamList.Add(component);
 			this.goCharaList[num].name = text;
 			this.goCharaList[num].transform.SetParent(this.Locater[num].transform.parent);

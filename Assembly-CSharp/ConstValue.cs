@@ -56,37 +56,19 @@ public class ConstValue
 
 	public const string PROFILE_GRAY_BUTTON = "Common02_Btn_BaseG";
 
-	public const string CHIP_ICON = "Common02_Icon_Chip";
-
-	public const string MEAT_ICON = "Common02_Icon_Meat";
-
-	public const string LINK_POINT_ICON = "Common02_Icon_Link";
-
-	public const string DIGI_STONE_ICON = "Common02_Icon_Stone";
-
 	public const string GOLD_TALENT_ICON = "Common02_Talent_Gold";
 
 	public const string SILVER_TALENT_ICON = "Common02_Talent_Silver";
 
-	public const string COMMON_MAIN_THEME_BGM = "bgm_101";
-
 	public const string COMMON_OTHER_SCENE_BGM = "bgm_102";
-
-	public const string COMMON_TUTORIAL_BGM = "bgm_103";
 
 	public const string FORM_MAIN_BGM = "bgm_201";
 
 	public const string FORM_GASHA_BGM = "bgm_202";
 
-	public const string FORM_CHIP_GASHA_BGM_1 = "bgm_204";
-
-	public const string FORM_CHIP_GASHA_BGM_10 = "bgm_205";
-
 	public const string COLOSSEUM_BGM = "bgm_203";
 
 	public const string BATTLE_QUEST_TOP_BGM = "bgm_301";
-
-	public const string BATTLE_WIN_BGM = "bgm_302";
 
 	public const string BATTLE_RESULT_BGM = "bgm_303";
 
@@ -824,6 +806,38 @@ public class ConstValue
 		get
 		{
 			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_INHERITRATE_ULTIMATE;
+		}
+	}
+
+	public static string EXT_ADR_AGREE
+	{
+		get
+		{
+			if (MasterDataMng.Instance().RespDataMA_CodeM == null || string.IsNullOrEmpty(MasterDataMng.Instance().RespDataMA_CodeM.codeM.EXT_ADR_AGREE))
+			{
+				return "https://legal.bandainamcoent.co.jp/terms/";
+			}
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.EXT_ADR_AGREE;
+		}
+	}
+
+	public static string EXT_ADR_PRIVACY_POLICY
+	{
+		get
+		{
+			if (MasterDataMng.Instance().RespDataMA_CodeM == null || string.IsNullOrEmpty(MasterDataMng.Instance().RespDataMA_CodeM.codeM.EXT_ADR_PRIVACY_POLICY))
+			{
+				return "https://legal.bandainamcoent.co.jp/privacy/";
+			}
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.EXT_ADR_PRIVACY_POLICY;
+		}
+	}
+
+	public static string GDPR_OPT_OUT_SITE_URL
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.GDPR_OPT_OUT_SITE_URL;
 		}
 	}
 

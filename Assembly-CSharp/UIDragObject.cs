@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Drag Object")]
+[ExecuteInEditMode]
 public class UIDragObject : MonoBehaviour
 {
 	public Transform target;

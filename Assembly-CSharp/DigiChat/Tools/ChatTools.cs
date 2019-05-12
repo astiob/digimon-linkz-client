@@ -126,7 +126,7 @@ namespace DigiChat.Tools
 
 		public static void chatGroupMaxJoinDialog()
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatSearch-05");
 		}

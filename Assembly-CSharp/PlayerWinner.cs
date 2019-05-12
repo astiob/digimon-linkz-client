@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class PlayerWinner : MonoBehaviour
 {
-	[SerializeField]
 	[Header("Nextボタン")]
+	[SerializeField]
 	private UIButton nextButton;
 
-	[Header("Nextボタンのコライダー")]
 	[SerializeField]
+	[Header("Nextボタンのコライダー")]
 	private Collider nextButtonCollider;
 
-	[SerializeField]
 	[Header("NextボタンのGameObject")]
+	[SerializeField]
 	public GameObject nextButtonGO;
 
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[Header("スピードクリア")]

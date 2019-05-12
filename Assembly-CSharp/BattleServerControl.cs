@@ -462,15 +462,11 @@ public class BattleServerControl : BattleFunctionBase
 			SelectingOrder selectingOrder = ServerToBattleUtility.IntToSelectingOrder(enemy.ai[i].lookType);
 			float minValue = (targetSelectReference != TargetSelectReference.Hp) ? ((float)enemy.ai[i].invokeMinRange) : ServerToBattleUtility.HundredToPercentage(enemy.ai[i].invokeMinRange);
 			float maxValue = (targetSelectReference != TargetSelectReference.Hp) ? ((float)enemy.ai[i].invokeMaxRange) : ServerToBattleUtility.HundredToPercentage(enemy.ai[i].invokeMaxRange);
-			float num2 = ServerToBattleUtility.PermillionToPercentage(enemy.ai[i].minRate);
-			float maxRange2 = ServerToBattleUtility.PermillionToPercentage(enemy.ai[i].maxRate);
+			float minRange2 = 0f;
+			float maxRange2 = ServerToBattleUtility.PermillionToPercentage(enemy.ai[i].rate);
 			string skillId = enemy.ai[i].skillId;
-			if (num2 <= 1f)
-			{
-				num2 = 0f;
-			}
 			list3.Add(this.SkillMToSkillStatus(skillId));
-			AIActionClip item5 = new AIActionClip(targetSelectReference, selectingOrder, minValue, maxValue, num2, maxRange2, skillId);
+			AIActionClip item5 = new AIActionClip(targetSelectReference, selectingOrder, minValue, maxValue, minRange2, maxRange2, skillId);
 			bool flag = false;
 			if (i < enemy.ai.Length - 1)
 			{
@@ -481,7 +477,7 @@ public class BattleServerControl : BattleFunctionBase
 						flag = true;
 					}
 				}
-				else if (enemy.ai[i + 1].minHpRange != enemy.ai[i + 1].minHpRange)
+				else if (enemy.ai[i].minHpRange != enemy.ai[i + 1].minHpRange && enemy.ai[i].maxHpRange != enemy.ai[i + 1].maxHpRange)
 				{
 					flag = true;
 				}
@@ -506,9 +502,7 @@ public class BattleServerControl : BattleFunctionBase
 			foreach (GameWebAPI.RespDataWD_DungeonStart.Drop drop2 in enemy.drop)
 			{
 				DropBoxType dropBoxType = ServerToBattleUtility.IntToDropBoxType(drop2.dropBoxType);
-				MasterDataMng.AssetCategory dropAssetType = (MasterDataMng.AssetCategory)drop2.assetCategoryId.ToInt32();
-				int assetNum = drop2.assetNum;
-				ItemDropResult item2 = new ItemDropResult(dropBoxType, dropAssetType, assetNum);
+				ItemDropResult item2 = new ItemDropResult(dropBoxType);
 				list4.Add(item2);
 			}
 		}
@@ -531,16 +525,16 @@ public class BattleServerControl : BattleFunctionBase
 		{
 			array = new int[0];
 		}
-		foreach (int num3 in array)
+		foreach (int num2 in array)
 		{
-			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(num3.ToString());
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(num2.ToString());
 			if (chipEffectData != null)
 			{
 				foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipEffectData)
 				{
-					int num4 = chipEffect.effectType.ToInt32();
+					int num3 = chipEffect.effectType.ToInt32();
 					string effectValue = chipEffect.effectValue;
-					if (num4 == 60 || num4 == 61 || (num4 == 56 && num4 > 0))
+					if (num3 == 60 || num3 == 61 || (num3 == 56 && num3 > 0))
 					{
 						SkillStatus skillStatus = base.stateManager.serverControl.SkillMToSkillStatus(effectValue);
 						base.hierarchyData.AddSkillStatus(skillStatus.skillId, skillStatus);
@@ -585,6 +579,8 @@ public class BattleServerControl : BattleFunctionBase
 					string name = skillM[i].name;
 					string description = skillM[i].description;
 					int needAp = int.Parse(skillM[i].needPoint);
+					string useCountType = "0";
+					int useCountValue = (!string.IsNullOrEmpty(skillM[i].useCountValue)) ? int.Parse(skillM[i].useCountValue) : 0;
 					EffectTarget target = affectEffectPropertyList[0].target;
 					EffectNumbers effectNumbers = affectEffectPropertyList[0].effectNumbers;
 					foreach (AffectEffectProperty affectEffectProperty in affectEffectPropertyList)
@@ -596,7 +592,7 @@ public class BattleServerControl : BattleFunctionBase
 							break;
 						}
 					}
-					return new SkillStatus(skillId, attackEffect, soundEffect, skillType, name, description, target, effectNumbers, needAp, affectEffectPropertyList.ToArray());
+					return new SkillStatus(skillId, attackEffect, soundEffect, skillType, name, description, target, effectNumbers, needAp, useCountType, useCountValue, affectEffectPropertyList.ToArray());
 				}
 			}
 		}
@@ -732,6 +728,13 @@ public class BattleServerControl : BattleFunctionBase
 				float num5 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect7, false);
 				float num6 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect8, false);
 				float num7 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect9, false);
+				float num8 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect10, false);
+				float num9 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect11, false);
+				float num10 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect12, false);
+				float num11 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect13, false);
+				float num12 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect14, false);
+				float num13 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect15, false);
+				float num14 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect16, false);
 				bool useDrainAffectEffect = ServerToBattleUtility.GetUseDrainAffectEffect(convertSkillDetailM[i].effectType);
 				PowerType powerType = ServerToBattleUtility.GetPowerType(convertSkillDetailM[i].effectType);
 				TechniqueType techniqueType = ServerToBattleUtility.GetTechniqueType(convertSkillDetailM[i].effectType);
@@ -749,7 +752,14 @@ public class BattleServerControl : BattleFunctionBase
 					num4,
 					num5,
 					num6,
-					num7
+					num7,
+					num8,
+					num9,
+					num10,
+					num11,
+					num12,
+					num13,
+					num14
 				}, useDrainAffectEffect, powerType, techniqueType, attribute, isMissThrough);
 				list.Add(item);
 			}
@@ -802,7 +812,7 @@ public class BattleServerControl : BattleFunctionBase
 				base.battleStateData.beforeConfirmDigiStoneNumber = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 				shopCloseWait = true;
 			};
-			CMD_Shop cs = GUIMain.ShowCommonDialog(Result, "CMD_Shop") as CMD_Shop;
+			CMD_Shop cs = GUIMain.ShowCommonDialog(Result, "CMD_Shop", null) as CMD_Shop;
 			cs.CloseWhenConsumed = true;
 			float obstacleBGLocalY = obstacleBGTrans.localPosition.y;
 			cs.SetOnOpened(delegate(int a)
@@ -821,7 +831,7 @@ public class BattleServerControl : BattleFunctionBase
 			{
 				shopCloseWait = true;
 			};
-			CMD_Alert ca = GUIMain.ShowCommonDialog(Result2, "CMD_Alert") as CMD_Alert;
+			CMD_Alert ca = GUIMain.ShowCommonDialog(Result2, "CMD_Alert", null) as CMD_Alert;
 			ca.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
 			ca.Title = StringMaster.GetString("Maintenance-03");
 			ca.Info = StringMaster.GetString("Maintenance-04");

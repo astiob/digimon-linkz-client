@@ -289,7 +289,7 @@ public sealed class RewardListItem : MonoBehaviour
 		{
 			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(objectId);
 			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(int.Parse(facilityConditionM.releaseId));
+			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
 			result = facilityMasterByReleaseId.GetIconPath();
 			break;
 		}

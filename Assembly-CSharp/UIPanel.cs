@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Panel")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Panel")]
 public class UIPanel : UIRect
 {
 	public static List<UIPanel> list = new List<UIPanel>();
@@ -42,8 +42,8 @@ public class UIPanel : UIRect
 
 	public UIPanel.OnClippingMoved onClipMove;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Texture2D mClipTexture;
 
 	[HideInInspector]
@@ -62,8 +62,8 @@ public class UIPanel : UIRect
 	[SerializeField]
 	private Vector2 mClipSoftness = new Vector2(4f, 4f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mDepth;
 
 	[HideInInspector]

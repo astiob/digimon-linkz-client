@@ -14,20 +14,20 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private bool _onIgnoreUpdate;
 
-	[SerializeField]
 	[FormerlySerializedAs("onIgnoreManage")]
+	[SerializeField]
 	private bool _onIgnoreManage;
 
-	[FormerlySerializedAs("onIgnoreManage")]
 	[SerializeField]
+	[FormerlySerializedAs("onIgnoreManage")]
 	private bool _onIgnoreFollowingTransformOverride;
 
-	[FormerlySerializedAs("onManualPosition")]
 	[SerializeField]
+	[FormerlySerializedAs("onManualPosition")]
 	private bool _onManualPosition;
 
-	[SerializeField]
 	[FormerlySerializedAs("manualPositionTransform")]
+	[SerializeField]
 	private Transform _manualPositionTransform;
 
 	[SerializeField]
@@ -51,8 +51,8 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private bool _onInverseDistance;
 
-	[FormerlySerializedAs("onInverse")]
 	[SerializeField]
+	[FormerlySerializedAs("onInverse")]
 	private bool _onInverse;
 
 	[SerializeField]

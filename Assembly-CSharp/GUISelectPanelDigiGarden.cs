@@ -4,16 +4,6 @@ using UnityEngine;
 
 public sealed class GUISelectPanelDigiGarden : GUISelectPanelBSPartsUD
 {
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public void AllBuild(List<MonsterData> dts)
 	{
 		base.InitBuild();

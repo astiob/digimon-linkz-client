@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[ExecuteInEditMode]
-	[AddComponentMenu("Image Effects/Edge Detection/Crease Shading")]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Edge Detection/Crease Shading")]
 	internal class CreaseShading : PostEffectsBase
 	{
 		public float intensity = 0.5f;

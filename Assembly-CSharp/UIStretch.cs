@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Stretch")]
+[ExecuteInEditMode]
 public class UIStretch : MonoBehaviour
 {
 	public Camera uiCamera;

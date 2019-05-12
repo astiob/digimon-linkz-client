@@ -134,7 +134,7 @@ namespace Colosseum.Matching
 				this.eventListener.OnReceivedOpponentStartBattleResponse();
 				break;
 			default:
-				this.eventListener.OnExceptionStartBattleResponse(resultCode);
+				this.eventListener.OnExceptionStartBattleResponse(resultCode.ToString());
 				break;
 			}
 		}
@@ -183,7 +183,14 @@ namespace Colosseum.Matching
 					}
 					break;
 				case "080108":
-					this.OnRecievedBattleStart(Convert.ToInt32(dictionary["resultCode"]));
+					if (dictionary.ContainsKey("errorCode"))
+					{
+						this.eventListener.OnExceptionStartBattleResponse(dictionary["errorCode"].ToString());
+					}
+					else
+					{
+						this.OnRecievedBattleStart(Convert.ToInt32(dictionary["resultCode"]));
+					}
 					break;
 				case "enemyData":
 				{

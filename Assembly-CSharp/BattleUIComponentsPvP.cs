@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 {
-	[Header("Menu/PanelのTransform")]
 	[SerializeField]
+	[Header("Menu/PanelのTransform")]
 	private Transform menuPanelTransform;
 
 	[Header("味方のPvP用上に出る文字")]
@@ -15,8 +15,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	private UIWidget _pvpBattleEnemyPartyUi;
 
-	[SerializeField]
 	[Header("シード同期中のもの")]
+	[SerializeField]
 	private UIWidget _pvpBattleSyncWaitUi;
 
 	[SerializeField]
@@ -38,8 +38,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	public UIButton winNextButton;
 
-	[SerializeField]
 	[Header("Loseの次のボタン")]
+	[SerializeField]
 	public UIButton loseNextButton;
 
 	public override GameObject enemyStatusDescriptionGO
@@ -78,6 +78,11 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	{
 		this.menuDialog = dialogRetireTrans.gameObject.AddComponent<MenuDialog>();
 		dialogRetireTrans.SetParent(this.menuPanelTransform);
+		UIWidget component = dialogRetireTrans.GetComponent<UIWidget>();
+		if (component != null)
+		{
+			component.SetAnchor(this.menuPanelTransform);
+		}
 	}
 
 	protected override void CreateStatusObjects()

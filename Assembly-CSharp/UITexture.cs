@@ -9,24 +9,24 @@ public class UITexture : UIBasicSprite
 	[SerializeField]
 	private Rect mRect = new Rect(0f, 0f, 1f, 1f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Texture mTexture;
 
 	[HideInInspector]
 	[SerializeField]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Shader mShader;
 
 	[HideInInspector]
 	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mFixedAspect;
 
 	[NonSerialized]

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class GUICameraControll : MonoBehaviour
 {
+	private const float SAVE_TIME = 2f;
+
 	private InputControll inputControl;
 
 	private FarmCameraDrawArea farmCameraDrawArea;
@@ -39,6 +41,14 @@ public sealed class GUICameraControll : MonoBehaviour
 
 	private Vector3 vtmp;
 
+	private float currentSaveTime;
+
+	private bool saveFlg;
+
+	private bool lastFarmCameraEnabled;
+
+	private TutorialObserver tutorialObserver;
+
 	private void Awake()
 	{
 		this.farmCamera = base.gameObject.GetComponent<Camera>();
@@ -56,6 +66,11 @@ public sealed class GUICameraControll : MonoBehaviour
 		this.SetDistanceToGround();
 	}
 
+	private void Start()
+	{
+		this.LoadSetting();
+	}
+
 	private void Update()
 	{
 		this.UpdateTargetOrthographicSize();
@@ -63,16 +78,22 @@ public sealed class GUICameraControll : MonoBehaviour
 		this.UpdateViewPosition();
 		this.UpdateCameraTargetLocator();
 		this.UpdateCameraLocator(true);
+		this.UpdateSave();
 	}
 
 	private void UpdateTargetOrthographicSize()
 	{
+		float num = this.targetOrthographicSize;
 		if (this.inputControl != null)
 		{
 			this.targetOrthographicSize -= this.inputControl.fScl * this.targetOrthographicSize;
 		}
 		this.targetOrthographicSize = Mathf.Min(this.targetOrthographicSize, this.ORTHOGRAPHIC_SIZE_MAX);
 		this.targetOrthographicSize = Mathf.Max(this.targetOrthographicSize, this.ORTHOGRAPHIC_SIZE_MIN);
+		if (this.targetOrthographicSize - num != 0f)
+		{
+			this.RequestSave();
+		}
 	}
 
 	private void UpdateViewRotation()
@@ -89,6 +110,10 @@ public sealed class GUICameraControll : MonoBehaviour
 			vector = this.farmCameraDrawArea.AdjustCameraAdd(this.farmCamera, vector);
 		}
 		this.viewPosition += Quaternion.Euler(0f, this.viewRotation.y, 0f) * vector;
+		if (vector.sqrMagnitude > 0f)
+		{
+			this.RequestSave();
+		}
 	}
 
 	private Vector3 GetCameraMoveValue()
@@ -177,5 +202,62 @@ public sealed class GUICameraControll : MonoBehaviour
 		float f = (90f - this.farmCamera.transform.localEulerAngles.x) * 0.0174532924f;
 		float z = Mathf.Abs(this.farmCamera.transform.localPosition.y / Mathf.Cos(f));
 		this.distanceToGround = this.farmCamera.transform.localRotation * new Vector3(0f, 0f, z);
+	}
+
+	private void RequestSave()
+	{
+		this.saveFlg = true;
+		this.currentSaveTime = 0f;
+	}
+
+	private void UpdateSave()
+	{
+		if (this.IsTutorial())
+		{
+			return;
+		}
+		if (this.lastFarmCameraEnabled && !this.farmCamera.enabled)
+		{
+			this.SaveSetting();
+		}
+		this.lastFarmCameraEnabled = this.farmCamera.enabled;
+		if (this.saveFlg)
+		{
+			this.currentSaveTime += Time.deltaTime;
+			if (this.currentSaveTime >= 2f)
+			{
+				this.currentSaveTime = 0f;
+				this.saveFlg = false;
+				this.SaveSetting();
+			}
+		}
+	}
+
+	private bool IsTutorial()
+	{
+		if (this.tutorialObserver == null)
+		{
+			this.tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
+			return this.tutorialObserver != null && this.tutorialObserver.isTutorial;
+		}
+		return this.tutorialObserver.isTutorial;
+	}
+
+	private void SaveSetting()
+	{
+		PlayerPrefs.SetFloat("FarmCameraPosX", this.viewPosition.x);
+		PlayerPrefs.SetFloat("FarmCameraPosY", this.viewPosition.y);
+		PlayerPrefs.SetFloat("FarmCameraPosZ", this.viewPosition.z);
+		PlayerPrefs.SetFloat("FarmCameraOrthographicSize", this.targetOrthographicSize);
+		PlayerPrefs.Save();
+	}
+
+	private void LoadSetting()
+	{
+		float @float = PlayerPrefs.GetFloat("FarmCameraPosX", this.viewPosition.x);
+		float float2 = PlayerPrefs.GetFloat("FarmCameraPosY", this.viewPosition.y);
+		float float3 = PlayerPrefs.GetFloat("FarmCameraPosZ", this.viewPosition.z);
+		this.viewPosition = new Vector3(@float, float2, float3);
+		this.targetOrthographicSize = PlayerPrefs.GetFloat("FarmCameraOrthographicSize", this.targetOrthographicSize);
 	}
 }

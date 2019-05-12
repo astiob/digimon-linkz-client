@@ -8,8 +8,8 @@ public class BattleRoundEndPvP : MonoBehaviour
 	[Header("あと○ラウンド")]
 	private UILabel remainingTime;
 
-	[SerializeField]
 	[Header("rootのオブジェクトラウンド")]
+	[SerializeField]
 	private GameObject rootObject;
 
 	public void ShowLeftRoundUI(int leftRound)

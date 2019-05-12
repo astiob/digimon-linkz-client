@@ -11,6 +11,7 @@ namespace DebugMonitor
 		FPS,
 		JSON,
 		PLATFORM_USER_ID,
-		API_LOG
+		API_LOG,
+		PvP
 	}
 }

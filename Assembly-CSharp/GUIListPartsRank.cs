@@ -2,51 +2,42 @@
 using System;
 using UnityEngine;
 
-public class GUIListPartsRank : GUIListPartBS
+public sealed class GUIListPartsRank : GUIListPartBS
 {
-	[SerializeField]
-	private UILabel pointTitleLabel;
-
 	[SerializeField]
 	private UILabel pointLabel;
 
 	[SerializeField]
 	private UISprite rankSprite;
 
-	private GUIListPartsRank.RankData data;
+	private GUIListPartsRank.RankData rankData;
 
 	public GUIListPartsRank.RankData Data
 	{
-		get
-		{
-			return this.data;
-		}
 		set
 		{
-			this.data = value;
-			this.ShowGUI();
+			this.rankData = value;
 		}
 	}
 
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
-		this.pointTitleLabel.text = StringMaster.GetString("ColosseumRankListNeedTitle2");
-		if (!this.data.isHideMaximum)
+		if (!this.rankData.isHideMaximum)
 		{
-			this.pointLabel.text = string.Format(StringMaster.GetString("ColosseumRankListNeedInfo"), this.data.lowerPoint, this.data.upperPoint);
+			this.pointLabel.text = string.Format(StringMaster.GetString("ColosseumRankListNeedInfo"), this.rankData.lowerPoint, this.rankData.upperPoint);
 		}
 		else
 		{
-			this.pointLabel.text = string.Format(StringMaster.GetString("ColosseumRankListNeedInfo"), this.data.lowerPoint, string.Empty);
+			this.pointLabel.text = string.Format(StringMaster.GetString("ColosseumRankListNeedInfo"), this.rankData.lowerPoint, string.Empty);
 		}
-		if (this.data.groupedId > -1)
+		if (this.rankData.groupedId > -1)
 		{
-			this.rankSprite.spriteName = "Rank_" + this.data.groupedId.ToString();
+			this.rankSprite.spriteName = "Rank_" + this.rankData.groupedId.ToString();
 		}
 		else
 		{
-			this.rankSprite.spriteName = "Rank_" + this.data.id.ToString();
+			this.rankSprite.spriteName = "Rank_" + this.rankData.id.ToString();
 		}
 	}
 

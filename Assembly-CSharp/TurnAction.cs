@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class TurnAction : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
-	[Header("スキル名のスキナー")]
 	[SerializeField]
+	[Header("スキル名のスキナー")]
 	private UIComponentSkinner skillNameSkinner;
 
 	[Header("スキル名のTween")]
 	[SerializeField]
 	private TweenTransform skinllNameTweenTransform;
 
-	[Header("スキル名のテキスト")]
 	[SerializeField]
+	[Header("スキル名のテキスト")]
 	private UILabel skillNameText;
 
 	public void ApplyTurnActionBarSwipeout(bool isReset)

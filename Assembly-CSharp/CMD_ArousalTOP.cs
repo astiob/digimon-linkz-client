@@ -63,10 +63,7 @@ public sealed class CMD_ArousalTOP : CMD
 	private UILabel _ngTX_DECIDE;
 
 	[SerializeField]
-	private UILabel _ngTX_MN_HAVE;
-
 	[Header("チップ装備の処理は分離")]
-	[SerializeField]
 	private ChipBaseSelect chipBaseSelect;
 
 	[Header("パートナーデジモンのラベル")]
@@ -138,6 +135,8 @@ public sealed class CMD_ArousalTOP : CMD
 
 	private TranceResistanceMonsterList monsterList;
 
+	private MonsterData baseDigimon { get; set; }
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -190,7 +189,7 @@ public sealed class CMD_ArousalTOP : CMD
 		base.WindowOpened();
 		FarmCameraControlForCMD.Off();
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
+		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
 			tutorialObserver.StartSecondTutorial("second_tutorial_arousal", new Action(GUIMain.BarrierOFF), delegate
@@ -214,7 +213,7 @@ public sealed class CMD_ArousalTOP : CMD
 	{
 		this._goSelectPanelMonsterIcon = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelMonsterIcon", base.gameObject);
 		this._csSelectPanelMonsterIcon = this._goSelectPanelMonsterIcon.GetComponent<GUISelectPanelMonsterIcon>();
-		if (this.goEFC_RIGHT != null)
+		if (null != this.goEFC_RIGHT)
 		{
 			this._goSelectPanelMonsterIcon.transform.parent = this.goEFC_RIGHT.transform;
 		}
@@ -298,7 +297,7 @@ public sealed class CMD_ArousalTOP : CMD
 					this.iconGrayOut.LockIconReturnDetailed(icon, tappedMonsterData.userMonster.IsLocked);
 				}
 			}
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 		if (flag)
 		{
 			cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Arousal;
@@ -362,8 +361,6 @@ public sealed class CMD_ArousalTOP : CMD
 		return result;
 	}
 
-	private MonsterData baseDigimon { get; set; }
-
 	private void ActMIconShort(MonsterData tapMonster)
 	{
 		GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tapMonster);
@@ -397,7 +394,7 @@ public sealed class CMD_ArousalTOP : CMD
 			this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
 			this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 		}
-		else if (this.partnerMonsterList.Count < 1)
+		else if (1 > this.partnerMonsterList.Count)
 		{
 			this.partnerMonsterList.Add(tapMonster);
 			this.partnerMonsterIcon = this.CreateIcon(tapMonster, this._goMN_ICON_MAT_LIST[0]);
@@ -594,7 +591,7 @@ public sealed class CMD_ArousalTOP : CMD
 			string text = string.Empty;
 			text = selectAilmentGroupData.GetAssetValue(a.index + 1);
 			string assetNum = selectAilmentGroupData.GetAssetNum(a.index + 1);
-			if (string.IsNullOrEmpty(text) || int.Parse(text) == 0)
+			if (string.IsNullOrEmpty(text) || "0" == text)
 			{
 				a.value.SetActive(false);
 			}
@@ -679,7 +676,7 @@ public sealed class CMD_ArousalTOP : CMD
 	{
 		string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(soulId);
 		UITexture component = go.GetComponent<UITexture>();
-		if (component != null)
+		if (null != component)
 		{
 			go.SetActive(true);
 			NGUIUtil.ChangeUITextureFromFile(component, evolveItemIconPathByID, false);
@@ -703,7 +700,7 @@ public sealed class CMD_ArousalTOP : CMD
 
 	private bool SetItemNumToText(GameObject go, string soulId, string needNum)
 	{
-		if (needNum == "0")
+		if ("0" == needNum)
 		{
 			go.SetActive(false);
 			return true;
@@ -731,7 +728,7 @@ public sealed class CMD_ArousalTOP : CMD
 		guimonsterIcon.Lock = md.userMonster.IsLocked;
 		UIWidget component = goEmpty.GetComponent<UIWidget>();
 		UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
-		if (component != null && component2 != null)
+		if (null != component && null != component2)
 		{
 			int add = component.depth - component2.depth;
 			DepthController component3 = guimonsterIcon.gameObject.GetComponent<DepthController>();
@@ -757,7 +754,7 @@ public sealed class CMD_ArousalTOP : CMD
 				this._goUI_LEFT_ITEM_LIST_DEFAULT.SetActive(true);
 			}
 			this.baseDigimon = null;
-			if (this.partnerMonsterList.Count <= 0)
+			if (0 >= this.partnerMonsterList.Count)
 			{
 				this.monsterList.ClearIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 				this.monsterList.ClearGrayOutIconPartyUsedMonster();
@@ -807,7 +804,7 @@ public sealed class CMD_ArousalTOP : CMD
 	{
 		if (this.baseDigimon != null)
 		{
-			if (this.leftLargeMonsterIcon != null)
+			if (null != this.leftLargeMonsterIcon)
 			{
 				Action<MonsterData> touchAct_S = this.leftLargeMonsterIcon.GetTouchAct_S();
 				if (touchAct_S != null)
@@ -815,7 +812,7 @@ public sealed class CMD_ArousalTOP : CMD
 					touchAct_S(this.leftLargeMonsterIcon.Data);
 				}
 			}
-			if (this.partnerMonsterIcon != null)
+			if (null != this.partnerMonsterIcon)
 			{
 				Action<MonsterData> touchAct_S2 = this.partnerMonsterIcon.GetTouchAct_S();
 				if (touchAct_S2 != null)
@@ -838,7 +835,7 @@ public sealed class CMD_ArousalTOP : CMD
 		if (this.baseDigimon == null)
 		{
 			this.SetActiveAllItem(false);
-			if (this.partnerMonsterList.Count <= 0)
+			if (0 >= this.partnerMonsterList.Count)
 			{
 				this.monsterList.ClearIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 				this.monsterList.ClearGrayOutIconPartyUsedMonster();
@@ -847,18 +844,16 @@ public sealed class CMD_ArousalTOP : CMD
 		this.BtnCont();
 	}
 
-	private void ShiftPartnerIcon(int idx)
+	private void ShiftPartnerIcon(int noop)
 	{
-		int i;
-		for (i = 0; i < this.partnerMonsterList.Count; i++)
+		for (int i = 0; i < this.partnerMonsterList.Count; i++)
 		{
 			this.partnerMonsterIcon.gameObject.transform.localPosition = this._goMN_ICON_MAT_LIST[i].transform.localPosition;
 			this._goMN_ICON_MAT_LIST[i].SetActive(false);
 		}
-		while (i < this._goMN_ICON_MAT_LIST.Count)
+		for (int j = this.partnerMonsterList.Count; j < this._goMN_ICON_MAT_LIST.Count; j++)
 		{
-			this._goMN_ICON_MAT_LIST[i].SetActive(true);
-			i++;
+			this._goMN_ICON_MAT_LIST[j].SetActive(true);
 		}
 	}
 
@@ -907,7 +902,7 @@ public sealed class CMD_ArousalTOP : CMD
 
 	private void OnTouchDecide()
 	{
-		CMD_ArousalCheck cmd_ArousalCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseArousal), "CMD_ArousalCheck") as CMD_ArousalCheck;
+		CMD_ArousalCheck cmd_ArousalCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseArousal), "CMD_ArousalCheck", null) as CMD_ArousalCheck;
 		bool isGrowStepMax;
 		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE)
 		{
@@ -975,20 +970,9 @@ public sealed class CMD_ArousalTOP : CMD
 		}
 	}
 
-	private bool IsGrowStepMax(MonsterData mData)
+	private bool IsGrowStepMax(MonsterData monster)
 	{
-		if (mData == null)
-		{
-			return false;
-		}
-		int growStep = mData.monsterMG.growStep.ToInt32();
-		return MonsterGrowStepData.IsUltimateScope(growStep);
-	}
-
-	private bool IsGrowStepMax(string growStep)
-	{
-		int growStep2 = int.Parse(growStep);
-		return MonsterGrowStepData.IsUltimateScope(growStep2);
+		return monster != null && MonsterGrowStepData.IsUltimateScope(monster.monsterMG.growStep);
 	}
 
 	private void EndTrunce(string materialUserMonsterId)
@@ -1063,7 +1047,7 @@ public sealed class CMD_ArousalTOP : CMD
 			this.ShiftPartnerIcon(i);
 		}
 		this.partnerMonsterList.Clear();
-		if (this.partnerMonsterIcon != null)
+		if (null != this.partnerMonsterIcon)
 		{
 			UnityEngine.Object.Destroy(this.partnerMonsterIcon.gameObject);
 			this.partnerMonsterIcon = null;
@@ -1090,14 +1074,14 @@ public sealed class CMD_ArousalTOP : CMD
 
 	public void OnTouchedEvoltionItemListBtn()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_EvolutionItemList");
+		GUIMain.ShowCommonDialog(null, "CMD_EvolutionItemList", null);
 	}
 
 	public void OnTouchedResistanceBtn()
 	{
 		if (!this.userVarUpPossession)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ArousalNonVersionUpTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ArousalNonVersionUp");
 		}
@@ -1105,13 +1089,13 @@ public sealed class CMD_ArousalTOP : CMD
 		{
 			this.arousalSelectState = CMD_ArousalTOP.ArousalSelectState.RESISTANCE;
 			UISprite component = this.ResistanceBtn.gameObject.GetComponent<UISprite>();
-			if (component != null)
+			if (null != component)
 			{
 				component.spriteName = this.resistanceTabOn;
 				this.ResistanceLabel.color = this.TAB_COLOR_ON;
 			}
 			UISprite component2 = this.AttributeBtn.gameObject.GetComponent<UISprite>();
-			if (component2 != null)
+			if (null != component2)
 			{
 				component2.spriteName = this.resistanceTabOff;
 				this.AttributeLabel.color = this.TAB_COLOR_OFF;
@@ -1128,13 +1112,13 @@ public sealed class CMD_ArousalTOP : CMD
 		{
 			this.arousalSelectState = CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE;
 			UISprite component = this.ResistanceBtn.gameObject.GetComponent<UISprite>();
-			if (component != null)
+			if (null != component)
 			{
 				component.spriteName = this.resistanceTabOff;
 				this.ResistanceLabel.color = this.TAB_COLOR_OFF;
 			}
 			UISprite component2 = this.AttributeBtn.gameObject.GetComponent<UISprite>();
-			if (component2 != null)
+			if (null != component2)
 			{
 				component2.spriteName = this.resistanceTabOn;
 				this.AttributeLabel.color = this.TAB_COLOR_ON;

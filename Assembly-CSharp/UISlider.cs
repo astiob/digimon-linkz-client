@@ -5,8 +5,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UISlider : UIProgressBar
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Transform foreground;
 
 	[HideInInspector]
@@ -17,8 +17,8 @@ public class UISlider : UIProgressBar
 	[SerializeField]
 	private UISlider.Direction direction = UISlider.Direction.Upgraded;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mInverted;
 
 	public bool isColliderEnabled

@@ -1,5 +1,4 @@
-﻿using Master;
-using Monster;
+﻿using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,9 +18,6 @@ public class CMD_PairSelectBase : CMD
 	private UILabel possessionTip;
 
 	[SerializeField]
-	private UILabel costTipTitle;
-
-	[SerializeField]
 	private UILabel costTip;
 
 	[SerializeField]
@@ -32,14 +28,6 @@ public class CMD_PairSelectBase : CMD
 
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
-
-	[SerializeField]
-	[Header("ベースデジモンラベル")]
-	private UILabel baseDigimonLabel;
-
-	[SerializeField]
-	[Header("パートナーデジモンラベル")]
-	private UILabel partnerDigimonLabel;
 
 	protected int useClusterBK;
 
@@ -59,14 +47,6 @@ public class CMD_PairSelectBase : CMD
 	{
 		base.Awake();
 		CMD_PairSelectBase.instance = this;
-	}
-
-	private void Start()
-	{
-		this.baseDigimonLabel.text = StringMaster.GetString("Succession-01");
-		this.partnerDigimonLabel.text = StringMaster.GetString("ArousalPartner");
-		this.costTipTitle.text = StringMaster.GetString("SystemCost");
-		this.ngTX_DECIDE.text = StringMaster.GetString("SystemButtonDecision");
 	}
 
 	protected override void OnDestroy()
@@ -140,7 +120,7 @@ public class CMD_PairSelectBase : CMD
 
 	private void OpenConfirmPartnerArousal(Action<int> onClosedPopupAction)
 	{
-		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert") as CMD_ResearchModalAlert;
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
 		cmd_ResearchModalAlert.SetDigimonIcon(this.partnerDigimon);
 		this.SetTextConfirmPartnerArousal(cmd_ResearchModalAlert);
 		cmd_ResearchModalAlert.AdjustSize();
@@ -152,7 +132,7 @@ public class CMD_PairSelectBase : CMD
 
 	private void OpenConfirmBaseVersionUp(Action<int> onClosedPopupAction)
 	{
-		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert") as CMD_ResearchModalAlert;
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
 		cmd_ResearchModalAlert.SetDigimonIcon(this.baseDigimon);
 		this.SetTextConfirmBaseVersionUp(cmd_ResearchModalAlert);
 		cmd_ResearchModalAlert.AdjustSize();
@@ -164,7 +144,7 @@ public class CMD_PairSelectBase : CMD
 
 	private void OpenConfirmPartnerVersionUp(Action<int> onClosedPopupAction)
 	{
-		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert") as CMD_ResearchModalAlert;
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
 		cmd_ResearchModalAlert.SetDigimonIcon(this.partnerDigimon);
 		this.SetTextConfirmPartnerVersionUp(cmd_ResearchModalAlert);
 		cmd_ResearchModalAlert.AdjustSize();
@@ -253,7 +233,7 @@ public class CMD_PairSelectBase : CMD
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
 			{
 				RestrictionInput.EndLoad();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = this.GetTitle();
 			cmd_ModalMessage.Info = this.GetStoreChipInfo();
 			this.EnableCutinButton();
@@ -277,7 +257,7 @@ public class CMD_PairSelectBase : CMD
 		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
 		this.AddButton();
 		CMD_CharacterDetailed.DataChg = monsterDataByUserMonsterID;
-		this.characterDetailed = (GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed") as CMD_CharacterDetailed);
+		this.characterDetailed = (GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed);
 	}
 
 	protected virtual void ClearTargetStatus()
@@ -374,7 +354,7 @@ public class CMD_PairSelectBase : CMD
 		CMD_ModalMessage cd = GUIMain.ShowCommonDialog(delegate(int i)
 		{
 			this.ClosePanel(false);
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cd.Title = this.GetTitle();
 		cd.Info = this.GetInfoCannotEnter();
 		yield break;
@@ -401,7 +381,7 @@ public class CMD_PairSelectBase : CMD
 		{
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
 			icon.Lock = monsterData.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 		cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Laboratory;
 	}
 
@@ -412,7 +392,7 @@ public class CMD_PairSelectBase : CMD
 		{
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
 			icon.Lock = monsterData.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed");
+		}, "CMD_CharacterDetailed", null);
 	}
 
 	protected virtual void SetBaseTouchAct_L(GUIMonsterIcon cs)
@@ -435,7 +415,7 @@ public class CMD_PairSelectBase : CMD
 	{
 		if (!this.CanEnter())
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = this.GetTitle();
 			cmd_ModalMessage.Info = this.GetInfoCannotEnter();
 			return;
@@ -456,7 +436,7 @@ public class CMD_PairSelectBase : CMD
 					this.BtnCont();
 					this.OnBaseSelected();
 				}
-			}, "CMD_BaseSelect");
+			}, "CMD_BaseSelect", null);
 			commonDialog.SetForceReturnValue(0);
 		}
 		else
@@ -491,7 +471,7 @@ public class CMD_PairSelectBase : CMD
 					this.ShowCHGInfo();
 					this.BtnCont();
 				}
-			}, "CMD_BaseSelect");
+			}, "CMD_BaseSelect", null);
 			commonDialog.SetForceReturnValue(0);
 		}
 		else

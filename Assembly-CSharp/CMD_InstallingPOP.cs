@@ -6,24 +6,24 @@ public sealed class CMD_InstallingPOP : CMD
 {
 	private Action _successCallback;
 
-	[Header("タイトルラベル")]
 	[SerializeField]
+	[Header("タイトルラベル")]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("チップテクスチャ")]
+	[SerializeField]
 	private UITexture chipTexture;
 
 	[Header("チップランクプライト")]
 	[SerializeField]
 	private UISprite rankSprite;
 
-	[SerializeField]
 	[Header("はいラベル")]
+	[SerializeField]
 	private UILabel yesLabel;
 
-	[SerializeField]
 	[Header("いいえラベル")]
+	[SerializeField]
 	private UILabel noLabel;
 
 	[Header("チップ名ラベル")]
@@ -34,8 +34,8 @@ public sealed class CMD_InstallingPOP : CMD
 	[SerializeField]
 	private UILabel chipDescLabel;
 
-	[Header("チップ装着メッセージラベル")]
 	[SerializeField]
+	[Header("チップ装着メッセージラベル")]
 	private UILabel chipAlertLabel;
 
 	private GameWebAPI.ReqDataCS_ChipEquipLogic equip;
@@ -78,7 +78,7 @@ public sealed class CMD_InstallingPOP : CMD
 
 	public static CMD_InstallingPOP Create(GameWebAPI.ReqDataCS_ChipEquipLogic equip, GameWebAPI.RespDataMA_ChipM.Chip chip, Action successCallback)
 	{
-		CMD_InstallingPOP cmd_InstallingPOP = GUIMain.ShowCommonDialog(null, "CMD_InstallingPOP") as CMD_InstallingPOP;
+		CMD_InstallingPOP cmd_InstallingPOP = GUIMain.ShowCommonDialog(null, "CMD_InstallingPOP", null) as CMD_InstallingPOP;
 		cmd_InstallingPOP.equip = equip;
 		cmd_InstallingPOP.chipName = chip.name;
 		cmd_InstallingPOP.chipDetail = chip.detail;

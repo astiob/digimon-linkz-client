@@ -3,30 +3,26 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class GUIListPartsQuestRanking : GUIListPartBS
+public sealed class GUIListPartsQuestRanking : GUIListPartBS
 {
-	[Header("あなたを示すアイコン")]
-	[SerializeField]
-	private UISprite spYouIcon;
-
-	[SerializeField]
 	[Header("キャラサムネの位置")]
+	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
 	[SerializeField]
 	[Header("ユーザーネーム")]
 	private UILabel lbTX_UserName;
 
-	[Header("称号アイコン")]
 	[SerializeField]
+	[Header("称号アイコン")]
 	private GameObject goTITLE_ICON;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[Header("Nextポイント")]
 	[SerializeField]
+	[Header("Nextポイント")]
 	private UILabel lbTX_NextPoint;
 
 	[Header("ランキング順位")]
@@ -80,11 +76,6 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 		this.ShowGUI();
 	}
 
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
 	public override void ShowGUI()
 	{
 		this.ShowData();
@@ -128,11 +119,6 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 			}
 			break;
 		}
-	}
-
-	private void SetBG()
-	{
-		this.spYouIcon.gameObject.SetActive(false);
 	}
 
 	private void SetDigimonIcon()
@@ -206,11 +192,11 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 		base.OnTouchEnded(touch, pos, flag);
 	}
 
-	protected virtual void OnTouchEndedProcess()
+	private void OnTouchEndedProcess()
 	{
 		if (this.data.userId == DataMng.Instance().RespDataCM_Login.playerInfo.userId)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Profile");
+			GUIMain.ShowCommonDialog(null, "CMD_Profile", null);
 		}
 		else
 		{
@@ -240,7 +226,7 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 		{
 			if (this.data.userId.ToInt32() == DataMng.Instance().RespDataCM_Login.playerInfo.UserId)
 			{
-				GUIMain.ShowCommonDialog(null, "CMD_Profile");
+				GUIMain.ShowCommonDialog(null, "CMD_Profile", null);
 			}
 			else
 			{
@@ -253,7 +239,7 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 						userId = this.data.userId
 					}
 				};
-				GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend");
+				GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend", null);
 			}
 		}
 		yield break;
@@ -261,10 +247,5 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 
 	private void OnClickedBtnSelect()
 	{
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 }

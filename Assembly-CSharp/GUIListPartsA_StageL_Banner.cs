@@ -7,8 +7,8 @@ using UnityEngine;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[Header("NEWのGameObject")]
 	[SerializeField]
+	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
 	[Header("選択してないときの背景色")]
@@ -23,8 +23,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[SerializeField]
 	[Header("選択時の外枠色")]
+	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -35,20 +35,20 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]
 	[SerializeField]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
-	[Header("オープンの時の色")]
 	[SerializeField]
+	[Header("オープンの時の色")]
 	private Color openBannerCol;
 
 	[SerializeField]
@@ -59,12 +59,12 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private GameObject goCloseKey;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[SerializeField]
@@ -335,7 +335,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 				{
 					int useStoneNum = int.Parse(this.worldStageData.worldStageM.forceOpenNum);
 					int hasStoneNum = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-					CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+					CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 					cd.Title = StringMaster.GetString("QuestUnlockTitle");
 					cd.OnPushedYesAction = delegate()
 					{
@@ -346,7 +346,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 								GUIMain.ShowCommonDialog(delegate(int i)
 								{
 									GUIPlayerStatus.RefreshParams_S(false);
-								}, "CMD_Shop");
+								}, "CMD_Shop", null);
 							});
 							cd.ClosePanel(true);
 						}
@@ -413,7 +413,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(delegate(int i)
 			{
 				GUIManager.CloseAllCommonDialog(null);
-			}, "CMD_Alert") as CMD_Alert;
+			}, "CMD_Alert", null) as CMD_Alert;
 			cmd_Alert.Title = StringMaster.GetString("QuestEventTitle");
 			cmd_Alert.Info = StringMaster.GetString("QuestEventInfo");
 			cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);

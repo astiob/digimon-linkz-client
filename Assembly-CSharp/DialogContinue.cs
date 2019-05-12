@@ -5,16 +5,16 @@ using UnityEngine;
 
 public sealed class DialogContinue : MonoBehaviour
 {
-	[SerializeField]
 	[Header("特定商取引ボタン")]
+	[SerializeField]
 	private UIButton specificTradeButton;
 
 	[SerializeField]
 	[Header("リタイアボタン")]
 	private UIButton retireButton;
 
-	[SerializeField]
 	[Header("復活ボタン")]
+	[SerializeField]
 	private UIButton revivalButton;
 
 	[SerializeField]
@@ -25,16 +25,16 @@ public sealed class DialogContinue : MonoBehaviour
 	[SerializeField]
 	private GameObject background;
 
-	[SerializeField]
 	[Header("デジストーン説明のローカライズ")]
+	[SerializeField]
 	private UILabel digistoneDescription;
 
-	[SerializeField]
 	[Header("特定商取引ボタンのコライダー")]
+	[SerializeField]
 	private Collider specificTradeCollider;
 
-	[SerializeField]
 	[Header("リタイアボタンのコライダー")]
+	[SerializeField]
 	private Collider retireButtonCollider;
 
 	[SerializeField]
@@ -49,16 +49,16 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
-	[SerializeField]
 	[Header("諦めるローカライズ")]
+	[SerializeField]
 	private UILabel retireLocalize;
 
 	[Header("コンティニューのタイトルのローカライズ")]
 	[SerializeField]
 	private UILabel continueTitleLocalize;
 
-	[SerializeField]
 	[Header("復活する/ショップへ移動ローカライズ")]
+	[SerializeField]
 	private UILabel revivalOrShopLocalize;
 
 	[SerializeField]

@@ -59,8 +59,8 @@ public class UIPopupList : UIWidgetContainer
 	[HideInInspector]
 	protected string mSelectedItem;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIPanel mPanel;
 
 	[SerializeField]
@@ -71,16 +71,16 @@ public class UIPopupList : UIWidgetContainer
 	[SerializeField]
 	protected UISprite mHighlight;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UILabel mHighlightedLabel;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected List<UILabel> mLabelList = new List<UILabel>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected float mBgBorder;
 
 	[NonSerialized]
@@ -89,8 +89,8 @@ public class UIPopupList : UIWidgetContainer
 	[NonSerialized]
 	protected int mOpenFrame;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
 	[HideInInspector]
@@ -101,8 +101,8 @@ public class UIPopupList : UIWidgetContainer
 	[SerializeField]
 	private float textScale;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIFont font;
 
 	[SerializeField]

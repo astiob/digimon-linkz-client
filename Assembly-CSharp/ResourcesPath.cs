@@ -64,7 +64,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("キャラクターデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("キャラクターデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -79,7 +79,7 @@ public struct ResourcesPath
 		}));
 		if (playerStatusObject == null)
 		{
-			global::Debug.LogError("キャラクターデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("キャラクターデータが存在しません. (" + id + ")");
 			return new PlayerStatus();
 		}
 		return playerStatusObject.playerStatus;
@@ -95,7 +95,7 @@ public struct ResourcesPath
 		}));
 		if (enemyStatusObject == null)
 		{
-			global::Debug.LogError("キャラクターデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("キャラクターデータが存在しません. (" + id + ")");
 			return new EnemyStatus();
 		}
 		return enemyStatusObject.enemyStatus;
@@ -111,7 +111,7 @@ public struct ResourcesPath
 		}));
 		if (toleranceObject == null)
 		{
-			global::Debug.LogError("耐性データが存在しません. (" + id + ")");
+			global::Debug.LogWarning("耐性データが存在しません. (" + id + ")");
 			return Tolerance.GetNutralTolerance();
 		}
 		return toleranceObject.tolerance;
@@ -140,7 +140,7 @@ public struct ResourcesPath
 		}
 		if (sprite == null)
 		{
-			global::Debug.LogError("キャラクターサムネイルデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("キャラクターサムネイルデータが存在しません. (" + id + ")");
 		}
 		return sprite;
 	}
@@ -155,7 +155,7 @@ public struct ResourcesPath
 		}));
 		if (characterDatasObject == null)
 		{
-			global::Debug.LogError("キャラクターデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("キャラクターデータが存在しません. (" + id + ")");
 			return new CharacterDatas();
 		}
 		return characterDatasObject.characterDatas;
@@ -171,7 +171,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("発動エフェクトデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("発動エフェクトデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -186,7 +186,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("受動エフェクトデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("受動エフェクトデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -201,7 +201,7 @@ public struct ResourcesPath
 		}));
 		if (skillStatusObject == null)
 		{
-			global::Debug.LogError("スキルステータスデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("スキルステータスデータが存在しません. (" + id + ")");
 			return new SkillStatus();
 		}
 		return skillStatusObject.skillStatus;
@@ -217,7 +217,7 @@ public struct ResourcesPath
 		}));
 		if (leaderSkillStatusObject == null)
 		{
-			global::Debug.LogError("リーダースキルステータスデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("リーダースキルステータスデータが存在しません. (" + id + ")");
 			return LeaderSkillStatus.GetUnHavingLeaderSkill();
 		}
 		return leaderSkillStatusObject.leaderSkillStatus;
@@ -233,7 +233,7 @@ public struct ResourcesPath
 		}));
 		if (extraEffectStatusObject == null)
 		{
-			global::Debug.LogError("エリア効果データが存在しません. (" + id + ")");
+			global::Debug.LogWarning("エリア効果データが存在しません. (" + id + ")");
 		}
 		return extraEffectStatusObject.extraEffectStatus;
 	}
@@ -248,7 +248,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("ヒットエフェクトデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("ヒットエフェクトデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -263,7 +263,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("常設エフェクトデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("常設エフェクトデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -278,7 +278,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("ステージデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("ステージデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -293,7 +293,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("出現ポイントデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("出現ポイントデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -308,7 +308,7 @@ public struct ResourcesPath
 		}));
 		if (gameObject == null)
 		{
-			global::Debug.LogError("カメラモーションデータが存在しません. (" + id + ")");
+			global::Debug.LogWarning("カメラモーションデータが存在しません. (" + id + ")");
 		}
 		return gameObject;
 	}
@@ -526,6 +526,8 @@ public struct ResourcesPath
 			public const string referenceTargetHpRate = "EFF_COM_HIT_RATIO";
 
 			public const string apDrain = "EFF_COM_S_APDRAIN";
+
+			public const string escape = "EFF_COM_UP";
 		}
 
 		public struct AlwaysEffects
@@ -768,25 +770,6 @@ public struct ResourcesPath
 		public struct Public
 		{
 			public const string characterShadowPath = "Shadow";
-		}
-	}
-
-	public struct Public
-	{
-		public static GameObject GetCharacterShadowData()
-		{
-			GameObject gameObject = Resources.Load<GameObject>(ResourcesPath.CreatePath(new string[]
-			{
-				"Public",
-				"Characters",
-				"Shadow",
-				"prefab"
-			}));
-			if (gameObject == null)
-			{
-				global::Debug.LogError("影データが存在しません.");
-			}
-			return gameObject;
 		}
 	}
 }

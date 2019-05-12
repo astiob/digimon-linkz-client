@@ -8,8 +8,8 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private UISprite newSprite;
 
-	[Header("回数表示")]
 	[SerializeField]
+	[Header("回数表示")]
 	private UILabel lbAbleCount;
 
 	[Header("選択してないときの背景色")]
@@ -24,16 +24,16 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[Header("選択時の外枠色")]
 	[SerializeField]
+	[Header("選択時の外枠色")]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[Header("残り時間のラベル")]
 	[SerializeField]
+	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[Header("背景のスプライト")]
@@ -44,8 +44,8 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[Header("バッジスプライト")]

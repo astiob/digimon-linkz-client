@@ -33,8 +33,8 @@ public class UIPlayTween : MonoBehaviour
 	[SerializeField]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string callWhenFinished;
 
 	private UITweener[] mTweens;

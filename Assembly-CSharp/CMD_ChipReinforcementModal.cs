@@ -36,7 +36,7 @@ public sealed class CMD_ChipReinforcementModal : CMD
 
 	public static CMD_ChipReinforcementModal Create(GameWebAPI.RespDataCS_ChipListLogic.UserChipList data, Action<int> callback = null)
 	{
-		CMD_ChipReinforcementModal cmd_ChipReinforcementModal = GUIMain.ShowCommonDialog(callback, "CMD_ChipReinforcedModal") as CMD_ChipReinforcementModal;
+		CMD_ChipReinforcementModal cmd_ChipReinforcementModal = GUIMain.ShowCommonDialog(callback, "CMD_ChipReinforcedModal", null) as CMD_ChipReinforcementModal;
 		cmd_ChipReinforcementModal.SetParam(data);
 		return cmd_ChipReinforcementModal;
 	}

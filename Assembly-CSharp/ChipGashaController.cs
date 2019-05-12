@@ -17,12 +17,12 @@ public sealed class ChipGashaController : CutsceneBase
 	[SerializeField]
 	private List<GameObject> goLightLocatorList;
 
-	[SerializeField]
 	[Header("光弾エフェクト")]
+	[SerializeField]
 	private GameObject goPartsLight;
 
-	[SerializeField]
 	[Header("青色→青色")]
+	[SerializeField]
 	private GameObject goPartsBlue;
 
 	[Header("青色→黄色")]
@@ -33,21 +33,25 @@ public sealed class ChipGashaController : CutsceneBase
 	[SerializeField]
 	private GameObject goPartsRainbow;
 
-	[Header("フェードアウト開始フレーム")]
 	[SerializeField]
+	[Header("フェードアウト開始フレーム")]
 	private int startFadeOutFrame;
 
-	[SerializeField]
 	[Header("メインカメラ")]
+	[SerializeField]
 	private Camera mainCam;
 
 	[SerializeField]
-	private AllSkipButtonForGUI allSkipButton;
+	private AllSkipButton allSkipButton;
 
 	[SerializeField]
 	private GameObject animationRoot;
 
 	private Action<RenderTexture> endCallback;
+
+	private string bgmFileName;
+
+	private Vector2 backgroundSize;
 
 	private int frameCT;
 
@@ -73,7 +77,7 @@ public sealed class ChipGashaController : CutsceneBase
 
 	private void EndCutscene()
 	{
-		RenderTexture renderTexture = new RenderTexture(1200, 1200, 16);
+		RenderTexture renderTexture = new RenderTexture((int)this.backgroundSize.x, (int)this.backgroundSize.y, 16);
 		renderTexture.antiAliasing = 2;
 		this.mainCam.targetTexture = renderTexture;
 		this.lightLocatorRoot.SetActive(false);
@@ -105,6 +109,8 @@ public sealed class ChipGashaController : CutsceneBase
 		if (!this.animationRoot.gameObject.activeSelf)
 		{
 			this.animationRoot.gameObject.SetActive(true);
+			this.allSkipButton.Show();
+			SoundMng.Instance().PlayGameBGM(this.bgmFileName);
 		}
 	}
 
@@ -130,12 +136,15 @@ public sealed class ChipGashaController : CutsceneBase
 		if (cutsceneDataChipGasha != null)
 		{
 			this.endCallback = cutsceneDataChipGasha.endCallback;
+			this.bgmFileName = cutsceneDataChipGasha.bgmFileName;
+			this.backgroundSize = cutsceneDataChipGasha.backgroundSize;
 			this.allSkipButton.Initialize();
 			this.allSkipButton.AddAction(delegate
 			{
 				this.frameCT = this.startFadeOutFrame;
 				this.StartFadeOut();
 			});
+			this.allSkipButton.Hide();
 			GameWebAPI.RespDataGA_ExecChip.UserAssetList[] gashaResult = cutsceneDataChipGasha.gashaResult;
 			int i = 0;
 			while (i < gashaResult.Length)
@@ -144,7 +153,7 @@ public sealed class ChipGashaController : CutsceneBase
 				string text = effectType;
 				if (text == null)
 				{
-					goto IL_CB;
+					goto IL_EE;
 				}
 				if (ChipGashaController.<>f__switch$map9 == null)
 				{
@@ -167,13 +176,13 @@ public sealed class ChipGashaController : CutsceneBase
 				int num;
 				if (!ChipGashaController.<>f__switch$map9.TryGetValue(text, out num))
 				{
-					goto IL_CB;
+					goto IL_EE;
 				}
 				GameObject effect;
 				switch (num)
 				{
 				default:
-					goto IL_CB;
+					goto IL_EE;
 				case 1:
 					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsYellow);
 					break;
@@ -181,15 +190,15 @@ public sealed class ChipGashaController : CutsceneBase
 					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsRainbow);
 					break;
 				}
-				IL_FE:
+				IL_121:
 				this.SetEffectLocator(this.goLocatorList[i], effect);
 				effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsLight);
 				this.SetEffectLocator(this.goLightLocatorList[i], effect);
 				i++;
 				continue;
-				IL_CB:
+				IL_EE:
 				effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsBlue);
-				goto IL_FE;
+				goto IL_121;
 			}
 			for (int j = gashaResult.Length; j < this.goLocatorList.Count; j++)
 			{

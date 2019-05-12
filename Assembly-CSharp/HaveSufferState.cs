@@ -40,13 +40,21 @@ public class HaveSufferState
 		this.sufferStatePropertyDictionary[type].SetNull();
 	}
 
+	public void RemoveAllSufferState()
+	{
+		foreach (KeyValuePair<SufferStateProperty.SufferType, SufferStateProperty> keyValuePair in this.sufferStatePropertyDictionary)
+		{
+			this.RemoveSufferState(keyValuePair.Key);
+		}
+	}
+
 	public void SetSufferState(SufferStateProperty.Data data, CharacterStateControl status = null)
 	{
 		SufferStateProperty sufferStateProperty = this.sufferStatePropertyDictionary[data.sufferType];
 		sufferStateProperty.AddSufferStateProperty(data);
 	}
 
-	public void RoundCount()
+	public void RoundUpdate()
 	{
 		SufferStateProperty.SufferType[] array = new SufferStateProperty.SufferType[]
 		{
@@ -81,8 +89,23 @@ public class HaveSufferState
 			SufferStateProperty.SufferType.DamageRateUp,
 			SufferStateProperty.SufferType.DamageRateDown,
 			SufferStateProperty.SufferType.Regenerate,
-			SufferStateProperty.SufferType.TurnEvasion
+			SufferStateProperty.SufferType.TurnEvasion,
+			SufferStateProperty.SufferType.Escape
 		};
+		foreach (SufferStateProperty.SufferType key in array)
+		{
+			this.sufferStatePropertyDictionary[key].AddCurrentKeepRound(-1);
+		}
+		SufferStateProperty sufferStateProperty = this.sufferStatePropertyDictionary[SufferStateProperty.SufferType.Escape];
+		if (sufferStateProperty.isActive)
+		{
+			sufferStateProperty.SaveAheadEscapeResult();
+		}
+	}
+
+	public void TurnUpdate()
+	{
+		SufferStateProperty.SufferType[] array = new SufferStateProperty.SufferType[0];
 		foreach (SufferStateProperty.SufferType key in array)
 		{
 			this.sufferStatePropertyDictionary[key].AddCurrentKeepRound(-1);

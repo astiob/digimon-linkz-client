@@ -8,16 +8,16 @@ public sealed class BattleStateManager : MonoBehaviour
 {
 	public BattleAdventureSceneManager battleAdventureSceneManager;
 
-	[Header("シングルUI")]
 	[SerializeField]
+	[Header("シングルUI")]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
 	[SerializeField]
 	[Header("マルチUI")]
 	private BattleUIComponentsMulti battleUIComponentsMulti;
 
-	[Header("PvPUI")]
 	[SerializeField]
+	[Header("PvPUI")]
 	private BattleUIComponentsPvP battleUIComponentsPvP;
 
 	private static BattleMode _battleMode;

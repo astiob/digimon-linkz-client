@@ -43,19 +43,16 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 		this.favoriteDeckNo = int.Parse(favoriteDeckNum);
 		this.favoriteButtonCollider = this.favoriteButton.GetComponent<GUICollider>();
 		this.favoriteButtonBackground = this.favoriteButton.GetComponent<UISprite>();
-		switch (type)
+		if (type != CMD_PartyEdit.MODE_TYPE.SELECT && type != CMD_PartyEdit.MODE_TYPE.MULTI)
 		{
-		case CMD_PartyEdit.MODE_TYPE.SELECT:
-		case CMD_PartyEdit.MODE_TYPE.PVP:
-		case CMD_PartyEdit.MODE_TYPE.MULTI:
-			this.favoriteButton.SetActive(false);
-			break;
-		default:
 			if (!this.favoriteButton.activeSelf)
 			{
 				this.favoriteButton.SetActive(true);
 			}
-			break;
+		}
+		else
+		{
+			this.favoriteButton.SetActive(false);
 		}
 	}
 
@@ -99,7 +96,7 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 	{
 		this.favoriteDeckNo = partyNo;
 		this.SetFavoriteButton(true);
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		if (cmd_ModalMessage != null)
 		{
 			cmd_ModalMessage.Title = StringMaster.GetString("PartyFavoriteTitle");

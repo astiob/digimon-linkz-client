@@ -248,7 +248,7 @@ public class CMD_ChatWindow : CMD
 			{
 				this.ClosePanel(true);
 			};
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(action, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(action, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("AlertNetworkErrorTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("AlertNetworkErrorInfo");
 		}
@@ -317,7 +317,7 @@ public class CMD_ChatWindow : CMD
 			{
 				CMD_ChatWindow.instance.PushedChatReturnBtn();
 				CMD_ChatTop.instance.GetUserChatGroupListExec();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatMemberKickNotice");
 		}
@@ -463,7 +463,7 @@ public class CMD_ChatWindow : CMD
 				{
 					CMD_ChatWindow.instance.PushedChatReturnBtn();
 					CMD_ChatTop.instance.GetUserChatGroupListExec();
-				}, "CMD_ModalMessage") as CMD_ModalMessage;
+				}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 				cmd_ModalMessage.Info = StringMaster.GetString("ChatMemberKickNotice");
 				break;
@@ -496,17 +496,17 @@ public class CMD_ChatWindow : CMD
 	{
 		if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_ChatMenu");
+			GUIMain.ShowCommonDialog(null, "CMD_ChatMenu", null);
 		}
 		else
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_ChatMenuM");
+			GUIMain.ShowCommonDialog(null, "CMD_ChatMenuM", null);
 		}
 	}
 
 	public void PushedFixedPhraseBtn()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ChatFixedPhrase");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatFixedPhrase", null);
 	}
 
 	public override void ClosePanel(bool animation = true)
@@ -549,7 +549,7 @@ public class CMD_ChatWindow : CMD
 				this.chatDisconnect();
 				base.closeAll();
 			}
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("AlertNetworkErrorTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("ChatLogError");
 	}

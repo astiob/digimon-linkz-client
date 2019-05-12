@@ -17,23 +17,18 @@ public abstract class CMD_ProfileBase : CMD
 
 	protected bool isOpenScreen;
 
-	public GameObject goOPEN_SCREEN;
+	[SerializeField]
+	private UILabel fullScreenButtonLabel;
 
-	private UILabel ngTX_OPEN_SCREEN;
+	[SerializeField]
+	private GameObject goSCR_HEADER;
 
-	public GameObject goSCR_CHARACTER;
-
-	public GameObject goSCR_HEADER;
-
-	public GameObject goSCR_DETAIL;
-
-	private Vector3 vOrgSCR_CHARACTER;
+	[SerializeField]
+	private GameObject goSCR_DETAIL;
 
 	private Vector3 vOrgSCR_HEADER;
 
 	private Vector3 vOrgSCR_DETAIL;
-
-	private Vector3 vPosSCR_CHARACTER;
 
 	private Vector3 vPosSCR_HEADER;
 
@@ -43,20 +38,9 @@ public abstract class CMD_ProfileBase : CMD
 
 	protected GameWebAPI.ColosseumUserStatus colosseumUserStatus;
 
-	private Action<int> movedAct;
-
-	protected override void Awake()
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
-		base.Awake();
-		Vector3 localPosition = this.goSCR_CHARACTER.transform.localPosition;
-		localPosition.x = 0f;
-		localPosition.y = 0f;
-		this.goSCR_CHARACTER.transform.localPosition = localPosition;
-	}
-
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
-	{
-		base.Show(f, sizeX, sizeY, aT);
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 		base.PartsTitle.SetTitle(StringMaster.GetString("ProfileTitle"));
 		this.RefreshComponents();
 		this.leaderMonsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.userProfile.monsterData.monsterId);
@@ -70,23 +54,23 @@ public abstract class CMD_ProfileBase : CMD
 		}));
 	}
 
-	protected abstract void dataReload();
-
 	protected abstract void RefreshComponents();
 
 	protected override void WindowOpened()
 	{
 		base.WindowOpened();
 		FarmCameraControlForCMD.Off();
-		this.InitOpenScreen();
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		Vector2 windowSize = uipanel.GetWindowSize();
+		this.vOrgSCR_HEADER = this.goSCR_HEADER.transform.localPosition;
+		this.vOrgSCR_DETAIL = this.goSCR_DETAIL.transform.localPosition;
+		this.vPosSCR_HEADER = this.vOrgSCR_HEADER;
+		this.vPosSCR_HEADER.y = windowSize.y;
+		this.vPosSCR_DETAIL = this.vOrgSCR_DETAIL;
+		this.vPosSCR_DETAIL.x = windowSize.x;
 	}
 
 	public override void ClosePanel(bool animation = true)
-	{
-		this.CloseAndFarmCamOn(animation);
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
 	{
 		FarmCameraControlForCMD.On();
 		base.ClosePanel(animation);
@@ -123,30 +107,15 @@ public abstract class CMD_ProfileBase : CMD
 		this.ngTargetTex.mainTexture = this.characterCameraView.renderTex;
 	}
 
-	private void InitOpenScreen()
-	{
-		this.ngTX_OPEN_SCREEN = this.goOPEN_SCREEN.GetComponent<UILabel>();
-		this.ngTX_OPEN_SCREEN.text = StringMaster.GetString("CharaDetailsFullScreen");
-		this.vOrgSCR_CHARACTER = this.goSCR_CHARACTER.transform.localPosition;
-		this.vOrgSCR_HEADER = this.goSCR_HEADER.transform.localPosition;
-		this.vOrgSCR_DETAIL = this.goSCR_DETAIL.transform.localPosition;
-		this.vPosSCR_CHARACTER = this.vOrgSCR_CHARACTER;
-		this.vPosSCR_CHARACTER.x = 0f;
-		this.vPosSCR_HEADER = this.vOrgSCR_HEADER;
-		this.vPosSCR_HEADER.y = 480f;
-		this.vPosSCR_DETAIL = this.vOrgSCR_DETAIL;
-		this.vPosSCR_DETAIL.x = 1000f;
-	}
-
 	protected void OnClickedScreen()
 	{
 		CharacterParams characterParams = this.characterCameraView.csRender3DRT.GetCharacterParams();
 		DigimonModelPlayer component = base.GetComponent<DigimonModelPlayer>();
 		if (!this.isOpenScreen)
 		{
-			this.MoveTo(this.goSCR_HEADER, this.vPosSCR_HEADER, 0.18f, null, iTween.EaseType.linear);
-			this.MoveTo(this.goSCR_DETAIL, this.vPosSCR_DETAIL, 0.18f, null, iTween.EaseType.linear);
-			this.ngTX_OPEN_SCREEN.text = StringMaster.GetString("SystemButtonReturn");
+			this.MoveTo(this.goSCR_HEADER, this.vPosSCR_HEADER, 0.18f, iTween.EaseType.linear);
+			this.MoveTo(this.goSCR_DETAIL, this.vPosSCR_DETAIL, 0.18f, iTween.EaseType.linear);
+			this.fullScreenButtonLabel.text = StringMaster.GetString("SystemButtonReturn");
 			if (null != component)
 			{
 				component.MonsterParams = characterParams;
@@ -155,13 +124,13 @@ public abstract class CMD_ProfileBase : CMD
 		}
 		else
 		{
-			if (characterParams != null)
+			if (null != characterParams)
 			{
 				characterParams.transform.localScale = Vector3.one;
 			}
-			this.MoveTo(this.goSCR_HEADER, this.vOrgSCR_HEADER, 0.18f, null, iTween.EaseType.linear);
-			this.MoveTo(this.goSCR_DETAIL, this.vOrgSCR_DETAIL, 0.18f, null, iTween.EaseType.linear);
-			this.ngTX_OPEN_SCREEN.text = StringMaster.GetString("CharaDetailsFullScreen");
+			this.MoveTo(this.goSCR_HEADER, this.vOrgSCR_HEADER, 0.18f, iTween.EaseType.linear);
+			this.MoveTo(this.goSCR_DETAIL, this.vOrgSCR_DETAIL, 0.18f, iTween.EaseType.linear);
+			this.fullScreenButtonLabel.text = StringMaster.GetString("CharaDetailsFullScreen");
 			if (null != component)
 			{
 				component.MonsterParams = null;
@@ -172,9 +141,8 @@ public abstract class CMD_ProfileBase : CMD
 		this.characterCameraView.enableTouch = this.isOpenScreen;
 	}
 
-	protected void MoveTo(GameObject go, Vector3 vP, float time, Action<int> act, iTween.EaseType type = iTween.EaseType.linear)
+	protected void MoveTo(GameObject go, Vector3 vP, float time, iTween.EaseType type = iTween.EaseType.linear)
 	{
-		this.movedAct = act;
 		iTween.MoveTo(go, new Hashtable
 		{
 			{
@@ -196,24 +164,8 @@ public abstract class CMD_ProfileBase : CMD
 			{
 				"easetype",
 				type
-			},
-			{
-				"oncomplete",
-				"MoveEnd"
-			},
-			{
-				"oncompleteparams",
-				0
 			}
 		});
-	}
-
-	private void MoveEnd(int id)
-	{
-		if (this.movedAct != null)
-		{
-			this.movedAct(id);
-		}
 	}
 
 	public void OnDisplayDrag(Vector2 Delta)

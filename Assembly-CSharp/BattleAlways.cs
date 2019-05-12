@@ -7,14 +7,14 @@ public class BattleAlways : MonoBehaviour
 	public GameObject helpDialogGO;
 
 	[NonSerialized]
-	public Transform menuPanelTransform;
+	public BattleMenu battleMenu;
 
-	[Header("Menuボタンのコライダー")]
 	[SerializeField]
+	[Header("Menuボタンのコライダー")]
 	protected Collider menuCollider;
 
-	[SerializeField]
 	[Header("Autoのコライダー")]
+	[SerializeField]
 	protected Collider autoCollider;
 
 	[SerializeField]
@@ -35,7 +35,7 @@ public class BattleAlways : MonoBehaviour
 		Transform transform = gameObject.transform;
 		BattleMenu component = transform.GetComponent<BattleMenu>();
 		this.helpDialogGO = component.helpDialogGO;
-		this.menuPanelTransform = component.menuPanelTransform;
+		this.battleMenu = component;
 		return component.SetupMenu(base.transform);
 	}
 }

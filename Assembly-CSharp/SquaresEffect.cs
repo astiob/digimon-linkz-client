@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class SquaresEffect : MonoBehaviour
+public sealed class SquaresEffect : MonoBehaviour
 {
 	[SerializeField]
 	private Material squaresMat;
@@ -28,11 +28,6 @@ public class SquaresEffect : MonoBehaviour
 		}
 	}
 
-	private void Awake()
-	{
-		this.Initialize();
-	}
-
 	private void Update()
 	{
 		this.EffectAnimation();
@@ -43,7 +38,7 @@ public class SquaresEffect : MonoBehaviour
 		Graphics.Blit(src, dest, this.squaresMat);
 	}
 
-	private void Initialize()
+	public void Initialize()
 	{
 		this.squaresMat.shader = this.squareShader;
 		this.EffectProgress = 1f;
@@ -57,7 +52,7 @@ public class SquaresEffect : MonoBehaviour
 			UnityEngine.Object.Destroy(base.gameObject);
 			return;
 		}
-		if (this.waitCT > 0)
+		if (0 < this.waitCT)
 		{
 			this.waitCT--;
 			return;

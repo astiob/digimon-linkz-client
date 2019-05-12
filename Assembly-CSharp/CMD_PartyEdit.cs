@@ -8,8 +8,8 @@ using UnityEngine;
 
 public sealed class CMD_PartyEdit : CMD
 {
-	[SerializeField]
 	[Header("スクロールビューの左右をクリッピングするオブジェクト")]
+	[SerializeField]
 	private GameObject[] clipObjects;
 
 	private Vector3 v3DPos = new Vector3(0f, 4000f, 0f);
@@ -58,10 +58,6 @@ public sealed class CMD_PartyEdit : CMD
 			break;
 		case CMD_PartyEdit.MODE_TYPE.SELECT:
 			this.partyEditAction = new PartyEditActionBattle();
-			break;
-		case CMD_PartyEdit.MODE_TYPE.PVP:
-			this.partyEditAction = new PartyEditActionPvP();
-			ClassSingleton<PartyBossIconsAccessor>.Instance.StageEnemies = null;
 			break;
 		case CMD_PartyEdit.MODE_TYPE.MULTI:
 			this.partyEditAction = new PartyEditActionMulti();
@@ -168,7 +164,7 @@ public sealed class CMD_PartyEdit : CMD
 				if (ticketQuestDungeonByTicketID != null)
 				{
 					flag = true;
-					num = ticketQuestDungeonByTicketID.dungeonTicketNum.ToInt32();
+					num = int.Parse(ticketQuestDungeonByTicketID.dungeonTicketNum);
 					GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonMaster = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(ticketQuestDungeonByTicketID.worldDungeonId.ToString());
 					arg = worldDungeonMaster.name;
 				}
@@ -181,7 +177,7 @@ public sealed class CMD_PartyEdit : CMD
 					{
 						this.OnClickedSaveOperation();
 					}
-				}, "CMD_Confirm") as CMD_Confirm;
+				}, "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("TicketQuestTitle");
 				cmd_Confirm.Info = string.Format(StringMaster.GetString("TicketQuestConfirmInfo"), arg, num, num - 1);
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonYes");
@@ -313,7 +309,6 @@ public sealed class CMD_PartyEdit : CMD
 	{
 		EDIT,
 		SELECT,
-		PVP,
 		MULTI
 	}
 }

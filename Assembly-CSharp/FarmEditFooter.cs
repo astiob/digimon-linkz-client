@@ -59,6 +59,7 @@ public class FarmEditFooter : MonoBehaviour
 		}
 		GUIFace.instance.ShowGUI();
 		GUIFaceIndicator.instance.ShowLocator();
+		PartsMenu.instance.gameObject.SetActive(true);
 	}
 
 	public void OnPushedCloseButton()
@@ -68,7 +69,7 @@ public class FarmEditFooter : MonoBehaviour
 		{
 			if (instance.isEdit)
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedCloseYesButton), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedCloseYesButton), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("FarmEditCloseTitle");
 				cmd_Confirm.Info = StringMaster.GetString("FarmEditCloseInfo");
 			}
@@ -183,7 +184,7 @@ public class FarmEditFooter : MonoBehaviour
 			global::Debug.LogError("Exist StoreFacility");
 			return;
 		}
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedSaveYesButton), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedSaveYesButton), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("FarmEditSaveTitle");
 		cmd_Confirm.Info = StringMaster.GetString("FarmEditSaveInfo");
 	}

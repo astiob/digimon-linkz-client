@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class BattleStartAction : MonoBehaviour
 {
-	[SerializeField]
 	[Header("タイトル")]
+	[SerializeField]
 	private GameObject titleRoot;
 
-	[SerializeField]
 	[Header("味方のリーダースキルのUI")]
+	[SerializeField]
 	private BattleStartAction.LeaderSkillUI playerLeaderSkillUI;
 
 	[Header("敵のリーダースキルのUI")]
 	[SerializeField]
 	private BattleStartAction.LeaderSkillUI enemyLeaderSkillUI;
 
-	[SerializeField]
 	[Header("VSの時のメッセージ")]
+	[SerializeField]
 	public UIWidget pvpVSUi;
 
 	public void SetActive(bool value)

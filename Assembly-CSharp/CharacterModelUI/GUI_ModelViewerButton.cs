@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace CharacterModelUI
 {
-	[RequireComponent(typeof(BoxCollider))]
 	[RequireComponent(typeof(UISprite))]
+	[RequireComponent(typeof(BoxCollider))]
 	public sealed class GUI_ModelViewerButton : GUICollider
 	{
 		[SerializeField]

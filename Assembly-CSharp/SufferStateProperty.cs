@@ -203,22 +203,36 @@ public class SufferStateProperty
 		}
 	}
 
-	public bool isMultiHitThrough
+	public SufferStateProperty.Data[] GetIsMultiHitThroughDatas()
 	{
-		get
+		List<SufferStateProperty.Data> list = new List<SufferStateProperty.Data>();
+		foreach (List<SufferStateProperty.Data> list2 in this.dataDictionary.Values)
 		{
-			foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
+			foreach (SufferStateProperty.Data data in list2)
 			{
-				foreach (SufferStateProperty.Data data in list)
+				if (data.isActive && data.isMultiHitThrough)
 				{
-					if (data.isActive && data.isMultiHitThrough)
-					{
-						return true;
-					}
+					list.Add(data);
 				}
 			}
-			return false;
 		}
+		return list.ToArray();
+	}
+
+	public SufferStateProperty.Data[] GetNotIsMultiHitThroughDatas()
+	{
+		List<SufferStateProperty.Data> list = new List<SufferStateProperty.Data>();
+		foreach (List<SufferStateProperty.Data> list2 in this.dataDictionary.Values)
+		{
+			foreach (SufferStateProperty.Data data in list2)
+			{
+				if (data.isActive && !data.isMultiHitThrough)
+				{
+					list.Add(data);
+				}
+			}
+		}
+		return list.ToArray();
 	}
 
 	public int generationStartTiming
@@ -381,6 +395,47 @@ public class SufferStateProperty
 		return false;
 	}
 
+	private bool GetEscapeResult()
+	{
+		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
+		{
+			foreach (SufferStateProperty.Data data in list)
+			{
+				if (data.isActive && RandomExtension.Switch(data.escapeRate))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void SaveAheadEscapeResult()
+	{
+		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
+		{
+			foreach (SufferStateProperty.Data data in list)
+			{
+				data.isEscape = this.GetEscapeResult();
+			}
+		}
+	}
+
+	public bool GetAheadEscapeResult()
+	{
+		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
+		{
+			foreach (SufferStateProperty.Data data in list)
+			{
+				if (data.isEscape)
+				{
+					return data.isEscape;
+				}
+			}
+		}
+		return false;
+	}
+
 	public int GetRevivalAp(int maxAp)
 	{
 		int num = 0;
@@ -438,10 +493,29 @@ public class SufferStateProperty
 		{
 			foreach (SufferStateProperty.Data data in list)
 			{
-				data.isActive = false;
-				data.currentKeepRound = -1;
+				if (!data.isParmanent)
+				{
+					data.isActive = false;
+					data.currentKeepRound = -1;
+				}
 			}
 		}
+	}
+
+	public int GetNearCurrentKeepRound()
+	{
+		int num = int.MaxValue;
+		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
+		{
+			foreach (SufferStateProperty.Data data in list)
+			{
+				if (data.isActive)
+				{
+					num = Mathf.Min(num, data.currentKeepRound);
+				}
+			}
+		}
+		return num;
 	}
 
 	public void AddCurrentKeepRound(int value)
@@ -450,7 +524,7 @@ public class SufferStateProperty
 		{
 			foreach (SufferStateProperty.Data data in list)
 			{
-				if (data.isActive)
+				if (data.isActive && !data.isParmanent)
 				{
 					data.currentKeepRound += value;
 					if (data.currentKeepRound < 0)
@@ -467,16 +541,21 @@ public class SufferStateProperty
 	{
 		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
 		{
-			foreach (SufferStateProperty.Data data in list)
+			this.AddCurrentKeepCount(list.ToArray(), value);
+		}
+	}
+
+	public void AddCurrentKeepCount(SufferStateProperty.Data[] datas, int value)
+	{
+		foreach (SufferStateProperty.Data data in datas)
+		{
+			if (data.isActive && !data.isParmanent)
 			{
-				if (data.isActive)
+				data.currentKeepRound += value;
+				if (data.currentKeepRound <= 0)
 				{
-					data.currentKeepRound += value;
-					if (data.currentKeepRound <= 0)
-					{
-						data.isActive = false;
-						data.currentKeepRound = -1;
-					}
+					data.isActive = false;
+					data.currentKeepRound = -1;
 				}
 			}
 		}
@@ -521,24 +600,50 @@ public class SufferStateProperty
 		}
 	}
 
-	public float GetTribeDamageRate(CharacterStateControl characterStateControl)
+	public SufferStateProperty.DamageRateResult GetCaseDamageRate(AffectEffectProperty affectEffectProperty, CharacterStateControl characterStateControl)
 	{
-		int num = characterStateControl.characterDatas.tribe.ToInt32();
-		float[] array = new float[8];
+		SufferStateProperty.DamageRateResult damageRateResult = new SufferStateProperty.DamageRateResult();
+		bool flag = affectEffectProperty.skillId.ToString() == BattleStateManager.PublicAttackSkillId;
 		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
 		{
 			foreach (SufferStateProperty.Data data in list)
 			{
-				array[1] += data.damageRateForPhantomStudents;
-				array[2] += data.damageRateForHeatHaze;
-				array[3] += data.damageRateForGlacier;
-				array[4] += data.damageRateForElectromagnetic;
-				array[5] += data.damageRateForEarth;
-				array[6] += data.damageRateForShaftOfLight;
-				array[7] += data.damageRateForAbyss;
+				if (data.isActive)
+				{
+					if (data.recieveSkillType == 0 || (data.recieveSkillType == 1 && flag) || (data.recieveSkillType == 2 && !flag))
+					{
+						bool flag2 = data.recieveSkillTargetSubType == 1;
+						bool flag3 = data.recieveSkillTargetSubType == 2;
+						float[] array = new float[]
+						{
+							data.damagePercent,
+							data.damageRateForPhantomStudents,
+							data.damageRateForHeatHaze,
+							data.damageRateForGlacier,
+							data.damageRateForElectromagnetic,
+							data.damageRateForEarth,
+							data.damageRateForShaftOfLight,
+							data.damageRateForAbyss
+						};
+						int num = 0;
+						if (flag2)
+						{
+							num = (int)(affectEffectProperty.attribute + 1);
+						}
+						else if (flag3)
+						{
+							num = ((!(characterStateControl != null)) ? 0 : characterStateControl.characterDatas.tribe.ToInt32());
+						}
+						damageRateResult.damageRate += array[num];
+						if (array[num] != 0f)
+						{
+							damageRateResult.dataList.Add(data);
+						}
+					}
+				}
 			}
 		}
-		return array[num];
+		return damageRateResult;
 	}
 
 	public HaveSufferStateStore.DataChild[] Get()
@@ -609,7 +714,8 @@ public class SufferStateProperty
 		DamageRateDown,
 		Regenerate,
 		TurnEvasion,
-		CountEvasion
+		CountEvasion,
+		Escape
 	}
 
 	[Serializable]
@@ -686,13 +792,28 @@ public class SufferStateProperty
 
 		public SufferStateProperty.SetType setType;
 
+		public int recieveSkillType;
+
+		public int recieveSkillTargetSubType;
+
+		public float escapeRate;
+
+		public bool isEscape;
+
 		public Data()
 		{
 		}
 
 		public Data(AffectEffectProperty affectProperty, int lastGenerationStartTiming = 0)
 		{
-			this.id = SufferStateProperty.Data.CreateId(affectProperty.skillId, affectProperty.subSkillId);
+			if (affectProperty.sufferSetType == SufferStateProperty.SetType.Override)
+			{
+				this.id = "Override";
+			}
+			else
+			{
+				this.id = SufferStateProperty.Data.CreateId(affectProperty.skillId, affectProperty.subSkillId);
+			}
 			this.isActive = true;
 			this.generationStartTiming = lastGenerationStartTiming;
 			switch (affectProperty.type)
@@ -914,6 +1035,16 @@ public class SufferStateProperty
 				this.currentKeepRound = affectProperty.keepRoundNumber;
 				this.damagePercent = affectProperty.damagePercent;
 				this.isMultiHitThrough = affectProperty.isMultiHitThrough;
+				this.damageRateForPhantomStudents = affectProperty.damageRateForPhantomStudents;
+				this.damageRateForHeatHaze = affectProperty.damageRateForHeatHaze;
+				this.damageRateForGlacier = affectProperty.damageRateForGlacier;
+				this.damageRateForElectromagnetic = affectProperty.damageRateForElectromagnetic;
+				this.damageRateForEarth = affectProperty.damageRateForEarth;
+				this.damageRateForShaftOfLight = affectProperty.damageRateForShaftOfLight;
+				this.damageRateForAbyss = affectProperty.damageRateForAbyss;
+				this.recieveSkillType = affectProperty.recieveSkillType;
+				this.recieveSkillTargetSubType = affectProperty.recieveSkillTargetSubType;
+				this.setType = affectProperty.sufferSetType;
 				break;
 			case AffectEffect.TurnBarrier:
 				this.sufferType = SufferStateProperty.SufferType.TurnBarrier;
@@ -930,6 +1061,7 @@ public class SufferStateProperty
 				this.sufferType = SufferStateProperty.SufferType.DamageRateUp;
 				this.keepRoundNumber = affectProperty.damageRateKeepRoundNumber;
 				this.currentKeepRound = affectProperty.damageRateKeepRoundNumber;
+				this.damagePercent = affectProperty.damagePercent;
 				this.damageRateForPhantomStudents = affectProperty.damageRateForPhantomStudents;
 				this.damageRateForHeatHaze = affectProperty.damageRateForHeatHaze;
 				this.damageRateForGlacier = affectProperty.damageRateForGlacier;
@@ -937,11 +1069,15 @@ public class SufferStateProperty
 				this.damageRateForEarth = affectProperty.damageRateForEarth;
 				this.damageRateForShaftOfLight = affectProperty.damageRateForShaftOfLight;
 				this.damageRateForAbyss = affectProperty.damageRateForAbyss;
+				this.recieveSkillType = affectProperty.recieveSkillType;
+				this.recieveSkillTargetSubType = affectProperty.recieveSkillTargetSubType;
+				this.setType = affectProperty.sufferSetType;
 				break;
 			case AffectEffect.DamageRateDown:
 				this.sufferType = SufferStateProperty.SufferType.DamageRateDown;
 				this.keepRoundNumber = affectProperty.damageRateKeepRoundNumber;
 				this.currentKeepRound = affectProperty.damageRateKeepRoundNumber;
+				this.damagePercent = affectProperty.damagePercent;
 				this.damageRateForPhantomStudents = affectProperty.damageRateForPhantomStudents;
 				this.damageRateForHeatHaze = affectProperty.damageRateForHeatHaze;
 				this.damageRateForGlacier = affectProperty.damageRateForGlacier;
@@ -949,6 +1085,9 @@ public class SufferStateProperty
 				this.damageRateForEarth = affectProperty.damageRateForEarth;
 				this.damageRateForShaftOfLight = affectProperty.damageRateForShaftOfLight;
 				this.damageRateForAbyss = affectProperty.damageRateForAbyss;
+				this.recieveSkillType = affectProperty.recieveSkillType;
+				this.recieveSkillTargetSubType = affectProperty.recieveSkillTargetSubType;
+				this.setType = affectProperty.sufferSetType;
 				break;
 			case AffectEffect.Regenerate:
 				this.sufferType = SufferStateProperty.SufferType.Regenerate;
@@ -971,6 +1110,20 @@ public class SufferStateProperty
 				this.currentKeepRound = affectProperty.keepRoundNumber;
 				this.isMultiHitThrough = affectProperty.isMultiHitThrough;
 				break;
+			case AffectEffect.Escape:
+				this.sufferType = SufferStateProperty.SufferType.Escape;
+				this.keepRoundNumber = affectProperty.escapeRound;
+				this.currentKeepRound = affectProperty.escapeRound;
+				this.escapeRate = affectProperty.escapeRate;
+				break;
+			}
+		}
+
+		public bool isParmanent
+		{
+			get
+			{
+				return this.keepRoundNumber >= 100 || this.currentKeepRound >= 100;
 			}
 		}
 
@@ -978,5 +1131,12 @@ public class SufferStateProperty
 		{
 			return skillId + "_" + subSkillId;
 		}
+	}
+
+	public class DamageRateResult
+	{
+		public float damageRate;
+
+		public List<SufferStateProperty.Data> dataList = new List<SufferStateProperty.Data>();
 	}
 }

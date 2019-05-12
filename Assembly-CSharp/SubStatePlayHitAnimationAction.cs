@@ -42,12 +42,20 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	private IEnumerator PlayHitAnimation()
 	{
+		if (!base.stateManager.cameraControl.IsPlaying(this.data.cameraKey))
+		{
+			foreach (SubStatePlayHitAnimationAction.Data.HitIcon temp in this.data.hitIconList)
+			{
+				temp.target.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+			}
+			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.data.cameraKey, this.data.hitIconList[0].target);
+		}
 		List<HitIcon> hitIconList = new List<HitIcon>();
 		foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon in this.data.hitIconList)
 		{
 			int index = hitIconList.Count;
-			HitIcon temp = base.stateManager.uiControl.ApplyShowHitIcon(index, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon.target), hitIcon.affectEffect, hitIcon.damage, hitIcon.strength, hitIcon.isMiss, hitIcon.isCritical, hitIcon.isDrain, hitIcon.isCounter, hitIcon.isReflection, hitIcon.extraEffectType);
-			hitIconList.Add(temp);
+			HitIcon temp2 = base.stateManager.uiControl.ApplyShowHitIcon(index, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon.target), hitIcon.affectEffect, hitIcon.damage, hitIcon.strength, hitIcon.isMiss, hitIcon.isCritical, hitIcon.isDrain, hitIcon.isCounter, hitIcon.isReflection, hitIcon.extraEffectType);
+			hitIconList.Add(temp2);
 		}
 		HitEffectParams[] currentHitEffect = this.GetHitEffectParams();
 		base.stateManager.uiControl.HideCharacterHUDFunction();
@@ -87,7 +95,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 				{
 					if ((isDamage || isTolerance) && (isBarrier || isEvasion || isInvalid))
 					{
-						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.idle, new CharacterStateControl[]
+						base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(new CharacterStateControl[]
 						{
 							this.data.hitIconList[i].target
 						});
@@ -155,7 +163,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.TurnEvasion:
 						case AffectEffect.CountEvasion:
 						case AffectEffect.ApDrain:
-							goto IL_7BC;
+							goto IL_896;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
 						case AffectEffect.SpAttackDown:
@@ -196,10 +204,10 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							}
 							break;
 						default:
-							goto IL_7BC;
+							goto IL_896;
 						}
-						goto IL_844;
-						IL_7BC:
+						goto IL_91E;
+						IL_896:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							this.data.hitIconList[i].target
@@ -212,7 +220,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							this.data.hitIconList[i].target
 						});
 					}
-					IL_844:;
+					IL_91E:;
 				}
 				else
 				{
@@ -337,6 +345,10 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 			if (hitIcon.target.isDied)
 			{
 				hitIcon.target.isDiedJustBefore = true;
+				base.stateManager.threeDAction.HideAllCharactersAction(new CharacterStateControl[]
+				{
+					hitIcon.target
+				});
 			}
 		}
 	}
@@ -355,6 +367,8 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		public float time;
 
 		public AffectEffectProperty affectEffectProperty;
+
+		public string cameraKey = string.Empty;
 
 		public List<SubStatePlayHitAnimationAction.Data.HitIcon> hitIconList = new List<SubStatePlayHitAnimationAction.Data.HitIcon>();
 

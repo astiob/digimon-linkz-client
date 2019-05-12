@@ -47,8 +47,8 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private CMD_Succession.SkillTab materialMonsterSkillTab2;
 
-	[SerializeField]
 	[Header("所持クラスタ数")]
+	[SerializeField]
 	private UILabel myClusterLabel;
 
 	[SerializeField]
@@ -63,14 +63,6 @@ public sealed class CMD_Succession : CMD
 
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
-
-	[SerializeField]
-	[Header("表示デジモン数")]
-	private UILabel ngTX_MN_HAVE;
-
-	[SerializeField]
-	[Header("ソートのラベル")]
-	private UILabel ngTX_SORT_DISP;
 
 	[SerializeField]
 	private UILabel sortButtonLabel;
@@ -98,11 +90,13 @@ public sealed class CMD_Succession : CMD
 
 	private InheritSkillMonsterList monsterList;
 
+	private List<MonsterData> selecterPartnerDigimons = new List<MonsterData>();
+
 	private GameObject goSelectPanelMonsterIcon;
 
 	private GUISelectPanelMonsterIcon csSelectPanelMonsterIcon;
 
-	private List<MonsterData> selecterPartnerDigimons = new List<MonsterData>();
+	private MonsterData baseDigimon { get; set; }
 
 	protected override void Awake()
 	{
@@ -149,17 +143,11 @@ public sealed class CMD_Succession : CMD
 		RestrictionInput.EndLoad();
 	}
 
-	protected override void WindowClosed()
-	{
-		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
-		base.WindowClosed();
-	}
-
 	protected override void WindowOpened()
 	{
 		base.WindowOpened();
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
+		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
 			tutorialObserver.StartSecondTutorial("second_tutorial_succession", new Action(GUIMain.BarrierOFF), delegate
@@ -173,13 +161,19 @@ public sealed class CMD_Succession : CMD
 		}
 	}
 
+	protected override void WindowClosed()
+	{
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
+		base.WindowClosed();
+	}
+
 	private void OnTouchSort()
 	{
 	}
 
 	private void OnTouchDecide()
 	{
-		CMD_InheritCheck cmd_InheritCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSuccession), "CMD_InheritCheck") as CMD_InheritCheck;
+		CMD_InheritCheck cmd_InheritCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSuccession), "CMD_InheritCheck", null) as CMD_InheritCheck;
 		cmd_InheritCheck.SetParams(this.selecterPartnerDigimons, this.useClusterLabel.text, this.baseDigimonSkillNumber, this.partnerDigimonSkillNumber);
 	}
 
@@ -217,7 +211,7 @@ public sealed class CMD_Succession : CMD
 
 	private void OnPartnerDigimonSkill1()
 	{
-		if (this.selecterPartnerDigimons.Count > 0)
+		if (0 < this.selecterPartnerDigimons.Count)
 		{
 			this.FunctionPartnerDigimonSkill1();
 		}
@@ -233,7 +227,7 @@ public sealed class CMD_Succession : CMD
 
 	private void OnPartnerDigimonSkill2()
 	{
-		if (this.selecterPartnerDigimons.Count > 0 && this.selecterPartnerDigimons[0].GetExtraCommonSkill() != null)
+		if (0 < this.selecterPartnerDigimons.Count && this.selecterPartnerDigimons[0].GetExtraCommonSkill() != null)
 		{
 			this.FunctionPartnerDigimonSkill2();
 		}
@@ -290,13 +284,13 @@ public sealed class CMD_Succession : CMD
 		{
 			if (!this.IsMATLevelMax())
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("SuccessionTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("SuccessionFailedLv");
 			}
 			else if (this.IsSameSkill())
 			{
-				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage2.Title = StringMaster.GetString("SuccessionTitle");
 				cmd_ModalMessage2.Info = StringMaster.GetString("SuccessionFailedSame");
 			}
@@ -392,7 +386,7 @@ public sealed class CMD_Succession : CMD
 		{
 			this.leftLargeMonsterIcon.Lock = this.baseDigimon.userMonster.IsLocked;
 			icon.Lock = this.baseDigimon.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed");
+		}, "CMD_CharacterDetailed", null);
 	}
 
 	private void ShowChgInfo()
@@ -430,7 +424,7 @@ public sealed class CMD_Succession : CMD
 
 	private void ShowMATInfo()
 	{
-		if (this.selecterPartnerDigimons.Count > 0 && this.selecterPartnerDigimons[0] != null)
+		if (0 < this.selecterPartnerDigimons.Count && this.selecterPartnerDigimons[0] != null)
 		{
 			MonsterData monsterData = this.selecterPartnerDigimons[0];
 			this.materialMonsterBasicInfo.SetMonsterData(monsterData);
@@ -471,7 +465,7 @@ public sealed class CMD_Succession : CMD
 		localPosition.x = 208f;
 		GUICollider component = this.goSelectPanelMonsterIcon.GetComponent<GUICollider>();
 		component.SetOriginalPos(localPosition);
-		if (this.goEFC_RIGHT != null)
+		if (null != this.goEFC_RIGHT)
 		{
 			this.goSelectPanelMonsterIcon.transform.parent = this.goEFC_RIGHT.transform;
 		}
@@ -532,7 +526,7 @@ public sealed class CMD_Succession : CMD
 					this.iconGrayOut.SetLockReturnDetailed(icon, tappedMonsterData.userMonster.IsLocked);
 				}
 			}
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 		if (flag)
 		{
 			cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Succession;
@@ -580,8 +574,6 @@ public sealed class CMD_Succession : CMD
 		}
 		return result;
 	}
-
-	private MonsterData baseDigimon { get; set; }
 
 	private void ActMIconShort(MonsterData md)
 	{
@@ -663,7 +655,7 @@ public sealed class CMD_Succession : CMD
 		guimonsterIcon.transform.localScale = new Vector3(0.84f, 0.84f, 1f);
 		UIWidget component = goEmpty.GetComponent<UIWidget>();
 		UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
-		if (component != null && component2 != null)
+		if (null != component && null != component2)
 		{
 			int add = component.depth - component2.depth;
 			DepthController component3 = guimonsterIcon.gameObject.GetComponent<DepthController>();
@@ -675,16 +667,14 @@ public sealed class CMD_Succession : CMD
 
 	private void ShiftMatIcon(int idx)
 	{
-		int i;
-		for (i = 0; i < this.selecterPartnerDigimons.Count; i++)
+		for (int i = 0; i < this.selecterPartnerDigimons.Count; i++)
 		{
 			this.targetMonsterIconList[i].gameObject.transform.localPosition = this.goMN_ICON_MAT_LIST[i].transform.localPosition;
 			this.goMN_ICON_MAT_LIST[i].SetActive(false);
 		}
-		while (i < this.goMN_ICON_MAT_LIST.Count)
+		for (int j = this.selecterPartnerDigimons.Count; j < this.goMN_ICON_MAT_LIST.Count; j++)
 		{
-			this.goMN_ICON_MAT_LIST[i].SetActive(true);
-			i++;
+			this.goMN_ICON_MAT_LIST[j].SetActive(true);
 		}
 	}
 
@@ -697,7 +687,7 @@ public sealed class CMD_Succession : CMD
 	private void BtnCont()
 	{
 		bool flag = false;
-		if (this.baseDigimon != null && this.selecterPartnerDigimons.Count > 0)
+		if (this.baseDigimon != null && 0 < this.selecterPartnerDigimons.Count)
 		{
 			int num = this.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
 			int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);

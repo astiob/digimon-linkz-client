@@ -31,12 +31,22 @@ public class IsWarning : MonoBehaviour
 			this.messageLocalize.text = StringMaster.GetString("BattleNotice-09");
 			return;
 		default:
-			if (sufferType != SufferStateProperty.SufferType.PowerCharge)
+			if (sufferType == SufferStateProperty.SufferType.PowerCharge)
+			{
+				this.messageLocalize.text = StringMaster.GetString("BattleNotice-07");
+				return;
+			}
+			if (sufferType != SufferStateProperty.SufferType.Escape)
 			{
 				return;
 			}
-			this.messageLocalize.text = StringMaster.GetString("BattleNotice-07");
 			return;
 		}
+	}
+
+	public void ApplyWarning(string value, bool isEnemy)
+	{
+		this.allyTitleBarSkinner.SetSkins((!isEnemy) ? 0 : 1);
+		this.messageLocalize.text = value;
 	}
 }

@@ -12,24 +12,24 @@ public sealed class CMD_PvPBattleResult : CMD
 {
 	private const int UP_COUNT_VALUE = 1;
 
-	[SerializeField]
 	[Header("Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogo;
 
 	[Header("Loseのロゴ")]
 	[SerializeField]
 	private GameObject loseLogo;
 
-	[SerializeField]
 	[Header("スキップ用Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogoForSkip;
 
 	[Header("獲得クラスタ表示ルート")]
 	[SerializeField]
 	private GameObject acquisitionRoot;
 
-	[SerializeField]
 	[Header("DP表示ルート")]
+	[SerializeField]
 	private GameObject dpRoot;
 
 	[Header("ランク表示用スプライト")]
@@ -40,40 +40,40 @@ public sealed class CMD_PvPBattleResult : CMD
 	[Header("獲得クラスタ数値ラベル")]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("変動DP数値ラベル")]
+	[SerializeField]
 	private UILabel fluctuateDpLabel;
 
 	[Header("現在のDP数値ラベル")]
 	[SerializeField]
 	private UILabel currentDpLabel;
 
-	[SerializeField]
 	[Header("通算勝利数のラベル")]
+	[SerializeField]
 	private UILabel totalWinNum;
 
 	[SerializeField]
 	[Header("次のランクアップまでの勝利数ラベル")]
 	private UILabel nextRankupWinNum;
 
-	[SerializeField]
 	[Header("ランクアップ用オブジェクト")]
+	[SerializeField]
 	private GameObject gaugeUp;
 
-	[SerializeField]
 	[Header("ランクダウン用オブジェクト")]
+	[SerializeField]
 	private GameObject gaugeDown;
 
-	[Header("ランクアップ用エフェクト")]
 	[SerializeField]
+	[Header("ランクアップ用エフェクト")]
 	private GameObject rankUpEffect;
 
-	[Header("ランクダウン用エフェクト")]
 	[SerializeField]
+	[Header("ランクダウン用エフェクト")]
 	private GameObject rankDownEffect;
 
-	[Header("TAP NEXTのオブジェクト")]
 	[SerializeField]
+	[Header("TAP NEXTのオブジェクト")]
 	private GameObject tapNext;
 
 	[Header("加算DPのTween")]
@@ -82,8 +82,8 @@ public sealed class CMD_PvPBattleResult : CMD
 
 	private readonly Vector3 BIG_LABEL_SIZE = new Vector3(1.35f, 1.35f, 1f);
 
-	[SerializeField]
 	[Header("カウントアップするときのラベルの色")]
+	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	private GUIMonsterIcon[] digimonIcons;
@@ -485,7 +485,7 @@ public sealed class CMD_PvPBattleResult : CMD
 		}
 		else
 		{
-			CMD_FirstClear cmd_FirstClear = GUIMain.ShowCommonDialog(new Action<int>(this.ShowRewardDialog), "CMD_PvPIncentive") as CMD_FirstClear;
+			CMD_FirstClear cmd_FirstClear = GUIMain.ShowCommonDialog(new Action<int>(this.ShowRewardDialog), "CMD_PvPIncentive", null) as CMD_FirstClear;
 			cmd_FirstClear.SetRankUpRewardTitle();
 		}
 	}
@@ -499,7 +499,7 @@ public sealed class CMD_PvPBattleResult : CMD
 		else
 		{
 			CMD_FirstClear.isNormalReward = true;
-			CMD_FirstClear cmd_FirstClear = GUIMain.ShowCommonDialog(new Action<int>(this.GotoPvPTop), "CMD_PvPIncentive") as CMD_FirstClear;
+			CMD_FirstClear cmd_FirstClear = GUIMain.ShowCommonDialog(new Action<int>(this.GotoPvPTop), "CMD_PvPIncentive", null) as CMD_FirstClear;
 			if (this.multiBattleData.BattleResult == 1)
 			{
 				cmd_FirstClear.SetWinRewardTitle();

@@ -25,7 +25,8 @@ namespace DebugMonitor
 				ApplicationMonitorModeList.Create(MonitorMode.FPS, "FPS:", "fps"),
 				ApplicationMonitorModeList.Create(MonitorMode.JSON, "Json Parse Error", string.Empty),
 				ApplicationMonitorModeList.Create(MonitorMode.PLATFORM_USER_ID, "Platform User Id", string.Empty),
-				ApplicationMonitorModeList.Create(MonitorMode.API_LOG, "API", "Log")
+				ApplicationMonitorModeList.Create(MonitorMode.API_LOG, "API", "Log"),
+				ApplicationMonitorModeList.Create(MonitorMode.PvP, "PvP", string.Empty)
 			};
 		}
 	}

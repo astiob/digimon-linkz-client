@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class VersionUpItem : GUICollider
 {
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	public UISprite spIcon;
 
-	[Header("アイコン")]
 	[SerializeField]
+	[Header("アイコン")]
 	public UITexture texIcon;
 
 	[Header("素材選択")]

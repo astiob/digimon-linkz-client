@@ -6,24 +6,24 @@ using UnityEngine;
 
 public class ChipIcon : MonoBehaviour
 {
-	[SerializeField]
 	[Header("装備アイコン")]
+	[SerializeField]
 	private UISprite equipment;
 
-	[Header("選択中のメッセージラベル")]
 	[SerializeField]
+	[Header("選択中のメッセージラベル")]
 	private UILabel dimMessage;
 
-	[SerializeField]
 	[Header("チップアイコン")]
+	[SerializeField]
 	private UITexture iconTexture;
 
 	[SerializeField]
 	[Header("ランクアイコン")]
 	private UISprite rankSprite;
 
-	[Header("複数選択時のメッセージラベル")]
 	[SerializeField]
+	[Header("複数選択時のメッセージラベル")]
 	private UILabel selectMessage;
 
 	private int defaultTexSizeWidth;

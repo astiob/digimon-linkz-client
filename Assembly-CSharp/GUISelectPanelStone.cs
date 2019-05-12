@@ -2,29 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GUISelectPanelStone : GUISelectPanelBSPartsUD
+public sealed class GUISelectPanelStone : GUISelectPanelBSPartsUD
 {
 	[SerializeField]
-	private GameObject goPackParts;
+	private GameObject largeContentItem;
 
 	public Action Callback { private get; set; }
 
-	protected override void Awake()
+	public void AllBuild(List<StoreUtil.StoneStoreData> dts)
 	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public Vector3 AllBuild(List<StoreUtil.StoneStoreData> dts)
-	{
+		if (!base.selectParts.activeSelf)
+		{
+			base.selectParts.SetActive(true);
+		}
+		if (!this.largeContentItem.activeSelf)
+		{
+			this.largeContentItem.SetActive(true);
+		}
 		base.InitBuild();
 		this.partsCount = dts.Count;
-		Vector3 position = new Vector3(0f, 0f, 0f);
-		if (base.selectCollider != null)
+		if (null != base.selectCollider)
 		{
 			GUISelectPanelStone.PanelBuildDataForShop panelBuildDataForShop = this.CalcBuildDataForShop(dts);
 			for (int i = 0; i < dts.Count; i++)
@@ -33,7 +30,7 @@ public class GUISelectPanelStone : GUISelectPanelBSPartsUD
 				GameObject selectParts;
 				if (stoneStoreData.packFlg)
 				{
-					selectParts = this.goPackParts;
+					selectParts = this.largeContentItem;
 				}
 				else
 				{
@@ -41,35 +38,33 @@ public class GUISelectPanelStone : GUISelectPanelBSPartsUD
 				}
 				GameObject gameObject = base.AddBuildPart(selectParts);
 				GUIListPartsStone component = gameObject.GetComponent<GUIListPartsStone>();
-				if (component != null)
+				if (null != component)
 				{
 					component.Callback = this.Callback;
 					component.SetOriginalPos(panelBuildDataForShop.posList[i]);
-					if (i == 0)
-					{
-						position = component.transform.position;
-					}
 					component.Data = stoneStoreData;
+					component.ShowGUI();
 				}
 			}
 			base.height = panelBuildDataForShop.lenH;
 			base.InitMinMaxLocation(-1, 0f);
 		}
-		return position;
+		base.selectParts.SetActive(false);
+		this.largeContentItem.SetActive(false);
 	}
 
-	public GUISelectPanelStone.PanelBuildDataForShop CalcBuildDataForShop(List<StoreUtil.StoneStoreData> dts)
+	private GUISelectPanelStone.PanelBuildDataForShop CalcBuildDataForShop(List<StoreUtil.StoneStoreData> dts)
 	{
 		GUISelectPanelStone.PanelBuildDataForShop panelBuildDataForShop = new GUISelectPanelStone.PanelBuildDataForShop();
 		panelBuildDataForShop.posList = new List<Vector3>();
-		if (base.selectParts != null && !base.selectParts.activeSelf)
+		if (null != base.selectParts && !base.selectParts.activeSelf)
 		{
 			base.selectParts.SetActive(true);
 		}
 		float width = base.selectCollider.width;
 		float height = base.selectCollider.height;
 		float num = width + this.horizontalMargin;
-		GUICollider component = this.goPackParts.GetComponent<GUICollider>();
+		GUICollider component = this.largeContentItem.GetComponent<GUICollider>();
 		float height2 = component.height;
 		bool flag = false;
 		float num2 = 0f;
@@ -85,14 +80,7 @@ public class GUISelectPanelStone : GUISelectPanelBSPartsUD
 			if (stoneStoreData.packFlg)
 			{
 				x = 0f;
-				if (i == 0)
-				{
-					num3 -= this.verticalBorder;
-				}
-				else
-				{
-					num3 -= this.verticalMargin;
-				}
+				num3 = ((i != 0) ? (num3 - this.verticalMargin) : (num3 - this.verticalBorder));
 				num3 -= height2;
 				y = num3 + height2 / 2f;
 				flag = false;
@@ -100,14 +88,7 @@ public class GUISelectPanelStone : GUISelectPanelBSPartsUD
 			else if (!flag)
 			{
 				x = num5;
-				if (i == 0)
-				{
-					num3 -= this.verticalBorder;
-				}
-				else
-				{
-					num3 -= this.verticalMargin;
-				}
+				num3 = ((i != 0) ? (num3 - this.verticalMargin) : (num3 - this.verticalBorder));
 				num3 -= height;
 				y = num3 + height / 2f;
 				flag = true;
@@ -125,11 +106,11 @@ public class GUISelectPanelStone : GUISelectPanelBSPartsUD
 		float num6 = Mathf.Abs(num3) / 2f;
 		num2 += num6;
 		num3 += num6;
-		for (int i = 0; i < dts.Count; i++)
+		for (int j = 0; j < dts.Count; j++)
 		{
-			Vector3 value = panelBuildDataForShop.posList[i];
+			Vector3 value = panelBuildDataForShop.posList[j];
 			value.y += num6;
-			panelBuildDataForShop.posList[i] = value;
+			panelBuildDataForShop.posList[j] = value;
 		}
 		return panelBuildDataForShop;
 	}

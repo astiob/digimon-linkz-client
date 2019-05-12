@@ -4,20 +4,20 @@ using UnityEngine;
 
 public sealed class GUIBannerParts : GUIListPartBS
 {
-	[Header("残り時間のラベル")]
 	[SerializeField]
+	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[Header("ガシャの背景色")]
 	[SerializeField]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("イベントの背景色")]
+	[SerializeField]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[SerializeField]
 	[Header("NEWのスプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
 	[SerializeField]
@@ -352,7 +352,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private void InfoShortcut()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = this.Data.name;
 		cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
 	}

@@ -64,7 +64,7 @@ public class BtnSort : GUICollider
 			float magnitude = (this.beganPostion - pos).magnitude;
 			if (magnitude < 40f)
 			{
-				CMD_ModalSort cmd_ModalSort = GUIMain.ShowCommonDialog(new Action<int>(this.EndSort), "CMD_ModalSort") as CMD_ModalSort;
+				CMD_ModalSort cmd_ModalSort = GUIMain.ShowCommonDialog(new Action<int>(this.EndSort), "CMD_ModalSort", null) as CMD_ModalSort;
 				cmd_ModalSort.SetTargetMonsterList(this.SortTargetMonsterList);
 				cmd_ModalSort.SetChangeSettingAction(this.OnChangeSortType);
 				cmd_ModalSort.Initialize();

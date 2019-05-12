@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UISprite))]
+[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Atlas Sprite Animation")]
 public class UIAtlasSpriteAnimation : CustomUISpriteAnimation
 {

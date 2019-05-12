@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class HitIcon : MonoBehaviour
 {
-	[Header("アニメーション 通常 有利 不利 の順")]
 	[SerializeField]
+	[Header("アニメーション 通常 有利 不利 の順")]
 	private UITweener[] tween;
 
 	[SerializeField]
@@ -23,28 +23,24 @@ public class HitIcon : MonoBehaviour
 	[Header("耐性結果を表示するフォントテクスチャ")]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
+	[SerializeField]
 	[Header("通常効果を表示するフォントテクスチャ")]
-	[SerializeField]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
-
-	[SerializeField]
-	[Header("ステージ効果を表示するフォントテクスチャ")]
-	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
 
 	private MaterialPropertyBlock materialPropertyBlock;
 
 	private Dictionary<string, string> dictionary;
 
-	[Header("ステージ効果上昇UI")]
 	[SerializeField]
+	[Header("ステージ効果上昇UI")]
 	private UISprite upSprite;
 
-	[Header("ステージ効果減少UI")]
 	[SerializeField]
+	[Header("ステージ効果減少UI")]
 	private UISprite downSprite;
 
-	[SerializeField]
 	[Header("国内用フォントデータ")]
+	[SerializeField]
 	private HitIcon.LanguageFont languageFont;
 
 	[SerializeField]
@@ -233,6 +229,9 @@ public class HitIcon : MonoBehaviour
 				return;
 			case AffectEffect.CountEvasion:
 				this.ShowCountEvasion(data);
+				return;
+			case AffectEffect.Escape:
+				this.ShowEscape(data);
 				return;
 			}
 			NGUITools.SetActiveSelf(base.gameObject, false);
@@ -628,6 +627,15 @@ public class HitIcon : MonoBehaviour
 	private void ShowRecommand(HitIcon.Data data)
 	{
 		data.middleMesh.text = this.GetString("HitIconRecommand");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowEscape(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconEscape");
 		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
 		{
 			data.middleMesh

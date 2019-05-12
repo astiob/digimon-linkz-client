@@ -16,8 +16,8 @@ public class MultiBattleSimulator : BattleSimulator
 	[Header("MyユーザID")]
 	public string myPlayerUserId;
 
-	[Header("マルチユーザ達")]
 	[SerializeField]
+	[Header("マルチユーザ達")]
 	public MultiUser[] multiUsers;
 
 	[SerializeField]

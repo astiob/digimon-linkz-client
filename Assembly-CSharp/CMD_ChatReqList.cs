@@ -3,7 +3,7 @@ using Master;
 using System;
 using UnityEngine;
 
-public class CMD_ChatReqList : CMD
+public sealed class CMD_ChatReqList : CMD
 {
 	public static CMD_ChatReqList instance;
 
@@ -28,11 +28,6 @@ public class CMD_ChatReqList : CMD
 		CMD_ChatReqList.instance = this;
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		this.SetCommonUI();
@@ -45,10 +40,10 @@ public class CMD_ChatReqList : CMD
 			this.GetUserChatRequestListExec();
 		}
 		base.Show(f, sizeX, sizeY, aT);
-		this.setInitLabel();
+		this.SetInitLabel();
 	}
 
-	private void setInitLabel()
+	private void SetInitLabel()
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("ChatTitle"));
 		this.ngChatGroupDefaultText = this.chatGroupDefaultText.GetComponent<UILabelEx>();
@@ -153,7 +148,7 @@ public class CMD_ChatReqList : CMD
 				{
 					base.StartCoroutine(Singleton<TCPUtil>.Instance.SendSystemMessege(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, DataMng.Instance().UserId, DataMng.Instance().UserName));
 				}
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			string format = (this.reqReplyType != 1) ? StringMaster.GetString("ChatInviteReplyNG") : StringMaster.GetString("ChatInviteReplyOK");
 			cmd_ModalMessage.Info = string.Format(format, ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName);
@@ -228,7 +223,7 @@ public class CMD_ChatReqList : CMD
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
 			{
 				this.GetUserChatRequestListExec();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			cmd_ModalMessage.Info = string.Format(StringMaster.GetString("ChatApply-05"), ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName);
 		}

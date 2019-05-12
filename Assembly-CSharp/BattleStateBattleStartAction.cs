@@ -166,7 +166,6 @@ public class BattleStateBattleStartAction : BattleStateBase
 		}
 		base.stateManager.threeDAction.StopAlwaysEffectAction(base.battleStateData.insertCharacterEffect);
 		base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
-		base.stateManager.threeDAction.SmallToBigTransitionAfter(base.battleStateData.playerCharacters, smallToBigTransition.ToArray());
 		base.stateManager.soundPlayer.TryStopSE(base.battleStateData.insertCharacterEffect);
 		yield break;
 	}
@@ -241,7 +240,6 @@ public class BattleStateBattleStartAction : BattleStateBase
 			yield return null;
 		}
 		base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
-		base.stateManager.threeDAction.SmallToBigTransitionAfter(base.battleStateData.enemies, smallToBigTransition.ToArray());
 		if (base.battleMode == BattleMode.PvP)
 		{
 			base.stateManager.threeDAction.StopAlwaysEffectAction(base.battleStateData.insertEnemyEffect);

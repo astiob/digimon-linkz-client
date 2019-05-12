@@ -4,8 +4,8 @@ using UnityEngine;
 
 public static class NGUIMath
 {
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float Lerp(float from, float to, float factor)
 	{
 		return from * (1f - factor) + to * factor;
@@ -18,8 +18,8 @@ public static class NGUIMath
 		return (val >= 0) ? ((val >= max) ? (max - 1) : val) : 0;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int RepeatIndex(int val, int max)
 	{
 		if (max < 1)
@@ -37,8 +37,8 @@ public static class NGUIMath
 		return val;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float WrapAngle(float angle)
 	{
 		while (angle > 180f)
@@ -59,8 +59,8 @@ public static class NGUIMath
 		return val - (float)Mathf.FloorToInt(val);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int HexToDecimal(char ch)
 	{
 		switch (ch)
@@ -120,8 +120,8 @@ public static class NGUIMath
 		return 10;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static char DecimalToHexChar(int num)
 	{
 		if (num > 15)
@@ -135,8 +135,8 @@ public static class NGUIMath
 		return (char)(65 + num - 10);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string DecimalToHex8(int num)
 	{
 		num &= 255;
@@ -169,8 +169,8 @@ public static class NGUIMath
 		return num | Mathf.RoundToInt(c.a * 255f);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static Color IntToColor(int val)
 	{
 		float num = 0.003921569f;

@@ -425,9 +425,9 @@ public class GUIMonsterIcon : GUIListPartBS
 		{
 			flag = AssetDataMng.Instance().IsIncludedInAssetBundle(AssetDataMng.GetLocalizedPath(assetBundlePath));
 		}
-		if (texture2D3 != null && texture2D4 != null && !flag)
+		if (null != texture2D3 && null != texture2D4 && !flag)
 		{
-			if (iconTexture.material == null)
+			if (null == iconTexture.material)
 			{
 				Shader iconShader = GUIMonsterIcon.GetIconShader();
 				iconTexture.material = new Material(iconShader);
@@ -441,9 +441,9 @@ public class GUIMonsterIcon : GUIListPartBS
 			NGUIUtil.ChangeUITexture(iconTexture, null, false);
 			MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, delegate(UnityEngine.Object obj)
 			{
-				Texture2D tex2 = obj as Texture2D;
-				NGUIUtil.ChangeUITexture(iconTexture, tex2, false);
-				if (iconTexture.material != null)
+				Texture2D tex = obj as Texture2D;
+				NGUIUtil.ChangeUITexture(iconTexture, tex, false);
+				if (null != iconTexture.material)
 				{
 					iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
 				}
@@ -451,11 +451,14 @@ public class GUIMonsterIcon : GUIListPartBS
 		}
 		else
 		{
-			Texture2D tex = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, null) as Texture2D;
-			NGUIUtil.ChangeUITexture(iconTexture, tex, false);
-			if (iconTexture.material != null)
+			Texture2D texture2D5 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, null) as Texture2D;
+			if (null != texture2D5)
 			{
-				iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
+				NGUIUtil.ChangeUITexture(iconTexture, texture2D5, false);
+				if (null != iconTexture.material)
+				{
+					iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
+				}
 			}
 		}
 	}

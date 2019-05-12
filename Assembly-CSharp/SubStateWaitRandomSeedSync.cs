@@ -83,7 +83,6 @@ public class SubStateWaitRandomSeedSync : BattleStateController
 		}
 		if (this.isFirst && base.battleMode == BattleMode.PvP)
 		{
-			base.stateManager.pvpFunction.FinishedSync();
 			this.standby.PlayHideAnimation();
 			IEnumerator asdWait = base.stateManager.time.WaitForCertainPeriodTimeAction(1.5f, null, null);
 			while (asdWait.MoveNext())

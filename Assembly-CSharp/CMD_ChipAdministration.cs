@@ -68,7 +68,7 @@ public sealed class CMD_ChipAdministration : CMD
 
 	public static CMD_ChipAdministration Create(Action<int> callback = null)
 	{
-		return GUIMain.ShowCommonDialog(callback, "CMD_ChipList") as CMD_ChipAdministration;
+		return GUIMain.ShowCommonDialog(callback, "CMD_ChipList", null) as CMD_ChipAdministration;
 	}
 
 	protected override void WindowOpened()
@@ -220,7 +220,7 @@ public sealed class CMD_ChipAdministration : CMD
 				AppCoroutine.Start(this.Send(), false);
 			}
 		};
-		CMD_SaleCheck cmd_SaleCheck = GUIMain.ShowCommonDialog(action, "CMD_SaleCheck") as CMD_SaleCheck;
+		CMD_SaleCheck cmd_SaleCheck = GUIMain.ShowCommonDialog(action, "CMD_SaleCheck", null) as CMD_SaleCheck;
 		cmd_SaleCheck.SetParams(this.saleUserChipList, StringFormat.Cluster(this.totalPrice));
 	}
 

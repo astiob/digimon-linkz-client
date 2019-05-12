@@ -19,8 +19,8 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[Header("自分の情報を表示するUI群")]
 	private PvPVersusInfo6Icon.UserDataUI myDataUI;
 
-	[SerializeField]
 	[Header("相手の情報を表示するUI群")]
+	[SerializeField]
 	private PvPVersusInfo6Icon.UserDataUI opponentDataUI;
 
 	[Header("背景のDepth値")]

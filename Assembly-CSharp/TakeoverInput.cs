@@ -80,7 +80,7 @@ public class TakeoverInput : MonoBehaviour
 					PlayerPrefsExtentions.DeleteAllGameParams();
 					GameCache.ClearCache(null);
 					this.ChangeSceneToUILogo();
-				}, "CMD_ModalMessage") as CMD_ModalMessage;
+				}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("TakeOver-10");
 				cmd_ModalMessage.Info = StringMaster.GetString("TakeOver-11");
 			}

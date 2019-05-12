@@ -173,6 +173,8 @@ namespace BattleStateMachineInternal
 
 		private int[] _revivaledCharactersIndex = new int[3];
 
+		private float? _seValue;
+
 		private float? _pauseBgmVolume;
 
 		private List<ItemDropResult> _itemDropResults = new List<ItemDropResult>();
@@ -217,8 +219,6 @@ namespace BattleStateMachineInternal
 		public bool isTutorialInduction;
 
 		public int turnUseDigiStoneCount;
-
-		public Dictionary<string, object> sendValues = new Dictionary<string, object>();
 
 		public TweenCameraTargetFunction commandSelectTweenTargetCamera { get; set; }
 
@@ -598,6 +598,28 @@ namespace BattleStateMachineInternal
 				}
 			}
 			return false;
+		}
+
+		public int[][] GetEnemyAliveList()
+		{
+			int[][] array = new int[this.preloadEnemies.Length][];
+			for (int i = 0; i < this.preloadEnemies.Length; i++)
+			{
+				int[] array2 = new int[this.preloadEnemies[i].Length];
+				for (int j = 0; j < this.preloadEnemies[i].Length; j++)
+				{
+					if (!this.preloadEnemies[i][j].isDied || this.preloadEnemies[i][j].isEscape)
+					{
+						array2[j] = 1;
+					}
+					else
+					{
+						array2[j] = 0;
+					}
+				}
+				array[i] = array2;
+			}
+			return array;
 		}
 
 		public void ChangePlayerLeader(int index)
@@ -1355,6 +1377,18 @@ namespace BattleStateMachineInternal
 			}
 		}
 
+		public float? seValue
+		{
+			get
+			{
+				return this._seValue;
+			}
+			set
+			{
+				this._seValue = value;
+			}
+		}
+
 		public float? pauseBgmVolume
 		{
 			get
@@ -1576,13 +1610,6 @@ namespace BattleStateMachineInternal
 				return;
 			}
 			this.apRevival[num] = ((!isApRevival) ? 0 : 1);
-		}
-
-		public void SetPlayPassiveEffectFunctionValues(CharacterStateControl[] isTargetsStatus, SkillStatus status, AffectEffectProperty currentSuffer)
-		{
-			this.sendValues["isTargetsStatus"] = isTargetsStatus;
-			this.sendValues["status"] = status;
-			this.sendValues["currentSuffer"] = currentSuffer;
 		}
 
 		public bool IsChipSkill()

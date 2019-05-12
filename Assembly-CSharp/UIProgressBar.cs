@@ -20,8 +20,8 @@ public class UIProgressBar : UIWidgetContainer
 	[HideInInspector]
 	protected UIWidget mFG;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected float mValue = 1f;
 
 	[HideInInspector]

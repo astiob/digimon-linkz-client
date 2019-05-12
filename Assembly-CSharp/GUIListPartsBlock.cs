@@ -11,7 +11,7 @@ public class GUIListPartsBlock : GUIListPartsFriend
 			{
 				CMD_BlockList.Instance.BuildBlockList();
 			}
-		}, "CMD_ProfileFriend") as CMD_ProfileFriend;
+		}, "CMD_ProfileFriend", null) as CMD_ProfileFriend;
 		cmd_ProfileFriend.SetLastLoginTime(this.lastLoginTime);
 	}
 }

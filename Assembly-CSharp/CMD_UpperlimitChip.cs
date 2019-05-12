@@ -1,5 +1,6 @@
 ﻿using Master;
 using System;
+using UI.Common;
 using UnityEngine;
 
 public sealed class CMD_UpperlimitChip : CMD
@@ -35,6 +36,22 @@ public sealed class CMD_UpperlimitChip : CMD
 			this.message.text = StringMaster.GetString("ChipOverPresent");
 			break;
 		case CMD_UpperlimitChip.MessageType.QUEST:
+			this.message.text = StringMaster.GetString("ChipOverQuest");
+			break;
+		}
+	}
+
+	public void SetNoticeMessage(LimitOverNoticeType type)
+	{
+		switch (type)
+		{
+		case LimitOverNoticeType.GASHA:
+			this.message.text = StringMaster.GetString("ChipOverGasha");
+			break;
+		case LimitOverNoticeType.PRESENTS:
+			this.message.text = StringMaster.GetString("ChipOverPresent");
+			break;
+		case LimitOverNoticeType.QUEST:
 			this.message.text = StringMaster.GetString("ChipOverQuest");
 			break;
 		}

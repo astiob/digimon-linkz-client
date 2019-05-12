@@ -17,28 +17,28 @@ public class ItemInfoField : MonoBehaviour
 	[Header("Box(ノーマル)")]
 	private GameObject normalBox;
 
-	[SerializeField]
 	[Header("Box(レア)")]
+	[SerializeField]
 	private GameObject rareBox;
 
 	[Header("Wave & Roundのテキスト")]
 	[SerializeField]
 	private UILabel waveAndRoundText;
 
-	[Header("残りRoundのテキスト")]
 	[SerializeField]
+	[Header("残りRoundのテキスト")]
 	private UILabel remainingRoundText;
 
 	[SerializeField]
 	[Header("Box数テキスト(ノーマル)")]
 	private UILabel normalBoxNumberText;
 
-	[Header("Box数テキスト(レア)")]
 	[SerializeField]
+	[Header("Box数テキスト(レア)")]
 	private UILabel rareBoxNumberText;
 
-	[SerializeField]
 	[Header("BoxのTween(ノーマル)")]
+	[SerializeField]
 	private UITweener normalBoxTween;
 
 	[Header("BoxのTween(レア)")]

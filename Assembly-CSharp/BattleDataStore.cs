@@ -137,6 +137,16 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			param.dungeonId = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart.worldDungeonId;
 			param.clear = 0;
 			param.aliveInfo = new int[3];
+			GameWebAPI.RespDataWD_DungeonStart.DungeonFloor[] dungeonFloor = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart.dungeonFloor;
+			if (dungeonFloor != null)
+			{
+				param.enemyAliveInfo = new int[dungeonFloor.Length][];
+				for (int i = 0; i < dungeonFloor.Length; i++)
+				{
+					int num = dungeonFloor[i].enemy.Length;
+					param.enemyAliveInfo[i] = new int[num];
+				}
+			}
 		};
 		GameWebAPI.WorldResultLogic request = worldResultLogic;
 		Action<Exception> onFailed = delegate(Exception nop)
@@ -168,7 +178,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				global::Debug.LogError("ダイアログ選択でありえない選択がされた");
 				this.GoFarm(onCancel);
 			}
-		}, "CMD_Confirm") as CMD_Confirm;
+		}, "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("BattleComebackTitle");
 		cmd_Confirm.Info = StringMaster.GetString("BattleComebackInfo");
 	}
@@ -736,14 +746,15 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 		string str = string.Concat(jsonObjs.ToArray());
 		string hashCode = this.CalculateMD5(str);
-		VersatileDataStore value = new VersatileDataStore
+		VersatileDataStore versatileDataStore = new VersatileDataStore
 		{
 			worldDungeonId = respDataWD_DungeonStart.worldDungeonId,
 			startId = respDataWD_DungeonStart.startId,
 			randomSeed = UnityEngine.Random.seed,
 			hashCode = hashCode
 		};
-		string item = JsonWriter.Serialize(value);
+		UnityEngine.Random.seed = versatileDataStore.randomSeed;
+		string item = JsonWriter.Serialize(versatileDataStore);
 		jsonObjs.Insert(0, item);
 		jsonObjs.Insert(0, VersionManager.version);
 	}
@@ -762,6 +773,8 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			myIndex = csc.myIndex,
 			isEnemy = csc.isEnemy,
 			chipIds = csc.chipIds,
+			isEscape = csc.isEscape,
+			skillUseCounts = csc.skillUseCounts,
 			currentSufferState = csc.currentSufferState.Get(),
 			chipEffectCount = csc.GetChipEffectCountToString(),
 			potencyChipIdList = csc.GetPotencyChipIdListToString()
@@ -784,8 +797,6 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			{
 				isDropped = itemDropResult.isDropped,
 				dropBoxType = itemDropResult.dropBoxType,
-				dropAssetType = itemDropResult.dropAssetType,
-				dropNumber = itemDropResult.dropNumber,
 				isRare = itemDropResult.isRare
 			};
 			string item = JsonWriter.Serialize(value);
@@ -801,7 +812,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		foreach (string value in array)
 		{
 			ItemDropResultStore itemDropResultStore = JsonReader.Deserialize(value, typeof(ItemDropResultStore)) as ItemDropResultStore;
-			ItemDropResult item = new ItemDropResult(itemDropResultStore.dropBoxType, itemDropResultStore.dropAssetType, itemDropResultStore.dropNumber);
+			ItemDropResult item = new ItemDropResult(itemDropResultStore.dropBoxType);
 			list.Add(item);
 		}
 		battleStateData.itemDropResults = list;

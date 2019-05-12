@@ -110,45 +110,38 @@ public class LeadCapture : MonoBehaviour
 		}
 		else
 		{
-			bool flag = false;
+			bool active = false;
 			foreach (DateTime dateTime in this.UpdateDateTimeList)
 			{
-				if (this.OpenedDateTime == null || (dateTime.CompareTo(ServerDateTime.Now) <= 0 && dateTime.CompareTo(this.OpenedDateTime) > 0))
+				if (this.OpenedDateTime == null || (0 >= dateTime.CompareTo(ServerDateTime.Now) && 0 < dateTime.CompareTo(this.OpenedDateTime)))
 				{
-					flag = true;
+					active = true;
 					break;
 				}
 			}
-			if (flag)
-			{
-				base.gameObject.SetActive(true);
-			}
-			else
-			{
-				base.gameObject.SetActive(false);
-			}
+			base.gameObject.SetActive(active);
 		}
 	}
 
-	public void SaveCaptureUpdate(List<string> UpdateDateTimeList)
+	public void SaveCaptureUpdate(List<string> updateDateTimeList)
 	{
-		if (!this.CompareStringList(UpdateDateTimeList, this.UpdateDateTimeStringList))
+		if (!this.CompareStringList(updateDateTimeList, this.UpdateDateTimeStringList))
 		{
-			this.UpdateDateTimeStringList = UpdateDateTimeList;
+			this.UpdateDateTimeStringList = updateDateTimeList;
 			base.gameObject.SetActive(false);
 			this.OpenedDateTime = new DateTime?(ServerDateTime.Now);
 		}
 	}
 
-	private bool CompareStringList(List<string> Value_1, List<string> Value_2)
+	private bool CompareStringList(List<string> value_1, List<string> value_2)
 	{
-		if (Value_1.Count != Value_2.Count)
+		if (value_1.Count != value_2.Count)
 		{
 			return false;
 		}
-		for (int i = 0; i < Value_1.Count; i++)
+		for (int i = 0; i < value_1.Count; i++)
 		{
-			if (Value_1[i] != Value_2[i])
+			if (value_1[i] != value_2[i])
 			{
 				return false;
 			}

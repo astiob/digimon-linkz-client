@@ -19,8 +19,8 @@ namespace BattleStateMachineInternal
 		[SerializeField]
 		private float rotationSpeed = 2f;
 
-		[FormerlySerializedAs("minDistance")]
 		[SerializeField]
+		[FormerlySerializedAs("minDistance")]
 		private float selectPointMinDistance = 0.5f;
 
 		[SerializeField]
@@ -56,12 +56,12 @@ namespace BattleStateMachineInternal
 				return;
 			}
 			this._camera = camera;
+			this._cameraPositions = this.GetCameraPositions();
 			this.root = new GameObject("Root").transform;
 			this.root.SetParent(base.transform);
 			this.root.localPosition = Vector3.zero;
 			this.root.localRotation = Quaternion.identity;
 			this.root.localScale = Vector3.one;
-			this._cameraPositions = this.GetCameraPositions();
 			foreach (Transform transform in this._cameraPositions)
 			{
 				if (this.root != transform.parent)

@@ -2,57 +2,35 @@
 using System;
 using UnityEngine;
 
-public class CMD_OtherTOP : CMD
+public sealed class CMD_OtherTOP : CMD
 {
 	[SerializeField]
-	private UILabel historyText;
+	private GameObject jpButtonRoot;
 
 	[SerializeField]
-	private UILabel takeoverText;
+	private GameObject wwButtonRoot;
 
 	[SerializeField]
-	private UILabel officialText;
+	private GameObject wwButtonListLeft;
 
 	[SerializeField]
-	private UILabel inquiryText;
-
-	[SerializeField]
-	private UILabel termsText;
-
-	[SerializeField]
-	private UILabel authorityText;
-
-	[SerializeField]
-	private GameObject[] buttonObjectList;
-
-	[SerializeField]
-	private GameObject[] multiLanguageButtonObjectList;
+	private GameObject wwButtonListRight;
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
+		if (this.jpButtonRoot.activeSelf)
+		{
+			this.jpButtonRoot.SetActive(false);
+		}
+		if (!this.wwButtonRoot.activeSelf)
+		{
+			this.wwButtonRoot.SetActive(true);
+		}
+		this.goEFC_LEFT = this.wwButtonListLeft;
+		this.goEFC_RIGHT = this.wwButtonListRight;
 		SoundMng.Instance().PlayGameBGM("bgm_102");
 		base.PartsTitle.SetTitle(StringMaster.GetString("InfomationOther"));
 		base.Show(f, sizeX, sizeY, aT);
-		this.historyText.text = StringMaster.GetString("OtherHistory");
-		this.takeoverText.text = StringMaster.GetString("TakeOverTitle");
-		this.officialText.text = StringMaster.GetString("OtherOfficialSite");
-		this.inquiryText.text = StringMaster.GetString("InquiryTitle");
-		this.termsText.text = StringMaster.GetString("AgreementTitle");
-		this.authorityText.text = StringMaster.GetString("OtherRight");
-		if (this.buttonObjectList != null)
-		{
-			foreach (GameObject gameObject in this.buttonObjectList)
-			{
-				gameObject.SetActive(false);
-			}
-		}
-		if (this.multiLanguageButtonObjectList != null)
-		{
-			foreach (GameObject gameObject2 in this.multiLanguageButtonObjectList)
-			{
-				gameObject2.SetActive(true);
-			}
-		}
 	}
 
 	protected override void WindowOpened()
@@ -85,7 +63,7 @@ public class CMD_OtherTOP : CMD
 
 	private void OnClickedRightsExpression()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		if (null != cmdwebWindow)
 		{
 			cmdwebWindow.TitleText = StringMaster.GetString("OtherRight");
@@ -95,22 +73,27 @@ public class CMD_OtherTOP : CMD
 
 	private void OnClickedPurchaseHistory()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_History");
+		GUIMain.ShowCommonDialog(null, "CMD_History", null);
 	}
 
 	private void OnClickedTakeover()
 	{
 		CMD_Takeover.currentMode = CMD_Takeover.MODE.ISSUE;
-		GUIMain.ShowCommonDialog(null, "CMD_TakeoverIssue");
+		GUIMain.ShowCommonDialog(null, "CMD_TakeoverIssue", null);
 	}
 
 	private void OnClickedContact()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_inquiry");
+		GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
 	}
 
 	private void OnClickedPrivacyOfUse()
 	{
 		Application.OpenURL(WebAddress.EXT_ADR_PRIVACY_POLICY);
+	}
+
+	private void OnClickedGDPR()
+	{
+		Application.OpenURL(ConstValue.GDPR_OPT_OUT_SITE_URL);
 	}
 }

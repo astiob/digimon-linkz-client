@@ -18,8 +18,8 @@ public class GUISelectPanelChipList : GUISelectPanelViewPartsUD
 		float num2 = windowSize.y * 0.5f;
 		listWindowViewRect.xMin = -num;
 		listWindowViewRect.xMax = num;
-		listWindowViewRect.yMin = -num2;
-		listWindowViewRect.yMax = num2;
+		listWindowViewRect.yMin = -num2 - GUIMain.VerticalSpaceSize;
+		listWindowViewRect.yMax = num2 + GUIMain.VerticalSpaceSize;
 		base.ListWindowViewRect = listWindowViewRect;
 		this.fRecycleViewMaxY = num2 * 1.5f;
 		this.fRecycleViewMinY = -num2 * 1.5f;

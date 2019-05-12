@@ -24,7 +24,11 @@ namespace CharacterModelUI
 
 		public bool enableTouch;
 
-		public CharacterCameraView(MonsterData monsterData)
+		public CharacterCameraView(MonsterData monsterData) : this(monsterData, 1136, 820)
+		{
+		}
+
+		public CharacterCameraView(MonsterData monsterData, int width, int height)
 		{
 			GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DRT", null);
 			this.csRender3DRT = gameObject.GetComponent<CommonRender3DRT>();
@@ -40,7 +44,7 @@ namespace CharacterModelUI
 				string filePath2 = MonsterObject.GetFilePath(eggModelId);
 				this.csRender3DRT.LoadEgg(filePath2, 0f, 10000f, 0.1f);
 			}
-			this.renderTex = this.csRender3DRT.SetRenderTarget(1136, 820, 16);
+			this.renderTex = this.csRender3DRT.SetRenderTarget(width, height, 16);
 			this.defaultPos = Camera.main.ScreenToViewportPoint(new Vector3(-382f, -80f, 0f));
 			this.defaultPos.x = -0.6f;
 			this.orignal = this.csRender3DRT.projectionMatrix;

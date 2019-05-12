@@ -1,9 +1,10 @@
-﻿using System;
+﻿using NGUI.Extensions;
+using System;
 using UnityEngine;
 
 [ExecuteInEditMode]
 [AddComponentMenu("GUI/PrefabFolder")]
-public class PrefabFolder : MonoBehaviour
+public sealed class PrefabFolder : MonoBehaviour
 {
 	[SerializeField]
 	private GameObject goSRC_Prefab;
@@ -26,10 +27,10 @@ public class PrefabFolder : MonoBehaviour
 		if (Application.isPlaying)
 		{
 			this.ReplacePrefab();
-			if (this.target != null)
+			if (null != this.target)
 			{
 				UtilForCMD component = this.target.GetComponent<UtilForCMD>();
-				if (component != null)
+				if (null != component)
 				{
 					component.SetParamToCMD();
 				}
@@ -51,28 +52,35 @@ public class PrefabFolder : MonoBehaviour
 		}
 	}
 
-	private void OnInit()
-	{
-	}
-
 	private void ReplacePrefab()
 	{
-		if (this.goSRC_Prefab != null)
+		if (null != this.goSRC_Prefab)
 		{
 			this.goSRC_Prv = this.goSRC_Prefab;
 			foreach (object obj in base.transform)
 			{
 				Transform transform = (Transform)obj;
-				UnityEngine.Object.DestroyImmediate(transform.gameObject);
+				UnityEngine.Object.Destroy(transform.gameObject);
 			}
-			string name = this.goSRC_Prefab.name;
 			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.goSRC_Prefab);
 			Vector3 localScale = gameObject.transform.localScale;
 			gameObject.transform.parent = base.transform;
 			gameObject.transform.localScale = localScale;
-			gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
-			gameObject.name = name;
+			gameObject.transform.localPosition = Vector3.zero;
+			gameObject.name = this.goSRC_Prefab.name;
 			this.target = gameObject;
+			IUISafeAreaChildren[] componentsInChildren = gameObject.GetComponentsInChildren<IUISafeAreaChildren>();
+			if (componentsInChildren != null)
+			{
+				UISafeArea componentInParent = base.GetComponentInParent<UISafeArea>();
+				if (null != componentInParent)
+				{
+					for (int i = 0; i < componentsInChildren.Length; i++)
+					{
+						componentsInChildren[i].SetAnchorTarget(componentInParent.transform);
+					}
+				}
+			}
 		}
 	}
 }

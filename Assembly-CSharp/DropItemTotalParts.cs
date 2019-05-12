@@ -7,8 +7,8 @@ public class DropItemTotalParts : MonoBehaviour
 	[SerializeField]
 	private PresentBoxItem dropItemItems;
 
-	[SerializeField]
 	[Header("ドロップ数のラベル")]
+	[SerializeField]
 	private UILabel dropNumLabel;
 
 	public void SetData(DropItemTotalParts.Data data)

@@ -47,6 +47,19 @@ public class GUISelectPanelGashaEdit : GUISelectPanelBSPartsLR
 		this.timeCoun = this.limitOrigin;
 	}
 
+	public void Create()
+	{
+		base.ListWindowViewRect = new Rect
+		{
+			xMin = 117f,
+			xMax = 660f,
+			yMin = -240f,
+			yMax = 240f
+		};
+		this.ResetAutoScrollTime();
+		base.initLocation = true;
+	}
+
 	public void AllBuild(string[] te)
 	{
 		base.InitBuild();

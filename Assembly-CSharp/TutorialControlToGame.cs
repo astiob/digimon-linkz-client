@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Tutorial;
 using TutorialRequestHeader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,10 @@ using WebAPIRequest;
 
 public sealed class TutorialControlToGame : MonoBehaviour
 {
+	public const int GASHA_RESULT_UI = 0;
+
+	public const int EVOLUTION_DETAIL_UI = 1;
+
 	private TutorialEmphasizeUI emphasizeUI;
 
 	private int tutorialBattleDungeonId;
@@ -29,6 +34,8 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	private List<GameObject> effectObjects = new List<GameObject>();
 
+	private Dictionary<string, Action> tutorialActionList;
+
 	public bool IsBackgroundDownload
 	{
 		get
@@ -42,6 +49,18 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		get
 		{
 			return this.isStandardDownload;
+		}
+	}
+
+	private void Start()
+	{
+		if (this.tutorialActionList == null)
+		{
+			this.tutorialActionList = new Dictionary<string, Action>();
+		}
+		else
+		{
+			this.tutorialActionList.Clear();
 		}
 	}
 
@@ -200,7 +219,8 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			BattleStateManager.onAutoChangeTutorialMode = true;
 			GUICollider.DisableAllCollider(base.gameObject.name);
 			GUIMain.ReqScreen("UIIdle", string.Empty);
-			GUIFace.ForceHideDigiviceBtn_S();
+			GUIFace.CloseDigiviceChildButton();
+			GUIFace.CloseFacilityChildButton();
 			BattleStateManager.onAutoServerConnect = true;
 			SceneManager.LoadScene(BattleStateManager.BattleSceneName);
 			if (completed != null)
@@ -594,6 +614,14 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		if (onOpened != null)
 		{
 			window.onOpened += onOpened;
+			window.onOpened += delegate()
+			{
+				GUIFace guiface = UnityEngine.Object.FindObjectOfType<GUIFace>();
+				if (null != guiface)
+				{
+					guiface.RemoveActionPushedGashaButton(new Action<CommonDialog>(this.SetTutorialParameter));
+				}
+			};
 		}
 		yield break;
 	}
@@ -645,19 +673,6 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		else if (onOpened != null)
 		{
 			onOpened();
-		}
-	}
-
-	public void WaitOpenedForGashaCharacterDetailWindow(Action completed)
-	{
-		CMD_GashaTOP cmd_GashaTOP = UnityEngine.Object.FindObjectOfType<CMD_GashaTOP>();
-		if (null != cmd_GashaTOP)
-		{
-			cmd_GashaTOP.SetFinishedActionCutScene(completed);
-		}
-		else if (completed != null)
-		{
-			completed();
 		}
 	}
 
@@ -800,6 +815,15 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		return tutorialEmphasizeUI;
 	}
 
+	private void SetTutorialParameter(CommonDialog dialog)
+	{
+		ITutorialControl tutorialControl = dialog as ITutorialControl;
+		if (tutorialControl != null)
+		{
+			tutorialControl.SetTutorialParameter(this.tutorialActionList);
+		}
+	}
+
 	public void SetInduceUI(string uiType, bool enabledFrame, int arrowPosition, TutorialUI tutorialUI, Action onPushedEvent)
 	{
 		this.emphasizeUI = this.FindEmphasizeUI(uiType);
@@ -855,6 +879,15 @@ public sealed class TutorialControlToGame : MonoBehaviour
 					EventDelegate.Execute(holdPressButtonEvents);
 				};
 				gameObject = this.emphasizeUI.transform.FindChild("MonsterButtonGraphicRootScaler/MonsterButtonGraphicRoot").gameObject;
+				break;
+			}
+			case TutorialEmphasizeUI.UiNameType.GASHA:
+			{
+				GUIFace guiface = UnityEngine.Object.FindObjectOfType<GUIFace>();
+				if (null != guiface)
+				{
+					guiface.AddActionPushedGashaButton(new Action<CommonDialog>(this.SetTutorialParameter));
+				}
 				break;
 			}
 			}
@@ -1190,14 +1223,14 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		string path = MonsterObject.GetFilePath(monsterMaster.Group.modelId);
 		GameObject resource = AssetDataMng.Instance().LoadObject(path, null, true) as GameObject;
 		yield return null;
-		Camera uiCamera = Singleton<GUIMain>.Instance.GetComponent<Camera>();
+		Camera uiCamera = GUIMain.GetOrthoCamera();
 		Vector3 cemeraPosition = uiCamera.transform.position;
 		this.digimon = UnityEngine.Object.Instantiate<GameObject>(resource);
 		this.digimon.transform.localScale = new Vector3(scale, scale, scale);
 		this.digimon.transform.localPosition = cemeraPosition + new Vector3(adjustPosition.x, adjustPosition.y, -2f);
 		this.digimon.transform.localEulerAngles = new Vector3(0f, 180f, 0f);
 		CharacterParams characterParams = this.digimon.GetComponent<CharacterParams>();
-		characterParams.PlayIdleAnimation();
+		characterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		Light light = this.digimon.AddComponent<Light>();
 		light.type = LightType.Directional;
 		yield return null;
@@ -1354,7 +1387,15 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			MonsterSort.SortMonsterUserDataList(monsterDataList2, MonsterSortType.DATE, MonsterSortOrder.DESC);
 			CMD_CharacterDetailed.DataChg = monsterDataList2.First<MonsterData>();
 		}
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, openDialogName);
+		CommonDialog commonDialog;
+		if ("CMD_GashaTOP" == openDialogName)
+		{
+			commonDialog = GUIMain.ShowCommonDialog(null, openDialogName, new Action<CommonDialog>(this.SetTutorialParameter));
+		}
+		else
+		{
+			commonDialog = GUIMain.ShowCommonDialog(null, openDialogName, null);
+		}
 		commonDialog.onOpened += actionOpened;
 	}
 
@@ -1362,19 +1403,44 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	{
 		if ("GashaConfirmDialog" == openDialogName)
 		{
-			CMD_GashaTOP cmd_GashaTOP = UnityEngine.Object.FindObjectOfType<CMD_GashaTOP>();
-			if (null != cmd_GashaTOP)
+			CMD_GashaTOP y = UnityEngine.Object.FindObjectOfType<CMD_GashaTOP>();
+			if (null != y)
 			{
-				cmd_GashaTOP.OnClickedSingle();
+				this.CallActionRegistFromOutside("GashaConfirmDialog", true);
+				if (actionOpened != null)
+				{
+					actionOpened();
+				}
 			}
 		}
+	}
+
+	private void CallActionRegistFromOutside(string key, bool isDemonstrate)
+	{
+		if (this.tutorialActionList.ContainsKey(key))
+		{
+			Action action = this.tutorialActionList[key];
+			if (action != null)
+			{
+				action();
+			}
+			if (isDemonstrate)
+			{
+				this.tutorialActionList.Remove(key);
+			}
+		}
+	}
+
+	public void RemoveActionRegistFromOutside(string key)
+	{
+		this.tutorialActionList.Remove(key);
 	}
 
 	public void StartDownload(string level, Action completed)
 	{
 		if (!string.IsNullOrEmpty(level))
 		{
-			CMD_ShortDownload progressUI = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload") as CMD_ShortDownload;
+			CMD_ShortDownload progressUI = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload", null) as CMD_ShortDownload;
 			progressUI.SetOnOpened(delegate(int x)
 			{
 				this.StartCoroutine(this.WaitDownloaded(level, progressUI, completed));
@@ -1432,7 +1498,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	private IEnumerator IE_WaitBackgroundDownload(Action completed)
 	{
 		this.isBackgroundDownload = false;
-		CMD_ShortDownload progressUI = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload") as CMD_ShortDownload;
+		CMD_ShortDownload progressUI = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload", null) as CMD_ShortDownload;
 		yield return base.StartCoroutine(progressUI.WaitAssetBundleDownload());
 		progressUI.SetCloseAction(delegate(int x)
 		{
@@ -1503,6 +1569,10 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		for (int i = 0; i < Enum.GetNames(typeof(TutorialControlToGame.ScreenEffectType)).Length; i++)
 		{
 			this.StopEffect(i);
+		}
+		if (this.tutorialActionList != null)
+		{
+			this.tutorialActionList.Clear();
 		}
 	}
 
@@ -1605,11 +1675,5 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		CIRCLE_FADE,
 		CONNECTING,
 		SHUT_DOWN
-	}
-
-	public enum WaitOpenDetailWindowType
-	{
-		GASHA_DETAIL_UI,
-		EVOLUTION_DETAIL_UI
 	}
 }

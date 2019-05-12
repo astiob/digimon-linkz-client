@@ -136,6 +136,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 			foreach (CharacterStateControl character in this.GetTotalCharacters())
 			{
 				character.InitChipEffectCountForWave();
+				character.ResetSkillUseCountForWave();
 			}
 		}
 		base.SetState(this.subStateRoundStartAction.GetType());
@@ -166,6 +167,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			if (!sortedCharacters[sortedIndex].isDied)
 			{
+				base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(this.GetTotalCharacters());
 				sortedCharacters[sortedIndex].InitChipEffectCountForTurn();
 				this.lastCharacter = sortedCharacters[sortedIndex];
 				base.stateManager.fraudCheck.FraudCheckOverflowMaxHp(sortedCharacters[sortedIndex]);
@@ -198,7 +200,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 				}
 				base.battleStateData.onSkillTrigger = false;
 				base.stateManager.roundFunction.InitRunSufferFlags();
-				base.stateManager.roundFunction.RunSufferBeforeCommand(sortedCharacters, sortedCharacter);
+				yield return base.stateManager.roundFunction.RunSufferBeforeCommand(sortedCharacters, sortedCharacter);
 				if (!sortedCharacter.isEnemy)
 				{
 					IEnumerator playerTurnFunction = this.PlayerTurnFunction();
@@ -215,7 +217,6 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 						yield return null;
 					}
 				}
-				base.stateManager.uiControl.HideCharacterHUDFunction();
 				base.stateManager.roundFunction.RunSufferAfterCommand(sortedCharacters, sortedCharacter);
 				if (this.onFreeze)
 				{
@@ -234,6 +235,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 						yield return null;
 					}
 				}
+				sortedCharacter.currentSufferState.TurnUpdate();
 				base.stateManager.uiControl.HideCharacterHUDFunction();
 				base.SetState(this.subStateCharacterDeadCheckFunction.GetType());
 				while (base.isWaitState)
@@ -434,6 +436,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			this.lastCharacter.currentSkillStatus.OnAttackUseAttackerAp(this.lastCharacter);
 		}
+		this.lastCharacter.AddSkillUseCount(this.lastCharacter.isSelectSkill, -1);
 		if (this.lastCharacter.currentSkillStatus.skillType == SkillType.Attack)
 		{
 			base.battleStateData.isInvocationEffectPlaying = true;
@@ -575,6 +578,10 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		else if (this.result[0])
 		{
 			this.SaveRecoverData();
+			foreach (CharacterStateControl characterStateControl in base.battleStateData.GetTotalCharacters())
+			{
+				characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape);
+			}
 			if (this.onPlayerWinner != null)
 			{
 				this.onPlayerWinner(this.result[1]);
@@ -613,6 +620,5 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 
 	protected virtual void SaveRecoverData()
 	{
-		base.stateManager.recover.Save();
 	}
 }

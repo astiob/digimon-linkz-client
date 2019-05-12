@@ -4,8 +4,9 @@ using Quest;
 using System;
 using System.Collections;
 using UnityEngine;
+using User;
 
-public class DataMng : MonoBehaviour
+public sealed class DataMng : MonoBehaviour
 {
 	private static DataMng instance;
 
@@ -66,7 +67,7 @@ public class DataMng : MonoBehaviour
 		return DataMng.instance;
 	}
 
-	protected virtual void Awake()
+	private void Awake()
 	{
 		DataMng.instance = this;
 		this.InitWD_ReqDngResult();
@@ -500,6 +501,7 @@ public class DataMng : MonoBehaviour
 				{
 					this.IsPopUpInformaiton = true;
 				}
+				UserHomeInfo.dirtyMyPage = false;
 			}
 		};
 		return new APIRequestTask(request, requestRetry);
@@ -658,7 +660,7 @@ public class DataMng : MonoBehaviour
 				{
 					finish();
 				}
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("CampaignEndTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("CampaignEndInfo");
 		}
@@ -670,7 +672,7 @@ public class DataMng : MonoBehaviour
 				{
 					finish();
 				}
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage2.Title = StringMaster.GetString("CampaignStartTitle");
 			cmd_ModalMessage2.Info = StringMaster.GetString("CampaignStartInfo");
 		}

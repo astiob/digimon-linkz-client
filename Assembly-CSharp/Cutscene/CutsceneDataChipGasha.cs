@@ -8,5 +8,9 @@ namespace Cutscene
 		public Action<RenderTexture> endCallback;
 
 		public GameWebAPI.RespDataGA_ExecChip.UserAssetList[] gashaResult;
+
+		public string bgmFileName;
+
+		public Vector2 backgroundSize;
 	}
 }

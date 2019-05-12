@@ -26,8 +26,8 @@ public sealed class CMD_ChipSphere : CMD
 
 	public const int arousal4ButtonNo = 5;
 
-	[SerializeField]
 	[Header("演出中に守るバリア")]
+	[SerializeField]
 	private GameObject barrierGO;
 
 	[SerializeField]
@@ -38,8 +38,8 @@ public sealed class CMD_ChipSphere : CMD
 	[Header("取外パッチの残り個数")]
 	private UILabel ejectCountLabel;
 
-	[SerializeField]
 	[Header("拡張パッチの残り個数")]
+	[SerializeField]
 	private UILabel extraCountLabel;
 
 	[Header("右下の切り替わるメニューのオブジェクト")]
@@ -54,8 +54,8 @@ public sealed class CMD_ChipSphere : CMD
 	[Header("左に出る3Dキャラの表示")]
 	private UITexture character3DTexture;
 
-	[Header("ステータスのルート")]
 	[SerializeField]
+	[Header("ステータスのルート")]
 	private GameObject statusRoot;
 
 	[Header("装着アニメーションのゲームオブジェクト")]
@@ -66,12 +66,12 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private UITexture[] partsUpperCutinTextures;
 
-	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
 	[SerializeField]
+	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
 	private GameObject ejectItemCutinGO;
 
-	[SerializeField]
 	[Header("拡張/チップ取外アニメーションのテクスチャ")]
+	[SerializeField]
 	private UITexture[] ejectItemCutinTextures;
 
 	private CharacterCameraView characterCameraView;
@@ -120,8 +120,8 @@ public sealed class CMD_ChipSphere : CMD
 
 	private AnimationFinishEventTrigger ejectAnimationTrigger;
 
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private ChipSphereLines chipSphereLines;
 
 	public static MonsterData DataChg { get; set; }

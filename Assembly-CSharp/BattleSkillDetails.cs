@@ -155,6 +155,7 @@ public class BattleSkillDetails : BattleFunctionBase
 			skillResults.onMissHit = true;
 			return skillResults;
 		}
+		skillResults.onMissHit = false;
 		AffectEffect type = affectEffectProperty.type;
 		switch (type)
 		{
@@ -178,38 +179,27 @@ public class BattleSkillDetails : BattleFunctionBase
 				this.SufferStatusClear(targetCharacter, affectEffectProperty);
 				break;
 			default:
-				if (type != AffectEffect.HpSettingFixable)
+				switch (type)
 				{
-					if (type != AffectEffect.HpSettingPercentage)
+				case AffectEffect.HpSettingFixable:
+				{
+					int num2 = this.HpSettingFixable(targetCharacter, affectEffectProperty);
+					if (num2 > 0)
 					{
-						if (type != AffectEffect.Recommand)
-						{
-							this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
-						}
-						else
-						{
-							targetCharacter.isRecommand = true;
-						}
+						skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
 					}
 					else
 					{
-						int num2 = this.HpSettingPercentage(targetCharacter, affectEffectProperty);
-						if (num2 > 0)
-						{
-							skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
-						}
-						else
-						{
-							skillResults.hitIconAffectEffect = AffectEffect.Damage;
-						}
-						num2 = Mathf.Abs(num2);
-						skillResults.attackPower = num2;
-						skillResults.originalAttackPower = num2;
+						skillResults.hitIconAffectEffect = AffectEffect.Damage;
 					}
+					num2 = Mathf.Abs(num2);
+					skillResults.attackPower = num2;
+					skillResults.originalAttackPower = num2;
+					break;
 				}
-				else
+				case AffectEffect.HpSettingPercentage:
 				{
-					int num3 = this.HpSettingFixable(targetCharacter, affectEffectProperty);
+					int num3 = this.HpSettingPercentage(targetCharacter, affectEffectProperty);
 					if (num3 > 0)
 					{
 						skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
@@ -221,6 +211,28 @@ public class BattleSkillDetails : BattleFunctionBase
 					num3 = Mathf.Abs(num3);
 					skillResults.attackPower = num3;
 					skillResults.originalAttackPower = num3;
+					break;
+				}
+				case AffectEffect.Escape:
+					if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Escape))
+					{
+						skillResults.onMissHit = true;
+					}
+					else
+					{
+						this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
+					}
+					break;
+				default:
+					if (type != AffectEffect.Recommand)
+					{
+						this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
+					}
+					else
+					{
+						targetCharacter.isRecommand = true;
+					}
+					break;
 				}
 				break;
 			case AffectEffect.ApUp:
@@ -238,7 +250,6 @@ public class BattleSkillDetails : BattleFunctionBase
 			this.HateDown(targetCharacter, affectEffectProperty);
 			break;
 		}
-		skillResults.onMissHit = false;
 		return skillResults;
 	}
 
@@ -313,6 +324,10 @@ public class BattleSkillDetails : BattleFunctionBase
 			}
 			else
 			{
+				if (affectEffectProperty.type == AffectEffect.Stun)
+				{
+					targetCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape);
+				}
 				this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
 			}
 		}

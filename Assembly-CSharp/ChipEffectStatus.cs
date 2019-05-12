@@ -84,9 +84,9 @@ public class ChipEffectStatus : EffectStatusBase
 		case 23:
 			return ChipEffectStatus.CheckMonsterIntegrationGroupId(effectTriggerValue, characterStateControl.characterStatus.monsterIntegrationIds);
 		case 24:
-			return ChipEffectStatus.CheckSkillDamageSend(effectTriggerValue, characterStateControl);
+			return ChipEffectStatus.CheckSkillDamageSend(characterStateControl);
 		case 25:
-			return ChipEffectStatus.CheckSkillDamageRecieve(effectTriggerValue, characterStateControl);
+			return ChipEffectStatus.CheckSkillDamageRecieve(characterStateControl);
 		case 28:
 		case 29:
 			return true;
@@ -162,23 +162,34 @@ public class ChipEffectStatus : EffectStatusBase
 
 	private static bool CheckAttackStarted(string effectType, string effectValue, CharacterStateControl characterStateControl)
 	{
-		return characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.currentSkillStatus.skillType == SkillType.Attack;
+		return ChipEffectStatus.CheckSkillSendBase(characterStateControl) && characterStateControl.currentSkillStatus.skillType == SkillType.Attack;
 	}
 
 	private static bool CheckSkillStartedApMax(string effectType, string effectValue, CharacterStateControl characterStateControl)
 	{
-		return characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.ap == characterStateControl.maxAp;
+		return ChipEffectStatus.CheckSkillSendBase(characterStateControl) && characterStateControl.ap == characterStateControl.maxAp;
 	}
 
 	private static bool CheckAttackCommandedTarget(CharacterStateControl characterStateControl)
 	{
-		if (characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.currentSkillStatus.ThisSkillIsAttack)
+		if (ChipEffectStatus.CheckSkillSendBase(characterStateControl))
 		{
-			CharacterStateControl[] targets = ChipEffectStatus.GetTargets();
-			if (targets.Where((CharacterStateControl item) => item.skillOrder < characterStateControl.skillOrder).Any<CharacterStateControl>())
+			List<AffectEffectProperty> affectEffect = characterStateControl.currentSkillStatus.affectEffect;
+			foreach (AffectEffectProperty affectEffectProperty in affectEffect)
 			{
-				return true;
+				if (affectEffectProperty.ThisSkillIsAttack)
+				{
+					CharacterStateControl[] targets = ChipEffectStatus.GetTargets(characterStateControl, affectEffectProperty);
+					if (!targets.Where((CharacterStateControl item) => item == characterStateControl).Any<CharacterStateControl>())
+					{
+						if (targets.Where((CharacterStateControl item) => item.skillOrder < characterStateControl.skillOrder).Any<CharacterStateControl>())
+						{
+							return true;
+						}
+					}
+				}
 			}
+			return false;
 		}
 		return false;
 	}
@@ -190,33 +201,78 @@ public class ChipEffectStatus : EffectStatusBase
 
 	private static bool CheckSkillTargetSpecies(string effectTriggerValue, CharacterStateControl characterStateControl)
 	{
-		if (ChipEffectStatus.CheckSkillDamageSend(effectTriggerValue, characterStateControl))
+		if (ChipEffectStatus.CheckSkillSendBase(characterStateControl))
 		{
-			string tribe = effectTriggerValue;
-			if (tribe == "0")
+			List<AffectEffectProperty> affectEffect = characterStateControl.currentSkillStatus.affectEffect;
+			foreach (AffectEffectProperty affectEffectProperty in affectEffect)
 			{
-				return true;
+				if (affectEffectProperty.ThisSkillIsAttack)
+				{
+					string tribe = effectTriggerValue;
+					if (tribe == "0")
+					{
+						return true;
+					}
+					CharacterStateControl[] targets = ChipEffectStatus.GetTargets(characterStateControl, affectEffectProperty);
+					if (targets.Where((CharacterStateControl item) => item.characterDatas.tribe == tribe).Any<CharacterStateControl>())
+					{
+						return true;
+					}
+				}
 			}
-			CharacterStateControl[] targets = ChipEffectStatus.GetTargets();
-			if (targets.Where((CharacterStateControl item) => item.characterDatas.tribe == tribe).Any<CharacterStateControl>())
-			{
-				return true;
-			}
+			return false;
 		}
 		return false;
 	}
 
 	private static bool CheckSkillStartedSendAttribute(string targetSubType, string targetValue, string targetValue2, string effectTriggerValue, CharacterStateControl characterStateControl)
 	{
-		return ChipEffectStatus.CheckSkillDamageSend(effectTriggerValue, characterStateControl) && ChipEffectStatus.CheckSkillAttribute(targetSubType, targetValue, targetValue2, effectTriggerValue, characterStateControl);
+		if (ChipEffectStatus.CheckSkillSendBase(characterStateControl))
+		{
+			SkillStatus currentSkillStatus = characterStateControl.currentSkillStatus;
+			List<AffectEffectProperty> affectEffect = currentSkillStatus.affectEffect;
+			foreach (AffectEffectProperty affectEffectProperty in affectEffect)
+			{
+				if (affectEffectProperty.ThisSkillIsAttack)
+				{
+					CharacterStateControl[] targets = ChipEffectStatus.GetTargets(characterStateControl, affectEffectProperty);
+					if (!targets.Where((CharacterStateControl item) => item == characterStateControl).Any<CharacterStateControl>())
+					{
+						if (ChipEffectStatus.CheckSkillAttribute(affectEffectProperty, currentSkillStatus.skillType == SkillType.Attack, targetSubType, targetValue, targetValue2, effectTriggerValue))
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		return false;
 	}
 
 	private static bool CheckSkillStartedRecieveAttribute(string targetSubType, string targetValue, string targetValue2, string effectTriggerValue, CharacterStateControl characterStateControl)
 	{
-		return ChipEffectStatus.CheckSkillDamageRecieve(effectTriggerValue, characterStateControl) && ChipEffectStatus.CheckSkillAttribute(targetSubType, targetValue, targetValue2, effectTriggerValue, characterStateControl);
+		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
+		SkillStatus currentSkillStatus = currentSelectCharacterState.currentSkillStatus;
+		List<AffectEffectProperty> affectEffect = currentSkillStatus.affectEffect;
+		foreach (AffectEffectProperty affectEffectProperty in affectEffect)
+		{
+			if (affectEffectProperty.ThisSkillIsAttack)
+			{
+				CharacterStateControl[] targets = ChipEffectStatus.GetTargets(currentSelectCharacterState, affectEffectProperty);
+				if (targets.Where((CharacterStateControl item) => item == characterStateControl).Any<CharacterStateControl>())
+				{
+					if (ChipEffectStatus.CheckSkillAttribute(affectEffectProperty, currentSkillStatus.skillType == SkillType.Attack, targetSubType, targetValue, targetValue2, effectTriggerValue))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
-	private static bool CheckSkillAttribute(string targetSubType, string targetValue, string targetValue2, string effectTriggerValue, CharacterStateControl characterStateControl)
+	private static bool CheckSkillAttribute(AffectEffectProperty skillEffect, bool isPublicAttack, string targetSubType, string targetValue, string targetValue2, string effectTriggerValue)
 	{
 		if (effectTriggerValue.ToInt32() == 0)
 		{
@@ -224,25 +280,24 @@ public class ChipEffectStatus : EffectStatusBase
 		}
 		if (targetSubType.ToInt32() != 9)
 		{
-			CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
 			global::Attribute attribute = ServerToBattleUtility.IntToAttribute(effectTriggerValue.ToInt32());
-			return currentSelectCharacterState.currentSkillStatus.attribute == attribute;
+			return skillEffect.attribute == attribute;
 		}
-		CharacterStateControl currentSelectCharacterState2 = BattleStateManager.current.battleStateData.currentSelectCharacterState;
 		global::Attribute attribute2 = ServerToBattleUtility.IntToAttribute(targetValue.ToInt32());
+		bool flag = skillEffect.attribute == attribute2;
 		if (targetValue2 == "0")
 		{
-			return currentSelectCharacterState2.currentSkillStatus.attribute == attribute2;
+			return flag;
 		}
 		if (targetValue2 == "1")
 		{
-			return currentSelectCharacterState2.currentSkillStatus.attribute == attribute2 && currentSelectCharacterState2.currentSkillStatus.skillType == SkillType.Attack;
+			return flag && isPublicAttack;
 		}
 		if (targetValue2 == "2")
 		{
-			return currentSelectCharacterState2.currentSkillStatus.attribute == attribute2 && currentSelectCharacterState2.currentSkillStatus.skillType != SkillType.Attack;
+			return flag && !isPublicAttack;
 		}
-		return currentSelectCharacterState2.currentSkillStatus.attribute == attribute2;
+		return flag;
 	}
 
 	private static bool CheckSufferHit(string effectTriggerValue, CharacterStateControl characterStateControl)
@@ -274,20 +329,15 @@ public class ChipEffectStatus : EffectStatusBase
 		return false;
 	}
 
-	private static bool CheckSkillDamageSend(string effectTriggerValue, CharacterStateControl characterStateControl)
+	private static bool CheckSkillDamageSend(CharacterStateControl characterStateControl)
 	{
-		return ChipEffectStatus.CheckSkillSendBase(characterStateControl) && ChipEffectStatus.CheckSkillDamage(effectTriggerValue, characterStateControl);
+		return ChipEffectStatus.CheckSkillSendBase(characterStateControl) && characterStateControl.currentSkillStatus.ThisSkillIsAttack;
 	}
 
-	private static bool CheckSkillDamageRecieve(string effectTriggerValue, CharacterStateControl characterStateControl)
+	private static bool CheckSkillDamageRecieve(CharacterStateControl characterStateControl)
 	{
-		return ChipEffectStatus.CheckSkillRecieveBase(characterStateControl) && ChipEffectStatus.CheckSkillDamage(effectTriggerValue, characterStateControl);
-	}
-
-	private static bool CheckSkillDamage(string effectTriggerValue, CharacterStateControl characterStateControl)
-	{
-		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
-		return currentSelectCharacterState.currentSkillStatus.ThisSkillIsAttack;
+		AffectEffectProperty[] skillRecieveBase = ChipEffectStatus.GetSkillRecieveBase(characterStateControl);
+		return skillRecieveBase.Where((AffectEffectProperty item) => item.ThisSkillIsAttack).Any<AffectEffectProperty>();
 	}
 
 	private static bool CheckSkillSendBase(CharacterStateControl characterStateControl)
@@ -295,39 +345,51 @@ public class ChipEffectStatus : EffectStatusBase
 		return characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState;
 	}
 
-	private static bool CheckSkillRecieveBase(CharacterStateControl characterStateControl)
+	private static AffectEffectProperty[] GetSkillRecieveBase(CharacterStateControl characterStateControl)
 	{
-		if (characterStateControl != null)
+		List<AffectEffectProperty> list = new List<AffectEffectProperty>();
+		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
+		if (currentSelectCharacterState == null || currentSelectCharacterState.currentSkillStatus == null)
 		{
-			CharacterStateControl[] targets = ChipEffectStatus.GetTargets();
+			list.ToArray();
+		}
+		foreach (AffectEffectProperty affectEffectProperty in currentSelectCharacterState.currentSkillStatus.affectEffect)
+		{
+			CharacterStateControl[] targets = ChipEffectStatus.GetTargets(currentSelectCharacterState, affectEffectProperty);
 			if (targets.Where((CharacterStateControl item) => item == characterStateControl).Any<CharacterStateControl>())
 			{
-				return true;
+				list.Add(affectEffectProperty);
 			}
 		}
-		return false;
+		return list.ToArray();
 	}
 
-	private static CharacterStateControl[] GetTargets()
+	private static CharacterStateControl[] GetTargets(CharacterStateControl actor, AffectEffectProperty skillEffect)
 	{
 		List<CharacterStateControl> list = new List<CharacterStateControl>();
-		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
-		if (currentSelectCharacterState.currentSkillStatus.numbers == EffectNumbers.Simple)
+		if (actor == null || skillEffect == null)
 		{
-			list.Add(currentSelectCharacterState.targetCharacter);
+			return list.ToArray();
 		}
-		else
+		CharacterStateControl[] skillTargetList = BattleStateManager.current.targetSelect.GetSkillTargetList(actor, skillEffect.target);
+		if (skillTargetList.Length == 0)
 		{
-			CharacterStateControl[] collection;
-			if (currentSelectCharacterState.targetCharacter.isEnemy)
+			return list.ToArray();
+		}
+		if (skillEffect.effectNumbers == EffectNumbers.Simple)
+		{
+			if (skillTargetList.Where((CharacterStateControl item) => item == actor.targetCharacter).Any<CharacterStateControl>())
 			{
-				collection = BattleStateManager.current.battleStateData.enemies.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
+				list.Add(actor.targetCharacter);
 			}
 			else
 			{
-				collection = BattleStateManager.current.battleStateData.playerCharacters.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
+				list.Add(skillTargetList[0]);
 			}
-			list.AddRange(collection);
+		}
+		else
+		{
+			list.AddRange(skillTargetList);
 		}
 		return list.ToArray();
 	}

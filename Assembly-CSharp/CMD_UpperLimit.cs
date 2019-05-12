@@ -1,6 +1,7 @@
 ﻿using FarmData;
 using Master;
 using System;
+using UI.Common;
 using UnityEngine;
 
 public sealed class CMD_UpperLimit : CMD
@@ -71,12 +72,62 @@ public sealed class CMD_UpperLimit : CMD
 		}
 	}
 
+	public void SetNoticeMessage(LimitOverNoticeType type)
+	{
+		int num = 7;
+		FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(num);
+		bool flag = false;
+		for (int i = 0; i < Singleton<UserDataMng>.Instance.userFacilityList.Count; i++)
+		{
+			UserFacility userFacility = Singleton<UserDataMng>.Instance.userFacilityList[i];
+			if (userFacility.facilityId == num)
+			{
+				int num2 = 0;
+				if (int.TryParse(facilityMaster.maxLevel, out num2))
+				{
+					flag = (num2 <= userFacility.level);
+				}
+				break;
+			}
+		}
+		if (flag)
+		{
+			switch (type)
+			{
+			case LimitOverNoticeType.GASHA:
+				this.message.text = StringMaster.GetString("PossessionOverGasha");
+				break;
+			case LimitOverNoticeType.PRESENTS:
+				this.message.text = StringMaster.GetString("PossessionOverPresent");
+				break;
+			case LimitOverNoticeType.QUEST:
+				this.message.text = StringMaster.GetString("PossessionOverQuest");
+				break;
+			}
+		}
+		else
+		{
+			switch (type)
+			{
+			case LimitOverNoticeType.GASHA:
+				this.message.text = StringMaster.GetString("PossessionOverGashaUpgrade");
+				break;
+			case LimitOverNoticeType.PRESENTS:
+				this.message.text = StringMaster.GetString("PossessionOverPresentUpgrade");
+				break;
+			case LimitOverNoticeType.QUEST:
+				this.message.text = StringMaster.GetString("PossessionOverQuestUpgrade");
+				break;
+			}
+		}
+	}
+
 	private void OnPushedReinforcementButton()
 	{
 		base.ClosePanel(true);
 		base.SetCloseAction(delegate(int x)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_ReinforcementTOP");
+			GUIMain.ShowCommonDialog(null, "CMD_ReinforcementTOP", null);
 		});
 	}
 
@@ -86,7 +137,7 @@ public sealed class CMD_UpperLimit : CMD
 		base.ClosePanel(true);
 		base.SetCloseAction(delegate(int x)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_FarewellListRun");
+			GUIMain.ShowCommonDialog(null, "CMD_FarewellListRun", null);
 		});
 	}
 
@@ -96,7 +147,7 @@ public sealed class CMD_UpperLimit : CMD
 		base.ClosePanel(true);
 		base.SetCloseAction(delegate(int x)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_GardenList");
+			GUIMain.ShowCommonDialog(null, "CMD_GardenList", null);
 		});
 	}
 

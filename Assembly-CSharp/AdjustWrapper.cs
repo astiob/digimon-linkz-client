@@ -45,6 +45,8 @@ public class AdjustWrapper : MonoBehaviour
 
 	public static string EVENT_ID_SEND_PAYMENT = "ws02z4";
 
+	public static string EVENT_ID_CONFIRM_GDPR = "6ld0k0";
+
 	public static AdjustWrapper Instance
 	{
 		get
@@ -131,6 +133,22 @@ public class AdjustWrapper : MonoBehaviour
 		AdjustEvent adjustEvent = new AdjustEvent(eventToken);
 		adjustEvent.setRevenue(amount, currency);
 		this.adjust.trackEvent(adjustEvent);
+	}
+
+	public void TrackEventGDPR(Dictionary<string, bool> agreements)
+	{
+		if (this.adjust == null || agreements == null || 0 >= agreements.Count)
+		{
+			global::Debug.Log(this.errorMessage);
+			return;
+		}
+		AdjustEvent adjustEvent = new AdjustEvent(AdjustWrapper.EVENT_ID_CONFIRM_GDPR);
+		foreach (KeyValuePair<string, bool> keyValuePair in agreements)
+		{
+			string value = (!keyValuePair.Value) ? "0" : "1";
+			adjustEvent.addCallbackParameter(keyValuePair.Key, value);
+		}
+		Adjust.trackEvent(adjustEvent);
 	}
 
 	public void start(AdjustConfig adjustConfig)

@@ -1,35 +1,36 @@
-﻿using System;
+﻿using NGUI.Extensions;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BattleUIComponents : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIRoot")]
+	[SerializeField]
 	private UIRoot _uiRoot;
 
 	[SerializeField]
 	[Header("UIカメラ")]
 	private Camera _uiCamera;
 
-	[SerializeField]
 	[Header("ロードUI")]
+	[SerializeField]
 	public BattleUIInitialize initializeUi;
 
 	[Header("AlwaysのPrefab")]
 	[SerializeField]
 	public BattleAlways battleAlwaysUi;
 
-	[SerializeField]
 	[Header("ボスウェーブ開始時のテロップ")]
+	[SerializeField]
 	private UIWidget _bossStartUi;
 
-	[SerializeField]
 	[Header("バトル開始時のテロップ")]
+	[SerializeField]
 	public BattleStartAction battleStartAction;
 
-	[Header("乱入ウェーブ開始時のテロップ")]
 	[SerializeField]
+	[Header("乱入ウェーブ開始時のテロップ")]
 	private UIWidget _extraStartUi;
 
 	[SerializeField]
@@ -52,24 +53,24 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private UIWidget _timeOverUi;
 
-	[Header("状態異常による警告テロップ")]
 	[SerializeField]
+	[Header("状態異常による警告テロップ")]
 	public IsWarning isWarning;
 
 	[Header("PlayerWinnerのPrefab")]
 	[SerializeField]
 	public PlayerWinner playerWinnerUi;
 
-	[Header("ウェーブ開始時のテロップ")]
 	[SerializeField]
+	[Header("ウェーブ開始時のテロップ")]
 	private UIWidget _nextWaveUi;
 
-	[SerializeField]
 	[Header("プレイヤーの敗北UI")]
+	[SerializeField]
 	private UIWidget _playerFailUi;
 
-	[Header("コンテニューダイアログ")]
 	[SerializeField]
+	[Header("コンテニューダイアログ")]
 	private UIWidget _continueUi;
 
 	[SerializeField]
@@ -87,8 +88,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[NonSerialized]
 	public MenuDialog menuDialog;
 
-	[Header("コンテニューダイアログ")]
 	[SerializeField]
+	[Header("コンテニューダイアログ")]
 	public DialogContinue dialogContinue;
 
 	[Header("オートボタン")]
@@ -98,8 +99,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[Header("スキップボタン")]
 	public BattleUISingleX2PlayButton x2PlayButton;
 
-	[Header("メニューのボタン")]
 	[SerializeField]
+	[Header("メニューのボタン")]
 	public UIButton menuButton;
 
 	[Header("スキル発動時のテロップ")]
@@ -117,12 +118,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	public BattleUIInitialInduction initialInduction;
 
-	[SerializeField]
 	[Header("ヒットアイコンUI")]
+	[SerializeField]
 	private GameObject _hitIconObject;
 
-	[Header("HUD")]
 	[SerializeField]
+	[Header("HUD")]
 	private GameObject _hudObject;
 
 	[Header("ビッグボス用のHUD")]
@@ -132,8 +133,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private GameObject _manualSelectTargetObject;
 
-	[Header("ターゲットアイコン（アロー）")]
 	[SerializeField]
+	[Header("ターゲットアイコン（アロー）")]
 	private GameObject _toleranceIconObject;
 
 	[Header("ドロップアイテム")]
@@ -147,12 +148,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	public GameObject winGameObject;
 
-	[SerializeField]
 	[Header("ステージ効果による上昇減少アイコン")]
+	[SerializeField]
 	private GameObject _battleGimmickStatusObject;
 
-	[Header("チップ効果発動時の演出用")]
 	[SerializeField]
+	[Header("チップ効果発動時の演出用")]
 	private ChipBarLnvocation _chipBarLnvocation;
 
 	[SerializeField]
@@ -197,6 +198,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 
 	[NonSerialized]
 	public List<GameObject> battleGimmickStatusInstanced = new List<GameObject>();
+
+	private UISafeArea uiSafeArea;
 
 	public UIRoot uiRoot
 	{
@@ -391,6 +394,41 @@ public abstract class BattleUIComponents : MonoBehaviour
 		}
 	}
 
+	public void InitSafeArea()
+	{
+		if (GUIMain.GetUIRoot() == null)
+		{
+			return;
+		}
+		UIPanel component = BattleStateManager.current.battleUiComponents.transform.GetComponent<UIPanel>();
+		UIRoot uiroot = GUIMain.GetUIRoot();
+		GameObject gameObject = new GameObject();
+		gameObject.layer = component.gameObject.layer;
+		gameObject.transform.SetParent(uiroot.transform);
+		gameObject.transform.localPosition = Vector3.zero;
+		gameObject.transform.localScale = Vector3.one;
+		UIWidget uiwidget = gameObject.AddComponent<UIWidget>();
+		uiwidget.SetDimensions(1136, 640);
+		uiwidget.SetAnchor(uiroot.transform);
+		component.transform.SetParent(gameObject.transform);
+		component.SetAnchor(gameObject.transform);
+		component.transform.localPosition = Vector3.zero;
+		component.transform.localScale = Vector3.one;
+		this.uiSafeArea = gameObject.AddComponent<UISafeArea>();
+	}
+
+	public void Destroy()
+	{
+		if (this.rootPanel != null)
+		{
+			UnityEngine.Object.Destroy(this.rootPanel.gameObject);
+		}
+		if (this.uiSafeArea != null)
+		{
+			UnityEngine.Object.Destroy(this.uiSafeArea.gameObject);
+		}
+	}
+
 	public void Init()
 	{
 		this.CreateRetireObject();
@@ -406,14 +444,6 @@ public abstract class BattleUIComponents : MonoBehaviour
 		transform.localPosition = new Vector3(2f, 0f, 0f);
 		transform.localScale = Vector3.one;
 		this.dialogRetire = gameObject.GetComponent<DialogRetire>();
-		UIWidget component = gameObject.transform.FindChild("BG").GetComponent<UIWidget>();
-		component.SetAnchor(this.battleAlwaysUi.gameObject);
-		component.leftAnchor.absolute = -1;
-		component.rightAnchor.absolute = 1;
-		component.bottomAnchor.absolute = -1;
-		component.topAnchor.absolute = 1;
-		component.ResetAnchors();
-		component.UpdateAnchors();
 		gameObject.SetActive(false);
 	}
 
@@ -421,7 +451,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	{
 		this.menuDialog = this.battleAlwaysUi.SetupMenu();
 		this.helpDialog = this.battleAlwaysUi.helpDialogGO;
-		dialogRetireTrans.SetParent(this.battleAlwaysUi.menuPanelTransform);
+		dialogRetireTrans.SetParent(this.battleAlwaysUi.battleMenu.transform);
+		UIWidget component = dialogRetireTrans.GetComponent<UIWidget>();
+		if (component != null)
+		{
+			component.SetAnchor(this.battleAlwaysUi.battleMenu.transform);
+		}
 	}
 
 	protected virtual void CreateStatusObjects()

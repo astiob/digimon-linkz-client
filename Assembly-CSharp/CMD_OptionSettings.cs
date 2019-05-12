@@ -574,7 +574,7 @@ public class CMD_OptionSettings : CMD
 
 	private void OnMultiLangSettingSelect()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_MultiLangSetting");
+		GUIMain.ShowCommonDialog(null, "CMD_MultiLangSetting", null);
 	}
 
 	public enum TAB

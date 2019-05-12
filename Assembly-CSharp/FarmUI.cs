@@ -18,7 +18,8 @@ public sealed class FarmUI : MonoBehaviour
 				FacilityButtonSet component = gameObject.GetComponent<FacilityButtonSet>();
 				component.SetFacility(farmObject);
 			}
-			GUIFace.ForceHideDigiviceBtn_S();
+			GUIFace.CloseDigiviceChildButton();
+			GUIFace.CloseFacilityChildButton();
 		}
 	}
 

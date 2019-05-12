@@ -63,7 +63,7 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		{
 			yield break;
 		}
-		foreach (CharacterStateControl character in characters)
+		foreach (CharacterStateControl character in base.stateManager.battleStateData.GetTotalCharacters())
 		{
 			base.stateManager.threeDAction.ShowAliveCharactersAction(new CharacterStateControl[]
 			{
@@ -118,10 +118,10 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 					characterStateControl
 				});
 			}
-			for (int k = 0; k < characters.Count; k++)
+			for (int l = 0; l < characters.Count; l++)
 			{
-				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[k]);
-				hitIconlist[k].HitIconReposition(fixableCharacterCenterPosition2DFunction);
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[l]);
+				hitIconlist[l].HitIconReposition(fixableCharacterCenterPosition2DFunction);
 			}
 		};
 		float waitSecond = base.stateManager.stateProperty.poisonHitEffectWaitSecond;
@@ -142,7 +142,7 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		{
 			yield break;
 		}
-		foreach (CharacterStateControl character in characters)
+		foreach (CharacterStateControl character in base.stateManager.battleStateData.GetTotalCharacters())
 		{
 			base.stateManager.threeDAction.ShowAliveCharactersAction(new CharacterStateControl[]
 			{
@@ -236,10 +236,10 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 					characterStateControl
 				});
 			}
-			for (int m = 0; m < characters.Count; m++)
+			for (int n = 0; n < characters.Count; n++)
 			{
-				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[m]);
-				hitIconlist[m].HitIconReposition(fixableCharacterCenterPosition2DFunction);
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[n]);
+				hitIconlist[n].HitIconReposition(fixableCharacterCenterPosition2DFunction);
 			}
 		};
 		if (currentDeathBigBoss != null)

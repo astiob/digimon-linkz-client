@@ -95,8 +95,8 @@ public class ConstructionName : MonoBehaviour
 			if (this.param.farmObject != null)
 			{
 				Vector3 position = this.param.farmCamera.WorldToScreenPoint(this.param.farmObject.transform.position);
-				Camera gUICamera = GUIManager.gUICamera;
-				Vector3 vector = gUICamera.ScreenToWorldPoint(position);
+				Camera orthoCamera = GUIMain.GetOrthoCamera();
+				Vector3 vector = orthoCamera.ScreenToWorldPoint(position);
 				Vector3 position2 = this.param.constructionName.transform.position;
 				position2.x = vector.x;
 				position2.y = vector.y;

@@ -24,12 +24,12 @@ public class DialogRetire : MonoBehaviour
 	[SerializeField]
 	private UILabel noLocalize;
 
-	[SerializeField]
 	[Header("リタイア/降参ローカライズ")]
+	[SerializeField]
 	private UILabel retireLocalize;
 
-	[Header("リタイアメッセージローカライズ")]
 	[SerializeField]
+	[Header("リタイアメッセージローカライズ")]
 	private UILabel retireMessageLocalize;
 
 	private void Awake()

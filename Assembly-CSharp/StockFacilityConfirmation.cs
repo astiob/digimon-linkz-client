@@ -19,12 +19,12 @@ public sealed class StockFacilityConfirmation : FacilityConfirmation
 
 	protected override bool CanExtendBuild(int facilityId)
 	{
-		return Singleton<UserDataMng>.Instance.IsFacilityExistInUserStockFacility(facilityId) && FarmUtility.IsExtendBuild(facilityId);
+		return Singleton<UserDataMng>.Instance.ExistInUserStockFacility(facilityId) && FarmUtility.IsExtendBuild(facilityId);
 	}
 
 	protected override void BackToUI()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_FacilityStock");
+		GUIMain.ShowCommonDialog(null, "CMD_FacilityStock", null);
 	}
 
 	protected override void Close(bool returnHomeUI)

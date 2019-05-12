@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class TVFade : ScreenEffectBase
+public sealed class TVFade : ScreenEffectBase
 {
 	[SerializeField]
 	[Range(0f, 0.5f)]
@@ -20,10 +20,9 @@ public class TVFade : ScreenEffectBase
 
 	private Action onFinishedAction;
 
-	protected override void Awake()
+	protected override void OnInitialize(float aspectRatio)
 	{
-		base.Awake();
-		this.material.SetFloat("_Aspect", this.aspectRatio);
+		this.material.SetFloat("_Aspect", aspectRatio);
 		this.SetLightEdge(this.lightEdge);
 	}
 
@@ -64,9 +63,8 @@ public class TVFade : ScreenEffectBase
 		}
 	}
 
-	protected override void Update()
+	private void Update()
 	{
-		base.Update();
 		if (this.lightRunTime.height.state == TVFade.AnimeState.REVERSE)
 		{
 			this.UpdateValue(0f, 1f, this.vanishTimeLightHeight, ref this.lightRunTime.height, new Action<float>(this.SetLightHeight), delegate

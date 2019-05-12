@@ -23,7 +23,7 @@ namespace Colosseum.DeckUI
 		public static void OpenDialog(CMD_ColosseumDeck deckDialog)
 		{
 			ColosseumConfirmDialog @object = new ColosseumConfirmDialog(deckDialog);
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(@object.OnCloseAction), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(@object.OnCloseAction), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = StringMaster.GetString("ColosseumDeckConfirmInfo");
 		}

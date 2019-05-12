@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class UVAnimHelper : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UV アニメ U方向スピード")]
+	[SerializeField]
 	private float speedU;
 
-	[SerializeField]
 	[Header("UV アニメ V方向スピード")]
+	[SerializeField]
 	private float speedV;
 
 	[SerializeField]

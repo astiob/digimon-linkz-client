@@ -465,7 +465,7 @@ public class CMD_CreateChatGroup : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
 		{
 			this.ClosePanel(true);
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("ChatConfirmTitle");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("ChatGroupCreateSuccess"), this.groupNameInput.value);
 	}
@@ -480,7 +480,7 @@ public class CMD_CreateChatGroup : CMD
 				ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName = this.groupNameInput.value;
 				CMD_ChatWindow.instance.UpdateChatWindowTitle = ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName;
 				CMD_ChatTop.instance.GetUserChatGroupListExec();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ChatConfirmTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatGroupUpdateSuccess");
 		}
@@ -488,7 +488,7 @@ public class CMD_CreateChatGroup : CMD
 
 	private void ShowDaialogOverTheLength()
 	{
-		CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert") as CMD_Alert;
+		CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert", null) as CMD_Alert;
 		if (cmd_Alert == null)
 		{
 			return;
@@ -501,7 +501,7 @@ public class CMD_CreateChatGroup : CMD
 
 	private void ShowDaialogForbiddenChar()
 	{
-		CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert") as CMD_Alert;
+		CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert", null) as CMD_Alert;
 		if (cmd_Alert == null)
 		{
 			return;

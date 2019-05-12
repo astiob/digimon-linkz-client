@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(UITextReplacer))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(UITextReplacer))]
 public class UITextAnimation : MonoBehaviour
 {
 	[SerializeField]

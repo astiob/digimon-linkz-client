@@ -66,7 +66,7 @@ public class CMD_ChipSortModal : CMD
 
 	public static CMD_ChipSortModal Create(Action<int> callback = null)
 	{
-		return GUIMain.ShowCommonDialog(callback, "CMD_ChipModalSort") as CMD_ChipSortModal;
+		return GUIMain.ShowCommonDialog(callback, "CMD_ChipModalSort", null) as CMD_ChipSortModal;
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -245,6 +245,7 @@ public class CMD_ChipSortModal : CMD
 	private void OnDecisionButton()
 	{
 		CMD_ChipSortModal.data.Copy(this.tempData);
+		CMD_ChipSortModal.SaveSetting();
 		base.SetForceReturnValue(1);
 		this.ClosePanel(true);
 	}
@@ -494,6 +495,35 @@ public class CMD_ChipSortModal : CMD
 		yield break;
 	}
 
+	public static void SaveSetting()
+	{
+		string value = JsonUtility.ToJson(CMD_ChipSortModal.data);
+		PlayerPrefs.SetString("ChipSortData", value);
+		PlayerPrefs.Save();
+	}
+
+	public static void LoadSetting()
+	{
+		if (PlayerPrefs.HasKey("ChipSortData"))
+		{
+			string @string = PlayerPrefs.GetString("ChipSortData");
+			try
+			{
+				CMD_ChipSortModal.data.Copy(JsonUtility.FromJson<CMD_ChipSortModal.Data>(@string));
+			}
+			catch
+			{
+				CMD_ChipSortModal.data.Copy(new CMD_ChipSortModal.Data());
+				CMD_ChipSortModal.SaveSetting();
+			}
+		}
+		else
+		{
+			CMD_ChipSortModal.data.Copy(new CMD_ChipSortModal.Data());
+		}
+	}
+
+	[Serializable]
 	public enum SortType
 	{
 		Rarity,
@@ -523,6 +553,7 @@ public class CMD_ChipSortModal : CMD
 		TribePhantomStudents = 65536
 	}
 
+	[Serializable]
 	public class Data
 	{
 		public bool isOrderByAsc = true;

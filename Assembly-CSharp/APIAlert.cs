@@ -84,7 +84,7 @@ public sealed class APIAlert
 		}
 		else
 		{
-			cmd_maintenance = (GUIMain.ShowCommonDialog(null, "CMD_maintenance") as CMD_maintenance);
+			cmd_maintenance = (GUIMain.ShowCommonDialog(null, "CMD_maintenance", null) as CMD_maintenance);
 			cmd_maintenance.Info = maintenanceMessage;
 		}
 	}

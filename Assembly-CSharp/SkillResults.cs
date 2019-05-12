@@ -20,5 +20,15 @@ public sealed class SkillResults
 
 	public bool onMissHit;
 
+	public SufferStateProperty.DamageRateResult damageRateResult = new SufferStateProperty.DamageRateResult();
+
 	public ExtraEffectType extraEffectType;
+
+	public bool isGuard
+	{
+		get
+		{
+			return this.damageRateResult.damageRate < 1f && this.damageRateResult.dataList.Count > 0;
+		}
+	}
 }

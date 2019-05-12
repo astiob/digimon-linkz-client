@@ -132,9 +132,6 @@ public sealed class CMD_BaseSelect : CMD
 	private UILabel ngTX_DECIDE;
 
 	[SerializeField]
-	private UISprite ngSPR_CHIP;
-
-	[SerializeField]
 	private UILabel ngTXT_CHIP;
 
 	[SerializeField]
@@ -193,7 +190,7 @@ public sealed class CMD_BaseSelect : CMD
 	{
 		CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.CHIP;
 		CMD_BaseSelect.ElementType = CMD_BaseSelect.ELEMENT_TYPE.BASE;
-		return GUIMain.ShowCommonDialog(callback, "CMD_BaseSelect") as CMD_BaseSelect;
+		return GUIMain.ShowCommonDialog(callback, "CMD_BaseSelect", null) as CMD_BaseSelect;
 	}
 
 	protected override void Awake()
@@ -262,7 +259,6 @@ public sealed class CMD_BaseSelect : CMD
 				this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
 				this.campaignLabel.Refresh();
 				base.PartsTitle.SetTitle(StringMaster.GetString("BaseSelect-04"));
-				NGUIUtil.ChangeUISpriteWithSize(this.ngSPR_CHIP, "Common02_Icon_Chip");
 			}
 			this.goBTN_EVITEM_LIST.SetActive(true);
 			break;
@@ -301,7 +297,6 @@ public sealed class CMD_BaseSelect : CMD
 			this.goPlateMeat.SetActive(true);
 			this.goPlateClustar.SetActive(false);
 			base.PartsTitle.SetTitle(StringMaster.GetString("BaseSelect-03"));
-			NGUIUtil.ChangeUISpriteWithSize(this.ngSPR_CHIP, "Common02_Icon_Meat");
 			break;
 		}
 		case CMD_BaseSelect.BASE_TYPE.LABO:
@@ -319,7 +314,6 @@ public sealed class CMD_BaseSelect : CMD
 				elementTypeName = StringMaster.GetString("SystemPartner");
 			}
 			base.PartsTitle.SetTitle(string.Format(StringMaster.GetString("BaseSelect-08"), elementTypeName));
-			NGUIUtil.ChangeUISpriteWithSize(this.ngSPR_CHIP, "Common02_Icon_Chip");
 			break;
 		}
 		case CMD_BaseSelect.BASE_TYPE.CHIP:
@@ -580,14 +574,14 @@ public sealed class CMD_BaseSelect : CMD
 				{
 					this.leftLargeMonsterIcon.Lock = CMD_BaseSelect.DataChg.userMonster.IsLocked;
 				}
-			}, "CMD_Evolution");
+			}, "CMD_Evolution", null);
 			break;
 		case CMD_BaseSelect.BASE_TYPE.MEAL:
 		{
 			List<UserFacility> userFacilityList = Singleton<UserDataMng>.Instance.GetUserFacilityList();
 			if (!userFacilityList.Exists((UserFacility x) => x.facilityId == 1))
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.LeadBuildMeat), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.LeadBuildMeat), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("BaseSelect-05");
 				cmd_Confirm.Info = StringMaster.GetString("BaseSelect-06");
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("BaseSelect-07");
@@ -596,7 +590,7 @@ public sealed class CMD_BaseSelect : CMD
 			else
 			{
 				CMD_MealExecution.DataChg = CMD_BaseSelect.DataChg;
-				GUIMain.ShowCommonDialog(null, "CMD_MealExecution");
+				GUIMain.ShowCommonDialog(null, "CMD_MealExecution", null);
 				CMD_MealExecution.UpdateParamCallback = delegate()
 				{
 					ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
@@ -617,7 +611,7 @@ public sealed class CMD_BaseSelect : CMD
 				{
 					if (partnerDigimon != null)
 					{
-						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 						if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO)
 						{
 							cmd_ModalMessage.Title = StringMaster.GetString("LaboratoryTitle");
@@ -1003,7 +997,7 @@ public sealed class CMD_BaseSelect : CMD
 						this.iconGrayOut.CancelLockMonsterReturnDetailed(icon);
 					}
 				}
-			}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+			}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 			if (flag)
 			{
 				cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Laboratory;
@@ -1020,7 +1014,7 @@ public sealed class CMD_BaseSelect : CMD
 				{
 					this.leftLargeMonsterIcon.Lock = tappedMonsterData.userMonster.IsLocked;
 				}
-			}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+			}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.EVOLVE)
 			{
 				cmd_CharacterDetailed2.Mode = CMD_CharacterDetailed.LockMode.Evolution;
@@ -1215,15 +1209,15 @@ public sealed class CMD_BaseSelect : CMD
 	{
 		GUIManager.CloseAllCommonDialog(delegate
 		{
-			GUIFace.ForceHideDigiviceBtn_S();
-			GUIFace.ForceHideFacilityBtn_S();
-			GUIMain.ShowCommonDialog(null, "CMD_FacilityShop");
+			GUIFace.CloseDigiviceChildButton();
+			GUIFace.CloseFacilityChildButton();
+			GUIMain.ShowCommonDialog(null, "CMD_FacilityShop", null);
 		});
 	}
 
 	public void OnTouchedEvoltionItemListBtn()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_EvolutionItemList");
+		GUIMain.ShowCommonDialog(null, "CMD_EvolutionItemList", null);
 	}
 
 	public void switchDetailSkillPanel(bool isOpen)
@@ -1394,6 +1388,21 @@ public sealed class CMD_BaseSelect : CMD
 		bool canVersionUp = VersionUpMaterialData.CanVersionUp(monster.GetMonsterMaster().Simple, monster.GetMonster(), almightyMaterialList);
 		GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monster);
 		this.iconGrayOut.SetVersionUpIcon(icon, canVersionUp, GUIMonsterIcon.GetIconGrayOutType(CMD_BaseSelect.IconSortType));
+	}
+
+	public static void SaveSetting()
+	{
+		PlayerPrefs.SetInt("DigimonSortType", (int)CMD_BaseSelect.IconSortType);
+		PlayerPrefs.SetInt("DigimonSortOrder", (int)CMD_BaseSelect.IconSortOrder);
+		PlayerPrefs.SetInt("DigimonFilterType", (int)CMD_BaseSelect.IconFilterType);
+		PlayerPrefs.Save();
+	}
+
+	public static void LoadSetting()
+	{
+		CMD_BaseSelect.IconSortType = (MonsterSortType)PlayerPrefs.GetInt("DigimonSortType", 2);
+		CMD_BaseSelect.IconSortOrder = (MonsterSortOrder)PlayerPrefs.GetInt("DigimonSortOrder", 0);
+		CMD_BaseSelect.IconFilterType = (MonsterDetailedFilterType)PlayerPrefs.GetInt("DigimonFilterType", 0);
 	}
 
 	public enum BASE_TYPE

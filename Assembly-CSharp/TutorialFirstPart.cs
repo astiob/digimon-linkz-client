@@ -17,7 +17,6 @@ public sealed class TutorialFirstPart : TutorialBasePart
 
 	private IEnumerator Initialize(GameObject observer, string tutorialStatusId, Action completed)
 	{
-		GashaTutorialMode.TutoExec = true;
 		DataMng.Instance().CampaignForceHide = true;
 		this.gameEngineController = observer.AddComponent<TutorialControlToGame>();
 		yield return null;
@@ -85,7 +84,6 @@ public sealed class TutorialFirstPart : TutorialBasePart
 		UnityEngine.Object.Destroy(observer.GetComponent<TutorialControlToGame>());
 		DataMng.Instance().CampaignForceHide = false;
 		BattleStateManager.onAutoChangeTutorialMode = false;
-		GashaTutorialMode.TutoExec = false;
 		GUIManager.ExtBackKeyReady = true;
 		RestrictionInput.isDisableBackKeySetting = false;
 		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();

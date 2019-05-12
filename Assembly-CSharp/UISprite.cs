@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Sprite")]
+[ExecuteInEditMode]
 public class UISprite : UIBasicSprite
 {
 	[SerializeField]

@@ -90,7 +90,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 		CMD_MultiRecruitPartyWait.Instance.ClearStExchange();
 		this.baseMonster = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(base.Data.userMonster.userMonsterId, false);
 		CMD_DeckList.SelectMonsterData = this.baseMonster;
-		CMD_DeckList cmd_DeckList = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedDeckList), "CMD_DeckList") as CMD_DeckList;
+		CMD_DeckList cmd_DeckList = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedDeckList), "CMD_DeckList", null) as CMD_DeckList;
 		cmd_DeckList.PartsTitle.DisableCloseBtn(true);
 		cmd_DeckList.PPMI_Instance = this;
 		cmd_DeckList.ppmiList = new List<PartsPartyMonsInfo>();

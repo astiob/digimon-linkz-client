@@ -18,8 +18,8 @@ namespace Colosseum.Matching
 		[Header("マッチング中アニメオブジェクト")]
 		private GameObject matchingProcessEffect;
 
-		[Header("マッチング完了アニメオブジェクト")]
 		[SerializeField]
+		[Header("マッチング完了アニメオブジェクト")]
 		private GameObject matchingFinishedEffect;
 
 		[SerializeField]
@@ -30,12 +30,12 @@ namespace Colosseum.Matching
 		[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 		private float transferWait;
 
-		[SerializeField]
 		[Header("RenderTarget用テクスチャ")]
+		[SerializeField]
 		private UITexture renderTargetTexture;
 
-		[Header("転送エフェクトの乗算色(アルファは０固定)")]
 		[SerializeField]
+		[Header("転送エフェクトの乗算色(アルファは０固定)")]
 		private Color renderTextureColor;
 
 		private int monsterCount;

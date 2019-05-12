@@ -539,7 +539,7 @@ public class MissionItem : GUIListPartBS
 	{
 		GUIManager.CloseAllCommonDialog(delegate
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Succession");
+			GUIMain.ShowCommonDialog(null, "CMD_Succession", null);
 		});
 	}
 
@@ -547,7 +547,7 @@ public class MissionItem : GUIListPartBS
 	{
 		GUIManager.CloseAllCommonDialog(delegate
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Laboratory");
+			GUIMain.ShowCommonDialog(null, "CMD_Laboratory", null);
 		});
 	}
 
@@ -575,6 +575,6 @@ public class MissionItem : GUIListPartBS
 	private void OnRewardDetailButton()
 	{
 		CMD_MissionItemList.missionInfo = this.missionInfo;
-		GUIMain.ShowCommonDialog(null, "CMD_MissionItemList");
+		GUIMain.ShowCommonDialog(null, "CMD_MissionItemList", null);
 	}
 }

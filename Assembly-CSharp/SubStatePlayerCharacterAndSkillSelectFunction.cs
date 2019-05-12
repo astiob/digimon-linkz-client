@@ -19,8 +19,9 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 		this.isOutCharacterView = false;
 		this.lastCharacter = null;
 		this.currentCharacter = base.battleStateData.currentSelectCharacterState;
-		base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.playerCharacters);
-		base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.enemies);
+		CharacterStateControl[] totalCharacters = base.stateManager.battleStateData.GetTotalCharacters();
+		base.stateManager.threeDAction.ShowAliveCharactersAction(totalCharacters);
+		base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(totalCharacters);
 		this.SetSelectCharacter(this.currentCharacter.myIndex);
 		base.battleStateData.currentSelectCharacterIndex = this.currentCharacter.myIndex;
 		if (base.hierarchyData.onAutoPlay == 2)
@@ -33,8 +34,6 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 		}
 		else if (base.hierarchyData.onAutoPlay == 0)
 		{
-			CharacterStateControl[] totalCharacters = base.stateManager.battleStateData.GetTotalCharacters();
-			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(totalCharacters);
 			base.stateManager.callAction.HideMonsterDescription();
 			base.stateManager.callAction.ForceHideSkillDescription();
 			base.stateManager.targetSelect.TargetManualSelectAndApplyUIFunction(null);
@@ -170,16 +169,16 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			base.stateManager.uiControl.ApplySkillButtonColliderActive(j, flag2);
 			if (flag2)
 			{
-				bool onEnable = !characterStateControl.isApShortness(j);
+				bool onEnable = characterStateControl.isUseSkill(j);
 				if (flag)
 				{
 					onEnable = false;
 				}
-				base.stateManager.uiControl.ApplySkillButtonData(j, characterStateControl.skillStatus[j], onEnable, flag, characterStateControl);
+				base.stateManager.uiControl.ApplySkillButtonData(j, characterStateControl.skillStatus[j], onEnable, flag, characterStateControl, characterStateControl.skillUseCounts[j]);
 			}
 			else
 			{
-				base.stateManager.uiControl.ApplySkillButtonData(j, new SkillStatus(), false, false, characterStateControl);
+				base.stateManager.uiControl.ApplySkillButtonData(j, new SkillStatus(), false, false, characterStateControl, 0);
 			}
 		}
 	}

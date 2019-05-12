@@ -22,8 +22,8 @@ public class ChipBarLnvocation : MonoBehaviour
 	[Header("演出の待機時間")]
 	private float minWaitTime = 2f;
 
-	[Header("チップアイコン表示位置")]
 	[SerializeField]
+	[Header("チップアイコン表示位置")]
 	private Vector3[] chipEffectOffsetPostion = new Vector3[]
 	{
 		Vector3.zero,

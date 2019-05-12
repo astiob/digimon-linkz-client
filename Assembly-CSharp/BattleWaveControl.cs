@@ -13,11 +13,14 @@ public class BattleWaveControl : BattleFunctionBase
 		string spawnPointId = ResourcesPath.ReservedID.SpawnPoints.GetSpawnPointId(base.battleStateData.enemies.Length, base.battleMode, cameraType);
 		SpawnPointParams @object = base.battleStateData.preloadSpawnPoints.GetObject(spawnPointId);
 		base.battleStateData.ApplySpawnPoint(@object);
-		base.stateManager.threeDAction.HideAllPreloadEnemiesAction();
-		Dictionary<string, int> dictionary = new Dictionary<string, int>();
-		for (int i = 0; i < base.battleStateData.enemies.Length; i++)
+		foreach (CharacterParams characterParams in base.battleStateData.preloadEnemiesParams.GetAllObject())
 		{
-			string prefabId = base.battleStateData.enemies[i].characterStatus.prefabId;
+			characterParams.gameObject.SetActive(false);
+		}
+		Dictionary<string, int> dictionary = new Dictionary<string, int>();
+		for (int j = 0; j < base.battleStateData.enemies.Length; j++)
+		{
+			string prefabId = base.battleStateData.enemies[j].characterStatus.prefabId;
 			int num = 0;
 			if (dictionary.ContainsKey(prefabId))
 			{
@@ -33,33 +36,33 @@ public class BattleWaveControl : BattleFunctionBase
 			{
 				dictionary.Add(prefabId, 0);
 			}
-			this.WaveResetEnemyResetupFunction(prefabId, num, i, isRecover);
-			int index = base.battleStateData.playerCharacters.Length + i;
-			base.stateManager.uiControl.ApplyCharacterHudBoss(index, base.hierarchyData.batteWaves[waveNumber].enemiesBossFlag[i]);
-			base.stateManager.uiControl.ApplyCharacterHudContent(index, base.battleStateData.enemies[i]);
+			this.WaveResetEnemyResetupFunction(prefabId, num, j, isRecover);
+			int index = base.battleStateData.playerCharacters.Length + j;
+			base.stateManager.uiControl.ApplyCharacterHudBoss(index, base.hierarchyData.batteWaves[waveNumber].enemiesBossFlag[j]);
+			base.stateManager.uiControl.ApplyCharacterHudContent(index, base.battleStateData.enemies[j]);
 			base.stateManager.uiControl.ApplyCharacterHudReset(index);
 		}
 		base.stateManager.uiControl.ApplyBigBossCharacterHudBoss(false);
 		base.stateManager.uiControl.ApplyBigBossCharacterHudContent(base.battleStateData.enemies[0]);
 		base.stateManager.uiControl.ApplyBigBossCharacterHudReset();
-		for (int j = 0; j < base.battleStateData.playerCharacters.Length; j++)
+		for (int k = 0; k < base.battleStateData.playerCharacters.Length; k++)
 		{
-			this.WaveResetPlayerResetupFunction(j);
-			CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[j];
+			this.WaveResetPlayerResetupFunction(k);
+			CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[k];
 			if (!characterStateControl.isDied)
 			{
 				if (!isRecover)
 				{
 					if (characterStateControl.WaveCountInitialize(base.hierarchyData.batteWaves[waveNumber].hpRevivalPercentage))
 					{
-						base.battleStateData.isRoundStartHpRevival[j] = true;
+						base.battleStateData.isRoundStartHpRevival[k] = true;
 					}
 				}
 				if (waveNumber == 0)
 				{
-					base.stateManager.uiControl.ApplyCharacterHudBoss(j, false);
-					base.stateManager.uiControl.ApplyCharacterHudContent(j, characterStateControl);
-					base.stateManager.uiControl.ApplyCharacterHudReset(j);
+					base.stateManager.uiControl.ApplyCharacterHudBoss(k, false);
+					base.stateManager.uiControl.ApplyCharacterHudContent(k, characterStateControl);
+					base.stateManager.uiControl.ApplyCharacterHudReset(k);
 				}
 			}
 		}
@@ -76,7 +79,7 @@ public class BattleWaveControl : BattleFunctionBase
 		CharacterParams @object = base.battleStateData.preloadEnemiesParams.GetObject(prefabId, num.ToString());
 		@object.gameObject.SetActive(true);
 		@object.Initialize(base.hierarchyData.cameraObject.camera3D);
-		@object.PlayIdleAnimation();
+		@object.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		@object.transform.position = base.battleStateData.enemiesSpawnPoint[i].position;
 		@object.transform.rotation = base.battleStateData.enemiesSpawnPoint[i].rotation;
 		base.battleStateData.enemies[i].CharacterParams = @object;
@@ -162,7 +165,6 @@ public class BattleWaveControl : BattleFunctionBase
 					}
 					base.battleStateData.isRoundStartApRevival[num2] = true;
 				}
-				characterStateControl2.currentSufferState.RoundCount();
 			}
 			else
 			{
@@ -176,6 +178,13 @@ public class BattleWaveControl : BattleFunctionBase
 			base.battleStateData.currentRoundNumber++;
 		}
 		base.stateManager.uiControl.ApplyWaveAndRound(base.battleStateData.currentWaveNumber, base.battleStateData.currentRoundNumber);
+		foreach (CharacterStateControl characterStateControl3 in this.GetTotalCharacters())
+		{
+			if (!characterStateControl3.isDied)
+			{
+				characterStateControl3.currentSufferState.RoundUpdate();
+			}
+		}
 	}
 
 	private CharacterStateControl[] GetTotalCharacters()

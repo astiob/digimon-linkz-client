@@ -26,6 +26,8 @@ public class TutorialShutdown : MonoBehaviour
 		gameObject.transform.localScale = Vector3.one;
 		gameObject.transform.localPosition = Vector3.zero;
 		this.tvFade = gameObject.GetComponent<TVFade>();
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		this.tvFade.Initialize(uipanel.GetWindowSize());
 		this.tvFade.StartAnimation(this.onFinishedAnimation);
 		this.SetEffectTexture(this.tvFade);
 	}

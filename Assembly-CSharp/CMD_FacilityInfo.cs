@@ -92,12 +92,12 @@ public class CMD_FacilityInfo : CMD
 		int num = facilityUpgradeMaster.upgradeAssetCategoryId1.ToInt32();
 		if (num == 4)
 		{
-			CMD_UpgradeConfirmation cmd_UpgradeConfirmation = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirmation") as CMD_UpgradeConfirmation;
+			CMD_UpgradeConfirmation cmd_UpgradeConfirmation = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirmation", null) as CMD_UpgradeConfirmation;
 			cmd_UpgradeConfirmation.SetUserFacility(this.userFacility);
 		}
 		else
 		{
-			CMD_UpgradeConfirmationDigistone cmd_UpgradeConfirmationDigistone = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirm_STONE") as CMD_UpgradeConfirmationDigistone;
+			CMD_UpgradeConfirmationDigistone cmd_UpgradeConfirmationDigistone = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirm_STONE", null) as CMD_UpgradeConfirmationDigistone;
 			cmd_UpgradeConfirmationDigistone.SetUserFacility(this.userFacility);
 		}
 		this.ClosePanel(true);

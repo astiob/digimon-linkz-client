@@ -68,14 +68,6 @@ public abstract class BattleInputFunctionBase : MonoBehaviour, IBattleFunctionIn
 		}
 	}
 
-	protected BattleStateUIProperty uiProperty
-	{
-		get
-		{
-			return this.stateManager.uiProperty;
-		}
-	}
-
 	protected BattleCallAction callAction
 	{
 		get

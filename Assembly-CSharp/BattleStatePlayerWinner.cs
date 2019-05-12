@@ -59,10 +59,14 @@ public class BattleStatePlayerWinner : BattleStateController
 			a.gameObject.SetActive(false);
 		}
 		base.stateManager.threeDAction.ShowAliveCharactersAction(base.battleStateData.GetTotalCharacters());
-		base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(base.battleStateData.playerCharacters);
+		IEnumerator motionResetAliveCharacterAction = base.stateManager.threeDAction.MotionResetAliveCharacterAction(base.battleStateData.playerCharacters);
+		while (motionResetAliveCharacterAction.MoveNext())
+		{
+			yield return null;
+		}
 		Action playWinMotion = delegate()
 		{
-			base.stateManager.threeDAction.PlaySmoothAnimationCharacterAction(CharacterAnimationType.win, new CharacterStateControl[]
+			base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.win, new CharacterStateControl[]
 			{
 				base.battleStateData.playerCharacters[base.battleStateData.lastAttackPlayerCharacterIndex]
 			});
@@ -72,15 +76,8 @@ public class BattleStatePlayerWinner : BattleStateController
 		{
 			base.stateManager.uiControl.ShowHidePlayerWinnerButton(true);
 		};
-		IEnumerator waitNextButton = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.uiProperty.winActionShowNextButtonWaitSecond, null, showNextButton);
-		IEnumerator wait = base.stateManager.threeDAction.MotionResetAliveCharacterAction(new CharacterStateControl[]
-		{
-			base.battleStateData.playerCharacters[base.battleStateData.lastAttackPlayerCharacterIndex]
-		});
-		while (wait.MoveNext())
-		{
-			yield return null;
-		}
+		float waitTime = base.stateManager.uiProperty.winActionShowNextButtonWaitSecond;
+		IEnumerator waitNextButton = base.stateManager.time.WaitForCertainPeriodTimeAction(waitTime, null, showNextButton);
 		base.stateManager.cameraControl.StopCameraMotionAction("0007_commandCharaView");
 		base.stateManager.cameraControl.StopCameraMotionAction("BigBoss/0007_commandCharaView");
 		base.stateManager.cameraControl.StopCameraMotionAction("0002_command");
@@ -113,6 +110,10 @@ public class BattleStatePlayerWinner : BattleStateController
 
 	private void SaveBattleMenuSettings()
 	{
+		if (base.stateManager.battleMode != BattleMode.Single)
+		{
+			return;
+		}
 		if (base.hierarchyData.on2xSpeedPlay)
 		{
 			PlayerPrefs.SetInt("Battle2xSpeedPlay", 1);

@@ -27,7 +27,7 @@ public class CommonRender3D : MonoBehaviour
 		GameObject original = AssetDataMng.Instance().LoadObject(path, null, true) as GameObject;
 		this.goChara = UnityEngine.Object.Instantiate<GameObject>(original);
 		CharacterParams component = this.goChara.GetComponent<CharacterParams>();
-		component.PlayIdleAnimation();
+		component.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		this.goChara.name = path;
 		this.goChara.transform.SetParent(base.gameObject.transform);
 		this.goChara.transform.localPosition = new Vector3(0f, 0f, 0f);

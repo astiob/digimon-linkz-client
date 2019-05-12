@@ -13,12 +13,12 @@ public class PrizeEfcDirector : MonoBehaviour
 	[Header("フェードアウトのアルファ値")]
 	private float valueA_Min;
 
-	[Header("フェードインのアルファ値")]
 	[SerializeField]
+	[Header("フェードインのアルファ値")]
 	private float valueA_Max = 1f;
 
-	[SerializeField]
 	[Header("フェードイン時間")]
+	[SerializeField]
 	private float fadeInTime = 0.3f;
 
 	[Header("オンしている時間")]

@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class ChipSphereStatus : MonoBehaviour
 {
-	[Header("MenuType")]
 	[SerializeField]
+	[Header("MenuType")]
 	private CMD_ChipSphere.MenuType myMenuType;
 
-	[SerializeField]
 	[Header("Lookのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject lookGO;
 
 	[SerializeField]
 	[Header("アイコン右下のレア度")]
 	private UISprite rareSprite;
 
-	[Header("アイコンのlookテクスチャ")]
 	[SerializeField]
+	[Header("アイコンのlookテクスチャ")]
 	private UITexture chipLookTexture;
 
 	[SerializeField]
 	[Header("アイコンのテクスチャ")]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("アイコンの個数/名前/進化段階名")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
 	[Header("右下のメッセージ")]
@@ -36,24 +36,24 @@ public class ChipSphereStatus : MonoBehaviour
 	[Header("ボタンのラベル")]
 	private UILabel buttonLabel;
 
-	[SerializeField]
 	[Header("強化ボタンのラベル")]
+	[SerializeField]
 	private UILabel reinforcementButtonLabel;
 
 	[SerializeField]
 	[Header("ボタンのスプライト")]
 	private UISprite buttonSprite;
 
-	[Header("強化ボタンのスプライト")]
 	[SerializeField]
+	[Header("強化ボタンのスプライト")]
 	private UISprite reinforcementButtonSprite;
 
-	[SerializeField]
 	[Header("ボタンのコライダー")]
+	[SerializeField]
 	private BoxCollider buttonCollider;
 
-	[SerializeField]
 	[Header("強化ボタンのコライダー")]
+	[SerializeField]
 	private BoxCollider reinforcementButtonCollider;
 
 	private Color defaultButtonLabelEffectColor;

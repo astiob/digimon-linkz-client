@@ -81,7 +81,6 @@ public class BattleRecover : BattleFunctionBase
 		if (this.isMustLoad)
 		{
 			Debug.Log("isMustLoad.");
-			base.hierarchyData.onEnableRandomValue = false;
 			this.isMustLoad = false;
 			this.Load();
 			base.stateManager.uiControl.ApplyWaveAndRound(base.battleStateData.currentWaveNumber, base.battleStateData.currentRoundNumber);

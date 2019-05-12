@@ -16,28 +16,7 @@ public sealed class CMD_BattleNextChoice : CMD
 	private GameObject[] singlePlayButtons;
 
 	[SerializeField]
-	private GameObject multiPlayButtons;
-
-	[SerializeField]
 	private UserStamina userStamina;
-
-	[SerializeField]
-	private UILabel staminaText;
-
-	[SerializeField]
-	private UILabel farmText;
-
-	[SerializeField]
-	private UILabel retryText;
-
-	[SerializeField]
-	private UILabel nextText;
-
-	[SerializeField]
-	private UILabel multiFarmText;
-
-	[SerializeField]
-	private UILabel multiNextText;
 
 	[SerializeField]
 	private BattleNextBattleOption battleOption;
@@ -75,30 +54,6 @@ public sealed class CMD_BattleNextChoice : CMD
 		{
 			this.userStamina.RefreshParams();
 		}
-		if (this.staminaText != null)
-		{
-			this.staminaText.text = StringMaster.GetString("BattleResult-11");
-		}
-		if (this.farmText != null)
-		{
-			this.farmText.text = StringMaster.GetString("Mission-01");
-		}
-		if (this.retryText != null)
-		{
-			this.retryText.text = StringMaster.GetString("BattleResult-12");
-		}
-		if (this.nextText != null)
-		{
-			this.nextText.text = StringMaster.GetString("BattleResult-13");
-		}
-		if (this.multiFarmText != null)
-		{
-			this.multiFarmText.text = StringMaster.GetString("Mission-01");
-		}
-		if (this.multiNextText != null)
-		{
-			this.multiNextText.text = StringMaster.GetString("BattleResult-13");
-		}
 		base.Show(f, sizeX, sizeY, aT);
 	}
 
@@ -119,7 +74,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterDungeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonID.ToString());
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
-		return !(worldStageM2.worldAreaId == "8") || !string.IsNullOrEmpty(last_dng_req.userDungeonTicketId);
+		return !("8" == worldStageM2.worldAreaId) || !string.IsNullOrEmpty(last_dng_req.userDungeonTicketId);
 	}
 
 	private void OnPushedAgainButton()
@@ -162,20 +117,20 @@ public sealed class CMD_BattleNextChoice : CMD
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterDungeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonID.ToString());
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
-		if (worldStageM2.worldAreaId == "8")
+		if ("8" == worldStageM2.worldAreaId)
 		{
-			if (this.isMulti && last_dng_req.userDungeonTicketId == "-1")
+			if (this.isMulti && "-1" == last_dng_req.userDungeonTicketId)
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("TicketQuestTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("MultiParticipateAgainAlert");
 				return;
 			}
 			GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dng = ClassSingleton<QuestData>.Instance.GetTicketQuestDungeonByTicketID(last_dng_req.userDungeonTicketId);
 			int num = int.Parse(dng.dungeonTicketNum);
-			if (num <= 0)
+			if (0 >= num)
 			{
-				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage2.Title = StringMaster.GetString("TicketQuestTitle");
 				cmd_ModalMessage2.Info = StringMaster.GetString("QuestPlayLimitZeroInfo");
 			}
@@ -196,10 +151,9 @@ public sealed class CMD_BattleNextChoice : CMD
 							nextChoiceReplay2.Start();
 						}
 					}
-				}, "CMD_Confirm") as CMD_Confirm;
+				}, "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("TicketQuestTitle");
-				string info = string.Format(StringMaster.GetString("TicketQuestConfirmInfo"), worldStageM2.name, num, num - 1);
-				cmd_Confirm.Info = info;
+				cmd_Confirm.Info = string.Format(StringMaster.GetString("TicketQuestConfirmInfo"), worldStageM2.name, num, num - 1);
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonYes");
 				cmd_Confirm.BtnTextNo = StringMaster.GetString("SystemButtonClose");
 			}
@@ -209,43 +163,44 @@ public sealed class CMD_BattleNextChoice : CMD
 			List<QuestData.WorldDungeonData> wdd = ClassSingleton<QuestData>.Instance.GetWorldDungeonData_ByAreaIdStageId(worldStageM2.worldAreaId, masterDungeon.worldStageId, 0, false, true);
 			if (wdd == null)
 			{
-				CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage3.Title = StringMaster.GetString("MultiAgainAlertYetClearTitle");
 				cmd_ModalMessage3.Info = StringMaster.GetString("MultiAgainAlertYetClearInfo");
 				return;
 			}
-			int m;
-			for (m = 0; m < wdd.Count; m++)
+			int worldDungeonDataIndex = 0;
+			for (int i = 0; i < wdd.Count; i++)
 			{
-				if (wdd[m].dungeon.worldDungeonId.ToString() == masterDungeon.worldDungeonId)
+				if (wdd[i].dungeon.worldDungeonId.ToString() == masterDungeon.worldDungeonId)
 				{
+					worldDungeonDataIndex = i;
 					break;
 				}
 			}
-			if (m < wdd.Count)
+			if (worldDungeonDataIndex < wdd.Count)
 			{
 				int usedCT = ConstValue.PLAYLIMIT_USE_COUNT;
-				if (this.isMulti && last_dng_req.userDungeonTicketId == "-1")
+				if (this.isMulti && "-1" == last_dng_req.userDungeonTicketId)
 				{
 					usedCT = 0;
 				}
-				bool flag = ClassSingleton<QuestData>.Instance.IsEmptyDng(wdd[m].dungeon, worldStageM2.worldAreaId);
+				bool flag = ClassSingleton<QuestData>.Instance.IsEmptyDng(wdd[worldDungeonDataIndex].dungeon, worldStageM2.worldAreaId);
 				if (flag)
 				{
-					CMD_ModalMessage cmd_ModalMessage4 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage4 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage4.Title = StringMaster.GetString("QuestPlayLimitTitle");
 					cmd_ModalMessage4.Info = StringMaster.GetString("QuestPlayLimitZeroInfo");
 					return;
 				}
-				if (!ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(wdd[m].dungeon, delegate(int idx)
+				if (!ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(wdd[worldDungeonDataIndex].dungeon, delegate(int idx)
 				{
 					if (idx == 0)
 					{
-						if (wdd[m].dungeon.playLimit.recoveryAssetCategoryId == 2)
+						if (wdd[worldDungeonDataIndex].dungeon.playLimit.recoveryAssetCategoryId == 2)
 						{
 							CMD_Shop cmd = GUIMain.ShowCommonDialog(delegate(int _idx)
 							{
-							}, "CMD_Shop") as CMD_Shop;
+							}, "CMD_Shop", null) as CMD_Shop;
 							cmd.PartsTitle.SetReturnAct(delegate(int _i_)
 							{
 								cmd.ClosePanel(true);
@@ -261,17 +216,17 @@ public sealed class CMD_BattleNextChoice : CMD
 								cmd.ClosePanel(true);
 							});
 						}
-						else if (wdd[m].dungeon.playLimit.recoveryAssetCategoryId == 6)
+						else if (wdd[worldDungeonDataIndex].dungeon.playLimit.recoveryAssetCategoryId == 6)
 						{
-							GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(wdd[m].dungeon.playLimit.recoveryAssetValue.ToString());
-							CMD_ModalMessage cmd_ModalMessage6 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+							GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(wdd[worldDungeonDataIndex].dungeon.playLimit.recoveryAssetValue.ToString());
+							CMD_ModalMessage cmd_ModalMessage6 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 							cmd_ModalMessage6.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
 							cmd_ModalMessage6.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
 						}
 					}
 				}, delegate(int _idx)
 				{
-					ClassSingleton<PlayLimit>.Instance.RecoverPlayLimit(wdd[m].dungeon, new Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons>(this.OnSuccessedRecoverPlayLimit));
+					ClassSingleton<PlayLimit>.Instance.RecoverPlayLimit(wdd[worldDungeonDataIndex].dungeon, new Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons>(this.OnSuccessedRecoverPlayLimit));
 				}, usedCT))
 				{
 					return;
@@ -288,7 +243,7 @@ public sealed class CMD_BattleNextChoice : CMD
 			}
 			else
 			{
-				CMD_ModalMessage cmd_ModalMessage5 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage5 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage5.Title = StringMaster.GetString("MultiAgainAlertYetClearTitle");
 				cmd_ModalMessage5.Info = StringMaster.GetString("MultiAgainAlertYetClearInfo");
 			}
@@ -314,7 +269,7 @@ public sealed class CMD_BattleNextChoice : CMD
 					DataMng.Instance().WD_ReqDngResult.dungeonId = sendData.dungeonId;
 				}
 				RestrictionInput.EndLoad();
-				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseMultiBattleMenu), "CMD_MultiBattleParticipateMenu");
+				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseMultiBattleMenu), "CMD_MultiBattleParticipateMenu", null);
 			}, delegate(Exception noop)
 			{
 				RestrictionInput.EndLoad();
@@ -411,7 +366,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		CMD_PartyEdit.replayMultiAreaId = worldStageM2.worldAreaId;
 		CMD_PartyEdit.replayMultiDungeonId = last_dng_req.dungeonId;
 		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
-		CMD_PartyEdit cmd2 = GUIMain.ShowCommonDialog(null, "CMD_PartyEdit") as CMD_PartyEdit;
+		CMD_PartyEdit cmd2 = GUIMain.ShowCommonDialog(null, "CMD_PartyEdit", null) as CMD_PartyEdit;
 		cmd2.PartsTitle.SetReturnAct(delegate(int i)
 		{
 			cmd2.ClosePanel(true);
@@ -525,7 +480,7 @@ public sealed class CMD_BattleNextChoice : CMD
 				masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == nextDungeonID.ToString());
 				nextStage = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterNextDangeon.worldStageId);
 			}
-			if (int.Parse(masterNextDangeon.worldDungeonId) > 3000)
+			if (3000 < int.Parse(masterNextDangeon.worldDungeonId))
 			{
 				ClassSingleton<QuestTOPAccessor>.Instance.nextAreaFlg = false;
 				ClassSingleton<QuestTOPAccessor>.Instance.nextAreaEvent = true;
@@ -541,15 +496,15 @@ public sealed class CMD_BattleNextChoice : CMD
 				RestrictionInput.EndLoad();
 				ClassSingleton<QuestTOPAccessor>.Instance.nextDungeon = masterNextDangeon;
 				ClassSingleton<QuestTOPAccessor>.Instance.nextStage = nextStage;
-				CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestTOP") as CMD;
+				CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestTOP", null) as CMD;
 				PartsTitleBase partsTitle = cmd.PartsTitle;
-				if (partsTitle != null)
+				if (null != partsTitle)
 				{
 					partsTitle.SetReturnAct(delegate(int idx)
 					{
 						cmd.SetCloseAction(delegate(int i)
 						{
-							CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestSelect") as CMD;
+							CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestSelect", null) as CMD;
 							cmd.SetForceReturnValue(1);
 						});
 						cmd.ClosePanel(true);
@@ -624,7 +579,7 @@ public sealed class CMD_BattleNextChoice : CMD
 
 	private bool IsLockNextDungeon(int ClearDungeonID)
 	{
-		if (ClearDungeonID > 3000)
+		if (3000 < ClearDungeonID)
 		{
 			return true;
 		}
@@ -676,7 +631,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int result)
 		{
 			this.OnPushedFarmButton();
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("Present-08");
 		cmd_ModalMessage.Info = info;
 		cmd_ModalMessage.BtnText = StringMaster.GetString("GoToFarm");
@@ -694,7 +649,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		if (GUIManager.ExtBackKeyReady && !this.pushedBackKey && Input.GetKeyDown(KeyCode.Escape))
 		{
 			CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
-			if (topDialog != null && topDialog.gameObject.name == base.gameObject.name && !this.permanentMode && base.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN && !GUICollider.IsAllColliderDisable())
+			if (null != topDialog && topDialog.gameObject.name == base.gameObject.name && !this.permanentMode && base.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN && !GUICollider.IsAllColliderDisable())
 			{
 				this.pushedBackKey = true;
 				this.OnPushedFarmButton();

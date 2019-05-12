@@ -1570,7 +1570,8 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			amis = list,
 			ogis = ogis.Distinct<int>().ToList<int>(),
 			clearRound = DataMng.Instance().WD_ReqDngResult.clearRound,
-			uniqueRequestId = num
+			uniqueRequestId = num,
+			enemyAliveInfo = base.battleStateData.GetEnemyAliveList()
 		};
 		dictionary.Add("820102", value3);
 		return dictionary;

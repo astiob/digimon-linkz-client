@@ -25,6 +25,8 @@ namespace MonsterList.ChangeMonster
 		[SerializeField]
 		private GameObject goMN_ICON_CHG;
 
+		private GameObject goMN_ICON_NOW_2;
+
 		[SerializeField]
 		private MonsterBasicInfo nowMonsterBasicInfo;
 
@@ -140,12 +142,6 @@ namespace MonsterList.ChangeMonster
 		private GameObject switchSkillPanelBtn;
 
 		[SerializeField]
-		private UILabel ngTX_MN_HAVE;
-
-		[SerializeField]
-		private UILabel ngTX_SORT_DISP;
-
-		[SerializeField]
 		private UISprite selectButton;
 
 		private int statusPage = 1;
@@ -161,12 +157,10 @@ namespace MonsterList.ChangeMonster
 
 		private GameObject goMN_ICON_CHG_2;
 
-		private int depth_MN_ICON_CHG_2;
-
 		private GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray;
 
-		[SerializeField]
 		[Header("キャラクターのステータスPanel")]
+		[SerializeField]
 		private StatusPanel statusPanel;
 
 		private MonsterData changeMonsterData;
@@ -178,10 +172,6 @@ namespace MonsterList.ChangeMonster
 		private ChangeMonsterIconGrayOut iconGrayOut;
 
 		private ChangeMonsterMonsterList monsterList;
-
-		private GameObject goMN_ICON_NOW_2;
-
-		private int depth_MN_ICON_NOW_2;
 
 		public static MonsterData SelectMonsterData { get; set; }
 
@@ -362,7 +352,7 @@ namespace MonsterList.ChangeMonster
 				guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 				UIWidget component = this.goMN_ICON_NOW.GetComponent<UIWidget>();
 				UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
-				if (component != null && component2 != null)
+				if (null != component && null != component2)
 				{
 					int add = component.depth - component2.depth;
 					DepthController component3 = guimonsterIcon.gameObject.GetComponent<DepthController>();
@@ -377,7 +367,7 @@ namespace MonsterList.ChangeMonster
 		{
 			this.goSelectPanelMonsterIcon = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelMonsterIcon", base.gameObject);
 			this.csSelectPanelMonsterIcon = this.goSelectPanelMonsterIcon.GetComponent<GUISelectPanelMonsterIcon>();
-			if (this.goEFC_RIGHT != null)
+			if (null != this.goEFC_RIGHT)
 			{
 				this.goSelectPanelMonsterIcon.transform.parent = this.goEFC_RIGHT.transform;
 			}
@@ -440,7 +430,7 @@ namespace MonsterList.ChangeMonster
 		private void SetSelectedCharChg(MonsterData monster)
 		{
 			this.changeMonsterData = monster;
-			if (this.goMN_ICON_CHG_2 != null)
+			if (null != this.goMN_ICON_CHG_2)
 			{
 				UnityEngine.Object.Destroy(this.goMN_ICON_CHG_2);
 			}
@@ -471,7 +461,7 @@ namespace MonsterList.ChangeMonster
 				this.monsterList.CancelSelectedIcon(this.changeMonsterData);
 				this.changeMonsterData = null;
 			}
-			if (this.goMN_ICON_CHG_2 != null)
+			if (null != this.goMN_ICON_CHG_2)
 			{
 				UnityEngine.Object.Destroy(this.goMN_ICON_CHG_2);
 			}
@@ -487,7 +477,7 @@ namespace MonsterList.ChangeMonster
 			{
 				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
 				icon.Lock = md.userMonster.IsLocked;
-			}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+			}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 			cmd_CharacterDetailed.DisableEvolutionButton();
 		}
 

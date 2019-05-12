@@ -37,8 +37,8 @@ public sealed class CMD_ClearingHouseTop : CMD
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
 			this.menu.Init();
-			GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoLogicData = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData;
-			bool flag = eventExchangeInfoLogicData != null && eventExchangeInfoLogicData.Length > 0 && eventExchangeInfoLogicData[0] != null;
+			GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoList = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoList;
+			bool flag = eventExchangeInfoList != null && eventExchangeInfoList.Length > 0 && eventExchangeInfoList[0] != null;
 			GUITips.TIPS_DISP_TYPE dispType = (!flag) ? GUITips.TIPS_DISP_TYPE.NoneExchangeNavi : GUITips.TIPS_DISP_TYPE.ExchangeNavi;
 			this.tips.Init(dispType);
 			this.Show(f, sizeX, sizeY, aT);
@@ -50,11 +50,6 @@ public sealed class CMD_ClearingHouseTop : CMD
 	}
 
 	public override void ClosePanel(bool animation = true)
-	{
-		this.CloseAndFarmCamOn(animation);
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
 	{
 		FarmCameraControlForCMD.On();
 		base.ClosePanel(animation);
@@ -69,8 +64,8 @@ public sealed class CMD_ClearingHouseTop : CMD
 	public void Rebuild()
 	{
 		this.menu.Init();
-		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoLogicData = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData;
-		bool flag = eventExchangeInfoLogicData != null && eventExchangeInfoLogicData.Length > 0 && eventExchangeInfoLogicData[0] != null;
+		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoList = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoList;
+		bool flag = eventExchangeInfoList != null && eventExchangeInfoList.Length > 0 && eventExchangeInfoList[0] != null;
 		GUITips.TIPS_DISP_TYPE dispType = (!flag) ? GUITips.TIPS_DISP_TYPE.NoneExchangeNavi : GUITips.TIPS_DISP_TYPE.ExchangeNavi;
 		this.tips.Init(dispType);
 	}

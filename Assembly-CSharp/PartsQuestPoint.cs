@@ -10,16 +10,16 @@ public class PartsQuestPoint : MonoBehaviour
 	[SerializeField]
 	private List<UISprite> spPointList;
 
-	[Header("ランキングのスプライト")]
 	[SerializeField]
+	[Header("ランキングのスプライト")]
 	private List<UISprite> spRankingList;
 
-	[SerializeField]
 	[Header("ランキングの位の文字 -> 圏外で消し")]
+	[SerializeField]
 	private UILabel lbTX_Ranking;
 
-	[SerializeField]
 	[Header("ランキング圏外")]
+	[SerializeField]
 	private UILabel lbTX_RankingOut;
 
 	public QuestData.WorldAreaData AreaData;
@@ -57,19 +57,19 @@ public class PartsQuestPoint : MonoBehaviour
 	private void OnClickedRanking()
 	{
 		CMD_PointQuestRanking.PointQuestInfo = this.PointInfo;
-		GUIMain.ShowCommonDialog(null, "CMD_PointQuestRanking");
+		GUIMain.ShowCommonDialog(null, "CMD_PointQuestRanking", null);
 	}
 
 	private void OnClickedDetail()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("PointQuest-1");
 		cmdwebWindow.Url = string.Format(WebAddress.EXT_ADR_POINT_QUEST_DETAIL, this.PointInfo.worldEventId);
 	}
 
 	private void OnClickedReward()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("PointQuest-2");
 		cmdwebWindow.Url = string.Format(WebAddress.EXT_ADR_POINT_QUEST_REWARD, this.PointInfo.worldEventId);
 	}

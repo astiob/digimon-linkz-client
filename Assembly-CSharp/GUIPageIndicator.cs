@@ -14,8 +14,8 @@ public class GUIPageIndicator : MonoBehaviour
 	[Header("オンの時のスプライト名")]
 	private string onSpriteName;
 
-	[Header("オフの時のスプライト名")]
 	[SerializeField]
+	[Header("オフの時のスプライト名")]
 	private string offSpriteName;
 
 	private int nowIdx;

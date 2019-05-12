@@ -63,7 +63,7 @@ namespace CharacterDetailsUI
 		private void OpenDialogFailedProtection(CMD_CharacterDetailed.LockMode lockMode)
 		{
 			global::Debug.Assert(!this.isLocked, "ロック中に更にロックすることはできない");
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("CharaDetailsNotLock");
 			this.SetTextFailedProtectionDialog(cmd_ModalMessage, lockMode);
 		}
@@ -149,7 +149,7 @@ namespace CharacterDetailsUI
 			FarmCameraControlForCMD.ClearRefCT();
 			FarmCameraControlForCMD.On();
 			GUIMain.DestroyAllDialog(null);
-			GUIMain.ShowCommonDialog(null, "CMD_DigiGarden");
+			GUIMain.ShowCommonDialog(null, "CMD_DigiGarden", null);
 		}
 
 		private void OnPushedEvolutionRouteMapButton()

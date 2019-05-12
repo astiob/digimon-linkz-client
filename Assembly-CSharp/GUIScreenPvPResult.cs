@@ -26,7 +26,8 @@ public sealed class GUIScreenPvPResult : GUIScreen
 			this.seq = 1;
 			break;
 		case 1:
-			if (++this.timeCt >= 20)
+			this.timeCt++;
+			if (this.timeCt >= 20)
 			{
 				RestrictionInput.EndLoad();
 				this.OpenResultUI();
@@ -45,7 +46,7 @@ public sealed class GUIScreenPvPResult : GUIScreen
 
 	private void OpenResultUI()
 	{
-		GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBattleResult), "CMD_PVPBattleResult");
+		GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBattleResult), "CMD_PVPBattleResult", null);
 	}
 
 	private void OnCloseBattleResult(int i)
@@ -56,16 +57,15 @@ public sealed class GUIScreenPvPResult : GUIScreen
 	private void GoToPvPTop()
 	{
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePvPTOP), "CMD_PvPTop");
+		GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePvPTOP), "CMD_PvPTop", null);
 	}
 
 	private void OnClosePvPTOP(int idx)
 	{
-		if (idx == 0)
+		if (idx == 100)
 		{
-			return;
+			this.GoToFarm();
 		}
-		this.GoToFarm();
 	}
 
 	private void GoToFarm()

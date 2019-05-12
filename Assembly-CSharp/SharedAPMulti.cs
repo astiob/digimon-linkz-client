@@ -10,20 +10,20 @@ public sealed class SharedAPMulti : MonoBehaviour
 	[SerializeField]
 	private int _APNum;
 
-	[Header("APアイコン")]
 	[SerializeField]
+	[Header("APアイコン")]
 	private SharedApNotes[] apNotes = new SharedApNotes[16];
 
-	[SerializeField]
 	[Header("AP Maxエフェクト")]
+	[SerializeField]
 	private GameObject multiAPMaxEffect;
 
-	[Header("分子数字")]
 	[SerializeField]
+	[Header("分子数字")]
 	private UITextReplacer numLabel;
 
-	[SerializeField]
 	[Header("スラッシュ分母数字")]
+	[SerializeField]
 	private UITextReplacer maxNumLabel;
 
 	private bool isPlayedFirstAnimation;

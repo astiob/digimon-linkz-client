@@ -12,27 +12,15 @@ public class ItemDropResult
 
 	private int _dropNumber;
 
-	public ItemDropResult(DropBoxType dropBoxType, MasterDataMng.AssetCategory dropAssetType, int dropNumber)
+	public ItemDropResult(DropBoxType dropBoxType)
 	{
 		this._isDropped = true;
 		this._dropBoxType = dropBoxType;
-		this._dropAssetType = dropAssetType;
-		this._dropNumber = dropNumber;
-	}
-
-	public ItemDropResult(DropAssetPattern dropAssetPattern)
-	{
-		this._dropBoxType = dropAssetPattern.dropBoxType;
-		this._dropAssetType = dropAssetPattern.dropAssetType;
-		this._dropNumber = dropAssetPattern.dropNumber;
-		this._isDropped = true;
 	}
 
 	public ItemDropResult(bool isDropped)
 	{
 		this._dropBoxType = DropBoxType.Normal;
-		this._dropAssetType = MasterDataMng.AssetCategory.MONSTER;
-		this._dropNumber = 0;
 		this._isDropped = isDropped;
 	}
 
@@ -49,22 +37,6 @@ public class ItemDropResult
 		get
 		{
 			return this._dropBoxType;
-		}
-	}
-
-	public MasterDataMng.AssetCategory dropAssetType
-	{
-		get
-		{
-			return this._dropAssetType;
-		}
-	}
-
-	public int dropNumber
-	{
-		get
-		{
-			return this._dropNumber;
 		}
 	}
 

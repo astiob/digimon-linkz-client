@@ -77,13 +77,13 @@ public sealed class CMD_MultiRecruitPass : CMD
 			}
 			else
 			{
-				CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
+				CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip", null) as CMD_UpperlimitChip;
 				cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
 			}
 		}
 		else
 		{
-			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
+			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit", null) as CMD_UpperLimit;
 			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
 		}
 	}

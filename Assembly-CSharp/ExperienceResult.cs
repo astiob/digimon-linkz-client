@@ -23,12 +23,12 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private GameObject acquisitionGO;
 
-	[SerializeField]
 	[Header("デジモン部分")]
+	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[SerializeField]
 	[Header("デジモンに吸収されるパーティクルを消す")]
+	[SerializeField]
 	private GameObject particleRemover;
 
 	[Header("取得経験値のラベル")]
@@ -39,8 +39,8 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private UILabel getExpText;
 
-	[Header("取得クラスタのラベル")]
 	[SerializeField]
+	[Header("取得クラスタのラベル")]
 	private UILabel getCluster;
 
 	[Header("取得クラスタの文言ラベル")]
@@ -51,8 +51,8 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private UILabel getFriendPointForLeader;
 
-	[Header("取得友情度【リーダー】の文言ラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】の文言ラベル")]
 	private UILabel getFriendPointForLeaderText;
 
 	[Header("取得友情度のラベル")]
@@ -108,19 +108,19 @@ public class ExperienceResult : ResultBase
 		NGUITools.SetActiveSelf(this.acquisitionGO, false);
 		int num = int.Parse(DataMng.Instance().RespDataMN_DeckList.selectDeckNum) - 1;
 		this.deckData = DataMng.Instance().RespDataMN_DeckList.deckList[num];
-		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		this.isMulti = (null != respData_WorldMultiStartInfo);
 		if (!this.isMulti)
 		{
-			this.totalExp = respDataWD_DungeonStart.totalExp;
-			this.totalCluster = respDataWD_DungeonStart.totalMoney;
+			GameWebAPI.RespDataWD_DungeonResult respDataWD_DungeonResult = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult;
+			this.totalExp = respDataWD_DungeonResult.totalExp;
+			this.totalCluster = respDataWD_DungeonResult.totalMoney;
 		}
 		else
 		{
-			this.totalExp = respData_WorldMultiStartInfo.totalExp;
-			this.totalCluster = respData_WorldMultiStartInfo.totalMoney;
 			GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
+			this.totalExp = respData_WorldMultiResultInfoLogic.totalExp;
+			this.totalCluster = respData_WorldMultiResultInfoLogic.totalMoney;
 			if (respData_WorldMultiResultInfoLogic.dungeonReward != null)
 			{
 				if (respData_WorldMultiResultInfoLogic.dungeonReward.luckDrop != null)
@@ -709,7 +709,7 @@ public class ExperienceResult : ResultBase
 	private IEnumerator PopFriendshipUpStatus(MonsterData afterMonsterData)
 	{
 		yield return new WaitForSeconds(1f);
-		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP") as CMD_FriendshipStatusUP;
+		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP", null) as CMD_FriendshipStatusUP;
 		cd.SetData(afterMonsterData);
 		cd.SetChangeData(this.memoryUserMonsterList.monsterId, this.memoryUserMonsterList.friendship);
 		while (cd != null)

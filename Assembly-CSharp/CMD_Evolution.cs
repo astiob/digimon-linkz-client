@@ -143,7 +143,7 @@ public sealed class CMD_Evolution : CMD
 			{
 				this.monsterIcon.Lock = CMD_BaseSelect.DataChg.userMonster.IsLocked;
 			}
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 		cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Evolution;
 	}
 
@@ -320,7 +320,7 @@ public sealed class CMD_Evolution : CMD
 		CMD_CharacterDetailed.DataChg = monsterDataByUserMonsterID;
 		base.SetCloseAction(delegate(int inx)
 		{
-			GUIMain.ShowCommonDialog(new Action<int>(this.RunRefreshPicturebook), "CMD_CharacterDetailed");
+			GUIMain.ShowCommonDialog(new Action<int>(this.RunRefreshPicturebook), "CMD_CharacterDetailed", null);
 		});
 		this.ClosePanel(false);
 	}

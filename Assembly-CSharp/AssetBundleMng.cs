@@ -10,23 +10,13 @@ public class AssetBundleMng : MonoBehaviour
 {
 	private static AssetBundleMng instance;
 
-	public static int AB_CACHE_LIFE = 12960000;
-
-	public static long AB_CACHE_MAX = 4294967296L;
-
 	private bool isWaitDiskSpaceCheck;
 
 	private int countDownloadProcess;
 
 	private long downloadFileSize;
 
-	private string ROOT_PATH = ConstValue.APP_ASSET_DOMAIN + "/asset/";
-
-	private string AB_ROOT = "AB_DATA/";
-
-	private string AB_VERSION = string.Empty;
-
-	private string AB_PLATFORM = "ANDROID/";
+	private string applicationVersion;
 
 	private bool isStopDownload;
 
@@ -48,14 +38,10 @@ public class AssetBundleMng : MonoBehaviour
 
 	private void Awake()
 	{
-		Caching.expirationDelay = AssetBundleMng.AB_CACHE_LIFE;
-		Caching.maximumAvailableDiskSpace = AssetBundleMng.AB_CACHE_MAX;
+		Caching.expirationDelay = 12960000;
+		Caching.maximumAvailableDiskSpace = 4294967296L;
 		AssetBundleMng.instance = this;
-		this.GetVersionInfo();
-	}
-
-	private void Start()
-	{
+		this.LoadVersionInfo();
 	}
 
 	private void Update()
@@ -73,7 +59,7 @@ public class AssetBundleMng : MonoBehaviour
 		return AssetBundleMng.instance;
 	}
 
-	private void GetVersionInfo()
+	private void LoadVersionInfo()
 	{
 		string version = string.Empty;
 		VersionManager.Load(delegate(bool isSuccess, string str)
@@ -86,7 +72,7 @@ public class AssetBundleMng : MonoBehaviour
 			{
 				version = "1.0.0";
 			}
-			this.AB_VERSION = version + "/";
+			this.applicationVersion = version + "/";
 		});
 	}
 
@@ -95,33 +81,36 @@ public class AssetBundleMng : MonoBehaviour
 		return VersionManager.version;
 	}
 
-	public string GetAB_ROOT_PATH()
+	public string GetAssetBundleRootPath()
 	{
-		return this.ROOT_PATH + this.AB_ROOT + this.AB_PLATFORM + this.AB_VERSION;
+		string str = ConstValue.APP_ASSET_DOMAIN + "/asset/AB_DATA/ANDROID/";
+		return str + this.applicationVersion;
 	}
 
 	public AB_DownLoadInfo DownLoad_OneAssetBundleData(string catName, int ver, string abPath, AssetBundleInfo abInfo, Action<AssetBundle, AB_DownLoadInfo> actEnd = null, bool forceDL = false)
 	{
-		AB_DownLoadInfo abdlI = new AB_DownLoadInfo();
-		abdlI.ver = ver;
-		abdlI.abPath = abPath;
-		abdlI.abInfo = abInfo;
-		abdlI.actEndCallBack = actEnd;
-		abdlI.progress = 0f;
+		AB_DownLoadInfo abdlI = new AB_DownLoadInfo
+		{
+			ver = ver,
+			abPath = abPath,
+			abInfo = abInfo,
+			actEndCallBack = actEnd,
+			progress = 0f
+		};
 		string text = string.Empty;
 		string strROOT = string.Empty;
-		strROOT = this.GetAB_ROOT_PATH();
+		strROOT = this.GetAssetBundleRootPath();
 		text = strROOT + abdlI.abPath + abdlI.abInfo.abName;
 		text = text + ".unity3d?" + AssetDataMng.assetVersion;
 		uint crc = abdlI.abInfo.crc;
 		uint recordCRC = this.GetRecordCRC(abdlI.abPath, abdlI.abInfo.abName);
-		int recordVER = this.GetRecordVER(abdlI.abPath, abdlI.abInfo.abName);
+		int recordVersion = this.GetRecordVersion(abdlI.abPath, abdlI.abInfo.abName);
 		if (abdlI.actEndCallBack != null)
 		{
 			Action action;
-			if (forceDL && recordVER != -1)
+			if (forceDL && recordVersion != -1)
 			{
-				abdlI.ver = recordVER;
+				abdlI.ver = recordVersion;
 				action = delegate()
 				{
 					this.StartCoroutine(this.WaitResponse_DownLoad(abdlI, strROOT, forceDL));
@@ -137,7 +126,7 @@ public class AssetBundleMng : MonoBehaviour
 						abdlI.actEndCallBack(null, abdlI);
 					};
 				}
-				else if (recordVER == -1)
+				else if (recordVersion == -1)
 				{
 					abdlI.ver = 1;
 					action = delegate()
@@ -147,7 +136,7 @@ public class AssetBundleMng : MonoBehaviour
 				}
 				else if (recordCRC != crc)
 				{
-					abdlI.ver = recordVER;
+					abdlI.ver = recordVersion;
 					action = delegate()
 					{
 						this.StartCoroutine(this.WaitResponse_DownLoad(abdlI, strROOT, false));
@@ -155,10 +144,10 @@ public class AssetBundleMng : MonoBehaviour
 				}
 				else
 				{
-					bool flag = Caching.IsVersionCached(text, recordVER);
+					bool flag = Caching.IsVersionCached(text, recordVersion);
 					if (flag)
 					{
-						Caching.MarkAsUsed(text, recordVER);
+						Caching.MarkAsUsed(text, recordVersion);
 						action = delegate()
 						{
 							abdlI.actEndCallBack(null, abdlI);
@@ -166,7 +155,7 @@ public class AssetBundleMng : MonoBehaviour
 					}
 					else
 					{
-						abdlI.ver = recordVER;
+						abdlI.ver = recordVersion;
 						action = delegate()
 						{
 							this.StartCoroutine(this.WaitResponse_DownLoad(abdlI, strROOT, false));
@@ -184,7 +173,7 @@ public class AssetBundleMng : MonoBehaviour
 			abdlI.www = WWW.LoadFromCacheOrDownload(text, 1, 0u);
 			return abdlI;
 		}
-		abdlI.ver = recordVER;
+		abdlI.ver = recordVersion;
 		forceDL = false;
 		base.StartCoroutine(this.ReloadFromWWW(abdlI, strROOT));
 		string text2 = text.Substring(text.IndexOf("AB_DATA/"));
@@ -195,7 +184,7 @@ public class AssetBundleMng : MonoBehaviour
 			"\n存在するはずのファイルがキャッシュに存在しません!\n CRC = ",
 			recordCRC.ToString(),
 			",  VER = ",
-			recordVER.ToString()
+			recordVersion.ToString()
 		});
 		NativeMessageDialog.Show(text2);
 		return abdlI;
@@ -325,7 +314,7 @@ public class AssetBundleMng : MonoBehaviour
 		yield break;
 	}
 
-	private void InitAll()
+	public void InitAll()
 	{
 		this.isWaitDiskSpaceCheck = false;
 		this.isStopDownload = false;
@@ -374,17 +363,17 @@ public class AssetBundleMng : MonoBehaviour
 
 	public int GetDLAllCount(AssetBundleInfoData abid)
 	{
-		List<AssetBundleInfo> assetBundleInfoList = abid.assetBundleInfoList;
 		int num = 0;
+		List<AssetBundleInfo> assetBundleInfoList = abid.assetBundleInfoList;
 		for (int i = 0; i < assetBundleInfoList.Count; i++)
 		{
 			AssetBundleInfo assetBundleInfo = assetBundleInfoList[i];
 			uint crc = assetBundleInfo.crc;
 			uint recordCRC = this.GetRecordCRC(abid.abPath, assetBundleInfo.abName);
-			int recordVER = this.GetRecordVER(abid.abPath, assetBundleInfo.abName);
+			int recordVersion = this.GetRecordVersion(abid.abPath, assetBundleInfo.abName);
 			if (!(this.level != string.Empty) || !(this.level != assetBundleInfo.level.Trim()))
 			{
-				if (recordVER == -1)
+				if (recordVersion == -1)
 				{
 					num++;
 				}
@@ -394,18 +383,21 @@ public class AssetBundleMng : MonoBehaviour
 				}
 				else
 				{
-					string text = string.Empty;
-					string str = string.Empty;
-					str = this.GetAB_ROOT_PATH();
-					text = str + abid.abPath + assetBundleInfo.abName;
-					text = text + ".unity3d?" + AssetDataMng.assetVersion;
-					if (!Caching.IsVersionCached(text, recordVER))
+					string url = string.Concat(new object[]
+					{
+						this.GetAssetBundleRootPath(),
+						abid.abPath,
+						assetBundleInfo.abName,
+						".unity3d?",
+						AssetDataMng.assetVersion
+					});
+					if (!Caching.IsVersionCached(url, recordVersion))
 					{
 						num++;
 					}
 					else
 					{
-						Caching.MarkAsUsed(text, recordVER);
+						Caching.MarkAsUsed(url, recordVersion);
 					}
 				}
 			}
@@ -484,16 +476,20 @@ public class AssetBundleMng : MonoBehaviour
 		}
 	}
 
-	public bool LoadObjectASync(AssetBundleInfoData abid, string objName, Action<UnityEngine.Object> actEnd)
+	public bool LoadObjectASync(AssetBundleInfoData abid, string resourceName, Action<UnityEngine.Object> actEnd)
 	{
-		List<AssetBundleInfo> abiList = abid.assetBundleInfoList;
+		AssetBundleMng.<LoadObjectASync>c__AnonStorey279 <LoadObjectASync>c__AnonStorey = new AssetBundleMng.<LoadObjectASync>c__AnonStorey279();
+		<LoadObjectASync>c__AnonStorey.resourceName = resourceName;
+		<LoadObjectASync>c__AnonStorey.actEnd = actEnd;
+		<LoadObjectASync>c__AnonStorey.<>f__this = this;
+		<LoadObjectASync>c__AnonStorey.abiList = abid.assetBundleInfoList;
+		bool flag = false;
 		int m;
-		for (m = 0; m < abiList.Count; m++)
+		for (m = 0; m < <LoadObjectASync>c__AnonStorey.abiList.Count; m++)
 		{
-			bool flag = false;
-			for (int i = 0; i < abiList[m].objNameList.Count; i++)
+			for (int i = 0; i < <LoadObjectASync>c__AnonStorey.abiList[m].objNameList.Count; i++)
 			{
-				if (objName == abiList[m].objNameList[i])
+				if (<LoadObjectASync>c__AnonStorey.resourceName == <LoadObjectASync>c__AnonStorey.abiList[m].objNameList[i])
 				{
 					flag = true;
 					break;
@@ -501,33 +497,30 @@ public class AssetBundleMng : MonoBehaviour
 			}
 			if (flag)
 			{
-				this.DownLoad_OneAssetBundleData(abid.name, abid.ver, abid.abPath, abiList[m], delegate(AssetBundle ab, AB_DownLoadInfo abdlI)
+				this.DownLoad_OneAssetBundleData(abid.name, abid.ver, abid.abPath, <LoadObjectASync>c__AnonStorey.abiList[m], delegate(AssetBundle ab, AB_DownLoadInfo abdlI)
 				{
-					UnityEngine.Object obj = this.FindObjectAndUnloadAB(abdlI, abiList[m], objName);
-					if (actEnd != null)
+					UnityEngine.Object obj = this.FindObjectAndUnloadAB(abdlI, <LoadObjectASync>c__AnonStorey.abiList[m], <LoadObjectASync>c__AnonStorey.resourceName);
+					if (<LoadObjectASync>c__AnonStorey.actEnd != null)
 					{
-						actEnd(obj);
+						<LoadObjectASync>c__AnonStorey.actEnd(obj);
 					}
 				}, true);
-				return true;
+				break;
 			}
 		}
-		if (m == abiList.Count)
-		{
-		}
-		return false;
+		return flag;
 	}
 
-	public UnityEngine.Object LoadObject(AssetBundleInfoData abid, string objName)
+	public UnityEngine.Object LoadObject(AssetBundleInfoData abid, string resourceName)
 	{
+		UnityEngine.Object result = null;
 		List<AssetBundleInfo> assetBundleInfoList = abid.assetBundleInfoList;
-		int i;
-		for (i = 0; i < assetBundleInfoList.Count; i++)
+		for (int i = 0; i < assetBundleInfoList.Count; i++)
 		{
 			bool flag = false;
 			for (int j = 0; j < assetBundleInfoList[i].objNameList.Count; j++)
 			{
-				if (objName == assetBundleInfoList[i].objNameList[j])
+				if (resourceName == assetBundleInfoList[i].objNameList[j])
 				{
 					flag = true;
 					break;
@@ -536,13 +529,11 @@ public class AssetBundleMng : MonoBehaviour
 			if (flag)
 			{
 				AB_DownLoadInfo abdlI = this.DownLoad_OneAssetBundleData(abid.name, abid.ver, abid.abPath, assetBundleInfoList[i], null, false);
-				return this.FindObjectAndUnloadAB(abdlI, assetBundleInfoList[i], objName);
+				result = this.FindObjectAndUnloadAB(abdlI, assetBundleInfoList[i], resourceName);
+				break;
 			}
 		}
-		if (i == assetBundleInfoList.Count)
-		{
-		}
-		return null;
+		return result;
 	}
 
 	private UnityEngine.Object FindObjectAndUnloadAB(AB_DownLoadInfo abdlI, AssetBundleInfo abi, string objName)
@@ -627,7 +618,7 @@ public class AssetBundleMng : MonoBehaviour
 							break;
 						}
 					}
-					if (i >= array2.Length)
+					if (array2.Length <= i)
 					{
 						global::Debug.LogError("===================================== AssetBundleMng:LoadObject NOT FOUND_2!!");
 						global::Debug.LogError("===================================== AssetBundleMng:LoadObject objName = " + objName);
@@ -639,14 +630,14 @@ public class AssetBundleMng : MonoBehaviour
 		abdlI.www.assetBundle.Unload(false);
 		if (abdlI.www.error != null)
 		{
-			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert") as CMD_Alert;
+			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert", null) as CMD_Alert;
 			cmd_Alert.Title = "File:" + objName + " AB:" + abi.abName;
 			cmd_Alert.Info = TextUtil.GetWinTextSkipColorCode(abdlI.www.error, 18);
 			cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
 		}
 		else if (@object == null)
 		{
-			CMD_Alert cmd_Alert2 = GUIMain.ShowCommonDialog(null, "CMD_Alert") as CMD_Alert;
+			CMD_Alert cmd_Alert2 = GUIMain.ShowCommonDialog(null, "CMD_Alert", null) as CMD_Alert;
 			cmd_Alert2.Title = "File:" + objName + " AB:" + abi.abName;
 			cmd_Alert2.Info = "UE:OBJが NULL!!";
 			cmd_Alert2.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
@@ -665,14 +656,13 @@ public class AssetBundleMng : MonoBehaviour
 
 	public bool ReadAllRecord()
 	{
-		string str = Application.persistentDataPath + "/";
-		string str2 = "ab_all_record_" + this.STR_VERSION_ALL_RECORD + ".txt";
+		string path = Application.persistentDataPath + "/ab_all_record_" + this.STR_VERSION_ALL_RECORD + ".txt";
 		bool flag = true;
 		bool flag2 = true;
 		string json = string.Empty;
 		try
 		{
-			json = File.ReadAllText(str + str2, Encoding.UTF8);
+			json = File.ReadAllText(path, Encoding.UTF8);
 		}
 		catch
 		{
@@ -715,35 +705,34 @@ public class AssetBundleMng : MonoBehaviour
 
 	public void WriteAllRecord()
 	{
-		string text = Application.persistentDataPath + "/";
-		string text2 = "ab_all_record_" + this.STR_VERSION_ALL_RECORD + ".txt";
-		global::Debug.Log("============================== APP DATA DATA_PATH = " + text + text2);
+		string text = Application.persistentDataPath + "/ab_all_record_" + this.STR_VERSION_ALL_RECORD + ".txt";
+		global::Debug.Log("============================== APP DATA DATA_PATH = " + text);
 		string contents = JsonMapper.ToJson(this.abdlRecordC);
-		string text3 = text + text2;
-		string text4 = text3 + "_suffix";
+		string text2 = text;
+		string text3 = text2 + "_suffix";
 		try
 		{
-			File.WriteAllText(text4, contents, Encoding.UTF8);
-			string json = File.ReadAllText(text4);
+			File.WriteAllText(text3, contents, Encoding.UTF8);
+			string json = File.ReadAllText(text3);
 			AB_DL_RecordC ab_DL_RecordC = JsonMapper.ToObject<AB_DL_RecordC>(json);
 			if (ab_DL_RecordC != null)
 			{
-				if (File.Exists(text3))
+				if (File.Exists(text2))
 				{
-					File.Delete(text3);
+					File.Delete(text2);
 				}
-				File.Move(text4, text3);
+				File.Move(text3, text2);
 			}
-			else if (File.Exists(text4))
+			else if (File.Exists(text3))
 			{
-				File.Delete(text4);
+				File.Delete(text3);
 			}
 		}
 		catch (JsonException ex)
 		{
-			if (File.Exists(text4))
+			if (File.Exists(text3))
 			{
-				File.Delete(text4);
+				File.Delete(text3);
 			}
 			if (ex != null)
 			{
@@ -768,7 +757,7 @@ public class AssetBundleMng : MonoBehaviour
 		return ab_DL_RecordVal.crc;
 	}
 
-	private int GetRecordVER(string path, string name)
+	private int GetRecordVersion(string path, string name)
 	{
 		Dictionary<string, AB_DL_RecordVal> dlrecordList = this.abdlRecordC.DLRecordList;
 		if (!dlrecordList.ContainsKey(path + "_" + name))

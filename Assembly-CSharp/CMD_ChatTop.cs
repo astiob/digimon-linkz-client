@@ -295,6 +295,9 @@ public class CMD_ChatTop : CMD
 		this.csPartPvPParent = this.partPvPParent.GetComponent<GUISelectPvPListPanel>();
 		this.csPartPvPParent.selectParts = this.partPvPList;
 		this.csPartPvPParent.ListWindowViewRect = ChatTools.MakeChatListRectWindow();
+		this.partGroupList.SetActive(false);
+		this.partMultiList.SetActive(false);
+		this.partPvPList.SetActive(false);
 	}
 
 	public void SetChatListUI(GameWebAPI.ResponseData_ChatGroupList data)
@@ -554,12 +557,12 @@ public class CMD_ChatTop : CMD
 
 	private void ClickSortBtn()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ChatSort");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatSort", null);
 	}
 
 	private void ClickIdSearchBtn()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ChatSearch");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatSearch", null);
 	}
 
 	private void ClickInviteBackBtn()
@@ -628,7 +631,7 @@ public class CMD_ChatTop : CMD
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
 			{
 				this.ClickSearchBackBtn();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ChatConfirmTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatSearch-07");
 			if (data.approvalType == 1)
@@ -733,7 +736,7 @@ public class CMD_ChatTop : CMD
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ColosseumTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ColosseumLimit");
 			this.goMultiUpdateBtn.SetActive(false);
@@ -774,13 +777,13 @@ public class CMD_ChatTop : CMD
 	{
 		if (this.isGetBlockList)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_ChatWindow");
+			GUIMain.ShowCommonDialog(null, "CMD_ChatWindow", null);
 		}
 		else
 		{
 			base.StartCoroutine(this.getBlockList(delegate(int i)
 			{
-				GUIMain.ShowCommonDialog(null, "CMD_ChatWindow");
+				GUIMain.ShowCommonDialog(null, "CMD_ChatWindow", null);
 			}));
 		}
 	}
@@ -833,20 +836,20 @@ public class CMD_ChatTop : CMD
 		}
 		else
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_CreateChatGroup");
+			GUIMain.ShowCommonDialog(null, "CMD_CreateChatGroup", null);
 		}
 	}
 
 	public void PushedRequestListBtn()
 	{
 		ClassSingleton<ChatData>.Instance.CurrentChatInfo.openListType = 1;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatReqList");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatReqList", null);
 	}
 
 	public void PushedRequestApplyingListBtn()
 	{
 		ClassSingleton<ChatData>.Instance.CurrentChatInfo.openListType = 2;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatReqList");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatReqList", null);
 	}
 
 	protected override void WindowOpened()
@@ -872,7 +875,7 @@ public class CMD_ChatTop : CMD
 	{
 		if (PlayerPrefs.GetInt("ChatAgreement") <= 0)
 		{
-			CMD_AgreementChat cmd_AgreementChat = GUIMain.ShowCommonDialog(null, "CMD_AgreementChat") as CMD_AgreementChat;
+			CMD_AgreementChat cmd_AgreementChat = GUIMain.ShowCommonDialog(null, "CMD_AgreementChat", null) as CMD_AgreementChat;
 			cmd_AgreementChat.SetActionAgreementPopupClosed(new Action<bool>(this.OnFinishAgreement));
 		}
 		else

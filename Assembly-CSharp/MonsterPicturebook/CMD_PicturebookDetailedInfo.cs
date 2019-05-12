@@ -44,7 +44,7 @@ namespace MonsterPicturebook
 
 		public static void CreateDialog(GameObject parentDialog, PicturebookMonster monster)
 		{
-			CMD_PicturebookDetailedInfo cmd_PicturebookDetailedInfo = CMDWrapper.LoadPrefab<CMD_PicturebookDetailedInfo>("CMD_PictureBookDetail 1");
+			CMD_PicturebookDetailedInfo cmd_PicturebookDetailedInfo = CMDWrapper.LoadPrefab<CMD_PicturebookDetailedInfo>("CMD_PictureBookDetailedInfo");
 			cmd_PicturebookDetailedInfo.parentDialog = parentDialog;
 			cmd_PicturebookDetailedInfo.viewInfo = new PicturebookDetailedInfo(monster);
 			cmd_PicturebookDetailedInfo.Show();

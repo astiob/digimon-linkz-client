@@ -375,10 +375,6 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		global::Debug.Log("Finalizeされました.");
 		Singleton<TCPUtil>.Instance.TCPDisConnect(true);
 		Screen.sleepTimeout = -2;
-		if (base.onServerConnect)
-		{
-			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StartGetHistoryIdList();
-		}
 	}
 
 	protected virtual void ShowDisconnectTCPDialog(Action callback = null)

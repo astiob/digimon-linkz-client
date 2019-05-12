@@ -39,6 +39,8 @@ public class GameWebAPI : WebAPI
 			"000601",
 			"000602",
 			"020010",
+			"020015",
+			"020016",
 			"060001",
 			"060101",
 			"060102",
@@ -50,7 +52,8 @@ public class GameWebAPI : WebAPI
 			"020301",
 			"120110",
 			"120202",
-			"150024"
+			"150024",
+			"120203"
 		};
 		this.disableVC_DynamicList = new List<string>();
 	}
@@ -1393,6 +1396,44 @@ public class GameWebAPI : WebAPI
 		public string birthday;
 	}
 
+	public sealed class Request_GdprInfo : RequestTypeBase<GameWebAPI.SendGdprInfo, GameWebAPI.ResponseGdprInfo>
+	{
+		public Request_GdprInfo()
+		{
+			this.apiId = "020015";
+		}
+	}
+
+	public sealed class SendGdprInfo : WebAPI.SendBaseData
+	{
+		public int functionId = 1;
+	}
+
+	public sealed class ResponseGdprInfo : WebAPI.ResponseData
+	{
+		public GameWebAPI.ResponseGdprInfo.Details[] gdprList;
+
+		public sealed class Details
+		{
+			public int type;
+
+			public string url;
+		}
+	}
+
+	public sealed class Request_GdprConfirmed : RequestTypeBase<GameWebAPI.SendGdprConfirmed, WebAPI.ResponseData>
+	{
+		public Request_GdprConfirmed()
+		{
+			this.apiId = "020016";
+		}
+	}
+
+	public sealed class SendGdprConfirmed : WebAPI.SendBaseData
+	{
+		public int functionId = 2;
+	}
+
 	public sealed class RequestMonsterList : RequestTypeBase<GameWebAPI.ReqDataUS_GetMonsterList, GameWebAPI.RespDataUS_GetMonsterList>
 	{
 		public RequestMonsterList()
@@ -1904,32 +1945,30 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_GetGachaInfo.Result[] result;
 
-		public sealed class Odd
+		public sealed class PriceType
 		{
-			public string growStep;
+			public string category;
 
-			public string percent;
+			public string value;
 		}
 
-		public sealed class AppealType
+		public sealed class Detail
 		{
-			public string monsterGroupId;
+			public string count;
 
-			public string[] status;
-		}
+			public string price;
 
-		public sealed class IsFirstGacha1
-		{
-			public int total;
+			public string priceFirst;
 
-			public int today;
-		}
+			public string dailyResetFirst;
 
-		public sealed class IsFirstGacha10
-		{
-			public int total;
+			public string appealText;
 
-			public int today;
+			public string appealTextDisplayType;
+
+			public int isFirst;
+
+			public int isTodayFirst;
 		}
 
 		public sealed class Result
@@ -1937,8 +1976,6 @@ public class GameWebAPI : WebAPI
 			public string gachaId;
 
 			public string gachaName;
-
-			public string gachaDescription;
 
 			public string mainImagePath;
 
@@ -1948,73 +1985,17 @@ public class GameWebAPI : WebAPI
 
 			public string endTime;
 
-			public string priceType;
+			public string prize;
 
-			public string price;
-
-			public string priceFirst1;
-
-			public string priceFirst10;
-
-			public string priceDiscount10;
-
-			public string dailyresetFirst1;
-
-			public string dailyresetFirst10;
+			public GameWebAPI.RespDataGA_GetGachaInfo.PriceType priceType;
 
 			public string totalPlayLimitCount;
 
 			public string totalPlayCount;
 
-			public string appealText1;
+			public GameWebAPI.RespDataGA_GetGachaInfo.Detail[] details;
 
-			public string appealText10;
-
-			public string appealTextDisplayType1;
-
-			public string appealTextDisplayType10;
-
-			public GameWebAPI.RespDataGA_GetGachaInfo.Odd[] odds;
-
-			public GameWebAPI.RespDataGA_GetGachaInfo.AppealType[] appealType;
-
-			public GameWebAPI.RespDataGA_GetGachaInfo.IsFirstGacha1 isFirstGacha1;
-
-			public GameWebAPI.RespDataGA_GetGachaInfo.IsFirstGacha10 isFirstGacha10;
-
-			public string dispNum = "1";
-
-			public Texture tex;
-
-			public bool IsRare()
-			{
-				return this.priceType == ConstValue.GASHA_PRICE_TYPE_DIGISTONE;
-			}
-
-			public bool IsLink()
-			{
-				return this.priceType == ConstValue.GASHA_PRICE_TYPE_LINKPOINT;
-			}
-
-			public bool IsRareChip()
-			{
-				return this.priceType == ConstValue.GASHA_PRICE_TYPE_DIGISTONE_CHIP;
-			}
-
-			public bool IsLinkChip()
-			{
-				return this.priceType == ConstValue.GASHA_PRICE_TYPE_LINKPOINT_CHIP;
-			}
-
-			public bool IsRareTicket()
-			{
-				return this.priceType == ConstValue.GASHA_PRICE_TYPE_DIGISTONE_TICKET;
-			}
-
-			public bool IsLinkTicket()
-			{
-				return this.priceType == ConstValue.GASHA_PRICE_TYPE_LINKPOINT_TICKET;
-			}
+			public string dispNum;
 		}
 	}
 
@@ -2648,32 +2629,6 @@ public class GameWebAPI : WebAPI
 
 		public string worldDungeonId;
 
-		public string expUpRate;
-
-		public string campaignExpUpRate;
-
-		public string campaignMoneyUpRate;
-
-		public string campaignMaterialDropUpRate;
-
-		public string campaignRareDropUpRate;
-
-		public string campaignFriendshipUpRate;
-
-		public string campaignStaminaOffRate;
-
-		public int enemyExp;
-
-		public int dropExp;
-
-		public int totalExp;
-
-		public int enemyMoney;
-
-		public int dropMoney;
-
-		public int totalMoney;
-
 		public GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop;
 
 		public GameWebAPI.RespDataWD_DungeonStart.Deck deck;
@@ -2698,12 +2653,6 @@ public class GameWebAPI : WebAPI
 
 		public sealed class Drop
 		{
-			public string assetCategoryId;
-
-			public int assetValue;
-
-			public int assetNum;
-
 			public int dropBoxType;
 		}
 
@@ -2730,10 +2679,6 @@ public class GameWebAPI : WebAPI
 			public int invokeMaxRange;
 
 			public string skillId;
-
-			public int minRate;
-
-			public int maxRate;
 		}
 
 		public sealed class Enemy
@@ -2816,7 +2761,13 @@ public class GameWebAPI : WebAPI
 
 		public int clearType;
 
+		public int totalExp;
+
+		public int totalMoney;
+
 		public GameWebAPI.RespDataWD_DungeonResult.DungeonReward[] dungeonReward;
+
+		public GameWebAPI.RespDataWD_DungeonResult.Drop[] dropReward;
 
 		public GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrop;
 
@@ -2835,6 +2786,17 @@ public class GameWebAPI : WebAPI
 			public int everyTimeFlg;
 
 			public string exValue;
+		}
+
+		public class Drop
+		{
+			public string assetCategoryId;
+
+			public int assetValue;
+
+			public int assetNum;
+
+			public int dropBoxType;
 		}
 
 		public class OptionDrop
@@ -3620,6 +3582,13 @@ public class GameWebAPI : WebAPI
 
 			public GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result.Detail[] detail;
 
+			public string jumpGachaId;
+
+			public bool IsAlways()
+			{
+				return this.type == "1";
+			}
+
 			public sealed class Detail
 			{
 				public string eventExchangeDetailId;
@@ -3663,12 +3632,6 @@ public class GameWebAPI : WebAPI
 					public int count;
 				}
 			}
-		}
-
-		public enum EXCHANGE_TYPE
-		{
-			ALWAYS = 1,
-			EVENT
 		}
 	}
 
@@ -4614,6 +4577,8 @@ public class GameWebAPI : WebAPI
 			public string soundEffect;
 
 			public string rank;
+
+			public string useCountValue;
 
 			public static string ActionSkill;
 
@@ -5647,8 +5612,6 @@ public class GameWebAPI : WebAPI
 
 			private int[] _modeChangeCoefficientRare = new int[6];
 
-			private int useNewPvPMatchingType = 1;
-
 			private int[] _chipExtendSlotNeeds = new int[]
 			{
 				1,
@@ -5657,6 +5620,8 @@ public class GameWebAPI : WebAPI
 				8,
 				10
 			};
+
+			private string gdprOptOutSiteUrl = string.Empty;
 
 			public string maxChildMonster
 			{
@@ -6395,14 +6360,6 @@ public class GameWebAPI : WebAPI
 				}
 			}
 
-			public string pvpMatchingType
-			{
-				set
-				{
-					this.PVP_MATCHING_TYPE = int.Parse(value);
-				}
-			}
-
 			public string multiMaxAttackTime
 			{
 				set
@@ -6568,6 +6525,30 @@ public class GameWebAPI : WebAPI
 				set
 				{
 					this.ABILITY_INHERITRATE_ULTIMATE = int.Parse(value);
+				}
+			}
+
+			public string usdigimonAgreeAdress
+			{
+				set
+				{
+					this.EXT_ADR_AGREE = value;
+				}
+			}
+
+			public string usdigimonPrivacyPolicyAdress
+			{
+				set
+				{
+					this.EXT_ADR_PRIVACY_POLICY = value;
+				}
+			}
+
+			public string gdprOptOutSiteURL
+			{
+				set
+				{
+					this.GDPR_OPT_OUT_SITE_URL = value;
 				}
 			}
 
@@ -6753,18 +6734,6 @@ public class GameWebAPI : WebAPI
 
 			public int PVP_PARTY_SELECT_TIME { get; private set; }
 
-			public int PVP_MATCHING_TYPE
-			{
-				get
-				{
-					return this.useNewPvPMatchingType;
-				}
-				private set
-				{
-					this.useNewPvPMatchingType = value;
-				}
-			}
-
 			public int MULTI_MAX_ATTACK_TIME { get; private set; }
 
 			public int MULTI_HURRYUP_ATTACK_TIME { get; private set; }
@@ -6808,6 +6777,22 @@ public class GameWebAPI : WebAPI
 			public int ABILITY_INHERITRATE_PERFECT { get; private set; }
 
 			public int ABILITY_INHERITRATE_ULTIMATE { get; private set; }
+
+			public string EXT_ADR_AGREE { get; private set; }
+
+			public string EXT_ADR_PRIVACY_POLICY { get; private set; }
+
+			public string GDPR_OPT_OUT_SITE_URL
+			{
+				get
+				{
+					return (!string.IsNullOrEmpty(this.gdprOptOutSiteUrl)) ? this.gdprOptOutSiteUrl : "https://optout.channel.or.jp";
+				}
+				private set
+				{
+					this.gdprOptOutSiteUrl = value;
+				}
+			}
 		}
 	}
 
@@ -7812,6 +7797,18 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM[] dungeonTicketM;
 
+		public GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM GetTicketMaster(string ticketId)
+		{
+			for (int i = 0; i < this.dungeonTicketM.Length; i++)
+			{
+				if (ticketId == this.dungeonTicketM[i].dungeonTicketId)
+				{
+					return this.dungeonTicketM[i];
+				}
+			}
+			return null;
+		}
+
 		[Serializable]
 		public class DungeonTicketM
 		{
@@ -8622,29 +8619,7 @@ public class GameWebAPI : WebAPI
 
 		public string worldDungeonId;
 
-		public string expUpRate;
-
-		public string campaignExpUpRate;
-
-		public string campaignMoneyUpRate;
-
-		public string campaignMaterialDropUpRate;
-
-		public string campaignRareDropUpRate;
-
-		public string campaignFriendshipUpRate;
-
-		public string campaignStaminaOffRate;
-
-		public int enemyExp;
-
-		public int dropExp;
-
 		public int totalExp;
-
-		public int enemyMoney;
-
-		public int dropMoney;
 
 		public int totalMoney;
 
@@ -8713,7 +8688,13 @@ public class GameWebAPI : WebAPI
 
 		public int[] onlineGuestIds;
 
+		public int totalExp;
+
+		public int totalMoney;
+
 		public GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward dungeonReward;
+
+		public GameWebAPI.RespDataWD_DungeonResult.Drop[] dropReward;
 
 		public GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrop;
 

@@ -12,8 +12,8 @@ public class CMD_Tips : CMD
 	[SerializeField]
 	private UITexture thumbnail;
 
-	[Header("このダイアログのZ値(dont manage zpos が起っていること)")]
 	[SerializeField]
+	[Header("このダイアログのZ値(dont manage zpos が起っていること)")]
 	private float zPos;
 
 	private static CMD_Tips.DISPLAY_PLACE displayPlace = CMD_Tips.DISPLAY_PLACE.TitleToFarm;

@@ -7,8 +7,8 @@ public class AlwaysPvP : BattleAlways
 	[Header("エモーションを開くボタン")]
 	private UIButton openEmotionButton;
 
-	[SerializeField]
 	[Header("ガードのオブジェクト/未使用")]
+	[SerializeField]
 	public GameObject guardObject;
 
 	[Header("右下のメッセージ")]

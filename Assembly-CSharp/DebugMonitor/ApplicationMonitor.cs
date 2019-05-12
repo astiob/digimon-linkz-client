@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MultiBattle.Tools;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DebugMonitor
@@ -36,6 +39,8 @@ namespace DebugMonitor
 		private int frameCount;
 
 		private float elapsedTime;
+
+		private string log = string.Empty;
 
 		private void Start()
 		{
@@ -139,6 +144,85 @@ namespace DebugMonitor
 			this.titleText = this.monitorModeList[(int)setMode].title;
 			this.displayText = string.Empty;
 			this.counterSuffixText = this.monitorModeList[(int)setMode].suffix;
+		}
+
+		private IEnumerator ExecuteColosseumBattleEndLogic(GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleResult battleResult, Action<bool> callback = null)
+		{
+			GameWebAPI.RespData_ColosseumBattleEndLogic colosseumEnd = null;
+			GameWebAPI.ColosseumBattleEndLogic request = new GameWebAPI.ColosseumBattleEndLogic
+			{
+				SetSendData = delegate(GameWebAPI.ReqData_ColosseumBattleEndLogic param)
+				{
+					param.battleResult = (int)battleResult;
+					param.roundCount = 1;
+					param.isMockBattle = ((!(ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode == "0")) ? 1 : 0);
+					param.skillUseDeckPosition = "0";
+				},
+				OnReceived = delegate(GameWebAPI.RespData_ColosseumBattleEndLogic resData)
+				{
+					colosseumEnd = resData;
+				}
+			};
+			yield return request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+			{
+				RestrictionInput.EndLoad();
+			}, null);
+			MultiBattleData.BattleEndResponseData responseData = new MultiBattleData.BattleEndResponseData();
+			if (colosseumEnd != null)
+			{
+				responseData.resultCode = colosseumEnd.resultCode;
+				List<MultiBattleData.BattleEndResponseData.Reward> rwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+				if (colosseumEnd.reward != null)
+				{
+					for (int i = 0; i < colosseumEnd.reward.Length; i++)
+					{
+						rwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+						{
+							assetCategoryId = colosseumEnd.reward[i].assetCategoryId,
+							assetNum = colosseumEnd.reward[i].assetNum,
+							assetValue = colosseumEnd.reward[i].assetValue
+						});
+					}
+				}
+				List<MultiBattleData.BattleEndResponseData.Reward> firstRankupRwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+				if (colosseumEnd.firstRankUpReward != null)
+				{
+					for (int j = 0; j < colosseumEnd.firstRankUpReward.Length; j++)
+					{
+						firstRankupRwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+						{
+							assetCategoryId = colosseumEnd.firstRankUpReward[j].assetCategoryId,
+							assetNum = colosseumEnd.firstRankUpReward[j].assetNum,
+							assetValue = colosseumEnd.firstRankUpReward[j].assetValue
+						});
+					}
+				}
+				responseData.reward = rwardList.ToArray();
+				responseData.firstRankUpReward = firstRankupRwardList.ToArray();
+				responseData.score = colosseumEnd.score;
+				responseData.colosseumRankId = colosseumEnd.colosseumRankId;
+				responseData.isFirstRankUp = colosseumEnd.isFirstRankUp;
+				if (colosseumEnd.battleRecord != null)
+				{
+					responseData.battleRecord = new MultiBattleData.BattleEndResponseData.ColosseumBattleRecord();
+					responseData.battleRecord.count = colosseumEnd.battleRecord.count;
+					responseData.battleRecord.winPercent = colosseumEnd.battleRecord.winPercent;
+				}
+				if (callback != null)
+				{
+					callback(true);
+				}
+			}
+			else
+			{
+				responseData.reward = new MultiBattleData.BattleEndResponseData.Reward[0];
+				if (callback != null)
+				{
+					callback(false);
+				}
+			}
+			ClassSingleton<MultiBattleData>.Instance.BattleEndResponse = responseData;
+			yield break;
 		}
 	}
 }

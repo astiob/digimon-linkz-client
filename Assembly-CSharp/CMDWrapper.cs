@@ -67,7 +67,7 @@ public abstract class CMDWrapper : CMD
 
 	protected static DialogType LoadPrefab<DialogType>(string fileName) where DialogType : CMDWrapper
 	{
-		return GUIMain.ShowCommonDialog(null, fileName) as DialogType;
+		return GUIMain.ShowCommonDialog(null, fileName, null) as DialogType;
 	}
 
 	public void SetCloseStartAction(Action closeStartAction)

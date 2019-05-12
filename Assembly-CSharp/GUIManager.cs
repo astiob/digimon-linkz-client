@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GUIManager : Singleton<GUIManager>
 {
-	private static Camera gUICamera_;
-
 	public static Dictionary<string, LinkedList<ITouchEvent>> gUIColliders = new Dictionary<string, LinkedList<ITouchEvent>>();
 
 	private static Dictionary<string, GUIBase> guiBases = new Dictionary<string, GUIBase>();
@@ -52,27 +50,11 @@ public class GUIManager : Singleton<GUIManager>
 
 	private static int touchingCount = 0;
 
-	private Action<int> actCallBackDelay;
-
-	private int actCallBackDelayIDX;
-
-	private int actCallBackDelayCT;
-
 	public static List<ITouchEvent> selectButtons;
-
-	public static float zposition = 0f;
 
 	public event Action ActCallBackCloseAllCMD;
 
 	public bool UseOutsideTouchControl { get; set; }
-
-	public static Camera gUICamera
-	{
-		get
-		{
-			return GUIManager.gUICamera_;
-		}
-	}
 
 	public static bool EnableMultiInput
 	{
@@ -100,15 +82,9 @@ public class GUIManager : Singleton<GUIManager>
 		return GUIManager.guiBases.ContainsKey(gui);
 	}
 
-	private void Awake()
+	private void Start()
 	{
-		GUIManager.gUICamera_ = base.GetComponent<Camera>();
 		GUIManager.InitCloseAll();
-	}
-
-	public static bool IsFade()
-	{
-		return false;
 	}
 
 	public static void AddGUIBase(GUIBase guiBase)
@@ -520,13 +496,19 @@ public class GUIManager : Singleton<GUIManager>
 		GUIManager.actCallShowDialog = act;
 	}
 
-	public static CommonDialog ShowCommonDialog(Action<int> action = null, bool blockBg = true, string dialogName = "CommonDialog", string textname = null, string text = null, float showTime = 0.2f, float posX = 0f, float posY = 0f, float sizeX = -1f, float sizeY = -1f)
+	public static CommonDialog ShowCommonDialog(Action<int> action, string dialogName, Action<CommonDialog> actionReady)
 	{
+		bool flag = true;
+		float aT = 0.2f;
+		float x2 = 0f;
+		float y = 0f;
+		float sizeX = -1f;
+		float sizeY = -1f;
 		if (!GUIManager.commonDialogs.ContainsKey(dialogName))
 		{
 			string path = "UIDialogBox/" + dialogName;
 			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(MultiLanguageResources.Load(path, typeof(GameObject)));
-			if (gameObject == null)
+			if (null == gameObject)
 			{
 				return null;
 			}
@@ -553,9 +535,13 @@ public class GUIManager : Singleton<GUIManager>
 		}
 		CommonDialog commonDialog = GUIManager.commonDialogs[dialogName];
 		Vector3 position = commonDialog.gameObject.transform.position;
-		commonDialog.gameObject.transform.localPosition = new Vector3(posX, posY, position.z);
-		commonDialog.Show(action2, sizeX, sizeY, showTime);
-		GUIManager.blockBGCollider = blockBg;
+		commonDialog.gameObject.transform.localPosition = new Vector3(x2, y, position.z);
+		if (actionReady != null)
+		{
+			actionReady(commonDialog);
+		}
+		commonDialog.Show(action2, sizeX, sizeY, aT);
+		GUIManager.blockBGCollider = flag;
 		if (GUIManager.blockBGCollider)
 		{
 			GUIManager.ShowGUI("CommonDialogBarrier");
@@ -580,7 +566,6 @@ public class GUIManager : Singleton<GUIManager>
 			num = localPosition.z;
 		}
 		commonDialog.SetOriginalPos(localPosition);
-		GUIManager.Zposision = num;
 		GUIBase guibase = GUIManager.guiBases["CommonDialogBarrier"];
 		localPosition = guibase.gameObject.transform.localPosition;
 		localPosition.x = (localPosition.y = 0f);
@@ -975,24 +960,8 @@ public class GUIManager : Singleton<GUIManager>
 		return 40000;
 	}
 
-	public void SetDelayCallBack(Action<int> act, int idx, int ct = 1)
-	{
-		this.actCallBackDelay = act;
-		this.actCallBackDelayIDX = idx;
-		this.actCallBackDelayCT = ct;
-	}
-
 	private void Update()
 	{
-		if (this.actCallBackDelay != null)
-		{
-			this.actCallBackDelayCT--;
-			if (this.actCallBackDelayCT <= 0)
-			{
-				this.actCallBackDelay(this.actCallBackDelayIDX);
-				this.actCallBackDelay = null;
-			}
-		}
 		GUIManager.touchEndTrg = false;
 		GUIManager.barrierReqToFade = false;
 		GUIManager.someOneTouch = false;
@@ -1046,12 +1015,12 @@ public class GUIManager : Singleton<GUIManager>
 
 	private void lookAtTouch(Touch touch)
 	{
-		Camera component = Singleton<GUIManager>.Instance.gameObject.GetComponent<Camera>();
+		Camera orthoCamera = GUIMain.GetOrthoCamera();
 		Vector3 position = Singleton<GUIManager>.Instance.gameObject.transform.position;
 		Singleton<GUIManager>.Instance.gameObject.transform.position = Vector3.zero;
 		Vector2 touchPosition = new Vector2(touch.position.x, touch.position.y);
 		Vector3 position2 = new Vector3(touch.position.x, touch.position.y, 0f);
-		Vector3 vector = component.ScreenToWorldPoint(position2);
+		Vector3 vector = orthoCamera.ScreenToWorldPoint(position2);
 		if (GUIMain.USE_NGUI && Singleton<GUIManager>.Instance.transform.parent != null)
 		{
 			float x = Singleton<GUIManager>.Instance.transform.parent.localScale.x;
@@ -1153,9 +1122,9 @@ public class GUIManager : Singleton<GUIManager>
 
 	public static List<ITouchEvent> getButtonForScreenPositions(Vector2 touchPosition)
 	{
-		Camera component = Singleton<GUIManager>.Instance.gameObject.GetComponent<Camera>();
+		Camera orthoCamera = GUIMain.GetOrthoCamera();
 		List<ITouchEvent> list = new List<ITouchEvent>();
-		Ray ray = component.ScreenPointToRay(new Vector3(touchPosition.x, touchPosition.y, 0f));
+		Ray ray = orthoCamera.ScreenPointToRay(new Vector3(touchPosition.x, touchPosition.y, 0f));
 		RaycastHit[] array = Physics.RaycastAll(ray);
 		if (array.Length > 0)
 		{
@@ -1171,75 +1140,6 @@ public class GUIManager : Singleton<GUIManager>
 			list.Sort((ITouchEvent x, ITouchEvent y) => Math.Sign(x.distance - y.distance));
 		}
 		return list;
-	}
-
-	public static List<int> GetWebViewMargin(float fU, float fD, float fL, float fR)
-	{
-		Camera component = Singleton<GUIManager>.Instance.gameObject.GetComponent<Camera>();
-		Vector3 position = new Vector3(0f, 0f, 0f);
-		float num = (float)Screen.width;
-		float num2 = (float)Screen.height;
-		if (GUIMain.USE_NGUI && Singleton<GUIManager>.Instance.transform.parent != null)
-		{
-			float x = Singleton<GUIManager>.Instance.transform.parent.localScale.x;
-			float y = Singleton<GUIManager>.Instance.transform.parent.localScale.y;
-			fL *= x;
-			fD *= y;
-			fR *= x;
-			fU *= y;
-		}
-		Vector3 position2 = Singleton<GUIManager>.Instance.gameObject.transform.position;
-		Singleton<GUIManager>.Instance.gameObject.transform.position = Vector3.zero;
-		position.x = fL;
-		position.y = fD;
-		Vector3 vector = component.WorldToScreenPoint(position);
-		position.x = fR;
-		position.y = fU;
-		Vector3 vector2 = component.WorldToScreenPoint(position);
-		Singleton<GUIManager>.Instance.gameObject.transform.position = position2;
-		int item = (int)vector.x;
-		int item2 = (int)(num - vector2.x);
-		int item3 = (int)(num2 - vector2.y);
-		int item4 = (int)vector.y;
-		return new List<int>
-		{
-			item,
-			item3,
-			item2,
-			item4
-		};
-	}
-
-	public static GameObject SearchGameObject(GameObject go, string name)
-	{
-		GameObject result = null;
-		foreach (object obj in go.transform)
-		{
-			Transform transform = (Transform)obj;
-			if (transform.name == name)
-			{
-				result = transform.gameObject;
-				break;
-			}
-			result = GUIManager.SearchGameObject(transform.gameObject, name);
-		}
-		return result;
-	}
-
-	public static float Zposision
-	{
-		get
-		{
-			if (GUIManager.zposition == 0f)
-			{
-				return GUIManager.DLG_START_Z + GUIManager.DLG_PITCH_Z - 200f;
-			}
-			return GUIManager.zposition - 200f;
-		}
-		set
-		{
-			GUIManager.zposition = value;
-		}
 	}
 
 	public static GameObject GetParentObject(GameObject go)

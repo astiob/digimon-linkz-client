@@ -1,5 +1,4 @@
-﻿using BattleStateMachineInternal;
-using BattleStateMachineInternal.HelpImage;
+﻿using BattleStateMachineInternal.HelpImage;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,14 +27,6 @@ public class BattleHelp : BattleFunctionBase
 		get
 		{
 			return base.stateManager.input;
-		}
-	}
-
-	private BattleStateUIProperty uiProperty
-	{
-		get
-		{
-			return base.stateManager.uiProperty;
 		}
 	}
 

@@ -37,9 +37,9 @@ public class GUIExchangeMenu : MonoBehaviour
 
 	public void Init()
 	{
-		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoLogicData = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData;
-		bool flag = eventExchangeInfoLogicData != null && eventExchangeInfoLogicData.Length > 0 && eventExchangeInfoLogicData[0] != null;
-		this.exchangeResultInfoList = ((!flag) ? null : new List<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>(eventExchangeInfoLogicData));
+		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoList = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoList;
+		bool flag = eventExchangeInfoList != null && eventExchangeInfoList.Length > 0 && eventExchangeInfoList[0] != null;
+		this.exchangeResultInfoList = ((!flag) ? null : new List<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>(eventExchangeInfoList));
 		this.exchangeUpdateDict = new Dictionary<string, bool>();
 		if (flag)
 		{
@@ -105,9 +105,9 @@ public class GUIExchangeMenu : MonoBehaviour
 
 	public void ReloadResultInfo()
 	{
-		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoLogicData = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData;
-		bool flag = eventExchangeInfoLogicData != null && eventExchangeInfoLogicData.Length > 0 && eventExchangeInfoLogicData[0] != null;
-		this.exchangeResultInfoList = ((!flag) ? null : new List<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>(eventExchangeInfoLogicData));
+		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoList = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoList;
+		bool flag = eventExchangeInfoList != null && eventExchangeInfoList.Length > 0 && eventExchangeInfoList[0] != null;
+		this.exchangeResultInfoList = ((!flag) ? null : new List<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>(eventExchangeInfoList));
 		if (this.exchangeResultInfoList == null)
 		{
 			return;

@@ -63,13 +63,13 @@ public class CMD_CacheClear : CMD
 	{
 		if (result)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedSuccessModalMessage), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedSuccessModalMessage), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("CacheClearTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("CacheClearSuccess");
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedFailedModalMessage), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedFailedModalMessage), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage2.Title = StringMaster.GetString("CacheClearTitle");
 			cmd_ModalMessage2.Info = StringMaster.GetString("CacheClearFailed");
 		}

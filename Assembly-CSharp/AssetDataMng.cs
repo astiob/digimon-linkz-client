@@ -192,10 +192,7 @@ public class AssetDataMng : MonoBehaviour
 						@object = AssetBundleMng.Instance().LoadObject(findABInfoResult.abInfoData, findABInfoResult.objName);
 					}
 				}
-				if (@object == null)
-				{
-					global::Debug.LogError("====================================== AssetDataMng:LoadObject = " + path + "がない！");
-				}
+				global::Debug.Assert(null != @object, "AssetDataMng:LoadObject = " + path + "がない");
 			}
 		}
 		if (@object == null && showAlert)
@@ -367,7 +364,7 @@ public class AssetDataMng : MonoBehaviour
 
 	private IEnumerator LoadABData_FromWWW()
 	{
-		string strROOT = AssetBundleMng.Instance().GetAB_ROOT_PATH();
+		string strROOT = AssetBundleMng.Instance().GetAssetBundleRootPath();
 		string fullpath = string.Empty;
 		for (int i = 0; i < this.abFolderList.Count; i++)
 		{

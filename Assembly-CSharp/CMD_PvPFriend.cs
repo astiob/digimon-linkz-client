@@ -17,8 +17,8 @@ public class CMD_PvPFriend : CMD
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[SerializeField]
 	[Header("デフォルトメッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]

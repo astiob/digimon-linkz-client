@@ -101,7 +101,7 @@ public class TakeoverMenu : MonoBehaviour
 			{
 				cloudBackup.SaveBackupData();
 			}
-		}, "CMD_BackupModal") as CMD_BackupModal;
+		}, "CMD_BackupModal", null) as CMD_BackupModal;
 		cmd_BackupModal.ChangeButtonToBackupFromTwo();
 		if (this.currentMode == TakeoverMenu.MODE.Input)
 		{
@@ -135,7 +135,7 @@ public class TakeoverMenu : MonoBehaviour
 			{
 				callback();
 			}
-		}, "CMD_ModalMessageBtn2") as CMD_ModalMessageBtn2;
+		}, "CMD_ModalMessageBtn2", null) as CMD_ModalMessageBtn2;
 		cmd_ModalMessageBtn.SetTitle(StringMaster.GetString(title));
 		cmd_ModalMessageBtn.SetExp(StringMaster.GetString(text));
 		cmd_ModalMessageBtn.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
@@ -413,7 +413,7 @@ public class TakeoverMenu : MonoBehaviour
 				{
 					GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 				}
-			}, "CMD_FacebookConfirm") as CMD_FacebookConfirm;
+			}, "CMD_FacebookConfirm", null) as CMD_FacebookConfirm;
 			cmd_FacebookConfirm.SetUserData(this.userSocialStatus);
 		}, null, null), false);
 	}
@@ -466,7 +466,7 @@ public class TakeoverMenu : MonoBehaviour
 				{
 					GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 				}
-			}, "CMD_FacebookConfirm2") as CMD_ModalMessageBtn2;
+			}, "CMD_FacebookConfirm2", null) as CMD_ModalMessageBtn2;
 		}
 	}
 
@@ -503,7 +503,7 @@ public class TakeoverMenu : MonoBehaviour
 		if (this.facebookUserId != null)
 		{
 			bool flag = true;
-			if (this.userStatusCheck != null && !this.userStatusCheck.Authenticated())
+			if (this.userStatusCheck == null || (this.userStatusCheck != null && !this.userStatusCheck.Authenticated()))
 			{
 				flag = false;
 			}

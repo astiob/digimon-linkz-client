@@ -2,40 +2,22 @@
 using System;
 using UnityEngine;
 
-public class CMD_PlayHistory : CMD
+public sealed class CMD_PlayHistory : CMD
 {
 	[SerializeField]
-	private UILabel questLabel;
-
-	[SerializeField]
 	private UILabel questNumLabel;
-
-	[SerializeField]
-	private UILabel meatLabel;
 
 	[SerializeField]
 	private UILabel meatNumLabel;
 
 	[SerializeField]
-	private UILabel fusionLabel;
-
-	[SerializeField]
 	private UILabel fusionNumLabel;
-
-	[SerializeField]
-	private UILabel evolutionLabel;
 
 	[SerializeField]
 	private UILabel evolutionNumLabel;
 
 	[SerializeField]
-	private UILabel InheritanceLabel;
-
-	[SerializeField]
 	private UILabel InheritanceNumLabel;
-
-	[SerializeField]
-	private UILabel researchLabel;
 
 	[SerializeField]
 	private UILabel researchNumLabel;
@@ -47,62 +29,32 @@ public class CMD_PlayHistory : CMD
 	private GameObject colosseumNoneDataObj;
 
 	[SerializeField]
-	private UILabel competitionLabel;
-
-	[SerializeField]
 	private UILabel competitionNumLabel;
-
-	[SerializeField]
-	private UILabel outComeLabel;
 
 	[SerializeField]
 	private UILabel outComeNumLabel;
 
 	[SerializeField]
-	private UILabel winRateLabel;
-
-	[SerializeField]
 	private UILabel winRate;
-
-	[SerializeField]
-	private UILabel pictorialBookLabel;
 
 	[SerializeField]
 	private UILabel pictorialBookNumLabel;
 
 	[SerializeField]
-	private UILabel continueLoginCountLabel;
-
-	[SerializeField]
 	private UILabel continueLoginCount;
-
-	[SerializeField]
-	private UILabel totalLoginLabel;
 
 	[SerializeField]
 	private UILabel totalLoginNumLabel;
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		this.Initialize();
-		base.Show(f, sizeX, sizeY, aT);
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 	}
 
 	private void Initialize()
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("PlayHistoryTitle"));
-		this.questLabel.text = StringMaster.GetString("PlayHistory-01");
-		this.meatLabel.text = StringMaster.GetString("PlayHistory-02");
-		this.fusionLabel.text = StringMaster.GetString("PlayHistory-03");
-		this.evolutionLabel.text = StringMaster.GetString("PlayHistory-04");
-		this.InheritanceLabel.text = StringMaster.GetString("PlayHistory-05");
-		this.researchLabel.text = StringMaster.GetString("PlayHistory-06");
-		this.competitionLabel.text = StringMaster.GetString("PlayHistory-07");
-		this.outComeLabel.text = StringMaster.GetString("PlayHistory-08");
-		this.winRateLabel.text = StringMaster.GetString("PlayHistory-09");
-		this.pictorialBookLabel.text = StringMaster.GetString("MyProfile-03");
-		this.continueLoginCountLabel.text = StringMaster.GetString("PlayHistory-10");
-		this.totalLoginLabel.text = StringMaster.GetString("PlayHistory-11");
 		this.questNumLabel.text = DataMng.Instance().RespDataPRF_Profile.playHistory.dungeonClearCount;
 		this.meatNumLabel.text = DataMng.Instance().RespDataPRF_Profile.playHistory.useMeatNum;
 		this.fusionNumLabel.text = DataMng.Instance().RespDataPRF_Profile.playHistory.fusionCount;

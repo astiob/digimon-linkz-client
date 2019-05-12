@@ -10,24 +10,24 @@ public sealed class ChipBaseSelect : MonoBehaviour
 
 	private const string ChipOff = "Chip_Slot_OFF";
 
-	[SerializeField]
 	[Header("消すべきオブジェクト")]
+	[SerializeField]
 	private GameObject[] mustHideObjects;
 
-	[Header("PartsStatusChipのオブジェクト")]
 	[SerializeField]
+	[Header("PartsStatusChipのオブジェクト")]
 	private GameObject partsStatusChipGO;
 
-	[SerializeField]
 	[Header("チップの□スロット")]
+	[SerializeField]
 	private UISprite[] chipSlots;
 
 	[SerializeField]
 	[Header("チップのセル")]
 	private BaseSelectChipCell[] chipCells;
 
-	[Header("チップのラベル")]
 	[SerializeField]
+	[Header("チップのラベル")]
 	private UILabel chipLabel;
 
 	[Header("チップがないメッセージ")]
@@ -66,7 +66,7 @@ public sealed class ChipBaseSelect : MonoBehaviour
 		{
 			this.SetSelectedCharChg(CMD_BaseSelect.DataChg);
 			callback();
-		}, "CMD_ChipSphere");
+		}, "CMD_ChipSphere", null);
 	}
 
 	private void HideObjecs()

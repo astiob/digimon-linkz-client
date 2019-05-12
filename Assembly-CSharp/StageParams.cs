@@ -33,8 +33,8 @@ public class StageParams : MonoBehaviour
 	[SerializeField]
 	private Color ambientGroundColor = Color.black;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float ambientIntensity = 1f;
 
 	[SerializeField]

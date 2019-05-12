@@ -55,7 +55,7 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		{
 			bool hasGoldOver = false;
 			MonsterAbilityStatusInfo monsterAbilityStatusInfo = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(this.baseDigimon, this.partnerDigimon, ref hasGoldOver);
-			CMD_AbilityModal cmd_AbilityModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_AbilityModal") as CMD_AbilityModal;
+			CMD_AbilityModal cmd_AbilityModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_AbilityModal", null) as CMD_AbilityModal;
 			cmd_AbilityModal.SetChipParams(this.partnerDigimon);
 			cmd_AbilityModal.SetAnyNotUpdate(monsterAbilityStatusInfo);
 			cmd_AbilityModal.SetHasGoldOver(hasGoldOver);
@@ -272,7 +272,7 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 
 	protected override void OpenCanNotSelectMonsterPop()
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("MedalInheritAlertTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("MedalInheritEnterAlertInfo");
 	}
@@ -299,7 +299,7 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 
 	protected override void OpenBaseDigimonNonePop()
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("LaboratoryNotSelectedTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("LaboratoryNotSelectedInfo");
 	}

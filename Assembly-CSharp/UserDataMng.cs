@@ -185,7 +185,7 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 	public bool IsOverUnitLimit(int count)
 	{
 		int num = 0;
-		if (DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
+		if (DataMng.Instance().RespDataUS_PlayerInfo != null && DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
 		{
 			num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.unitLimitMax);
 		}
@@ -194,11 +194,10 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 
 	public bool IsOverChipLimit(int addCount = 0)
 	{
-		int chipLimitMax = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax;
 		if (ChipDataMng.userChipData != null && ChipDataMng.userChipData.userChipList != null)
 		{
-			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] userChipList = ChipDataMng.userChipData.userChipList;
-			return chipLimitMax < userChipList.Length + addCount;
+			int chipLimitMax = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax;
+			return chipLimitMax < ChipDataMng.userChipData.userChipList.Length + addCount;
 		}
 		return false;
 	}
@@ -292,7 +291,7 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		DateTime now = ServerDateTime.Now;
 		TimeSpan timeSpan = now - this.playerStaminaBaseTime;
 		int num = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery - (int)timeSpan.TotalSeconds;
-		if (num <= 0)
+		if (0 >= num)
 		{
 			this.playerStaminaBaseTime = now;
 			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery = 0;
@@ -326,6 +325,7 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 
 	public int GetFavoriteDeckNum()
 	{
+		global::Debug.Assert(null != DataMng.Instance().RespDataMN_DeckList, "GetFavoriteDeckNum : DataMng.Instance().RespDataMN_DeckList is NULL");
 		int num = 0;
 		if (int.TryParse(DataMng.Instance().RespDataMN_DeckList.favoriteDeckNum, out num))
 		{
@@ -336,8 +336,11 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 
 	public GameWebAPI.RespDataMN_GetDeckList.DeckList GetFavoriteDeckNumDeck()
 	{
+		global::Debug.Assert(null != DataMng.Instance().RespDataMN_DeckList, "GetFavoriteDeckNumDeck : DataMng.Instance().RespDataMN_DeckList is NULL");
 		int favoriteDeckNum = this.GetFavoriteDeckNum();
-		return DataMng.Instance().RespDataMN_DeckList.deckList[favoriteDeckNum];
+		GameWebAPI.RespDataMN_GetDeckList.DeckList deckList = DataMng.Instance().RespDataMN_DeckList.deckList[favoriteDeckNum];
+		global::Debug.Assert(deckList != null && null != deckList.monsterList, "GetFavoriteDeckNumDeck : favoriteDeck is NULL, favoriteDeck.monsterList is NULL");
+		return deckList;
 	}
 
 	public APIRequestTask RequestRecoverStamina(bool requestRetry = true)
@@ -426,6 +429,23 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		return new APIRequestTask(request, requestRetry);
 	}
 
+	public bool ExistInBuildFacility(int facilityId)
+	{
+		bool result = false;
+		if (this.userFacilityList != null)
+		{
+			for (int i = 0; i < this.userFacilityList.Count; i++)
+			{
+				if (facilityId == this.userFacilityList[i].facilityId)
+				{
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
 	public void AddUserStockFacility(UserFacility facility)
 	{
 		this.userStockFacilityList.Add(facility);
@@ -460,7 +480,7 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		return null;
 	}
 
-	public bool IsFacilityExistInUserStockFacility(int facilityId)
+	public bool ExistInUserStockFacility(int facilityId)
 	{
 		for (int i = 0; i < this.userStockFacilityList.Count; i++)
 		{
@@ -484,12 +504,12 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		return null;
 	}
 
-	public List<UserFacility> GetStockFacilityListByfacilityIdAndLevel(int facilityId, int level = -1)
+	public List<UserFacility> GetStockFacilityListByfacilityIdAndLevel(int facilityId)
 	{
 		List<UserFacility> list = new List<UserFacility>();
 		for (int i = 0; i < this.userStockFacilityList.Count; i++)
 		{
-			if (facilityId == this.userStockFacilityList[i].facilityId && (level == this.userStockFacilityList[i].level || level == -1))
+			if (facilityId == this.userStockFacilityList[i].facilityId)
 			{
 				list.Add(this.userStockFacilityList[i]);
 			}
@@ -525,11 +545,6 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		}, null));
 	}
 
-	private GameWebAPI.UserSoulData GetUserSoulDataBySID(string soulId)
-	{
-		return EvolutionMaterialData.GetUserEvolutionMaterial(soulId);
-	}
-
 	public bool CheckMaterialCount(GameWebAPI.MonsterEvolutionMaterialMaster.Material materialMaster)
 	{
 		bool result = true;
@@ -537,10 +552,10 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		{
 			string assetValue = materialMaster.GetAssetValue(i);
 			int num = int.Parse(materialMaster.GetAssetNum(i));
-			GameWebAPI.UserSoulData userSoulDataBySID = this.GetUserSoulDataBySID(assetValue);
-			if (userSoulDataBySID != null)
+			GameWebAPI.UserSoulData userEvolutionMaterial = EvolutionMaterialData.GetUserEvolutionMaterial(assetValue);
+			if (userEvolutionMaterial != null)
 			{
-				int num2 = int.Parse(userSoulDataBySID.num);
+				int num2 = int.Parse(userEvolutionMaterial.num);
 				if (num > num2)
 				{
 					result = false;

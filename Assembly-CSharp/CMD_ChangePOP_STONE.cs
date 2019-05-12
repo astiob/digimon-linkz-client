@@ -1,8 +1,9 @@
 ﻿using Master;
 using System;
+using UI.Common;
 using UnityEngine;
 
-public class CMD_ChangePOP_STONE : CMD
+public sealed class CMD_ChangePOP_STONE : CMD, IPayConfirmNotice
 {
 	[SerializeField]
 	private UILabel titleLabel;
@@ -11,19 +12,10 @@ public class CMD_ChangePOP_STONE : CMD
 	private UILabel infoLabel;
 
 	[SerializeField]
-	private UILabel possessionTitle;
-
-	[SerializeField]
 	private UILabel possessionNum;
 
 	[SerializeField]
-	private UILabel costTitle;
-
-	[SerializeField]
 	private UILabel costNum;
-
-	[SerializeField]
-	private UILabel ruleButtonLabel;
 
 	[SerializeField]
 	private UILabel yesButtonLabel;
@@ -37,6 +29,8 @@ public class CMD_ChangePOP_STONE : CMD
 	public Action OnPushedYesAction;
 
 	public Action OnPushedNoAction;
+
+	private object useDetail;
 
 	public string Title
 	{
@@ -88,9 +82,6 @@ public class CMD_ChangePOP_STONE : CMD
 
 	private void Start()
 	{
-		this.possessionTitle.text = StringMaster.GetString("SystemPossession");
-		this.costTitle.text = StringMaster.GetString("SystemCost");
-		this.ruleButtonLabel.text = StringMaster.GetString("ShopRule-02");
 		if (this.ruleButtonObject != null)
 		{
 			this.ruleButtonObject.SetActive(false);
@@ -127,8 +118,18 @@ public class CMD_ChangePOP_STONE : CMD
 
 	private void OnClickedLegalSpecificButton()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("ShopRule-02");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_TRADE;
+	}
+
+	public void SetUseDetail(object detail)
+	{
+		this.useDetail = detail;
+	}
+
+	public object GetUseDetail()
+	{
+		return this.useDetail;
 	}
 }

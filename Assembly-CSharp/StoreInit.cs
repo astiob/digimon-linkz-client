@@ -97,7 +97,7 @@ public class StoreInit : MonoBehaviour
 
 	private TaskBase GetProductsID(Action<string[]> onCompleted)
 	{
-		if (this.init_status != StoreInit.STATUS.DONE_INIT)
+		if (this.init_status == StoreInit.STATUS.DONE_NOTHING)
 		{
 			return new NormalTask();
 		}
@@ -189,10 +189,15 @@ public class StoreInit : MonoBehaviour
 			{
 				GUIMain.BarrierON(null);
 			}
+			this.getProductsSucceed = false;
 		}
-		else if (stateChange)
+		else
 		{
-			this.init_status = StoreInit.STATUS.DONE_REQUEST_PRODUCT;
+			if (stateChange)
+			{
+				this.init_status = StoreInit.STATUS.DONE_REQUEST_PRODUCT;
+			}
+			this.getProductsSucceed = true;
 		}
 		yield break;
 	}
@@ -270,7 +275,7 @@ public class StoreInit : MonoBehaviour
 		return productsID2.Run(null, null, null);
 	}
 
-	public bool GetProductsSucceed()
+	public bool IsSuccessReceiveProducts()
 	{
 		return this.getProductsSucceed;
 	}
@@ -288,15 +293,14 @@ public class StoreInit : MonoBehaviour
 			{
 				return StoreInit.Instance().GetProducts(productsID, false);
 			}
+			this.getProductsSucceed = false;
 			return null;
 		}));
-		return productsID2.Run(delegate
-		{
-			this.getProductsSucceed = true;
-		}, delegate(Exception nop)
+		Action<Exception> onFailed = delegate(Exception nop)
 		{
 			this.getProductsSucceed = false;
-		}, null);
+		};
+		return productsID2.Run(null, onFailed, null);
 	}
 
 	public enum STATUS

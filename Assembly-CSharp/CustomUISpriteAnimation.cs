@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(UISprite))]
 [ExecuteInEditMode]
+[RequireComponent(typeof(UISprite))]
 public class CustomUISpriteAnimation : MonoBehaviour
 {
 	[HideInInspector]
 	[SerializeField]
 	protected float mFPS = 30f;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected string mPrefix = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mLoop = true;
 
 	[SerializeField]

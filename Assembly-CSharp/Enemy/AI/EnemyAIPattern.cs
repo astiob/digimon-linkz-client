@@ -23,12 +23,6 @@ namespace Enemy.AI
 		{
 			this._aiCycle = aiCycle;
 			this._aiActionPattern = new List<AIActionPattern>(aiActionPattern);
-			float minRange = 0f;
-			for (int i = 0; i < this._aiActionPattern.Count; i++)
-			{
-				this._aiActionPattern[i] = new AIActionPattern(minRange, this._aiActionPattern[i].maxRange, this._aiActionPattern[i].aiActionClip.ToArray());
-				minRange = this._aiActionPattern[i].maxRange;
-			}
 		}
 
 		public AICycle aiCycle
@@ -78,15 +72,15 @@ namespace Enemy.AI
 			{
 				return this.aiActionPattern[currentRound % this.aiActionPattern.Count];
 			}
-			float num = (float)(characterState.hp / characterState.extraMaxHp);
+			float num = (float)characterState.hp / (float)characterState.extraMaxHp;
 			for (int i = 0; i < this.aiActionPattern.Count; i++)
 			{
-				if (num >= this.aiActionPattern[i].minRange && num < this.aiActionPattern[i].maxRange)
+				if (num > this.aiActionPattern[i].minRange && num <= this.aiActionPattern[i].maxRange)
 				{
 					return this.aiActionPattern[i];
 				}
 			}
-			return this.aiActionPattern[this.aiActionPattern.Count - 1];
+			return this.aiActionPattern[0];
 		}
 
 		public override string ToString()

@@ -3,12 +3,13 @@ using Monster;
 using Quest;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[SerializeField]
 	[Header("チップの処理")]
+	[SerializeField]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
@@ -94,8 +95,8 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject goL_CLIP;
 
-	[Header("右クリップのOBJ")]
 	[SerializeField]
+	[Header("右クリップのOBJ")]
 	private GameObject goR_CLIP;
 
 	[SerializeField]
@@ -163,17 +164,31 @@ public class PartsPartyMonsInfo : GUICollider
 		}
 		global::Debug.Log("================================================== TAP MONS = " + base.gameObject.name);
 		CMD_DeckList.SelectMonsterData = this.Data;
-		CMD_DeckList cmd_DeckList = GUIMain.ShowCommonDialog(delegate(int i)
+		CMD_DeckList dl = GUIMain.ShowCommonDialog(delegate(int i)
 		{
 			if (this.guiListPartsPartyEdit != null)
 			{
 				this.guiListPartsPartyEdit.OnChanged();
 			}
-		}, "CMD_DeckList") as CMD_DeckList;
-		cmd_DeckList.PPMI_Instance = this;
-		cmd_DeckList.SetSortieLimit(this.guiListPartsPartyEdit.partyEdit.GetWorldSortieLimit());
+		}, "CMD_DeckList", null) as CMD_DeckList;
+		dl.PPMI_Instance = this;
+		CMD_BattleNextChoice battleNextChoice = UnityEngine.Object.FindObjectOfType<CMD_BattleNextChoice>();
+		if (battleNextChoice != null)
+		{
+			dl.PartsTitle.SetCloseAct(delegate(int i)
+			{
+				battleNextChoice.ClosePanel(false);
+				CMD_PartyEdit.instance.ClosePanel(false);
+				dl.SetCloseAction(delegate(int x)
+				{
+					CMD_BattleNextChoice.GoToFarm();
+				});
+				dl.ClosePanel(true);
+			});
+		}
+		dl.SetSortieLimit(this.guiListPartsPartyEdit.partyEdit.GetWorldSortieLimit());
 		GUIListPartsPartyEdit guilistPartsPartyEdit = this.guiListPartsPartyEdit;
-		cmd_DeckList.ppmiList = guilistPartsPartyEdit.ppmiList;
+		dl.ppmiList = guilistPartsPartyEdit.ppmiList;
 		this.HideStatusPanel();
 	}
 
@@ -557,7 +572,7 @@ public class PartsPartyMonsInfo : GUICollider
 			}
 			for (int num3 = 0; num3 < list.Count; num3++)
 			{
-				bool flag3 = ExtraEffectUtil.CheckExtraParams(list[num3].targetSubType, list[num3].targetValue, list[num3].effectValue, this.Data);
+				bool flag3 = ExtraEffectUtil.CheckExtraParams(this.Data, list[num3]);
 				if (flag3)
 				{
 					this.bonusListText.Add(list[num3].detail);
@@ -565,7 +580,7 @@ public class PartsPartyMonsInfo : GUICollider
 			}
 			for (int num4 = 0; num4 < extraEffectDataList.Count; num4++)
 			{
-				bool flag4 = ExtraEffectUtil.CheckExtraParams(extraEffectDataList[num4].targetSubType, extraEffectDataList[num4].targetValue, extraEffectDataList[num4].effectValue, this.Data);
+				bool flag4 = ExtraEffectUtil.CheckExtraStageParams(this.Data, extraEffectDataList[num4]);
 				if (flag4)
 				{
 					this.bonusListText.Add(extraEffectDataList[num4].detail);
@@ -615,7 +630,7 @@ public class PartsPartyMonsInfo : GUICollider
 
 	public void SpEffectButton()
 	{
-		this.spBonusPop = (GUIMain.ShowCommonDialog(null, "CMD_SPBonusList") as CMD_SPBonusList);
+		this.spBonusPop = (GUIMain.ShowCommonDialog(null, "CMD_SPBonusList", null) as CMD_SPBonusList);
 		if (this.spBonusPop != null)
 		{
 			this.spBonusPop.SetViewData(this.bonusListText);
@@ -721,9 +736,10 @@ public class PartsPartyMonsInfo : GUICollider
 	private GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] SetStageGimmick(string StageID, string DungeonID)
 	{
 		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] array = DataMng.Instance().StageGimmick.GetExtraEffectDataList(StageID, DungeonID).ToArray();
+		array = array.Where((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM item) => ExtraEffectUtil.CheckExtraStageParams(this.Data, item)).ToArray<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM>();
 		int num = 0;
 		int num2 = 0;
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 1);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 1, true);
 		if (num2 == 1)
 		{
 			this.gimmickSkillActionUp.SetActive(true);
@@ -732,7 +748,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.gimmickSkillActionDown.SetActive(true);
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillHit, 1);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillHit, 1, true);
 		if (num2 == 1)
 		{
 			this.gimmickSkillActionUp.SetActive(true);
@@ -741,7 +757,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.gimmickSkillActionDown.SetActive(true);
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 2);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 2, true);
 		if (num2 == 1)
 		{
 			this.gimmickSkillSucceedUp.SetActive(true);
@@ -750,7 +766,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.gimmickSkillSucceedDown.SetActive(true);
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillHit, 2);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillHit, 2, true);
 		if (num2 == 1)
 		{
 			this.gimmickSkillSucceedUp.SetActive(true);
@@ -763,7 +779,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			return array;
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 3);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 3, true);
 		if (num2 == 1)
 		{
 			this.gimmickSkillSucceedUp2.SetActive(true);
@@ -772,7 +788,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.gimmickSkillSucceedDown2.SetActive(true);
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillHit, 3);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillHit, 3, true);
 		if (num2 == 1)
 		{
 			this.gimmickSkillSucceedUp2.SetActive(true);

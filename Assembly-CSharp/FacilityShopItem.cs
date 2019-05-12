@@ -144,7 +144,7 @@ public class FacilityShopItem : GUIListPartBS
 			{
 				this.conditionLine.SetActive(false);
 			}
-			if (facilityConditionMaster.Length > 0 && facilityConditionMaster[0].conditionType == 5.ToString())
+			if (0 < facilityConditionMaster.Length && facilityConditionMaster[0].conditionType == 5.ToString())
 			{
 				this.ChangeEventItemMode();
 			}
@@ -185,7 +185,7 @@ public class FacilityShopItem : GUIListPartBS
 			{
 				this.SetButtonLimit();
 			}
-			if (facilityConditionMaster.Length > 0 && facilityConditionMaster[0].conditionType == 5.ToString())
+			if (0 < facilityConditionMaster.Length && facilityConditionMaster[0].conditionType == 5.ToString())
 			{
 				this.BuildEventItemMode();
 			}
@@ -229,7 +229,7 @@ public class FacilityShopItem : GUIListPartBS
 			return -1;
 		}
 		int facilityCount = instance.Scenery.GetFacilityCount(this.facilityID);
-		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(this.facilityID, -1);
+		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(this.facilityID);
 		int count = stockFacilityListByfacilityIdAndLevel.Count;
 		return facilityCount + count;
 	}
@@ -266,13 +266,13 @@ public class FacilityShopItem : GUIListPartBS
 			FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(this.facilityID);
 			if (int.Parse(facilityMaster.maxNum) <= nowCount)
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("FacilityShopBuildMaxTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("FacilityShopMuxNumInfo");
 			}
 			else if (2 <= FarmUtility.GetBuildFacilityCount())
 			{
-				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage2.Title = StringMaster.GetString("FacilityShopBuildMaxNumTitle");
 				cmd_ModalMessage2.Info = StringMaster.GetString("FacilityShopBuildMaxNumInfo");
 			}
@@ -285,7 +285,7 @@ public class FacilityShopItem : GUIListPartBS
 
 	private void OnInfoButton()
 	{
-		CMD_FacilityInfoNoneEffect cmd_FacilityInfoNoneEffect = GUIMain.ShowCommonDialog(null, "CMD_FacilityInfo_only") as CMD_FacilityInfoNoneEffect;
+		CMD_FacilityInfoNoneEffect cmd_FacilityInfoNoneEffect = GUIMain.ShowCommonDialog(null, "CMD_FacilityInfo_only", null) as CMD_FacilityInfoNoneEffect;
 		cmd_FacilityInfoNoneEffect.SetFacilityInfo(this.facilityID);
 	}
 }
