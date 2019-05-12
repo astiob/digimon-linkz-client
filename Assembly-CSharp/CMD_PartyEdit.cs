@@ -4,6 +4,7 @@ using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_PartyEdit : CMD
@@ -39,9 +40,16 @@ public sealed class CMD_PartyEdit : CMD
 
 	public static string replayMultiStageId = string.Empty;
 
-	public static string replayMultiAreaId = string.Empty;
-
 	public static string replayMultiDungeonId = string.Empty;
+
+	private string worldAreaId;
+
+	private string worldStageId;
+
+	private string worldDungeonId;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public static CMD_PartyEdit.MODE_TYPE ModeType { get; set; }
 
@@ -49,33 +57,40 @@ public sealed class CMD_PartyEdit : CMD
 	{
 		base.Awake();
 		CMD_PartyEdit.instance = this;
-		switch (CMD_PartyEdit.ModeType)
+		CMD_PartyEdit.MODE_TYPE modeType = CMD_PartyEdit.ModeType;
+		if (modeType != CMD_PartyEdit.MODE_TYPE.EDIT)
 		{
-		case CMD_PartyEdit.MODE_TYPE.EDIT:
+			if (modeType != CMD_PartyEdit.MODE_TYPE.SELECT)
+			{
+				if (modeType == CMD_PartyEdit.MODE_TYPE.MULTI)
+				{
+					this.partyEditAction = new PartyEditActionMulti();
+				}
+			}
+			else
+			{
+				this.partyEditAction = new PartyEditActionBattle();
+			}
+		}
+		else
+		{
 			this.partyEditAction = new PartyEditAction();
 			ClassSingleton<PartyBossIconsAccessor>.Instance.StageEnemies = null;
 			ClassSingleton<QuestData>.Instance.SelectDungeon = null;
-			break;
-		case CMD_PartyEdit.MODE_TYPE.SELECT:
-			this.partyEditAction = new PartyEditActionBattle();
-			break;
-		case CMD_PartyEdit.MODE_TYPE.MULTI:
-			this.partyEditAction = new PartyEditActionMulti();
-			break;
 		}
 		this.partyEditAction.SetUiRoot(this);
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
-		GUICollider.DisableAllCollider("CMD_PartyEdit");
+		GUICollider.DisableAllCollider("CMD_PartyEdit_Collider");
 		Vector3 localPosition = base.gameObject.transform.localPosition;
 		localPosition.x = 10000f;
 		base.gameObject.transform.localPosition = localPosition;
-		base.StartCoroutine(this.ShowAll(f, sizeX, sizeY, aT));
+		base.StartCoroutine(this.ShowAll(closeEvent, sizeX, sizeY, showAnimationTime));
 	}
 
-	private IEnumerator ShowAll(Action<int> f, float sizeX, float sizeY, float aT)
+	private IEnumerator ShowAll(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		this.battleInfo.SetView(CMD_PartyEdit.ModeType);
 		while (!AssetDataCacheMng.Instance().IsCacheAllReadyType(AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY))
@@ -86,19 +101,29 @@ public sealed class CMD_PartyEdit : CMD
 		base.SetTutorialAnyTime("anytime_second_tutorial_partyedit");
 		this.battleInfo.SetBossMonsterIcon(ClassSingleton<QuestData>.Instance.GetBossMonsterList(ClassSingleton<PartyBossIconsAccessor>.Instance.StageEnemies));
 		this.battleInfo.SetSortieLimit();
-		this.partyMember.SetView(this);
+		QuestBonusPack questBonus = new QuestBonusPack();
+		questBonus.CreateQuestBonus(this.worldAreaId, this.worldStageId, this.worldDungeonId);
+		QuestBonusTargetCheck bonusChecker = new QuestBonusTargetCheck();
+		this.partyMember.SetView(this, questBonus, bonusChecker);
 		this.partyInfo.SetView(CMD_PartyEdit.ModeType);
 		this.partyMember.SetChangeMonsterEvent(new Action(this.UpdateSelectDeckData));
 		this.RefreshPartyNumText();
 		Vector3 v3 = base.gameObject.transform.localPosition;
 		v3.x = 0f;
 		base.gameObject.transform.localPosition = v3;
-		base.Show(f, sizeX, sizeY, aT);
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 		if (Loading.IsShow())
 		{
 			RestrictionInput.EndLoad();
 		}
 		yield break;
+	}
+
+	public void SetQuestId(string areaId, string stageId, string dungeonId)
+	{
+		this.worldAreaId = areaId;
+		this.worldStageId = stageId;
+		this.worldDungeonId = dungeonId;
 	}
 
 	protected override void Update()
@@ -123,19 +148,25 @@ public sealed class CMD_PartyEdit : CMD
 			if (tutorialObserver != null)
 			{
 				GUIMain.BarrierON(null);
-				tutorialObserver.StartSecondTutorial("second_tutorial_partyedit", new Action(GUIMain.BarrierOFF), delegate
+				TutorialObserver tutorialObserver2 = tutorialObserver;
+				string tutorialName = "second_tutorial_partyedit";
+				if (CMD_PartyEdit.<>f__mg$cache0 == null)
 				{
-					GUICollider.EnableAllCollider("CMD_PartyEdit");
+					CMD_PartyEdit.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+				}
+				tutorialObserver2.StartSecondTutorial(tutorialName, CMD_PartyEdit.<>f__mg$cache0, delegate
+				{
+					GUICollider.EnableAllCollider("CMD_PartyEdit_Collider");
 				});
 			}
 			else
 			{
-				GUICollider.EnableAllCollider("CMD_PartyEdit");
+				GUICollider.EnableAllCollider("CMD_PartyEdit_Collider");
 			}
 		}
 		else
 		{
-			GUICollider.EnableAllCollider("CMD_PartyEdit");
+			GUICollider.EnableAllCollider("CMD_PartyEdit_Collider");
 		}
 	}
 

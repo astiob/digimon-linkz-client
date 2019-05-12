@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Facebook.Unity.Canvas
 {
@@ -6,10 +7,22 @@ namespace Facebook.Unity.Canvas
 	{
 		string GetSDKVersion();
 
-		void ExternalCall(string functionName, params object[] args);
-
 		void DisableFullScreen();
 
-		void ExternalEval(string script);
+		void Init(string connectFacebookUrl, string locale, int debug, string initParams, int status);
+
+		void Login(IEnumerable<string> scope, string callback_id);
+
+		void Logout();
+
+		void ActivateApp();
+
+		void LogAppEvent(string eventName, float? valueToSum, string parameters);
+
+		void LogPurchase(float purchaseAmount, string currency, string parameters);
+
+		void Ui(string x, string uid, string callbackMethodName);
+
+		void InitScreenPosition();
 	}
 }

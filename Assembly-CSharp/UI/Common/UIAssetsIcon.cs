@@ -52,16 +52,20 @@ namespace UI.Common
 			bool result = false;
 			switch (category)
 			{
-			case MasterDataMng.AssetCategory.ITEM:
 			case MasterDataMng.AssetCategory.GATHA_TICKET:
 			case MasterDataMng.AssetCategory.SOUL:
 			case MasterDataMng.AssetCategory.FACILITY_KEY:
-			case MasterDataMng.AssetCategory.CHIP:
 			case MasterDataMng.AssetCategory.DUNGEON_TICKET:
 			case MasterDataMng.AssetCategory.TITLE:
-				result = true;
+				break;
+			default:
+				if (category != MasterDataMng.AssetCategory.ITEM)
+				{
+					return result;
+				}
 				break;
 			}
+			result = true;
 			return result;
 		}
 
@@ -178,14 +182,17 @@ namespace UI.Common
 			return result;
 		}
 
-		private bool SetChipIcon(string assetsValue, GameObject parent)
+		private bool SetChipIcon(string assetsValue, GameObject parent, int width, int height)
 		{
 			bool result = false;
 			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(assetsValue);
 			if (chipMainData != null)
 			{
 				Transform transform = parent.transform;
-				ChipDataMng.MakePrefabByChipData(chipMainData, parent, transform.localPosition, transform.localScale, null, -1, -1, true);
+				GameWebAPI.RespDataMA_ChipM.Chip masterChip = chipMainData;
+				Vector3 localPosition = transform.localPosition;
+				Vector3 localScale = transform.localScale;
+				ChipDataMng.MakePrefabByChipData(masterChip, parent, localPosition, localScale, null, width, height, true);
 				result = true;
 			}
 			return result;
@@ -231,7 +238,7 @@ namespace UI.Common
 
 		public void SetIcon()
 		{
-			global::Debug.Assert(this.assetsCategory != (MasterDataMng.AssetCategory)0, "アセットカテゴリーIDが設定されていません");
+			global::Debug.Assert(this.assetsCategory != MasterDataMng.AssetCategory.NONE, "アセットカテゴリーIDが設定されていません");
 			if (this.iconSprite.enabled)
 			{
 				if (this.SetSprite(this.assetsCategory, this.iconSprite) && this.iconPixelPerfect)
@@ -248,7 +255,7 @@ namespace UI.Common
 			}
 			else if (this.assetsCategory == MasterDataMng.AssetCategory.CHIP)
 			{
-				this.SetChipIcon(this.assetValue, this.iconSprite.gameObject);
+				this.SetChipIcon(this.assetValue, this.iconSprite.gameObject, this.iconTexture.width, this.iconTexture.height);
 			}
 			else if (this.assetsCategory == MasterDataMng.AssetCategory.MONSTER)
 			{

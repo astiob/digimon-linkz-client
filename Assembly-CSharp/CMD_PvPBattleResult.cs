@@ -10,54 +10,52 @@ using UnityEngine;
 
 public sealed class CMD_PvPBattleResult : CMD
 {
-	private const int UP_COUNT_VALUE = 1;
-
-	[SerializeField]
 	[Header("Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogo;
 
-	[SerializeField]
 	[Header("Loseのロゴ")]
+	[SerializeField]
 	private GameObject loseLogo;
 
-	[SerializeField]
 	[Header("スキップ用Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogoForSkip;
 
-	[SerializeField]
 	[Header("獲得クラスタ表示ルート")]
+	[SerializeField]
 	private GameObject acquisitionRoot;
 
-	[SerializeField]
 	[Header("DP表示ルート")]
+	[SerializeField]
 	private GameObject dpRoot;
 
 	[Header("ランク表示用スプライト")]
 	[SerializeField]
 	private UISprite rankSprite;
 
-	[SerializeField]
 	[Header("獲得クラスタ数値ラベル")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("変動DP数値ラベル")]
+	[SerializeField]
 	private UILabel fluctuateDpLabel;
 
-	[SerializeField]
 	[Header("現在のDP数値ラベル")]
+	[SerializeField]
 	private UILabel currentDpLabel;
 
-	[SerializeField]
 	[Header("通算勝利数のラベル")]
+	[SerializeField]
 	private UILabel totalWinNum;
 
 	[Header("次のランクアップまでの勝利数ラベル")]
 	[SerializeField]
 	private UILabel nextRankupWinNum;
 
-	[SerializeField]
 	[Header("ランクアップ用オブジェクト")]
+	[SerializeField]
 	private GameObject gaugeUp;
 
 	[Header("ランクダウン用オブジェクト")]
@@ -68,8 +66,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject rankUpEffect;
 
-	[SerializeField]
 	[Header("ランクダウン用エフェクト")]
+	[SerializeField]
 	private GameObject rankDownEffect;
 
 	[Header("TAP NEXTのオブジェクト")]
@@ -111,6 +109,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	private bool isMockBattle;
 
 	private int nowTotalWin;
+
+	private const int UP_COUNT_VALUE = 1;
 
 	private CMD_PvPBattleResult.SKIP_SUCCESS currentSkipSuccess;
 

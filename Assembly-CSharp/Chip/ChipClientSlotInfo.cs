@@ -25,9 +25,23 @@ namespace Chip
 
 		public void AddChipEquip(ChipClientEquip chipEquip)
 		{
+			int num = 0;
 			if (chipEquip == null)
 			{
 				return;
+			}
+			foreach (ChipClientEquip chipClientEquip in this.equipList)
+			{
+				if (chipClientEquip.type == chipEquip.type && chipClientEquip.dispNum == chipEquip.dispNum && chipClientEquip.userChipId > 0)
+				{
+					num = chipClientEquip.userChipId;
+				}
+			}
+			if (num > 0)
+			{
+				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(num);
+				userChip.resetUserMonsterID();
+				this.DeleteChipEquip(num);
 			}
 			this.equipList.Add(chipEquip);
 		}

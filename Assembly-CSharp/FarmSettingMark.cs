@@ -33,9 +33,9 @@ public class FarmSettingMark : MonoBehaviour
 		component.mesh.uv = new Vector2[]
 		{
 			new Vector2(0f, 0f),
-			new Vector2(0f + (float)width, 0f + (float)height),
-			new Vector2(0f + (float)width, 0f),
-			new Vector2(0f, 0f + (float)height)
+			new Vector2((float)width, (float)height),
+			new Vector2((float)width, 0f),
+			new Vector2(0f, (float)height)
 		};
 	}
 

@@ -3,6 +3,7 @@ using FarmData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public static class FarmDataManager
@@ -40,6 +41,9 @@ public static class FarmDataManager
 	private static FarmFacilityAnimationData facilityAnimationData;
 
 	private static RuntimeAnimatorController facilityAnimator;
+
+	[CompilerGenerated]
+	private static Comparison<FacilityM> <>f__mg$cache0;
 
 	private static void InitList<T>(ref List<T> list) where T : class, new()
 	{
@@ -368,7 +372,12 @@ public static class FarmDataManager
 				return int.Parse(x.type) == typeInt && !FarmDataManager.FacilityInfo.initBuild.Any((FarmFacilityData.FacilityID id) => id == (FarmFacilityData.FacilityID)fid);
 			}).ToList<FacilityM>();
 		}
-		list.Sort(new Comparison<FacilityM>(FarmDataManager.CompareFacility));
+		List<FacilityM> list2 = list;
+		if (FarmDataManager.<>f__mg$cache0 == null)
+		{
+			FarmDataManager.<>f__mg$cache0 = new Comparison<FacilityM>(FarmDataManager.CompareFacility);
+		}
+		list2.Sort(FarmDataManager.<>f__mg$cache0);
 		return list.ToArray();
 	}
 

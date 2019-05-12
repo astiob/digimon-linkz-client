@@ -60,11 +60,7 @@ public class AssetDataCacheMng : MonoBehaviour
 
 	public void RegisterCache(string path, AssetDataCacheMng.CACHE_TYPE type = AssetDataCacheMng.CACHE_TYPE.NORMAL, bool immediate = false)
 	{
-		if (this.cacheInfoTable.ContainsKey(path))
-		{
-			global::Debug.LogError("===================================####### AssetDataCacheMng:RegisterCache " + path + " -> 既に登録済み");
-		}
-		else
+		if (!this.cacheInfoTable.ContainsKey(path))
 		{
 			AssetDataCacheMng.CacheInfo cacheInfo = new AssetDataCacheMng.CacheInfo();
 			cacheInfo.type = type;
@@ -85,6 +81,20 @@ public class AssetDataCacheMng : MonoBehaviour
 				AssetDataCacheMng.load_async_not_op_ct++;
 			}
 			this.cacheInfoTable.Add(path, cacheInfo);
+		}
+	}
+
+	public void AddCache(string path, AssetDataCacheMng.CACHE_TYPE type, UnityEngine.Object resource)
+	{
+		if (!this.cacheInfoTable.ContainsKey(path))
+		{
+			AssetDataCacheMng.CacheInfo value = new AssetDataCacheMng.CacheInfo
+			{
+				type = type,
+				obj = resource,
+				state = 2
+			};
+			this.cacheInfoTable.Add(path, value);
 		}
 	}
 

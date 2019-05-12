@@ -8,7 +8,6 @@ namespace Facebook.Unity
 		Android,
 		IOS,
 		WebGL,
-		WebPlayer,
-		Arcade
+		Gameroom
 	}
 }

@@ -31,16 +31,16 @@ public class UIToggle : UIWidgetContainer
 
 	public UIToggle.Validate validator;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UISprite checkSprite;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Animation checkAnimation;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
 	[HideInInspector]

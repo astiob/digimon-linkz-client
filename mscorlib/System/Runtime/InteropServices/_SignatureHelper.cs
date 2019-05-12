@@ -5,10 +5,10 @@ namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.SignatureHelper" /> class to unmanaged code.</summary>
 	[TypeLibImportClass(typeof(SignatureHelper))]
+	[ComVisible(true)]
 	[Guid("7D13DD37-5A04-393C-BBCA-A5FEA802893D")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[CLSCompliant(false)]
-	[ComVisible(true)]
 	public interface _SignatureHelper
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

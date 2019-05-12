@@ -1,11 +1,18 @@
 ﻿using Enemy.AI;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityExtension;
 
 public static class CharacterStateControlSorter
 {
+	[CompilerGenerated]
+	private static Comparison<CharacterStateControl> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Comparison<CharacterStateControl> <>f__mg$cache1;
+
 	private static int CompareHpBase(CharacterStateControl x, CharacterStateControl y)
 	{
 		if (x == y)
@@ -220,21 +227,22 @@ public static class CharacterStateControlSorter
 		}
 		if (x != y)
 		{
-			switch (x)
+			if (x != Strength.Strong)
 			{
-			case Strength.None:
-				if (y == Strength.Strong || y == Strength.Invalid)
+				if (x != Strength.None)
+				{
+					if (x == Strength.Weak)
+					{
+						return 1;
+					}
+				}
+				else if (y == Strength.Strong || y == Strength.Invalid)
 				{
 					return 1;
 				}
-				break;
-			case Strength.Strong:
-				if (y == Strength.Invalid)
-				{
-					return 1;
-				}
-				break;
-			case Strength.Weak:
+			}
+			else if (y == Strength.Invalid)
+			{
 				return 1;
 			}
 			return -1;
@@ -667,7 +675,12 @@ public static class CharacterStateControlSorter
 	public static CharacterStateControl[] SortedSpeedEnemyPriority(CharacterStateControl[] characterStatus)
 	{
 		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControlSorter.CompareSpeedEnemyPriority));
+		CharacterStateControl[] array2 = array;
+		if (CharacterStateControlSorter.<>f__mg$cache0 == null)
+		{
+			CharacterStateControlSorter.<>f__mg$cache0 = new Comparison<CharacterStateControl>(CharacterStateControlSorter.CompareSpeedEnemyPriority);
+		}
+		Array.Sort<CharacterStateControl>(array2, CharacterStateControlSorter.<>f__mg$cache0);
 		return array;
 	}
 
@@ -696,7 +709,12 @@ public static class CharacterStateControlSorter
 	public static CharacterStateControl[] SortedSpeedLuck(CharacterStateControl[] characterStatus)
 	{
 		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControlSorter.CompareSpeedLuck));
+		CharacterStateControl[] array2 = array;
+		if (CharacterStateControlSorter.<>f__mg$cache1 == null)
+		{
+			CharacterStateControlSorter.<>f__mg$cache1 = new Comparison<CharacterStateControl>(CharacterStateControlSorter.CompareSpeedLuck);
+		}
+		Array.Sort<CharacterStateControl>(array2, CharacterStateControlSorter.<>f__mg$cache1);
 		return array;
 	}
 

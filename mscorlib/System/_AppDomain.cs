@@ -12,10 +12,10 @@ namespace System
 {
 	/// <summary>Exposes the public members of the <see cref="T:System.AppDomain" /> class to unmanaged code.</summary>
 	/// <filterpriority>2</filterpriority>
-	[ComVisible(true)]
 	[Guid("05F696DC-2B29-3663-AD8B-C4389CF2A713")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComVisible(true)]
 	[CLSCompliant(false)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface _AppDomain
 	{
 		/// <summary>Provides COM objects with version-independent access to the <see cref="E:System.AppDomain.AssemblyLoad" /> event.</summary>

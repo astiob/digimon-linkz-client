@@ -8,20 +8,20 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private CMD_ChipSphere.MenuType myMenuType;
 
-	[SerializeField]
 	[Header("Lookのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("アイコン右下のレア度")]
+	[SerializeField]
 	private UISprite rareSprite;
 
 	[Header("アイコンのlookテクスチャ")]
 	[SerializeField]
 	private UITexture chipLookTexture;
 
-	[SerializeField]
 	[Header("アイコンのテクスチャ")]
+	[SerializeField]
 	private UITexture chipTexture;
 
 	[Header("アイコンの個数/名前/進化段階名")]
@@ -36,9 +36,13 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private UILabel buttonLabel;
 
-	[SerializeField]
 	[Header("強化ボタンのラベル")]
+	[SerializeField]
 	private UILabel reinforcementButtonLabel;
+
+	[Header("入替えボタンのラベル")]
+	[SerializeField]
+	private UILabel replacementButtonLabel;
 
 	[Header("ボタンのスプライト")]
 	[SerializeField]
@@ -52,8 +56,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private BoxCollider buttonCollider;
 
-	[SerializeField]
 	[Header("強化ボタンのコライダー")]
+	[SerializeField]
 	private BoxCollider reinforcementButtonCollider;
 
 	private Color defaultButtonLabelEffectColor;
@@ -61,8 +65,6 @@ public class ChipSphereStatus : MonoBehaviour
 	private Color defaultReinforcementButtonLabelEffectColor;
 
 	private int extendItemCount { get; set; }
-
-	private int ejectItemCount { get; set; }
 
 	public void SetButtonOff()
 	{
@@ -99,14 +101,17 @@ public class ChipSphereStatus : MonoBehaviour
 			{
 				this.reinforcementButtonLabel.text = StringMaster.GetString("ReinforcementTitle");
 			}
+			if (this.replacementButtonLabel != null)
+			{
+				this.replacementButtonLabel.text = StringMaster.GetString("ReplacementTitle");
+			}
 			break;
 		}
 	}
 
-	public void Refresh(int extendItemCount, int ejectItemCount)
+	public void Refresh(int extendItemCount)
 	{
 		this.extendItemCount = extendItemCount;
-		this.ejectItemCount = ejectItemCount;
 	}
 
 	public void SetupDetail(ChipSphereIconButton.Parameter parameter)
@@ -190,20 +195,10 @@ public class ChipSphereStatus : MonoBehaviour
 			NGUITools.SetActiveSelf(this.chipTexture.gameObject, true);
 			this.rareSprite.spriteName = ChipTools.GetRankPath(parameter.chipRank);
 			NGUITools.SetActiveSelf(this.rareSprite.gameObject, true);
-			if (this.ejectItemCount > 0)
-			{
-				this.buttonSprite.spriteName = "Common02_Btn_Red";
-				this.buttonCollider.enabled = true;
-				this.buttonLabel.color = Color.white;
-				this.buttonLabel.effectColor = this.defaultButtonLabelEffectColor;
-			}
-			else
-			{
-				this.buttonSprite.spriteName = "Common02_Btn_Gray";
-				this.buttonCollider.enabled = false;
-				this.buttonLabel.color = ConstValue.DEACTIVE_BUTTON_LABEL;
-				this.buttonLabel.effectColor = ConstValue.DEACTIVE_BUTTON_LABEL;
-			}
+			this.buttonSprite.spriteName = "Common02_Btn_Red";
+			this.buttonCollider.enabled = true;
+			this.buttonLabel.color = Color.white;
+			this.buttonLabel.effectColor = this.defaultButtonLabelEffectColor;
 			GameWebAPI.RespDataMA_ChipM.Chip chipEnhancedData = ChipDataMng.GetChipEnhancedData(parameter.ConvertChipId());
 			if (chipEnhancedData != null)
 			{

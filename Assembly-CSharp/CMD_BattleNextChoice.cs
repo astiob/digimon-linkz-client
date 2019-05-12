@@ -5,6 +5,7 @@ using Quest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_BattleNextChoice : CMD
@@ -26,6 +27,12 @@ public sealed class CMD_BattleNextChoice : CMD
 	private static bool isGoToFarmCalled;
 
 	private bool pushedBackKey;
+
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache1;
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
@@ -208,7 +215,7 @@ public sealed class CMD_BattleNextChoice : CMD
 							cmd.PartsTitle.DisableReturnBtn(false);
 							cmd.PartsTitle.SetCloseAct(delegate(int _i_)
 							{
-								this.ClosePanel(false);
+								this.<ClosePanel>__BaseCallProxy0(false);
 								cmd.SetCloseAction(delegate(int x)
 								{
 									CMD_BattleNextChoice.GoToFarm();
@@ -336,7 +343,7 @@ public sealed class CMD_BattleNextChoice : CMD
 			cmd1.PartsTitle.DisableReturnBtn(false);
 			cmd1.PartsTitle.SetCloseAct(delegate(int i)
 			{
-				this.ClosePanel(false);
+				this.<ClosePanel>__BaseCallProxy0(false);
 				cmd1.SetCloseAction(delegate(int x)
 				{
 					CMD_BattleNextChoice.GoToFarm();
@@ -363,24 +370,38 @@ public sealed class CMD_BattleNextChoice : CMD
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
 		CMD_PartyEdit.replayMultiStageId = worldStageM2.worldStageId;
-		CMD_PartyEdit.replayMultiAreaId = worldStageM2.worldAreaId;
 		CMD_PartyEdit.replayMultiDungeonId = last_dng_req.dungeonId;
 		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
-		CMD_PartyEdit cmd2 = GUIMain.ShowCommonDialog(null, "CMD_PartyEdit", null) as CMD_PartyEdit;
-		cmd2.PartsTitle.SetReturnAct(delegate(int i)
+		CMD_PartyEdit partyEdit = GUIMain.ShowCommonDialog(null, "CMD_PartyEdit", new Action<CommonDialog>(this.OnReadyPartyEdit)) as CMD_PartyEdit;
+		partyEdit.PartsTitle.SetReturnAct(delegate(int i)
 		{
-			cmd2.ClosePanel(true);
+			partyEdit.ClosePanel(true);
 		});
-		cmd2.PartsTitle.DisableReturnBtn(false);
-		cmd2.PartsTitle.SetCloseAct(delegate(int i)
+		partyEdit.PartsTitle.DisableReturnBtn(false);
+		partyEdit.PartsTitle.SetCloseAct(delegate(int i)
 		{
-			this.ClosePanel(false);
-			cmd2.SetCloseAction(delegate(int x)
+			this.<ClosePanel>__BaseCallProxy0(false);
+			partyEdit.SetCloseAction(delegate(int x)
 			{
 				CMD_BattleNextChoice.GoToFarm();
 			});
-			cmd2.ClosePanel(true);
+			partyEdit.ClosePanel(true);
 		});
+	}
+
+	private void OnReadyPartyEdit(CommonDialog dialog)
+	{
+		CMD_PartyEdit cmd_PartyEdit = dialog as CMD_PartyEdit;
+		if (null != cmd_PartyEdit)
+		{
+			GameWebAPI.WD_Req_DngStart last_dng_req = DataMng.Instance().GetResultUtilData().last_dng_req;
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
+			int dungeonID = int.Parse(last_dng_req.dungeonId);
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterDungeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonID.ToString());
+			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
+			cmd_PartyEdit.SetQuestId(worldStageM2.worldAreaId, worldStageM2.worldStageId, last_dng_req.dungeonId);
+		}
 	}
 
 	private void OnPushedNextQuestButton()
@@ -462,25 +483,26 @@ public sealed class CMD_BattleNextChoice : CMD
 	{
 		if (isSuccess)
 		{
+			CMD_BattleNextChoice.<OpenQuestUI>c__AnonStoreyA <OpenQuestUI>c__AnonStoreyA = new CMD_BattleNextChoice.<OpenQuestUI>c__AnonStoreyA();
 			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
-			int nextDungeonID = int.Parse(this.screenResult.clearDungeonID);
-			int nextDungeonID2 = nextDungeonID;
-			nextDungeonID++;
-			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == nextDungeonID.ToString());
-			if (masterNextDangeon == null)
+			<OpenQuestUI>c__AnonStoreyA.nextDungeonID = int.Parse(this.screenResult.clearDungeonID);
+			int nextDungeonID = <OpenQuestUI>c__AnonStoreyA.nextDungeonID;
+			<OpenQuestUI>c__AnonStoreyA.nextDungeonID++;
+			<OpenQuestUI>c__AnonStoreyA.masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == <OpenQuestUI>c__AnonStoreyA.nextDungeonID.ToString());
+			if (<OpenQuestUI>c__AnonStoreyA.masterNextDangeon == null)
 			{
-				nextDungeonID--;
-				masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == nextDungeonID.ToString());
+				<OpenQuestUI>c__AnonStoreyA.nextDungeonID--;
+				<OpenQuestUI>c__AnonStoreyA.masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == <OpenQuestUI>c__AnonStoreyA.nextDungeonID.ToString());
 			}
 			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
-			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM nextStage = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterNextDangeon.worldStageId);
-			if (nextDungeonID > nextDungeonID2 && nextStage == null)
+			<OpenQuestUI>c__AnonStoreyA.nextStage = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == <OpenQuestUI>c__AnonStoreyA.masterNextDangeon.worldStageId);
+			if (<OpenQuestUI>c__AnonStoreyA.nextDungeonID > nextDungeonID && <OpenQuestUI>c__AnonStoreyA.nextStage == null)
 			{
-				nextDungeonID--;
-				masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == nextDungeonID.ToString());
-				nextStage = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterNextDangeon.worldStageId);
+				<OpenQuestUI>c__AnonStoreyA.nextDungeonID--;
+				<OpenQuestUI>c__AnonStoreyA.masterNextDangeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == <OpenQuestUI>c__AnonStoreyA.nextDungeonID.ToString());
+				<OpenQuestUI>c__AnonStoreyA.nextStage = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == <OpenQuestUI>c__AnonStoreyA.masterNextDangeon.worldStageId);
 			}
-			if (3000 < int.Parse(masterNextDangeon.worldDungeonId))
+			if (3000 < int.Parse(<OpenQuestUI>c__AnonStoreyA.masterNextDangeon.worldDungeonId))
 			{
 				ClassSingleton<QuestTOPAccessor>.Instance.nextAreaFlg = false;
 				ClassSingleton<QuestTOPAccessor>.Instance.nextAreaEvent = true;
@@ -493,21 +515,32 @@ public sealed class CMD_BattleNextChoice : CMD
 			BattleNextBattleOption.ClearBattleMenuSettings();
 			base.SetCloseAction(delegate(int x)
 			{
+				CMD_BattleNextChoice.<OpenQuestUI>c__AnonStoreyA.<OpenQuestUI>c__AnonStoreyB <OpenQuestUI>c__AnonStoreyB = new CMD_BattleNextChoice.<OpenQuestUI>c__AnonStoreyA.<OpenQuestUI>c__AnonStoreyB();
+				<OpenQuestUI>c__AnonStoreyB.<>f__ref$10 = <OpenQuestUI>c__AnonStoreyA;
 				RestrictionInput.EndLoad();
-				ClassSingleton<QuestTOPAccessor>.Instance.nextDungeon = masterNextDangeon;
-				ClassSingleton<QuestTOPAccessor>.Instance.nextStage = nextStage;
-				CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestTOP", null) as CMD;
-				PartsTitleBase partsTitle = cmd.PartsTitle;
+				ClassSingleton<QuestTOPAccessor>.Instance.nextDungeon = <OpenQuestUI>c__AnonStoreyA.masterNextDangeon;
+				ClassSingleton<QuestTOPAccessor>.Instance.nextStage = <OpenQuestUI>c__AnonStoreyA.nextStage;
+				CMD_BattleNextChoice.<OpenQuestUI>c__AnonStoreyA.<OpenQuestUI>c__AnonStoreyB <OpenQuestUI>c__AnonStoreyB2 = <OpenQuestUI>c__AnonStoreyB;
+				if (CMD_BattleNextChoice.<>f__mg$cache0 == null)
+				{
+					CMD_BattleNextChoice.<>f__mg$cache0 = new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP);
+				}
+				<OpenQuestUI>c__AnonStoreyB2.cmd = (GUIMain.ShowCommonDialog(CMD_BattleNextChoice.<>f__mg$cache0, "CMD_QuestTOP", null) as CMD);
+				PartsTitleBase partsTitle = <OpenQuestUI>c__AnonStoreyB.cmd.PartsTitle;
 				if (null != partsTitle)
 				{
 					partsTitle.SetReturnAct(delegate(int idx)
 					{
-						cmd.SetCloseAction(delegate(int i)
+						<OpenQuestUI>c__AnonStoreyB.cmd.SetCloseAction(delegate(int i)
 						{
-							CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestSelect", null) as CMD;
+							if (CMD_BattleNextChoice.<>f__mg$cache1 == null)
+							{
+								CMD_BattleNextChoice.<>f__mg$cache1 = new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP);
+							}
+							CMD cmd = GUIMain.ShowCommonDialog(CMD_BattleNextChoice.<>f__mg$cache1, "CMD_QuestSelect", null) as CMD;
 							cmd.SetForceReturnValue(1);
 						});
-						cmd.ClosePanel(true);
+						<OpenQuestUI>c__AnonStoreyB.cmd.ClosePanel(true);
 					});
 				}
 			});
@@ -609,8 +642,8 @@ public sealed class CMD_BattleNextChoice : CMD
 
 	private bool CanPlayDungeonOver()
 	{
-		bool flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON);
-		bool flag2 = Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON);
+		bool flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON);
+		bool flag2 = Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON);
 		if (!flag && !flag2)
 		{
 			return true;

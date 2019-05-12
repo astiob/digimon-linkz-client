@@ -9,8 +9,8 @@ using System.Text;
 namespace System.Security.Cryptography.X509Certificates
 {
 	/// <summary>Provides methods that help you use X.509 v.3 certificates.</summary>
-	[ComVisible(true)]
 	[MonoTODO("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
+	[ComVisible(true)]
 	[Serializable]
 	public class X509Certificate : ISerializable, IDeserializationCallback
 	{
@@ -817,8 +817,8 @@ namespace System.Security.Cryptography.X509Certificates
 		///   <IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true" />
 		///   <IPermission class="System.Security.Permissions.KeyContainerPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="Create" />
 		/// </PermissionSet>
-		[MonoTODO("missing KeyStorageFlags support")]
 		[ComVisible(false)]
+		[MonoTODO("missing KeyStorageFlags support")]
 		public virtual void Import(string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			byte[] rawData = X509Certificate.Load(fileName);

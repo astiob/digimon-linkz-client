@@ -6,16 +6,16 @@ public class CMD_MultiBattleParticipateMenu : CMD
 {
 	public static CMD_MultiBattleParticipateMenu instance;
 
-	[SerializeField]
 	[Header("GameObject：参加")]
+	[SerializeField]
 	private GameObject goBtnParticipate;
 
 	[Header("GameObject：募集")]
 	[SerializeField]
 	private GameObject goBtnRecruit;
 
-	[SerializeField]
 	[Header("Label：参加")]
+	[SerializeField]
 	private UILabel lbBtnParticipate;
 
 	[Header("Label：募集")]

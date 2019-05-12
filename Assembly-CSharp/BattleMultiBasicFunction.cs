@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public abstract class BattleMultiBasicFunction : BattleFunctionBase
@@ -10,8 +11,6 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 	protected const float tcpSendWaitingTerm = 2f;
 
 	protected const float sendTcpWaitTime = 15f;
-
-	private const int MAX_EXCEPTION_COUNT = 3;
 
 	protected Dictionary<TCPMessageType, Action> lastAction = new Dictionary<TCPMessageType, Action>();
 
@@ -31,9 +30,14 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 
 	private int tryRecoverCount;
 
+	private const int MAX_EXCEPTION_COUNT = 3;
+
 	private int exceptionCount;
 
 	private List<string> adventureSceneEndList = new List<string>();
+
+	[CompilerGenerated]
+	private static Func<string, int> <>f__mg$cache0;
 
 	protected virtual string myTCPKey
 	{
@@ -190,11 +194,24 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		this.CurrentEnemyMyIndex = -1;
 		this.recieveChecks = new Dictionary<TCPMessageType, bool>();
 		this.confirmationChecks = new Dictionary<TCPMessageType, List<string>>();
-		foreach (object obj in Enum.GetValues(typeof(TCPMessageType)))
+		IEnumerator enumerator = Enum.GetValues(typeof(TCPMessageType)).GetEnumerator();
+		try
 		{
-			TCPMessageType key = (TCPMessageType)((int)obj);
-			this.recieveChecks[key] = false;
-			this.confirmationChecks[key] = new List<string>();
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				TCPMessageType key = (TCPMessageType)obj;
+				this.recieveChecks[key] = false;
+				this.confirmationChecks[key] = new List<string>();
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 		this.multiUsers = ClassSingleton<MultiBattleData>.Instance.PvPUserDatas;
 		this.IsOwner = this.multiUsers.Any((MultiBattleData.PvPUserData item) => item.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId && item.isOwner);
@@ -400,7 +417,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			object obj = wait.Current;
 			yield return obj;
 		}
-		UnityEngine.Random.seed = randomSeed;
+		UnityEngine.Random.InitState(randomSeed);
 		yield break;
 	}
 
@@ -427,7 +444,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			{
 				randomSeedSyncData.randomSeed
 			});
-			UnityEngine.Random.seed = randomSeedSyncData.randomSeed;
+			UnityEngine.Random.InitState(randomSeedSyncData.randomSeed);
 			this.recieveChecks[TCPMessageType.RandomSeedSync] = true;
 		};
 		this.SendConfirmation(tcpMessageType, randomSeedSyncData.playerUserId, string.Empty);
@@ -559,19 +576,19 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		string[] otherUsersIds = this.GetOtherUsersId().ToArray<string>();
 		if (otherUsersIds.Length > 0)
 		{
-			int count = 0;
-			foreach (string otherUsersId in otherUsersIds)
+			int num = 0;
+			foreach (string a in otherUsersIds)
 			{
-				foreach (string adventureSceneEnd in this.adventureSceneEndList)
+				foreach (string b in this.adventureSceneEndList)
 				{
-					if (otherUsersId == adventureSceneEnd)
+					if (a == b)
 					{
-						count++;
+						num++;
 						break;
 					}
 				}
 			}
-			if (!base.stateManager.battleAdventureSceneManager.isUpdate && count >= otherUsersIds.Length)
+			if (!base.stateManager.battleAdventureSceneManager.isUpdate && num >= otherUsersIds.Length)
 			{
 				this.isAdventureSceneAllEnd = true;
 			}
@@ -751,7 +768,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		{
 			return;
 		}
-		Dictionary<string, object> data = ClassSingleton<TCPMessageFactory>.Instance.CreateMessage(tcpMessageType, message);
+		Dictionary<string, object> dictionary = ClassSingleton<TCPMessageFactory>.Instance.CreateMessage(tcpMessageType, message);
 		if (this.multiUsers == null || this.multiUsers.Length == 0)
 		{
 			return;
@@ -763,7 +780,13 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		}
 		else
 		{
-			Singleton<TCPUtil>.Instance.SendTCPRequest(data, targetIds.Select((string item) => item.ToInt32()).ToList<int>(), this.myTCPKey);
+			TCPUtil instance = Singleton<TCPUtil>.Instance;
+			Dictionary<string, object> data = dictionary;
+			if (BattleMultiBasicFunction.<>f__mg$cache0 == null)
+			{
+				BattleMultiBasicFunction.<>f__mg$cache0 = new Func<string, int>(Util.ToInt32);
+			}
+			instance.SendTCPRequest(data, targetIds.Select(BattleMultiBasicFunction.<>f__mg$cache0).ToList<int>(), this.myTCPKey);
 			global::Debug.LogFormat("[TCPMessage]{0}を送信しました.", new object[]
 			{
 				tcpMessageType

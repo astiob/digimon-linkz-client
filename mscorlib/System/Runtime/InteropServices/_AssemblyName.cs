@@ -4,11 +4,11 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.AssemblyName" /> class to unmanaged code.</summary>
-	[TypeLibImportClass(typeof(AssemblyName))]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
+	[TypeLibImportClass(typeof(AssemblyName))]
 	[Guid("B42B6AAC-317E-34D5-9FA9-093BB4160C50")]
 	[CLSCompliant(false)]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface _AssemblyName
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

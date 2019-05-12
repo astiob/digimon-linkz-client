@@ -12,11 +12,11 @@ namespace Neptune.Cloud.Core
 {
 	public abstract class INpCloudSocketSystem
 	{
+		private readonly object EXCEPTION_LOCK = new object();
+
 		protected const int MS_TO_MINITSU = 1000;
 
 		protected const int RECEIVE_BUFFER_SIZE = 1024;
-
-		private readonly object EXCEPTION_LOCK = new object();
 
 		private readonly string HASH_KEY = string.Empty;
 
@@ -261,12 +261,11 @@ namespace Neptune.Cloud.Core
 				}
 			}
 			NpCloudReceponseQueueType npCloudReceponseQueueType = (NpCloudReceponseQueueType)this.LoadQueu(out buffer);
-			NpCloudReceponseQueueType npCloudReceponseQueueType2 = npCloudReceponseQueueType;
-			if (npCloudReceponseQueueType2 == NpCloudReceponseQueueType.None)
+			if (npCloudReceponseQueueType == NpCloudReceponseQueueType.None)
 			{
 				return (T)((object)null);
 			}
-			if (npCloudReceponseQueueType2 != NpCloudReceponseQueueType.Message)
+			if (npCloudReceponseQueueType != NpCloudReceponseQueueType.Message)
 			{
 				throw new NpCloudException(701, "Switchのcaseがdefaultだったよ = {0}");
 			}

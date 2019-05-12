@@ -42,9 +42,25 @@ public sealed class GUIScreenResult : GUIScreen
 	protected override void Update()
 	{
 		base.Update();
-		switch (this.seq)
+		GUIScreenResult.UpdateState updateState = (GUIScreenResult.UpdateState)this.seq;
+		if (updateState != GUIScreenResult.UpdateState.Initialize)
 		{
-		case 0:
+			if (updateState != GUIScreenResult.UpdateState.OpenResult)
+			{
+				if (updateState != GUIScreenResult.UpdateState.Wait)
+				{
+				}
+			}
+			else if (++this.timeCt >= 20)
+			{
+				RestrictionInput.EndLoad();
+				this.OpenResultUI();
+				this.timeCt = 0;
+				this.seq = 2;
+			}
+		}
+		else
+		{
 			this.result = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult;
 			this.multiResult = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
 			if (this.result == null && this.multiResult == null)
@@ -56,16 +72,6 @@ public sealed class GUIScreenResult : GUIScreen
 			{
 				this.seq = 1;
 			}
-			break;
-		case 1:
-			if (++this.timeCt >= 20)
-			{
-				RestrictionInput.EndLoad();
-				this.OpenResultUI();
-				this.timeCt = 0;
-				this.seq = 2;
-			}
-			break;
 		}
 	}
 

@@ -8,6 +8,7 @@ using Monster;
 using Picturebook;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using WebAPIRequest;
 
@@ -33,20 +34,36 @@ public sealed class CMD_Evolution : CMD
 	private UILabel ngTXT_CHIP;
 
 	[SerializeField]
-	[Header("各進化先のリンク")]
 	private GameObject goListParts;
 
 	private GUISelectPanelEvolution csSelectPanelEvolution;
 
 	private GUIMonsterIcon monsterIcon;
 
-	private CMD_Evolution.EvolutionReviewStatus execEvolutionReviewStatus;
-
 	private List<EvolutionData.MonsterEvolveData> monsterEvolveDataList;
+
+	private CMD_Evolution.EvolutionReviewStatus execEvolutionReviewStatus;
 
 	private EvolutionData.MonsterEvolveData evolveDataBK;
 
 	private int execClusterNum;
+
+	private CMD_CharacterDetailed detailedWindow;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache3;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache4;
 
 	protected override void Awake()
 	{
@@ -168,26 +185,19 @@ public sealed class CMD_Evolution : CMD
 	{
 		this.monsterEvolveDataList = ClassSingleton<EvolutionData>.Instance.GetEvolveListByMonsterData(CMD_BaseSelect.DataChg);
 		this.csSelectPanelEvolution.initLocation = true;
-		this.csSelectPanelEvolution.AllBuild(this.monsterEvolveDataList);
+		this.csSelectPanelEvolution.AllBuild(this.monsterEvolveDataList, this, new Action<EvolutionData.MonsterEvolveData, int>(this.RequestEvolution));
 		this.goListParts.SetActive(false);
 	}
 
-	public void EvolveDo(EvolutionData.MonsterEvolveData data, int needChip)
-	{
-		this.evolveDataBK = data;
-		this.execClusterNum = needChip;
-		this.EndCloseEvolveDo();
-	}
-
-	private RequestList CreateRequest()
+	private void RequestEvolution(EvolutionData.MonsterEvolveData evolutionData, int costCluster)
 	{
 		RequestList requestList = new RequestList();
 		GameWebAPI.RequestMN_MonsterEvolution addRequest = new GameWebAPI.RequestMN_MonsterEvolution
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_Evolution param)
 			{
-				param.userMonsterId = this.evolveDataBK.md.userMonster.userMonsterId;
-				param.monsterId = int.Parse(this.evolveDataBK.md_next.monsterM.monsterId);
+				param.userMonsterId = evolutionData.md.userMonster.userMonsterId;
+				param.monsterId = int.Parse(evolutionData.md_next.monsterM.monsterId);
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_EvolutionExec response)
 			{
@@ -205,35 +215,28 @@ public sealed class CMD_Evolution : CMD
 		requestList.AddRequest(addRequest);
 		GameWebAPI.MonsterSlotInfoListLogic addRequest2 = ChipAPIRequest.RequestAPIMonsterSlotInfo(new int[]
 		{
-			int.Parse(this.evolveDataBK.md.userMonster.userMonsterId)
+			int.Parse(evolutionData.md.userMonster.userMonsterId)
 		});
+		string beforeModelId = evolutionData.md.GetMonsterMaster().Group.modelId;
+		string beforeGrowStep = evolutionData.md.GetMonsterMaster().Group.growStep;
 		requestList.AddRequest(addRequest2);
-		return requestList;
-	}
-
-	private void EndCloseEvolveDo()
-	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		string beforeModelId = this.evolveDataBK.md.GetMonsterMaster().Group.modelId;
-		string beforeGrowStep = this.evolveDataBK.md.GetMonsterMaster().Group.growStep;
-		RequestList requestList = this.CreateRequest();
 		AppCoroutine.Start(requestList.Run(delegate()
 		{
-			this.EndEvolveDo(beforeModelId, beforeGrowStep);
+			this.evolveDataBK = evolutionData;
+			this.EndEvolveDo(beforeModelId, beforeGrowStep, costCluster);
 		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null), false);
 	}
 
-	private void EndEvolveDo(string monsterModelId, string monsterGrowStep)
+	private void EndEvolveDo(string monsterModelId, string monsterGrowStep, int costCluster)
 	{
 		if (this.evolveDataBK.mem.effectType != "2")
 		{
 			GooglePlayGamesTool.Instance.Evolution();
 		}
-		string evolutionType = ClassSingleton<EvolutionData>.Instance.GetEvolutionEffectType(this.evolveDataBK.md.userMonster.monsterId, this.evolveDataBK.md_next.userMonster.monsterId);
-		DataMng.Instance().US_PlayerInfoSubChipNum(this.execClusterNum);
+		DataMng.Instance().US_PlayerInfoSubChipNum(costCluster);
 		this.UpdateClusterNum();
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		ClassSingleton<EvolutionData>.Instance.EvolvePostProcess(this.evolveDataBK.itemList);
@@ -253,57 +256,82 @@ public sealed class CMD_Evolution : CMD
 		}
 		CutsceneDataBase cutsceneData = null;
 		string effectType = this.evolveDataBK.mem.effectType;
-		switch (effectType)
+		if (effectType != null)
 		{
-		case "1":
-			if (MonsterGrowStepData.IsUltimateScope(userMonster.GetMonsterMaster().Group.growStep))
+			if (!(effectType == "1"))
 			{
-				cutsceneData = new CutsceneDataEvolutionUltimate
+				if (!(effectType == "2"))
 				{
-					path = "Cutscenes/EvolutionUltimate",
-					beforeModelId = monsterModelId,
-					afterModelId = userMonster.GetMonsterMaster().Group.modelId,
-					endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-				};
+					if (effectType == "3" || effectType == "4")
+					{
+						CutsceneDataJogress cutsceneDataJogress = new CutsceneDataJogress();
+						cutsceneDataJogress.path = "Cutscenes/Jogress";
+						cutsceneDataJogress.beforeModelId = monsterModelId;
+						cutsceneDataJogress.afterModelId = userMonster.GetMonsterMaster().Group.modelId;
+						cutsceneDataJogress.partnerModelId = partnerModelId;
+						CutsceneDataJogress cutsceneDataJogress2 = cutsceneDataJogress;
+						if (CMD_Evolution.<>f__mg$cache3 == null)
+						{
+							CMD_Evolution.<>f__mg$cache3 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+						}
+						cutsceneDataJogress2.endCallback = CMD_Evolution.<>f__mg$cache3;
+						cutsceneData = cutsceneDataJogress;
+					}
+				}
+				else
+				{
+					CutsceneDataModeChange cutsceneDataModeChange = new CutsceneDataModeChange();
+					cutsceneDataModeChange.path = "Cutscenes/ModeChange";
+					cutsceneDataModeChange.beforeModelId = monsterModelId;
+					cutsceneDataModeChange.afterModelId = userMonster.GetMonsterMaster().Group.modelId;
+					CutsceneDataModeChange cutsceneDataModeChange2 = cutsceneDataModeChange;
+					if (CMD_Evolution.<>f__mg$cache2 == null)
+					{
+						CMD_Evolution.<>f__mg$cache2 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+					}
+					cutsceneDataModeChange2.endCallback = CMD_Evolution.<>f__mg$cache2;
+					cutsceneData = cutsceneDataModeChange;
+				}
+			}
+			else if (MonsterGrowStepData.IsUltimateScope(userMonster.GetMonsterMaster().Group.growStep))
+			{
+				CutsceneDataEvolutionUltimate cutsceneDataEvolutionUltimate = new CutsceneDataEvolutionUltimate();
+				cutsceneDataEvolutionUltimate.path = "Cutscenes/EvolutionUltimate";
+				cutsceneDataEvolutionUltimate.beforeModelId = monsterModelId;
+				cutsceneDataEvolutionUltimate.afterModelId = userMonster.GetMonsterMaster().Group.modelId;
+				CutsceneDataEvolutionUltimate cutsceneDataEvolutionUltimate2 = cutsceneDataEvolutionUltimate;
+				if (CMD_Evolution.<>f__mg$cache0 == null)
+				{
+					CMD_Evolution.<>f__mg$cache0 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+				}
+				cutsceneDataEvolutionUltimate2.endCallback = CMD_Evolution.<>f__mg$cache0;
+				cutsceneData = cutsceneDataEvolutionUltimate;
 			}
 			else
 			{
-				cutsceneData = new CutsceneDataEvolution
+				CutsceneDataEvolution cutsceneDataEvolution = new CutsceneDataEvolution();
+				cutsceneDataEvolution.path = "Cutscenes/Evolution";
+				cutsceneDataEvolution.beforeModelId = monsterModelId;
+				cutsceneDataEvolution.beforeGrowStep = monsterGrowStep;
+				cutsceneDataEvolution.afterModelId = userMonster.GetMonsterMaster().Group.modelId;
+				cutsceneDataEvolution.afterGrowStep = userMonster.GetMonsterMaster().Group.growStep;
+				CutsceneDataEvolution cutsceneDataEvolution2 = cutsceneDataEvolution;
+				if (CMD_Evolution.<>f__mg$cache1 == null)
 				{
-					path = "Cutscenes/Evolution",
-					beforeModelId = monsterModelId,
-					beforeGrowStep = monsterGrowStep,
-					afterModelId = userMonster.GetMonsterMaster().Group.modelId,
-					afterGrowStep = userMonster.GetMonsterMaster().Group.growStep,
-					endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-				};
+					CMD_Evolution.<>f__mg$cache1 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+				}
+				cutsceneDataEvolution2.endCallback = CMD_Evolution.<>f__mg$cache1;
+				cutsceneData = cutsceneDataEvolution;
 			}
-			break;
-		case "2":
-			cutsceneData = new CutsceneDataModeChange
-			{
-				path = "Cutscenes/ModeChange",
-				beforeModelId = monsterModelId,
-				afterModelId = userMonster.GetMonsterMaster().Group.modelId,
-				endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-			};
-			break;
-		case "3":
-		case "4":
-			cutsceneData = new CutsceneDataJogress
-			{
-				path = "Cutscenes/Jogress",
-				beforeModelId = monsterModelId,
-				afterModelId = userMonster.GetMonsterMaster().Group.modelId,
-				partnerModelId = partnerModelId,
-				endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-			};
-			break;
 		}
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), delegate()
 		{
-			this.ShowCompletedCutin(evolutionType);
+			this.detailedWindow.StartAnimation();
+			if (this.execEvolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW && this.execEvolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW)
+			{
+				RestrictionInput.EndLoad();
+			}
 		}, 0.5f, 0.5f);
 	}
 
@@ -316,91 +344,27 @@ public sealed class CMD_Evolution : CMD
 			CMD_BaseSelect.instance.SetEmpty();
 			CMD_BaseSelect.instance.SetDecideButton(false);
 		}
-		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.evolveDataBK.md.userMonster.userMonsterId, true);
-		CMD_CharacterDetailed.DataChg = monsterDataByUserMonsterID;
+		MonsterData afterMonster = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.evolveDataBK.md.userMonster.userMonsterId, true);
 		base.SetCloseAction(delegate(int inx)
 		{
-			GUIMain.ShowCommonDialog(new Action<int>(this.RunRefreshPicturebook), "CMD_CharacterDetailed", null);
+			CMD_Evolution $this = this;
+			MonsterData afterMonster = afterMonster;
+			string effectType = this.evolveDataBK.mem.effectType;
+			bool reviewFirstUltima = this.execEvolutionReviewStatus == CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
+			bool reviewFirstEvolution = this.execEvolutionReviewStatus == CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW;
+			if (CMD_Evolution.<>f__mg$cache4 == null)
+			{
+				CMD_Evolution.<>f__mg$cache4 = new Action(RestrictionInput.EndLoad);
+			}
+			$this.detailedWindow = CMD_CharacterDetailed.CreateWindow(afterMonster, effectType, reviewFirstUltima, reviewFirstEvolution, CMD_Evolution.<>f__mg$cache4);
 		});
 		this.ClosePanel(false);
-	}
-
-	private void RunRefreshPicturebook(int noop)
-	{
-	}
-
-	private void ShowCompletedCutin(string evolutionType)
-	{
-		if (PartsUpperCutinController.Instance != null)
-		{
-			PartsUpperCutinController.AnimeType playType;
-			switch (evolutionType.ToInt32())
-			{
-			default:
-				playType = PartsUpperCutinController.AnimeType.EvolutionComplete;
-				break;
-			case 2:
-				playType = PartsUpperCutinController.AnimeType.ModeChangeComplete;
-				break;
-			case 3:
-				playType = PartsUpperCutinController.AnimeType.Jogress;
-				break;
-			case 4:
-				playType = PartsUpperCutinController.AnimeType.Combine;
-				break;
-			}
-			if (this.execEvolutionReviewStatus == CMD_Evolution.EvolutionReviewStatus.NONE)
-			{
-				PartsUpperCutinController.Instance.PlayAnimator(playType, null);
-				RestrictionInput.EndLoad();
-			}
-			else
-			{
-				PartsUpperCutinController.Instance.PlayAnimator(playType, new Action(this.ShowReviewDialog));
-			}
-		}
-		else
-		{
-			RestrictionInput.EndLoad();
-		}
-	}
-
-	private void ShowReviewDialog()
-	{
-		CMD_Evolution.EvolutionReviewStatus evolutionReviewStatus = this.execEvolutionReviewStatus;
-		if (evolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW)
-		{
-			if (evolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW)
-			{
-				RestrictionInput.EndLoad();
-			}
-			else
-			{
-				LeadReview.ShowReviewConfirm(LeadReview.MessageType.FIRST_ULTIMA_EVOLUTION, new Action(RestrictionInput.EndLoad), false);
-			}
-		}
-		else
-		{
-			LeadReview.ShowReviewConfirm(LeadReview.MessageType.FIRST_EVOLUTION, new Action(RestrictionInput.EndLoad), false);
-		}
 	}
 
 	private void OnTouchEvolutionDiagramButton()
 	{
 		MonsterData dataChg = CMD_BaseSelect.DataChg;
-		FarmCameraControlForCMD.ClearRefCT();
-		FarmCameraControlForCMD.On();
-		GUIMain.DestroyAllDialog(null);
 		CMD_EvolutionRouteMap.CreateDialog(null, dataChg.GetMonsterMaster());
-	}
-
-	public enum EvolveType
-	{
-		Normal = 1,
-		ModeChange,
-		Jogress,
-		Combine,
-		VersionUp
 	}
 
 	private enum EvolutionReviewStatus

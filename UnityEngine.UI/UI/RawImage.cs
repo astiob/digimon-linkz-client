@@ -22,15 +22,23 @@ namespace UnityEngine.UI
 		{
 			get
 			{
-				if (!(this.m_Texture == null))
+				Texture result;
+				if (this.m_Texture == null)
 				{
-					return this.m_Texture;
+					if (this.material != null && this.material.mainTexture != null)
+					{
+						result = this.material.mainTexture;
+					}
+					else
+					{
+						result = Graphic.s_WhiteTexture;
+					}
 				}
-				if (this.material != null && this.material.mainTexture != null)
+				else
 				{
-					return this.material.mainTexture;
+					result = this.m_Texture;
 				}
-				return Graphic.s_WhiteTexture;
+				return result;
 			}
 		}
 
@@ -42,13 +50,12 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (this.m_Texture == value)
+				if (!(this.m_Texture == value))
 				{
-					return;
+					this.m_Texture = value;
+					this.SetVerticesDirty();
+					this.SetMaterialDirty();
 				}
-				this.m_Texture = value;
-				this.SetVerticesDirty();
-				this.SetMaterialDirty();
 			}
 		}
 
@@ -60,12 +67,11 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (this.m_UVRect == value)
+				if (!(this.m_UVRect == value))
 				{
-					return;
+					this.m_UVRect = value;
+					this.SetVerticesDirty();
 				}
-				this.m_UVRect = value;
-				this.SetVerticesDirty();
 			}
 		}
 
@@ -89,11 +95,13 @@ namespace UnityEngine.UI
 			{
 				Rect pixelAdjustedRect = base.GetPixelAdjustedRect();
 				Vector4 vector = new Vector4(pixelAdjustedRect.x, pixelAdjustedRect.y, pixelAdjustedRect.x + pixelAdjustedRect.width, pixelAdjustedRect.y + pixelAdjustedRect.height);
-				Color color = base.color;
-				vh.AddVert(new Vector3(vector.x, vector.y), color, new Vector2(this.m_UVRect.xMin, this.m_UVRect.yMin));
-				vh.AddVert(new Vector3(vector.x, vector.w), color, new Vector2(this.m_UVRect.xMin, this.m_UVRect.yMax));
-				vh.AddVert(new Vector3(vector.z, vector.w), color, new Vector2(this.m_UVRect.xMax, this.m_UVRect.yMax));
-				vh.AddVert(new Vector3(vector.z, vector.y), color, new Vector2(this.m_UVRect.xMax, this.m_UVRect.yMin));
+				float num = (float)mainTexture.width * mainTexture.texelSize.x;
+				float num2 = (float)mainTexture.height * mainTexture.texelSize.y;
+				Color color = this.color;
+				vh.AddVert(new Vector3(vector.x, vector.y), color, new Vector2(this.m_UVRect.xMin * num, this.m_UVRect.yMin * num2));
+				vh.AddVert(new Vector3(vector.x, vector.w), color, new Vector2(this.m_UVRect.xMin * num, this.m_UVRect.yMax * num2));
+				vh.AddVert(new Vector3(vector.z, vector.w), color, new Vector2(this.m_UVRect.xMax * num, this.m_UVRect.yMax * num2));
+				vh.AddVert(new Vector3(vector.z, vector.y), color, new Vector2(this.m_UVRect.xMax * num, this.m_UVRect.yMin * num2));
 				vh.AddTriangle(0, 1, 2);
 				vh.AddTriangle(2, 3, 0);
 			}

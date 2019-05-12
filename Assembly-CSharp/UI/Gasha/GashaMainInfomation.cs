@@ -59,6 +59,28 @@ namespace UI.Gasha
 			}
 		}
 
+		private void SetCautionButtonText(MasterDataMng.AssetCategory category)
+		{
+			if (category != MasterDataMng.AssetCategory.MONSTER)
+			{
+				if (category != MasterDataMng.AssetCategory.CHIP)
+				{
+					if (category == MasterDataMng.AssetCategory.DUNGEON_TICKET)
+					{
+						this.cautionButtonLabel.text = StringMaster.GetString("TicketGashaLineupCaution");
+					}
+				}
+				else
+				{
+					this.cautionButtonLabel.text = StringMaster.GetString("ChipGashaLineupCaution");
+				}
+			}
+			else
+			{
+				this.cautionButtonLabel.text = StringMaster.GetString("GashaLineupCaution");
+			}
+		}
+
 		public void SetTitleParts(PartsTitleBase title)
 		{
 			this.titleParts = title;
@@ -73,32 +95,12 @@ namespace UI.Gasha
 			switch (gashaInfo.priceType.GetCostAssetsCategory())
 			{
 			case MasterDataMng.AssetCategory.DIGI_STONE:
-			{
 				this.titleParts.SetTitle(StringMaster.GetString("GashaTitleRare"));
 				this.shopButton.SetActive(true);
 				this.detailButton.SetActive(true);
 				this.cautionButton.SetActive(true);
-				MasterDataMng.AssetCategory prizeAssetsCategory = gashaInfo.GetPrizeAssetsCategory();
-				if (prizeAssetsCategory != MasterDataMng.AssetCategory.CHIP)
-				{
-					if (prizeAssetsCategory != MasterDataMng.AssetCategory.DUNGEON_TICKET)
-					{
-						if (prizeAssetsCategory == MasterDataMng.AssetCategory.MONSTER)
-						{
-							this.cautionButtonLabel.text = StringMaster.GetString("GashaLineupCaution");
-						}
-					}
-					else
-					{
-						this.cautionButtonLabel.text = StringMaster.GetString("TicketGashaLineupCaution");
-					}
-				}
-				else
-				{
-					this.cautionButtonLabel.text = StringMaster.GetString("ChipGashaLineupCaution");
-				}
+				this.SetCautionButtonText(gashaInfo.GetPrizeAssetsCategory());
 				return;
-			}
 			case MasterDataMng.AssetCategory.LINK_POINT:
 				this.titleParts.SetTitle(StringMaster.GetString("GashaTitleLink"));
 				this.shopButton.SetActive(false);
@@ -110,6 +112,7 @@ namespace UI.Gasha
 			this.shopButton.SetActive(false);
 			this.detailButton.SetActive(true);
 			this.cautionButton.SetActive(true);
+			this.SetCautionButtonText(gashaInfo.GetPrizeAssetsCategory());
 		}
 	}
 }

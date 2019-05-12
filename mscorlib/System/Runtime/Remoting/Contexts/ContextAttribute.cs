@@ -6,8 +6,8 @@ using System.Runtime.Remoting.Activation;
 namespace System.Runtime.Remoting.Contexts
 {
 	/// <summary>Provides the default implementations of the <see cref="T:System.Runtime.Remoting.Contexts.IContextAttribute" /> and <see cref="T:System.Runtime.Remoting.Contexts.IContextProperty" /> interfaces.</summary>
-	[AttributeUsage(AttributeTargets.Class)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
 	public class ContextAttribute : Attribute, IContextAttribute, IContextProperty
 	{

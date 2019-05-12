@@ -31,7 +31,7 @@ public class SubStateMultiWaitEnemySkillSelect : SubStateMultiPlayerCharacterAnd
 		base.stateManager.uiControlMulti.StartSharedAPAnimation();
 		base.stateManager.uiControlMulti.HideRemainingTurnRightDown();
 		base.stateManager.targetSelect.TargetManualSelectAndApplyUIFunction(null);
-		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
+		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		base.stateManager.uiControl.SetHudCollider(false);
 		yield break;
 	}

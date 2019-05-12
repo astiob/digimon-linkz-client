@@ -8,15 +8,15 @@ using UnityEngine;
 
 public class CMD_MultiRecruitFriend : CMD
 {
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partFriendParent;
 
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[SerializeField]
 	[Header("デフォルトメッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -84,13 +84,13 @@ public class CMD_MultiRecruitFriend : CMD
 		APIRequestTask task = APIUtil.Instance().RequestFriendData(false);
 		yield return base.StartCoroutine(task.Run(delegate
 		{
-			base.ShowDLG();
+			this.ShowDLG();
 			this.SetCommonUI();
 			this.InitFriendList();
-			base.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception noop)
 		{
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 		MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		yield break;

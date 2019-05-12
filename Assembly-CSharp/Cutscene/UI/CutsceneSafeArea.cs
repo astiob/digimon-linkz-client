@@ -12,13 +12,13 @@ namespace Cutscene.UI
 		private void Awake()
 		{
 			UIRoot component = base.GetComponent<UIRoot>();
-			if (null != this.cutsceneUIWidget)
+			UIRoot uiroot = GUIMain.GetUIRoot();
+			if (null != uiroot)
 			{
-				UIRoot uiroot = GUIMain.GetUIRoot();
-				if (null != uiroot)
+				component.manualWidth = uiroot.manualWidth;
+				component.manualHeight = uiroot.manualHeight;
+				if (null != this.cutsceneUIWidget)
 				{
-					component.manualWidth = uiroot.manualWidth;
-					component.manualHeight = uiroot.manualHeight;
 					UICoverSafeArea component2 = uiroot.GetComponent<UICoverSafeArea>();
 					if (null != component2)
 					{

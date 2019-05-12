@@ -6,33 +6,37 @@ using UnityEngine;
 
 public sealed class CMD_InheritCheck : CMD
 {
-	[Header("タイトルのラベル")]
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("デジモンの継承スキル")]
 	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
 
-	[Header("消費クラスタのラベル")]
 	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
 	private GameObject dialogPlate;
 
 	[SerializeField]
-	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
+
+	private Action<CMD> onPushYesButton;
+
+	private void OnPushYesButton()
+	{
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton(this);
+		}
+		this.ClosePanel(true);
+	}
 
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string useCluster, int baseDigimonSkillNumber, int partnerDigimonSkillNumber)
 	{
@@ -98,5 +102,10 @@ public sealed class CMD_InheritCheck : CMD
 	{
 		base.Awake();
 		this.titleLabel.text = StringMaster.GetString("SuccessionConfirmTitle");
+	}
+
+	public void SetActionYesButton(Action<CMD> action)
+	{
+		this.onPushYesButton = action;
 	}
 }

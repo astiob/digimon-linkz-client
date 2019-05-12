@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.CompilerServices
 {
 	/// <summary>Persists an 8-byte <see cref="T:System.DateTime" /> constant for a field or parameter.</summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
 	[Serializable]
 	public sealed class DateTimeConstantAttribute : CustomConstantAttribute
 	{

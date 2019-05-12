@@ -4,11 +4,11 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.ModuleBuilder" /> class to unmanaged code.</summary>
-	[ComVisible(true)]
-	[CLSCompliant(false)]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid("D05FFA9A-04AF-3519-8EE1-8D93AD73430B")]
 	[TypeLibImportClass(typeof(ModuleBuilder))]
+	[Guid("D05FFA9A-04AF-3519-8EE1-8D93AD73430B")]
+	[CLSCompliant(false)]
+	[ComVisible(true)]
 	public interface _ModuleBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

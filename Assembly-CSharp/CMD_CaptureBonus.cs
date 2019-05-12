@@ -72,17 +72,41 @@ public sealed class CMD_CaptureBonus : CMD
 		{
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(RewardsData.assetValue);
 			arg = monsterData.monsterMG.monsterName;
-			goto IL_12A;
+			break;
 		}
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			arg = text;
-			goto IL_12A;
+			break;
 		case MasterDataMng.AssetCategory.LINK_POINT:
 			arg = text;
-			goto IL_12A;
+			break;
 		case MasterDataMng.AssetCategory.TIP:
 			arg = text;
-			goto IL_12A;
+			break;
+		default:
+			switch (assetCategoryId)
+			{
+			case MasterDataMng.AssetCategory.MEAT:
+				arg = text;
+				goto IL_117;
+			case MasterDataMng.AssetCategory.SOUL:
+			{
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(RewardsData.assetValue);
+				arg = soul.soulName;
+				goto IL_117;
+			}
+			case MasterDataMng.AssetCategory.FACILITY_KEY:
+				arg = text;
+				goto IL_117;
+			case MasterDataMng.AssetCategory.CHIP:
+			{
+				GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(RewardsData.assetValue);
+				arg = chipMainData.name;
+				goto IL_117;
+			}
+			}
+			arg = StringMaster.GetString("Present-10");
+			break;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(RewardsData.assetValue);
@@ -90,29 +114,10 @@ public sealed class CMD_CaptureBonus : CMD
 			{
 				arg = itemM.name;
 			}
-			goto IL_12A;
-		}
-		case MasterDataMng.AssetCategory.MEAT:
-			arg = text;
-			goto IL_12A;
-		case MasterDataMng.AssetCategory.SOUL:
-		{
-			GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(RewardsData.assetValue);
-			arg = soul.soulName;
-			goto IL_12A;
-		}
-		case MasterDataMng.AssetCategory.FACILITY_KEY:
-			arg = text;
-			goto IL_12A;
-		case MasterDataMng.AssetCategory.CHIP:
-		{
-			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(RewardsData.assetValue);
-			arg = chipMainData.name;
-			goto IL_12A;
+			break;
 		}
 		}
-		arg = StringMaster.GetString("Present-10");
-		IL_12A:
+		IL_117:
 		return string.Format(StringMaster.GetString("CaptureBonusItem"), arg, RewardsData.count);
 	}
 
@@ -124,34 +129,5 @@ public sealed class CMD_CaptureBonus : CMD
 		}).Length;
 		int num2 = (this.itemDetileLabel.fontSize + this.itemDetileLabel.spacingY) * num;
 		base.GetComponent<UIWidget>().height += num2;
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	private void Start()
-	{
-	}
-
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
-	{
-		base.Show(f, sizeX, sizeY, aT);
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 }

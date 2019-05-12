@@ -4,6 +4,8 @@ namespace UnityEngine.UI
 {
 	public interface IClippable
 	{
+		GameObject gameObject { get; }
+
 		void RecalculateClipping();
 
 		RectTransform rectTransform { get; }

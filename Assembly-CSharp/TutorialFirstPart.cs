@@ -26,10 +26,10 @@ public sealed class TutorialFirstPart : TutorialBasePart
 		UIRoot root = GUIMain.GetUIRoot();
 		if (null != root)
 		{
-			UIPanel uiPanel = root.GetComponent<UIPanel>();
-			if (null != uiPanel)
+			UIPanel component = root.GetComponent<UIPanel>();
+			if (null != component)
 			{
-				uiPanel.depth = 100;
+				component.depth = 100;
 			}
 		}
 		yield return AppCoroutine.Start(this.LoadScriptEngine(tutorialStatusId), false);

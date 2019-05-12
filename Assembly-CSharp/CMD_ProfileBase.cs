@@ -3,7 +3,9 @@ using Master;
 using PvP;
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 [RequireComponent(typeof(DigimonModelPlayer))]
 public abstract class CMD_ProfileBase : CMD
@@ -37,6 +39,9 @@ public abstract class CMD_ProfileBase : CMD
 	protected CharacterCameraView characterCameraView;
 
 	protected GameWebAPI.ColosseumUserStatus colosseumUserStatus;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
@@ -188,7 +193,12 @@ public abstract class CMD_ProfileBase : CMD
 				this.colosseumUserStatus = resData.userStatus;
 			}
 		};
-		yield return base.StartCoroutine(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request2 = request;
+		if (CMD_ProfileBase.<>f__mg$cache0 == null)
+		{
+			CMD_ProfileBase.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		yield return base.StartCoroutine(request2.Run(CMD_ProfileBase.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null));

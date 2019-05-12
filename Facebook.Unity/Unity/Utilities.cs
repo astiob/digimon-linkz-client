@@ -27,7 +27,7 @@ namespace Facebook.Unity
 				{
 					if (commandLineArgs[i].StartsWith("/") || commandLineArgs[i].StartsWith("-"))
 					{
-						string value = (i + 1 >= commandLineArgs.Length) ? null : commandLineArgs[i + 1];
+						string value = (i + 1 < commandLineArgs.Length) ? commandLineArgs[i + 1] : null;
 						dictionary.Add(commandLineArgs[i], value);
 					}
 				}
@@ -135,7 +135,7 @@ namespace Facebook.Unity
 			stringBuilder.AppendFormat("\n{0}:", className);
 			foreach (KeyValuePair<string, string> keyValuePair in propertiesAndValues)
 			{
-				string arg = (keyValuePair.Value == null) ? "null" : keyValuePair.Value;
+				string arg = (keyValuePair.Value != null) ? keyValuePair.Value : "null";
 				stringBuilder.AppendFormat("\n\t{0}: {1}", keyValuePair.Key, arg);
 			}
 			return stringBuilder.ToString();
@@ -144,39 +144,34 @@ namespace Facebook.Unity
 		private static DateTime ParseExpirationDateFromResult(IDictionary<string, object> resultDictionary)
 		{
 			DateTime result;
+			int num;
 			if (Constants.IsWeb)
 			{
 				long valueOrDefault = resultDictionary.GetValueOrDefault(LoginResult.ExpirationTimestampKey, true);
 				result = DateTime.UtcNow.AddSeconds((double)valueOrDefault);
 			}
-			else
+			else if (int.TryParse(resultDictionary.GetValueOrDefault(LoginResult.ExpirationTimestampKey, true), out num) && num > 0)
 			{
-				string valueOrDefault2 = resultDictionary.GetValueOrDefault(LoginResult.ExpirationTimestampKey, true);
-				int num;
-				if (int.TryParse(valueOrDefault2, out num) && num > 0)
+				if (Constants.IsGameroom)
 				{
-					if (Constants.IsArcade)
-					{
-						result = DateTime.UtcNow.AddSeconds((double)num);
-					}
-					else
-					{
-						result = Utilities.FromTimestamp(num);
-					}
+					result = DateTime.UtcNow.AddSeconds((double)num);
 				}
 				else
 				{
-					result = DateTime.MaxValue;
+					result = Utilities.FromTimestamp(num);
 				}
+			}
+			else
+			{
+				result = DateTime.MaxValue;
 			}
 			return result;
 		}
 
 		private static DateTime? ParseLastRefreshFromResult(IDictionary<string, object> resultDictionary)
 		{
-			string valueOrDefault = resultDictionary.GetValueOrDefault("last_refresh", false);
 			int num;
-			if (int.TryParse(valueOrDefault, out num) && num > 0)
+			if (int.TryParse(resultDictionary.GetValueOrDefault("last_refresh", false), out num) && num > 0)
 			{
 				return new DateTime?(Utilities.FromTimestamp(num));
 			}
@@ -207,8 +202,7 @@ namespace Facebook.Unity
 
 		private static DateTime FromTimestamp(int timestamp)
 		{
-			DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-			return dateTime.AddSeconds((double)timestamp);
+			return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds((double)timestamp);
 		}
 
 		public delegate void Callback<T>(T obj);

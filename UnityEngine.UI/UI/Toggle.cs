@@ -7,7 +7,7 @@ namespace UnityEngine.UI
 {
 	[AddComponentMenu("UI/Toggle", 31)]
 	[RequireComponent(typeof(RectTransform))]
-	public class Toggle : Selectable, IEventSystemHandler, IPointerClickHandler, ISubmitHandler, ICanvasElement
+	public class Toggle : Selectable, IPointerClickHandler, ISubmitHandler, ICanvasElement, IEventSystemHandler
 	{
 		public Toggle.ToggleTransition toggleTransition = Toggle.ToggleTransition.Fade;
 
@@ -18,9 +18,9 @@ namespace UnityEngine.UI
 
 		public Toggle.ToggleEvent onValueChanged = new Toggle.ToggleEvent();
 
-		[SerializeField]
 		[FormerlySerializedAs("m_IsActive")]
 		[Tooltip("Is the toggle currently on or off?")]
+		[SerializeField]
 		private bool m_IsOn;
 
 		protected Toggle()
@@ -91,13 +91,13 @@ namespace UnityEngine.UI
 			{
 				this.m_Group = newGroup;
 			}
-			if (this.m_Group != null && this.IsActive())
+			if (newGroup != null && this.IsActive())
 			{
-				this.m_Group.RegisterToggle(this);
+				newGroup.RegisterToggle(this);
 			}
 			if (newGroup != null && newGroup != group && this.isOn && this.IsActive())
 			{
-				this.m_Group.NotifyToggleOn(this);
+				newGroup.NotifyToggleOn(this);
 			}
 		}
 
@@ -120,30 +120,32 @@ namespace UnityEngine.UI
 
 		private void Set(bool value, bool sendCallback)
 		{
-			if (this.m_IsOn == value)
+			if (this.m_IsOn != value)
 			{
-				return;
-			}
-			this.m_IsOn = value;
-			if (this.m_Group != null && this.IsActive() && (this.m_IsOn || (!this.m_Group.AnyTogglesOn() && !this.m_Group.allowSwitchOff)))
-			{
-				this.m_IsOn = true;
-				this.m_Group.NotifyToggleOn(this);
-			}
-			this.PlayEffect(this.toggleTransition == Toggle.ToggleTransition.None);
-			if (sendCallback)
-			{
-				this.onValueChanged.Invoke(this.m_IsOn);
+				this.m_IsOn = value;
+				if (this.m_Group != null && this.IsActive())
+				{
+					if (this.m_IsOn || (!this.m_Group.AnyTogglesOn() && !this.m_Group.allowSwitchOff))
+					{
+						this.m_IsOn = true;
+						this.m_Group.NotifyToggleOn(this);
+					}
+				}
+				this.PlayEffect(this.toggleTransition == Toggle.ToggleTransition.None);
+				if (sendCallback)
+				{
+					UISystemProfilerApi.AddMarker("Toggle.value", this);
+					this.onValueChanged.Invoke(this.m_IsOn);
+				}
 			}
 		}
 
 		private void PlayEffect(bool instant)
 		{
-			if (this.graphic == null)
+			if (!(this.graphic == null))
 			{
-				return;
+				this.graphic.CrossFadeAlpha((!this.m_IsOn) ? 0f : 1f, (!instant) ? 0.1f : 0f, true);
 			}
-			this.graphic.CrossFadeAlpha((!this.m_IsOn) ? 0f : 1f, (!instant) ? 0.1f : 0f, true);
 		}
 
 		protected override void Start()
@@ -153,20 +155,18 @@ namespace UnityEngine.UI
 
 		private void InternalToggle()
 		{
-			if (!this.IsActive() || !this.IsInteractable())
+			if (this.IsActive() && this.IsInteractable())
 			{
-				return;
+				this.isOn = !this.isOn;
 			}
-			this.isOn = !this.isOn;
 		}
 
 		public virtual void OnPointerClick(PointerEventData eventData)
 		{
-			if (eventData.button != PointerEventData.InputButton.Left)
+			if (eventData.button == PointerEventData.InputButton.Left)
 			{
-				return;
+				this.InternalToggle();
 			}
-			this.InternalToggle();
 		}
 
 		public virtual void OnSubmit(BaseEventData eventData)
@@ -174,12 +174,7 @@ namespace UnityEngine.UI
 			this.InternalToggle();
 		}
 
-		virtual bool IsDestroyed()
-		{
-			return base.IsDestroyed();
-		}
-
-		virtual Transform get_transform()
+		Transform ICanvasElement.get_transform()
 		{
 			return base.transform;
 		}

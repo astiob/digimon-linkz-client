@@ -24,14 +24,12 @@ namespace Facebook.Unity
 			if (string.IsNullOrEmpty(result))
 			{
 				this.ResultDictionary = new Dictionary<string, object>();
+				return;
 			}
-			else
+			this.ResultDictionary = (Json.Deserialize(result) as Dictionary<string, object>);
+			if (Constants.IsWeb && this.ResultDictionary != null)
 			{
-				this.ResultDictionary = (Json.Deserialize(result) as Dictionary<string, object>);
-				if (Constants.IsWeb && this.ResultDictionary != null)
-				{
-					this.ResultDictionary = this.GetWebFormattedResponseDictionary(this.ResultDictionary);
-				}
+				this.ResultDictionary = this.GetWebFormattedResponseDictionary(this.ResultDictionary);
 			}
 		}
 

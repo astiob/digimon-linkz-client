@@ -1,26 +1,15 @@
-﻿using System;
+﻿using Quest;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GUISelectPanelPartyEdit : GUISelectPanelBSPartsLR
 {
-	public CMD_PartyEdit partyEdit;
-
 	public List<GUIListPartsPartyEdit> fastSetPartObjs;
 
 	public Action popupCallback { get; set; }
 
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public void AllBuild(List<GameWebAPI.RespDataMN_GetDeckList.DeckList> dts)
+	public void AllBuild(List<GameWebAPI.RespDataMN_GetDeckList.DeckList> dts, CMD_PartyEdit partyEdit, QuestBonusPack questBonus, QuestBonusTargetCheck checker)
 	{
 		base.InitBuild();
 		this.fastSetPartObjs.Clear();
@@ -40,8 +29,9 @@ public class GUISelectPanelPartyEdit : GUISelectPanelBSPartsLR
 				{
 					component.SetOriginalPos(new Vector3(num3, y, -5f));
 					component.SetDeck(dts[i]);
-					component.partyEdit = this.partyEdit;
+					component.partyEdit = partyEdit;
 					component.selectPanelParty = this;
+					component.SetUI(questBonus, checker);
 					component.ShowGUI();
 					int partyNumber = int.Parse(dts[i].deckNum);
 					component.partyNumber = partyNumber;

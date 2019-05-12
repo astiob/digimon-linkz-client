@@ -15,68 +15,68 @@ public class CampaignUtil
 				break;
 			case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestExpUp:
 				result = string.Format(StringMaster.GetString("CampaignExp"), rate.ToString(format));
-				goto IL_2CB;
+				goto IL_2C9;
 			case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestCipUp:
 				result = string.Format(StringMaster.GetString("CampaignTip"), rate.ToString(format));
-				goto IL_2CB;
+				goto IL_2C9;
 			case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestMatUp:
 				result = string.Format(StringMaster.GetString("CampaignDrop"), rate.ToString(format));
-				goto IL_2CB;
+				goto IL_2C9;
 			case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestRrDrpUp:
 				result = string.Format(StringMaster.GetString("CampaignDropRare"), rate.ToString(format));
-				goto IL_2CB;
+				goto IL_2C9;
 			case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestFriUp:
 				result = string.Format(StringMaster.GetString("CampaignFriend"), rate.ToString(format));
-				goto IL_2CB;
+				goto IL_2C9;
 			case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown:
 				result = string.Format(StringMaster.GetString("CampaignStamina"), rate.ToString(format));
-				goto IL_2CB;
+				goto IL_2C9;
 			default:
 				switch (cpmType)
 				{
 				case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestExpUpMul:
 					result = string.Format(StringMaster.GetString("CampaignExp"), rate.ToString(format));
-					goto IL_2CB;
+					goto IL_2C9;
 				case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestCipUpMul:
 					result = string.Format(StringMaster.GetString("CampaignTip"), rate.ToString(format));
-					goto IL_2CB;
+					goto IL_2C9;
 				case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestMatUpMul:
 					result = string.Format(StringMaster.GetString("CampaignDrop"), rate.ToString(format));
-					goto IL_2CB;
+					goto IL_2C9;
 				case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestRrDrpUpMul:
 					result = string.Format(StringMaster.GetString("CampaignDropRare"), rate.ToString(format));
-					goto IL_2CB;
+					goto IL_2C9;
 				case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestFriUpMul:
 					result = string.Format(StringMaster.GetString("CampaignFriend"), rate.ToString(format));
-					goto IL_2CB;
+					goto IL_2C9;
 				case GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDownMul:
 					result = string.Format(StringMaster.GetString("CampaignStamina"), rate.ToString(format));
-					goto IL_2CB;
+					goto IL_2C9;
 				default:
 					switch (cpmType)
 					{
 					case GameWebAPI.RespDataCP_Campaign.CampaignType.TrainExpUp:
 						result = string.Format(StringMaster.GetString("CampaignExp"), rate.ToString(format));
-						goto IL_2CB;
+						goto IL_2C9;
 					case GameWebAPI.RespDataCP_Campaign.CampaignType.TrainCostDown:
 						result = string.Format(StringMaster.GetString("CampaignTipOff"), rate.ToString(format));
-						goto IL_2CB;
+						goto IL_2C9;
 					case GameWebAPI.RespDataCP_Campaign.CampaignType.MeatExpUp:
 						result = string.Format(StringMaster.GetString("CampaignExp"), rate.ToString(format));
-						goto IL_2CB;
+						goto IL_2C9;
 					case GameWebAPI.RespDataCP_Campaign.CampaignType.TrainLuckUp:
 						result = string.Format(StringMaster.GetString("CampaignLuckUp"), rate.ToString(format));
-						goto IL_2CB;
+						goto IL_2C9;
 					default:
 						if (cpmType == GameWebAPI.RespDataCP_Campaign.CampaignType.MeatHrvUp)
 						{
 							result = string.Format(StringMaster.GetString("CampaignMeat"), rate.ToString(format));
-							goto IL_2CB;
+							goto IL_2C9;
 						}
 						if (cpmType == GameWebAPI.RespDataCP_Campaign.CampaignType.MedalTakeOverUp)
 						{
 							result = string.Format(StringMaster.GetString("CampaignMedalTakeOverUp"), rate.ToString(format));
-							goto IL_2CB;
+							goto IL_2C9;
 						}
 						break;
 					}
@@ -85,7 +85,7 @@ public class CampaignUtil
 				break;
 			}
 			result = string.Format(StringMaster.GetString("Campaign"), rate.ToString(format));
-			IL_2CB:;
+			IL_2C9:;
 		}
 		else
 		{

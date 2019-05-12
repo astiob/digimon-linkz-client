@@ -22,6 +22,8 @@ namespace Facebook.Unity
 
 		public const string ErrorKey = "error";
 
+		public const string HasLicenseKey = "has_license";
+
 		public const string OnPayCompleteMethodName = "OnPayComplete";
 
 		public const string OnShareCompleteMethodName = "OnShareLinkComplete";
@@ -50,12 +52,11 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				string uriString = string.Format(CultureInfo.InvariantCulture, "https://graph.{0}/{1}/", new object[]
+				return new Uri(string.Format(CultureInfo.InvariantCulture, "https://graph.{0}/{1}/", new object[]
 				{
 					FB.FacebookDomain,
 					FB.GraphApiVersion
-				});
-				return new Uri(uriString);
+				}));
 			}
 		}
 
@@ -91,15 +92,15 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return Constants.CurrentPlatform == FacebookUnityPlatform.WebGL || Constants.CurrentPlatform == FacebookUnityPlatform.WebPlayer;
+				return Constants.CurrentPlatform == FacebookUnityPlatform.WebGL;
 			}
 		}
 
-		public static bool IsArcade
+		public static bool IsGameroom
 		{
 			get
 			{
-				return Constants.CurrentPlatform == FacebookUnityPlatform.Arcade;
+				return Constants.CurrentPlatform == FacebookUnityPlatform.Gameroom;
 			}
 		}
 
@@ -149,24 +150,29 @@ namespace Facebook.Unity
 		private static FacebookUnityPlatform GetCurrentPlatform()
 		{
 			RuntimePlatform platform = Application.platform;
-			switch (platform)
+			if (platform <= RuntimePlatform.IPhonePlayer)
 			{
-			case RuntimePlatform.WindowsPlayer:
-				return FacebookUnityPlatform.Arcade;
-			case RuntimePlatform.OSXWebPlayer:
-			case RuntimePlatform.WindowsWebPlayer:
-				return FacebookUnityPlatform.WebPlayer;
-			default:
-				if (platform != RuntimePlatform.WebGLPlayer)
+				if (platform == RuntimePlatform.WindowsPlayer)
 				{
-					return FacebookUnityPlatform.Unknown;
+					return FacebookUnityPlatform.Gameroom;
 				}
-				return FacebookUnityPlatform.WebGL;
-			case RuntimePlatform.IPhonePlayer:
-				return FacebookUnityPlatform.IOS;
-			case RuntimePlatform.Android:
-				return FacebookUnityPlatform.Android;
+				if (platform == RuntimePlatform.IPhonePlayer)
+				{
+					return FacebookUnityPlatform.IOS;
+				}
 			}
+			else
+			{
+				if (platform == RuntimePlatform.Android)
+				{
+					return FacebookUnityPlatform.Android;
+				}
+				if (platform == RuntimePlatform.WebGLPlayer)
+				{
+					return FacebookUnityPlatform.WebGL;
+				}
+			}
+			return FacebookUnityPlatform.Unknown;
 		}
 	}
 }

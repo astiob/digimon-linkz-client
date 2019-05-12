@@ -13,8 +13,9 @@ namespace Facebook.Unity
 				if (this.ResultDictionary.TryGetValue(ShareResult.PostIDKey, out postId))
 				{
 					this.PostId = postId;
+					return;
 				}
-				else if (this.ResultDictionary.TryGetValue("postId", out postId))
+				if (this.ResultDictionary.TryGetValue("postId", out postId))
 				{
 					this.PostId = postId;
 				}
@@ -27,7 +28,11 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return (!Constants.IsWeb) ? "id" : "post_id";
+				if (!Constants.IsWeb)
+				{
+					return "id";
+				}
+				return "post_id";
 			}
 		}
 

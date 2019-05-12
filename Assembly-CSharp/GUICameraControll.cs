@@ -4,8 +4,6 @@ using UnityEngine;
 
 public sealed class GUICameraControll : MonoBehaviour
 {
-	private const float SAVE_TIME = 2f;
-
 	private InputControll inputControl;
 
 	private FarmCameraDrawArea farmCameraDrawArea;
@@ -40,6 +38,8 @@ public sealed class GUICameraControll : MonoBehaviour
 	private float currentOrthographicSize;
 
 	private Vector3 vtmp;
+
+	private const float SAVE_TIME = 2f;
 
 	private float currentSaveTime;
 

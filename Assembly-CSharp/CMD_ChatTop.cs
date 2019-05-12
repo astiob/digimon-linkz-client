@@ -3,6 +3,7 @@ using Master;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using WebAPIRequest;
 
@@ -126,6 +127,12 @@ public class CMD_ChatTop : CMD
 
 	private Action showWindow;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
 	public bool isGetChatGroupListMax { get; set; }
 
 	public bool isChatPaging { get; set; }
@@ -168,7 +175,7 @@ public class CMD_ChatTop : CMD
 			this.ShowDLG();
 			this.SetTutorialAnyTime("anytime_second_tutorial_digichat");
 			this.SetCommonUI();
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 			this.setTabView();
 			this.setInitLabel();
 			if (this.initFocusTabNum == 1)
@@ -203,7 +210,7 @@ public class CMD_ChatTop : CMD
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 	}
 
@@ -317,8 +324,13 @@ public class CMD_ChatTop : CMD
 		{
 		};
 		multiRoomRequestList.OnReceived = new Action<GameWebAPI.RespData_MultiRoomRequestList>(this.UpdateMultiRecruitFriendList);
-		GameWebAPI.MultiRoomRequestList request = multiRoomRequestList;
-		AppCoroutine.Start(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		GameWebAPI.MultiRoomRequestList multiRoomRequestList2 = multiRoomRequestList;
+		RequestBase request = multiRoomRequestList2;
+		if (CMD_ChatTop.<>f__mg$cache0 == null)
+		{
+			CMD_ChatTop.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		AppCoroutine.Start(request.RunOneTime(CMD_ChatTop.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null), false);
@@ -327,11 +339,16 @@ public class CMD_ChatTop : CMD
 	private void GetPvPFriendList()
 	{
 		this.SetUpdateLock();
-		GameWebAPI.ColosseumMockBattleRequestListLogic request = new GameWebAPI.ColosseumMockBattleRequestListLogic
+		GameWebAPI.ColosseumMockBattleRequestListLogic colosseumMockBattleRequestListLogic = new GameWebAPI.ColosseumMockBattleRequestListLogic
 		{
 			OnReceived = new Action<GameWebAPI.RespData_ColosseumMockBattleRequestListLogic>(this.UpdatePvPFriendList)
 		};
-		AppCoroutine.Start(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request = colosseumMockBattleRequestListLogic;
+		if (CMD_ChatTop.<>f__mg$cache1 == null)
+		{
+			CMD_ChatTop.<>f__mg$cache1 = new Action(RestrictionInput.EndLoad);
+		}
+		AppCoroutine.Start(request.RunOneTime(CMD_ChatTop.<>f__mg$cache1, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null), false);

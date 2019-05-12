@@ -20,7 +20,7 @@ public class BattleSkillDetails : BattleFunctionBase
 		{
 			if (target.currentSufferState.FindSufferState(type))
 			{
-				target.currentSufferState.RemoveSufferState(type);
+				target.currentSufferState.RemoveSufferState(type, false);
 			}
 		}
 	}
@@ -40,7 +40,7 @@ public class BattleSkillDetails : BattleFunctionBase
 		{
 			if (target.currentSufferState.FindSufferState(type))
 			{
-				target.currentSufferState.RemoveSufferState(type);
+				target.currentSufferState.RemoveSufferState(type, false);
 			}
 		}
 	}
@@ -78,7 +78,7 @@ public class BattleSkillDetails : BattleFunctionBase
 		{
 			if (RandomExtension.Switch(keyValuePair.Value) && target.currentSufferState.FindSufferState(keyValuePair.Key))
 			{
-				target.currentSufferState.RemoveSufferState(keyValuePair.Key);
+				target.currentSufferState.RemoveSufferState(keyValuePair.Key, false);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public class BattleSkillDetails : BattleFunctionBase
 		target.hate += affectEffectProperty.downPower;
 	}
 
-	private void AddSufferStateOthers(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
+	public void AddSufferStateOthers(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
 		SufferStateProperty.Data data = new SufferStateProperty.Data(affectEffectProperty, base.battleStateData.currentLastGenerateStartTimingSufferState);
 		target.currentSufferState.SetSufferState(data, null);
@@ -175,71 +175,80 @@ public class BattleSkillDetails : BattleFunctionBase
 		default:
 			switch (type)
 			{
-			case AffectEffect.SufferStatusClear:
-				this.SufferStatusClear(targetCharacter, affectEffectProperty);
+			case AffectEffect.HpSettingFixable:
+			{
+				int num2 = this.HpSettingFixable(targetCharacter, affectEffectProperty);
+				if (num2 > 0)
+				{
+					skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
+				}
+				else
+				{
+					skillResults.hitIconAffectEffect = AffectEffect.Damage;
+				}
+				num2 = Mathf.Abs(num2);
+				skillResults.attackPower = num2;
+				skillResults.originalAttackPower = num2;
+				break;
+			}
+			case AffectEffect.HpSettingPercentage:
+			{
+				int num3 = this.HpSettingPercentage(targetCharacter, affectEffectProperty);
+				if (num3 > 0)
+				{
+					skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
+				}
+				else
+				{
+					skillResults.hitIconAffectEffect = AffectEffect.Damage;
+				}
+				num3 = Mathf.Abs(num3);
+				skillResults.attackPower = num3;
+				skillResults.originalAttackPower = num3;
+				break;
+			}
+			case AffectEffect.Escape:
+				if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Escape))
+				{
+					skillResults.onMissHit = true;
+				}
+				else
+				{
+					this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
+				}
+				break;
+			case AffectEffect.Nothing:
 				break;
 			default:
-				switch (type)
+				if (type != AffectEffect.ApUp)
 				{
-				case AffectEffect.HpSettingFixable:
+					if (type != AffectEffect.ApDown)
+					{
+						if (type != AffectEffect.SufferStatusClear)
+						{
+							if (type != AffectEffect.Recommand)
+							{
+								this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
+							}
+							else
+							{
+								targetCharacter.isRecommand = true;
+							}
+						}
+						else
+						{
+							this.SufferStatusClear(targetCharacter, affectEffectProperty);
+						}
+					}
+					else
+					{
+						this.ApDown(targetCharacter, affectEffectProperty);
+					}
+				}
+				else
 				{
-					int num2 = this.HpSettingFixable(targetCharacter, affectEffectProperty);
-					if (num2 > 0)
-					{
-						skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
-					}
-					else
-					{
-						skillResults.hitIconAffectEffect = AffectEffect.Damage;
-					}
-					num2 = Mathf.Abs(num2);
-					skillResults.attackPower = num2;
-					skillResults.originalAttackPower = num2;
-					break;
+					this.ApUp(targetCharacter, affectEffectProperty);
 				}
-				case AffectEffect.HpSettingPercentage:
-				{
-					int num3 = this.HpSettingPercentage(targetCharacter, affectEffectProperty);
-					if (num3 > 0)
-					{
-						skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
-					}
-					else
-					{
-						skillResults.hitIconAffectEffect = AffectEffect.Damage;
-					}
-					num3 = Mathf.Abs(num3);
-					skillResults.attackPower = num3;
-					skillResults.originalAttackPower = num3;
-					break;
-				}
-				case AffectEffect.Escape:
-					if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Escape))
-					{
-						skillResults.onMissHit = true;
-					}
-					else
-					{
-						this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
-					}
-					break;
-				default:
-					if (type != AffectEffect.Recommand)
-					{
-						this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
-					}
-					else
-					{
-						targetCharacter.isRecommand = true;
-					}
-					break;
-				}
-				break;
-			case AffectEffect.ApUp:
-				this.ApUp(targetCharacter, affectEffectProperty);
-				break;
-			case AffectEffect.ApDown:
-				this.ApDown(targetCharacter, affectEffectProperty);
 				break;
 			}
 			break;
@@ -318,18 +327,11 @@ public class BattleSkillDetails : BattleFunctionBase
 			skillResults.hitIconAffectEffect = affectEffectProperty.type;
 			skillResults.onWeakHit = Strength.None;
 			skillResults.onMissHit = false;
-			if (affectEffectProperty.type == AffectEffect.InstantDeath)
+			if (affectEffectProperty.type == AffectEffect.Stun)
 			{
-				targetCharacter.Kill();
+				targetCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape, false);
 			}
-			else
-			{
-				if (affectEffectProperty.type == AffectEffect.Stun)
-				{
-					targetCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape);
-				}
-				this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
-			}
+			this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
 		}
 		return skillResults;
 	}

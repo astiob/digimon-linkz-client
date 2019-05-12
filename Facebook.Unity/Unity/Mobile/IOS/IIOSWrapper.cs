@@ -22,10 +22,6 @@ namespace Facebook.Unity.Mobile.IOS
 
 		void AppInvite(int requestId, string appLinkUrl, string previewImageUrl);
 
-		void CreateGameGroup(int requestId, string name, string description, string privacy);
-
-		void JoinGameGroup(int requestId, string groupId);
-
 		void FBSettingsActivateApp(string appId);
 
 		void LogAppEvent(string logEvent, double valueToSum, int numParams, string[] paramKeys, string[] paramVals);

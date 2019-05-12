@@ -7,8 +7,8 @@ public class CameraPostEffect : MonoBehaviour
 {
 	public static CameraPostEffect current;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float _effectLevel;
 
 	private MaterialController _materialController;

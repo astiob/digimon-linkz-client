@@ -1974,8 +1974,8 @@ namespace System
 		/// <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method matches the binding criteria. </exception>
 		/// <exception cref="T:System.InvalidOperationException">The method represented by <paramref name="name" /> has one or more unspecified generic type parameters. That is, the method's <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> property returns true.</exception>
 		/// <filterpriority>2</filterpriority>
-		[DebuggerHidden]
 		[DebuggerStepThrough]
+		[DebuggerHidden]
 		public object InvokeMember(string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, CultureInfo culture)
 		{
 			return this.InvokeMember(name, invokeAttr, binder, target, args, null, culture, null);

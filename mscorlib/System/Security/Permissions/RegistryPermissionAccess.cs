@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions
 {
 	/// <summary>Specifies the permitted access to registry keys and values.</summary>
-	[ComVisible(true)]
 	[Flags]
+	[ComVisible(true)]
 	[Serializable]
 	public enum RegistryPermissionAccess
 	{

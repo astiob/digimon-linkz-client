@@ -211,17 +211,17 @@ public class GUISelectPanelBSRT : GUICollider
 	protected override void Awake()
 	{
 		base.Awake();
-		this.onTouchBegan += delegate(Touch touch, Vector2 pos)
+		base.onTouchBegan += delegate(Touch touch, Vector2 pos)
 		{
 			this.isAdjusting = false;
 			this.CancelMoveLR();
 		};
-		this.onTouchMoved += delegate(Touch touch, Vector2 pos)
+		base.onTouchMoved += delegate(Touch touch, Vector2 pos)
 		{
 			this.isAdjusting = false;
 			this.CancelMoveLR();
 		};
-		this.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
+		base.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 		{
 			this.isAdjusting = false;
 			this.CancelMoveLR();
@@ -500,7 +500,7 @@ public class GUISelectPanelBSRT : GUICollider
 
 	public float GetLocationByIdx(int idx)
 	{
-		float num = 0f + this.GetUsePitch() * (float)idx;
+		float num = this.GetUsePitch() * (float)idx;
 		return -num;
 	}
 
@@ -693,7 +693,7 @@ public class GUISelectPanelBSRT : GUICollider
 	{
 		base.Update();
 		this.panelSpeed_ = this.scrollSpeed;
-		if (!this.isTouchMoved)
+		if (!base.isTouchMoved)
 		{
 			this.panelSpeed_ = this.selectLoc;
 			float usePitch = this.GetUsePitch();

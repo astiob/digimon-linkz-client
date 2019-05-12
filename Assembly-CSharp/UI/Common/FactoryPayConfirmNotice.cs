@@ -60,5 +60,56 @@ namespace UI.Common
 			}
 			return result;
 		}
+
+		public static IPayConfirmNotice CreateDialog(int category)
+		{
+			IPayConfirmNotice result;
+			if (category == 2)
+			{
+				result = (GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE);
+			}
+			else
+			{
+				result = (GUIMain.ShowCommonDialog(null, "CMD_ChangePOP", null) as CMD_ChangePOP);
+			}
+			return result;
+		}
+
+		public static void SetAssets(this IPayConfirmNotice dialog, int category, int assetsValue, int cost)
+		{
+			dialog.SetAssetIcon(category, assetsValue.ToString());
+			switch (category)
+			{
+			case 2:
+			case 3:
+			case 4:
+				break;
+			default:
+				switch (category)
+				{
+				case 13:
+					break;
+				case 14:
+				case 17:
+					goto IL_5F;
+				case 15:
+				case 16:
+					return;
+				default:
+					return;
+				}
+				break;
+			case 6:
+				goto IL_5F;
+			}
+			dialog.SetAssetValue(category, cost);
+			return;
+			IL_5F:
+			CMD_ChangePOP cmd_ChangePOP = dialog as CMD_ChangePOP;
+			if (null != cmd_ChangePOP)
+			{
+				cmd_ChangePOP.SetAssetValue(category, assetsValue, cost);
+			}
+		}
 	}
 }

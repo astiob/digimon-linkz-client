@@ -15,7 +15,7 @@ namespace UnityEngine.Networking
 
 		protected override T DeserializeItem(NetworkReader reader)
 		{
-			return default(T);
+			return Activator.CreateInstance<T>();
 		}
 
 		public T GetItem(int i)

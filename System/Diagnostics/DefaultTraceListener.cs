@@ -156,7 +156,7 @@ namespace System.Diagnostics
 			MethodInfo method;
 			try
 			{
-				Assembly assembly = Assembly.Load("System.Windows.Forms, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+				Assembly assembly = Assembly.Load("System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				if (assembly == null)
 				{
 					return DefaultTraceListener.DialogResult.None;

@@ -6,8 +6,8 @@ namespace System.Text
 {
 	/// <summary>Represents a UTF-16 encoding of Unicode characters.</summary>
 	/// <filterpriority>1</filterpriority>
-	[MonoTODO("Serialization format not compatible with .NET")]
 	[ComVisible(true)]
+	[MonoTODO("Serialization format not compatible with .NET")]
 	[Serializable]
 	public class UnicodeEncoding : Encoding
 	{

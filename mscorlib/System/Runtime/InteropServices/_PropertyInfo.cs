@@ -5,10 +5,10 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the public members of the <see cref="T:System.Reflection.PropertyInfo" /> class to unmanaged code.</summary>
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
 	[TypeLibImportClass(typeof(PropertyInfo))]
 	[Guid("F59ED4E4-E68F-3218-BD77-061AA82824BF")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[CLSCompliant(false)]
 	public interface _PropertyInfo
 	{

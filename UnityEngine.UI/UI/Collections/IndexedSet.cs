@@ -4,16 +4,11 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Collections
 {
-	internal class IndexedSet<T> : IEnumerable, IList<T>, ICollection<T>, IEnumerable<T>
+	internal class IndexedSet<T> : IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable
 	{
 		private readonly List<T> m_List = new List<T>();
 
 		private Dictionary<T, int> m_Dictionary = new Dictionary<T, int>();
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
 
 		public void Add(T item)
 		{
@@ -23,29 +18,44 @@ namespace UnityEngine.UI.Collections
 
 		public bool AddUnique(T item)
 		{
+			bool result;
 			if (this.m_Dictionary.ContainsKey(item))
 			{
-				return false;
+				result = false;
 			}
-			this.m_List.Add(item);
-			this.m_Dictionary.Add(item, this.m_List.Count - 1);
-			return true;
+			else
+			{
+				this.m_List.Add(item);
+				this.m_Dictionary.Add(item, this.m_List.Count - 1);
+				result = true;
+			}
+			return result;
 		}
 
 		public bool Remove(T item)
 		{
 			int index = -1;
+			bool result;
 			if (!this.m_Dictionary.TryGetValue(item, out index))
 			{
-				return false;
+				result = false;
 			}
-			this.RemoveAt(index);
-			return true;
+			else
+			{
+				this.RemoveAt(index);
+				result = true;
+			}
+			return result;
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
 			throw new NotImplementedException();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
 		}
 
 		public void Clear()

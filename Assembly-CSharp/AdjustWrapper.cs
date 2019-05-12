@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class AdjustWrapper : MonoBehaviour
 {
-	private static GameObject go;
+	private static GameObject go = null;
 
-	private static AdjustWrapper instance;
+	private static AdjustWrapper instance = null;
 
 	private string errorMessage = "adjust: SDK not started. Start it manually using the 'start' method.";
 
@@ -44,6 +44,8 @@ public class AdjustWrapper : MonoBehaviour
 	public static string EVENT_ID_FINISH_TUTORIAL = "bli3um";
 
 	public static string EVENT_ID_SEND_PAYMENT = "v7gp08";
+
+	public static string EVENT_ID_CONFIRM_GDPR = string.Empty;
 
 	public static AdjustWrapper Instance
 	{
@@ -130,6 +132,22 @@ public class AdjustWrapper : MonoBehaviour
 		}
 		AdjustEvent adjustEvent = new AdjustEvent(eventToken);
 		adjustEvent.setRevenue(amount, currency);
+		this.adjust.trackEvent(adjustEvent);
+	}
+
+	public void TrackEventGDPR(Dictionary<string, bool> agreements)
+	{
+		if (this.adjust == null || agreements == null || 0 >= agreements.Count)
+		{
+			global::Debug.Log(this.errorMessage);
+			return;
+		}
+		AdjustEvent adjustEvent = new AdjustEvent(AdjustWrapper.EVENT_ID_CONFIRM_GDPR);
+		foreach (KeyValuePair<string, bool> keyValuePair in agreements)
+		{
+			string value = (!keyValuePair.Value) ? "0" : "1";
+			adjustEvent.addCallbackParameter(keyValuePair.Key, value);
+		}
 		this.adjust.trackEvent(adjustEvent);
 	}
 

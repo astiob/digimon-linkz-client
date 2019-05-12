@@ -3,10 +3,8 @@ using UnityEngine;
 
 public class SpritePointCount : MonoBehaviour
 {
-	private const int secondsCount = 60;
-
-	[SerializeField]
 	[Header("表示番号のスプライト")]
+	[SerializeField]
 	private UISprite[] numSprite;
 
 	[Header("上桁ゼロ表示しない = true")]
@@ -33,6 +31,8 @@ public class SpritePointCount : MonoBehaviour
 	private bool curveFlag;
 
 	private float curveTime;
+
+	private const int secondsCount = 60;
 
 	public void SetNum(int num)
 	{

@@ -45,11 +45,17 @@ public class RareUpStar : MonoBehaviour
 	{
 		if (this.coun <= 5)
 		{
-			this.starEffect.GetComponent<ParticleSystem>().startColor += new Color(0f, 0f, 0f, 0.2f);
+			ParticleSystem.MainModule main = this.starEffect.GetComponent<ParticleSystem>().main;
+			ParticleSystem.MinMaxGradient startColor = main.startColor;
+			startColor.color += new Color(0f, 0f, 0f, 0.2f);
+			main.startColor = startColor;
 		}
 		else
 		{
-			this.starEffect.GetComponent<ParticleSystem>().startColor -= new Color(0f, 0f, 0f, 0.1f);
+			ParticleSystem.MainModule main2 = this.starEffect.GetComponent<ParticleSystem>().main;
+			ParticleSystem.MinMaxGradient startColor2 = main2.startColor;
+			startColor2.color -= new Color(0f, 0f, 0f, 0.1f);
+			main2.startColor = startColor2;
 			if (this.coun > 15)
 			{
 				base.CancelInvoke("StarEffectAlphaOn");

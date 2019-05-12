@@ -1,7 +1,5 @@
 ﻿using Master;
-using Monster;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class CMD_VersionUpModal : CMD_ModalMessageBtn2
@@ -14,36 +12,50 @@ public sealed class CMD_VersionUpModal : CMD_ModalMessageBtn2
 	[SerializeField]
 	private UILabel messageLabel;
 
+	private Action onPushYesButton;
+
+	private void OnPushYesButton()
+	{
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton();
+		}
+		this.ClosePanel(true);
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
 		base.SetTitle(StringMaster.GetString("SystemConfirm"));
-		this.messageLabel.text = StringMaster.GetString("VersionUpAlertInfo");
 		base.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
 		base.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
 	}
 
-	public void ShowIcon(MonsterData md, bool active = true)
+	public void SetMonsterIcon(MonsterData monsterData)
 	{
-		this.versionUpDitail.ShowIcon(md, active);
+		this.versionUpDitail.SetMonsterIcon(monsterData, true);
 	}
 
-	public void ShowDetail(int oldLev, int newLev, bool isSkillAdd)
+	public void ShowDetail(int beforeMaxLevel, int afterMaxLevel, bool isSkillAdd)
 	{
-		this.versionUpDitail.ShowDetail(oldLev, newLev, isSkillAdd);
+		this.versionUpDitail.ShowDetail(beforeMaxLevel, afterMaxLevel, isSkillAdd);
 	}
 
-	public void SetChipParams(MonsterData baseMonsterData)
+	public void SetActionYesButton(Action action)
 	{
-		bool flag = MonsterUserDataMng.AnyChipEquipMonster(new List<MonsterData>
+		this.onPushYesButton = action;
+	}
+
+	public void SetDescription(MonsterData monsterData)
+	{
+		if (monsterData.GetChipEquip().IsAttachedChip())
 		{
-			baseMonsterData
-		});
-		if (flag)
-		{
-			UILabel uilabel = this.messageLabel;
-			uilabel.text = uilabel.text + "\n" + StringMaster.GetString("VerUPPrecautionChip");
+			this.messageLabel.text = StringMaster.GetString("VersionUpAlertInfo") + "\n" + StringMaster.GetString("VerUPPrecautionChip");
 			base.GetComponent<UIWidget>().height += this.messageLabel.fontSize * 2 + this.messageLabel.spacingY;
+		}
+		else
+		{
+			this.messageLabel.text = StringMaster.GetString("VersionUpAlertInfo");
 		}
 	}
 }

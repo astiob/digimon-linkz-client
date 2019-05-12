@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/NGUI Progress Bar")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/NGUI Progress Bar")]
 public class UIProgressBar : UIWidgetContainer
 {
 	public static UIProgressBar current;
@@ -16,8 +16,8 @@ public class UIProgressBar : UIWidgetContainer
 	[SerializeField]
 	protected UIWidget mBG;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIWidget mFG;
 
 	[HideInInspector]

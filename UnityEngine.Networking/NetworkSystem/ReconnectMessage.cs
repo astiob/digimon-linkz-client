@@ -20,14 +20,7 @@ namespace UnityEngine.Networking.NetworkSystem
 			this.playerControllerId = (short)reader.ReadPackedUInt32();
 			this.netId = reader.ReadNetworkId();
 			this.msgData = reader.ReadBytesAndSize();
-			if (this.msgData == null)
-			{
-				this.msgSize = 0;
-			}
-			else
-			{
-				this.msgSize = this.msgData.Length;
-			}
+			this.msgSize = this.msgData.Length;
 		}
 
 		public override void Serialize(NetworkWriter writer)

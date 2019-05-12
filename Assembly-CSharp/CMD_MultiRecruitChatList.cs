@@ -82,11 +82,11 @@ public class CMD_MultiRecruitChatList : CMD
 		AppCoroutine.Start(request.RunOneTime(delegate()
 		{
 			this.SetCommonUI();
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 			RestrictionInput.EndLoad();
 		}, delegate(Exception noop)
 		{
-			this.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 			RestrictionInput.EndLoad();
 		}, null), false);
 	}

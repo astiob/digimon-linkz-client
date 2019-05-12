@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [AddComponentMenu("NGUI/Interaction/Table")]
@@ -31,6 +32,18 @@ public class UITable : UIWidgetContainer
 
 	protected bool mReposition;
 
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache3;
+
 	public bool repositionNow
 	{
 		set
@@ -59,15 +72,30 @@ public class UITable : UIWidgetContainer
 		{
 			if (this.sorting == UITable.Sorting.Alphabetic)
 			{
-				list.Sort(new Comparison<Transform>(UIGrid.SortByName));
+				List<Transform> list2 = list;
+				if (UITable.<>f__mg$cache0 == null)
+				{
+					UITable.<>f__mg$cache0 = new Comparison<Transform>(UIGrid.SortByName);
+				}
+				list2.Sort(UITable.<>f__mg$cache0);
 			}
 			else if (this.sorting == UITable.Sorting.Horizontal)
 			{
-				list.Sort(new Comparison<Transform>(UIGrid.SortHorizontal));
+				List<Transform> list3 = list;
+				if (UITable.<>f__mg$cache1 == null)
+				{
+					UITable.<>f__mg$cache1 = new Comparison<Transform>(UIGrid.SortHorizontal);
+				}
+				list3.Sort(UITable.<>f__mg$cache1);
 			}
 			else if (this.sorting == UITable.Sorting.Vertical)
 			{
-				list.Sort(new Comparison<Transform>(UIGrid.SortVertical));
+				List<Transform> list4 = list;
+				if (UITable.<>f__mg$cache2 == null)
+				{
+					UITable.<>f__mg$cache2 = new Comparison<Transform>(UIGrid.SortVertical);
+				}
+				list4.Sort(UITable.<>f__mg$cache2);
 			}
 			else if (this.onCustomSort != null)
 			{
@@ -83,7 +111,11 @@ public class UITable : UIWidgetContainer
 
 	protected virtual void Sort(List<Transform> list)
 	{
-		list.Sort(new Comparison<Transform>(UIGrid.SortByName));
+		if (UITable.<>f__mg$cache3 == null)
+		{
+			UITable.<>f__mg$cache3 = new Comparison<Transform>(UIGrid.SortByName);
+		}
+		list.Sort(UITable.<>f__mg$cache3);
 	}
 
 	protected virtual void Start()
@@ -239,6 +271,8 @@ public class UITable : UIWidgetContainer
 		}
 	}
 
+	public delegate void OnReposition();
+
 	public enum Direction
 	{
 		Down,
@@ -253,6 +287,4 @@ public class UITable : UIWidgetContainer
 		Vertical,
 		Custom
 	}
-
-	public delegate void OnReposition();
 }

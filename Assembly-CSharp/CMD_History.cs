@@ -97,7 +97,7 @@ public class CMD_History : CMD
 			this.ShowDLG();
 			this.PartsTitle.SetTitle(StringMaster.GetString("OtherHistory"));
 			this.SettingTab();
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 			this.presentWindow.transform.gameObject.SetActive(true);
 			this.selectPresentHistoryPanel.initLocation = true;
 			this.selectPresentHistoryPanel.AllBuildHistory(this.presentData);
@@ -106,7 +106,7 @@ public class CMD_History : CMD
 		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 		this.degistoneTitleText.text = StringMaster.GetString("OtherHistory-01");
 		this.totalText.text = StringMaster.GetString("DegistoneHistory-01");

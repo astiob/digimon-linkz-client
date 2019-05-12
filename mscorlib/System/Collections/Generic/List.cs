@@ -7,7 +7,7 @@ namespace System.Collections.Generic
 	/// <summary>Represents a strongly typed list of objects that can be accessed by index. Provides methods to search, sort, and manipulate lists.</summary>
 	/// <typeparam name="T">The type of elements in the list.</typeparam>
 	/// <filterpriority>1</filterpriority>
-	[DebuggerTypeProxy(typeof(CollectionDebuggerView<>))]
+	[DebuggerTypeProxy(typeof(CollectionDebuggerView))]
 	[DebuggerDisplay("Count={Count}")]
 	[Serializable]
 	public class List<T> : IEnumerable, ICollection, IList, ICollection<T>, IEnumerable<T>, IList<T>

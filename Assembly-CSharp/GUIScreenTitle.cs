@@ -198,12 +198,12 @@ public sealed class GUIScreenTitle : GUIScreen
 		if (DataMng.Instance().RespDataCM_Login.penaltyUserInfo != null && DataMng.Instance().RespDataCM_Login.penaltyUserInfo.penaltyLevel == "2")
 		{
 			RestrictionInput.SuspensionLoad();
-			string title = StringMaster.GetString("PenaltyTitle");
+			string @string = StringMaster.GetString("PenaltyTitle");
 			string message = DataMng.Instance().RespDataCM_Login.penaltyUserInfo.penalty.message;
 			AlertManager.ShowAlertDialog(delegate(int x)
 			{
 				this.CancelGameStart();
-			}, title, message, AlertManager.ButtonActionType.Close, false);
+			}, @string, message, AlertManager.ButtonActionType.Close, false);
 			yield break;
 		}
 		APIUtil.Instance().alertOnlyCloseButton = true;

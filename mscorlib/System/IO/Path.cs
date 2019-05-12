@@ -432,6 +432,11 @@ namespace System.IO
 			{
 				path += Path.DirectorySeparatorChar;
 			}
+			string text2;
+			if (MonoIO.RemapPath(path, out text2))
+			{
+				path = text2;
+			}
 			return path;
 		}
 

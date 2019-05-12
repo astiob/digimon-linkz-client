@@ -3,28 +3,26 @@ using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UI.Common;
 using UnityEngine;
+using User;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[SerializeField]
-	[Header("NEWのGameObject")]
-	private GameObject goNEW;
-
 	[Header("選択してないときの背景色")]
 	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択してないときの外枠色")]
+	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[SerializeField]
 	[Header("選択時の外枠色")]
+	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[Header("残り時間のラベル")]
@@ -35,20 +33,20 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
-	[SerializeField]
 	[Header("外枠のスプライト")]
+	[SerializeField]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
-	[SerializeField]
 	[Header("オープンの時の色")]
+	[SerializeField]
 	private Color openBannerCol;
 
 	[Header("クローズの時の色")]
@@ -116,14 +114,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 		set
 		{
 			this.worldStageData = value;
-			this.ShowGUI();
 		}
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
-		this.ngSPR_NEW = this.goNEW.GetComponent<UISprite>();
 	}
 
 	public void SetBGColor(bool isActive)
@@ -274,17 +265,24 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 
 	private void SetNewClearStatus()
 	{
-		switch (this.WorldStageData.status)
+		int status = this.WorldStageData.status;
+		if (status != 2)
 		{
-		case 2:
+			if (status != 3)
+			{
+				if (status == 4)
+				{
+					this.SetClearIcon();
+				}
+			}
+			else
+			{
+				this.ngSPR_NEW.gameObject.SetActive(false);
+			}
+		}
+		else
+		{
 			this.ngSPR_NEW.MakePixelPerfect();
-			break;
-		case 3:
-			this.goNEW.SetActive(false);
-			break;
-		case 4:
-			this.SetClearIcon();
-			break;
 		}
 	}
 
@@ -333,31 +331,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 			{
 				if (this.worldStageData.wdi.isOpen != 1)
 				{
-					int useStoneNum = int.Parse(this.worldStageData.worldStageM.forceOpenNum);
-					int hasStoneNum = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-					CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
-					cd.Title = StringMaster.GetString("QuestUnlockTitle");
-					cd.OnPushedYesAction = delegate()
-					{
-						if (hasStoneNum < useStoneNum)
-						{
-							cd.SetCloseAction(delegate(int idx)
-							{
-								GUIMain.ShowCommonDialog(delegate(int i)
-								{
-									GUIPlayerStatus.RefreshParams_S(false);
-								}, "CMD_Shop", null);
-							});
-							cd.ClosePanel(true);
-						}
-						else
-						{
-							AppCoroutine.Start(this.BuyEventDungeon(), false);
-							cd.ClosePanel(true);
-						}
-					};
-					cd.Info = string.Format(StringMaster.GetString("QuestUnlockInfo"), ConstValue.EVENT_QUEST_OPEN_TIME);
-					cd.SetDigistone(hasStoneNum, useStoneNum);
+					this.OpenConfirmForceOpen();
 				}
 				else
 				{
@@ -367,9 +341,36 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 		}
 	}
 
-	private IEnumerator BuyEventDungeon()
+	private void OpenConfirmForceOpen()
+	{
+		GameWebAPI.ResponseWorldStageForceOpenMaster.ForceOpen questForceOpen = QuestData.GetQuestForceOpen(int.Parse(this.worldStageData.worldStageM.worldStageId));
+		if (questForceOpen != null)
+		{
+			IPayConfirmNotice payConfirmNotice = FactoryPayConfirmNotice.CreateDialog(questForceOpen.assetCategoryId);
+			payConfirmNotice.SetAssets(questForceOpen.assetCategoryId, questForceOpen.assetValue, questForceOpen.assetNum);
+			string assetName = UIAssetName.GetAssetName(questForceOpen.assetCategoryId.ToString(), questForceOpen.assetValue.ToString());
+			string info = string.Format(StringMaster.GetString("QuestForceOpenConfirmInfo"), assetName, questForceOpen.forceOpenMinute);
+			payConfirmNotice.SetMessage(StringMaster.GetString("QuestUnlockTitle"), info);
+			payConfirmNotice.SetPushActionYesButton(new Action<UnityEngine.Object>(this.OnConfirmPushYesButton));
+		}
+	}
+
+	private void OnConfirmPushYesButton(UnityEngine.Object popup)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		CMD cmd = popup as CMD;
+		if (null != cmd)
+		{
+			cmd.SetWindowClosedAction(delegate
+			{
+				AppCoroutine.Start(this.BuyEventDungeon(), false);
+			});
+			cmd.ClosePanel(true);
+		}
+	}
+
+	private IEnumerator BuyEventDungeon()
+	{
 		GameWebAPI.RequestWD_BuyDungeon request = new GameWebAPI.RequestWD_BuyDungeon
 		{
 			SetSendData = delegate(GameWebAPI.WD_Req_BuyDungeon param)
@@ -395,20 +396,17 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	private void BuyEventDng_OK()
 	{
 		RestrictionInput.EndLoad();
-		DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= int.Parse(this.worldStageData.worldStageM.forceOpenNum);
+		GameWebAPI.ResponseWorldStageForceOpenMaster.ForceOpen questForceOpen = QuestData.GetQuestForceOpen(int.Parse(this.worldStageData.worldStageM.worldStageId));
+		UserInventory.CalculateNumber((MasterDataMng.AssetCategory)questForceOpen.assetCategoryId, questForceOpen.assetValue.ToString(), questForceOpen.assetNum);
 		GUIPlayerStatus.RefreshParams_S(false);
 		this.worldStageData.wdi.isOpen = 1;
 		this.SetOpenStatus();
 		this.ExecuteTouch(true);
 	}
 
-	private void ExecuteTouch(bool forceChange = false)
+	private void ExecuteTouch(bool forceChange)
 	{
-		if (0 < this.totalSeconds)
-		{
-			CMD_QuestTOP.ChangeSelectA_StageL_S(base.IDX, forceChange);
-		}
-		else
+		if (0 >= this.totalSeconds)
 		{
 			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(delegate(int i)
 			{
@@ -417,6 +415,10 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 			cmd_Alert.Title = StringMaster.GetString("QuestEventTitle");
 			cmd_Alert.Info = StringMaster.GetString("QuestEventInfo");
 			cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
+		}
+		else
+		{
+			CMD_QuestTOP.ChangeSelectA_StageL_S(base.IDX, forceChange);
 		}
 	}
 

@@ -58,7 +58,7 @@ public sealed class FacilityUpgradeConfirm_MeatFarm : FacilityUpgradeConfirm
 			{
 				if (selectButton == 0)
 				{
-					base.Upgrade();
+					this.<Upgrade>__BaseCallProxy0();
 				}
 			}, "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");

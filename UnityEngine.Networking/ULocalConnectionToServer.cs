@@ -29,15 +29,20 @@ namespace UnityEngine.Networking
 
 		public override bool SendBytes(byte[] bytes, int numBytes, int channelId)
 		{
+			bool result;
 			if (numBytes <= 0)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("LocalConnection:SendBytes cannot send zero bytes");
 				}
-				return false;
+				result = false;
 			}
-			return this.m_LocalServer.InvokeBytes(this, bytes, numBytes, channelId);
+			else
+			{
+				result = this.m_LocalServer.InvokeBytes(this, bytes, numBytes, channelId);
+			}
+			return result;
 		}
 
 		public override bool SendWriter(NetworkWriter writer, int channelId)

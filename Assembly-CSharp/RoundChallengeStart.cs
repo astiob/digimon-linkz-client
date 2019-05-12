@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class RoundChallengeStart : RoundStart
 {
-	private const string animationName = "Battle_Limit_Round_SP";
-
 	[SerializeField]
 	private Animation roundLimitAnima;
 
@@ -28,6 +26,8 @@ public class RoundChallengeStart : RoundStart
 
 	[SerializeField]
 	private Color[] rankOutlineColor;
+
+	private const string animationName = "Battle_Limit_Round_SP";
 
 	private void Awake()
 	{

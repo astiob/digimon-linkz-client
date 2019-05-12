@@ -3,6 +3,7 @@ using MissionData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_Mission : CMD
@@ -11,12 +12,12 @@ public sealed class CMD_Mission : CMD
 	[SerializeField]
 	private GUISelectPanelMission missionList;
 
-	[SerializeField]
 	[Header("ミッション選択のタッチ領域")]
+	[SerializeField]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[SerializeField]
 	[Header("ミッションの段階終了時カットイン演出コントローラ")]
+	[SerializeField]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
@@ -39,6 +40,9 @@ public sealed class CMD_Mission : CMD
 	private List<CMD_Mission.MissionStateData> missionStateDataList;
 
 	private CMD_Mission.MissionStateData missionStateData_BAK;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission GetMissionData(int IDX)
 	{
@@ -224,7 +228,7 @@ public sealed class CMD_Mission : CMD
 		}
 		this.SetTitle(CMD_Mission.nowFocusType);
 		this.CreateSelectPanel(CMD_Mission.nowFocusType);
-		this.csSelectPanelMissionSelect.AllBuild(this.missionAllList.Count, true, 1f, 1f, null, this);
+		this.csSelectPanelMissionSelect.AllBuild(this.missionAllList.Count, true, 1f, 1f, null, this, true);
 		int indexByNowFocusType = this.GetIndexByNowFocusType(CMD_Mission.nowFocusType);
 		this.csSelectPanelMissionSelect.SetCellAnimReserve(indexByNowFocusType, false);
 		this.csSelectPanelMissionSelect.RefreshBadge();
@@ -249,14 +253,16 @@ public sealed class CMD_Mission : CMD
 		bool isFirst = missionStateDataByType.isFirst;
 		if (!this.isRebuildRecycle)
 		{
-			this.missionList.AllBuild(missionData.Length, isFirst, 1f, 1f, null, this);
+			this.missionList.AllBuild(missionData.Length, isFirst, 1f, 1f, null, this, true);
 			this.isRebuildRecycle = true;
 		}
 		else
 		{
 			GUISelectPanelViewPartsUD guiselectPanelViewPartsUD = this.missionList;
+			int partsCount = missionData.Length;
+			int horizontalPartsCount = 1;
 			bool initLoc = isFirst;
-			guiselectPanelViewPartsUD.RefreshList(missionData.Length, 1, null, initLoc);
+			guiselectPanelViewPartsUD.RefreshList(partsCount, horizontalPartsCount, null, initLoc);
 			this.missionListOriginalItem.gameObject.SetActive(false);
 			this.missionList.FadeOutAllListParts(null, true);
 			this.missionList.FadeInAllListParts(null);
@@ -320,7 +326,13 @@ public sealed class CMD_Mission : CMD
 			if (tutorialObserver != null)
 			{
 				GUIMain.BarrierON(null);
-				tutorialObserver.StartSecondTutorial("second_tutorial_mission_beginner", new Action(GUIMain.BarrierOFF), delegate
+				TutorialObserver tutorialObserver2 = tutorialObserver;
+				string tutorialName = "second_tutorial_mission_beginner";
+				if (CMD_Mission.<>f__mg$cache0 == null)
+				{
+					CMD_Mission.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+				}
+				tutorialObserver2.StartSecondTutorial(tutorialName, CMD_Mission.<>f__mg$cache0, delegate
 				{
 					GUICollider.EnableAllCollider("CMD_Mission");
 				});

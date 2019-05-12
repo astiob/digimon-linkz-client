@@ -150,17 +150,17 @@ public class BattleStateBattleStartAction : BattleStateBase
 		if (base.battleMode == BattleMode.PvP)
 		{
 			cameraKey = "pvpBattleStart";
-			GameObject go = (base.stateManager.battleUiComponents as BattleUIComponentsPvP).pvpBattleYourPartyUi.gameObject;
-			NGUITools.SetActiveSelf(go, true);
+			GameObject gameObject = (base.stateManager.battleUiComponents as BattleUIComponentsPvP).pvpBattleYourPartyUi.gameObject;
+			NGUITools.SetActiveSelf(gameObject, true);
 		}
 		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, base.battleStateData.playerCharacters[0]);
 		IEnumerator transitionCount = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.battleStartPlayerInsertWaitSecond, null, null);
 		base.stateManager.SetBattleScreen(BattleScreen.InsertPlayer);
 		while (transitionCount.MoveNext())
 		{
-			foreach (IEnumerator ie in smallToBigTransition)
+			foreach (IEnumerator enumerator2 in smallToBigTransition)
 			{
-				ie.MoveNext();
+				enumerator2.MoveNext();
 			}
 			yield return null;
 		}
@@ -178,22 +178,22 @@ public class BattleStateBattleStartAction : BattleStateBase
 		float findBossTransition = (!this.isFindBoss) ? 0f : base.stateManager.stateProperty.bossIntroInsertActionWaitSecond;
 		for (int i = 0; i < base.battleStateData.enemies.Length; i++)
 		{
-			bool isFindBossNow = this.battleWave.enemiesBossFlag[i];
-			AlwaysEffectParams effect = null;
-			if (isFindBossNow)
+			bool flag = this.battleWave.enemiesBossFlag[i];
+			AlwaysEffectParams insertCharacterEffect;
+			if (flag)
 			{
-				effect = base.battleStateData.insertBossCharacterEffect[countEffect2];
+				insertCharacterEffect = base.battleStateData.insertBossCharacterEffect[countEffect2];
 			}
 			else if (base.battleMode == BattleMode.PvP)
 			{
-				effect = base.battleStateData.insertEnemyEffect[i];
+				insertCharacterEffect = base.battleStateData.insertEnemyEffect[i];
 			}
 			else
 			{
-				effect = base.battleStateData.insertCharacterEffect[i];
+				insertCharacterEffect = base.battleStateData.insertCharacterEffect[i];
 			}
-			smallToBigTransition.Add(base.stateManager.threeDAction.SmallToBigTransition((float)base.battleStateData.enemiesTargetSelectOrder[base.battleStateData.enemiesTargetSelectOrder.Length - 1 - i] * transitionSpeed + findBossTransition, base.battleStateData.enemies[i], effect));
-			if (isFindBossNow)
+			smallToBigTransition.Add(base.stateManager.threeDAction.SmallToBigTransition((float)base.battleStateData.enemiesTargetSelectOrder[base.battleStateData.enemiesTargetSelectOrder.Length - 1 - i] * transitionSpeed + findBossTransition, base.battleStateData.enemies[i], insertCharacterEffect));
+			if (flag)
 			{
 				countEffect2++;
 			}
@@ -225,17 +225,17 @@ public class BattleStateBattleStartAction : BattleStateBase
 			if (base.battleMode == BattleMode.PvP)
 			{
 				cameraKey = "pvpBattleStart";
-				GameObject go = (base.stateManager.battleUiComponents as BattleUIComponentsPvP).pvpBattleEnemyPartyUi.gameObject;
-				NGUITools.SetActiveSelf(go, true);
+				GameObject gameObject = (base.stateManager.battleUiComponents as BattleUIComponentsPvP).pvpBattleEnemyPartyUi.gameObject;
+				NGUITools.SetActiveSelf(gameObject, true);
 			}
 			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, base.battleStateData.enemies[0]);
 			transitionCount = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.battleStartEnemyInsertWaitSecond + (base.stateManager.stateProperty.insertCharacterWaitSecond * (float)base.battleStateData.enemies.Length - 1f), null, null);
 		}
 		while (transitionCount.MoveNext())
 		{
-			foreach (IEnumerator ie in smallToBigTransition)
+			foreach (IEnumerator enumerator2 in smallToBigTransition)
 			{
-				ie.MoveNext();
+				enumerator2.MoveNext();
 			}
 			yield return null;
 		}

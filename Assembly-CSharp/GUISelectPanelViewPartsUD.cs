@@ -21,6 +21,10 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 
 	private BoxCollider scrollBarBGBox;
 
+	protected bool _isScrollBarActive;
+
+	protected bool _isSetScrollBarActive;
+
 	private GUICollider _selectCollider;
 
 	[Header("リサイクルビュー X方向 パーツカウント")]
@@ -342,9 +346,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 		base.maxLocate = 0f;
 		if (this._scrollBar != null && this._scrollBarBG != null)
 		{
-			bool active = !this.hideNonMoveScrollBar;
-			this._scrollBar.SetActive(active);
-			this._scrollBarBG.SetActive(active);
+			bool scrollBarActive = !this.hideNonMoveScrollBar;
+			this.SetScrollBarActive(scrollBarActive);
 		}
 	}
 
@@ -372,7 +375,7 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 		}
 	}
 
-	public void AllBuild(int count, bool initLoc = true, float sclX = 1f, float sclY = 1f, List<float> sizeYList = null, CMD instCMD = null)
+	public void AllBuild(int count, bool initLoc = true, float sclX = 1f, float sclY = 1f, List<float> sizeYList = null, CMD instCMD = null, bool isResizeListArea = true)
 	{
 		if (this._selectParts != null)
 		{
@@ -425,7 +428,7 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 			}
 			base.height = panelBuildData.lenH;
 			this.InitMinMaxLocation(-1, 0f);
-			base.InitViewControl(this.selectParts, panelBuildData.pitchH, this.fRecycleViewMinY, this.fRecycleViewMaxY, this.PARTS_CT_MN, this.RecycleViewSectorSize);
+			base.InitViewControl(this.selectParts, panelBuildData.pitchH, this.fRecycleViewMinY, this.fRecycleViewMaxY, this.PARTS_CT_MN, this.RecycleViewSectorSize, isResizeListArea);
 			this.KickEffect();
 		}
 		if (this._selectParts != null)
@@ -705,6 +708,17 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 		this.SetSelectPanelParam();
 	}
 
+	protected void SetScrollBarActive(bool active)
+	{
+		if (!this._isSetScrollBarActive || this._isScrollBarActive != active)
+		{
+			this._scrollBar.SetActive(active);
+			this._scrollBarBG.SetActive(active);
+			this._isScrollBarActive = active;
+			this._isSetScrollBarActive = true;
+		}
+	}
+
 	public void ReleaseBuild()
 	{
 		if (this.partObjs != null)
@@ -908,28 +922,24 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 			if (base.isActiveAndEnabled)
 			{
 				bool flag = !this.hideNonMoveScrollBar || base.maxLocate != base.minLocate;
-				this._scrollBar.SetActive(flag);
-				this._scrollBarBG.SetActive(flag);
+				this.SetScrollBarActive(flag);
 				if (flag)
 				{
 					this.UpdateHideScrollBarAllWays();
 					if (this.hideScrollBarAllWays)
 					{
-						this._scrollBar.SetActive(false);
-						this._scrollBarBG.SetActive(false);
+						this.SetScrollBarActive(false);
 					}
 				}
 			}
 			else
 			{
-				this._scrollBar.SetActive(false);
-				this._scrollBarBG.SetActive(false);
+				this.SetScrollBarActive(false);
 			}
 		}
 		if (this._scrollBar != null && this._scrollBarBG && (this.partObjs == null || this.partObjs.Count == 0))
 		{
-			this._scrollBar.SetActive(false);
-			this._scrollBarBG.SetActive(false);
+			this.SetScrollBarActive(false);
 		}
 	}
 

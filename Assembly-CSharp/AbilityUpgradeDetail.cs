@@ -1,5 +1,8 @@
 ﻿using Ability;
+using Master;
 using System;
+using UI.Common;
+using UI.MedalInheritance;
 using UnityEngine;
 
 public class AbilityUpgradeDetail : MonoBehaviour
@@ -7,193 +10,93 @@ public class AbilityUpgradeDetail : MonoBehaviour
 	[SerializeField]
 	private UISprite charaIcon;
 
+	[Header("0=HP, 1=ATK, 2=DEF, 3=S-ATK, 4=S-DEF, 5=SPD")]
 	[SerializeField]
-	private MonsterMedalList medalList;
-
-	[SerializeField]
-	private MonsterMedalRateList medalRateList;
-
-	[SerializeField]
-	private MonsterMedalList medalList_S;
-
-	[SerializeField]
-	private MonsterMedalRateList medalRateList_S;
+	private MonsterMedalInheritanceIcon[] medals;
 
 	private GUIMonsterIcon csMonsterIcon;
 
+	private void Awake()
+	{
+		for (int i = 0; i < this.medals.Length; i++)
+		{
+			this.medals[i].Initialize();
+		}
+	}
+
 	public void ClearStatus()
 	{
-		this.medalList.SetActive(false);
-		this.medalRateList.SetActive(false);
-		this.medalList_S.SetActive(false);
-		this.medalRateList_S.SetActive(false);
+		for (int i = 0; i < this.medals.Length; i++)
+		{
+			this.medals[i].ClearMedal();
+			this.medals[i].SetActive(false);
+		}
 		this.ShowIcon(null, false);
 		this.charaIcon.spriteName = "Common02_Thumbnail_none";
 	}
 
-	public void SetStatus(MonsterAbilityStatusInfo abilityStatus)
+	private void SetInheritanceInfo(int medalIndex, bool isNoMaterial, bool isMaxLevel, string medalType, string medalParcentage, float inheritanceRate, string medalTypeSub, string medalParcentageSub, float inheritanceRateSub)
 	{
-		if (abilityStatus == null)
+		this.medals[medalIndex].ClearMedal();
+		if ("0" == medalType)
 		{
-			this.ClearStatus();
+			this.medals[medalIndex].SetActive(false);
 		}
 		else
 		{
-			this.medalList.SetActive(true);
-			this.medalRateList.SetActive(true);
-			this.medalList_S.SetActive(true);
-			this.medalRateList_S.SetActive(true);
-			GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterList = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList();
-			userMonsterList.hpAbilityFlg = abilityStatus.hpAbilityFlg;
-			userMonsterList.hpAbility = abilityStatus.hpAbility;
-			userMonsterList.attackAbilityFlg = abilityStatus.attackAbilityFlg;
-			userMonsterList.attackAbility = abilityStatus.attackAbility;
-			userMonsterList.defenseAbilityFlg = abilityStatus.defenseAbilityFlg;
-			userMonsterList.defenseAbility = abilityStatus.defenseAbility;
-			userMonsterList.spAttackAbilityFlg = abilityStatus.spAttackAbilityFlg;
-			userMonsterList.spAttackAbility = abilityStatus.spAttackAbility;
-			userMonsterList.spDefenseAbilityFlg = abilityStatus.spDefenseAbilityFlg;
-			userMonsterList.spDefenseAbility = abilityStatus.spDefenseAbility;
-			userMonsterList.speedAbilityFlg = abilityStatus.speedAbilityFlg;
-			userMonsterList.speedAbility = abilityStatus.speedAbility;
-			this.medalList.SetValues(userMonsterList);
-			string hp = string.Empty;
-			string atk = string.Empty;
-			string def = string.Empty;
-			string s_atk = string.Empty;
-			string s_def = string.Empty;
-			string spd = string.Empty;
-			if (ClassSingleton<AbilityData>.Instance.HasAbility(abilityStatus.hpAbilityMinGuarantee))
+			this.medals[medalIndex].SetActive(true);
+			if (isNoMaterial)
 			{
-				userMonsterList.hpAbilityFlg = ClassSingleton<AbilityData>.Instance.GetAbilityType(abilityStatus.hpAbilityMinGuarantee);
-				userMonsterList.hpAbility = abilityStatus.hpAbilityMinGuarantee;
-				hp = abilityStatus.hpAbilityMinGuaranteeRate.ToString();
+				string medalSpriteName = MonsterMedalIcon.GetMedalSpriteName(medalType, medalParcentage);
+				this.medals[medalIndex].SetFirstView(medalSpriteName, StringMaster.GetString("SystemNoneHyphen"));
 			}
 			else
 			{
-				userMonsterList.hpAbilityFlg = "0";
-				userMonsterList.hpAbility = "0";
+				string medalSpriteName2 = MonsterMedalIcon.GetMedalSpriteName(medalType, medalParcentage);
+				string rate = string.Format(StringMaster.GetString("SystemPercent"), inheritanceRate);
+				this.medals[medalIndex].SetFirstView(medalSpriteName2, rate);
+				if ("0" != medalTypeSub)
+				{
+					medalSpriteName2 = MonsterMedalIcon.GetMedalSpriteName(medalTypeSub, medalParcentageSub);
+					rate = string.Format(StringMaster.GetString("SystemPercent"), inheritanceRateSub);
+					this.medals[medalIndex].AddMedalInfo(medalSpriteName2, rate);
+				}
 			}
-			if (ClassSingleton<AbilityData>.Instance.HasAbility(abilityStatus.attackAbilityMinGuarantee))
-			{
-				userMonsterList.attackAbilityFlg = ClassSingleton<AbilityData>.Instance.GetAbilityType(abilityStatus.attackAbilityMinGuarantee);
-				userMonsterList.attackAbility = abilityStatus.attackAbilityMinGuarantee;
-				atk = abilityStatus.attackAbilityMinGuaranteeRate.ToString();
-			}
-			else
-			{
-				userMonsterList.attackAbilityFlg = "0";
-				userMonsterList.attackAbility = "0";
-			}
-			if (ClassSingleton<AbilityData>.Instance.HasAbility(abilityStatus.defenseAbilityMinGuarantee))
-			{
-				userMonsterList.defenseAbilityFlg = ClassSingleton<AbilityData>.Instance.GetAbilityType(abilityStatus.defenseAbilityMinGuarantee);
-				userMonsterList.defenseAbility = abilityStatus.defenseAbilityMinGuarantee;
-				def = abilityStatus.defenseAbilityMinGuaranteeRate.ToString();
-			}
-			else
-			{
-				userMonsterList.defenseAbilityFlg = "0";
-				userMonsterList.defenseAbility = "0";
-			}
-			if (ClassSingleton<AbilityData>.Instance.HasAbility(abilityStatus.spAttackAbilityMinGuarantee))
-			{
-				userMonsterList.spAttackAbilityFlg = ClassSingleton<AbilityData>.Instance.GetAbilityType(abilityStatus.spAttackAbilityMinGuarantee);
-				userMonsterList.spAttackAbility = abilityStatus.spAttackAbilityMinGuarantee;
-				s_atk = abilityStatus.spAttackAbilityMinGuaranteeRate.ToString();
-			}
-			else
-			{
-				userMonsterList.spAttackAbilityFlg = "0";
-				userMonsterList.spAttackAbility = "0";
-			}
-			if (ClassSingleton<AbilityData>.Instance.HasAbility(abilityStatus.spDefenseAbilityMinGuarantee))
-			{
-				userMonsterList.spDefenseAbilityFlg = ClassSingleton<AbilityData>.Instance.GetAbilityType(abilityStatus.spDefenseAbilityMinGuarantee);
-				userMonsterList.spDefenseAbility = abilityStatus.spDefenseAbilityMinGuarantee;
-				s_def = abilityStatus.spDefenseAbilityMinGuaranteeRate.ToString();
-			}
-			else
-			{
-				userMonsterList.spDefenseAbilityFlg = "0";
-				userMonsterList.spDefenseAbility = "0";
-			}
-			if (ClassSingleton<AbilityData>.Instance.HasAbility(abilityStatus.speedAbilityMinGuarantee))
-			{
-				userMonsterList.speedAbilityFlg = ClassSingleton<AbilityData>.Instance.GetAbilityType(abilityStatus.speedAbilityMinGuarantee);
-				userMonsterList.speedAbility = abilityStatus.speedAbilityMinGuarantee;
-				spd = abilityStatus.speedAbilityMinGuaranteeRate.ToString();
-			}
-			else
-			{
-				userMonsterList.speedAbilityFlg = "0";
-				userMonsterList.speedAbility = "0";
-			}
-			this.medalList_S.SetValues(userMonsterList);
-			this.medalRateList.SetValues(abilityStatus);
-			this.medalRateList_S.SetValues(hp, atk, def, s_atk, s_def, spd);
-			this.SetAlphaTween();
 		}
 	}
 
-	private void SetAlphaTween()
+	public void SetStatus(MonsterAbilityStatusInfo abilityStatus)
 	{
-		AlphaTweenerController component = base.gameObject.GetComponent<AlphaTweenerController>();
-		component.ClearWidgetList();
-		if (this.medalList.HpIcon.gameObject.activeSelf && this.medalList_S.HpIcon.gameObject.activeSelf)
+		this.SetInheritanceInfo(0, abilityStatus.hpNoMaterial, abilityStatus.hpIsAbilityMax, abilityStatus.hpAbilityFlg, abilityStatus.hpAbility, abilityStatus.hpAbilityRate, MonsterMedalIcon.GetMedalType(abilityStatus.hpAbilityMinGuarantee), abilityStatus.hpAbilityMinGuarantee, abilityStatus.hpAbilityMinGuaranteeRate);
+		this.SetInheritanceInfo(1, abilityStatus.attackNoMaterial, abilityStatus.attackIsAbilityMax, abilityStatus.attackAbilityFlg, abilityStatus.attackAbility, abilityStatus.attackAbilityRate, MonsterMedalIcon.GetMedalType(abilityStatus.attackAbilityMinGuarantee), abilityStatus.attackAbilityMinGuarantee, abilityStatus.attackAbilityMinGuaranteeRate);
+		this.SetInheritanceInfo(2, abilityStatus.defenseNoMaterial, abilityStatus.defenseIsAbilityMax, abilityStatus.defenseAbilityFlg, abilityStatus.defenseAbility, abilityStatus.defenseAbilityRate, MonsterMedalIcon.GetMedalType(abilityStatus.defenseAbilityMinGuarantee), abilityStatus.defenseAbilityMinGuarantee, abilityStatus.defenseAbilityMinGuaranteeRate);
+		this.SetInheritanceInfo(3, abilityStatus.spAttackNoMaterial, abilityStatus.spAttackIsAbilityMax, abilityStatus.spAttackAbilityFlg, abilityStatus.spAttackAbility, abilityStatus.spAttackAbilityRate, MonsterMedalIcon.GetMedalType(abilityStatus.spAttackAbilityMinGuarantee), abilityStatus.spAttackAbilityMinGuarantee, abilityStatus.spAttackAbilityMinGuaranteeRate);
+		this.SetInheritanceInfo(4, abilityStatus.spDefenseNoMaterial, abilityStatus.spDefenseIsAbilityMax, abilityStatus.spDefenseAbilityFlg, abilityStatus.spDefenseAbility, abilityStatus.spDefenseAbilityRate, MonsterMedalIcon.GetMedalType(abilityStatus.spDefenseAbilityMinGuarantee), abilityStatus.spDefenseAbilityMinGuarantee, abilityStatus.spDefenseAbilityMinGuaranteeRate);
+		this.SetInheritanceInfo(5, abilityStatus.speedNoMaterial, abilityStatus.speedIsAbilityMax, abilityStatus.speedAbilityFlg, abilityStatus.speedAbility, abilityStatus.speedAbilityRate, MonsterMedalIcon.GetMedalType(abilityStatus.speedAbilityMinGuarantee), abilityStatus.speedAbilityMinGuarantee, abilityStatus.speedAbilityMinGuaranteeRate);
+		for (int i = 0; i < this.medals.Length; i++)
 		{
-			component.AddPairWidget(this.medalList.HpIcon, this.medalList_S.HpIcon);
-			component.AddPairWidget(this.medalRateList.HpLabel, this.medalRateList_S.HpLabel);
-		}
-		if (this.medalList.AttackIcon.gameObject.activeSelf && this.medalList_S.AttackIcon.gameObject.activeSelf)
-		{
-			component.AddPairWidget(this.medalList.AttackIcon, this.medalList_S.AttackIcon);
-			component.AddPairWidget(this.medalRateList.AttackLabel, this.medalRateList_S.AttackLabel);
-		}
-		if (this.medalList.DefenseIcon.gameObject.activeSelf && this.medalList_S.DefenseIcon.gameObject.activeSelf)
-		{
-			component.AddPairWidget(this.medalList.DefenseIcon, this.medalList_S.DefenseIcon);
-			component.AddPairWidget(this.medalRateList.DefenseLabel, this.medalRateList_S.DefenseLabel);
-		}
-		if (this.medalList.MagicAttackIcon.gameObject.activeSelf && this.medalList_S.MagicAttackIcon.gameObject.activeSelf)
-		{
-			component.AddPairWidget(this.medalList.MagicAttackIcon, this.medalList_S.MagicAttackIcon);
-			component.AddPairWidget(this.medalRateList.MagicAttackLabel, this.medalRateList_S.MagicAttackLabel);
-		}
-		if (this.medalList.MagicDefenseIcon.gameObject.activeSelf && this.medalList_S.MagicDefenseIcon.gameObject.activeSelf)
-		{
-			component.AddPairWidget(this.medalList.MagicDefenseIcon, this.medalList_S.MagicDefenseIcon);
-			component.AddPairWidget(this.medalRateList.MagicDefenseLabel, this.medalRateList_S.MagicDefenseLabel);
-		}
-		if (this.medalList.SpeedIcon.gameObject.activeSelf && this.medalList_S.SpeedIcon.gameObject.activeSelf)
-		{
-			component.AddPairWidget(this.medalList.SpeedIcon, this.medalList_S.SpeedIcon);
-			component.AddPairWidget(this.medalRateList.SpeedLabel, this.medalRateList_S.SpeedLabel);
+			this.medals[i].StartAnimation();
 		}
 	}
 
 	public void ShowIcon(MonsterData md, bool active)
 	{
+		if (this.csMonsterIcon != null)
+		{
+			UnityEngine.Object.Destroy(this.csMonsterIcon.gameObject);
+		}
 		if (!active)
 		{
-			if (this.csMonsterIcon != null)
-			{
-				UnityEngine.Object.Destroy(this.csMonsterIcon.gameObject);
-				this.csMonsterIcon = null;
-			}
+			this.csMonsterIcon = null;
 		}
 		else
 		{
-			if (this.csMonsterIcon != null)
-			{
-				UnityEngine.Object.Destroy(this.csMonsterIcon.gameObject);
-			}
 			GameObject gameObject = this.charaIcon.gameObject;
 			this.csMonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, gameObject.transform.localScale, gameObject.transform.localPosition, gameObject.transform.parent, true, false);
 			UIWidget component = gameObject.GetComponent<UIWidget>();
 			if (component != null)
 			{
-				DepthController.SetWidgetDepth_2(this.csMonsterIcon.gameObject.transform, component.depth + 2);
+				DepthController.SetWidgetDepth_Static(this.csMonsterIcon.gameObject.transform, component.depth + 2);
 			}
 		}
 	}

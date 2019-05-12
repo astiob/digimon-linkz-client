@@ -52,7 +52,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		if (null != meatIcon)
 		{
 			this.meatMain = meatIcon.GetComponent<UISprite>();
-			GameObject gameObject = base.transform.FindChild("Locator/ModelRoot/Meat/Meat1").gameObject;
+			GameObject gameObject = base.transform.Find("Locator/ModelRoot/Meat/Meat1").gameObject;
 			for (int i = 0; i < 6; i++)
 			{
 				GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject);
@@ -196,10 +196,12 @@ public sealed class FarmObject_MeatFarm : FarmObject
 
 	private bool StartMeatHarvest(bool selected)
 	{
+		FarmObject_MeatFarm.<StartMeatHarvest>c__AnonStoreyA <StartMeatHarvest>c__AnonStoreyA = new FarmObject_MeatFarm.<StartMeatHarvest>c__AnonStoreyA();
+		<StartMeatHarvest>c__AnonStoreyA.$this = this;
 		bool result = false;
 		UserFacility userFacility = Singleton<UserDataMng>.Instance.GetUserFacility(this.userFacilityID);
-		int cropCount = this.GetCropCount(this.GetPassSeconds(), userFacility.level);
-		if (0 < cropCount)
+		<StartMeatHarvest>c__AnonStoreyA.cropCount = this.GetCropCount(this.GetPassSeconds(), userFacility.level);
+		if (0 < <StartMeatHarvest>c__AnonStoreyA.cropCount)
 		{
 			result = true;
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_OFF);
@@ -228,14 +230,14 @@ public sealed class FarmObject_MeatFarm : FarmObject
 					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
 					{
 						RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_OFF);
-						this.StartRequestHarvest(cropCount, campaignRate);
+						<StartMeatHarvest>c__AnonStoreyA.StartRequestHarvest(<StartMeatHarvest>c__AnonStoreyA.cropCount, campaignRate);
 					}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 					cmd_ModalMessage.Info = info;
 				}
 				else
 				{
-					this.StartRequestHarvest(cropCount, campaignRate);
+					<StartMeatHarvest>c__AnonStoreyA.$this.StartRequestHarvest(<StartMeatHarvest>c__AnonStoreyA.cropCount, campaignRate);
 				}
 			}));
 		}
@@ -287,18 +289,21 @@ public sealed class FarmObject_MeatFarm : FarmObject
 	private IEnumerator MeatHarvestCampaign(Action<FarmObject_MeatFarm.CampaignState, int> onFinished)
 	{
 		GameWebAPI.RespDataCP_Campaign campaign = DataMng.Instance().RespDataCP_Campaign;
+		GameWebAPI.RespDataCP_Campaign.CampaignInfo localInfo = null;
 		if (campaign != null)
 		{
-			GameWebAPI.RespDataCP_Campaign.CampaignInfo info = campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.MeatHrvUp, false);
-			if (info != null)
+			GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign2 = campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.MeatHrvUp, false);
+			if (campaign2 != null)
 			{
-				GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfo = new GameWebAPI.RespDataCP_Campaign.CampaignInfo();
-				campaignInfo.campaignManageId = info.campaignManageId;
-				campaignInfo.campaignId = info.campaignId;
-				campaignInfo.targetValue = info.targetValue;
-				campaignInfo.rate = info.rate;
-				campaignInfo.openTime = info.openTime;
-				campaignInfo.closeTime = info.closeTime;
+				localInfo = new GameWebAPI.RespDataCP_Campaign.CampaignInfo
+				{
+					campaignManageId = campaign2.campaignManageId,
+					campaignId = campaign2.campaignId,
+					targetValue = campaign2.targetValue,
+					rate = campaign2.rate,
+					openTime = campaign2.openTime,
+					closeTime = campaign2.closeTime
+				};
 			}
 		}
 		FarmObject_MeatFarm.CampaignState campaignState = FarmObject_MeatFarm.CampaignState.NONE;
@@ -309,10 +314,9 @@ public sealed class FarmObject_MeatFarm : FarmObject
 			GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
 			if (respDataCP_Campaign != null)
 			{
-				GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign2 = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.MeatHrvUp, false);
-				if (campaign2 == null)
+				GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign3 = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.MeatHrvUp, false);
+				if (campaign3 == null)
 				{
-					GameWebAPI.RespDataCP_Campaign.CampaignInfo localInfo;
 					if (localInfo != null)
 					{
 						campaignState = FarmObject_MeatFarm.CampaignState.END;
@@ -320,16 +324,15 @@ public sealed class FarmObject_MeatFarm : FarmObject
 				}
 				else
 				{
-					GameWebAPI.RespDataCP_Campaign.CampaignInfo localInfo;
 					if (localInfo == null)
 					{
 						campaignState = FarmObject_MeatFarm.CampaignState.START;
 					}
-					else if (!localInfo.IsEqualInfo(campaign2))
+					else if (!localInfo.IsEqualInfo(campaign3))
 					{
 						campaignState = FarmObject_MeatFarm.CampaignState.CHANGE;
 					}
-					campaignRate = campaign2.rate.ToInt32();
+					campaignRate = campaign3.rate.ToInt32();
 				}
 			}
 		}, null, null));
@@ -359,6 +362,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 
 	private IEnumerator RequestHarvest(int storehouseUserFacilityID)
 	{
+		int harvestNum = 0;
 		RequestFA_FacilityHarvest request = new RequestFA_FacilityHarvest
 		{
 			SetSendData = delegate(FacilityHarvest param)
@@ -368,7 +372,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 			},
 			OnReceived = delegate(FacilityHarvestResult response)
 			{
-				int harvestNum = response.harvestNum;
+				harvestNum = response.harvestNum;
 			}
 		};
 		APIRequestTask task = new APIRequestTask(request, true);
@@ -384,7 +388,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		{
 			if (this.meatAnimation == null)
 			{
-				this.meatAnimation = base.StartCoroutine(this.DrawMeat());
+				this.meatAnimation = this.StartCoroutine(this.DrawMeat());
 			}
 			RestrictionInput.EndLoad();
 		}, delegate(Exception exception)
@@ -419,7 +423,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 			RestrictionInput.EndLoad();
 			FarmUtility.PayCost(2.ToString(), ConstValue.MEAT_SHORTCUT_DEGISTONE_NUM.ToString());
 			FarmRoot instance = FarmRoot.Instance;
-			EffectAnimatorObserver buildCompleteEffect = instance.GetBuildCompleteEffect(base.transform);
+			EffectAnimatorObserver buildCompleteEffect = instance.GetBuildCompleteEffect(this.transform);
 			if (null != buildCompleteEffect)
 			{
 				EffectAnimatorEventTime component = buildCompleteEffect.GetComponent<EffectAnimatorEventTime>();
@@ -449,12 +453,12 @@ public sealed class FarmObject_MeatFarm : FarmObject
 	private IEnumerator HarvestAnimation(int harvestNum)
 	{
 		int drawMeatCount = 0;
-		foreach (GameObject meatModel in this.meatModels)
+		foreach (GameObject gameObject in this.meatModels)
 		{
-			if (meatModel.activeSelf)
+			if (gameObject.activeSelf)
 			{
 				drawMeatCount++;
-				meatModel.SetActive(false);
+				gameObject.SetActive(false);
 			}
 		}
 		if (drawMeatCount == 0)
@@ -467,11 +471,11 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		Vector3 worldToViewportPoint = FarmRoot.Instance.Camera.WorldToViewportPoint(base.transform.position);
 		Vector3 viewportToScreenPoint = Camera.main.ViewportToWorldPoint(worldToViewportPoint);
 		viewportToScreenPoint.z = this.meatMain.transform.position.z;
-		for (int i = 0; i < drawMeatCount; i++)
+		for (int j = 0; j < drawMeatCount; j++)
 		{
-			this.meatList[i].gameObject.SetActive(true);
-			this.meatList[i].gameObject.transform.position = viewportToScreenPoint;
-			this.meatList[i].transform.localScale = scale * 120f;
+			this.meatList[j].gameObject.SetActive(true);
+			this.meatList[j].gameObject.transform.position = viewportToScreenPoint;
+			this.meatList[j].transform.localScale = scale * 120f;
 		}
 		Coroutine coroutine = base.StartCoroutine(this.RotationMeat());
 		yield return base.StartCoroutine(this.OpenMeat(harvestNum, drawMeatCount));
@@ -479,10 +483,10 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		base.StopCoroutine(coroutine);
 		this.meatMain.width = width;
 		this.meatMain.height = height;
-		for (int j = 0; j < drawMeatCount; j++)
+		for (int k = 0; k < drawMeatCount; k++)
 		{
-			this.meatList[j].gameObject.SetActive(false);
-			this.meatList[j].transform.localScale = scale;
+			this.meatList[k].gameObject.SetActive(false);
+			this.meatList[k].transform.localScale = scale;
 		}
 		yield return null;
 		yield break;
@@ -499,9 +503,9 @@ public sealed class FarmObject_MeatFarm : FarmObject
 			}
 			float sin = Mathf.Sin(rot);
 			float cos = Mathf.Cos(rot);
-			foreach (GameObject temp in this.meatList)
+			foreach (GameObject gameObject in this.meatList)
 			{
-				temp.transform.localPosition += new Vector3(3f * cos, 3f * sin, 0f);
+				gameObject.transform.localPosition += new Vector3(3f * cos, 3f * sin, 0f);
 			}
 			yield return null;
 		}
@@ -514,11 +518,11 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		float oneRot = 360f / (float)drawMeatCount;
 		for (int i = 0; i < drawMeatCount; i++)
 		{
-			Vector3 pos = this.meatList[i].gameObject.transform.localPosition;
-			Vector3 offset = Quaternion.Euler(0f, 0f, oneRot * (float)i) * new Vector3(75f + 5f * Mathf.Sin((float)(i * harvestNum)), 0f, 0f);
-			offset += pos;
+			Vector3 localPosition = this.meatList[i].gameObject.transform.localPosition;
+			Vector3 vector = Quaternion.Euler(0f, 0f, oneRot * (float)i) * new Vector3(75f + 5f * Mathf.Sin((float)(i * harvestNum)), 0f, 0f);
+			vector += localPosition;
 			FarmObject_MeatFarm.LerpPosition lerpPosition = new FarmObject_MeatFarm.LerpPosition(this.meatList[i]);
-			lerpPosition.Set(0.3f, pos, offset, null);
+			lerpPosition.Set(0.3f, localPosition, vector, null);
 			lerpPositionList.Add(lerpPosition);
 		}
 		float time = 0f;
@@ -545,21 +549,21 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		float lerpTime = 0.5f;
 		for (int i = 0; i < drawMeatCount; i++)
 		{
-			GameObject meat = this.meatList[i];
+			GameObject gameObject = this.meatList[i];
 			int startMeatNum = (int)((float)intMeatNum + (float)harvestNum * (float)i / (float)drawMeatCount);
 			int endMeatNum = (int)((float)intMeatNum + (float)harvestNum * (float)(i + 1) / (float)drawMeatCount);
-			FarmObject_MeatFarm.LerpPosition lerpPosition = new FarmObject_MeatFarm.LerpPosition(meat);
-			Vector3 startPos = meat.gameObject.transform.localPosition;
-			Vector3 endPos = this.meatMain.transform.localPosition;
-			lerpPosition.Set(lerpTime, startPos, endPos, delegate
+			FarmObject_MeatFarm.LerpPosition lerpPosition = new FarmObject_MeatFarm.LerpPosition(gameObject);
+			Vector3 localPosition = gameObject.gameObject.transform.localPosition;
+			Vector3 localPosition2 = this.meatMain.transform.localPosition;
+			lerpPosition.Set(lerpTime, localPosition, localPosition2, delegate
 			{
 				meatIconAnimation.Set(0.2f, startMeatNum, endMeatNum);
 			});
 			lerpPositionList.Add(lerpPosition);
-			FarmObject_MeatFarm.LerpScale lerpScale = new FarmObject_MeatFarm.LerpScale(meat);
-			Vector3 startScale = meat.transform.localScale;
-			Vector3 endScale = meat.transform.localScale * 0.5f;
-			lerpScale.Set(lerpTime, startScale, endScale, null);
+			FarmObject_MeatFarm.LerpScale lerpScale = new FarmObject_MeatFarm.LerpScale(gameObject);
+			Vector3 localScale = gameObject.transform.localScale;
+			Vector3 end = gameObject.transform.localScale * 0.5f;
+			lerpScale.Set(lerpTime, localScale, end, null);
 			lerpScaleList.Add(lerpScale);
 		}
 		int count = 1;

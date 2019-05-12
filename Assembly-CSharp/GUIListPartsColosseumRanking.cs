@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class GUIListPartsColosseumRanking : GUIListPartBS
 {
-	[SerializeField]
 	[Header("あなたを示すアイコン")]
+	[SerializeField]
 	private UISprite spYouIcon;
 
 	[Header("キャラサムネの位置")]
@@ -17,20 +17,20 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_UserName;
 
-	[SerializeField]
 	[Header("称号アイコン")]
+	[SerializeField]
 	private GameObject goTITLE_ICON;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
 	[Header("ランキング順位")]
 	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
-	[SerializeField]
 	[Header("ランキングアイコン")]
+	[SerializeField]
 	private UISprite spRankingIcon;
 
 	[Header("背景スプライト")]

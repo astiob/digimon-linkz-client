@@ -5,8 +5,8 @@ using UnityEngine;
 
 public sealed class EmotionSenderMulti : MonoBehaviour
 {
-	[SerializeField]
 	[Header("受信用の各々のエモーションアイコンのスプライト(UIAtlasSkinnerを使わない方)")]
+	[SerializeField]
 	private UISprite[] emotionSprites;
 
 	[SerializeField]
@@ -15,8 +15,8 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 	[NonSerialized]
 	public List<GameObject> iconSpriteParents = new List<GameObject>();
 
-	[SerializeField]
 	[Header("送信用アイコンたちが載ってる親")]
+	[SerializeField]
 	private GameObject dialog;
 
 	[SerializeField]

@@ -1,6 +1,5 @@
 ﻿using Master;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GUIListPartsTrainingMenu : GUIListPartBS
@@ -9,24 +8,24 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 	[SerializeField]
 	private UISprite spBase;
 
-	[SerializeField]
 	[Header("NEWを示すアイコン")]
+	[SerializeField]
 	private UISprite spNew;
 
-	[SerializeField]
 	[Header("ビックリマーク")]
+	[SerializeField]
 	private UISprite spInfo;
 
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel lbTX_Title;
 
 	[Header("タイトル左")]
 	[SerializeField]
 	private UISprite spL_Title;
 
-	[SerializeField]
 	[Header("タイトル右")]
+	[SerializeField]
 	private UISprite spR_Title;
 
 	[Header("キャンペーンラベル")]
@@ -41,36 +40,18 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 		string strTitle = this.data.strTitle;
 		if (strTitle != null)
 		{
-			if (GUIListPartsTrainingMenu.<>f__switch$map35 == null)
+			if (!(strTitle == "MealTitle"))
 			{
-				GUIListPartsTrainingMenu.<>f__switch$map35 = new Dictionary<string, int>(2)
-				{
-					{
-						"MealTitle",
-						0
-					},
-					{
-						"ChipSphereTitle",
-						1
-					}
-				};
-			}
-			int num;
-			if (GUIListPartsTrainingMenu.<>f__switch$map35.TryGetValue(strTitle, out num))
-			{
-				if (num != 0)
-				{
-					if (num == 1)
-					{
-						TutorialEmphasizeUI tutorialEmphasizeUI = base.gameObject.AddComponent<TutorialEmphasizeUI>();
-						tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.CHIP_INSTALLING;
-					}
-				}
-				else
+				if (strTitle == "ChipSphereTitle")
 				{
 					TutorialEmphasizeUI tutorialEmphasizeUI = base.gameObject.AddComponent<TutorialEmphasizeUI>();
-					tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.MEAL;
+					tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.CHIP_INSTALLING;
 				}
+			}
+			else
+			{
+				TutorialEmphasizeUI tutorialEmphasizeUI = base.gameObject.AddComponent<TutorialEmphasizeUI>();
+				tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.MEAL;
 			}
 		}
 	}
@@ -83,11 +64,6 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 	public override void RefreshParts()
 	{
 		this.ShowGUI();
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
 	}
 
 	public override void ShowGUI()
@@ -156,11 +132,6 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 		}
 	}
 
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
-	}
-
 	[Serializable]
 	public class PartsData
 	{
@@ -174,8 +145,10 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 
 		public Color col;
 
+		[NonSerialized]
 		public Color labelCol;
 
+		[NonSerialized]
 		public Color LRCol;
 
 		public Action actCallBack;

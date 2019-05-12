@@ -12,10 +12,6 @@ namespace Facebook.Unity
 
 		void OnGetAppLinkComplete(ResultContainer resultContainer);
 
-		void OnGroupCreateComplete(ResultContainer resultContainer);
-
-		void OnGroupJoinComplete(ResultContainer resultContainer);
-
 		void OnAppRequestsComplete(ResultContainer resultContainer);
 
 		void OnShareLinkComplete(ResultContainer resultContainer);

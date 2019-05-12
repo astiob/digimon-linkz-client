@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -72,12 +73,25 @@ public class CommonRender3DRT : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-		foreach (object obj in base.gameObject.transform)
+		IEnumerator enumerator = base.gameObject.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			if (transform.name == "Cam3D")
+			while (enumerator.MoveNext())
 			{
-				this.cam = transform.gameObject.GetComponent<Camera>();
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				if (transform.name == "Cam3D")
+				{
+					this.cam = transform.gameObject.GetComponent<Camera>();
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
 			}
 		}
 	}
@@ -406,17 +420,30 @@ public class CommonRender3DRT : MonoBehaviour
 
 	private static void SearchCompoSMR(GameObject go, List<SkinnedMeshRenderer> smrL)
 	{
-		foreach (object obj in go.transform)
+		IEnumerator enumerator = go.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			SkinnedMeshRenderer component = transform.gameObject.GetComponent<SkinnedMeshRenderer>();
-			if (component != null)
+			while (enumerator.MoveNext())
 			{
-				smrL.Add(component);
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				SkinnedMeshRenderer component = transform.gameObject.GetComponent<SkinnedMeshRenderer>();
+				if (component != null)
+				{
+					smrL.Add(component);
+				}
+				else
+				{
+					CommonRender3DRT.SearchCompoSMR(transform.gameObject, smrL);
+				}
 			}
-			else
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
 			{
-				CommonRender3DRT.SearchCompoSMR(transform.gameObject, smrL);
+				disposable.Dispose();
 			}
 		}
 	}

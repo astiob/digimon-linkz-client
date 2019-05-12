@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [AddComponentMenu("NGUI/Interaction/Grid")]
@@ -37,6 +38,15 @@ public class UIGrid : UIWidgetContainer
 
 	protected bool mInitDone;
 
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Comparison<Transform> <>f__mg$cache2;
+
 	public bool repositionNow
 	{
 		set
@@ -65,15 +75,30 @@ public class UIGrid : UIWidgetContainer
 		{
 			if (this.sorting == UIGrid.Sorting.Alphabetic)
 			{
-				list.Sort(new Comparison<Transform>(UIGrid.SortByName));
+				List<Transform> list2 = list;
+				if (UIGrid.<>f__mg$cache0 == null)
+				{
+					UIGrid.<>f__mg$cache0 = new Comparison<Transform>(UIGrid.SortByName);
+				}
+				list2.Sort(UIGrid.<>f__mg$cache0);
 			}
 			else if (this.sorting == UIGrid.Sorting.Horizontal)
 			{
-				list.Sort(new Comparison<Transform>(UIGrid.SortHorizontal));
+				List<Transform> list3 = list;
+				if (UIGrid.<>f__mg$cache1 == null)
+				{
+					UIGrid.<>f__mg$cache1 = new Comparison<Transform>(UIGrid.SortHorizontal);
+				}
+				list3.Sort(UIGrid.<>f__mg$cache1);
 			}
 			else if (this.sorting == UIGrid.Sorting.Vertical)
 			{
-				list.Sort(new Comparison<Transform>(UIGrid.SortVertical));
+				List<Transform> list4 = list;
+				if (UIGrid.<>f__mg$cache2 == null)
+				{
+					UIGrid.<>f__mg$cache2 = new Comparison<Transform>(UIGrid.SortVertical);
+				}
+				list4.Sort(UIGrid.<>f__mg$cache2);
 			}
 			else if (this.onCustomSort != null)
 			{
@@ -302,6 +327,8 @@ public class UIGrid : UIWidgetContainer
 		}
 	}
 
+	public delegate void OnReposition();
+
 	public enum Arrangement
 	{
 		Horizontal,
@@ -317,6 +344,4 @@ public class UIGrid : UIWidgetContainer
 		Vertical,
 		Custom
 	}
-
-	public delegate void OnReposition();
 }

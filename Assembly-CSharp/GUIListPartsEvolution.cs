@@ -9,16 +9,6 @@ using UnityEngine;
 
 public sealed class GUIListPartsEvolution : GUIListPartBS
 {
-	public const string NORMAL_EVOLVE = "1";
-
-	public const string MODE_CHANGE_EVOLVE = "2";
-
-	public const string JOGRESS = "3";
-
-	public const string COMBINE = "4";
-
-	public const string VERSION_UP = "5";
-
 	private GUIListPartsEvolution instance;
 
 	[SerializeField]
@@ -58,6 +48,16 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 
 	private string evolutionType;
 
+	public const string NORMAL_EVOLVE = "1";
+
+	public const string MODE_CHANGE_EVOLVE = "2";
+
+	public const string JOGRESS = "3";
+
+	public const string COMBINE = "4";
+
+	public const string VERSION_UP = "5";
+
 	private string notEnoughFormat;
 
 	private string enoughFormat;
@@ -66,9 +66,11 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 
 	private int myCluster;
 
+	private bool isShowedItemIcon;
+
 	private EvolutionData.MonsterEvolveData data;
 
-	private bool isShowedItemIcon;
+	private Action<EvolutionData.MonsterEvolveData, int> onEvolution;
 
 	public EvolutionData.MonsterEvolveData Data
 	{
@@ -79,8 +81,6 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		set
 		{
 			this.data = value;
-			this.evolutionType = ClassSingleton<EvolutionData>.Instance.GetEvolutionEffectType(this.data.md.userMonster.monsterId, this.data.md_next.userMonster.monsterId);
-			this.ShowGUI();
 		}
 	}
 
@@ -121,26 +121,27 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		return result;
 	}
 
-	public override void ShowGUI()
+	public void Initialize(Action<EvolutionData.MonsterEvolveData, int> evolutionAction)
 	{
+		this.onEvolution = evolutionAction;
+		this.evolutionType = ClassSingleton<EvolutionData>.Instance.GetEvolutionEffectType(this.data.md.userMonster.monsterId, this.data.md_next.userMonster.monsterId);
 		this.ngTAG_NEED_CHIP.text = StringMaster.GetString("SystemCost");
 		this.myCluster = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
-		string monsterId = this.data.md_next.monsterM.monsterId;
 		if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4")
 		{
-			this.needCluster = EvolutionData.CalcClusterForEvolve(monsterId);
+			this.needCluster = EvolutionData.CalcClusterForEvolve(this.data.md_next.monsterM.monsterId);
 		}
 		else if (this.evolutionType == "5")
 		{
-			this.needCluster = EvolutionData.CalcClusterForVersionUp(monsterId);
+			this.needCluster = EvolutionData.CalcClusterForVersionUp(this.data.md_next.monsterM.monsterId);
 		}
 		else if (this.evolutionType == "2")
 		{
-			this.needCluster = EvolutionData.CalcClusterForModeChange(monsterId);
+			this.needCluster = EvolutionData.CalcClusterForModeChange(this.data.md_next.monsterM.monsterId);
 		}
 		this.ShowNextMonsterIcon();
 		this.ShowNextMonsterData();
-		this.executionButton.Initialize();
+		this.executionButton.Initialize(new Action<CMD>(this.OnPushConfirmYesButton));
 		UILabel component = this.goCAN_EVOLVE.GetComponent<UILabel>();
 		if (this.CanEvolve())
 		{
@@ -188,7 +189,6 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 			component.text = string.Format(StringMaster.GetString("EvolutionImpossible"), this.GetEvolutionName());
 			this.SetDeactiveButton();
 		}
-		base.ShowGUI();
 	}
 
 	private void SetActiveButton()
@@ -249,12 +249,13 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		return this.myCluster >= this.needCluster;
 	}
 
-	public void OnCloseEvolveDo(int selectButtonIndex)
+	private void OnPushConfirmYesButton(CMD confirmPopup)
 	{
-		if (selectButtonIndex == 0)
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		confirmPopup.SetCloseAction(delegate(int noop)
 		{
-			CMD_Evolution.instance.EvolveDo(this.data, this.needCluster);
-		}
+			this.onEvolution(this.data, this.needCluster);
+		});
 	}
 
 	private void OnLongPushedMonsterIcon(MonsterData tappedMonsterData)

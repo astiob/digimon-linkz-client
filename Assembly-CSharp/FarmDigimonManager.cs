@@ -89,34 +89,34 @@ public sealed class FarmDigimonManager : MonoBehaviour
 			this.CreateDigimonGameObject();
 			this.AppaearanceDigimon(actCallBack);
 			this.lastFavoriteDeckNum = DataMng.Instance().RespDataMN_DeckList.favoriteDeckNum;
-			string[] userMonstreIDs = this.GetFavoriteDeckDigimon();
-			this.GetLastMonsterId(userMonstreIDs, isEvolvePage);
+			string[] favoriteDeckDigimon = this.GetFavoriteDeckDigimon();
+			this.GetLastMonsterId(favoriteDeckDigimon, isEvolvePage);
 			this.SetFriendshipUpFlg();
 		}
 		else if (null != MonsterDataMng.Instance())
 		{
-			string[] userMonstreIDs2 = this.GetFavoriteDeckDigimon();
+			string[] userMonstreIDs = this.GetFavoriteDeckDigimon();
 			bool changed = false;
-			for (int i = 0; i < userMonstreIDs2.Length; i++)
+			for (int i = 0; i < userMonstreIDs.Length; i++)
 			{
-				if (!this.IsSameDigimon(this.lastMonstreIDs[i], userMonstreIDs2[i], isEvolvePage))
+				if (!this.IsSameDigimon(this.lastMonstreIDs[i], userMonstreIDs[i], isEvolvePage))
 				{
 					this.farmDigimons[i].DeleteDigimon();
-					if (!string.IsNullOrEmpty(userMonstreIDs2[i]))
+					if (!string.IsNullOrEmpty(userMonstreIDs[i]))
 					{
-						yield return base.StartCoroutine(this.farmDigimons[i].CreateDigimon(userMonstreIDs2[i]));
+						yield return base.StartCoroutine(this.farmDigimons[i].CreateDigimon(userMonstreIDs[i]));
 					}
 					changed = true;
 				}
 				else
 				{
-					this.farmDigimons[i].userMonsterID = userMonstreIDs2[i];
+					this.farmDigimons[i].userMonsterID = userMonstreIDs[i];
 				}
 			}
 			if (changed)
 			{
 				this.AppaearanceDigimon(actCallBack);
-				this.GetLastMonsterId(userMonstreIDs2, false);
+				this.GetLastMonsterId(userMonstreIDs, false);
 			}
 			else if (actCallBack != null)
 			{

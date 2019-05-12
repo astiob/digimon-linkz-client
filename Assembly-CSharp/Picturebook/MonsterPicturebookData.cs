@@ -21,7 +21,16 @@ namespace Picturebook
 
 		public static bool IsReady()
 		{
-			return 0 < MonsterPicturebookData.userPicturebook.Count;
+			bool result = false;
+			for (int i = 0; i < MonsterPicturebookData.userPicturebook.Count; i++)
+			{
+				if ("1" == MonsterPicturebookData.userPicturebook[i].collectionStatus)
+				{
+					result = true;
+					break;
+				}
+			}
+			return result;
 		}
 
 		public static APIRequestTask RequestUserPicturebook()
@@ -51,7 +60,7 @@ namespace Picturebook
 			{
 				if (collectionId == MonsterPicturebookData.userPicturebook[i].monsterCollectionId)
 				{
-					result = true;
+					result = MonsterPicturebookData.userPicturebook[i].IsHave();
 					break;
 				}
 			}
@@ -61,12 +70,12 @@ namespace Picturebook
 		public static void AddPictureBook(string collectionId)
 		{
 			Debug.Assert(!MonsterPicturebookData.ExistPicturebook(collectionId), "登録済みのモンスター図鑑情報を追加しようとしました.");
-			GameWebAPI.RespDataMN_Picturebook.UserCollectionData item = new GameWebAPI.RespDataMN_Picturebook.UserCollectionData
+			GameWebAPI.RespDataMN_Picturebook.UserCollectionData userCollectionData = new GameWebAPI.RespDataMN_Picturebook.UserCollectionData
 			{
-				monsterCollectionId = collectionId,
-				collectionStatus = "1"
+				monsterCollectionId = collectionId
 			};
-			MonsterPicturebookData.userPicturebook.Add(item);
+			userCollectionData.SetHaveStatus();
+			MonsterPicturebookData.userPicturebook.Add(userCollectionData);
 		}
 	}
 }

@@ -299,6 +299,7 @@ public class FarmObject : MonoBehaviour
 			{
 				this.isFacilityBuildCompleteRequesting = true;
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
+				bool isSuccess = false;
 				RequestFA_FacilityBuildComplete request = new RequestFA_FacilityBuildComplete
 				{
 					SetSendData = delegate(FacilityBuildComplete param)
@@ -307,7 +308,7 @@ public class FarmObject : MonoBehaviour
 					},
 					OnReceived = delegate(FacilityBuildCompleteResult response)
 					{
-						bool isSuccess = response.result == 1;
+						isSuccess = (response.result == 1);
 					}
 				};
 				yield return base.StartCoroutine(request.Run(delegate()

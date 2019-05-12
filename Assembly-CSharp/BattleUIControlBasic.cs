@@ -3,6 +3,7 @@ using MultiBattle.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BattleUIControlBasic : BattleUIControl
@@ -10,6 +11,10 @@ public class BattleUIControlBasic : BattleUIControl
 	private List<GameWebAPI.RespDataMA_GetWorldDungeonOptionRewardM.WorldDungeonOptionReward> speedRewardList = new List<GameWebAPI.RespDataMA_GetWorldDungeonOptionRewardM.WorldDungeonOptionReward>();
 
 	private UIPanel parentPanel;
+
+	private List<BattleUIControlBasic.SortDepthData> oldSortDepthDataList = new List<BattleUIControlBasic.SortDepthData>();
+
+	private List<BattleUIControlBasic.SortDepthData> newSortDepthDataList = new List<BattleUIControlBasic.SortDepthData>();
 
 	private GameObject currentSelectMonster { get; set; }
 
@@ -28,7 +33,7 @@ public class BattleUIControlBasic : BattleUIControl
 		this.SetInitActive();
 		base.ui.rootPanel.alpha = 1f;
 		NGUITools.SetActiveSelf(base.ui.initializeUi.loadingGaugeRootObject, true);
-		this.ApplyCurrentSelectArrow(false, default(Vector3));
+		this.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		yield break;
 	}
 
@@ -67,26 +72,26 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.hitIconObjectInstanced = new List<List<HitIcon>>();
 		for (int i = 0; i < maxCharacter; i++)
 		{
-			List<HitIcon> currentHitIconObjectInstanced = new List<HitIcon>();
-			for (int i2 = 0; i2 < base.uiProperty.hitIconLengthTime; i2++)
+			List<HitIcon> list = new List<HitIcon>();
+			for (int j = 0; j < base.uiProperty.hitIconLengthTime; j++)
 			{
-				GameObject hit = base.Instantiate<GameObject>(base.ui.hitIconObject);
-				hit.name = string.Concat(new object[]
+				GameObject gameObject = base.Instantiate<GameObject>(base.ui.hitIconObject);
+				gameObject.name = string.Concat(new object[]
 				{
 					base.ui.hitIconObject.name,
 					i,
 					"_",
-					i2
+					j
 				});
-				UITweenController twC = hit.AddComponent<UITweenController>();
-				twC.GetObject();
-				twC.afterObjectDisable = true;
-				hit.transform.SetParent(hitParent.transform);
-				hit.transform.position = Vector3.zero;
-				hit.transform.localScale = base.uiProperty.hitIconLocalScale;
-				currentHitIconObjectInstanced.Add(hit.GetComponent<HitIcon>());
+				UITweenController uitweenController = gameObject.AddComponent<UITweenController>();
+				uitweenController.GetObject();
+				uitweenController.afterObjectDisable = true;
+				gameObject.transform.SetParent(hitParent.transform);
+				gameObject.transform.position = Vector3.zero;
+				gameObject.transform.localScale = base.uiProperty.hitIconLocalScale;
+				list.Add(gameObject.GetComponent<HitIcon>());
 			}
-			base.ui.hitIconObjectInstanced.Add(currentHitIconObjectInstanced);
+			base.ui.hitIconObjectInstanced.Add(list);
 		}
 		yield break;
 	}
@@ -109,35 +114,35 @@ public class BattleUIControlBasic : BattleUIControl
 		panel.transform.localPosition = new Vector3(0f, 0f, 20f);
 		for (int i = 0; i < base.battleStateData.totalPreloadCharacterLength; i++)
 		{
-			Transform hud = base.Instantiate<GameObject>(base.ui.hudObject).transform;
-			hud.name = "HUD" + i;
-			hud.SetParent(hudParent.transform);
-			hud.position = Vector3.zero;
-			hud.localScale = base.uiProperty.hudObjectLocalScale;
-			base.ui.hudObjectInstanced.Add(hud.GetComponent<BattleUIHUD>());
+			Transform transform = base.Instantiate<GameObject>(base.ui.hudObject).transform;
+			transform.name = "HUD" + i;
+			transform.SetParent(hudParent.transform);
+			transform.position = Vector3.zero;
+			transform.localScale = base.uiProperty.hudObjectLocalScale;
+			base.ui.hudObjectInstanced.Add(transform.GetComponent<BattleUIHUD>());
 			base.ui.hudObjectInstanced[i].InitNum();
-			base.ui.hudColliderInstanced.Add(hud.GetComponent<Collider>());
-			base.ui.hudObjectDepthController.Add(hud.gameObject.GetComponent<DepthController>());
+			base.ui.hudColliderInstanced.Add(transform.GetComponent<Collider>());
+			base.ui.hudObjectDepthController.Add(transform.gameObject.GetComponent<DepthController>());
 			if (i >= base.battleStateData.playerCharacters.Length)
 			{
 				int onHoldWaitPressValue = i - base.battleStateData.playerCharacters.Length;
 				base.ui.hudObjectInstanced[i].AddEvent(new Action<int>(base.input.OnPressHud), new Action(base.input.OffPressHud), onHoldWaitPressValue);
 			}
 		}
-		foreach (BattleWave batteWave in base.hierarchyData.batteWaves)
+		foreach (BattleWave battleWave in base.hierarchyData.batteWaves)
 		{
-			if (batteWave.cameraType == 1)
+			if (battleWave.cameraType == 1)
 			{
-				Transform hud2 = base.Instantiate<GameObject>(base.ui.bigBossHudObject).transform;
-				hud2.name = "BIG_BOSS_HUD";
-				hud2.SetParent(hudParent.transform);
-				hud2.localPosition = new Vector3(-20f, 230f, 0f);
-				hud2.localScale = Vector3.one;
-				hud2.gameObject.SetActive(false);
-				base.ui.bigBossHudObjectInstanced = hud2.GetComponent<BattleUIHUD>();
+				Transform transform2 = base.Instantiate<GameObject>(base.ui.bigBossHudObject).transform;
+				transform2.name = "BIG_BOSS_HUD";
+				transform2.SetParent(hudParent.transform);
+				transform2.localPosition = new Vector3(-20f, 230f, 0f);
+				transform2.localScale = Vector3.one;
+				transform2.gameObject.SetActive(false);
+				base.ui.bigBossHudObjectInstanced = transform2.GetComponent<BattleUIHUD>();
 				base.ui.bigBossHudObjectInstanced.InitNum();
-				base.ui.hudColliderInstanced.Add(hud2.GetComponent<Collider>());
-				base.ui.hudObjectDepthController.Add(hud2.gameObject.GetComponent<DepthController>());
+				base.ui.hudColliderInstanced.Add(transform2.GetComponent<Collider>());
+				base.ui.hudObjectDepthController.Add(transform2.gameObject.GetComponent<DepthController>());
 				base.ui.bigBossHudObjectInstanced.AddEvent(new Action<int>(base.input.OnPressHud), new Action(base.input.OffPressHud), 0);
 				break;
 			}
@@ -169,16 +174,16 @@ public class BattleUIControlBasic : BattleUIControl
 		panel.transform.localPosition = new Vector3(0f, 0f, 40f);
 		for (int i = 0; i < base.battleStateData.maxPreloadCharacterLength; i++)
 		{
-			Transform manual = base.Instantiate<GameObject>(base.ui.manualSelectTargetObject).transform;
-			manual.SetParent(manualSelectTargetParent);
-			manual.position = Vector3.zero;
-			manual.localScale = base.uiProperty.manualSelectTargetObjectLocalScale;
-			base.ui.manualSelectTargetObjectInstanced.Add(manual.GetComponent<ManualSelectTarget>());
-			manual = base.Instantiate<GameObject>(base.ui.toleranceIconObject).transform;
-			manual.SetParent(manualSelectTargetParent);
-			manual.position = Vector3.zero;
-			manual.localScale = base.uiProperty.manualSelectTargetObjectLocalScale;
-			base.ui.toleranceIconObjectInstanced.Add(manual.GetComponent<ToleranceIcon>());
+			Transform transform = base.Instantiate<GameObject>(base.ui.manualSelectTargetObject).transform;
+			transform.SetParent(manualSelectTargetParent);
+			transform.position = Vector3.zero;
+			transform.localScale = base.uiProperty.manualSelectTargetObjectLocalScale;
+			base.ui.manualSelectTargetObjectInstanced.Add(transform.GetComponent<ManualSelectTarget>());
+			transform = base.Instantiate<GameObject>(base.ui.toleranceIconObject).transform;
+			transform.SetParent(manualSelectTargetParent);
+			transform.position = Vector3.zero;
+			transform.localScale = base.uiProperty.manualSelectTargetObjectLocalScale;
+			base.ui.toleranceIconObjectInstanced.Add(transform.GetComponent<ToleranceIcon>());
 		}
 		yield break;
 	}
@@ -656,14 +661,10 @@ public class BattleUIControlBasic : BattleUIControl
 		}
 	}
 
-	public void ApplyCurrentSelectArrow(bool isEnable, Vector3 position)
+	public void ApplyCurrentSelectArrow(bool isEnable, Vector3 position = default(Vector3), int index = 0)
 	{
-		bool flag = position.z > 0f && position.x > 0f && position.x < 1f && position.y > 0f && position.y < 1f && isEnable;
-		NGUITools.SetActiveSelf(this.currentSelectMonster, flag);
-		if (!flag)
-		{
-			return;
-		}
+		bool state = position.z > 0f && position.x > 0f && position.x < 1f && position.y > 0f && position.y < 1f && isEnable;
+		NGUITools.SetActiveSelf(this.currentSelectMonster, state);
 		if (base.ui.arrowDepthController == null)
 		{
 			base.ui.arrowDepthController = this.currentSelectMonster.GetComponent<DepthController>();
@@ -672,10 +673,15 @@ public class BattleUIControlBasic : BattleUIControl
 		float z = position2.z;
 		position2.Set(position2.x, position2.y, this.currentSelectMonster.transform.position.z);
 		this.currentSelectMonster.transform.position = position2;
-		BattleUIControlBasic.ApplyDepthController(base.ui.arrowDepthController, z);
+		int widgetManualDepth = 0;
+		if (base.ui.hudObjectDepthController.Count > index)
+		{
+			widgetManualDepth = base.ui.hudObjectDepthController[index].GetDepth();
+		}
+		base.ui.arrowDepthController.SetWidgetManualDepth(widgetManualDepth);
 	}
 
-	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non)
+	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non, bool isHitIcon = true)
 	{
 		int index2 = 0;
 		for (int i = 0; i < base.ui.hitIconObjectInstanced[index].Count; i++)
@@ -687,14 +693,17 @@ public class BattleUIControlBasic : BattleUIControl
 			}
 		}
 		HitIcon hitIcon = base.ui.hitIconObjectInstanced[index][index2];
-		hitIcon.transform.localScale = base.uiProperty.hitIconLocalScale;
-		NGUITools.SetActiveSelf(hitIcon.gameObject, true);
-		Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
-		hitIcon.transform.position = new Vector3(vector.x, vector.y, 0f);
-		DepthController component = hitIcon.GetComponent<DepthController>();
-		component.SetWidgetDepth(index);
-		NGUITools.SetActiveSelf(hitIcon.gameObject, true);
-		hitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType);
+		if (isHitIcon)
+		{
+			hitIcon.transform.localScale = base.uiProperty.hitIconLocalScale;
+			NGUITools.SetActiveSelf(hitIcon.gameObject, true);
+			Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
+			hitIcon.transform.position = new Vector3(vector.x, vector.y, 0f);
+			DepthController component = hitIcon.GetComponent<DepthController>();
+			component.SetWidgetDepth(index);
+			NGUITools.SetActiveSelf(hitIcon.gameObject, true);
+			hitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType);
+		}
 		return hitIcon;
 	}
 
@@ -908,19 +917,31 @@ public class BattleUIControlBasic : BattleUIControl
 		}
 	}
 
-	private void ApplyCharacterHudPosition(int index, bool isShow, Vector3 position)
+	private void SetActiveCharacterHud(int index, bool isShow, Vector3 position = default(Vector3))
 	{
-		bool flag = position.z > 0f && position.x > 0f && position.x < 1f && position.y > 0f && position.y < 1f && isShow;
-		NGUITools.SetActiveSelf(base.ui.hudObjectInstanced[index].gameObject, flag);
-		if (!flag)
-		{
-			return;
-		}
+		bool state = position.z > 0f && position.x > 0f && position.x < 1f && position.y > 0f && position.y < 1f && isShow;
+		NGUITools.SetActiveSelf(base.ui.hudObjectInstanced[index].gameObject, state);
+	}
+
+	private void ApplyCharacterHudPosition(int index, Vector3 position)
+	{
+		this.SetActiveCharacterHud(index, true, position);
 		Vector3 position2 = base.ui.uiCamera.ViewportToWorldPoint(position);
 		float z = position2.z;
 		position2.Set(position2.x, position2.y, base.ui.hudObjectInstanced[index].transform.parent.transform.position.z);
 		base.ui.hudObjectInstanced[index].transform.position = position2;
-		BattleUIControlBasic.ApplyDepthController(base.ui.hudObjectDepthController[index], z);
+		int widgetManualDepth = (int)(z * 1000f) * -1;
+		base.ui.hudObjectDepthController[index].SetWidgetManualDepth(widgetManualDepth);
+	}
+
+	private void ApplyCharacterHudPosition(int index, Vector3 position, int depth)
+	{
+		this.SetActiveCharacterHud(index, true, position);
+		Vector3 position2 = base.ui.uiCamera.ViewportToWorldPoint(position);
+		float z = position2.z;
+		position2.Set(position2.x, position2.y, base.ui.hudObjectInstanced[index].transform.parent.transform.position.z);
+		base.ui.hudObjectInstanced[index].transform.position = position2;
+		base.ui.hudObjectDepthController[index].SetWidgetManualDepth(depth);
 	}
 
 	private void ApplyBigBossCharacterHud(bool isShow)
@@ -1213,7 +1234,7 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		for (int i = 0; i < base.battleStateData.totalPreloadCharacterLength; i++)
 		{
-			this.ApplyCharacterHudPosition(i, false, default(Vector3));
+			this.SetActiveCharacterHud(i, false, default(Vector3));
 		}
 		this.ApplyBigBossCharacterHud(false);
 	}
@@ -1240,27 +1261,44 @@ public class BattleUIControlBasic : BattleUIControl
 			return 0;
 		};
 		list.Sort(comparison);
-		foreach (CharacterStateControl characterStateControl in list)
+		this.newSortDepthDataList = new List<BattleUIControlBasic.SortDepthData>();
+		foreach (var <>__AnonType in list.Select((CharacterStateControl item, int index) => new
 		{
-			int index = (!characterStateControl.isEnemy) ? characterStateControl.myIndex : (characterStateControl.myIndex + base.battleStateData.playerCharacters.Length);
-			if (characterStateControl.isDied && characterStateControl.isDiedJustBefore)
+			item,
+			index
+		}))
+		{
+			int index3 = (!<>__AnonType.item.isEnemy) ? <>__AnonType.item.myIndex : (<>__AnonType.item.myIndex + base.battleStateData.playerCharacters.Length);
+			int depth = <>__AnonType.index * -1000;
+			BattleUIControlBasic.SortDepthData sortDepthData = new BattleUIControlBasic.SortDepthData();
+			for (int i = 0; i < characters.Length; i++)
 			{
-				this.ApplyCharacterHudPosition(index, false, default(Vector3));
+				if (<>__AnonType.item == characters[i])
+				{
+					sortDepthData.index = i;
+				}
+			}
+			sortDepthData.depth = depth;
+			this.newSortDepthDataList.Add(sortDepthData);
+			if (<>__AnonType.item.isDied && <>__AnonType.item.isDiedJustBefore)
+			{
+				this.SetActiveCharacterHud(index3, false, default(Vector3));
 			}
 			else
 			{
-				this.ApplyCharacterHudPosition(index, true, this.GetHUDCenterPosition2DFunction(characterStateControl));
+				this.ApplyCharacterHudPosition(index3, this.GetHUDCenterPosition2DFunction(<>__AnonType.item), depth);
 			}
 		}
+		this.SortCharacterHudUI();
 		if (base.ui.bigBossHudObjectInstanced != null && base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
 		{
-			foreach (CharacterStateControl characterStateControl2 in list)
+			foreach (CharacterStateControl characterStateControl in list)
 			{
-				int index2 = (!characterStateControl2.isEnemy) ? characterStateControl2.myIndex : (characterStateControl2.myIndex + base.battleStateData.playerCharacters.Length);
-				if (characterStateControl2.isEnemy)
+				int index2 = (!characterStateControl.isEnemy) ? characterStateControl.myIndex : (characterStateControl.myIndex + base.battleStateData.playerCharacters.Length);
+				if (characterStateControl.isEnemy)
 				{
-					this.ApplyCharacterHudPosition(index2, false, default(Vector3));
-					if (characterStateControl2.isDied && characterStateControl2.isDiedJustBefore)
+					this.SetActiveCharacterHud(index2, false, default(Vector3));
+					if (characterStateControl.isDied && characterStateControl.isDiedJustBefore)
 					{
 						this.ApplyBigBossCharacterHud(false);
 					}
@@ -1282,7 +1320,7 @@ public class BattleUIControlBasic : BattleUIControl
 			{
 				characterStateControl.isDiedJustBefore = true;
 			}
-			this.ApplyCharacterHudPosition(totalCharacterIndex, !characterStateControl.isDied, default(Vector3));
+			this.SetActiveCharacterHud(totalCharacterIndex, !characterStateControl.isDied, default(Vector3));
 			this.ApplyCharacterHudContent(totalCharacterIndex, characterStateControl);
 			this.ApplyCharacterHudReset(totalCharacterIndex);
 		}
@@ -1293,7 +1331,7 @@ public class BattleUIControlBasic : BattleUIControl
 				int index = (!characterStateControl2.isEnemy) ? characterStateControl2.myIndex : (characterStateControl2.myIndex + base.battleStateData.playerCharacters.Length);
 				if (characterStateControl2.isEnemy)
 				{
-					this.ApplyCharacterHudPosition(index, false, default(Vector3));
+					this.SetActiveCharacterHud(index, false, default(Vector3));
 					this.ApplyBigBossCharacterHud(!characterStateControl2.isDied);
 					this.ApplyBigBossCharacterHudContent(characterStateControl2);
 					this.ApplyBigBossCharacterHudReset();
@@ -1344,9 +1382,51 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.rootCamera.useController = enable;
 	}
 
-	private static void ApplyDepthController(DepthController d, float z)
+	private void SortCharacterHudUI()
 	{
-		int widgetDepth = int.MaxValue - Mathf.RoundToInt(z * 1E+07f);
-		d.SetWidgetDepth(widgetDepth);
+		bool flag = false;
+		this.newSortDepthDataList.Sort((BattleUIControlBasic.SortDepthData a, BattleUIControlBasic.SortDepthData b) => a.depth - b.depth);
+		if (this.oldSortDepthDataList.Count > 0)
+		{
+			for (int i = 0; i < this.oldSortDepthDataList.Count; i++)
+			{
+				if (this.newSortDepthDataList.Count > i && this.oldSortDepthDataList[i].index != this.newSortDepthDataList[i].index)
+				{
+					UIPanel panel = base.ui.hudObjectDepthController[this.oldSortDepthDataList[i].index].GetPanel();
+					if (panel != null)
+					{
+						panel.SortWidgetsByManualDepth();
+						panel.RebuildAllDrawCalls();
+						flag = true;
+					}
+					break;
+				}
+			}
+		}
+		else
+		{
+			foreach (BattleUIControlBasic.SortDepthData sortDepthData in this.newSortDepthDataList)
+			{
+				UIPanel panel2 = base.ui.hudObjectDepthController[sortDepthData.index].GetPanel();
+				if (panel2 != null)
+				{
+					panel2.SortWidgetsByManualDepth();
+					panel2.RebuildAllDrawCalls();
+					flag = true;
+				}
+			}
+		}
+		if (flag)
+		{
+			this.oldSortDepthDataList = this.newSortDepthDataList;
+			flag = false;
+		}
+	}
+
+	private class SortDepthData
+	{
+		public int index;
+
+		public int depth;
 	}
 }

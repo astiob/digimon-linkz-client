@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Facebook.Unity
@@ -9,9 +8,6 @@ namespace Facebook.Unity
 	internal abstract class FacebookBase : IFacebookImplementation, IFacebook, IFacebookResultHandler
 	{
 		private InitDelegate onInitCompleteDelegate;
-
-		[CompilerGenerated]
-		private static Func<string, bool> <>f__mg$cache0;
 
 		protected FacebookBase(CallbackManager callbackManager)
 		{
@@ -72,12 +68,22 @@ namespace Facebook.Unity
 
 		public void API(string query, HttpMethod method, IDictionary<string, string> formData, FacebookDelegate<IGraphResult> callback)
 		{
-			IDictionary<string, string> dictionary = (formData == null) ? new Dictionary<string, string>() : this.CopyByValue(formData);
-			if (!dictionary.ContainsKey("access_token") && !query.Contains("access_token="))
+			IDictionary<string, string> dictionary2;
+			if (formData == null)
 			{
-				dictionary["access_token"] = ((!FB.IsLoggedIn) ? string.Empty : AccessToken.CurrentAccessToken.TokenString);
+				IDictionary<string, string> dictionary = new Dictionary<string, string>();
+				dictionary2 = dictionary;
 			}
-			AsyncRequestString.Request(this.GetGraphUrl(query), method, dictionary, callback);
+			else
+			{
+				dictionary2 = this.CopyByValue(formData);
+			}
+			IDictionary<string, string> dictionary3 = dictionary2;
+			if (!dictionary3.ContainsKey("access_token") && !query.Contains("access_token="))
+			{
+				dictionary3["access_token"] = (FB.IsLoggedIn ? AccessToken.CurrentAccessToken.TokenString : string.Empty);
+			}
+			FBUnityUtility.AsyncRequestStringWrapper.Request(this.GetGraphUrl(query), method, dictionary3, callback);
 		}
 
 		public void API(string query, HttpMethod method, WWWForm formData, FacebookDelegate<IGraphResult> callback)
@@ -86,14 +92,10 @@ namespace Facebook.Unity
 			{
 				formData = new WWWForm();
 			}
-			string value = (AccessToken.CurrentAccessToken == null) ? string.Empty : AccessToken.CurrentAccessToken.TokenString;
+			string value = (AccessToken.CurrentAccessToken != null) ? AccessToken.CurrentAccessToken.TokenString : string.Empty;
 			formData.AddField("access_token", value);
-			AsyncRequestString.Request(this.GetGraphUrl(query), method, formData, callback);
+			FBUnityUtility.AsyncRequestStringWrapper.Request(this.GetGraphUrl(query), method, formData, callback);
 		}
-
-		public abstract void GameGroupCreate(string name, string description, string privacy, FacebookDelegate<IGroupCreateResult> callback);
-
-		public abstract void GameGroupJoin(string id, FacebookDelegate<IGroupJoinResult> callback);
 
 		public abstract void ActivateApp(string appId = null);
 
@@ -126,10 +128,6 @@ namespace Facebook.Unity
 
 		public abstract void OnGetAppLinkComplete(ResultContainer resultContainer);
 
-		public abstract void OnGroupCreateComplete(ResultContainer resultContainer);
-
-		public abstract void OnGroupJoinComplete(ResultContainer resultContainer);
-
 		public abstract void OnAppRequestsComplete(ResultContainer resultContainer);
 
 		public abstract void OnShareLinkComplete(ResultContainer resultContainer);
@@ -150,18 +148,14 @@ namespace Facebook.Unity
 			}
 			if (to != null)
 			{
-				if (FacebookBase.<>f__mg$cache0 == null)
-				{
-					FacebookBase.<>f__mg$cache0 = new Func<string, bool>(string.IsNullOrEmpty);
-				}
-				if (to.Any(FacebookBase.<>f__mg$cache0))
+				if (to.Any((string toWhom) => string.IsNullOrEmpty(toWhom)))
 				{
 					throw new ArgumentNullException("to", "'to' cannot contain any null or empty strings");
 				}
 			}
 		}
 
-		protected void OnAuthResponse(LoginResult result)
+		protected virtual void OnAuthResponse(LoginResult result)
 		{
 			if (result.AccessToken != null)
 			{
@@ -175,7 +169,7 @@ namespace Facebook.Unity
 			Dictionary<string, string> dictionary = new Dictionary<string, string>(data.Count);
 			foreach (KeyValuePair<string, string> keyValuePair in data)
 			{
-				dictionary[keyValuePair.Key] = ((keyValuePair.Value == null) ? null : new string(keyValuePair.Value.ToCharArray()));
+				dictionary[keyValuePair.Key] = ((keyValuePair.Value != null) ? new string(keyValuePair.Value.ToCharArray()) : null);
 			}
 			return dictionary;
 		}

@@ -4,8 +4,8 @@ using System.Diagnostics;
 namespace System.Runtime.Versioning
 {
 	/// <summary>Specifies the resource exposure for a member of a class. This class cannot be inherited.</summary>
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	[Conditional("RESOURCE_ANNOTATION_WORK")]
+	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	public sealed class ResourceExposureAttribute : Attribute
 	{
 		private ResourceScope exposure;

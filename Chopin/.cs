@@ -3,9 +3,9 @@ using System.Reflection;
 
 internal class \uE016
 {
-	public int Order;
+	public int \uE000;
 
-	public string Name = string.Empty;
+	public string \uE001 = string.Empty;
 
-	public FieldInfo FieldInfo;
+	public FieldInfo \uE002;
 }

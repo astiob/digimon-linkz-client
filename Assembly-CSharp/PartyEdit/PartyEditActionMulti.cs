@@ -13,7 +13,7 @@ namespace PartyEdit
 
 		private void OnClosedMultiRecruitSettingModal(int selectButtonIndex)
 		{
-			if (selectButtonIndex == 0)
+			if (selectButtonIndex == 0 && CMD_MultiRecruitPartyWait.roomCreateData != null)
 			{
 				CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.OWNER;
 				GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait", null);

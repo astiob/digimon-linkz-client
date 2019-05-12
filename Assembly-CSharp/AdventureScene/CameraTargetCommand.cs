@@ -39,14 +39,14 @@ namespace AdventureScene
 				this.locatorOwnerFlag = commandParams[1];
 				if ("stage" == this.locatorOwnerFlag)
 				{
-					float new_x = float.Parse(commandParams[2]);
-					float new_y = float.Parse(commandParams[3]);
-					float new_z = float.Parse(commandParams[4]);
-					this.lookAtPosition.Set(new_x, new_y, new_z);
-					new_x = float.Parse(commandParams[5]);
-					new_y = float.Parse(commandParams[6]);
-					new_z = float.Parse(commandParams[7]);
-					this.stageLocalPosition.Set(new_x, new_y, new_z);
+					float newX = float.Parse(commandParams[2]);
+					float newY = float.Parse(commandParams[3]);
+					float newZ = float.Parse(commandParams[4]);
+					this.lookAtPosition.Set(newX, newY, newZ);
+					newX = float.Parse(commandParams[5]);
+					newY = float.Parse(commandParams[6]);
+					newZ = float.Parse(commandParams[7]);
+					this.stageLocalPosition.Set(newX, newY, newZ);
 				}
 				else if ("chara" == this.locatorOwnerFlag)
 				{
@@ -83,34 +83,43 @@ namespace AdventureScene
 			bool flag = false;
 			AdventureCamera adventureCamera = ClassSingleton<AdventureSceneData>.Instance.adventureCamera;
 			string text = this.locatorOwnerFlag;
-			switch (text)
+			if (text != null)
 			{
-			case "stage":
-				adventureCamera.SetLookAt(this.lookAtPosition, this.stageLocalPosition);
-				flag = true;
-				break;
-			case "chara":
-			{
-				AdventureDigimonInfo digimonInfo = ClassSingleton<AdventureSceneData>.Instance.GetDigimonInfo(this.charaId);
-				if (digimonInfo != null)
+				if (!(text == "stage"))
 				{
-					adventureCamera.SetTargetChara(digimonInfo.model, this.isFollowingFlag);
+					if (!(text == "chara"))
+					{
+						if (!(text == "stageLoc"))
+						{
+							if (text == "charaLoc")
+							{
+								AdventureDigimonInfo digimonInfo = ClassSingleton<AdventureSceneData>.Instance.GetDigimonInfo(this.charaId);
+								if (digimonInfo != null)
+								{
+									flag = adventureCamera.SetTargetCharaLocator(digimonInfo.model, this.locatorName, this.isFollowingFlag);
+								}
+							}
+						}
+						else
+						{
+							flag = adventureCamera.SetTargetStageLocator(this.locatorName, this.isFollowingFlag);
+						}
+					}
+					else
+					{
+						AdventureDigimonInfo digimonInfo = ClassSingleton<AdventureSceneData>.Instance.GetDigimonInfo(this.charaId);
+						if (digimonInfo != null)
+						{
+							adventureCamera.SetTargetChara(digimonInfo.model, this.isFollowingFlag);
+							flag = true;
+						}
+					}
+				}
+				else
+				{
+					adventureCamera.SetLookAt(this.lookAtPosition, this.stageLocalPosition);
 					flag = true;
 				}
-				break;
-			}
-			case "stageLoc":
-				flag = adventureCamera.SetTargetStageLocator(this.locatorName, this.isFollowingFlag);
-				break;
-			case "charaLoc":
-			{
-				AdventureDigimonInfo digimonInfo = ClassSingleton<AdventureSceneData>.Instance.GetDigimonInfo(this.charaId);
-				if (digimonInfo != null)
-				{
-					flag = adventureCamera.SetTargetCharaLocator(digimonInfo.model, this.locatorName, this.isFollowingFlag);
-				}
-				break;
-			}
 			}
 			if (flag)
 			{

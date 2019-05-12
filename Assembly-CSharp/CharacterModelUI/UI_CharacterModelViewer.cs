@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace CharacterModelUI
 {
-	[RequireComponent(typeof(BoxCollider))]
 	[RequireComponent(typeof(UIWidget))]
+	[RequireComponent(typeof(BoxCollider))]
 	public sealed class UI_CharacterModelViewer : UI_CharacterModelTexture
 	{
-		private const float DETAILS_UI_VIEW_POSITION_OFFSET_X = -0.6f;
-
-		private const float DETAILS_UI_SCREEN_POSITION_OFFSET_Y = -80f;
-
 		private BoxCollider touchAreaCollider;
 
 		private ViewerCameraController viewerCameraController;
+
+		private const float DETAILS_UI_VIEW_POSITION_OFFSET_X = -0.6f;
+
+		private const float DETAILS_UI_SCREEN_POSITION_OFFSET_Y = -80f;
 
 		private CharacterModelController characterModelController;
 

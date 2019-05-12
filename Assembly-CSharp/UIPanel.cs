@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Panel")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Panel")]
 public class UIPanel : UIRect
 {
 	public static List<UIPanel> list = new List<UIPanel>();
@@ -42,32 +43,32 @@ public class UIPanel : UIRect
 
 	public UIPanel.OnClippingMoved onClipMove;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Texture2D mClipTexture;
 
 	[HideInInspector]
 	[SerializeField]
 	private float mAlpha = 1f;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIDrawCall.Clipping mClipping;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mClipRange = new Vector4(0f, 0f, 300f, 200f);
 
 	[HideInInspector]
 	[SerializeField]
 	private Vector2 mClipSoftness = new Vector2(4f, 4f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mDepth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSortingOrder;
 
 	private bool mRebuild;
@@ -104,6 +105,18 @@ public class UIPanel : UIRect
 	private UIDrawCall.OnRenderCallback mOnRender;
 
 	private bool mForced;
+
+	[CompilerGenerated]
+	private static Comparison<UIPanel> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Comparison<UIPanel> <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Comparison<UIWidget> <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static Comparison<UIWidget> <>f__mg$cache3;
 
 	public static int nextUnusedDepth
 	{
@@ -159,7 +172,12 @@ public class UIPanel : UIRect
 			if (this.mDepth != value)
 			{
 				this.mDepth = value;
-				UIPanel.list.Sort(new Comparison<UIPanel>(UIPanel.CompareFunc));
+				List<UIPanel> list = UIPanel.list;
+				if (UIPanel.<>f__mg$cache0 == null)
+				{
+					UIPanel.<>f__mg$cache0 = new Comparison<UIPanel>(UIPanel.CompareFunc);
+				}
+				list.Sort(UIPanel.<>f__mg$cache0);
 			}
 		}
 	}
@@ -724,7 +742,7 @@ public class UIPanel : UIRect
 	protected override void Awake()
 	{
 		base.Awake();
-		this.mHalfPixelOffset = (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.XBOX360 || Application.platform == RuntimePlatform.WindowsWebPlayer || Application.platform == RuntimePlatform.WindowsEditor);
+		this.mHalfPixelOffset = (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.XboxOne || Application.platform == RuntimePlatform.WebGLPlayer || Application.platform == RuntimePlatform.WindowsEditor);
 		if (this.mHalfPixelOffset && SystemInfo.graphicsDeviceVersion.Contains("Direct3D"))
 		{
 			this.mHalfPixelOffset = (SystemInfo.graphicsShaderLevel < 40);
@@ -780,7 +798,12 @@ public class UIPanel : UIRect
 		this.mAlphaFrameID = -1;
 		this.mMatrixFrame = -1;
 		UIPanel.list.Add(this);
-		UIPanel.list.Sort(new Comparison<UIPanel>(UIPanel.CompareFunc));
+		List<UIPanel> list = UIPanel.list;
+		if (UIPanel.<>f__mg$cache1 == null)
+		{
+			UIPanel.<>f__mg$cache1 = new Comparison<UIPanel>(UIPanel.CompareFunc);
+		}
+		list.Sort(UIPanel.<>f__mg$cache1);
 	}
 
 	protected override void OnDisable()
@@ -1037,7 +1060,27 @@ public class UIPanel : UIRect
 	public void SortWidgets()
 	{
 		this.mSortWidgets = false;
-		this.widgets.Sort(new Comparison<UIWidget>(UIWidget.PanelCompareFunc));
+		List<UIWidget> list = this.widgets;
+		if (UIPanel.<>f__mg$cache2 == null)
+		{
+			UIPanel.<>f__mg$cache2 = new Comparison<UIWidget>(UIWidget.PanelCompareFunc);
+		}
+		list.Sort(UIPanel.<>f__mg$cache2);
+	}
+
+	public void SortWidgetsByManualDepth()
+	{
+		this.mSortWidgets = false;
+		List<UIWidget> list = this.widgets;
+		if (UIPanel.<>f__mg$cache3 == null)
+		{
+			UIPanel.<>f__mg$cache3 = new Comparison<UIWidget>(UIWidget.ManualDepthCompareFunc);
+		}
+		list.Sort(UIPanel.<>f__mg$cache3);
+		foreach (UIWidget uiwidget in this.widgets)
+		{
+			uiwidget.SetDepthFromManualDepth();
+		}
 	}
 
 	private void FillAllDrawCalls()

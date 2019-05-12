@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	/// <summary>Specifies the action that a custom application domain manager takes when initializing a new domain.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	public enum AppDomainManagerInitializationOptions
 	{
 		/// <summary>No initialization action.</summary>

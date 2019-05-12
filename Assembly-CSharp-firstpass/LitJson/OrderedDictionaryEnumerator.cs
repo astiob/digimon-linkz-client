@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace LitJson
 {
-	internal class OrderedDictionaryEnumerator : IEnumerator, IDictionaryEnumerator
+	internal class OrderedDictionaryEnumerator : IDictionaryEnumerator, IEnumerator
 	{
 		private IEnumerator<KeyValuePair<string, JsonData>> list_enumerator;
 

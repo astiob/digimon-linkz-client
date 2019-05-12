@@ -5,16 +5,16 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[DisallowMultipleComponent]
-	[SelectionBase]
-	[ExecuteInEditMode]
 	[AddComponentMenu("UI/Selectable", 70)]
-	public class Selectable : UIBehaviour, IEventSystemHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ISelectHandler, IDeselectHandler, IMoveHandler
+	[ExecuteInEditMode]
+	[SelectionBase]
+	[DisallowMultipleComponent]
+	public class Selectable : UIBehaviour, IMoveHandler, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler, IEventSystemHandler
 	{
 		private static List<Selectable> s_List = new List<Selectable>();
 
-		[SerializeField]
 		[FormerlySerializedAs("navigation")]
+		[SerializeField]
 		private Navigation m_Navigation = Navigation.defaultNavigation;
 
 		[FormerlySerializedAs("transition")]
@@ -25,21 +25,21 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private ColorBlock m_Colors = ColorBlock.defaultColorBlock;
 
-		[SerializeField]
 		[FormerlySerializedAs("spriteState")]
+		[SerializeField]
 		private SpriteState m_SpriteState;
 
-		[SerializeField]
 		[FormerlySerializedAs("animationTriggers")]
+		[SerializeField]
 		private AnimationTriggers m_AnimationTriggers = new AnimationTriggers();
 
-		[SerializeField]
 		[Tooltip("Can the Selectable be interacted with?")]
+		[SerializeField]
 		private bool m_Interactable = true;
 
-		[SerializeField]
 		[FormerlySerializedAs("highlightGraphic")]
 		[FormerlySerializedAs("m_HighlightGraphic")]
+		[SerializeField]
 		private Graphic m_TargetGraphic;
 
 		private bool m_GroupsAllowInteraction = true;
@@ -68,7 +68,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (SetPropertyUtility.SetEquatableStruct<Navigation>(ref this.m_Navigation, value))
+				if (SetPropertyUtility.SetStruct<Navigation>(ref this.m_Navigation, value))
 				{
 					this.OnSetProperty();
 				}
@@ -98,7 +98,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (SetPropertyUtility.SetEquatableStruct<ColorBlock>(ref this.m_Colors, value))
+				if (SetPropertyUtility.SetStruct<ColorBlock>(ref this.m_Colors, value))
 				{
 					this.OnSetProperty();
 				}
@@ -113,7 +113,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (SetPropertyUtility.SetEquatableStruct<SpriteState>(ref this.m_SpriteState, value))
+				if (SetPropertyUtility.SetStruct<SpriteState>(ref this.m_SpriteState, value))
 				{
 					this.OnSetProperty();
 				}
@@ -160,9 +160,13 @@ namespace UnityEngine.UI
 			{
 				if (SetPropertyUtility.SetStruct<bool>(ref this.m_Interactable, value))
 				{
-					if (this.m_Interactable && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == base.gameObject)
+					if (!this.m_Interactable && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == base.gameObject)
 					{
 						EventSystem.current.SetSelectedGameObject(null);
+					}
+					if (this.m_Interactable)
+					{
+						this.UpdateSelectionState(null);
 					}
 					this.OnSetProperty();
 				}
@@ -285,17 +289,24 @@ namespace UnityEngine.UI
 			this.isPointerInside = false;
 			this.isPointerDown = false;
 			this.hasSelection = false;
-			switch (this.m_Transition)
+			Selectable.Transition transition = this.m_Transition;
+			if (transition != Selectable.Transition.ColorTint)
 			{
-			case Selectable.Transition.ColorTint:
+				if (transition != Selectable.Transition.SpriteSwap)
+				{
+					if (transition == Selectable.Transition.Animation)
+					{
+						this.TriggerAnimation(normalTrigger);
+					}
+				}
+				else
+				{
+					this.DoSpriteSwap(null);
+				}
+			}
+			else
+			{
 				this.StartColorTween(Color.white, true);
-				break;
-			case Selectable.Transition.SpriteSwap:
-				this.DoSpriteSwap(null);
-				break;
-			case Selectable.Transition.Animation:
-				this.TriggerAnimation(normalTrigger);
-				break;
 			}
 		}
 
@@ -334,17 +345,24 @@ namespace UnityEngine.UI
 			}
 			if (base.gameObject.activeInHierarchy)
 			{
-				switch (this.m_Transition)
+				Selectable.Transition transition = this.m_Transition;
+				if (transition != Selectable.Transition.ColorTint)
 				{
-				case Selectable.Transition.ColorTint:
+					if (transition != Selectable.Transition.SpriteSwap)
+					{
+						if (transition == Selectable.Transition.Animation)
+						{
+							this.TriggerAnimation(triggername);
+						}
+					}
+					else
+					{
+						this.DoSpriteSwap(newSprite);
+					}
+				}
+				else
+				{
 					this.StartColorTween(a * this.m_Colors.colorMultiplier, instant);
-					break;
-				case Selectable.Transition.SpriteSwap:
-					this.DoSpriteSwap(newSprite);
-					break;
-				case Selectable.Transition.Animation:
-					this.TriggerAnimation(triggername);
-					break;
 				}
 			}
 		}
@@ -384,16 +402,21 @@ namespace UnityEngine.UI
 
 		private static Vector3 GetPointOnRectEdge(RectTransform rect, Vector2 dir)
 		{
+			Vector3 result;
 			if (rect == null)
 			{
-				return Vector3.zero;
+				result = Vector3.zero;
 			}
-			if (dir != Vector2.zero)
+			else
 			{
-				dir /= Mathf.Max(Mathf.Abs(dir.x), Mathf.Abs(dir.y));
+				if (dir != Vector2.zero)
+				{
+					dir /= Mathf.Max(Mathf.Abs(dir.x), Mathf.Abs(dir.y));
+				}
+				dir = rect.rect.center + Vector2.Scale(rect.rect.size, dir * 0.5f);
+				result = dir;
 			}
-			dir = rect.rect.center + Vector2.Scale(rect.rect.size, dir * 0.5f);
-			return dir;
+			return result;
 		}
 
 		private void Navigate(AxisEventData eventData, Selectable sel)
@@ -406,54 +429,74 @@ namespace UnityEngine.UI
 
 		public virtual Selectable FindSelectableOnLeft()
 		{
+			Selectable result;
 			if (this.m_Navigation.mode == Navigation.Mode.Explicit)
 			{
-				return this.m_Navigation.selectOnLeft;
+				result = this.m_Navigation.selectOnLeft;
 			}
-			if ((this.m_Navigation.mode & Navigation.Mode.Horizontal) != Navigation.Mode.None)
+			else if ((this.m_Navigation.mode & Navigation.Mode.Horizontal) != Navigation.Mode.None)
 			{
-				return this.FindSelectable(base.transform.rotation * Vector3.left);
+				result = this.FindSelectable(base.transform.rotation * Vector3.left);
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual Selectable FindSelectableOnRight()
 		{
+			Selectable result;
 			if (this.m_Navigation.mode == Navigation.Mode.Explicit)
 			{
-				return this.m_Navigation.selectOnRight;
+				result = this.m_Navigation.selectOnRight;
 			}
-			if ((this.m_Navigation.mode & Navigation.Mode.Horizontal) != Navigation.Mode.None)
+			else if ((this.m_Navigation.mode & Navigation.Mode.Horizontal) != Navigation.Mode.None)
 			{
-				return this.FindSelectable(base.transform.rotation * Vector3.right);
+				result = this.FindSelectable(base.transform.rotation * Vector3.right);
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual Selectable FindSelectableOnUp()
 		{
+			Selectable result;
 			if (this.m_Navigation.mode == Navigation.Mode.Explicit)
 			{
-				return this.m_Navigation.selectOnUp;
+				result = this.m_Navigation.selectOnUp;
 			}
-			if ((this.m_Navigation.mode & Navigation.Mode.Vertical) != Navigation.Mode.None)
+			else if ((this.m_Navigation.mode & Navigation.Mode.Vertical) != Navigation.Mode.None)
 			{
-				return this.FindSelectable(base.transform.rotation * Vector3.up);
+				result = this.FindSelectable(base.transform.rotation * Vector3.up);
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual Selectable FindSelectableOnDown()
 		{
+			Selectable result;
 			if (this.m_Navigation.mode == Navigation.Mode.Explicit)
 			{
-				return this.m_Navigation.selectOnDown;
+				result = this.m_Navigation.selectOnDown;
 			}
-			if ((this.m_Navigation.mode & Navigation.Mode.Vertical) != Navigation.Mode.None)
+			else if ((this.m_Navigation.mode & Navigation.Mode.Vertical) != Navigation.Mode.None)
 			{
-				return this.FindSelectable(base.transform.rotation * Vector3.down);
+				result = this.FindSelectable(base.transform.rotation * Vector3.down);
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual void OnMove(AxisEventData eventData)
@@ -477,56 +520,58 @@ namespace UnityEngine.UI
 
 		private void StartColorTween(Color targetColor, bool instant)
 		{
-			if (this.m_TargetGraphic == null)
+			if (!(this.m_TargetGraphic == null))
 			{
-				return;
+				this.m_TargetGraphic.CrossFadeColor(targetColor, (!instant) ? this.m_Colors.fadeDuration : 0f, true, true);
 			}
-			this.m_TargetGraphic.CrossFadeColor(targetColor, (!instant) ? this.m_Colors.fadeDuration : 0f, true, true);
 		}
 
 		private void DoSpriteSwap(Sprite newSprite)
 		{
-			if (this.image == null)
+			if (!(this.image == null))
 			{
-				return;
+				this.image.overrideSprite = newSprite;
 			}
-			this.image.overrideSprite = newSprite;
 		}
 
 		private void TriggerAnimation(string triggername)
 		{
-			if (this.animator == null || !this.animator.isActiveAndEnabled || this.animator.runtimeAnimatorController == null || string.IsNullOrEmpty(triggername))
+			if (this.transition == Selectable.Transition.Animation && !(this.animator == null) && this.animator.isActiveAndEnabled && this.animator.hasBoundPlayables && !string.IsNullOrEmpty(triggername))
 			{
-				return;
+				this.animator.ResetTrigger(this.m_AnimationTriggers.normalTrigger);
+				this.animator.ResetTrigger(this.m_AnimationTriggers.pressedTrigger);
+				this.animator.ResetTrigger(this.m_AnimationTriggers.highlightedTrigger);
+				this.animator.ResetTrigger(this.m_AnimationTriggers.disabledTrigger);
+				this.animator.SetTrigger(triggername);
 			}
-			this.animator.ResetTrigger(this.m_AnimationTriggers.normalTrigger);
-			this.animator.ResetTrigger(this.m_AnimationTriggers.pressedTrigger);
-			this.animator.ResetTrigger(this.m_AnimationTriggers.highlightedTrigger);
-			this.animator.ResetTrigger(this.m_AnimationTriggers.disabledTrigger);
-			this.animator.SetTrigger(triggername);
 		}
 
 		protected bool IsHighlighted(BaseEventData eventData)
 		{
+			bool result;
 			if (!this.IsActive())
 			{
-				return false;
+				result = false;
 			}
-			if (this.IsPressed())
+			else if (this.IsPressed())
 			{
-				return false;
-			}
-			bool flag = this.hasSelection;
-			if (eventData is PointerEventData)
-			{
-				PointerEventData pointerEventData = eventData as PointerEventData;
-				flag |= ((this.isPointerDown && !this.isPointerInside && pointerEventData.pointerPress == base.gameObject) || (!this.isPointerDown && this.isPointerInside && pointerEventData.pointerPress == base.gameObject) || (!this.isPointerDown && this.isPointerInside && pointerEventData.pointerPress == null));
+				result = false;
 			}
 			else
 			{
-				flag |= this.isPointerInside;
+				bool flag = this.hasSelection;
+				if (eventData is PointerEventData)
+				{
+					PointerEventData pointerEventData = eventData as PointerEventData;
+					flag |= ((this.isPointerDown && !this.isPointerInside && pointerEventData.pointerPress == base.gameObject) || (!this.isPointerDown && this.isPointerInside && pointerEventData.pointerPress == base.gameObject) || (!this.isPointerDown && this.isPointerInside && pointerEventData.pointerPress == null));
+				}
+				else
+				{
+					flag |= this.isPointerInside;
+				}
+				result = flag;
 			}
-			return flag;
+			return result;
 		}
 
 		[Obsolete("Is Pressed no longer requires eventData", false)]
@@ -545,24 +590,24 @@ namespace UnityEngine.UI
 			if (this.IsPressed())
 			{
 				this.m_CurrentSelectionState = Selectable.SelectionState.Pressed;
-				return;
 			}
-			if (this.IsHighlighted(eventData))
+			else if (this.IsHighlighted(eventData))
 			{
 				this.m_CurrentSelectionState = Selectable.SelectionState.Highlighted;
-				return;
 			}
-			this.m_CurrentSelectionState = Selectable.SelectionState.Normal;
+			else
+			{
+				this.m_CurrentSelectionState = Selectable.SelectionState.Normal;
+			}
 		}
 
 		private void EvaluateAndTransitionToSelectionState(BaseEventData eventData)
 		{
-			if (!this.IsActive())
+			if (this.IsActive() && this.IsInteractable())
 			{
-				return;
+				this.UpdateSelectionState(eventData);
+				this.InternalEvaluateAndTransitionToSelectionState(false);
 			}
-			this.UpdateSelectionState(eventData);
-			this.InternalEvaluateAndTransitionToSelectionState(false);
 		}
 
 		private void InternalEvaluateAndTransitionToSelectionState(bool instant)
@@ -577,26 +622,24 @@ namespace UnityEngine.UI
 
 		public virtual void OnPointerDown(PointerEventData eventData)
 		{
-			if (eventData.button != PointerEventData.InputButton.Left)
+			if (eventData.button == PointerEventData.InputButton.Left)
 			{
-				return;
+				if (this.IsInteractable() && this.navigation.mode != Navigation.Mode.None && EventSystem.current != null)
+				{
+					EventSystem.current.SetSelectedGameObject(base.gameObject, eventData);
+				}
+				this.isPointerDown = true;
+				this.EvaluateAndTransitionToSelectionState(eventData);
 			}
-			if (this.IsInteractable() && this.navigation.mode != Navigation.Mode.None && EventSystem.current != null)
-			{
-				EventSystem.current.SetSelectedGameObject(base.gameObject, eventData);
-			}
-			this.isPointerDown = true;
-			this.EvaluateAndTransitionToSelectionState(eventData);
 		}
 
 		public virtual void OnPointerUp(PointerEventData eventData)
 		{
-			if (eventData.button != PointerEventData.InputButton.Left)
+			if (eventData.button == PointerEventData.InputButton.Left)
 			{
-				return;
+				this.isPointerDown = false;
+				this.EvaluateAndTransitionToSelectionState(eventData);
 			}
-			this.isPointerDown = false;
-			this.EvaluateAndTransitionToSelectionState(eventData);
 		}
 
 		public virtual void OnPointerEnter(PointerEventData eventData)
@@ -625,11 +668,10 @@ namespace UnityEngine.UI
 
 		public virtual void Select()
 		{
-			if (EventSystem.current == null || EventSystem.current.alreadySelecting)
+			if (!(EventSystem.current == null) && !EventSystem.current.alreadySelecting)
 			{
-				return;
+				EventSystem.current.SetSelectedGameObject(base.gameObject);
 			}
-			EventSystem.current.SetSelectedGameObject(base.gameObject);
 		}
 
 		public enum Transition

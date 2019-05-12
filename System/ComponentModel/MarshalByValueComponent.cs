@@ -7,7 +7,7 @@ namespace System.ComponentModel
 	/// <summary>Implements <see cref="T:System.ComponentModel.IComponent" /> and provides the base implementation for remotable components that are marshaled by value (a copy of the serialized object is passed).</summary>
 	[DesignerCategory("Component")]
 	[ComVisible(true)]
-	[Designer("System.Windows.Forms.Design.ComponentDocumentDesigner, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.ComponentModel.Design.IRootDesigner))]
+	[Designer("System.Windows.Forms.Design.ComponentDocumentDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.ComponentModel.Design.IRootDesigner))]
 	[TypeConverter(typeof(ComponentConverter))]
 	public class MarshalByValueComponent : IDisposable, IServiceProvider, IComponent
 	{

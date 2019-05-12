@@ -5,13 +5,15 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.EventSystems
 {
-	[AddComponentMenu("Event/Touch Input Module")]
 	[Obsolete("TouchInputModule is no longer required as Touch input is now handled in StandaloneInputModule.")]
+	[AddComponentMenu("Event/Touch Input Module")]
 	public class TouchInputModule : PointerInputModule
 	{
 		private Vector2 m_LastMousePosition;
 
 		private Vector2 m_MousePosition;
+
+		private PointerEventData m_InputPointerEvent;
 
 		[SerializeField]
 		[FormerlySerializedAs("m_AllowActivationOnStandalone")]
@@ -48,36 +50,50 @@ namespace UnityEngine.EventSystems
 
 		public override void UpdateModule()
 		{
+			if (!base.eventSystem.isFocused)
+			{
+				if (this.m_InputPointerEvent != null && this.m_InputPointerEvent.pointerDrag != null && this.m_InputPointerEvent.dragging)
+				{
+					ExecuteEvents.Execute<IEndDragHandler>(this.m_InputPointerEvent.pointerDrag, this.m_InputPointerEvent, ExecuteEvents.endDragHandler);
+				}
+				this.m_InputPointerEvent = null;
+			}
 			this.m_LastMousePosition = this.m_MousePosition;
-			this.m_MousePosition = Input.mousePosition;
+			this.m_MousePosition = base.input.mousePosition;
 		}
 
 		public override bool IsModuleSupported()
 		{
-			return this.forceModuleActive || Input.touchSupported;
+			return this.forceModuleActive || base.input.touchSupported;
 		}
 
 		public override bool ShouldActivateModule()
 		{
+			bool result;
 			if (!base.ShouldActivateModule())
 			{
-				return false;
+				result = false;
 			}
-			if (this.m_ForceModuleActive)
+			else if (this.m_ForceModuleActive)
 			{
-				return true;
+				result = true;
 			}
-			if (this.UseFakeInput())
+			else if (this.UseFakeInput())
 			{
-				bool mouseButtonDown = Input.GetMouseButtonDown(0);
-				return mouseButtonDown | (this.m_MousePosition - this.m_LastMousePosition).sqrMagnitude > 0f;
+				bool flag = base.input.GetMouseButtonDown(0);
+				flag |= ((this.m_MousePosition - this.m_LastMousePosition).sqrMagnitude > 0f);
+				result = flag;
 			}
-			return Input.touchCount > 0;
+			else
+			{
+				result = (base.input.touchCount > 0);
+			}
+			return result;
 		}
 
 		private bool UseFakeInput()
 		{
-			return !Input.touchSupported;
+			return !base.input.touchSupported;
 		}
 
 		public override void Process()
@@ -101,7 +117,7 @@ namespace UnityEngine.EventSystems
 				eventData.buttonData.delta = Vector2.zero;
 			}
 			this.ProcessTouchPress(eventData.buttonData, eventData.PressedThisFrame(), eventData.ReleasedThisFrame());
-			if (Input.GetMouseButton(0))
+			if (base.input.GetMouseButton(0))
 			{
 				this.ProcessMove(eventData.buttonData);
 				this.ProcessDrag(eventData.buttonData);
@@ -110,9 +126,9 @@ namespace UnityEngine.EventSystems
 
 		private void ProcessTouchEvents()
 		{
-			for (int i = 0; i < Input.touchCount; i++)
+			for (int i = 0; i < base.input.touchCount; i++)
 			{
-				Touch touch = Input.GetTouch(i);
+				Touch touch = base.input.GetTouch(i);
 				if (touch.type != TouchType.Indirect)
 				{
 					bool pressed;
@@ -132,7 +148,7 @@ namespace UnityEngine.EventSystems
 			}
 		}
 
-		private void ProcessTouchPress(PointerEventData pointerEvent, bool pressed, bool released)
+		protected void ProcessTouchPress(PointerEventData pointerEvent, bool pressed, bool released)
 		{
 			GameObject gameObject = pointerEvent.pointerCurrentRaycast.gameObject;
 			if (pressed)
@@ -180,6 +196,7 @@ namespace UnityEngine.EventSystems
 				{
 					ExecuteEvents.Execute<IInitializePotentialDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.initializePotentialDrag);
 				}
+				this.m_InputPointerEvent = pointerEvent;
 			}
 			if (released)
 			{
@@ -209,6 +226,7 @@ namespace UnityEngine.EventSystems
 				pointerEvent.pointerDrag = null;
 				ExecuteEvents.ExecuteHierarchy<IPointerExitHandler>(pointerEvent.pointerEnter, pointerEvent, ExecuteEvents.pointerExitHandler);
 				pointerEvent.pointerEnter = null;
+				this.m_InputPointerEvent = pointerEvent;
 			}
 		}
 

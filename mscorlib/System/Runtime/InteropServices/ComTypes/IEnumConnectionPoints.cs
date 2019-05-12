@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	/// <summary>Manages the definition of the IEnumConnectionPoints interface.</summary>
-	[Guid("b196b285-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("b196b285-bab4-101a-b69c-00aa00341d07")]
 	[ComImport]
 	public interface IEnumConnectionPoints
 	{

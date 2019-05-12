@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.CompilerServices
 {
 	/// <summary>Defines the details of how a method is implemented.</summary>
-	[ComVisible(true)]
 	[Flags]
+	[ComVisible(true)]
 	[Serializable]
 	public enum MethodImplOptions
 	{

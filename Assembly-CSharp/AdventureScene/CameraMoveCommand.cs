@@ -41,18 +41,18 @@ namespace AdventureScene
 				}
 				else if ("pos" == this.activeType)
 				{
-					float new_x = float.Parse(commandParams[2]);
-					float new_y = float.Parse(commandParams[3]);
-					float new_z = float.Parse(commandParams[4]);
-					this.stageLocalPosition.Set(new_x, new_y, new_z);
+					float newX = float.Parse(commandParams[2]);
+					float newY = float.Parse(commandParams[3]);
+					float newZ = float.Parse(commandParams[4]);
+					this.stageLocalPosition.Set(newX, newY, newZ);
 					this.time = float.Parse(commandParams[5]);
 				}
 				else
 				{
-					float new_x2 = float.Parse(commandParams[2]);
-					float new_y2 = float.Parse(commandParams[3]);
-					float new_z2 = float.Parse(commandParams[4]);
-					this.rotationEulerAngles.Set(new_x2, new_y2, new_z2);
+					float newX2 = float.Parse(commandParams[2]);
+					float newY2 = float.Parse(commandParams[3]);
+					float newZ2 = float.Parse(commandParams[4]);
+					this.rotationEulerAngles.Set(newX2, newY2, newZ2);
 					this.time = float.Parse(commandParams[5]);
 				}
 				base.SetWaitScriptEngine(true);
@@ -69,20 +69,33 @@ namespace AdventureScene
 		{
 			bool result = true;
 			string text = this.activeType;
-			switch (text)
+			if (text != null)
 			{
-			case "fov":
-				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetFieldOfView(this.fov, this.time);
-				break;
-			case "pos":
-				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetMove(this.stageLocalPosition, this.time);
-				break;
-			case "rot":
-				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetRotation(this.rotationEulerAngles, false, this.time);
-				break;
-			case "round":
-				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetRotation(this.rotationEulerAngles, true, this.time);
-				break;
+				if (!(text == "fov"))
+				{
+					if (!(text == "pos"))
+					{
+						if (!(text == "rot"))
+						{
+							if (text == "round")
+							{
+								ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetRotation(this.rotationEulerAngles, true, this.time);
+							}
+						}
+						else
+						{
+							ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetRotation(this.rotationEulerAngles, false, this.time);
+						}
+					}
+					else
+					{
+						ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetMove(this.stageLocalPosition, this.time);
+					}
+				}
+				else
+				{
+					ClassSingleton<AdventureSceneData>.Instance.adventureCamera.SetFieldOfView(this.fov, this.time);
+				}
 			}
 			return result;
 		}

@@ -9,7 +9,7 @@ namespace System.IO.Compression
 	{
 		private const int BufferSize = 4096;
 
-		private const string LIBNAME = "__Internal";
+		private const string LIBNAME = "MonoPosixHelper";
 
 		private Stream base_stream;
 
@@ -565,19 +565,19 @@ namespace System.IO.Compression
 			}
 		}
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("MonoPosixHelper", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr CreateZStream(CompressionMode compress, bool gzip, DeflateStream.UnmanagedReadOrWrite feeder, IntPtr data);
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("MonoPosixHelper", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int CloseZStream(IntPtr stream);
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("MonoPosixHelper", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int Flush(IntPtr stream);
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("MonoPosixHelper", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int ReadZStream(IntPtr stream, IntPtr buffer, int length);
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("MonoPosixHelper", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int WriteZStream(IntPtr stream, IntPtr buffer, int length);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]

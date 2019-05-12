@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	/// <summary>Provides a managed definition of the ITypeLib2 interface.</summary>
-	[Guid("00020411-0000-0000-C000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("00020411-0000-0000-C000-000000000046")]
 	[ComImport]
 	public interface ITypeLib2 : ITypeLib
 	{

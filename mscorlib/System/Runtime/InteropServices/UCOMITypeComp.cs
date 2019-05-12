@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.ITypeComp" /> instead.</summary>
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid("00020403-0000-0000-c000-000000000046")]
 	[Obsolete]
+	[Guid("00020403-0000-0000-c000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface UCOMITypeComp
 	{

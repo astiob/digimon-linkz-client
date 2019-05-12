@@ -8,12 +8,12 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	public GameObject apUpObject;
 
-	[SerializeField]
 	[Header("[マルチバトル用]HP UP用オブジェクト")]
+	[SerializeField]
 	public GameObject hpUpObject;
 
-	[SerializeField]
 	[Header("ターン数のラベル")]
+	[SerializeField]
 	private UILabel turnNumber;
 
 	[Header("[マルチバトル用]AP数")]
@@ -24,40 +24,40 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UIGaugeManager hpGauge;
 
-	[SerializeField]
 	[Header("APゲージ")]
+	[SerializeField]
 	private UIGaugeManager apGauge;
 
-	[SerializeField]
 	[Header("押しっぱなしのボタン")]
+	[SerializeField]
 	private HoldPressButton holdPressButton;
 
 	[Header("アイコン画像(Group01)")]
 	[SerializeField]
 	private UISprite[] iconImageGroup01;
 
-	[SerializeField]
 	[Header("HUDコンポーネントのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner hudComponentSkinner;
 
-	[SerializeField]
 	[Header("StatePlateコンポーネントのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner statePlateComponentSkinner;
 
-	[SerializeField]
 	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner pnSpriteComponentSkinner;
 
-	[SerializeField]
 	[Header("[マルチバトル用]AP UP Rootのコンポーネントのスキナー")]
+	[SerializeField]
 	public UIComponentSkinner apUpRootComponentSkinner;
 
 	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
 	[SerializeField]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
-	[SerializeField]
 	[Header("ターン数Tween")]
+	[SerializeField]
 	private UITweener turnNumberTween;
 
 	[Header("HUDのTween")]
@@ -72,8 +72,8 @@ public class BattleUIHUD : UITweener
 	[Range(0f, 1f)]
 	private float from = 1f;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float to = 1f;
 
 	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
@@ -248,6 +248,7 @@ public class BattleUIHUD : UITweener
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.TurnEvasion, "Battle_icon_avoid");
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.CountEvasion, "Battle_icon_avoid");
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.Escape, "Battle_icon_escape");
+			this.iconSpriteNames.Add(SufferStateProperty.SufferType.InstantDeath, string.Empty);
 		}
 	}
 

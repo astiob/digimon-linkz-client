@@ -7,16 +7,16 @@ public sealed class CameraSwitcher : MonoBehaviour
 
 	private const float MIN_DISTANCE = 0.5f;
 
-	[SerializeField]
 	[Header("メインカメラ")]
+	[SerializeField]
 	private Camera mainCamera;
 
 	[Header("サブカメラ")]
 	[SerializeField]
 	private Camera subCamera;
 
-	[SerializeField]
 	[Header("カメラポジションルート")]
+	[SerializeField]
 	private Transform[] cameraAnchorList;
 
 	private Transform target;

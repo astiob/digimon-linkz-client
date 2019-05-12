@@ -5,6 +5,10 @@ using UnityExtension;
 
 public class SubStateRoundStartAction : BattleStateController
 {
+	private List<HitEffectParams> use_effect_list_ = new List<HitEffectParams>(6);
+
+	private List<HitEffectParams> use_revival_effect_list_ = new List<HitEffectParams>(6);
+
 	public SubStateRoundStartAction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
@@ -43,6 +47,10 @@ public class SubStateRoundStartAction : BattleStateController
 				yield return obj;
 			}
 		}
+		BattleEffectManager.Instance.ReturnEffect(this.use_effect_list_.ToArray());
+		BattleEffectManager.Instance.ReturnEffect(this.use_revival_effect_list_.ToArray());
+		this.use_effect_list_.Clear();
+		this.use_revival_effect_list_.Clear();
 		yield break;
 	}
 
@@ -101,14 +109,14 @@ public class SubStateRoundStartAction : BattleStateController
 	{
 		if (base.battleStateData.currentRoundNumber <= 1)
 		{
-			foreach (CharacterStateControl character in this.GetTotalCharacters())
+			foreach (CharacterStateControl characterStateControl in this.GetTotalCharacters())
 			{
-				character.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted);
+				characterStateControl.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted);
 			}
 		}
-		foreach (CharacterStateControl character2 in this.GetTotalCharacters())
+		foreach (CharacterStateControl characterStateControl2 in this.GetTotalCharacters())
 		{
-			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted);
+			characterStateControl2.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted);
 		}
 		base.SetState(typeof(SubStatePlayChipEffect));
 		while (base.isWaitState)
@@ -142,8 +150,9 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			if (base.battleStateData.isRoundStartHpRevival[i] && !base.battleStateData.playerCharacters[i].isDied)
 			{
-				HitEffectParams hitEffectParams = base.battleStateData.waveChangeHpRevivalEffect[i];
+				HitEffectParams hitEffectParams = BattleEffectManager.Instance.GetEffect("EFF_COM_L_HEAL") as HitEffectParams;
 				base.stateManager.threeDAction.PlayHitEffectAction(hitEffectParams, base.battleStateData.playerCharacters[i]);
+				this.use_revival_effect_list_.Add(hitEffectParams);
 				if (!flag)
 				{
 					flag = true;
@@ -157,8 +166,9 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			if (!totalCharacters[j].isDied && base.battleStateData.isRoundStartApRevival[j])
 			{
-				HitEffectParams hitEffectParams2 = base.battleStateData.roundChangeApRevivalEffect[j];
+				HitEffectParams hitEffectParams2 = BattleEffectManager.Instance.GetEffect(AffectEffect.ApUp.ToString()) as HitEffectParams;
 				base.stateManager.threeDAction.PlayHitEffectAction(hitEffectParams2, totalCharacters[j]);
+				this.use_effect_list_.Add(hitEffectParams2);
 				if (!flag2)
 				{
 					flag2 = true;
@@ -172,22 +182,15 @@ public class SubStateRoundStartAction : BattleStateController
 
 	private void StopHpAndApRevivalEffect()
 	{
-		base.stateManager.soundPlayer.TryStopSE(base.battleStateData.waveChangeHpRevivalEffect);
-		base.stateManager.soundPlayer.TryStopSE(base.battleStateData.roundChangeApRevivalEffect);
-		for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
+		base.stateManager.soundPlayer.TryStopSE(this.use_revival_effect_list_.ToArray());
+		base.stateManager.soundPlayer.TryStopSE(this.use_effect_list_.ToArray());
+		this.use_revival_effect_list_.ForEach(delegate(HitEffectParams effect)
 		{
 			base.stateManager.threeDAction.StopHitEffectAction(new HitEffectParams[]
 			{
-				base.battleStateData.waveChangeHpRevivalEffect[i]
+				effect
 			});
-		}
-		for (int j = 0; j < base.battleStateData.totalCharacterLength; j++)
-		{
-			base.stateManager.threeDAction.StopHitEffectAction(new HitEffectParams[]
-			{
-				base.battleStateData.roundChangeApRevivalEffect[j]
-			});
-		}
+		});
 	}
 
 	protected virtual IEnumerator RoundStartCameraMotionFunction()
@@ -324,13 +327,13 @@ public class SubStateRoundStartAction : BattleStateController
 		List<CharacterStateControl> characters = new List<CharacterStateControl>();
 		foreach (SufferStateProperty.SufferType sufferType in sufferTypes)
 		{
-			List<CharacterStateControl> temp = this.GetSufferCharacters(sufferType);
-			foreach (CharacterStateControl character in temp)
+			List<CharacterStateControl> sufferCharacters = this.GetSufferCharacters(sufferType);
+			foreach (CharacterStateControl characterStateControl in sufferCharacters)
 			{
-				SufferStateProperty property = character.currentSufferState.GetSufferStateProperty(sufferType);
-				if (property.isTurnRate && !characters.Contains(character))
+				SufferStateProperty sufferStateProperty = characterStateControl.currentSufferState.GetSufferStateProperty(sufferType);
+				if (sufferStateProperty.isTurnRate && !characters.Contains(characterStateControl))
 				{
-					characters.Add(character);
+					characters.Add(characterStateControl);
 				}
 			}
 		}
@@ -352,21 +355,21 @@ public class SubStateRoundStartAction : BattleStateController
 		foreach (SufferStateProperty.SufferType sufferType2 in sufferTypes)
 		{
 			string key = sufferType2.ToString();
-			HitEffectParams[] temp2 = base.battleStateData.hitEffects.GetObject(key);
-			if (temp2 != null)
+			HitEffectParams[] @object = base.battleStateData.hitEffects.GetObject(key);
+			if (@object != null)
 			{
-				hitEffectParams = temp2;
+				hitEffectParams = @object;
 				break;
 			}
 		}
 		base.stateManager.soundPlayer.TryPlaySE(hitEffectParams[0]);
-		for (int i = 0; i < characters.Count; i++)
+		for (int k = 0; k < characters.Count; k++)
 		{
 			base.stateManager.threeDAction.PlayAnimationCharacterAction(characterAnimationType, new CharacterStateControl[]
 			{
-				characters[i]
+				characters[k]
 			});
-			base.stateManager.threeDAction.PlayHitEffectAction(hitEffectParams[i], characters[i]);
+			base.stateManager.threeDAction.PlayHitEffectAction(hitEffectParams[k], characters[k]);
 		}
 		float waitSecond = base.stateManager.stateProperty.poisonHitEffectWaitSecond;
 		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(waitSecond, null, null);
@@ -374,11 +377,11 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			yield return null;
 		}
-		for (int j = 0; j < characters.Count; j++)
+		for (int l = 0; l < characters.Count; l++)
 		{
 			base.stateManager.threeDAction.StopHitEffectAction(new HitEffectParams[]
 			{
-				hitEffectParams[j]
+				hitEffectParams[l]
 			});
 		}
 		base.stateManager.soundPlayer.TryStopSE(hitEffectParams[0]);

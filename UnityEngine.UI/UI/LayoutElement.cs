@@ -3,13 +3,13 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
-	[RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("Layout/Layout Element", 140)]
+	[RequireComponent(typeof(RectTransform))]
 	[ExecuteInEditMode]
 	public class LayoutElement : UIBehaviour, ILayoutElement, ILayoutIgnorer
 	{
 		[SerializeField]
-		private bool m_IgnoreLayout;
+		private bool m_IgnoreLayout = false;
 
 		[SerializeField]
 		private float m_MinWidth = -1f;
@@ -28,6 +28,9 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private float m_FlexibleHeight = -1f;
+
+		[SerializeField]
+		private int m_LayoutPriority = 1;
 
 		protected LayoutElement()
 		{
@@ -150,7 +153,14 @@ namespace UnityEngine.UI
 		{
 			get
 			{
-				return 1;
+				return this.m_LayoutPriority;
+			}
+			set
+			{
+				if (SetPropertyUtility.SetStruct<int>(ref this.m_LayoutPriority, value))
+				{
+					this.SetDirty();
+				}
 			}
 		}
 
@@ -183,11 +193,10 @@ namespace UnityEngine.UI
 
 		protected void SetDirty()
 		{
-			if (!this.IsActive())
+			if (this.IsActive())
 			{
-				return;
+				LayoutRebuilder.MarkLayoutForRebuild(base.transform as RectTransform);
 			}
-			LayoutRebuilder.MarkLayoutForRebuild(base.transform as RectTransform);
 		}
 	}
 }

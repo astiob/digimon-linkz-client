@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(TextMeshPro))]
 public class TextMeshProStringKey : MonoBehaviour
 {
-	[SerializeField]
 	[Header("文言マスタのキー")]
+	[SerializeField]
 	private string stringMasterKey;
 
 	[SerializeField]

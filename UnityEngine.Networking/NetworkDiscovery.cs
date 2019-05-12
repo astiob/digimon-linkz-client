@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace UnityEngine.Networking
 {
-	[AddComponentMenu("Network/NetworkDiscovery")]
 	[DisallowMultipleComponent]
+	[AddComponentMenu("Network/NetworkDiscovery")]
 	public class NetworkDiscovery : MonoBehaviour
 	{
 		private const int k_MaxBroadcastMsgSize = 1024;
@@ -25,7 +25,7 @@ namespace UnityEngine.Networking
 		private int m_BroadcastInterval = 1000;
 
 		[SerializeField]
-		private bool m_UseNetworkManager = true;
+		private bool m_UseNetworkManager = false;
 
 		[SerializeField]
 		private string m_BroadcastData = "HELLO";
@@ -137,9 +137,12 @@ namespace UnityEngine.Networking
 			{
 				this.m_BroadcastData = value;
 				this.m_MsgOutBuffer = NetworkDiscovery.StringToBytes(this.m_BroadcastData);
-				if (this.m_UseNetworkManager && LogFilter.logWarn)
+				if (this.m_UseNetworkManager)
 				{
-					Debug.LogWarning("NetworkDiscovery broadcast data changed while using NetworkManager. This can prevent clients from finding the server. The format of the broadcast data must be 'NetworkManager:IPAddress:Port'.");
+					if (LogFilter.logWarn)
+					{
+						Debug.LogWarning("NetworkDiscovery broadcast data changed while using NetworkManager. This can prevent clients from finding the server. The format of the broadcast data must be 'NetworkManager:IPAddress:Port'.");
+					}
 				}
 			}
 		}
@@ -252,115 +255,144 @@ namespace UnityEngine.Networking
 
 		public bool Initialize()
 		{
+			bool result;
 			if (this.m_BroadcastData.Length >= 1024)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("NetworkDiscovery Initialize - data too large. max is " + 1024);
 				}
-				return false;
+				result = false;
 			}
-			if (!NetworkTransport.IsStarted)
+			else
 			{
-				NetworkTransport.Init();
-			}
-			if (this.m_UseNetworkManager && NetworkManager.singleton != null)
-			{
-				this.m_BroadcastData = string.Concat(new object[]
+				if (!NetworkTransport.IsStarted)
 				{
-					"NetworkManager:",
-					NetworkManager.singleton.networkAddress,
-					":",
-					NetworkManager.singleton.networkPort
-				});
-				if (LogFilter.logInfo)
-				{
-					Debug.Log("NetwrokDiscovery set broadbast data to:" + this.m_BroadcastData);
+					NetworkTransport.Init();
 				}
+				if (this.m_UseNetworkManager && NetworkManager.singleton != null)
+				{
+					this.m_BroadcastData = string.Concat(new object[]
+					{
+						"NetworkManager:",
+						NetworkManager.singleton.networkAddress,
+						":",
+						NetworkManager.singleton.networkPort
+					});
+					if (LogFilter.logInfo)
+					{
+						Debug.Log("NetworkDiscovery set broadcast data to:" + this.m_BroadcastData);
+					}
+				}
+				this.m_MsgOutBuffer = NetworkDiscovery.StringToBytes(this.m_BroadcastData);
+				this.m_MsgInBuffer = new byte[1024];
+				this.m_BroadcastsReceived = new Dictionary<string, NetworkBroadcastResult>();
+				ConnectionConfig connectionConfig = new ConnectionConfig();
+				connectionConfig.AddChannel(QosType.Unreliable);
+				this.m_DefaultTopology = new HostTopology(connectionConfig, 1);
+				if (this.m_IsServer)
+				{
+					this.StartAsServer();
+				}
+				if (this.m_IsClient)
+				{
+					this.StartAsClient();
+				}
+				result = true;
 			}
-			this.m_MsgOutBuffer = NetworkDiscovery.StringToBytes(this.m_BroadcastData);
-			this.m_MsgInBuffer = new byte[1024];
-			this.m_BroadcastsReceived = new Dictionary<string, NetworkBroadcastResult>();
-			ConnectionConfig connectionConfig = new ConnectionConfig();
-			connectionConfig.AddChannel(QosType.Unreliable);
-			this.m_DefaultTopology = new HostTopology(connectionConfig, 1);
-			if (this.m_IsServer)
-			{
-				this.StartAsServer();
-			}
-			if (this.m_IsClient)
-			{
-				this.StartAsClient();
-			}
-			return true;
+			return result;
 		}
 
 		public bool StartAsClient()
 		{
+			bool result;
 			if (this.m_HostId != -1 || this.m_Running)
 			{
 				if (LogFilter.logWarn)
 				{
 					Debug.LogWarning("NetworkDiscovery StartAsClient already started");
 				}
-				return false;
+				result = false;
 			}
-			this.m_HostId = NetworkTransport.AddHost(this.m_DefaultTopology, this.m_BroadcastPort);
-			if (this.m_HostId == -1)
+			else if (this.m_MsgInBuffer == null)
 			{
 				if (LogFilter.logError)
 				{
-					Debug.LogError("NetworkDiscovery StartAsClient - addHost failed");
+					Debug.LogError("NetworkDiscovery StartAsClient, NetworkDiscovery is not initialized");
 				}
-				return false;
+				result = false;
 			}
-			byte b;
-			NetworkTransport.SetBroadcastCredentials(this.m_HostId, this.m_BroadcastKey, this.m_BroadcastVersion, this.m_BroadcastSubVersion, out b);
-			this.m_Running = true;
-			this.m_IsClient = true;
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log("StartAsClient Discovery listening");
+				this.m_HostId = NetworkTransport.AddHost(this.m_DefaultTopology, this.m_BroadcastPort);
+				if (this.m_HostId == -1)
+				{
+					if (LogFilter.logError)
+					{
+						Debug.LogError("NetworkDiscovery StartAsClient - addHost failed");
+					}
+					result = false;
+				}
+				else
+				{
+					byte b;
+					NetworkTransport.SetBroadcastCredentials(this.m_HostId, this.m_BroadcastKey, this.m_BroadcastVersion, this.m_BroadcastSubVersion, out b);
+					this.m_Running = true;
+					this.m_IsClient = true;
+					if (LogFilter.logDebug)
+					{
+						Debug.Log("StartAsClient Discovery listening");
+					}
+					result = true;
+				}
 			}
-			return true;
+			return result;
 		}
 
 		public bool StartAsServer()
 		{
+			bool result;
 			if (this.m_HostId != -1 || this.m_Running)
 			{
 				if (LogFilter.logWarn)
 				{
 					Debug.LogWarning("NetworkDiscovery StartAsServer already started");
 				}
-				return false;
+				result = false;
 			}
-			this.m_HostId = NetworkTransport.AddHost(this.m_DefaultTopology, 0);
-			if (this.m_HostId == -1)
+			else
 			{
-				if (LogFilter.logError)
+				this.m_HostId = NetworkTransport.AddHost(this.m_DefaultTopology, 0);
+				byte b;
+				if (this.m_HostId == -1)
 				{
-					Debug.LogError("NetworkDiscovery StartAsServer - addHost failed");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("NetworkDiscovery StartAsServer - addHost failed");
+					}
+					result = false;
 				}
-				return false;
-			}
-			byte b;
-			if (!NetworkTransport.StartBroadcastDiscovery(this.m_HostId, this.m_BroadcastPort, this.m_BroadcastKey, this.m_BroadcastVersion, this.m_BroadcastSubVersion, this.m_MsgOutBuffer, this.m_MsgOutBuffer.Length, this.m_BroadcastInterval, out b))
-			{
-				if (LogFilter.logError)
+				else if (!NetworkTransport.StartBroadcastDiscovery(this.m_HostId, this.m_BroadcastPort, this.m_BroadcastKey, this.m_BroadcastVersion, this.m_BroadcastSubVersion, this.m_MsgOutBuffer, this.m_MsgOutBuffer.Length, this.m_BroadcastInterval, out b))
 				{
-					Debug.LogError("NetworkDiscovery StartBroadcast failed err: " + b);
+					if (LogFilter.logError)
+					{
+						Debug.LogError("NetworkDiscovery StartBroadcast failed err: " + b);
+					}
+					result = false;
 				}
-				return false;
+				else
+				{
+					this.m_Running = true;
+					this.m_IsServer = true;
+					if (LogFilter.logDebug)
+					{
+						Debug.Log("StartAsServer Discovery broadcasting");
+					}
+					Object.DontDestroyOnLoad(base.gameObject);
+					result = true;
+				}
 			}
-			this.m_Running = true;
-			this.m_IsServer = true;
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("StartAsServer Discovery broadcasting");
-			}
-			Object.DontDestroyOnLoad(base.gameObject);
-			return true;
+			return result;
 		}
 
 		public void StopBroadcast()
@@ -371,63 +403,62 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("NetworkDiscovery StopBroadcast not initialized");
 				}
-				return;
 			}
-			if (!this.m_Running)
+			else if (!this.m_Running)
 			{
 				Debug.LogWarning("NetworkDiscovery StopBroadcast not started");
-				return;
 			}
-			if (this.m_IsServer)
+			else
 			{
-				NetworkTransport.StopBroadcastDiscovery();
-			}
-			NetworkTransport.RemoveHost(this.m_HostId);
-			this.m_HostId = -1;
-			this.m_Running = false;
-			this.m_IsServer = false;
-			this.m_IsClient = false;
-			this.m_MsgInBuffer = null;
-			this.m_BroadcastsReceived = null;
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("Stopped Discovery broadcasting");
+				if (this.m_IsServer)
+				{
+					NetworkTransport.StopBroadcastDiscovery();
+				}
+				NetworkTransport.RemoveHost(this.m_HostId);
+				this.m_HostId = -1;
+				this.m_Running = false;
+				this.m_IsServer = false;
+				this.m_IsClient = false;
+				this.m_MsgInBuffer = null;
+				this.m_BroadcastsReceived = null;
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("Stopped Discovery broadcasting");
+				}
 			}
 		}
 
 		private void Update()
 		{
-			if (this.m_HostId == -1)
+			if (this.m_HostId != -1)
 			{
-				return;
-			}
-			if (this.m_IsServer)
-			{
-				return;
-			}
-			NetworkEventType networkEventType;
-			do
-			{
-				int num;
-				int num2;
-				int num3;
-				byte b;
-				networkEventType = NetworkTransport.ReceiveFromHost(this.m_HostId, out num, out num2, this.m_MsgInBuffer, 1024, out num3, out b);
-				if (networkEventType == NetworkEventType.BroadcastEvent)
+				if (!this.m_IsServer)
 				{
-					NetworkTransport.GetBroadcastConnectionMessage(this.m_HostId, this.m_MsgInBuffer, 1024, out num3, out b);
-					string text;
-					int num4;
-					NetworkTransport.GetBroadcastConnectionInfo(this.m_HostId, out text, out num4, out b);
-					NetworkBroadcastResult value = default(NetworkBroadcastResult);
-					value.serverAddress = text;
-					value.broadcastData = new byte[num3];
-					Buffer.BlockCopy(this.m_MsgInBuffer, 0, value.broadcastData, 0, num3);
-					this.m_BroadcastsReceived[text] = value;
-					this.OnReceivedBroadcast(text, NetworkDiscovery.BytesToString(this.m_MsgInBuffer));
+					NetworkEventType networkEventType;
+					do
+					{
+						int num;
+						int num2;
+						int num3;
+						byte b;
+						networkEventType = NetworkTransport.ReceiveFromHost(this.m_HostId, out num, out num2, this.m_MsgInBuffer, 1024, out num3, out b);
+						if (networkEventType == NetworkEventType.BroadcastEvent)
+						{
+							NetworkTransport.GetBroadcastConnectionMessage(this.m_HostId, this.m_MsgInBuffer, 1024, out num3, out b);
+							string text;
+							int num4;
+							NetworkTransport.GetBroadcastConnectionInfo(this.m_HostId, out text, out num4, out b);
+							NetworkBroadcastResult value = default(NetworkBroadcastResult);
+							value.serverAddress = text;
+							value.broadcastData = new byte[num3];
+							Buffer.BlockCopy(this.m_MsgInBuffer, 0, value.broadcastData, 0, num3);
+							this.m_BroadcastsReceived[text] = value;
+							this.OnReceivedBroadcast(text, NetworkDiscovery.BytesToString(this.m_MsgInBuffer));
+						}
+					}
+					while (networkEventType != NetworkEventType.Nothing);
 				}
 			}
-			while (networkEventType != NetworkEventType.Nothing);
 		}
 
 		private void OnDestroy()
@@ -449,78 +480,81 @@ namespace UnityEngine.Networking
 
 		private void OnGUI()
 		{
-			if (!this.m_ShowGUI)
+			if (this.m_ShowGUI)
 			{
-				return;
-			}
-			int num = 10 + this.m_OffsetX;
-			int num2 = 40 + this.m_OffsetY;
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
-			{
-				GUI.Box(new Rect((float)num, (float)num2, 200f, 20f), "( WebGL cannot broadcast )");
-				return;
-			}
-			if (this.m_MsgInBuffer == null)
-			{
-				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Initialize Broadcast"))
+				int num = 10 + this.m_OffsetX;
+				int num2 = 40 + this.m_OffsetY;
+				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
-					this.Initialize();
+					GUI.Box(new Rect((float)num, (float)num2, 200f, 20f), "( WebGL cannot broadcast )");
 				}
-				return;
-			}
-			string str = string.Empty;
-			if (this.m_IsServer)
-			{
-				str = " (server)";
-			}
-			if (this.m_IsClient)
-			{
-				str = " (client)";
-			}
-			GUI.Label(new Rect((float)num, (float)num2, 200f, 20f), "initialized" + str);
-			num2 += 24;
-			if (this.m_Running)
-			{
-				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Stop"))
+				else if (this.m_MsgInBuffer == null)
 				{
-					this.StopBroadcast();
-				}
-				num2 += 24;
-				if (this.m_BroadcastsReceived != null)
-				{
-					foreach (string text in this.m_BroadcastsReceived.Keys)
+					if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Initialize Broadcast"))
 					{
-						NetworkBroadcastResult networkBroadcastResult = this.m_BroadcastsReceived[text];
-						if (GUI.Button(new Rect((float)num, (float)(num2 + 20), 200f, 20f), "Game at " + text) && this.m_UseNetworkManager)
+						this.Initialize();
+					}
+				}
+				else
+				{
+					string str = "";
+					if (this.m_IsServer)
+					{
+						str = " (server)";
+					}
+					if (this.m_IsClient)
+					{
+						str = " (client)";
+					}
+					GUI.Label(new Rect((float)num, (float)num2, 200f, 20f), "initialized" + str);
+					num2 += 24;
+					if (this.m_Running)
+					{
+						if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Stop"))
 						{
-							string text2 = NetworkDiscovery.BytesToString(networkBroadcastResult.broadcastData);
-							string[] array = text2.Split(new char[]
+							this.StopBroadcast();
+						}
+						num2 += 24;
+						if (this.m_BroadcastsReceived != null)
+						{
+							foreach (string text in this.m_BroadcastsReceived.Keys)
 							{
-								':'
-							});
-							if (array.Length == 3 && array[0] == "NetworkManager" && NetworkManager.singleton != null && NetworkManager.singleton.client == null)
-							{
-								NetworkManager.singleton.networkAddress = array[1];
-								NetworkManager.singleton.networkPort = Convert.ToInt32(array[2]);
-								NetworkManager.singleton.StartClient();
+								NetworkBroadcastResult networkBroadcastResult = this.m_BroadcastsReceived[text];
+								if (GUI.Button(new Rect((float)num, (float)(num2 + 20), 200f, 20f), "Game at " + text) && this.m_UseNetworkManager)
+								{
+									string text2 = NetworkDiscovery.BytesToString(networkBroadcastResult.broadcastData);
+									string[] array = text2.Split(new char[]
+									{
+										':'
+									});
+									if (array.Length == 3 && array[0] == "NetworkManager")
+									{
+										if (NetworkManager.singleton != null && NetworkManager.singleton.client == null)
+										{
+											NetworkManager.singleton.networkAddress = array[1];
+											NetworkManager.singleton.networkPort = Convert.ToInt32(array[2]);
+											NetworkManager.singleton.StartClient();
+										}
+									}
+								}
+								num2 += 24;
 							}
+						}
+					}
+					else
+					{
+						if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Start Broadcasting"))
+						{
+							this.StartAsServer();
+						}
+						num2 += 24;
+						if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Listen for Broadcast"))
+						{
+							this.StartAsClient();
 						}
 						num2 += 24;
 					}
 				}
-			}
-			else
-			{
-				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Start Broadcasting"))
-				{
-					this.StartAsServer();
-				}
-				num2 += 24;
-				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Listen for Broadcast"))
-				{
-					this.StartAsClient();
-				}
-				num2 += 24;
 			}
 		}
 	}

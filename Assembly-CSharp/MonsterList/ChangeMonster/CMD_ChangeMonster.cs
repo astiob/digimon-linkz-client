@@ -8,8 +8,8 @@ namespace MonsterList.ChangeMonster
 {
 	public sealed class CMD_ChangeMonster : CMD
 	{
-		[SerializeField]
 		[Header("ベース用チップ装備")]
+		[SerializeField]
 		private ChipBaseSelect baseChipBaseSelect;
 
 		[Header("パートナー用チップ装備")]
@@ -397,6 +397,7 @@ namespace MonsterList.ChangeMonster
 			this.targetMonsterList = list;
 			list = MonsterDataMng.Instance().SelectionMDList(list);
 			this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+			this.csSelectPanelMonsterIcon.ClearIconDungeonBonus();
 			BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
 			this.sortButton = componentsInChildren[0];
 			this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);

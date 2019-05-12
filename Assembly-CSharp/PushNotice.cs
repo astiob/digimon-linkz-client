@@ -180,6 +180,12 @@ public sealed class PushNotice : MonoBehaviour, NpPush.INpPushListener
 		}
 	}
 
+	public void FastSetStaminaLocalPushNotice()
+	{
+		global::Debug.Log("＋プッシュ通知テスト関数実行");
+		NpPush.LocalPushSendRequestCode("プッシュテスト", 1, 60, 0);
+	}
+
 	private void ClearStaminaLocalPushNotice()
 	{
 		NpPush.CancelLocalNotifications(0);

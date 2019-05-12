@@ -19,15 +19,16 @@ namespace Facebook.Unity
 					this.RequestID = requestID;
 				}
 				string text;
-				IEnumerable<object> enumerable;
 				if (this.ResultDictionary.TryGetValue("to", out text))
 				{
 					this.To = text.Split(new char[]
 					{
 						','
 					});
+					return;
 				}
-				else if (this.ResultDictionary.TryGetValue("to", out enumerable))
+				IEnumerable<object> enumerable;
+				if (this.ResultDictionary.TryGetValue("to", out enumerable))
 				{
 					List<string> list = new List<string>();
 					foreach (object obj in enumerable)
@@ -57,7 +58,7 @@ namespace Facebook.Unity
 				},
 				{
 					"To",
-					(this.To == null) ? null : this.To.ToCommaSeparateList()
+					(this.To != null) ? this.To.ToCommaSeparateList() : null
 				}
 			});
 		}

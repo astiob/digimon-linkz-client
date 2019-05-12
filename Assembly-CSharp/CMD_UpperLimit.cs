@@ -42,33 +42,42 @@ public sealed class CMD_UpperLimit : CMD
 		}
 		if (flag)
 		{
-			switch (type)
+			if (type != CMD_UpperLimit.MessageType.GASHA)
 			{
-			case CMD_UpperLimit.MessageType.GASHA:
+				if (type != CMD_UpperLimit.MessageType.PRESENTS)
+				{
+					if (type == CMD_UpperLimit.MessageType.QUEST)
+					{
+						this.message.text = StringMaster.GetString("PossessionOverQuest");
+					}
+				}
+				else
+				{
+					this.message.text = StringMaster.GetString("PossessionOverPresent");
+				}
+			}
+			else
+			{
 				this.message.text = StringMaster.GetString("PossessionOverGasha");
-				break;
-			case CMD_UpperLimit.MessageType.PRESENTS:
-				this.message.text = StringMaster.GetString("PossessionOverPresent");
-				break;
-			case CMD_UpperLimit.MessageType.QUEST:
-				this.message.text = StringMaster.GetString("PossessionOverQuest");
-				break;
+			}
+		}
+		else if (type != CMD_UpperLimit.MessageType.GASHA)
+		{
+			if (type != CMD_UpperLimit.MessageType.PRESENTS)
+			{
+				if (type == CMD_UpperLimit.MessageType.QUEST)
+				{
+					this.message.text = StringMaster.GetString("PossessionOverQuestUpgrade");
+				}
+			}
+			else
+			{
+				this.message.text = StringMaster.GetString("PossessionOverPresentUpgrade");
 			}
 		}
 		else
 		{
-			switch (type)
-			{
-			case CMD_UpperLimit.MessageType.GASHA:
-				this.message.text = StringMaster.GetString("PossessionOverGashaUpgrade");
-				break;
-			case CMD_UpperLimit.MessageType.PRESENTS:
-				this.message.text = StringMaster.GetString("PossessionOverPresentUpgrade");
-				break;
-			case CMD_UpperLimit.MessageType.QUEST:
-				this.message.text = StringMaster.GetString("PossessionOverQuestUpgrade");
-				break;
-			}
+			this.message.text = StringMaster.GetString("PossessionOverGashaUpgrade");
 		}
 	}
 
@@ -92,33 +101,42 @@ public sealed class CMD_UpperLimit : CMD
 		}
 		if (flag)
 		{
-			switch (type)
+			if (type != LimitOverNoticeType.GASHA)
 			{
-			case LimitOverNoticeType.GASHA:
+				if (type != LimitOverNoticeType.PRESENTS)
+				{
+					if (type == LimitOverNoticeType.QUEST)
+					{
+						this.message.text = StringMaster.GetString("PossessionOverQuest");
+					}
+				}
+				else
+				{
+					this.message.text = StringMaster.GetString("PossessionOverPresent");
+				}
+			}
+			else
+			{
 				this.message.text = StringMaster.GetString("PossessionOverGasha");
-				break;
-			case LimitOverNoticeType.PRESENTS:
-				this.message.text = StringMaster.GetString("PossessionOverPresent");
-				break;
-			case LimitOverNoticeType.QUEST:
-				this.message.text = StringMaster.GetString("PossessionOverQuest");
-				break;
+			}
+		}
+		else if (type != LimitOverNoticeType.GASHA)
+		{
+			if (type != LimitOverNoticeType.PRESENTS)
+			{
+				if (type == LimitOverNoticeType.QUEST)
+				{
+					this.message.text = StringMaster.GetString("PossessionOverQuestUpgrade");
+				}
+			}
+			else
+			{
+				this.message.text = StringMaster.GetString("PossessionOverPresentUpgrade");
 			}
 		}
 		else
 		{
-			switch (type)
-			{
-			case LimitOverNoticeType.GASHA:
-				this.message.text = StringMaster.GetString("PossessionOverGashaUpgrade");
-				break;
-			case LimitOverNoticeType.PRESENTS:
-				this.message.text = StringMaster.GetString("PossessionOverPresentUpgrade");
-				break;
-			case LimitOverNoticeType.QUEST:
-				this.message.text = StringMaster.GetString("PossessionOverQuestUpgrade");
-				break;
-			}
+			this.message.text = StringMaster.GetString("PossessionOverGashaUpgrade");
 		}
 	}
 

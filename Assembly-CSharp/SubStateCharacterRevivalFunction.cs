@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class SubStateCharacterRevivalFunction : BattleStateController
 {
+	private List<HitEffectParams> use_revival_effect_list_ = new List<HitEffectParams>(6);
+
 	private bool isLastFindRevivalCharacter;
 
 	private string cameraKey = "skillA";
@@ -60,8 +62,8 @@ public class SubStateCharacterRevivalFunction : BattleStateController
 				characters.Add(base.battleStateData.playerCharacters[i]);
 				base.battleStateData.isRevivalReservedCharacter[i] = false;
 				base.stateManager.threeDAction.PlayAlwaysEffectAction(base.battleStateData.revivalReservedEffect[i], AlwaysEffectState.Out);
-				int index = base.battleStateData.GetTotalCharacterIndex(base.battleStateData.playerCharacters[i]);
-				base.battleStateData.isRoundStartApRevival[index] = false;
+				int totalCharacterIndex = base.battleStateData.GetTotalCharacterIndex(base.battleStateData.playerCharacters[i]);
+				base.battleStateData.isRoundStartApRevival[totalCharacterIndex] = false;
 				base.battleStateData.isRoundStartHpRevival[i] = false;
 			}
 		}
@@ -80,12 +82,14 @@ public class SubStateCharacterRevivalFunction : BattleStateController
 			characters[j].CharacterParams.Initialize(base.hierarchyData.cameraObject.camera3D);
 			characters[j].CharacterParams.gameObject.SetActive(true);
 			characters[j].CharacterParams.transform.localScale = Vector3.one;
-			base.stateManager.threeDAction.PlayHitEffectAction(base.battleStateData.revivalEffect[j], characters[j]);
+			HitEffectParams hitEffectParams = BattleEffectManager.Instance.GetEffect("EFF_COM_L_HEAL") as HitEffectParams;
+			this.use_revival_effect_list_.Add(hitEffectParams);
+			base.stateManager.threeDAction.PlayHitEffectAction(hitEffectParams, characters[j]);
 			characters[j].CharacterParams.transform.localScale = Vector3.zero;
 			characters[j].CharacterParams.PlayAnimation(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
 		}
 		base.stateManager.soundPlayer.TryPlaySE(base.battleStateData.revivalReservedEffect[0], AlwaysEffectState.Out);
-		base.stateManager.soundPlayer.TryPlaySE(base.battleStateData.revivalEffect[0]);
+		base.stateManager.soundPlayer.TryPlaySE(this.use_revival_effect_list_[0]);
 		base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(true);
 		IEnumerator wait = base.stateManager.threeDAction.SmoothIncreaseCharactersAction(base.stateManager.stateProperty.revivalActionWaitSecond, characters.ToArray());
 		while (wait.MoveNext())
@@ -103,14 +107,15 @@ public class SubStateCharacterRevivalFunction : BattleStateController
 			base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(false);
 			base.stateManager.cameraControl.StopCameraMotionAction(this.cameraKey);
 			base.stateManager.soundPlayer.TryStopSE(base.battleStateData.revivalReservedEffect[0]);
-			base.stateManager.soundPlayer.TryStopSE(base.battleStateData.revivalEffect[0]);
+			base.stateManager.soundPlayer.TryStopSE(this.use_revival_effect_list_[0]);
 			for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
 			{
 				base.stateManager.uiControl.ApplyCharacterHudReset(base.battleStateData.playerCharacters[i].myIndex);
 			}
 			base.stateManager.uiControl.ApplyBigBossCharacterHudReset();
-			base.stateManager.threeDAction.StopHitEffectAction(base.battleStateData.revivalEffect);
+			base.stateManager.threeDAction.StopHitEffectAction(this.use_revival_effect_list_.ToArray());
 			base.stateManager.threeDAction.StopAlwaysEffectAction(base.battleStateData.revivalReservedEffect);
+			BattleEffectManager.Instance.ReturnEffect(this.use_revival_effect_list_.ToArray());
 		}
 		base.stateManager.waveControl.RoundCountingFunction(base.battleStateData.GetTotalCharacters(), base.battleStateData.apRevival);
 		base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(true);

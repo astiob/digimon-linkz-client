@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 [RequireComponent(typeof(UITweener))]
+[DisallowMultipleComponent]
 public class UITweenerActivePlay : MonoBehaviour
 {
 	[Header("ONなら終了後、非表示にする")]
@@ -13,6 +14,9 @@ public class UITweenerActivePlay : MonoBehaviour
 	private List<UITweener> tween;
 
 	private bool isActive;
+
+	[CompilerGenerated]
+	private static Comparison<UITweener> <>f__mg$cache0;
 
 	public bool allDisabled { get; private set; }
 
@@ -68,7 +72,12 @@ public class UITweenerActivePlay : MonoBehaviour
 		if (this.tween == null)
 		{
 			this.tween = new List<UITweener>(base.GetComponents<UITweener>());
-			this.tween.Sort(new Comparison<UITweener>(UITweenerActivePlay.SortedDelayPlusDuration));
+			List<UITweener> list = this.tween;
+			if (UITweenerActivePlay.<>f__mg$cache0 == null)
+			{
+				UITweenerActivePlay.<>f__mg$cache0 = new Comparison<UITweener>(UITweenerActivePlay.SortedDelayPlusDuration);
+			}
+			list.Sort(UITweenerActivePlay.<>f__mg$cache0);
 		}
 	}
 

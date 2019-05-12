@@ -574,6 +574,10 @@ namespace System
 			{
 				throw new ArgumentOutOfRangeException(Locale.GetText("Value is too small or too big."));
 			}
+			if (digits == 0)
+			{
+				return Math.Round(value);
+			}
 			return Math.Round2(value, digits, false);
 		}
 
@@ -619,6 +623,10 @@ namespace System
 			if (mode != MidpointRounding.ToEven && mode != MidpointRounding.AwayFromZero)
 			{
 				throw new ArgumentException("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
+			}
+			if (digits == 0)
+			{
+				return Math.Round(value, mode);
 			}
 			if (mode == MidpointRounding.ToEven)
 			{

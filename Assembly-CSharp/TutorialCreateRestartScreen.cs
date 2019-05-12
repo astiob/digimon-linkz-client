@@ -49,44 +49,30 @@ public class TutorialCreateRestartScreen
 		controlToGame.SetPlayerMeatCount(meatNum);
 		controlToGame.SetPlayerDigiStoneCount(digiStoneNum);
 		controlToGame.SetPlayerLinkPointCount(linkPointNum);
-		for (int j = 0; j < digimonExpInfo.Count; j++)
+		for (int k = 0; k < digimonExpInfo.Count; k++)
 		{
-			ScriptCommandParams.DigimonExpInfo info2 = digimonExpInfo[j];
-			controlToGame.SetDigimonExp(info2.index, info2.level, info2.exp);
+			ScriptCommandParams.DigimonExpInfo digimonExpInfo2 = digimonExpInfo[k];
+			controlToGame.SetDigimonExp(digimonExpInfo2.index, digimonExpInfo2.level, digimonExpInfo2.exp);
 		}
 		bool show;
 		Action onOpendAction = delegate()
 		{
 			show = true;
 		};
-		for (int k = 0; k < openUI.Count; k++)
+		for (int j = 0; j < openUI.Count; j++)
 		{
 			show = false;
-			controlToGame.OpenCommonDialog(openUI[k], onOpendAction);
+			controlToGame.OpenCommonDialog(openUI[j], onOpendAction);
 			while (!show)
 			{
 				yield return null;
 			}
-			string text = openUI[k];
+			string text = openUI[j];
 			if (text != null)
 			{
-				if (TutorialCreateRestartScreen.<>f__switch$map23 == null)
+				if (text == "CMD_MealExecution")
 				{
-					TutorialCreateRestartScreen.<>f__switch$map23 = new Dictionary<string, int>(1)
-					{
-						{
-							"CMD_MealExecution",
-							0
-						}
-					};
-				}
-				int num;
-				if (TutorialCreateRestartScreen.<>f__switch$map23.TryGetValue(text, out num))
-				{
-					if (num == 0)
-					{
-						controlToGame.SetMealUI_NotServerRequest();
-					}
+					controlToGame.SetMealUI_NotServerRequest();
 				}
 			}
 		}

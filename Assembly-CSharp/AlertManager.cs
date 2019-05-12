@@ -151,12 +151,11 @@ public static class AlertManager
 		}
 		AlertManager.ButtonActionType actionType = (AlertManager.ButtonActionType)int.Parse(alert.actionType);
 		AlertManager.DialogType dialogType = (AlertManager.DialogType)int.Parse(alert.actionValue);
-		AlertManager.DialogType dialogType2 = dialogType;
-		if (dialogType2 == AlertManager.DialogType.Alert)
+		if (dialogType == AlertManager.DialogType.Alert)
 		{
 			return AlertManager.ShowAlertDialog(action, alert.messageTitle, alert.messageText, actionType, true);
 		}
-		if (dialogType2 != AlertManager.DialogType.Modal)
+		if (dialogType != AlertManager.DialogType.Modal)
 		{
 			return AlertManager.ShowAlertDialog(action, alert.messageTitle, alert.messageText, actionType, true);
 		}
@@ -205,46 +204,49 @@ public static class AlertManager
 		if (cmd_Type != null)
 		{
 			string text = typeof(CMD_Type).ToString();
-			switch (text)
+			if (text != null)
 			{
-			case "CMD_Alert":
-			{
-				CMD_Alert cmd_Alert = cmd_Type as CMD_Alert;
-				cmd_Alert.Title = title;
-				cmd_Alert.Info = message;
-				cmd_Alert.IsWarning = isWarningIcon;
-				switch (actionType)
+				if (!(text == "CMD_Alert"))
 				{
-				case AlertManager.ButtonActionType.Close:
-					cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
-					break;
-				case AlertManager.ButtonActionType.Retry:
-					cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.RETRY);
-					break;
-				case AlertManager.ButtonActionType.TitleAndRetry:
-					cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.TITLE_AND_RETRY);
-					break;
-				case AlertManager.ButtonActionType.Title:
-					cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.TITLE);
-					break;
+					if (!(text == "CMD_maintenance"))
+					{
+						if (text == "CMD_ModalMessage")
+						{
+							CMD_ModalMessage cmd_ModalMessage = cmd_Type as CMD_ModalMessage;
+							cmd_ModalMessage.Title = title;
+							cmd_ModalMessage.Info = message;
+							AlertManager.ExecuteOnCreateAlert(true, null);
+						}
+					}
+					else
+					{
+						CMD_maintenance cmd_maintenance = cmd_Type as CMD_maintenance;
+						cmd_maintenance.Info = message;
+					}
 				}
-				AlertManager.ExecuteOnCreateAlert(true, cmd_Alert);
-				break;
-			}
-			case "CMD_maintenance":
-			{
-				CMD_maintenance cmd_maintenance = cmd_Type as CMD_maintenance;
-				cmd_maintenance.Info = message;
-				break;
-			}
-			case "CMD_ModalMessage":
-			{
-				CMD_ModalMessage cmd_ModalMessage = cmd_Type as CMD_ModalMessage;
-				cmd_ModalMessage.Title = title;
-				cmd_ModalMessage.Info = message;
-				AlertManager.ExecuteOnCreateAlert(true, null);
-				break;
-			}
+				else
+				{
+					CMD_Alert cmd_Alert = cmd_Type as CMD_Alert;
+					cmd_Alert.Title = title;
+					cmd_Alert.Info = message;
+					cmd_Alert.IsWarning = isWarningIcon;
+					switch (actionType)
+					{
+					case AlertManager.ButtonActionType.Close:
+						cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
+						break;
+					case AlertManager.ButtonActionType.Retry:
+						cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.RETRY);
+						break;
+					case AlertManager.ButtonActionType.TitleAndRetry:
+						cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.TITLE_AND_RETRY);
+						break;
+					case AlertManager.ButtonActionType.Title:
+						cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.TITLE);
+						break;
+					}
+					AlertManager.ExecuteOnCreateAlert(true, cmd_Alert);
+				}
 			}
 			return true;
 		}
@@ -277,32 +279,36 @@ public static class AlertManager
 
 	public static string GetErrorCode(WWWResponse.LocalErrorStatus localErrorStatus)
 	{
-		switch (localErrorStatus)
+		if (localErrorStatus == WWWResponse.LocalErrorStatus.LOCAL_ERROR_TIMEOUT)
 		{
-		case WWWResponse.LocalErrorStatus.LOCAL_ERROR_TIMEOUT:
 			return "LOCAL_ERROR_TIMEOUT";
-		case WWWResponse.LocalErrorStatus.LOCAL_ERROR_WWW:
+		}
+		if (localErrorStatus == WWWResponse.LocalErrorStatus.LOCAL_ERROR_WWW)
+		{
 			return "LOCAL_ERROR_WWW";
-		case WWWResponse.LocalErrorStatus.LOCAL_ERROR_JSONPARSE:
-			return "LOCAL_ERROR_JSONPARSE";
-		default:
+		}
+		if (localErrorStatus != WWWResponse.LocalErrorStatus.LOCAL_ERROR_JSONPARSE)
+		{
 			return string.Empty;
 		}
+		return "LOCAL_ERROR_JSONPARSE";
 	}
 
 	public static string GetErrorCode(PersistentFile.ErrorType errorType)
 	{
-		switch (errorType)
+		if (errorType == PersistentFile.ErrorType.IO)
 		{
-		case PersistentFile.ErrorType.IO:
 			return "LOCAL_ERROR_SAVE_DATA_IO";
-		case PersistentFile.ErrorType.SECURITY:
-			return "LOCAL_ERROR_SAVE_DATA_SECURITY";
-		case PersistentFile.ErrorType.OTHER:
+		}
+		if (errorType == PersistentFile.ErrorType.OTHER)
+		{
 			return "LOCAL_ERROR_SAVE_DATA_OTHER";
-		default:
+		}
+		if (errorType != PersistentFile.ErrorType.SECURITY)
+		{
 			return string.Empty;
 		}
+		return "LOCAL_ERROR_SAVE_DATA_SECURITY";
 	}
 
 	public static string GetNeptuneErrorCode(string neptuneError)

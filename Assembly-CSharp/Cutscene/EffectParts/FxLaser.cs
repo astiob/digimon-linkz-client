@@ -28,10 +28,11 @@ namespace Cutscene.EffectParts
 			return (float)(num * effectIndex);
 		}
 
-		public void SetTransform(float positionY, float eulerAngleY)
+		public void SetTransform(float worldPositionY, float eulerAngleY)
 		{
 			Transform transform = base.transform;
-			transform.localPosition = new Vector3(0f, positionY, 0f);
+			transform.localPosition = Vector3.zero;
+			transform.position = new Vector3(transform.position.x, worldPositionY, transform.position.z);
 			transform.localRotation = Quaternion.Euler(new Vector3(0f, eulerAngleY + 72f, 0f));
 		}
 

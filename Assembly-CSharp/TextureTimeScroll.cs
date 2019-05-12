@@ -2,8 +2,8 @@
 using TextureTimeScrollInternal;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
 [AddComponentMenu("Digimon Effects/Tools/Texture Time Scroll")]
+[RequireComponent(typeof(Renderer))]
 public class TextureTimeScroll : MonoBehaviour
 {
 	public static int objectCount;

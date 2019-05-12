@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Remoting.Metadata
 {
 	/// <summary>Specifies the SOAP configuration options for use with the <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> class.</summary>
-	[ComVisible(true)]
 	[Flags]
+	[ComVisible(true)]
 	[Serializable]
 	public enum SoapOption
 	{

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace BattleStateMachineInternal
 {
@@ -22,8 +23,8 @@ namespace BattleStateMachineInternal
 			{
 				return;
 			}
-			float num = Profiler.usedHeapSize;
-			float num2 = Profiler.GetTotalReservedMemory();
+			float num = (float)Profiler.usedHeapSizeLong;
+			float num2 = (float)Profiler.GetTotalReservedMemoryLong();
 			float num3 = num / num2;
 			if (num3 > 0.95f)
 			{

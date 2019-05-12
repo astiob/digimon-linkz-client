@@ -6,10 +6,7 @@ public sealed class CMD_ResearchModalAlert : CMD_ModalMessageBtn2
 	[SerializeField]
 	private GUIMonsterIcon icon;
 
-	protected override void Awake()
-	{
-		base.Awake();
-	}
+	private Action onPushYesButton;
 
 	public void AdjustSize()
 	{
@@ -42,5 +39,19 @@ public sealed class CMD_ResearchModalAlert : CMD_ModalMessageBtn2
 				componentsInChildren[i].mainTexture = null;
 			}
 		}
+	}
+
+	private void OnPushYesButton()
+	{
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton();
+		}
+		this.ClosePanel(true);
+	}
+
+	public void SetActionYesButton(Action action)
+	{
+		this.onPushYesButton = action;
 	}
 }

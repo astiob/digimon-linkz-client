@@ -110,37 +110,37 @@ namespace UnityEngine.Networking
 
 		private void ProcessInternalMessages()
 		{
-			if (this.m_InternalMsgs.Count == 0)
+			if (this.m_InternalMsgs.Count != 0)
 			{
-				return;
-			}
-			List<LocalClient.InternalMsg> internalMsgs = this.m_InternalMsgs;
-			this.m_InternalMsgs = this.m_InternalMsgs2;
-			foreach (LocalClient.InternalMsg t in internalMsgs)
-			{
-				if (this.s_InternalMessage.reader == null)
+				List<LocalClient.InternalMsg> internalMsgs = this.m_InternalMsgs;
+				this.m_InternalMsgs = this.m_InternalMsgs2;
+				for (int i = 0; i < internalMsgs.Count; i++)
 				{
-					this.s_InternalMessage.reader = new NetworkReader(t.buffer);
+					LocalClient.InternalMsg t = internalMsgs[i];
+					if (this.s_InternalMessage.reader == null)
+					{
+						this.s_InternalMessage.reader = new NetworkReader(t.buffer);
+					}
+					else
+					{
+						this.s_InternalMessage.reader.Replace(t.buffer);
+					}
+					this.s_InternalMessage.reader.ReadInt16();
+					this.s_InternalMessage.channelId = t.channelId;
+					this.s_InternalMessage.conn = base.connection;
+					this.s_InternalMessage.msgType = this.s_InternalMessage.reader.ReadInt16();
+					this.m_Connection.InvokeHandler(this.s_InternalMessage);
+					this.m_FreeMessages.Push(t);
+					base.connection.lastMessageTime = Time.time;
 				}
-				else
+				this.m_InternalMsgs = internalMsgs;
+				this.m_InternalMsgs.Clear();
+				for (int j = 0; j < this.m_InternalMsgs2.Count; j++)
 				{
-					this.s_InternalMessage.reader.Replace(t.buffer);
+					this.m_InternalMsgs.Add(this.m_InternalMsgs2[j]);
 				}
-				this.s_InternalMessage.reader.ReadInt16();
-				this.s_InternalMessage.channelId = t.channelId;
-				this.s_InternalMessage.conn = base.connection;
-				this.s_InternalMessage.msgType = this.s_InternalMessage.reader.ReadInt16();
-				this.m_Connection.InvokeHandler(this.s_InternalMessage);
-				this.m_FreeMessages.Push(t);
-				base.connection.lastMessageTime = Time.time;
+				this.m_InternalMsgs2.Clear();
 			}
-			this.m_InternalMsgs = internalMsgs;
-			this.m_InternalMsgs.Clear();
-			foreach (LocalClient.InternalMsg item in this.m_InternalMsgs2)
-			{
-				this.m_InternalMsgs.Add(item);
-			}
-			this.m_InternalMsgs2.Clear();
 		}
 
 		internal void InvokeHandlerOnClient(short msgType, MessageBase msg, int channelId)

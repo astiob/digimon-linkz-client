@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Facebook.Unity.Mobile
 {
-	internal abstract class MobileFacebook : FacebookBase, IMobileFacebookImplementation, IMobileFacebook, IMobileFacebookResultHandler, IFacebook, IFacebookResultHandler
+	internal abstract class MobileFacebook : FacebookBase, IMobileFacebookImplementation, IMobileFacebook, IFacebook, IMobileFacebookResultHandler, IFacebookResultHandler
 	{
 		private const string CallbackIdKey = "callback_id";
 
@@ -33,27 +33,17 @@ namespace Facebook.Unity.Mobile
 
 		public abstract void RefreshCurrentAccessToken(FacebookDelegate<IAccessTokenRefreshResult> callback);
 
+		public abstract bool IsImplicitPurchaseLoggingEnabled();
+
 		public override void OnLoginComplete(ResultContainer resultContainer)
 		{
 			LoginResult result = new LoginResult(resultContainer);
-			base.OnAuthResponse(result);
+			this.OnAuthResponse(result);
 		}
 
 		public override void OnGetAppLinkComplete(ResultContainer resultContainer)
 		{
 			AppLinkResult result = new AppLinkResult(resultContainer);
-			base.CallbackManager.OnFacebookResponse(result);
-		}
-
-		public override void OnGroupCreateComplete(ResultContainer resultContainer)
-		{
-			GroupCreateResult result = new GroupCreateResult(resultContainer);
-			base.CallbackManager.OnFacebookResponse(result);
-		}
-
-		public override void OnGroupJoinComplete(ResultContainer resultContainer)
-		{
-			GroupJoinResult result = new GroupJoinResult(resultContainer);
 			base.CallbackManager.OnFacebookResponse(result);
 		}
 

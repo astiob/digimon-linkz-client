@@ -148,7 +148,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 				else
 				{
 					this.ShowDLG();
-					this.Show(closeEvent, sizeX, sizeY, showAnimationTime);
+					this.<Show>__BaseCallProxy0(closeEvent, sizeX, sizeY, showAnimationTime);
 					this.monsterParam = this.characterCameraView.csRender3DRT.GetCharacterParams();
 				}
 			}, delegate(Exception nop)

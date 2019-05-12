@@ -17,12 +17,12 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private string _cameraMotionId;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStage")]
+	[SerializeField]
 	private bool _hideStage;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStageBackgroundColor")]
+	[SerializeField]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]
@@ -156,9 +156,9 @@ public class InvocationEffectParams : EffectParamsGeneric
 			this._scale = attacker.effectScale;
 			base.transform.localScale = Vector3.one;
 			base.transform.localScale *= this._scale;
-			foreach (ParticleSystem particleSystem in this._particleSystems)
+			foreach (ParticleSystem particles in this._particleSystems)
 			{
-				ParticleScaler.Scale(particleSystem, this._scale, true, null);
+				ParticleScaler.Scale(particles, this._scale, true, null);
 			}
 		}
 		if (this._attackAnimationType == SkillType.InheritanceTechnique)

@@ -6,13 +6,13 @@ namespace UnityEngine.UI
 	[Serializable]
 	public struct SpriteState : IEquatable<SpriteState>
 	{
+		[FormerlySerializedAs("highlightedSprite")]
 		[FormerlySerializedAs("m_SelectedSprite")]
 		[SerializeField]
-		[FormerlySerializedAs("highlightedSprite")]
 		private Sprite m_HighlightedSprite;
 
-		[SerializeField]
 		[FormerlySerializedAs("pressedSprite")]
+		[SerializeField]
 		private Sprite m_PressedSprite;
 
 		[FormerlySerializedAs("disabledSprite")]

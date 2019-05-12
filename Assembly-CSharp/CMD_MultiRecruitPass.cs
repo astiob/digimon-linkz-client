@@ -49,9 +49,9 @@ public sealed class CMD_MultiRecruitPass : CMD
 
 	private void ClickDecisionBtn()
 	{
-		if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+		if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON))
 		{
-			if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
+			if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON))
 			{
 				MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 				GameWebAPI.MultiRoomJoin request = new GameWebAPI.MultiRoomJoin

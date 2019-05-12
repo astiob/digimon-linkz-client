@@ -85,6 +85,16 @@ namespace com.adjust.sdk
 			});
 		}
 
+		public static bool operator ==(JSONLazyCreator a, object b)
+		{
+			return b == null || object.ReferenceEquals(a, b);
+		}
+
+		public static bool operator !=(JSONLazyCreator a, object b)
+		{
+			return !(a == b);
+		}
+
 		public override bool Equals(object obj)
 		{
 			return obj == null || object.ReferenceEquals(this, obj);
@@ -183,16 +193,6 @@ namespace com.adjust.sdk
 				this.Set(jsonclass);
 				return jsonclass;
 			}
-		}
-
-		public static bool operator ==(JSONLazyCreator a, object b)
-		{
-			return b == null || object.ReferenceEquals(a, b);
-		}
-
-		public static bool operator !=(JSONLazyCreator a, object b)
-		{
-			return !(a == b);
 		}
 	}
 }

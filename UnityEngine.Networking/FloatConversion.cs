@@ -17,5 +17,13 @@ namespace UnityEngine.Networking
 			uintFloat.longValue = value;
 			return uintFloat.doubleValue;
 		}
+
+		public static decimal ToDecimal(ulong value1, ulong value2)
+		{
+			UIntDecimal uintDecimal = default(UIntDecimal);
+			uintDecimal.longValue1 = value1;
+			uintDecimal.longValue2 = value2;
+			return uintDecimal.decimalValue;
+		}
 	}
 }

@@ -266,21 +266,20 @@ public sealed class PresentBoxItem : MonoBehaviour
 		}
 		if (showDetail)
 		{
-			switch (masterAssetCategory.assetCategoryId.ToInt32())
+			MasterDataMng.AssetCategory assetCategory2 = (MasterDataMng.AssetCategory)masterAssetCategory.assetCategoryId.ToInt32();
+			if (assetCategory2 != MasterDataMng.AssetCategory.CHIP)
 			{
-			case 14:
-			{
-				GameWebAPI.RespDataMA_GetSoulM.SoulM soulMasterBySoulId = VersionUpMaterialData.GetSoulMasterBySoulId(objectId);
-				result = soulMasterBySoulId.soulName;
-				break;
+				if (assetCategory2 == MasterDataMng.AssetCategory.SOUL)
+				{
+					GameWebAPI.RespDataMA_GetSoulM.SoulM soulMasterBySoulId = VersionUpMaterialData.GetSoulMasterBySoulId(objectId);
+					result = soulMasterBySoulId.soulName;
+				}
 			}
-			case 17:
+			else
 			{
 				int chipId = int.Parse(objectId);
 				GameWebAPI.RespDataMA_ChipM.Chip chipMaster = ChipDataMng.GetChipMaster(chipId);
 				result = chipMaster.name;
-				break;
-			}
 			}
 		}
 		return result;

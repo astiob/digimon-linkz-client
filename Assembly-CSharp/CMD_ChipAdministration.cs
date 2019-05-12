@@ -1,6 +1,5 @@
 ﻿using Master;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,14 +7,6 @@ using UnityEngine;
 public sealed class CMD_ChipAdministration : CMD
 {
 	private const string CMD_NAME = "CMD_ChipList";
-
-	private const int MAX_SALE_COUNT = 10;
-
-	[SerializeField]
-	private GUICollider sortButton;
-
-	[SerializeField]
-	private UILabel sortButtonLabel;
 
 	[SerializeField]
 	private UILabel sortNameLabel;
@@ -42,9 +33,6 @@ public sealed class CMD_ChipAdministration : CMD
 	private GameObject saleCluster;
 
 	[SerializeField]
-	private UILabel saleClusterTitleLabel;
-
-	[SerializeField]
 	private UILabel saleClusterMessageLabel;
 
 	[SerializeField]
@@ -55,6 +43,8 @@ public sealed class CMD_ChipAdministration : CMD
 
 	[SerializeField]
 	private UILabel listCountLabel;
+
+	private const int MAX_SALE_COUNT = 10;
 
 	private CMD_ChipAdministration.ViewModeType viewModeType;
 
@@ -101,29 +91,15 @@ public sealed class CMD_ChipAdministration : CMD
 		this.chipList.AddWidgetDepth(base.gameObject.GetComponent<UIWidget>().depth);
 		this.chipList.SetTouchAreaWidth(875f);
 		this.messageLabel.gameObject.SetActive(this.userChipList.Length == 0);
-		this.messageLabel.text = StringMaster.GetString("ChipAdministration-01");
 		int num = 0;
 		if (ChipDataMng.userChipData != null && ChipDataMng.userChipData.userChipList != null)
 		{
 			num = ChipDataMng.userChipData.userChipList.Length;
 		}
 		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), num, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
-		this.listButtonLabel.text = StringMaster.GetString("SystemList");
-		this.saleButtonLabel.text = StringMaster.GetString("SystemButtonSell");
-		this.saleClusterTitleLabel.text = StringMaster.GetString("SaleConfirmGain");
 		this.saleClusterMessageLabel.text = "0";
-		this.saleDecisionButtonLabel.text = this.saleButtonLabel.text;
-		this.sortButtonLabel.text = StringMaster.GetString("SystemSortButton");
 		this.sortNameLabel.text = CMD_ChipSortModal.GetSortName();
 		this.UpdateCluster();
-		this.listButton.CallBackClass = base.gameObject;
-		this.listButton.MethodToInvoke = "OnListButton";
-		this.saleButton.CallBackClass = base.gameObject;
-		this.saleButton.MethodToInvoke = "OnSaleButton";
-		this.saleDecisionButton.CallBackClass = base.gameObject;
-		this.saleDecisionButton.MethodToInvoke = "OnSaleDecisionButton";
-		this.sortButton.CallBackClass = base.gameObject;
-		this.sortButton.MethodToInvoke = "OnSortButton";
 		this.ChangeViewMode(CMD_ChipAdministration.ViewModeType.List);
 		base.ShowDLG();
 		base.SetTutorialAnyTime("anytime_second_tutorial_chip_list");
@@ -133,7 +109,6 @@ public sealed class CMD_ChipAdministration : CMD
 
 	private void OnShortTouchChip(GUIListChipParts.Data data)
 	{
-		global::Debug.LogWarning("ShortTouch " + data.userChip.userChipId);
 		if (this.viewModeType == CMD_ChipAdministration.ViewModeType.List)
 		{
 			CMD_QuestItemPOP.Create(data.masterChip);
@@ -210,80 +185,10 @@ public sealed class CMD_ChipAdministration : CMD
 		this.ChangeViewMode(CMD_ChipAdministration.ViewModeType.Sale);
 	}
 
-	private void OnSaleDecisionButton()
-	{
-		Action<int> action = delegate(int result)
-		{
-			global::Debug.Log("result " + result);
-			if (result == 0)
-			{
-				AppCoroutine.Start(this.Send(), false);
-			}
-		};
-		CMD_SaleCheck cmd_SaleCheck = GUIMain.ShowCommonDialog(action, "CMD_SaleCheck", null) as CMD_SaleCheck;
-		cmd_SaleCheck.SetParams(this.saleUserChipList, StringFormat.Cluster(this.totalPrice));
-	}
-
-	private IEnumerator Send()
-	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-		List<int> ids = new List<int>();
-		foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList saleUserChip in this.saleUserChipList)
-		{
-			ids.Add(saleUserChip.userChipId);
-		}
-		Action<int> callback = delegate(int resultCode)
-		{
-			RestrictionInput.EndLoad();
-			if (resultCode == 1)
-			{
-				int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
-				int num2 = num + this.totalPrice;
-				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney = num2.ToString();
-				this.UpdateCluster();
-				this.saleUserChipList.Clear();
-				this.chipList.SetAllSelectColor(false);
-				this.saleClusterMessageLabel.text = "0";
-				this.totalPrice = 0;
-				this.userChipList = this.ConvertChipList(ChipDataMng.userChipData);
-				this.chipList.ReAllBuild(this.userChipList, false);
-				this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
-				this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
-				foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in this.userChipList)
-				{
-					if (userChipList.userMonsterId > 0)
-					{
-						this.chipList.SetSelectColor(userChipList.userChipId, true);
-					}
-				}
-				this.messageLabel.gameObject.SetActive(this.userChipList.Length == 0);
-				this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), ChipDataMng.userChipData.userChipList.Length, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
-				this.EnableSaleDecisionButton(false);
-			}
-			else
-			{
-				string @string = StringMaster.GetString("SystemDataMismatchTitle");
-				string message = string.Format(StringMaster.GetString("ChipDataMismatchMesage"), resultCode);
-				AlertManager.ShowModalMessage(delegate(int modal)
-				{
-				}, @string, message, AlertManager.ButtonActionType.Close, false);
-			}
-		};
-		GameWebAPI.ChipSellLogic logic = ChipDataMng.RequestAPIChipSell(ids.ToArray(), callback);
-		IEnumerator run = logic.Run(null, null, null);
-		while (run.MoveNext())
-		{
-			object obj = run.Current;
-			yield return obj;
-		}
-		yield break;
-	}
-
 	private void OnSortButton()
 	{
 		Action<int> callback = delegate(int result)
 		{
-			global::Debug.Log("result " + result);
 			if (result > 0)
 			{
 				this.sortNameLabel.text = CMD_ChipSortModal.GetSortName();
@@ -373,6 +278,39 @@ public sealed class CMD_ChipAdministration : CMD
 			return CMD_ChipSortModal.sortedUserChipList;
 		}
 		return list.ToArray();
+	}
+
+	public List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> GetSaleChipList()
+	{
+		return this.saleUserChipList;
+	}
+
+	public int GetSalePrice()
+	{
+		return this.totalPrice;
+	}
+
+	public void OnCompletedSaleChip()
+	{
+		this.UpdateCluster();
+		this.saleUserChipList.Clear();
+		this.chipList.SetAllSelectColor(false);
+		this.saleClusterMessageLabel.text = "0";
+		this.totalPrice = 0;
+		this.userChipList = this.ConvertChipList(ChipDataMng.userChipData);
+		this.chipList.ReAllBuild(this.userChipList, false);
+		this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
+		this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
+		foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in this.userChipList)
+		{
+			if (userChipList.userMonsterId > 0)
+			{
+				this.chipList.SetSelectColor(userChipList.userChipId, true);
+			}
+		}
+		this.messageLabel.gameObject.SetActive(this.userChipList.Length == 0);
+		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), ChipDataMng.userChipData.userChipList.Length, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
+		this.EnableSaleDecisionButton(false);
 	}
 
 	private enum ViewModeType

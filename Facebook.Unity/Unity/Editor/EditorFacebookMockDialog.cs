@@ -68,25 +68,22 @@ namespace Facebook.Unity.Editor
 			GUILayout.BeginHorizontal(new GUILayoutOption[0]);
 			GUILayout.FlexibleSpace();
 			GUIContent content = new GUIContent("Send Success");
-			Rect rect = GUILayoutUtility.GetRect(content, GUI.skin.button);
-			if (GUI.Button(rect, content))
+			if (GUI.Button(GUILayoutUtility.GetRect(content, GUI.skin.button), content))
 			{
 				this.SendSuccessResult();
-				UnityEngine.Object.Destroy(this);
+				Object.Destroy(this);
 			}
 			GUIContent content2 = new GUIContent("Send Cancel");
-			Rect rect2 = GUILayoutUtility.GetRect(content2, GUI.skin.button);
-			if (GUI.Button(rect2, content2, GUI.skin.button))
+			if (GUI.Button(GUILayoutUtility.GetRect(content2, GUI.skin.button), content2, GUI.skin.button))
 			{
 				this.SendCancelResult();
-				UnityEngine.Object.Destroy(this);
+				Object.Destroy(this);
 			}
 			GUIContent content3 = new GUIContent("Send Error");
-			Rect rect3 = GUILayoutUtility.GetRect(content2, GUI.skin.button);
-			if (GUI.Button(rect3, content3, GUI.skin.button))
+			if (GUI.Button(GUILayoutUtility.GetRect(content2, GUI.skin.button), content3, GUI.skin.button))
 			{
 				this.SendErrorResult("Error: Error button pressed");
-				UnityEngine.Object.Destroy(this);
+				Object.Destroy(this);
 			}
 			GUILayout.EndHorizontal();
 		}

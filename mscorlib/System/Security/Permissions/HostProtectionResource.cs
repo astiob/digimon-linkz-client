@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions
 {
 	/// <summary>Specifies categories of functionality potentially harmful to the host if invoked by a method or class.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum HostProtectionResource
 	{

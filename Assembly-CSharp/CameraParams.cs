@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.CameraParams.Internal;
 using UnityEngine.Serialization;
 
-[AddComponentMenu("Digimon Effects/Camera Params")]
 [DisallowMultipleComponent]
+[AddComponentMenu("Digimon Effects/Camera Params")]
 public class CameraParams : MonoBehaviour
 {
 	public static CameraParams current;
@@ -16,29 +16,29 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private CameraParams.CameraType _cameraType;
 
-	[SerializeField]
 	[FormerlySerializedAs("rootPosition")]
+	[SerializeField]
 	private CameraParams.RootPosition _rootPosition;
 
 	[FormerlySerializedAs("useAnimation")]
 	[SerializeField]
 	private bool _useAnimation = true;
 
-	[SerializeField]
 	[FormerlySerializedAs("isLoopAnimation")]
+	[SerializeField]
 	private bool _onLoopAnimation;
 
-	[Range(1f, 179f)]
 	[FormerlySerializedAs("fieldOfView")]
 	[SerializeField]
+	[Range(1f, 179f)]
 	private float _fieldOfView = 60f;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraAnimation")]
+	[SerializeField]
 	private Animation _cameraAnimation;
 
-	[SerializeField]
 	[FormerlySerializedAs("animationEndStop")]
+	[SerializeField]
 	private bool _animationEndStop = true;
 
 	[FormerlySerializedAs("endTime")]
@@ -49,12 +49,12 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private Transform _cameraTarget;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraLookTarget")]
+	[SerializeField]
 	private Transform _cameraLookTarget;
 
-	[SerializeField]
 	[FormerlySerializedAs("onPossibleInverse")]
+	[SerializeField]
 	private bool _onPossibleInverse;
 
 	[SerializeField]
@@ -439,8 +439,8 @@ public class CameraParams : MonoBehaviour
 			}
 			else
 			{
-				float endtimeCurrent = TimeExtension.GetTimeScaleDivided(endTimeCache);
-				if (endtimeCurrent < timeWait)
+				float timeScaleDivided = TimeExtension.GetTimeScaleDivided(endTimeCache);
+				if (timeScaleDivided < timeWait)
 				{
 					onEndAnimation = true;
 				}
@@ -575,8 +575,8 @@ public class CameraParams : MonoBehaviour
 		[SerializeField]
 		private CameraParams.CameraType _cameraType;
 
-		[Range(1f, 179f)]
 		[SerializeField]
+		[Range(1f, 179f)]
 		private float _fieldOfView = 60f;
 
 		[SerializeField]

@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class RoundStart : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("ApHpUp_Rootのスキナー")]
+	[SerializeField]
 	protected UIComponentSkinner apHpUpRootSkinner;
 
-	[SerializeField]
 	[Header("ラウンドのローカライズ")]
+	[SerializeField]
 	protected UILabel roundLocalize;
 
 	[Header("AP UPローカライズ(片方の時)")]
 	[SerializeField]
 	protected UILabel onlyApUpLocalize;
 
-	[SerializeField]
 	[Header("AP UPローカライズ(両方)")]
+	[SerializeField]
 	protected UILabel apUpLocalize;
 
-	[SerializeField]
 	[Header("HP回復ローカライズ(片方の時)")]
+	[SerializeField]
 	protected UILabel onlyHpRecoverLocalize;
 
 	[Header("HP回復ローカライズ(両方)")]

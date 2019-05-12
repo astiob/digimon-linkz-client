@@ -24,9 +24,36 @@ public class BattleAutoMenu : MonoBehaviour
 
 	public void ApplyAutoPlay(int isEnable)
 	{
-		switch (isEnable)
+		if (isEnable != 0)
 		{
-		case 0:
+			if (isEnable != 1)
+			{
+				if (isEnable == 2)
+				{
+					if (this.autoSprite != null)
+					{
+						this.autoSprite.spriteName = "Battle_Autobtn_ON";
+					}
+					if (this.autoLoopObj != null)
+					{
+						this.autoLoopObj.SetActive(true);
+					}
+				}
+			}
+			else
+			{
+				if (this.autoSprite != null)
+				{
+					this.autoSprite.spriteName = "Battle_Autobtn_OFF";
+				}
+				if (this.autoLoopObj != null)
+				{
+					this.autoLoopObj.SetActive(true);
+				}
+			}
+		}
+		else
+		{
 			if (this.autoSprite != null)
 			{
 				this.autoSprite.spriteName = "Battle_Autobtn_ALLOFF";
@@ -35,27 +62,6 @@ public class BattleAutoMenu : MonoBehaviour
 			{
 				this.autoLoopObj.SetActive(false);
 			}
-			break;
-		case 1:
-			if (this.autoSprite != null)
-			{
-				this.autoSprite.spriteName = "Battle_Autobtn_OFF";
-			}
-			if (this.autoLoopObj != null)
-			{
-				this.autoLoopObj.SetActive(true);
-			}
-			break;
-		case 2:
-			if (this.autoSprite != null)
-			{
-				this.autoSprite.spriteName = "Battle_Autobtn_ON";
-			}
-			if (this.autoLoopObj != null)
-			{
-				this.autoLoopObj.SetActive(true);
-			}
-			break;
 		}
 	}
 

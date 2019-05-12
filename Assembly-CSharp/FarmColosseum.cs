@@ -114,8 +114,8 @@ public class FarmColosseum : MonoBehaviour
 		EffectAnimatorObserver effect = FarmRoot.Instance.GetBuildCompleteEffect(base.transform);
 		if (null != effect)
 		{
-			EffectAnimatorEventTime eventTime = effect.GetComponent<EffectAnimatorEventTime>();
-			eventTime.SetEvent(0, delegate
+			EffectAnimatorEventTime component = effect.GetComponent<EffectAnimatorEventTime>();
+			component.SetEvent(0, delegate
 			{
 				isEffectEnd = true;
 			});

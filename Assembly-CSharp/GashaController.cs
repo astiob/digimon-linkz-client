@@ -60,6 +60,7 @@ public class GashaController : CutsceneBase
 
 	public override void SetData(CutsceneDataBase data)
 	{
+		base.transform.localPosition = new Vector3(0f, 10f, 0f);
 		CutsceneDataGasha cutsceneDataGasha = data as CutsceneDataGasha;
 		if (cutsceneDataGasha != null)
 		{

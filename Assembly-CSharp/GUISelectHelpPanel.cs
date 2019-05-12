@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class GUISelectHelpPanel : GUISelectPanelBSPartsUD
 {
-	private const int LIST_ITEM_COUNT = 10;
-
 	private int PARTS_CT_MN = 2;
+
+	private const int LIST_ITEM_COUNT = 10;
 
 	private int minIdx;
 

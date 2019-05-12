@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -14,45 +15,45 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private Font mTrueTypeFont;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIFont mFont;
 
-	[SerializeField]
 	[Multiline(6)]
 	[HideInInspector]
+	[SerializeField]
 	private string mText = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mFontSize = 16;
 
 	[HideInInspector]
 	[SerializeField]
 	private FontStyle mFontStyle;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private NGUIText.Alignment mAlignment;
 
 	[HideInInspector]
 	[SerializeField]
 	private bool mEncoding = true;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mMaxLineCount;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UILabel.Effect mEffectStyle;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Color mEffectColor = Color.black;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private NGUIText.SymbolStyle mSymbols = NGUIText.SymbolStyle.Normal;
 
 	[HideInInspector]
@@ -67,12 +68,12 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private Material mMaterial;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mApplyGradient;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Color mGradientTop = Color.white;
 
 	[HideInInspector]
@@ -87,28 +88,28 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private int mSpacingY;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mUseFloatSpacing;
 
 	[HideInInspector]
 	[SerializeField]
 	private float mFloatSpacingX;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mFloatSpacingY;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mOverflowEllipsis;
 
 	[HideInInspector]
 	[SerializeField]
 	private bool mShrinkToFit;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mMaxLineWidth;
 
 	[HideInInspector]
@@ -119,8 +120,8 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private float mLineWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mMultiline = true;
 
 	[NonSerialized]
@@ -164,6 +165,9 @@ public class UILabel : UIWidget
 	private static BetterList<Vector3> mTempVerts = new BetterList<Vector3>();
 
 	private static BetterList<int> mTempIndices = new BetterList<int>();
+
+	[CompilerGenerated]
+	private static Action<Font> <>f__mg$cache0;
 
 	public int finalFontSize
 	{
@@ -1019,7 +1023,11 @@ public class UILabel : UIWidget
 		if (!UILabel.mTexRebuildAdded)
 		{
 			UILabel.mTexRebuildAdded = true;
-			Font.textureRebuilt += UILabel.OnFontChanged;
+			if (UILabel.<>f__mg$cache0 == null)
+			{
+				UILabel.<>f__mg$cache0 = new Action<Font>(UILabel.OnFontChanged);
+			}
+			Font.textureRebuilt += UILabel.<>f__mg$cache0;
 		}
 	}
 

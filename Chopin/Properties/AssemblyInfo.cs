@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -7,17 +6,17 @@ using System.Security;
 using System.Security.Permissions;
 
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyTrademark("")]
-[assembly: ComVisible(false)]
-[assembly: AssemblyCopyright("Copyright © Yoshihide Osanai 2015")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CROOZ")]
-[assembly: AssemblyProduct("Chopin")]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
-[assembly: SuppressIldasm]
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: Guid("4eeaa544-fabe-42fc-9cfb-431721e2ec4a")]
+[assembly: AssemblyProduct("Chopin")]
+[assembly: AssemblyCopyright("Copyright © Yoshihide Osanai 2015")]
+[assembly: CompilationRelaxations(8)]
+[assembly: AssemblyDescription("Unity support library.")]
+[assembly: AssemblyTrademark("")]
 [assembly: InternalsVisibleTo("ChopinEditor")]
 [assembly: AssemblyTitle("Chopin")]
-[assembly: AssemblyDescription("Unity support library.")]
-[assembly: AssemblyConfiguration("")]
+[assembly: ComVisible(false)]
+[assembly: Guid("4eeaa544-fabe-42fc-9cfb-431721e2ec4a")]
+[assembly: SuppressIldasm]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]

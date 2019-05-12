@@ -1198,8 +1198,8 @@ namespace System.Globalization
 		/// <summary>Gets or sets a string array of abbreviated month names associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</summary>
 		/// <returns>A string array of abbreviated month names.</returns>
 		/// <exception cref="T:System.ArgumentNullException">In a set operation, the value array or one of the elements of the value array is null.</exception>
-		[MonoTODO("Returns only the English month abbreviated names")]
 		[ComVisible(false)]
+		[MonoTODO("Returns only the English month abbreviated names")]
 		public string[] AbbreviatedMonthGenitiveNames
 		{
 			get
@@ -1215,8 +1215,8 @@ namespace System.Globalization
 		/// <summary>Gets or sets a string array of month names associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</summary>
 		/// <returns>A string array of month names.</returns>
 		/// <exception cref="T:System.ArgumentNullException">In a set operation, the value array or one of the elements of the value array is null.</exception>
-		[MonoTODO("Returns only the English moth names")]
 		[ComVisible(false)]
+		[MonoTODO("Returns only the English moth names")]
 		public string[] MonthGenitiveNames
 		{
 			get
@@ -1231,8 +1231,8 @@ namespace System.Globalization
 
 		/// <summary>Gets the native name of the calendar associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</summary>
 		/// <returns>The native name of the calendar used in the culture associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object if that name is available, or the empty string ("") if the native calendar name is not available.</returns>
-		[ComVisible(false)]
 		[MonoTODO("Returns an empty string as if the calendar name wasn't available")]
+		[ComVisible(false)]
 		public string NativeCalendarName
 		{
 			get

@@ -7,8 +7,8 @@ public sealed class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 {
 	public bool animationMoving;
 
-	[SerializeField]
 	[Header("バナーのセルのスケール")]
+	[SerializeField]
 	private Vector3 bannerScale;
 
 	[Header("選択されたパーツのアニメ量 X")]

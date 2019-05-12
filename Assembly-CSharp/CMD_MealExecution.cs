@@ -6,14 +6,6 @@ using UnityEngine;
 
 public class CMD_MealExecution : CMD
 {
-	private const string SP_NAME_MEAL_PLUS = "Common02_Meal_UP";
-
-	private const string SP_NAME_MEAL_MINUS = "Common02_Meal_Down";
-
-	private const string SP_NAME_MEAL_PLUS_GRAY = "Common02_Meal_UP_G";
-
-	private const string SP_NAME_MEAL_MINUS_GRAY = "Common02_Meal_Down_G";
-
 	[SerializeField]
 	private UISprite rightUpBG;
 
@@ -75,8 +67,8 @@ public class CMD_MealExecution : CMD
 	[SerializeField]
 	private UILabel btnExecText;
 
-	[SerializeField]
 	[Header("高級肉関連")]
+	[SerializeField]
 	private UILabel lbHQMeatNum;
 
 	[SerializeField]
@@ -130,6 +122,14 @@ public class CMD_MealExecution : CMD
 	private IncreaseJumpingMeat meat;
 
 	private int updateExCT;
+
+	private const string SP_NAME_MEAL_PLUS = "Common02_Meal_UP";
+
+	private const string SP_NAME_MEAL_MINUS = "Common02_Meal_Down";
+
+	private const string SP_NAME_MEAL_PLUS_GRAY = "Common02_Meal_UP_G";
+
+	private const string SP_NAME_MEAL_MINUS_GRAY = "Common02_Meal_Down_G";
 
 	private bool IsLockClose
 	{
@@ -322,7 +322,7 @@ public class CMD_MealExecution : CMD
 		DataMng.ExperienceInfo expInfo = this.GetExpInfo();
 		this.statusAnime.Initialize(CMD_MealExecution.DataChg.userMonster, expInfo.lev);
 		this.monsterBasicInfo.SetMonsterData(CMD_MealExecution.DataChg, expInfo);
-		this.monsterStatusList.SetValues(CMD_MealExecution.DataChg, false);
+		this.monsterStatusList.SetValues(CMD_MealExecution.DataChg, false, false);
 		this.monsterResistanceList.SetValues(CMD_MealExecution.DataChg);
 		this.monsterMedalList.SetValues(CMD_MealExecution.DataChg.userMonster);
 		int nowMeatNum = this.GetNowMeatNum();

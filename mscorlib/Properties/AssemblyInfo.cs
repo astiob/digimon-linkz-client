@@ -6,17 +6,17 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
-[assembly: AssemblyVersion("2.0.5.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyCompany("MONO development team")]
 [assembly: AssemblyProduct("MONO Common language infrastructure")]
 [assembly: AssemblyCopyright("(c) various MONO Authors")]
-[assembly: AssemblyInformationalVersion("3.0.40818.0")]
-[assembly: SatelliteContractVersion("2.0.5.0")]
+[assembly: AssemblyInformationalVersion("2.0.50727.1433")]
+[assembly: SatelliteContractVersion("2.0.0.0")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(true)]
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../silverlight.pub")]
-[assembly: AssemblyFileVersion("3.0.40818.0")]
+[assembly: AssemblyKeyFile("../ecma.pub")]
+[assembly: AssemblyFileVersion("2.0.50727.1433")]
 [assembly: ComVisible(false)]
 [assembly: CompilationRelaxations(CompilationRelaxations.NoStringInterning)]
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]

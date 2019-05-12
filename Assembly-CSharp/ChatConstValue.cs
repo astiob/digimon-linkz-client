@@ -95,11 +95,27 @@ public static class ChatConstValue
 
 	public const string SPRITE_MEMBER_RELATION_TYPE_BLOCK = "ListStatus_Waku_Red";
 
+	public static readonly string[] SPRITE_GROUP_CATEGORY = new string[]
+	{
+		string.Empty,
+		"ChatCategori_Capture",
+		"ChatCategori_Chat",
+		"ChatCategori_Interact2",
+		"ChatCategori_Interact"
+	};
+
 	public const string API_SOCKET_SEND_MESSAGE = "810002";
 
 	public const string API_SOCKET_SEND_EXPULSION = "810003";
 
 	public const string CHAT_MESSEGE_HISTORY_ID_DEFAULT = "0";
+
+	public static readonly string[] WORLD_ID_LIST = new string[]
+	{
+		"1",
+		"3",
+		"8"
+	};
 
 	public const string PF_CHAT_REQ_LIST = "CMD_ChatReqList";
 
@@ -128,22 +144,6 @@ public static class ChatConstValue
 	public const string PF_CONFIRM = "CMD_Confirm";
 
 	public const string PF_PROFILE_FRIEND = "CMD_ProfileFriend";
-
-	public static readonly string[] SPRITE_GROUP_CATEGORY = new string[]
-	{
-		string.Empty,
-		"ChatCategori_Capture",
-		"ChatCategori_Chat",
-		"ChatCategori_Interact2",
-		"ChatCategori_Interact"
-	};
-
-	public static readonly string[] WORLD_ID_LIST = new string[]
-	{
-		"1",
-		"3",
-		"8"
-	};
 
 	public static int CHAT_GROUP_JOIN_MAX_NUM
 	{

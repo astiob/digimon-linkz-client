@@ -1,5 +1,6 @@
 ﻿using Master;
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class GUIPlayerStatus : MonoBehaviour
@@ -29,10 +30,21 @@ public sealed class GUIPlayerStatus : MonoBehaviour
 
 	private bool isUpdateParams;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
 	private void Awake()
 	{
 		GUIPlayerStatus.instance = this;
-		Singleton<GUIManager>.Instance.ActCallBackCloseAllCMD += GUIPlayerStatus.RefreshParamsForce_S;
+		GUIManager guimanager = Singleton<GUIManager>.Instance;
+		if (GUIPlayerStatus.<>f__mg$cache0 == null)
+		{
+			GUIPlayerStatus.<>f__mg$cache0 = new Action(GUIPlayerStatus.RefreshParamsForce_S);
+		}
+		guimanager.ActCallBackCloseAllCMD += GUIPlayerStatus.<>f__mg$cache0;
 	}
 
 	private void Update()
@@ -47,7 +59,12 @@ public sealed class GUIPlayerStatus : MonoBehaviour
 	private void OnDestroy()
 	{
 		GUIPlayerStatus.instance = null;
-		Singleton<GUIManager>.Instance.ActCallBackCloseAllCMD -= GUIPlayerStatus.RefreshParamsForce_S;
+		GUIManager guimanager = Singleton<GUIManager>.Instance;
+		if (GUIPlayerStatus.<>f__mg$cache1 == null)
+		{
+			GUIPlayerStatus.<>f__mg$cache1 = new Action(GUIPlayerStatus.RefreshParamsForce_S);
+		}
+		guimanager.ActCallBackCloseAllCMD -= GUIPlayerStatus.<>f__mg$cache1;
 	}
 
 	public static void RefreshParams_S(bool isForce = false)

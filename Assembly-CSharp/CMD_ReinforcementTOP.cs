@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_ReinforcementTOP : CMD
@@ -32,14 +33,11 @@ public sealed class CMD_ReinforcementTOP : CMD
 	private UILabel ngTX_LEV_S_PLUS;
 
 	[SerializeField]
-	[Header("チップ部分")]
 	private ChipBaseSelect chipBaseSelect;
 
-	[Header("所持クラスタ")]
 	[SerializeField]
 	private UILabel possessionClusterLabel;
 
-	[Header("消費クラスタ")]
 	[SerializeField]
 	private UILabel useClusterLabel;
 
@@ -49,8 +47,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private GUICollider clBTN_DECIDE;
 
-	[SerializeField]
 	[Header("決定ラベル")]
+	[SerializeField]
 	private UILabelEx decideLabel;
 
 	[SerializeField]
@@ -77,6 +75,15 @@ public sealed class CMD_ReinforcementTOP : CMD
 	private StrengthenCharaIconGrayOut iconGrayOut;
 
 	private StrengthenCharaMonsterList monsterList;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache2;
 
 	private MonsterData baseDigimon { get; set; }
 
@@ -171,12 +178,12 @@ public sealed class CMD_ReinforcementTOP : CMD
 			{
 				ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 				FarmCameraControlForCMD.On();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy1(animation);
 				RestrictionInput.EndLoad();
 			}, delegate(Exception nop)
 			{
 				FarmCameraControlForCMD.On();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy1(animation);
 				RestrictionInput.EndLoad();
 			}, null), false);
 		}
@@ -196,7 +203,13 @@ public sealed class CMD_ReinforcementTOP : CMD
 		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_reinforcement", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_reinforcement";
+			if (CMD_ReinforcementTOP.<>f__mg$cache0 == null)
+			{
+				CMD_ReinforcementTOP.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_ReinforcementTOP.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_ReinforcementTOP");
 			});
@@ -213,44 +226,45 @@ public sealed class CMD_ReinforcementTOP : CMD
 
 	private void OnTouchDecide()
 	{
-		CMD_StrengthenCheck cmd_StrengthenCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseReinforce), "CMD_StrengthenCheck", null) as CMD_StrengthenCheck;
-		string text = this.useClusterLabel.text;
-		string text2 = this.ngTX_LEV_S_CHG.text;
-		string text3 = this.ngTX_LEV_S_AFTER.text;
-		string text4 = this.ngTX_LEV_S_PLUS.text;
+		CMD_StrengthenCheck cmd_StrengthenCheck = GUIMain.ShowCommonDialog(null, "CMD_StrengthenCheck", null) as CMD_StrengthenCheck;
+		cmd_StrengthenCheck.SetActionYesButton(new Action<CMD>(this.OnPushConfirmYesButton));
 		bool isLevelMax = MonsterStatusData.IsLevelMax(this.baseDigimon.userMonster.monsterId, this.baseDigimon.userMonster.level);
-		cmd_StrengthenCheck.SetParams(this.partnerMonsterList, text, text2, text3, text4, isLevelMax);
+		cmd_StrengthenCheck.SetParams(this.partnerMonsterList, this.useClusterLabel.text, this.ngTX_LEV_S_CHG.text, this.ngTX_LEV_S_AFTER.text, this.ngTX_LEV_S_PLUS.text, isLevelMax);
 	}
 
-	private void OnCloseReinforce(int idx)
+	private void OnPushConfirmYesButton(CMD confirmPopup)
 	{
-		if (idx == 0)
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
+		confirmPopup.SetCloseAction(delegate(int noop)
 		{
-			RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
 			DataMng.Instance().CheckCampaign(new Action<int>(this.FusionExec), new GameWebAPI.RespDataCP_Campaign.CampaignType[]
 			{
 				GameWebAPI.RespDataCP_Campaign.CampaignType.TrainExpUp,
 				GameWebAPI.RespDataCP_Campaign.CampaignType.TrainCostDown,
 				GameWebAPI.RespDataCP_Campaign.CampaignType.TrainLuckUp
 			});
-		}
+		});
 	}
 
-	private void FusionExec(int result)
+	private void FusionExec(int campaignStatus)
 	{
-		if (result == -1)
+		if (campaignStatus == -1)
 		{
 			return;
 		}
-		if (0 < result)
+		if (0 < campaignStatus)
 		{
 			RestrictionInput.EndLoad();
-			DataMng.Instance().CampaignErrorCloseAllCommonDialog(result == 1, delegate
+			DataMng.Instance().CampaignErrorCloseAllCommonDialog(campaignStatus == 1, delegate
 			{
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-				DataMng.Instance().ReloadCampaign(new Action(RestrictionInput.EndLoad));
+				DataMng dataMng = DataMng.Instance();
+				if (CMD_ReinforcementTOP.<>f__mg$cache1 == null)
+				{
+					CMD_ReinforcementTOP.<>f__mg$cache1 = new Action(RestrictionInput.EndLoad);
+				}
+				dataMng.ReloadCampaign(CMD_ReinforcementTOP.<>f__mg$cache1);
 			});
-			RestrictionInput.EndLoad();
 			return;
 		}
 		string[] mat = new string[this.partnerMonsterList.Count];
@@ -283,30 +297,34 @@ public sealed class CMD_ReinforcementTOP : CMD
 	private void EndReinforce(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList oldUserMonster)
 	{
 		string[] userMonsterIdList = this.partnerMonsterList.Select((MonsterData x) => x.userMonster.userMonsterId).ToArray<string>();
+		ChipDataMng.GetUserChipSlotData().RemoveMonsterChipData(userMonsterIdList);
 		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
-		ChipDataMng.DeleteEquipChip(userMonsterIdList);
-		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Reinforce();
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		this.InitMonsterList(false);
-		int num = int.Parse(this.baseDigimon.userMonster.luck);
-		int luckDiff = num - int.Parse(oldUserMonster.luck);
-		CutsceneDataTraining cutsceneData = new CutsceneDataTraining
+		CutsceneDataTraining cutsceneDataTraining = new CutsceneDataTraining();
+		cutsceneDataTraining.path = "Cutscenes/Training";
+		cutsceneDataTraining.baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
+		cutsceneDataTraining.materialNum = this.partnerMonsterList.Count;
+		CutsceneDataTraining cutsceneDataTraining2 = cutsceneDataTraining;
+		if (CMD_ReinforcementTOP.<>f__mg$cache2 == null)
 		{
-			path = "Cutscenes/Training",
-			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
-			materialNum = this.partnerMonsterList.Count,
-			endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-		};
+			CMD_ReinforcementTOP.<>f__mg$cache2 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+		}
+		cutsceneDataTraining2.endCallback = CMD_ReinforcementTOP.<>f__mg$cache2;
+		CutsceneDataTraining cutsceneData = cutsceneDataTraining;
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, delegate()
 		{
-			AppCoroutine.Start(this.charaDetail.StartReinforcementEffect(this.baseDigimon.userMonster.ex, oldUserMonster, luckDiff), false);
+			this.StartCutSceneCallBack(oldUserMonster);
+		}, delegate()
+		{
+			this.charaDetail.StartAnimation();
 			RestrictionInput.EndLoad();
 		}, 0.5f, 0.5f);
 	}
 
-	private void StartCutSceneCallBack()
+	private void StartCutSceneCallBack(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList oldUserMonster)
 	{
 		this.leftLargeMonsterIcon.Data = this.baseDigimon;
 		GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.baseDigimon);
@@ -327,7 +345,13 @@ public sealed class CMD_ReinforcementTOP : CMD
 		this.SetLuckChanceDescript();
 		this.CalcAndShowLevelChange();
 		this.BtnCont();
-		this.charaDetail = this.ShowDetail(this.baseDigimon);
+		int num = int.Parse(this.baseDigimon.userMonster.luck);
+		int upLuck = num - int.Parse(oldUserMonster.luck);
+		this.charaDetail = CMD_CharacterDetailed.CreateWindow(this.baseDigimon, delegate()
+		{
+			this.monsterList.LockIconReturnDetailed(icon, this.baseDigimon, this.baseDigimon);
+			this.leftLargeMonsterIcon.Lock = this.baseDigimon.userMonster.IsLocked;
+		}, oldUserMonster, this.baseDigimon.userMonster.ex, upLuck);
 	}
 
 	private void ShowChgInfo()
@@ -450,6 +474,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		this.csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+		this.csSelectPanelMonsterIcon.ClearIconDungeonBonus();
 		BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
 		this.sortButton = componentsInChildren[0];
 		this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);

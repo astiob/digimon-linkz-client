@@ -7,8 +7,8 @@ using System.Security.Policy;
 namespace System.Runtime.Hosting
 {
 	/// <summary>Provides the base class for the activation of manifest-based assemblies. </summary>
-	[ComVisible(true)]
 	[MonoTODO("missing manifest support")]
+	[ComVisible(true)]
 	public class ApplicationActivator
 	{
 		/// <summary>Creates an instance of the application to be activated, using the specified activation context. </summary>

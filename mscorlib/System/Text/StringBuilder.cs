@@ -6,8 +6,8 @@ namespace System.Text
 {
 	/// <summary>Represents a mutable string of characters. This class cannot be inherited.</summary>
 	/// <filterpriority>1</filterpriority>
-	[MonoTODO("Serialization format not compatible with .NET")]
 	[ComVisible(true)]
+	[MonoTODO("Serialization format not compatible with .NET")]
 	[Serializable]
 	public sealed class StringBuilder : ISerializable
 	{

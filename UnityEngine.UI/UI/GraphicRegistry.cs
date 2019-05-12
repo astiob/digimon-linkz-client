@@ -14,6 +14,9 @@ namespace UnityEngine.UI
 
 		protected GraphicRegistry()
 		{
+			GC.KeepAlive(new Dictionary<Graphic, int>());
+			GC.KeepAlive(new Dictionary<ICanvasElement, int>());
+			GC.KeepAlive(new Dictionary<IClipper, int>());
 		}
 
 		public static GraphicRegistry instance
@@ -30,43 +33,52 @@ namespace UnityEngine.UI
 
 		public static void RegisterGraphicForCanvas(Canvas c, Graphic graphic)
 		{
-			if (c == null)
+			if (!(c == null))
 			{
-				return;
+				IndexedSet<Graphic> indexedSet;
+				GraphicRegistry.instance.m_Graphics.TryGetValue(c, out indexedSet);
+				if (indexedSet != null)
+				{
+					indexedSet.AddUnique(graphic);
+				}
+				else
+				{
+					indexedSet = new IndexedSet<Graphic>();
+					indexedSet.Add(graphic);
+					GraphicRegistry.instance.m_Graphics.Add(c, indexedSet);
+				}
 			}
-			IndexedSet<Graphic> indexedSet;
-			GraphicRegistry.instance.m_Graphics.TryGetValue(c, out indexedSet);
-			if (indexedSet != null)
-			{
-				indexedSet.AddUnique(graphic);
-				return;
-			}
-			indexedSet = new IndexedSet<Graphic>();
-			indexedSet.Add(graphic);
-			GraphicRegistry.instance.m_Graphics.Add(c, indexedSet);
 		}
 
 		public static void UnregisterGraphicForCanvas(Canvas c, Graphic graphic)
 		{
-			if (c == null)
+			if (!(c == null))
 			{
-				return;
-			}
-			IndexedSet<Graphic> indexedSet;
-			if (GraphicRegistry.instance.m_Graphics.TryGetValue(c, out indexedSet))
-			{
-				indexedSet.Remove(graphic);
+				IndexedSet<Graphic> indexedSet;
+				if (GraphicRegistry.instance.m_Graphics.TryGetValue(c, out indexedSet))
+				{
+					indexedSet.Remove(graphic);
+					if (indexedSet.Count == 0)
+					{
+						GraphicRegistry.instance.m_Graphics.Remove(c);
+					}
+				}
 			}
 		}
 
 		public static IList<Graphic> GetGraphicsForCanvas(Canvas canvas)
 		{
-			IndexedSet<Graphic> result;
-			if (GraphicRegistry.instance.m_Graphics.TryGetValue(canvas, out result))
+			IndexedSet<Graphic> indexedSet;
+			IList<Graphic> result;
+			if (GraphicRegistry.instance.m_Graphics.TryGetValue(canvas, out indexedSet))
 			{
-				return result;
+				result = indexedSet;
 			}
-			return GraphicRegistry.s_EmptyList;
+			else
+			{
+				result = GraphicRegistry.s_EmptyList;
+			}
+			return result;
 		}
 	}
 }

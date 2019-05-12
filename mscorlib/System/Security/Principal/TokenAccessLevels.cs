@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal
 {
 	/// <summary>Defines the privileges of the user account associated with the access token. </summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum TokenAccessLevels
 	{

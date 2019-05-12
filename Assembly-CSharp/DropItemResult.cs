@@ -16,8 +16,8 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private GameObject winLogo;
 
-	[SerializeField]
 	[Header("スキップ用Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogoForSkip;
 
 	[Header("エリア名とステージ名が入ってるGameObject")]
@@ -28,8 +28,8 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private UILabel areaName;
 
-	[SerializeField]
 	[Header("ステージ名")]
+	[SerializeField]
 	private UILabel stageName;
 
 	[Header("ライン達")]

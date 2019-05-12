@@ -20,12 +20,12 @@ public abstract class UIBasicSprite : UIWidget
 	[SerializeField]
 	protected bool mInvert;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIBasicSprite.Flip mFlip;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mRotate90;
 
 	[NonSerialized]

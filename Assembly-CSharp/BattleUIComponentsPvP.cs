@@ -7,16 +7,16 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	private Transform menuPanelTransform;
 
-	[SerializeField]
 	[Header("味方のPvP用上に出る文字")]
+	[SerializeField]
 	private UIWidget _pvpBattleYourPartyUi;
 
 	[Header("敵のPvP用上に出る文字")]
 	[SerializeField]
 	private UIWidget _pvpBattleEnemyPartyUi;
 
-	[SerializeField]
 	[Header("シード同期中のもの")]
+	[SerializeField]
 	private UIWidget _pvpBattleSyncWaitUi;
 
 	[SerializeField]

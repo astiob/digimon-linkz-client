@@ -8,8 +8,8 @@ public class VersionUpItem : GUICollider
 	[SerializeField]
 	public UISprite spIcon;
 
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	public UITexture texIcon;
 
 	[Header("素材選択")]
@@ -20,8 +20,8 @@ public class VersionUpItem : GUICollider
 	[SerializeField]
 	public UISprite spNumPlate;
 
-	[SerializeField]
 	[Header("個数表示")]
+	[SerializeField]
 	public UILabel lbNum;
 
 	private Action actTouchShort;

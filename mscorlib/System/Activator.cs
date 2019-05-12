@@ -13,9 +13,9 @@ namespace System
 {
 	/// <summary>Contains methods to create types of objects locally or remotely, or obtain references to existing remote objects. This class cannot be inherited. </summary>
 	/// <filterpriority>2</filterpriority>
-	[ComDefaultInterface(typeof(_Activator))]
 	[ClassInterface(ClassInterfaceType.None)]
 	[ComVisible(true)]
+	[ComDefaultInterface(typeof(_Activator))]
 	public sealed class Activator : _Activator
 	{
 		private const BindingFlags _flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.CreateInstance;

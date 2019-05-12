@@ -6,9 +6,9 @@ namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the public members of the <see cref="T:System.Reflection.FieldInfo" /> class to unmanaged code.</summary>
 	[Guid("8A7C1442-A9FB-366B-80D8-4939FFA6DBE0")]
-	[ComVisible(true)]
-	[CLSCompliant(false)]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[CLSCompliant(false)]
+	[ComVisible(true)]
 	[TypeLibImportClass(typeof(FieldInfo))]
 	public interface _FieldInfo
 	{

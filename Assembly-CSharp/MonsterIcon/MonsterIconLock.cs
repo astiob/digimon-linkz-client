@@ -21,7 +21,7 @@ namespace MonsterIcon
 			this.sprite.enabled = true;
 		}
 
-		public void ClearLock()
+		public void SetUnlock()
 		{
 			this.sprite.enabled = false;
 		}

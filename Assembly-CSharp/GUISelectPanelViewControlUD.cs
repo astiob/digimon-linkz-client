@@ -42,12 +42,20 @@ public class GUISelectPanelViewControlUD : GUICollider
 		return this.useVariableY;
 	}
 
-	protected void InitViewControl(GameObject _goParts, float _fY_PTH, float _fViewMinY, float _fViewMaxY, int _x_size, int _sector_size)
+	protected void InitViewControl(GameObject _goParts, float _fY_PTH, float _fViewMinY, float _fViewMaxY, int _x_size, int _sector_size, bool isResizeListArea)
 	{
 		this.goParts = _goParts;
 		this.fY_PTH = _fY_PTH;
-		this.fViewMinY = _fViewMinY - GUIMain.VerticalSpaceSize;
-		this.fViewMaxY = _fViewMaxY + GUIMain.VerticalSpaceSize;
+		if (isResizeListArea)
+		{
+			this.fViewMinY = _fViewMinY - GUIMain.VerticalSpaceSize;
+			this.fViewMaxY = _fViewMaxY + GUIMain.VerticalSpaceSize;
+		}
+		else
+		{
+			this.fViewMinY = _fViewMinY;
+			this.fViewMaxY = _fViewMaxY;
+		}
 		this.x_size = _x_size;
 		this.sector_size = _sector_size;
 		this.sector_ct = this.CalcSectorCT();
@@ -63,18 +71,20 @@ public class GUISelectPanelViewControlUD : GUICollider
 		{
 			this.csPartsList = new List<GUISelectPanelViewControlUD.ListPartsRecycle>();
 			int num = this.x_size * this.sector_size * this.sector_ct;
+			GUIListPartBS component = this.goParts.GetComponent<GUIListPartBS>();
 			for (int i = 0; i < num; i++)
 			{
 				GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.goParts);
-				GUIListPartBS component = gameObject.GetComponent<GUIListPartBS>();
-				component.parent = this;
-				Vector3 localScale = component.transform.localScale;
-				component.transform.parent = base.transform;
+				GUIListPartBS component2 = gameObject.GetComponent<GUIListPartBS>();
+				component2.parent = this;
+				component2.ReceiveOriginalParts(component);
+				Vector3 localScale = component2.transform.localScale;
+				component2.transform.parent = base.transform;
 				localScale.x *= this._sclX;
 				localScale.y *= this._sclY;
-				component.transform.localScale = localScale;
+				component2.transform.localScale = localScale;
 				GUISelectPanelViewControlUD.ListPartsRecycle listPartsRecycle = new GUISelectPanelViewControlUD.ListPartsRecycle();
-				listPartsRecycle.csParts = component;
+				listPartsRecycle.csParts = component2;
 				listPartsRecycle.csParts.IDX = -1;
 				listPartsRecycle.isInit = false;
 				this.csPartsList.Add(listPartsRecycle);

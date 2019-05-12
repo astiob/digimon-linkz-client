@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Other/Screen Overlay")]
-	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Other/Screen Overlay")]
 	public class ScreenOverlay : PostEffectsBase
 	{
 		public ScreenOverlay.OverlayBlendMode blendMode = ScreenOverlay.OverlayBlendMode.Overlay;
@@ -36,8 +36,8 @@ namespace UnityStandardAssets.ImageEffects
 				Graphics.Blit(source, destination);
 				return;
 			}
-			Vector4 vector = new Vector4(1f, 0f, 0f, 1f);
-			this.overlayMaterial.SetVector("_UV_Transform", vector);
+			Vector4 value = new Vector4(1f, 0f, 0f, 1f);
+			this.overlayMaterial.SetVector("_UV_Transform", value);
 			this.overlayMaterial.SetFloat("_Intensity", this.intensity);
 			this.overlayMaterial.SetTexture("_Overlay", this.texture);
 			Graphics.Blit(source, destination, this.overlayMaterial, (int)this.blendMode);

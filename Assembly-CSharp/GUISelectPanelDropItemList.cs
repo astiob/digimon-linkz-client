@@ -118,7 +118,8 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 			GUISelectPanelDropItemList.partsDataList[num11].index = num11;
 		}
 		base.initLocation = true;
-		base.AllBuild(num10, true, 1f, 1f, null, null);
+		this.RecycleViewSectorSize = 2;
+		base.AllBuild(num10, true, 1f, 1f, null, null, false);
 		if (base.scrollBar.activeInHierarchy)
 		{
 			this.boxCollider.size = new Vector3(this.boxCollider.size.x, this.boxCollider.size.y, 40f);
@@ -158,9 +159,9 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 					yield return new WaitForSeconds(0.5f);
 				}
 				int endDrawDropIconCount = 0;
-				foreach (GUIListDropItemParts temp in list)
+				foreach (GUIListDropItemParts guilistDropItemParts in list)
 				{
-					temp.DrawDropIcon(isSkip, delegate
+					guilistDropItemParts.DrawDropIcon(isSkip, delegate
 					{
 						endDrawDropIconCount++;
 					});
@@ -174,8 +175,8 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 				}
 				if (isMaxShow && !isEndPage)
 				{
-					int index = (i + 1) / 10;
-					base.InitMinMaxLocation(index, 0f);
+					int adjustIdx = (i + 1) / 10;
+					base.InitMinMaxLocation(adjustIdx, 0f);
 					this.Update();
 				}
 				list.Clear();

@@ -32,7 +32,7 @@ namespace CharacterMiniStatusUI
 
 		public void SetMonsterData(MonsterData monsterData)
 		{
-			this.statusList.SetValues(monsterData, false);
+			this.statusList.SetValues(monsterData, false, false);
 			this.medalList.SetValues(monsterData.userMonster);
 			this.skillPanelShort.SetMonsterData(monsterData);
 			this.skillPanelLong.SetMonsterData(monsterData);

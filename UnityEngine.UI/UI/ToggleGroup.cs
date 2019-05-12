@@ -10,7 +10,7 @@ namespace UnityEngine.UI
 	public class ToggleGroup : UIBehaviour
 	{
 		[SerializeField]
-		private bool m_AllowSwitchOff;
+		private bool m_AllowSwitchOff = false;
 
 		private List<Toggle> m_Toggles = new List<Toggle>();
 

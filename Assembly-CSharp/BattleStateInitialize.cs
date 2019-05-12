@@ -154,51 +154,41 @@ public class BattleStateInitialize : BattleStateController
 		for (int i = 0; i < base.hierarchyData.batteWaves.Length; i++)
 		{
 			maxEnemiesLength = Mathf.Max(maxEnemiesLength, base.hierarchyData.batteWaves[i].useEnemiesId.Length);
-			int currentBossLength = 0;
-			foreach (bool boss in base.hierarchyData.batteWaves[i].enemiesBossFlag)
+			int num = 0;
+			foreach (bool flag in base.hierarchyData.batteWaves[i].enemiesBossFlag)
 			{
-				if (boss)
+				if (flag)
 				{
-					currentBossLength++;
+					num++;
 				}
 			}
-			maxBossLength = Mathf.Max(maxBossLength, currentBossLength);
+			maxBossLength = Mathf.Max(maxBossLength, num);
 		}
 		int playerLength = base.hierarchyData.usePlayerCharacters.Length;
 		int maxDigimonLength = playerLength + maxEnemiesLength;
 		List<IEnumerator> list = new List<IEnumerator>();
-		base.battleStateData.roundChangeApRevivalEffect = new HitEffectParams[maxDigimonLength];
 		base.battleStateData.isRoundStartApRevival = new bool[maxDigimonLength];
-		for (int j = 0; j < maxDigimonLength; j++)
-		{
-			string key = "EFF_COM_APUP";
-			Action<HitEffectParams, int> callback = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.roundChangeApRevivalEffect[index] = h;
-			};
-			IEnumerator hitEffect = base.stateManager.initialize.LoadHitEffect(key, j, callback);
-			list.Add(hitEffect);
-		}
+		base.stateManager.initialize.SetHitEffectPool("EFF_COM_APUP", AffectEffect.ApUp.ToString());
 		base.battleStateData.stageGimmickUpEffect = new AlwaysEffectParams[maxDigimonLength];
 		base.battleStateData.stageGimmickDownEffect = new AlwaysEffectParams[maxDigimonLength];
 		if (!base.stateManager.onEnableTutorial)
 		{
 			for (int k = 0; k < maxDigimonLength; k++)
 			{
-				string upKey = "EFF_COM_GimmickUP";
-				Action<AlwaysEffectParams, int> upCallback = delegate(AlwaysEffectParams res, int index)
+				string effectId = "EFF_COM_GimmickUP";
+				Action<AlwaysEffectParams, int> result = delegate(AlwaysEffectParams res, int index)
 				{
 					base.battleStateData.stageGimmickUpEffect[index] = res;
 				};
-				IEnumerator upAlwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(upKey, k, upCallback);
-				list.Add(upAlwaysEffect);
-				string downKey = "EFF_COM_GimmickDOWN";
-				Action<AlwaysEffectParams, int> downCallback = delegate(AlwaysEffectParams res, int index)
+				IEnumerator item = base.stateManager.initialize.LoadAlwaysEffect(effectId, k, result);
+				list.Add(item);
+				string effectId2 = "EFF_COM_GimmickDOWN";
+				Action<AlwaysEffectParams, int> result2 = delegate(AlwaysEffectParams res, int index)
 				{
 					base.battleStateData.stageGimmickDownEffect[index] = res;
 				};
-				IEnumerator downAlwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(downKey, k, downCallback);
-				list.Add(downAlwaysEffect);
+				IEnumerator item2 = base.stateManager.initialize.LoadAlwaysEffect(effectId2, k, result2);
+				list.Add(item2);
 			}
 		}
 		BattleDebug.Log("共通エフェクトのロード: 開始");
@@ -218,10 +208,7 @@ public class BattleStateInitialize : BattleStateController
 		base.battleStateData.playerCharacters = new CharacterStateControl[playerLength];
 		base.battleStateData.revivalReservedEffect = new AlwaysEffectParams[playerLength];
 		base.battleStateData.isRevivalReservedCharacter = new bool[playerLength];
-		base.battleStateData.revivalEffect = new HitEffectParams[playerLength];
-		base.battleStateData.waveChangeHpRevivalEffect = new HitEffectParams[playerLength];
 		base.battleStateData.isRoundStartHpRevival = new bool[playerLength];
-		base.battleStateData.playersDeathEffect = new HitEffectParams[playerLength];
 		LeaderSkillStatus leaderCharacterSkillStatus = null;
 		PlayerStatus getStatusLeader = base.hierarchyData.usePlayerCharacters[base.hierarchyData.leaderCharacter];
 		if (getStatusLeader.isHavingLeaderSkill)
@@ -231,62 +218,43 @@ public class BattleStateInitialize : BattleStateController
 		CharacterDatas leaderCharacterData = base.hierarchyData.GetCharacterDatas(getStatusLeader.groupId);
 		for (int i = 0; i < playerLength; i++)
 		{
-			CharacterStatus status = base.hierarchyData.usePlayerCharacters[i];
-			Tolerance tolerance = status.tolerance;
-			CharacterDatas datas = base.hierarchyData.GetCharacterDatas(status.groupId);
-			SkillStatus[] skillStatuses = status.skillIds.Select((string item) => base.hierarchyData.GetSkillStatus(item)).ToArray<SkillStatus>();
-			LeaderSkillStatus myLeaderSkill = base.hierarchyData.GetLeaderSkillStatus(status.leaderSkillId);
+			CharacterStatus characterStatus = base.hierarchyData.usePlayerCharacters[i];
+			Tolerance tolerance = characterStatus.tolerance;
+			CharacterDatas characterDatas = base.hierarchyData.GetCharacterDatas(characterStatus.groupId);
+			SkillStatus[] skillStatuses = characterStatus.skillIds.Select((string item) => base.hierarchyData.GetSkillStatus(item)).ToArray<SkillStatus>();
+			LeaderSkillStatus leaderSkillStatus = base.hierarchyData.GetLeaderSkillStatus(characterStatus.leaderSkillId);
 			bool isEnemy = false;
-			base.battleStateData.playerCharacters[i] = base.stateManager.initialize.LoadCharacterStateControl(status, tolerance, datas, skillStatuses, leaderCharacterSkillStatus, leaderCharacterData, myLeaderSkill, isEnemy);
+			base.battleStateData.playerCharacters[i] = base.stateManager.initialize.LoadCharacterStateControl(characterStatus, tolerance, characterDatas, skillStatuses, leaderCharacterSkillStatus, leaderCharacterData, leaderSkillStatus, isEnemy);
 			base.battleStateData.playerCharacters[i].myIndex = i;
 			base.battleStateData.isRevivalReservedCharacter[i] = false;
-			Action<CharacterParams, int, string> idCallback = delegate(CharacterParams c, int index, string id)
+			Action<CharacterParams, int, string> result = delegate(CharacterParams c, int index, string id)
 			{
 				base.battleStateData.playerCharacters[index].CharacterParams = c;
 			};
-			IEnumerator idCharacterParam = base.stateManager.initialize.LoadCharacterParam(status.prefabId, i, idCallback);
-			list.Add(idCharacterParam);
-			string revivalReservedKey = "revivalReservationEffect";
-			Action<AlwaysEffectParams, int> revivalReservedCallback = delegate(AlwaysEffectParams a, int id)
+			IEnumerator item4 = base.stateManager.initialize.LoadCharacterParam(characterStatus.prefabId, i, result);
+			list.Add(item4);
+			string effectId = "revivalReservationEffect";
+			Action<AlwaysEffectParams, int> result2 = delegate(AlwaysEffectParams a, int id)
 			{
 				base.battleStateData.revivalReservedEffect[id] = a;
 			};
-			IEnumerator revivalReservedAlwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(revivalReservedKey, i, revivalReservedCallback);
-			list.Add(revivalReservedAlwaysEffect);
-			string death = "EFF_COM_DEATH";
-			Action<HitEffectParams, int> deathCallback = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.playersDeathEffect[index] = h;
-			};
-			IEnumerator deathHitEffect = base.stateManager.initialize.LoadHitEffect(death, i, deathCallback);
-			list.Add(deathHitEffect);
-			string revival = "EFF_COM_L_HEAL";
-			Action<HitEffectParams, int> revivalCallback = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.revivalEffect[index] = h;
-			};
-			IEnumerator revivalHitEffect = base.stateManager.initialize.LoadHitEffect(revival, i, revivalCallback);
-			list.Add(revivalHitEffect);
-			string waveHpRevival = "EFF_COM_L_HEAL";
-			Action<HitEffectParams, int> waveHpRevivalCallback = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.waveChangeHpRevivalEffect[index] = h;
-			};
-			IEnumerator waveHpRevivalHitEffect = base.stateManager.initialize.LoadHitEffect(waveHpRevival, i, waveHpRevivalCallback);
-			list.Add(waveHpRevivalHitEffect);
+			IEnumerator item2 = base.stateManager.initialize.LoadAlwaysEffect(effectId, i, result2);
+			list.Add(item2);
+			base.stateManager.initialize.SetHitEffectPool("EFF_COM_DEATH");
+			base.stateManager.initialize.SetHitEffectPool("EFF_COM_L_HEAL");
 		}
 		base.battleStateData.leaderCharacter = base.battleStateData.playerCharacters[base.hierarchyData.leaderCharacter];
 		base.battleStateData.leaderCharacter.isLeader = true;
 		base.battleStateData.insertCharacterEffect = new AlwaysEffectParams[playerLength];
 		for (int j = 0; j < playerLength; j++)
 		{
-			string key = this.insertPlayerPath;
-			Action<AlwaysEffectParams, int> callback = delegate(AlwaysEffectParams res, int index)
+			string insertPlayerPath = this.insertPlayerPath;
+			Action<AlwaysEffectParams, int> result3 = delegate(AlwaysEffectParams res, int index)
 			{
 				base.battleStateData.insertCharacterEffect[index] = res;
 			};
-			IEnumerator alwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(key, j, callback);
-			list.Add(alwaysEffect);
+			IEnumerator item3 = base.stateManager.initialize.LoadAlwaysEffect(insertPlayerPath, j, result3);
+			list.Add(item3);
 		}
 		BattleDebug.Log("プレイヤーキャラクタ / 関連エフェクトのロード: 開始");
 		IEnumerator LoadDataStore = base.stateManager.initialize.LoadCoroutine(list.ToArray());
@@ -306,15 +274,15 @@ public class BattleStateInitialize : BattleStateController
 		for (int i = 0; i < base.hierarchyData.batteWaves.Length; i++)
 		{
 			maxEnemiesLength = Mathf.Max(maxEnemiesLength, base.hierarchyData.batteWaves[i].useEnemiesId.Length);
-			int currentBossLength = 0;
-			foreach (bool boss in base.hierarchyData.batteWaves[i].enemiesBossFlag)
+			int num = 0;
+			foreach (bool flag in base.hierarchyData.batteWaves[i].enemiesBossFlag)
 			{
-				if (boss)
+				if (flag)
 				{
-					currentBossLength++;
+					num++;
 				}
 			}
-			maxBossLength = Mathf.Max(maxBossLength, currentBossLength);
+			maxBossLength = Mathf.Max(maxBossLength, num);
 		}
 		List<IEnumerator> list = new List<IEnumerator>();
 		LeaderSkillStatus leaderCharacterLeaderSkill = null;
@@ -326,111 +294,108 @@ public class BattleStateInitialize : BattleStateController
 		CharacterDatas enemyLeaderCharacterData = base.hierarchyData.GetCharacterDatas(getStatusEnemyLeader.groupId);
 		Dictionary<string, int> characterParamsIdListBattleWave = new Dictionary<string, int>();
 		base.battleStateData.preloadEnemies = new CharacterStateControl[base.hierarchyData.batteWaves.Length][];
-		for (int i2 = 0; i2 < base.battleStateData.preloadEnemies.Length; i2++)
+		for (int k = 0; k < base.battleStateData.preloadEnemies.Length; k++)
 		{
-			base.battleStateData.preloadEnemies[i2] = new CharacterStateControl[base.hierarchyData.batteWaves[i2].useEnemiesId.Length];
-			for (int j = 0; j < base.battleStateData.preloadEnemies[i2].Length; j++)
+			base.battleStateData.preloadEnemies[k] = new CharacterStateControl[base.hierarchyData.batteWaves[k].useEnemiesId.Length];
+			Dictionary<string, int> dictionary = new Dictionary<string, int>();
+			for (int l = 0; l < base.battleStateData.preloadEnemies[k].Length; l++)
 			{
-				CharacterStatus status = base.hierarchyData.batteWaves[i2].enemyStatuses[j];
-				Tolerance tolerance = status.tolerance;
-				CharacterDatas datas = base.hierarchyData.GetCharacterDatas(status.groupId);
-				SkillStatus[] skillStatuses = status.skillIds.Select((string item) => base.hierarchyData.GetSkillStatus(item)).ToArray<SkillStatus>();
-				LeaderSkillStatus myLeaderSkill = base.hierarchyData.GetLeaderSkillStatus(status.leaderSkillId);
+				CharacterStatus characterStatus = base.hierarchyData.batteWaves[k].enemyStatuses[l];
+				Tolerance tolerance = characterStatus.tolerance;
+				CharacterDatas characterDatas = base.hierarchyData.GetCharacterDatas(characterStatus.groupId);
+				SkillStatus[] skillStatuses = characterStatus.skillIds.Select((string item) => base.hierarchyData.GetSkillStatus(item)).ToArray<SkillStatus>();
+				LeaderSkillStatus leaderSkillStatus = base.hierarchyData.GetLeaderSkillStatus(characterStatus.leaderSkillId);
 				bool isEnemy = true;
-				base.battleStateData.preloadEnemies[i2][j] = base.stateManager.initialize.LoadCharacterStateControl(status, tolerance, datas, skillStatuses, leaderCharacterLeaderSkill, enemyLeaderCharacterData, myLeaderSkill, isEnemy);
-				base.battleStateData.preloadEnemies[i2][j].myIndex = j;
-				if (j == base.hierarchyData.leaderCharacter)
+				base.battleStateData.preloadEnemies[k][l] = base.stateManager.initialize.LoadCharacterStateControl(characterStatus, tolerance, characterDatas, skillStatuses, leaderCharacterLeaderSkill, enemyLeaderCharacterData, leaderSkillStatus, isEnemy);
+				base.battleStateData.preloadEnemies[k][l].myIndex = l;
+				if (l == base.hierarchyData.leaderCharacter)
 				{
-					base.battleStateData.preloadEnemies[i2][j].isLeader = true;
+					base.battleStateData.preloadEnemies[k][l].isLeader = true;
 				}
-				string prefabId = status.prefabId;
-				if (!characterParamsIdListBattleWave.ContainsKey(prefabId))
+				string prefabId = characterStatus.prefabId;
+				if (!dictionary.ContainsKey(prefabId))
 				{
-					characterParamsIdListBattleWave.Add(prefabId, 1);
+					dictionary.Add(prefabId, 1);
 				}
-				else if (characterParamsIdListBattleWave[prefabId] < maxEnemiesLength)
+				else
 				{
 					Dictionary<string, int> dictionary2;
-					Dictionary<string, int> dictionary = dictionary2 = characterParamsIdListBattleWave;
-					string key4;
-					string key3 = key4 = prefabId;
-					int num2 = dictionary2[key4];
-					dictionary[key3] = num2 + 1;
+					string key;
+					dictionary[prefabId] = ((dictionary2 = dictionary)[key = prefabId] = dictionary2[key] + 1);
+				}
+			}
+			foreach (KeyValuePair<string, int> keyValuePair in dictionary)
+			{
+				if (characterParamsIdListBattleWave.ContainsKey(keyValuePair.Key))
+				{
+					if (characterParamsIdListBattleWave[keyValuePair.Key] < keyValuePair.Value)
+					{
+						characterParamsIdListBattleWave[keyValuePair.Key] = keyValuePair.Value;
+					}
+				}
+				else
+				{
+					characterParamsIdListBattleWave.Add(keyValuePair.Key, keyValuePair.Value);
 				}
 			}
 		}
-		foreach (KeyValuePair<string, int> d in characterParamsIdListBattleWave)
+		foreach (KeyValuePair<string, int> keyValuePair2 in characterParamsIdListBattleWave)
 		{
-			for (int k = 0; k < d.Value; k++)
+			for (int m = 0; m < keyValuePair2.Value; m++)
 			{
-				Action<CharacterParams, int, string> callback = delegate(CharacterParams c, int index, string id)
+				IEnumerator item6 = base.stateManager.initialize.LoadCharacterParam(keyValuePair2.Key, m, delegate(CharacterParams c, int index, string id)
 				{
 					base.battleStateData.preloadEnemiesParams.Add(id, index.ToString(), c);
-				};
-				IEnumerator characterParam = base.stateManager.initialize.LoadCharacterParam(d.Key, k, callback);
-				list.Add(characterParam);
+				});
+				list.Add(item6);
 			}
 		}
-		base.battleStateData.enemiesDeathEffect = new HitEffectParams[maxEnemiesLength];
-		base.battleStateData.enemiesLastDeadEffect = new HitEffectParams[maxEnemiesLength];
 		base.battleStateData.droppingItemNormalEffect = new AlwaysEffectParams[base.battleStateData.maxDropNum];
 		base.battleStateData.droppingItemRareEffect = new AlwaysEffectParams[base.battleStateData.maxDropNum];
-		for (int l = 0; l < maxEnemiesLength; l++)
+		for (int n = 0; n < maxEnemiesLength; n++)
 		{
-			string deathKey = "EFF_COM_DEATH";
-			Action<HitEffectParams, int> deathCallback = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.enemiesDeathEffect[index] = h;
-			};
-			IEnumerator deathHitEffect = base.stateManager.initialize.LoadHitEffect(deathKey, l, deathCallback);
-			list.Add(deathHitEffect);
-			string deathLastKey = "EFF_COM_BOSSDEATH";
-			Action<HitEffectParams, int> deathLastCallback = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.enemiesLastDeadEffect[index] = h;
-			};
-			IEnumerator deathLastHitEffect = base.stateManager.initialize.LoadHitEffect(deathLastKey, l, deathLastCallback);
-			list.Add(deathLastHitEffect);
+			base.stateManager.initialize.SetHitEffectPool("EFF_COM_DEATH");
+			base.stateManager.initialize.SetHitEffectPool("EFF_COM_BOSSDEATH");
 		}
-		for (int m = 0; m < base.battleStateData.maxDropNum; m++)
+		for (int num2 = 0; num2 < base.battleStateData.maxDropNum; num2++)
 		{
-			string droppingItemNormalKey = "droppingItemEffectNormal";
-			Action<AlwaysEffectParams, int> droppingItemNormalCallback = delegate(AlwaysEffectParams a, int index)
+			string effectId = "droppingItemEffectNormal";
+			Action<AlwaysEffectParams, int> result = delegate(AlwaysEffectParams a, int index)
 			{
 				base.battleStateData.droppingItemNormalEffect[index] = a;
 			};
-			IEnumerator droppingItemNormalAlwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(droppingItemNormalKey, m, droppingItemNormalCallback);
-			list.Add(droppingItemNormalAlwaysEffect);
-			string droppingItemRareKey = "droppingItemEffectRare";
-			Action<AlwaysEffectParams, int> droppingItemRareCallback = delegate(AlwaysEffectParams a, int index)
+			IEnumerator item2 = base.stateManager.initialize.LoadAlwaysEffect(effectId, num2, result);
+			list.Add(item2);
+			string effectId2 = "droppingItemEffectRare";
+			Action<AlwaysEffectParams, int> result2 = delegate(AlwaysEffectParams a, int index)
 			{
 				base.battleStateData.droppingItemRareEffect[index] = a;
 			};
-			IEnumerator droppingItemRareAlwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(droppingItemRareKey, m, droppingItemRareCallback);
-			list.Add(droppingItemRareAlwaysEffect);
+			IEnumerator item3 = base.stateManager.initialize.LoadAlwaysEffect(effectId2, num2, result2);
+			list.Add(item3);
 		}
 		base.battleStateData.leaderEnemyCharacter = base.battleStateData.enemies[base.hierarchyData.leaderCharacter];
 		base.battleStateData.insertEnemyEffect = new AlwaysEffectParams[maxEnemiesLength];
-		for (int n = 0; n < maxEnemiesLength; n++)
+		for (int num3 = 0; num3 < maxEnemiesLength; num3++)
 		{
-			string key = this.insertEnemyPath;
-			Action<AlwaysEffectParams, int> callback2 = delegate(AlwaysEffectParams res, int index)
+			string insertEnemyPath = this.insertEnemyPath;
+			Action<AlwaysEffectParams, int> result3 = delegate(AlwaysEffectParams res, int index)
 			{
 				base.battleStateData.insertEnemyEffect[index] = res;
 			};
-			IEnumerator alwaysEffect = base.stateManager.initialize.LoadAlwaysEffect(key, n, callback2);
-			list.Add(alwaysEffect);
+			IEnumerator item4 = base.stateManager.initialize.LoadAlwaysEffect(insertEnemyPath, num3, result3);
+			list.Add(item4);
 		}
 		base.battleStateData.insertBossCharacterEffect = new AlwaysEffectParams[maxBossLength];
-		for (int i3 = 0; i3 < maxBossLength; i3++)
+		for (int num4 = 0; num4 < maxBossLength; num4++)
 		{
-			string key2 = "insertBossCharacterEffect";
-			Action<AlwaysEffectParams, int> callback3 = delegate(AlwaysEffectParams res, int index)
+			string effectId3 = "insertBossCharacterEffect";
+			Action<AlwaysEffectParams, int> result4 = delegate(AlwaysEffectParams res, int index)
 			{
 				base.battleStateData.insertBossCharacterEffect[index] = res;
 			};
-			IEnumerator alwaysEffect2 = base.stateManager.initialize.LoadAlwaysEffect(key2, i3, callback3);
-			list.Add(alwaysEffect2);
+			IEnumerator item5 = base.stateManager.initialize.LoadAlwaysEffect(effectId3, num4, result4);
+			list.Add(item5);
 		}
 		BattleDebug.Log("敵キャラクタ / 関連エフェクトのロード: 開始");
 		IEnumerator LoadDataStore = base.stateManager.initialize.LoadCoroutine(list.ToArray());
@@ -446,15 +411,15 @@ public class BattleStateInitialize : BattleStateController
 	private IEnumerator LoadCharacterAfter()
 	{
 		CharacterStateControl[] playerCharacters = base.stateManager.battleStateData.playerCharacters;
-		foreach (CharacterStateControl playerCharacter in playerCharacters)
+		foreach (CharacterStateControl characterStateControl in playerCharacters)
 		{
-			playerCharacter.InitializeSpecialCorrectionStatus();
+			characterStateControl.InitializeSpecialCorrectionStatus();
 		}
-		for (int i = 0; i < base.stateManager.battleStateData.preloadEnemies.Length; i++)
+		for (int j = 0; j < base.stateManager.battleStateData.preloadEnemies.Length; j++)
 		{
-			for (int j = 0; j < base.stateManager.battleStateData.preloadEnemies[i].Length; j++)
+			for (int k = 0; k < base.stateManager.battleStateData.preloadEnemies[j].Length; k++)
 			{
-				base.stateManager.battleStateData.preloadEnemies[i][j].InitializeSpecialCorrectionStatus();
+				base.stateManager.battleStateData.preloadEnemies[j][k].InitializeSpecialCorrectionStatus();
 			}
 		}
 		yield break;
@@ -469,44 +434,51 @@ public class BattleStateInitialize : BattleStateController
 		List<string> skillPassive = new List<string>();
 		foreach (SkillStatus skillStatus in base.hierarchyData.GetAllSkillStatus())
 		{
-			string invocationId = string.Empty;
-			string passiveId = string.Empty;
-			switch (skillStatus.skillType)
+			string text = string.Empty;
+			string text2 = string.Empty;
+			SkillType skillType = skillStatus.skillType;
+			if (skillType != SkillType.Attack)
 			{
-			case SkillType.Attack:
-				invocationId = "none";
-				passiveId = "none";
-				break;
-			case SkillType.Deathblow:
-				invocationId = skillStatus.prefabId;
-				passiveId = "none";
-				break;
-			case SkillType.InheritanceTechnique:
-				invocationId = "EFF_COM_SKILL";
-				passiveId = skillStatus.prefabId;
-				break;
+				if (skillType != SkillType.Deathblow)
+				{
+					if (skillType == SkillType.InheritanceTechnique)
+					{
+						text = "EFF_COM_SKILL";
+						text2 = skillStatus.prefabId;
+					}
+				}
+				else
+				{
+					text = skillStatus.prefabId;
+					text2 = "none";
+				}
 			}
-			if (!skillInvocation.Contains(invocationId))
+			else
 			{
-				string key = invocationId;
-				Action<InvocationEffectParams, string> callback = delegate(InvocationEffectParams p, string id)
+				text = "none";
+				text2 = "none";
+			}
+			if (!skillInvocation.Contains(text))
+			{
+				string skillInvocation2 = text;
+				Action<InvocationEffectParams, string> result = delegate(InvocationEffectParams p, string id)
 				{
 					invocationEffectDictionary.Add(id, p);
 				};
-				IEnumerator invocationEffect = base.stateManager.initialize.LoadInvocationEffect(key, callback);
-				effectStore.Add(invocationEffect);
-				skillInvocation.Add(invocationId);
+				IEnumerator item = base.stateManager.initialize.LoadInvocationEffect(skillInvocation2, result);
+				effectStore.Add(item);
+				skillInvocation.Add(text);
 			}
-			if (!skillPassive.Contains(passiveId))
+			if (!skillPassive.Contains(text2))
 			{
-				string key2 = passiveId;
-				Action<PassiveEffectParams[], string> callback2 = delegate(PassiveEffectParams[] p, string id)
+				string skillPassive2 = text2;
+				Action<PassiveEffectParams[], string> result2 = delegate(PassiveEffectParams[] p, string id)
 				{
 					passiveEffectDictionary.Add(id, p);
 				};
-				IEnumerator passiveEffect = base.stateManager.initialize.LoadPassiveEffect(key2, callback2);
-				effectStore.Add(passiveEffect);
-				skillPassive.Add(passiveId);
+				IEnumerator item2 = base.stateManager.initialize.LoadPassiveEffect(skillPassive2, result2);
+				effectStore.Add(item2);
+				skillPassive.Add(text2);
 			}
 		}
 		IEnumerator loadEffect = base.stateManager.initialize.LoadCoroutine(effectStore.ToArray());
@@ -516,25 +488,32 @@ public class BattleStateInitialize : BattleStateController
 		}
 		foreach (SkillStatus skillStatus2 in base.hierarchyData.GetAllSkillStatus())
 		{
-			string invocationId2 = string.Empty;
-			string passiveId2 = string.Empty;
-			switch (skillStatus2.skillType)
+			string key = string.Empty;
+			string key2 = string.Empty;
+			SkillType skillType2 = skillStatus2.skillType;
+			if (skillType2 != SkillType.Attack)
 			{
-			case SkillType.Attack:
-				invocationId2 = "none";
-				passiveId2 = "none";
-				break;
-			case SkillType.Deathblow:
-				invocationId2 = skillStatus2.prefabId;
-				passiveId2 = "none";
-				break;
-			case SkillType.InheritanceTechnique:
-				invocationId2 = "EFF_COM_SKILL";
-				passiveId2 = skillStatus2.prefabId;
-				break;
+				if (skillType2 != SkillType.Deathblow)
+				{
+					if (skillType2 == SkillType.InheritanceTechnique)
+					{
+						key = "EFF_COM_SKILL";
+						key2 = skillStatus2.prefabId;
+					}
+				}
+				else
+				{
+					key = skillStatus2.prefabId;
+					key2 = "none";
+				}
 			}
-			skillStatus2.invocationEffectParams = invocationEffectDictionary[invocationId2];
-			skillStatus2.passiveEffectParams = passiveEffectDictionary[passiveId2];
+			else
+			{
+				key = "none";
+				key2 = "none";
+			}
+			skillStatus2.invocationEffectParams = invocationEffectDictionary[key];
+			skillStatus2.passiveEffectParams = passiveEffectDictionary[key2];
 		}
 		SkillStatus[] allSkillStatus = base.hierarchyData.GetAllSkillStatus();
 		List<IEnumerator> hitEffectStore = base.stateManager.initialize.LoadHitEffectsByFlags(allSkillStatus);
@@ -555,10 +534,10 @@ public class BattleStateInitialize : BattleStateController
 		{
 			if (!BattleFunctionUtility.IsEmptyPath(skillStatus3.invocationEffectParams.cameraMotionId) && !invocationEffectKeys.Contains(skillStatus3.invocationEffectParams.cameraMotionId))
 			{
-				string key3 = skillStatus3.invocationEffectParams.cameraMotionId;
-				IEnumerator cameraMotion = base.stateManager.cameraControl.LoadCameraMotion(key3, null);
-				invocationEffectCameraMotionList.Add(cameraMotion);
-				invocationEffectKeys.Add(key3);
+				string cameraMotionId = skillStatus3.invocationEffectParams.cameraMotionId;
+				IEnumerator item3 = base.stateManager.cameraControl.LoadCameraMotion(cameraMotionId, null);
+				invocationEffectCameraMotionList.Add(item3);
+				invocationEffectKeys.Add(cameraMotionId);
 			}
 		}
 		IEnumerator loadInvocationEffectCameraMotion = base.stateManager.initialize.LoadCoroutine(invocationEffectCameraMotionList.ToArray());
@@ -656,21 +635,25 @@ public class BattleStateInitialize : BattleStateController
 		functionList.Add(this.LoadSkill());
 		functionList.Add(this.LoadAfterInitializeUI());
 		Action loading = base.stateManager.battleUiComponents.initializeUi.GetLoadingInvoke(functionList.Count);
+		TimeProfiler.BeginTotalProfile();
 		foreach (IEnumerator function in functionList)
 		{
+			TimeProfiler.BeginProfile();
 			while (function.MoveNext())
 			{
 				yield return null;
 			}
 			loading();
 			yield return new WaitForEndOfFrame();
+			TimeProfiler.EndProfile();
 		}
+		TimeProfiler.EndTotalProfile();
 		for (int i = 0; i < base.hierarchyData.usePlayerCharacters.Length; i++)
 		{
 			bool isLeader = i == base.hierarchyData.leaderCharacter;
-			CharacterStateControl playerCharacter = base.battleStateData.playerCharacters[i];
-			Sprite characterThumbnail = base.stateManager.serverControl.GetCharacterThumbnail(playerCharacter.playerStatus.thumbnailId);
-			base.stateManager.uiControl.ApplyMonsterButtonIcon(i, characterThumbnail, playerCharacter, isLeader);
+			CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[i];
+			Sprite characterThumbnail = base.stateManager.serverControl.GetCharacterThumbnail(characterStateControl.playerStatus.thumbnailId);
+			base.stateManager.uiControl.ApplyMonsterButtonIcon(i, characterThumbnail, characterStateControl, isLeader);
 		}
 		BattleDebug.Log("--- バトルGC : 開始");
 		Resources.UnloadUnusedAssets();

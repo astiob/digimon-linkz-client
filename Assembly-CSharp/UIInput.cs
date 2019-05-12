@@ -29,8 +29,8 @@ public class UIInput : MonoBehaviour
 
 	public string savedAs;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject selectOnTab;
 
 	public Color activeTextColor = Color.white;
@@ -192,10 +192,6 @@ public class UIInput : MonoBehaviour
 				this.Init();
 			}
 			UIInput.mDrawStart = 0;
-			if (Application.platform == RuntimePlatform.BlackBerryPlayer)
-			{
-				value = value.Replace("\\b", "\b");
-			}
 			value = this.Validate(value);
 			if (this.isSelected && UIInput.mKeyboard != null && this.mCached != value)
 			{

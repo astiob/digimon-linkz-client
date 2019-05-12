@@ -12,12 +12,12 @@ public sealed class TicketEfc : MonoBehaviour
 	[SerializeField]
 	private UITexture ngTICKET;
 
-	[SerializeField]
 	[Header("パーティクル OBJ")]
+	[SerializeField]
 	private GameObject goPARTICLE;
 
-	[SerializeField]
 	[Header("NEW スプライト")]
+	[SerializeField]
 	public UISprite spNew;
 
 	[Header("枚数ラベル")]

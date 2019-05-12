@@ -2,6 +2,7 @@
 using Master;
 using Scene;
 using System;
+using System.Runtime.CompilerServices;
 using UI;
 using UnityEngine;
 
@@ -9,6 +10,15 @@ namespace Quest
 {
 	public static class QuestStart
 	{
+		[CompilerGenerated]
+		private static Action <>f__mg$cache0;
+
+		[CompilerGenerated]
+		private static Action <>f__mg$cache1;
+
+		[CompilerGenerated]
+		private static Action <>f__mg$cache2;
+
 		public static void OpenConfirmReplayEvent(Action<int> onClosedAction)
 		{
 			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(onClosedAction, "CMD_Confirm", null) as CMD_Confirm;
@@ -19,7 +29,18 @@ namespace Quest
 		public static void StartEventStage(GameWebAPI.WD_Req_DngStart startInfo)
 		{
 			QuestEventInfoList.EventInfo eventInfo = ClassSingleton<QuestData>.Instance.GetEventInfo(startInfo.dungeonId);
-			ClassSingleton<AdventureSceneController>.Instance.Ready(eventInfo.scriptFileName, new Action(QuestStart.BeginEventScene), new Action(QuestStart.EndEventScene));
+			AdventureSceneController instance = ClassSingleton<AdventureSceneController>.Instance;
+			string scriptFileName = eventInfo.scriptFileName;
+			if (QuestStart.<>f__mg$cache0 == null)
+			{
+				QuestStart.<>f__mg$cache0 = new Action(QuestStart.BeginEventScene);
+			}
+			Action beginAction = QuestStart.<>f__mg$cache0;
+			if (QuestStart.<>f__mg$cache1 == null)
+			{
+				QuestStart.<>f__mg$cache1 = new Action(QuestStart.EndEventScene);
+			}
+			instance.Ready(scriptFileName, beginAction, QuestStart.<>f__mg$cache1);
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 			GameWebAPI.RequestWD_WorldStart requestWD_WorldStart = new GameWebAPI.RequestWD_WorldStart();
 			requestWD_WorldStart.SetSendData = delegate(GameWebAPI.WD_Req_DngStart param)
@@ -42,7 +63,15 @@ namespace Quest
 					DataMng.Instance().WD_ReqDngResult.clear = 0;
 				}
 				DataMng.Instance().GetResultUtilData().last_dng_req = startInfo;
-				FadeController.Instance().StartBlackFade(0f, 1f, 0.5f, new Action(QuestStart.OnFinishedFadeoutEventStage), null);
+				FadeController fadeController = FadeController.Instance();
+				float startAlpha = 0f;
+				float endAlpha = 1f;
+				float time = 0.5f;
+				if (QuestStart.<>f__mg$cache2 == null)
+				{
+					QuestStart.<>f__mg$cache2 = new Action(QuestStart.OnFinishedFadeoutEventStage);
+				}
+				fadeController.StartBlackFade(startAlpha, endAlpha, time, QuestStart.<>f__mg$cache2, null);
 				SoundMng.Instance().StopBGM(0.5f, null);
 			}, delegate(Exception noop)
 			{

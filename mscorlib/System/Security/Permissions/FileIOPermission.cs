@@ -485,8 +485,8 @@ namespace System.Security.Permissions
 
 		/// <summary>Gets a hash code for the <see cref="T:System.Security.Permissions.FileIOPermission" /> object that is suitable for use in hashing algorithms and data structures such as a hash table.</summary>
 		/// <returns>A hash code for the current <see cref="T:System.Security.Permissions.FileIOPermission" /> object.</returns>
-		[ComVisible(false)]
 		[MonoTODO("(2.0)")]
+		[ComVisible(false)]
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();

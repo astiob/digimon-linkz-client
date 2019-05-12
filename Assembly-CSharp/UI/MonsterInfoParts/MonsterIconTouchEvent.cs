@@ -17,7 +17,7 @@ namespace UI.MonsterInfoParts
 
 		public void InitializeInputEvent()
 		{
-			this.onTouchEnded += this.OnTouchEnd;
+			base.onTouchEnded += this.OnTouchEnd;
 		}
 
 		public void SetTouchAction(Action action)

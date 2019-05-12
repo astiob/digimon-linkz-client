@@ -151,6 +151,7 @@ public class GUIListPvPListParts : GUIListPartBS
 		}
 		global::Debug.Log("対戦相手UserCode: " + this.data.userInfo.userCode);
 		ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode = this.data.userInfo.userCode.Replace(" ", string.Empty);
+		GameWebAPI.RespData_ColosseumMatchingValidateLogic response = null;
 		GameWebAPI.ColosseumMatchingValidateLogic colosseumMatchingValidateLogic = new GameWebAPI.ColosseumMatchingValidateLogic();
 		colosseumMatchingValidateLogic.SetSendData = delegate(GameWebAPI.ReqData_ColosseumMatchingValidateLogic param)
 		{
@@ -160,7 +161,7 @@ public class GUIListPvPListParts : GUIListPartBS
 		};
 		colosseumMatchingValidateLogic.OnReceived = delegate(GameWebAPI.RespData_ColosseumMatchingValidateLogic res)
 		{
-			GameWebAPI.RespData_ColosseumMatchingValidateLogic response = res;
+			response = res;
 		};
 		GameWebAPI.ColosseumMatchingValidateLogic request = colosseumMatchingValidateLogic;
 		base.StartCoroutine(request.RunOneTime(delegate()

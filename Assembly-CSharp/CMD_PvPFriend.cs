@@ -6,7 +6,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 public class CMD_PvPFriend : CMD
 {
@@ -24,8 +26,8 @@ public class CMD_PvPFriend : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("誘うボタン")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]
@@ -44,6 +46,9 @@ public class CMD_PvPFriend : CMD
 	private string pvpMockTargetUserCode;
 
 	private static CMD_PvPFriend instance;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public static CMD_PvPFriend Instance
 	{
@@ -73,10 +78,10 @@ public class CMD_PvPFriend : CMD
 		{
 			this.SetCommonUI();
 			this.InitFriendList();
-			base.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception noop)
 		{
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 		MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		yield break;
@@ -158,7 +163,7 @@ public class CMD_PvPFriend : CMD
 		{
 			return;
 		}
-		GameWebAPI.RequestUS_UserProfile request = new GameWebAPI.RequestUS_UserProfile
+		GameWebAPI.RequestUS_UserProfile requestUS_UserProfile = new GameWebAPI.RequestUS_UserProfile
 		{
 			SetSendData = delegate(GameWebAPI.PRF_Req_ProfileData param)
 			{
@@ -172,7 +177,12 @@ public class CMD_PvPFriend : CMD
 				}
 			}
 		};
-		base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request = requestUS_UserProfile;
+		if (CMD_PvPFriend.<>f__mg$cache0 == null)
+		{
+			CMD_PvPFriend.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		base.StartCoroutine(request.RunOneTime(CMD_PvPFriend.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null));

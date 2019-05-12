@@ -9,7 +9,7 @@ namespace System.Collections.Generic
 	/// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
 	/// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
 	/// <filterpriority>1</filterpriority>
-	[DebuggerTypeProxy(typeof(CollectionDebuggerView<, >))]
+	[DebuggerTypeProxy(typeof(CollectionDebuggerView))]
 	[DebuggerDisplay("Count={Count}")]
 	[ComVisible(false)]
 	[Serializable]
@@ -1059,7 +1059,7 @@ namespace System.Collections.Generic
 
 		/// <summary>Represents the collection of keys in a <see cref="T:System.Collections.Generic.Dictionary`2" />. This class cannot be inherited. </summary>
 		[DebuggerDisplay("Count={Count}")]
-		[DebuggerTypeProxy(typeof(CollectionDebuggerView<, >))]
+		[DebuggerTypeProxy(typeof(CollectionDebuggerView))]
 		[Serializable]
 		public sealed class KeyCollection : IEnumerable, ICollection, ICollection<TKey>, IEnumerable<TKey>
 		{
@@ -1246,7 +1246,7 @@ namespace System.Collections.Generic
 		}
 
 		/// <summary>Represents the collection of values in a <see cref="T:System.Collections.Generic.Dictionary`2" />. This class cannot be inherited. </summary>
-		[DebuggerTypeProxy(typeof(CollectionDebuggerView<, >))]
+		[DebuggerTypeProxy(typeof(CollectionDebuggerView))]
 		[DebuggerDisplay("Count={Count}")]
 		[Serializable]
 		public sealed class ValueCollection : IEnumerable, ICollection, ICollection<TValue>, IEnumerable<TValue>

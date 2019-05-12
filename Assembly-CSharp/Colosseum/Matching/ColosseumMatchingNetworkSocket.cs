@@ -50,12 +50,11 @@ namespace Colosseum.Matching
 
 		private void OnErrorMatching(int errorCode)
 		{
-			int num = errorCode;
-			if (num != 2)
+			if (errorCode != 2)
 			{
-				if (num != 6)
+				if (errorCode != 6)
 				{
-					if (num != 93)
+					if (errorCode != 93)
 					{
 						this.eventListener.OnExceptionMatchingResponse(errorCode.ToString());
 					}

@@ -97,15 +97,28 @@ public class PrizeEfcCont : MonoBehaviour
 			this.spMedalList[num6].spriteName = "Common02_Talent_Silver";
 			this.spMedalList[num6].gameObject.SetActive(true);
 			Animation component2 = this.spMedalList[num6].gameObject.GetComponent<Animation>();
-			foreach (object obj in this.spMedalList[num6].gameObject.transform)
+			IEnumerator enumerator = this.spMedalList[num6].gameObject.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				if (component3 != null)
+				while (enumerator.MoveNext())
 				{
-					component3.gameObject.SetActive(true);
-					component3.text = StringMaster.GetString("MissionRewardKakeru") + num5.ToString();
-					break;
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					if (component3 != null)
+					{
+						component3.gameObject.SetActive(true);
+						component3.text = StringMaster.GetString("MissionRewardKakeru") + num5.ToString();
+						break;
+					}
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
 				}
 			}
 			this.medalAnimeList.Add(component2);
@@ -180,20 +193,16 @@ public class PrizeEfcCont : MonoBehaviour
 			{
 				global::Debug.LogError("Error : int.TryParse for userMonsterData of AbilityFlg");
 			}
+			else if (num != 1)
+			{
+				if (num == 2)
+				{
+					list.Add("Common02_Talent_Silver");
+				}
+			}
 			else
 			{
-				int num2 = num;
-				if (num2 != 1)
-				{
-					if (num2 == 2)
-					{
-						list.Add("Common02_Talent_Silver");
-					}
-				}
-				else
-				{
-					list.Add("Common02_Talent_Gold");
-				}
+				list.Add("Common02_Talent_Gold");
 			}
 		}
 		if (list.Count > 1)
@@ -231,15 +240,15 @@ public class PrizeEfcCont : MonoBehaviour
 	{
 		for (;;)
 		{
-			foreach (Animation anime in this.medalAnimeList)
+			foreach (Animation animation in this.medalAnimeList)
 			{
-				anime.Play();
+				animation.Play();
 			}
-			foreach (UISpriteAnimation anim in this.shiningList)
+			foreach (UISpriteAnimation uispriteAnimation in this.shiningList)
 			{
-				anim.GetComponent<UISprite>().spriteName = "Common02_Thum_Luster1";
-				anim.gameObject.SetActive(true);
-				anim.Play();
+				uispriteAnimation.GetComponent<UISprite>().spriteName = "Common02_Thum_Luster1";
+				uispriteAnimation.gameObject.SetActive(true);
+				uispriteAnimation.Play();
 			}
 			float elapsed = 0f;
 			while (this.shiningList.Count > 0 && this.shiningList[0].isPlaying)
@@ -247,14 +256,14 @@ public class PrizeEfcCont : MonoBehaviour
 				elapsed += Time.deltaTime;
 				yield return null;
 			}
-			foreach (UISpriteAnimation anim2 in this.shiningList)
+			foreach (UISpriteAnimation uispriteAnimation2 in this.shiningList)
 			{
-				anim2.gameObject.SetActive(false);
+				uispriteAnimation2.gameObject.SetActive(false);
 			}
 			yield return new WaitForSeconds(2f - elapsed);
-			foreach (Animation anime2 in this.medalAnimeList)
+			foreach (Animation animation2 in this.medalAnimeList)
 			{
-				anime2.Stop();
+				animation2.Stop();
 			}
 		}
 		yield break;

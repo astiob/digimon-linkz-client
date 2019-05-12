@@ -4,8 +4,8 @@ using UnityEngine;
 
 public sealed class GUIListPartsQuestRankingList : GUIListPartBS
 {
-	[SerializeField]
 	[Header("ランク帯の背景")]
+	[SerializeField]
 	private UISprite spBase;
 
 	[Header("ランク帯の背景装飾")]
@@ -16,16 +16,16 @@ public sealed class GUIListPartsQuestRankingList : GUIListPartBS
 	[SerializeField]
 	private UISprite spBaseLine;
 
-	[SerializeField]
 	[Header("ランク帯最低ポイントの背景")]
+	[SerializeField]
 	private UISprite spBaseSab;
 
-	[SerializeField]
 	[Header("ランク帯最低ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[SerializeField]
 	[Header("ランキング順位")]
+	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
 	[Header("今ココ")]

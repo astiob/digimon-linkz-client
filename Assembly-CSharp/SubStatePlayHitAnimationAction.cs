@@ -44,28 +44,35 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 	{
 		if (!base.stateManager.cameraControl.IsPlaying(this.data.cameraKey))
 		{
-			foreach (SubStatePlayHitAnimationAction.Data.HitIcon temp in this.data.hitIconList)
+			foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon in this.data.hitIconList)
 			{
-				temp.target.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+				hitIcon.target.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 			}
-			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.data.cameraKey, this.data.hitIconList[0].target);
+			if (this.data.hitIconList.Count == 1)
+			{
+				base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.data.cameraKey, this.data.hitIconList[0].target);
+			}
+			else if (this.data.hitIconList.Count >= 2 && this.data.hitIconList[0].affectEffect != AffectEffect.InstantDeath)
+			{
+				base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.data.cameraKey, this.data.hitIconList[0].target);
+			}
 		}
 		List<HitIcon> hitIconList = new List<HitIcon>();
-		foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon in this.data.hitIconList)
+		foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon2 in this.data.hitIconList)
 		{
-			int index = hitIconList.Count;
-			HitIcon temp2 = base.stateManager.uiControl.ApplyShowHitIcon(index, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon.target), hitIcon.affectEffect, hitIcon.damage, hitIcon.strength, hitIcon.isMiss, hitIcon.isCritical, hitIcon.isDrain, hitIcon.isCounter, hitIcon.isReflection, hitIcon.extraEffectType);
-			hitIconList.Add(temp2);
+			int count = hitIconList.Count;
+			HitIcon item2 = base.stateManager.uiControl.ApplyShowHitIcon(count, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon2.target), hitIcon2.affectEffect, hitIcon2.damage, hitIcon2.strength, hitIcon2.isMiss, hitIcon2.isCritical, hitIcon2.isDrain, hitIcon2.isCounter, hitIcon2.isReflection, hitIcon2.extraEffectType, hitIcon2.affectEffect != AffectEffect.InstantDeath);
+			hitIconList.Add(item2);
 		}
 		HitEffectParams[] currentHitEffect = this.GetHitEffectParams();
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		base.stateManager.threeDAction.ShowAllCharactersAction(this.data.hitIconList.Select((SubStatePlayHitAnimationAction.Data.HitIcon item) => item.target).ToArray<CharacterStateControl>());
+		bool isPlayedDeathSE = false;
 		Action PlayDeadSE = delegate()
 		{
-			bool isPlayedDeathSE;
 			if (!isPlayedDeathSE)
 			{
-				base.stateManager.soundPlayer.PlayDeathSE();
+				this.stateManager.soundPlayer.PlayDeathSE();
 			}
 			isPlayedDeathSE = true;
 		};
@@ -86,14 +93,14 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 					isPlayedHitEffectSE = true;
 					base.stateManager.soundPlayer.TryPlaySE(currentHitEffect[i]);
 				}
-				bool isDamage = AffectEffectProperty.IsDamage(this.data.affectEffectProperty.type);
-				bool isTolerance = Tolerance.OnInfluenceToleranceAffectEffect(this.data.affectEffectProperty.type);
-				bool isBarrier = this.data.hitIconList[i].affectEffect == AffectEffect.TurnBarrier || this.data.hitIconList[i].affectEffect == AffectEffect.CountBarrier;
-				bool isEvasion = this.data.hitIconList[i].affectEffect == AffectEffect.TurnEvasion || this.data.hitIconList[i].affectEffect == AffectEffect.CountEvasion;
-				bool isInvalid = this.data.hitIconList[i].strength == Strength.Invalid;
+				bool flag = AffectEffectProperty.IsDamage(this.data.affectEffectProperty.type);
+				bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(this.data.affectEffectProperty.type);
+				bool flag3 = this.data.hitIconList[i].affectEffect == AffectEffect.TurnBarrier || this.data.hitIconList[i].affectEffect == AffectEffect.CountBarrier;
+				bool flag4 = this.data.hitIconList[i].affectEffect == AffectEffect.TurnEvasion || this.data.hitIconList[i].affectEffect == AffectEffect.CountEvasion;
+				bool flag5 = this.data.hitIconList[i].strength == Strength.Invalid;
 				if (!this.data.hitIconList[i].target.isDied)
 				{
-					if ((isDamage || isTolerance) && (isBarrier || isEvasion || isInvalid))
+					if ((flag || flag2) && (flag3 || flag4 || flag5))
 					{
 						base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(new CharacterStateControl[]
 						{
@@ -102,68 +109,46 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 					}
 					else if (!this.data.hitIconList[i].isMiss)
 					{
-						switch (this.data.hitIconList[i].affectEffect)
+						AffectEffect affectEffect = this.data.hitIconList[i].affectEffect;
+						switch (affectEffect)
 						{
 						case AffectEffect.Damage:
-						case AffectEffect.ReferenceTargetHpRate:
-						case AffectEffect.HpBorderlineDamage:
-						case AffectEffect.HpBorderlineSpDamage:
-						case AffectEffect.DefenseThroughDamage:
-						case AffectEffect.SpDefenseThroughDamage:
-							if (this.data.hitIconList[i].strength == Strength.Weak)
+							goto IL_67E;
+						default:
+							switch (affectEffect)
 							{
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.strongHit, new CharacterStateControl[]
+							case AffectEffect.ReferenceTargetHpRate:
+							case AffectEffect.HpBorderlineDamage:
+							case AffectEffect.HpBorderlineSpDamage:
+							case AffectEffect.DefenseThroughDamage:
+							case AffectEffect.SpDefenseThroughDamage:
+							case AffectEffect.RefHpRateNonAttribute:
+								goto IL_67E;
+							case AffectEffect.ApDrain:
+							case AffectEffect.Escape:
+							case AffectEffect.Nothing:
+								goto IL_86A;
+							case AffectEffect.HpSettingFixable:
+							case AffectEffect.HpSettingPercentage:
+								if (this.data.hitIconList[i].damage > 0)
 								{
-									this.data.hitIconList[i].target
-								});
-							}
-							else if (this.data.hitIconList[i].strength == Strength.Drain)
-							{
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
+									base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+									{
+										this.data.hitIconList[i].target
+									});
+								}
+								else
 								{
-									this.data.hitIconList[i].target
-								});
-							}
-							else
-							{
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
-								{
-									this.data.hitIconList[i].target
-								});
+									base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
+									{
+										this.data.hitIconList[i].target
+									});
+								}
+								break;
+							default:
+								goto IL_86A;
 							}
 							break;
-						case AffectEffect.AttackUp:
-						case AffectEffect.DefenceUp:
-						case AffectEffect.SpAttackUp:
-						case AffectEffect.SpDefenceUp:
-						case AffectEffect.SpeedUp:
-						case AffectEffect.CorrectionDownReset:
-						case AffectEffect.HpRevival:
-						case AffectEffect.Counter:
-						case AffectEffect.Reflection:
-						case AffectEffect.Protect:
-						case AffectEffect.HateDown:
-						case AffectEffect.PowerCharge:
-						case AffectEffect.Destruct:
-						case AffectEffect.HitRateUp:
-						case AffectEffect.InstantDeath:
-						case AffectEffect.SufferStatusClear:
-						case AffectEffect.SatisfactionRateUp:
-						case AffectEffect.ApRevival:
-						case AffectEffect.ApUp:
-						case AffectEffect.ApConsumptionDown:
-						case AffectEffect.CountGuard:
-						case AffectEffect.TurnBarrier:
-						case AffectEffect.CountBarrier:
-						case AffectEffect.Invalid:
-						case AffectEffect.Recommand:
-						case AffectEffect.DamageRateUp:
-						case AffectEffect.DamageRateDown:
-						case AffectEffect.Regenerate:
-						case AffectEffect.TurnEvasion:
-						case AffectEffect.CountEvasion:
-						case AffectEffect.ApDrain:
-							goto IL_896;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
 						case AffectEffect.SpAttackDown:
@@ -186,28 +171,39 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 								this.data.hitIconList[i].target
 							});
 							break;
-						case AffectEffect.HpSettingFixable:
-						case AffectEffect.HpSettingPercentage:
-							if (this.data.hitIconList[i].damage > 0)
-							{
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
-								{
-									this.data.hitIconList[i].target
-								});
-							}
-							else
-							{
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
-								{
-									this.data.hitIconList[i].target
-								});
-							}
+						case AffectEffect.Counter:
+						case AffectEffect.Reflection:
+						case AffectEffect.Destruct:
+							goto IL_86A;
+						case AffectEffect.InstantDeath:
 							break;
-						default:
-							goto IL_896;
 						}
-						goto IL_91E;
-						IL_896:
+						IL_8AA:
+						goto IL_8EA;
+						IL_67E:
+						if (this.data.hitIconList[i].strength == Strength.Weak)
+						{
+							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.strongHit, new CharacterStateControl[]
+							{
+								this.data.hitIconList[i].target
+							});
+						}
+						else if (this.data.hitIconList[i].strength == Strength.Drain)
+						{
+							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
+							{
+								this.data.hitIconList[i].target
+							});
+						}
+						else
+						{
+							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+							{
+								this.data.hitIconList[i].target
+							});
+						}
+						goto IL_8AA;
+						IL_86A:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							this.data.hitIconList[i].target
@@ -220,7 +216,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							this.data.hitIconList[i].target
 						});
 					}
-					IL_91E:;
+					IL_8EA:;
 				}
 				else
 				{
@@ -270,8 +266,8 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 			}
 			for (int j = 0; j < this.data.hitIconList.Count; j++)
 			{
-				Vector3 position = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(this.data.hitIconList[j].target);
-				hitIconList[j].HitIconReposition(position);
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(this.data.hitIconList[j].target);
+				hitIconList[j].HitIconReposition(fixableCharacterCenterPosition2DFunction);
 			}
 			yield return null;
 		}
@@ -287,41 +283,55 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		}
 		yield return new WaitForSeconds(1.5f);
 		yield return base.stateManager.threeDAction.StopHitAnimation(hitEffectParams);
+		BattleEffectManager.Instance.ReturnEffect(hitEffectParams);
 		yield break;
 	}
 
 	private HitEffectParams[] GetHitEffectParams()
 	{
 		List<HitEffectParams> list = new List<HitEffectParams>();
+		string[] array = new string[]
+		{
+			"EFF_COM_HIT_NORMAL",
+			"EFF_COM_HIT_WEAK",
+			"EFF_COM_HIT_CRITICAL",
+			"EFF_COM_S_HEAL",
+			"EFF_COM_HIT_WEAK"
+		};
 		for (int i = 0; i < this.data.hitIconList.Count; i++)
 		{
-			if (AffectEffectProperty.IsDamage(this.data.hitIconList[i].affectEffect))
+			if (this.data.hitIconList[i].affectEffect == AffectEffect.Invalid)
+			{
+				HitEffectParams item = BattleEffectManager.Instance.GetEffect("EFF_COM_HIT_WEAK") as HitEffectParams;
+				list.Add(item);
+			}
+			else if (AffectEffectProperty.IsDamage(this.data.hitIconList[i].affectEffect))
 			{
 				if (this.data.hitIconList[i].isMiss)
 				{
-					HitEffectParams item = base.battleStateData.hitEffects.GetObject(AffectEffect.Damage.ToString(), Strength.None.ToString())[i];
-					list.Add(item);
+					HitEffectParams item2 = BattleEffectManager.Instance.GetEffect(array[0]) as HitEffectParams;
+					list.Add(item2);
 				}
 				else if (!base.stateManager.onEnableTutorial && this.data.hitIconList[i].extraEffectType == ExtraEffectType.Up)
 				{
-					HitEffectParams item2 = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackUp.ToString())[i];
-					list.Add(item2);
+					HitEffectParams item3 = BattleEffectManager.Instance.GetEffect(AffectEffect.gimmickSpecialAttackUp.ToString()) as HitEffectParams;
+					list.Add(item3);
 				}
 				else if (!base.stateManager.onEnableTutorial && this.data.hitIconList[i].extraEffectType == ExtraEffectType.Down)
 				{
-					HitEffectParams item3 = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackDown.ToString())[i];
-					list.Add(item3);
+					HitEffectParams item4 = BattleEffectManager.Instance.GetEffect(AffectEffect.gimmickSpecialAttackDown.ToString()) as HitEffectParams;
+					list.Add(item4);
 				}
 				else
 				{
-					HitEffectParams item4 = base.battleStateData.hitEffects.GetObject(AffectEffect.Damage.ToString(), this.data.hitIconList[i].strength.ToString())[i];
-					list.Add(item4);
+					HitEffectParams item5 = BattleEffectManager.Instance.GetEffect(array[(int)this.data.hitIconList[i].strength]) as HitEffectParams;
+					list.Add(item5);
 				}
 			}
 			else
 			{
-				HitEffectParams item5 = base.battleStateData.hitEffects.GetObject(this.data.hitIconList[i].affectEffect.ToString())[i];
-				list.Add(item5);
+				HitEffectParams item6 = BattleEffectManager.Instance.GetEffect(this.data.hitIconList[i].affectEffect.ToString()) as HitEffectParams;
+				list.Add(item6);
 			}
 		}
 		return list.ToArray();

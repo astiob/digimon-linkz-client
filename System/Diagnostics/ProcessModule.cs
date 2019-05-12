@@ -5,7 +5,7 @@ namespace System.Diagnostics
 {
 	/// <summary>Represents a.dll or .exe file that is loaded into a particular process.</summary>
 	/// <filterpriority>2</filterpriority>
-	[System.ComponentModel.Designer("System.Diagnostics.Design.ProcessModuleDesigner, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[System.ComponentModel.Designer("System.Diagnostics.Design.ProcessModuleDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	public class ProcessModule : System.ComponentModel.Component
 	{
 		private IntPtr baseaddr;

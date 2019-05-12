@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Indicates the type of class interface to be generated for a class exposed to COM, if an interface is generated at all.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class, Inherited = false)]
+	[ComVisible(true)]
 	public sealed class ClassInterfaceAttribute : Attribute
 	{
 		private ClassInterfaceType ciType;

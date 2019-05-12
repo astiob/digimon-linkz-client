@@ -170,7 +170,7 @@ public class CMD_PointQuestRanking : CMD
 		this.csParts.ShowGUI();
 		this.myRank.ShowGUI();
 		this.nextRank.ShowGUI();
-		this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null);
+		this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null, true);
 		this.csSelectPanel.SetLocationByIDX(this.listIdx, 0f);
 		if (!this.csParts.gameObject.activeSelf)
 		{

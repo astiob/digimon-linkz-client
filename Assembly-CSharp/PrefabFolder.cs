@@ -1,9 +1,10 @@
 ﻿using NGUI.Extensions;
 using System;
+using System.Collections;
 using UnityEngine;
 
-[AddComponentMenu("GUI/PrefabFolder")]
 [ExecuteInEditMode]
+[AddComponentMenu("GUI/PrefabFolder")]
 public sealed class PrefabFolder : MonoBehaviour
 {
 	[SerializeField]
@@ -57,10 +58,23 @@ public sealed class PrefabFolder : MonoBehaviour
 		if (null != this.goSRC_Prefab)
 		{
 			this.goSRC_Prv = this.goSRC_Prefab;
-			foreach (object obj in base.transform)
+			IEnumerator enumerator = base.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UnityEngine.Object.Destroy(transform.gameObject);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UnityEngine.Object.Destroy(transform.gameObject);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.goSRC_Prefab);
 			Vector3 localScale = gameObject.transform.localScale;

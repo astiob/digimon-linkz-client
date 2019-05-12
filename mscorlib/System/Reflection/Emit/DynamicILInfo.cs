@@ -101,8 +101,8 @@ namespace System.Reflection.Emit
 		/// <param name="maxStackSize">The maximum number of items on the operand stack when the method is executing.</param>
 		/// <exception cref="T:System.ArgumentOutOfRangeException">
 		///   <paramref name="codeSize" /> is less than 0.</exception>
-		[CLSCompliant(false)]
 		[MonoTODO]
+		[CLSCompliant(false)]
 		public unsafe void SetCode(byte* code, int codeSize, int maxStackSize)
 		{
 			throw new NotImplementedException();
@@ -141,8 +141,8 @@ namespace System.Reflection.Emit
 		/// <param name="signatureSize">The number of bytes in the signature.</param>
 		/// <exception cref="T:System.ArgumentOutOfRangeException">
 		///   <paramref name="signatureSize" /> is less than 0.</exception>
-		[CLSCompliant(false)]
 		[MonoTODO]
+		[CLSCompliant(false)]
 		public unsafe void SetLocalSignature(byte* localSignature, int signatureSize)
 		{
 			throw new NotImplementedException();

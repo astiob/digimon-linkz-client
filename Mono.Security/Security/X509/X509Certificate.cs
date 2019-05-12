@@ -247,31 +247,43 @@ namespace Mono.Security.X509
 					{
 						if (X509Certificate.<>f__switch$mapF == null)
 						{
-							X509Certificate.<>f__switch$mapF = new Dictionary<string, int>(6)
+							X509Certificate.<>f__switch$mapF = new Dictionary<string, int>(9)
 							{
 								{
 									"1.2.840.113549.1.1.2",
 									0
 								},
 								{
-									"1.2.840.113549.1.1.4",
+									"1.2.840.113549.1.1.3",
 									1
 								},
 								{
-									"1.2.840.113549.1.1.5",
+									"1.2.840.113549.1.1.4",
 									2
+								},
+								{
+									"1.2.840.113549.1.1.5",
+									3
 								},
 								{
 									"1.3.14.3.2.29",
-									2
+									3
 								},
 								{
 									"1.2.840.10040.4.3",
-									2
+									3
 								},
 								{
 									"1.2.840.113549.1.1.11",
-									3
+									4
+								},
+								{
+									"1.2.840.113549.1.1.12",
+									5
+								},
+								{
+									"1.2.840.113549.1.1.13",
+									6
 								}
 							};
 						}
@@ -285,16 +297,25 @@ namespace Mono.Security.X509
 								hashAlgorithm = MD2.Create();
 								break;
 							case 1:
-								hashAlgorithm = MD5.Create();
+								hashAlgorithm = MD4.Create();
 								break;
 							case 2:
-								hashAlgorithm = SHA1.Create();
+								hashAlgorithm = MD5.Create();
 								break;
 							case 3:
+								hashAlgorithm = SHA1.Create();
+								break;
+							case 4:
 								hashAlgorithm = SHA256.Create();
 								break;
+							case 5:
+								hashAlgorithm = SHA384.Create();
+								break;
+							case 6:
+								hashAlgorithm = SHA512.Create();
+								break;
 							default:
-								goto IL_D3;
+								goto IL_125;
 							}
 							if (this.decoder == null || this.decoder.Count < 1)
 							{
@@ -302,13 +323,13 @@ namespace Mono.Security.X509
 							}
 							byte[] bytes = this.decoder[0].GetBytes();
 							this.certhash = hashAlgorithm.ComputeHash(bytes, 0, bytes.Length);
-							goto IL_116;
+							goto IL_168;
 						}
 					}
-					IL_D3:
+					IL_125:
 					return null;
 				}
-				IL_116:
+				IL_168:
 				return (byte[])this.certhash.Clone();
 			}
 		}
@@ -430,10 +451,14 @@ namespace Mono.Security.X509
 				{
 					if (X509Certificate.<>f__switch$map10 == null)
 					{
-						X509Certificate.<>f__switch$map10 = new Dictionary<string, int>(6)
+						X509Certificate.<>f__switch$map10 = new Dictionary<string, int>(9)
 						{
 							{
 								"1.2.840.113549.1.1.2",
+								0
+							},
+							{
+								"1.2.840.113549.1.1.3",
 								0
 							},
 							{
@@ -450,6 +475,14 @@ namespace Mono.Security.X509
 							},
 							{
 								"1.2.840.113549.1.1.11",
+								0
+							},
+							{
+								"1.2.840.113549.1.1.12",
+								0
+							},
+							{
+								"1.2.840.113549.1.1.13",
 								0
 							},
 							{
@@ -593,27 +626,43 @@ namespace Mono.Security.X509
 			{
 				if (X509Certificate.<>f__switch$map11 == null)
 				{
-					X509Certificate.<>f__switch$map11 = new Dictionary<string, int>(5)
+					X509Certificate.<>f__switch$map11 = new Dictionary<string, int>(9)
 					{
 						{
 							"1.2.840.113549.1.1.2",
 							0
 						},
 						{
-							"1.2.840.113549.1.1.4",
+							"1.2.840.113549.1.1.3",
 							1
 						},
 						{
-							"1.2.840.113549.1.1.5",
+							"1.2.840.113549.1.1.4",
 							2
+						},
+						{
+							"1.2.840.113549.1.1.5",
+							3
 						},
 						{
 							"1.3.14.3.2.29",
-							2
+							3
 						},
 						{
 							"1.2.840.113549.1.1.11",
-							3
+							4
+						},
+						{
+							"1.2.840.113549.1.1.12",
+							5
+						},
+						{
+							"1.2.840.113549.1.1.13",
+							6
+						},
+						{
+							"1.2.840.10040.4.3",
+							7
 						}
 					};
 				}
@@ -626,21 +675,32 @@ namespace Mono.Security.X509
 						rsapkcs1SignatureDeformatter.SetHashAlgorithm("MD2");
 						break;
 					case 1:
-						rsapkcs1SignatureDeformatter.SetHashAlgorithm("MD5");
+						rsapkcs1SignatureDeformatter.SetHashAlgorithm("MD4");
 						break;
 					case 2:
-						rsapkcs1SignatureDeformatter.SetHashAlgorithm("SHA1");
+						rsapkcs1SignatureDeformatter.SetHashAlgorithm("MD5");
 						break;
 					case 3:
+						rsapkcs1SignatureDeformatter.SetHashAlgorithm("SHA1");
+						break;
+					case 4:
 						rsapkcs1SignatureDeformatter.SetHashAlgorithm("SHA256");
 						break;
+					case 5:
+						rsapkcs1SignatureDeformatter.SetHashAlgorithm("SHA384");
+						break;
+					case 6:
+						rsapkcs1SignatureDeformatter.SetHashAlgorithm("SHA512");
+						break;
+					case 7:
+						return false;
 					default:
-						goto IL_D4;
+						goto IL_147;
 					}
 					return rsapkcs1SignatureDeformatter.VerifySignature(this.Hash, this.Signature);
 				}
 			}
-			IL_D4:
+			IL_147:
 			throw new CryptographicException("Unsupported hash algorithm: " + this.m_signaturealgo);
 		}
 

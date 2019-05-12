@@ -4,8 +4,8 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Provides a callback mechanism for the type library converter to inform the caller of the status of the conversion, and involve the caller in the conversion process itself.</summary>
-	[ComVisible(true)]
 	[Guid("f1c3bf76-c3e4-11d3-88e7-00902754c43a")]
+	[ComVisible(true)]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITypeLibImporterNotifySink
 	{

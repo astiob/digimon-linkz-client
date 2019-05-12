@@ -5,12 +5,12 @@ using UnityEngine;
 
 public sealed class CampaignLabel : PartsMenuNotfIcon
 {
+	[SerializeField]
+	private UILabel lbContent;
+
 	private const int BASE_PLATE_SIZE = 66;
 
 	private const int DELTA_PLATE_SIZE = 14;
-
-	[SerializeField]
-	private UILabel lbContent;
 
 	protected override void Start()
 	{

@@ -1,5 +1,6 @@
 ﻿using Master;
 using System;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -50,6 +51,9 @@ public sealed class CMD_Profile : CMD_ProfileBase
 	[SerializeField]
 	private UITexture titleIcon;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -74,11 +78,11 @@ public sealed class CMD_Profile : CMD_ProfileBase
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
 			this.SetTutorialAnyTime("anytime_second_tutorial_profile");
-			this.Show(closeEvent, sizeX, sizeY, showAnimationTime);
+			this.<Show>__BaseCallProxy0(closeEvent, sizeX, sizeY, showAnimationTime);
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 			GUICollider.EnableAllCollider("CMD_Profile");
 		}, null));
 	}
@@ -212,17 +216,23 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	private void ShowErrorPopUp(CMD_Profile.CheckInputCharResult checkResult)
 	{
-		switch (checkResult)
+		if (checkResult != CMD_Profile.CheckInputCharResult.FORBIDDEN_CHAR)
 		{
-		case CMD_Profile.CheckInputCharResult.FORBIDDEN_CHAR:
+			if (checkResult != CMD_Profile.CheckInputCharResult.LIMIT_OVER)
+			{
+				if (checkResult == CMD_Profile.CheckInputCharResult.FEW_CHAR)
+				{
+					AlertManager.ShowAlertDialog(null, "E-US07");
+				}
+			}
+			else
+			{
+				AlertManager.ShowAlertDialog(null, "E-US18");
+			}
+		}
+		else
+		{
 			AlertManager.ShowAlertDialog(null, "E-US17");
-			break;
-		case CMD_Profile.CheckInputCharResult.LIMIT_OVER:
-			AlertManager.ShowAlertDialog(null, "E-US18");
-			break;
-		case CMD_Profile.CheckInputCharResult.FEW_CHAR:
-			AlertManager.ShowAlertDialog(null, "E-US07");
-			break;
 		}
 	}
 
@@ -259,7 +269,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		{
 			this.NicknameUpdate(delegate
 			{
-				base.ClosePanel(true);
+				this.<ClosePanel>__BaseCallProxy1(true);
 			});
 		}
 		else
@@ -350,7 +360,13 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_profile", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_profile";
+			if (CMD_Profile.<>f__mg$cache0 == null)
+			{
+				CMD_Profile.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_Profile.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_Profile");
 			});

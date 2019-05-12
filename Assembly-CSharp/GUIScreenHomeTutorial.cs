@@ -55,8 +55,8 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 		FarmRoot farm = FarmRoot.Instance;
 		if (null != farm)
 		{
-			InputControll ic = farm.Input;
-			ic.EnableControl = false;
+			InputControll input = farm.Input;
+			input.EnableControl = false;
 		}
 		base.StartCacheBattle();
 		base.StartCacheParty();

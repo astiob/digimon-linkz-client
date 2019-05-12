@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security
 {
 	/// <summary>Specifies the security policy components to be used by the host security manager.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum HostSecurityManagerOptions
 	{

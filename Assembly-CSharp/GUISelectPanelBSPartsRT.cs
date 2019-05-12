@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,12 +57,25 @@ public class GUISelectPanelBSPartsRT : GUISelectPanelBSRT
 	{
 		this.GetSelectCollider();
 		base.Awake();
-		foreach (object obj in base.transform)
+		IEnumerator enumerator = base.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			if (transform.name == "LIST_PARTS_ROOT")
+			while (enumerator.MoveNext())
 			{
-				this.goListPartsRoot = transform.gameObject;
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				if (transform.name == "LIST_PARTS_ROOT")
+				{
+					this.goListPartsRoot = transform.gameObject;
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
 			}
 		}
 	}

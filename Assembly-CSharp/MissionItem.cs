@@ -275,7 +275,7 @@ public class MissionItem : GUIListPartBS
 				case 1:
 					break;
 				case 2:
-					goto IL_475;
+					goto IL_46E;
 				case 3:
 					text = StringMaster.GetString("CaptureTitle");
 					this.onPushedButton = null;
@@ -283,9 +283,9 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedGASHA();
 					};
-					goto IL_697;
+					goto IL_690;
 				case 4:
-					goto IL_571;
+					goto IL_56A;
 				case 5:
 					text = StringMaster.GetString("ReinforcementTitle");
 					this.onPushedButton = null;
@@ -293,9 +293,9 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedREINFORCE();
 					};
-					goto IL_697;
+					goto IL_690;
 				case 6:
-					goto IL_59B;
+					goto IL_594;
 				case 7:
 					text = StringMaster.GetString("SuccessionTitle");
 					this.onPushedButton = null;
@@ -303,7 +303,7 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedSUCCESSION();
 					};
-					goto IL_697;
+					goto IL_690;
 				case 8:
 				case 10:
 					text = StringMaster.GetString("LaboratoryTitle");
@@ -312,7 +312,7 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedLABORATORY();
 					};
-					goto IL_697;
+					goto IL_690;
 				case 9:
 					text = StringMaster.GetString("ArousalTitle");
 					this.onPushedButton = null;
@@ -320,7 +320,7 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedAROUSAL();
 					};
-					goto IL_697;
+					goto IL_690;
 				default:
 					switch (categoryId)
 					{
@@ -331,13 +331,13 @@ public class MissionItem : GUIListPartBS
 						{
 							this.OnClickedFRIEND();
 						};
-						goto IL_697;
+						goto IL_690;
 					default:
 						if (categoryId != 181)
 						{
-							goto IL_697;
+							goto IL_690;
 						}
-						goto IL_59B;
+						goto IL_594;
 					case 204:
 					case 205:
 						text = StringMaster.GetString("ColosseumTitle");
@@ -346,13 +346,13 @@ public class MissionItem : GUIListPartBS
 						{
 							this.OnClicked_VS();
 						};
-						goto IL_697;
+						goto IL_690;
 					}
 					break;
 				}
 				break;
 			case 131:
-				goto IL_475;
+				goto IL_46E;
 			case 132:
 				text = StringMaster.GetString("Mission-01");
 				this.onPushedButton = null;
@@ -360,7 +360,7 @@ public class MissionItem : GUIListPartBS
 				{
 					this.OnClickedSTOREHOUSE();
 				};
-				goto IL_697;
+				goto IL_690;
 			case 133:
 				text = StringMaster.GetString("Mission-01");
 				this.onPushedButton = null;
@@ -368,7 +368,7 @@ public class MissionItem : GUIListPartBS
 				{
 					this.OnClickedRESTAURANT();
 				};
-				goto IL_697;
+				goto IL_690;
 			case 134:
 				text = StringMaster.GetString("Mission-01");
 				this.onPushedButton = null;
@@ -376,16 +376,16 @@ public class MissionItem : GUIListPartBS
 				{
 					this.OnClickedTRAINING();
 				};
-				goto IL_697;
+				goto IL_690;
 			case 144:
 			case 145:
 			case 146:
 			case 147:
-				goto IL_571;
+				goto IL_56A;
 			case 154:
 			case 155:
 			case 156:
-				goto IL_59B;
+				goto IL_594;
 			}
 			text = StringMaster.GetString("QuestNormal");
 			this.onPushedButton = null;
@@ -393,31 +393,31 @@ public class MissionItem : GUIListPartBS
 			{
 				this.OnClickedQUEST();
 			};
-			goto IL_697;
-			IL_475:
+			goto IL_690;
+			IL_46E:
 			text = StringMaster.GetString("Mission-01");
 			this.onPushedButton = null;
 			this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.OnClickedMEAT();
 			};
-			goto IL_697;
-			IL_571:
+			goto IL_690;
+			IL_56A:
 			text = StringMaster.GetString("MealTitle");
 			this.onPushedButton = null;
 			this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.OnClickedMEAL();
 			};
-			goto IL_697;
-			IL_59B:
+			goto IL_690;
+			IL_594:
 			text = StringMaster.GetString("EvolutionTitle");
 			this.onPushedButton = null;
 			this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.OnClickedEVOLUTION();
 			};
-			IL_697:
+			IL_690:
 			component2.onTouchEnded += this.lastAddedAction;
 			this.pushedButtonLabel.text = text;
 		}

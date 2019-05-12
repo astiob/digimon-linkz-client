@@ -23,83 +23,52 @@ namespace Ability
 			}
 		}
 
-		private float GetAbilityUpgradeRate(string baseAbility, string materialAbility, string baseGrowStep, ref bool isNext)
+		private float GetAbilityUpgradeRate(string baseAbility, string materialAbility, string baseGrowStep, ref bool hasMedal)
 		{
 			if (this.abilityUpgradeDataList == null)
 			{
 				this.SetupAbilityUpgradeDataList();
 			}
-			if (string.IsNullOrEmpty(materialAbility))
-			{
-				global::Debug.LogError("============================== Ability.AbilityData.GetAbilityUpgradeRate() materialAbility が、空");
-			}
-			int num = int.Parse(materialAbility);
-			if (num < 5 || num > 20 || (10 < num && num < 15))
-			{
-				global::Debug.LogError("============================== Ability.AbilityData.GetAbilityUpgradeRate() materialAbility が、空");
-			}
-			int num2 = 0;
-			if (string.IsNullOrEmpty(baseAbility))
-			{
-				isNext = false;
-			}
-			else
-			{
-				num2 = int.Parse(baseAbility);
-				if (num2 < 5 || num2 > 20 || (10 < num2 && num2 < 15))
-				{
-					isNext = false;
-				}
-				else
-				{
-					isNext = true;
-				}
-			}
+			float result = 0f;
+			hasMedal = this.ExistMedalByParcentage(baseAbility);
+			int medalParcentage = this.GetMedalParcentage(baseAbility);
 			int growStep = int.Parse(baseGrowStep);
-			float num3 = 1f;
-			float num4 = 1f;
+			float num = 1f;
+			float num2 = 1f;
 			if (MonsterGrowStepData.IsGrowingScope(growStep))
 			{
-				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_GROWING;
-				num4 = (float)ConstValue.ABILITY_INHERITRATE_GROWING;
+				num = ConstValue.ABILITY_UPGRADE_MULRATE_GROWING;
+				num2 = (float)ConstValue.ABILITY_INHERITRATE_GROWING;
 			}
 			else if (MonsterGrowStepData.IsRipeScope(growStep))
 			{
-				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_RIPE;
-				num4 = (float)ConstValue.ABILITY_INHERITRATE_RIPE;
+				num = ConstValue.ABILITY_UPGRADE_MULRATE_RIPE;
+				num2 = (float)ConstValue.ABILITY_INHERITRATE_RIPE;
 			}
 			else if (MonsterGrowStepData.IsPerfectScope(growStep))
 			{
-				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_PERFECT;
-				num4 = (float)ConstValue.ABILITY_INHERITRATE_PERFECT;
+				num = ConstValue.ABILITY_UPGRADE_MULRATE_PERFECT;
+				num2 = (float)ConstValue.ABILITY_INHERITRATE_PERFECT;
 			}
 			else if (MonsterGrowStepData.IsUltimateScope(growStep))
 			{
-				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_ULTIMATE;
-				num4 = (float)ConstValue.ABILITY_INHERITRATE_ULTIMATE;
+				num = ConstValue.ABILITY_UPGRADE_MULRATE_ULTIMATE;
+				num2 = (float)ConstValue.ABILITY_INHERITRATE_ULTIMATE;
 			}
-			else
+			if (medalParcentage < 20)
 			{
-				global::Debug.LogError("============================== Ability.AbilityData.GetAbilityUpgradeRate() ありえない成長スコープです!");
-			}
-			float result;
-			if (num2 == 20)
-			{
-				result = 0f;
-			}
-			else if (isNext)
-			{
-				string key = baseAbility + "_" + materialAbility;
-				if (!this.abilityUpgradeDataList.ContainsKey(key))
+				if (hasMedal)
 				{
-					global::Debug.LogError("============================== Ability.AbilityData.GetAbilityUpgradeRate() Keyがない！");
+					string key = baseAbility + "_" + materialAbility;
+					if (this.abilityUpgradeDataList.ContainsKey(key))
+					{
+						result = num * this.abilityUpgradeDataList[key];
+					}
 				}
-				float num5 = this.abilityUpgradeDataList[key];
-				result = num5 * num3;
-			}
-			else
-			{
-				result = num4;
+				else
+				{
+					result = num2;
+				}
 			}
 			return result;
 		}
@@ -166,98 +135,67 @@ namespace Ability
 			return num2.ToString();
 		}
 
-		public bool HasAbility(string materialAbility)
+		private bool ExistMedalByParcentage(string upParcentage)
 		{
-			bool result;
-			if (string.IsNullOrEmpty(materialAbility))
+			bool result = false;
+			int num;
+			if (!string.IsNullOrEmpty(upParcentage) && int.TryParse(upParcentage, out num))
 			{
-				result = false;
-			}
-			else
-			{
-				int num = int.Parse(materialAbility);
-				result = (num >= 5 && num <= 20 && (10 >= num || num >= 15));
+				result = ((5 <= num && num <= 10) || (15 <= num && num <= 20));
 			}
 			return result;
 		}
 
-		public float GetMaxAbility(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
+		public float GetMaxAbility(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList baseMonster)
+		{
+			return (float)Mathf.Max(new int[]
+			{
+				this.GetMedalParcentage(baseMonster.hpAbility),
+				this.GetMedalParcentage(baseMonster.attackAbility),
+				this.GetMedalParcentage(baseMonster.defenseAbility),
+				this.GetMedalParcentage(baseMonster.spAttackAbility),
+				this.GetMedalParcentage(baseMonster.spDefenseAbility),
+				this.GetMedalParcentage(baseMonster.speedAbility)
+			});
+		}
+
+		private int GetMedalParcentage(string upParcentage)
 		{
 			int num = 0;
-			int num2 = int.Parse(userMonster.hpAbility);
-			num2 = this.CheckAndFixAbility(num2);
-			if (num2 > num)
+			if (!string.IsNullOrEmpty(upParcentage) && int.TryParse(upParcentage, out num))
 			{
-				num = num2;
+				num = ((0 <= num) ? num : 0);
+				num = ((20 >= num) ? num : 20);
 			}
-			num2 = int.Parse(userMonster.attackAbility);
-			num2 = this.CheckAndFixAbility(num2);
-			if (num2 > num)
-			{
-				num = num2;
-			}
-			num2 = int.Parse(userMonster.defenseAbility);
-			num2 = this.CheckAndFixAbility(num2);
-			if (num2 > num)
-			{
-				num = num2;
-			}
-			num2 = int.Parse(userMonster.spAttackAbility);
-			num2 = this.CheckAndFixAbility(num2);
-			if (num2 > num)
-			{
-				num = num2;
-			}
-			num2 = int.Parse(userMonster.spDefenseAbility);
-			num2 = this.CheckAndFixAbility(num2);
-			if (num2 > num)
-			{
-				num = num2;
-			}
-			num2 = int.Parse(userMonster.speedAbility);
-			num2 = this.CheckAndFixAbility(num2);
-			if (num2 > num)
-			{
-				num = num2;
-			}
-			return (float)num;
+			return num;
 		}
 
-		private int CheckAndFixAbility(int abilityNum)
-		{
-			if (abilityNum < 5 || abilityNum > 20 || (10 < abilityNum && abilityNum < 15))
-			{
-				return 0;
-			}
-			return abilityNum;
-		}
-
-		public int GetTotalAbilityCount(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
+		public int GetTotalAbilityCount(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList materialMonster)
 		{
 			int num = 0;
-			num += this.CheckValidMedal(userMonster.hpAbilityFlg);
-			num += this.CheckValidMedal(userMonster.attackAbilityFlg);
-			num += this.CheckValidMedal(userMonster.defenseAbilityFlg);
-			num += this.CheckValidMedal(userMonster.spAttackAbilityFlg);
-			num += this.CheckValidMedal(userMonster.spDefenseAbilityFlg);
-			return num + this.CheckValidMedal(userMonster.speedAbilityFlg);
+			num += ((!this.ExistMedalByMedalType(materialMonster.hpAbilityFlg)) ? 0 : 1);
+			num += ((!this.ExistMedalByMedalType(materialMonster.attackAbilityFlg)) ? 0 : 1);
+			num += ((!this.ExistMedalByMedalType(materialMonster.defenseAbilityFlg)) ? 0 : 1);
+			num += ((!this.ExistMedalByMedalType(materialMonster.spAttackAbilityFlg)) ? 0 : 1);
+			num += ((!this.ExistMedalByMedalType(materialMonster.spDefenseAbilityFlg)) ? 0 : 1);
+			return num + ((!this.ExistMedalByMedalType(materialMonster.speedAbilityFlg)) ? 0 : 1);
 		}
 
-		private int CheckValidMedal(string abilityFlg)
+		private bool ExistMedalByMedalType(string medalType)
 		{
-			int num = int.Parse(abilityFlg);
-			if (num == 1)
+			bool result = false;
+			if (!string.IsNullOrEmpty(medalType))
 			{
-				return 1;
+				int num = int.Parse(medalType);
+				if (num == 1 || num == 2)
+				{
+					result = true;
+				}
 			}
-			if (num == 2)
-			{
-				return 1;
-			}
-			return 0;
+			return result;
 		}
 
-		public MonsterAbilityStatusInfo CreateAbilityStatus(MonsterData baseData, MonsterData partnerData, ref bool hasGoldOver)
+		public MonsterAbilityStatusInfo CreateAbilityStatus(MonsterData baseData, MonsterData partnerData)
 		{
 			MonsterAbilityStatusInfo monsterAbilityStatusInfo = new MonsterAbilityStatusInfo();
 			float campaignFix = this.GetCampaignFix();
@@ -270,17 +208,44 @@ namespace Ability
 			this.SetAbilityInfo(userMonster.spAttackAbility, userMonster2.spAttackAbility, growStep, campaignFix, ref monsterAbilityStatusInfo.spAttackAbilityFlg, ref monsterAbilityStatusInfo.spAttackAbility, ref monsterAbilityStatusInfo.spAttackAbilityRate, ref monsterAbilityStatusInfo.spAttackNoMaterial, ref monsterAbilityStatusInfo.spAttackIsAbilityMax, ref monsterAbilityStatusInfo.spAttackAbilityMinGuarantee, ref monsterAbilityStatusInfo.spAttackAbilityMinGuaranteeRate);
 			this.SetAbilityInfo(userMonster.spDefenseAbility, userMonster2.spDefenseAbility, growStep, campaignFix, ref monsterAbilityStatusInfo.spDefenseAbilityFlg, ref monsterAbilityStatusInfo.spDefenseAbility, ref monsterAbilityStatusInfo.spDefenseAbilityRate, ref monsterAbilityStatusInfo.spDefenseNoMaterial, ref monsterAbilityStatusInfo.spDefenseIsAbilityMax, ref monsterAbilityStatusInfo.spDefenseAbilityMinGuarantee, ref monsterAbilityStatusInfo.spDefenseAbilityMinGuaranteeRate);
 			this.SetAbilityInfo(userMonster.speedAbility, userMonster2.speedAbility, growStep, campaignFix, ref monsterAbilityStatusInfo.speedAbilityFlg, ref monsterAbilityStatusInfo.speedAbility, ref monsterAbilityStatusInfo.speedAbilityRate, ref monsterAbilityStatusInfo.speedNoMaterial, ref monsterAbilityStatusInfo.speedIsAbilityMax, ref monsterAbilityStatusInfo.speedAbilityMinGuarantee, ref monsterAbilityStatusInfo.speedAbilityMinGuaranteeRate);
-			int hasGold = 0;
-			int inheritGold = 0;
-			int upgradeGold = 0;
-			List<AbilityData.UpgradeState> goldMedalStateList = this.GetGoldMedalStateList(userMonster, userMonster2, ref hasGold, ref inheritGold, ref upgradeGold);
-			hasGoldOver = this.FixGoldOverRate(goldMedalStateList, monsterAbilityStatusInfo, hasGold, inheritGold, upgradeGold);
 			return monsterAbilityStatusInfo;
+		}
+
+		public void AdjustMedalInheritanceRate(MonsterAbilityStatusInfo statusInfo, List<AbilityData.GoldMedalInheritanceState> inheritanceStates, int maxGoldMedalCount)
+		{
+			int num = 0;
+			for (int i = 0; i < inheritanceStates.Count; i++)
+			{
+				if (inheritanceStates[i].goldUpState == AbilityData.GOLD_UPGRADE_STATE.HAS)
+				{
+					num++;
+				}
+			}
+			for (int j = 0; j < inheritanceStates.Count; j++)
+			{
+				if (num >= maxGoldMedalCount)
+				{
+					this.AdjustGoldMedalInheritanceRate(inheritanceStates[j], statusInfo);
+				}
+			}
+		}
+
+		public int GetCountInheritanceGoldMedal(List<AbilityData.GoldMedalInheritanceState> inheritanceStates)
+		{
+			int num = 0;
+			for (int i = 0; i < inheritanceStates.Count; i++)
+			{
+				if (inheritanceStates[i].goldUpState != AbilityData.GOLD_UPGRADE_STATE.NONE)
+				{
+					num++;
+				}
+			}
+			return num;
 		}
 
 		private void SetAbilityInfo(string baseAbility, string materialAbility, string baseGrowStep, float campFix, ref string abilityFlg, ref string ability, ref float abilityRate, ref bool noMaterial, ref bool isAbilityMax, ref string abilityMinGuarantee, ref float abilityMinGuaranteeRate)
 		{
-			bool isNext = false;
+			bool hasMedalBaseMonster = false;
 			noMaterial = false;
 			if (baseAbility == "20")
 			{
@@ -290,7 +255,7 @@ namespace Ability
 			{
 				isAbilityMax = false;
 			}
-			if (!this.HasAbility(materialAbility))
+			if (!this.ExistMedalByParcentage(materialAbility))
 			{
 				abilityFlg = this.GetAbilityType(baseAbility);
 				ability = baseAbility;
@@ -298,14 +263,19 @@ namespace Ability
 				noMaterial = true;
 				return;
 			}
-			abilityRate = this.GetAbilityUpgradeRate(baseAbility, materialAbility, baseGrowStep, ref isNext);
-			abilityMinGuarantee = this.GetMinGarantee(isNext, materialAbility, ref abilityMinGuaranteeRate);
+			abilityRate = this.GetAbilityUpgradeRate(baseAbility, materialAbility, baseGrowStep, ref hasMedalBaseMonster);
 			abilityRate *= campFix;
 			abilityRate = Mathf.Floor(abilityRate * 10f);
-			abilityRate /= 10f;
-			if (abilityRate > 100f)
+			abilityRate = Mathf.Min(abilityRate / 10f, 100f);
+			if (this.CheckMinGarantee(hasMedalBaseMonster, materialAbility, abilityRate))
 			{
-				abilityRate = 100f;
+				abilityMinGuarantee = "5";
+				abilityMinGuaranteeRate = 100f;
+			}
+			else
+			{
+				abilityMinGuarantee = "0";
+				abilityMinGuaranteeRate = 0f;
 			}
 			int nextAbility = this.GetNextAbility(baseAbility);
 			if (nextAbility == 5)
@@ -319,25 +289,20 @@ namespace Ability
 			abilityFlg = this.GetAbilityType(ability);
 		}
 
-		private string GetMinGarantee(bool isNext, string materialAbility, ref float abilityMinGuaranteeRate)
+		private bool CheckMinGarantee(bool hasMedalBaseMonster, string materialUpParcentage, float inheritanceRate)
 		{
-			string result = "0";
-			float num = 0f;
-			if (!isNext)
+			bool result = false;
+			if (!hasMedalBaseMonster && !string.IsNullOrEmpty(materialUpParcentage) && 100f > inheritanceRate)
 			{
-				int num2 = int.Parse(materialAbility);
-				if (num2 >= 15)
-				{
-					result = "5";
-					num = 100f;
-				}
+				int medalParcentage = this.GetMedalParcentage(materialUpParcentage);
+				result = (15 <= medalParcentage && medalParcentage <= 20);
 			}
-			abilityMinGuaranteeRate = num;
 			return result;
 		}
 
 		private float GetCampaignFix()
 		{
+			float result = 1f;
 			GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
 			List<GameWebAPI.RespDataCP_Campaign.CampaignInfo> underwayCampaignList = this.GetUnderwayCampaignList(respDataCP_Campaign);
 			for (int i = 0; i < underwayCampaignList.Count; i++)
@@ -345,10 +310,11 @@ namespace Ability
 				GameWebAPI.RespDataCP_Campaign.CampaignType cmpIdByEnum = underwayCampaignList[i].GetCmpIdByEnum();
 				if (cmpIdByEnum == GameWebAPI.RespDataCP_Campaign.CampaignType.MedalTakeOverUp)
 				{
-					return float.Parse(underwayCampaignList[i].rate);
+					result = float.Parse(underwayCampaignList[i].rate);
+					break;
 				}
 			}
-			return 1f;
+			return result;
 		}
 
 		private List<GameWebAPI.RespDataCP_Campaign.CampaignInfo> GetUnderwayCampaignList(GameWebAPI.RespDataCP_Campaign campaign)
@@ -365,94 +331,41 @@ namespace Ability
 			return list;
 		}
 
-		private List<AbilityData.UpgradeState> GetGoldMedalStateList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList baseMonster, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList matMonster, ref int hasGold, ref int inheritGold, ref int upgradeGold)
+		public List<AbilityData.GoldMedalInheritanceState> GetGoldMedalInheritanceList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList baseMonster, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList matMonster)
 		{
-			List<AbilityData.UpgradeState> list = new List<AbilityData.UpgradeState>();
-			list.Add(new AbilityData.UpgradeState
+			return new List<AbilityData.GoldMedalInheritanceState>
 			{
-				abilityState = AbilityData.ABILITY_STATE.HP,
-				goldUpState = this.CheckGoldMedalState(baseMonster.hpAbilityFlg, baseMonster.hpAbility, matMonster.hpAbilityFlg)
-			});
-			list.Add(new AbilityData.UpgradeState
-			{
-				abilityState = AbilityData.ABILITY_STATE.ATK,
-				goldUpState = this.CheckGoldMedalState(baseMonster.attackAbilityFlg, baseMonster.attackAbility, matMonster.attackAbilityFlg)
-			});
-			list.Add(new AbilityData.UpgradeState
-			{
-				abilityState = AbilityData.ABILITY_STATE.DEF,
-				goldUpState = this.CheckGoldMedalState(baseMonster.defenseAbilityFlg, baseMonster.defenseAbility, matMonster.defenseAbilityFlg)
-			});
-			list.Add(new AbilityData.UpgradeState
-			{
-				abilityState = AbilityData.ABILITY_STATE.S_ATK,
-				goldUpState = this.CheckGoldMedalState(baseMonster.spAttackAbilityFlg, baseMonster.spAttackAbility, matMonster.spAttackAbilityFlg)
-			});
-			list.Add(new AbilityData.UpgradeState
-			{
-				abilityState = AbilityData.ABILITY_STATE.S_DEF,
-				goldUpState = this.CheckGoldMedalState(baseMonster.spDefenseAbilityFlg, baseMonster.spDefenseAbility, matMonster.spDefenseAbilityFlg)
-			});
-			list.Add(new AbilityData.UpgradeState
-			{
-				abilityState = AbilityData.ABILITY_STATE.SPD,
-				goldUpState = this.CheckGoldMedalState(baseMonster.speedAbilityFlg, baseMonster.speedAbility, matMonster.speedAbilityFlg)
-			});
-			list.Sort(new Comparison<AbilityData.UpgradeState>(this.CompareByGUSTATE));
-			hasGold = 0;
-			inheritGold = 0;
-			upgradeGold = 0;
-			int num = 0;
-			for (int i = 0; i < list.Count; i++)
-			{
-				AbilityData.UpgradeState upgradeState = list[i];
-				if (upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.HAS || upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.INHERIT || upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.UPGRADE)
+				new AbilityData.GoldMedalInheritanceState
 				{
-					num++;
-					upgradeState.totalGoldNum = num;
-					if (upgradeState.totalGoldNum > ConstValue.MAX_GOLD_MEDAL_COUNT)
-					{
-						upgradeState.isGoldOver = true;
-					}
-					else
-					{
-						upgradeState.isGoldOver = false;
-					}
-					if (upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.HAS)
-					{
-						hasGold++;
-					}
-					if (upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.INHERIT)
-					{
-						inheritGold++;
-					}
-					if (upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.UPGRADE)
-					{
-						upgradeGold++;
-					}
-				}
-				else
+					abilityState = AbilityData.ABILITY_STATE.HP,
+					goldUpState = this.CheckGoldMedalState(baseMonster.hpAbilityFlg, baseMonster.hpAbility, matMonster.hpAbilityFlg)
+				},
+				new AbilityData.GoldMedalInheritanceState
 				{
-					upgradeState.totalGoldNum = num;
-					upgradeState.isGoldOver = false;
+					abilityState = AbilityData.ABILITY_STATE.ATK,
+					goldUpState = this.CheckGoldMedalState(baseMonster.attackAbilityFlg, baseMonster.attackAbility, matMonster.attackAbilityFlg)
+				},
+				new AbilityData.GoldMedalInheritanceState
+				{
+					abilityState = AbilityData.ABILITY_STATE.DEF,
+					goldUpState = this.CheckGoldMedalState(baseMonster.defenseAbilityFlg, baseMonster.defenseAbility, matMonster.defenseAbilityFlg)
+				},
+				new AbilityData.GoldMedalInheritanceState
+				{
+					abilityState = AbilityData.ABILITY_STATE.S_ATK,
+					goldUpState = this.CheckGoldMedalState(baseMonster.spAttackAbilityFlg, baseMonster.spAttackAbility, matMonster.spAttackAbilityFlg)
+				},
+				new AbilityData.GoldMedalInheritanceState
+				{
+					abilityState = AbilityData.ABILITY_STATE.S_DEF,
+					goldUpState = this.CheckGoldMedalState(baseMonster.spDefenseAbilityFlg, baseMonster.spDefenseAbility, matMonster.spDefenseAbilityFlg)
+				},
+				new AbilityData.GoldMedalInheritanceState
+				{
+					abilityState = AbilityData.ABILITY_STATE.SPD,
+					goldUpState = this.CheckGoldMedalState(baseMonster.speedAbilityFlg, baseMonster.speedAbility, matMonster.speedAbilityFlg)
 				}
-			}
-			return list;
-		}
-
-		private int CompareByGUSTATE(AbilityData.UpgradeState s_a, AbilityData.UpgradeState s_b)
-		{
-			int goldUpState = (int)s_a.goldUpState;
-			int goldUpState2 = (int)s_b.goldUpState;
-			if (goldUpState < goldUpState2)
-			{
-				return -1;
-			}
-			if (goldUpState > goldUpState2)
-			{
-				return 1;
-			}
-			return 0;
+			};
 		}
 
 		private AbilityData.GOLD_UPGRADE_STATE CheckGoldMedalState(string baseAbilityFlg, string baseAbility, string matAbilityFlg)
@@ -478,172 +391,50 @@ namespace Ability
 			return AbilityData.GOLD_UPGRADE_STATE.NONE;
 		}
 
-		private bool FixGoldOverRate(List<AbilityData.UpgradeState> upsList, MonsterAbilityStatusInfo mas, int hasGold, int inheritGold, int upgradeGold)
+		private void AdjustGoldMedalInheritanceRate(AbilityData.GoldMedalInheritanceState upgradeState, MonsterAbilityStatusInfo info)
 		{
-			bool result = false;
-			for (int i = 0; i < upsList.Count; i++)
+			if (upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.INHERIT || upgradeState.goldUpState == AbilityData.GOLD_UPGRADE_STATE.UPGRADE)
 			{
-				if (upsList[i].isGoldOver)
+				switch (upgradeState.abilityState)
 				{
-					result = true;
-					if (upsList[i].goldUpState == AbilityData.GOLD_UPGRADE_STATE.INHERIT && hasGold >= ConstValue.MAX_GOLD_MEDAL_COUNT)
-					{
-						switch (upsList[i].abilityState)
-						{
-						case AbilityData.ABILITY_STATE.HP:
-							mas.hpAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.ATK:
-							mas.attackAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.DEF:
-							mas.defenseAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.S_ATK:
-							mas.spAttackAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.S_DEF:
-							mas.spDefenseAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.SPD:
-							mas.speedAbilityRate = 0f;
-							break;
-						}
-					}
-					else if (upsList[i].goldUpState == AbilityData.GOLD_UPGRADE_STATE.UPGRADE && hasGold + inheritGold >= ConstValue.MAX_GOLD_MEDAL_COUNT)
-					{
-						switch (upsList[i].abilityState)
-						{
-						case AbilityData.ABILITY_STATE.HP:
-							mas.hpAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.ATK:
-							mas.attackAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.DEF:
-							mas.defenseAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.S_ATK:
-							mas.spAttackAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.S_DEF:
-							mas.spDefenseAbilityRate = 0f;
-							break;
-						case AbilityData.ABILITY_STATE.SPD:
-							mas.speedAbilityRate = 0f;
-							break;
-						}
-					}
-				}
-				else
-				{
-					switch (upsList[i].abilityState)
-					{
-					case AbilityData.ABILITY_STATE.HP:
-						if (this.HasAbility(mas.hpAbility) && mas.hpAbilityRate >= 100f)
-						{
-							mas.hpAbilityMinGuarantee = "0";
-							mas.hpAbilityMinGuaranteeRate = 0f;
-						}
-						break;
-					case AbilityData.ABILITY_STATE.ATK:
-						if (this.HasAbility(mas.attackAbility) && mas.attackAbilityRate >= 100f)
-						{
-							mas.attackAbilityMinGuarantee = "0";
-							mas.attackAbilityMinGuaranteeRate = 0f;
-						}
-						break;
-					case AbilityData.ABILITY_STATE.DEF:
-						if (this.HasAbility(mas.defenseAbility) && mas.defenseAbilityRate >= 100f)
-						{
-							mas.defenseAbilityMinGuarantee = "0";
-							mas.defenseAbilityMinGuaranteeRate = 0f;
-						}
-						break;
-					case AbilityData.ABILITY_STATE.S_ATK:
-						if (this.HasAbility(mas.spAttackAbility) && mas.spAttackAbilityRate >= 100f)
-						{
-							mas.spAttackAbilityMinGuarantee = "0";
-							mas.spAttackAbilityMinGuaranteeRate = 0f;
-						}
-						break;
-					case AbilityData.ABILITY_STATE.S_DEF:
-						if (this.HasAbility(mas.spDefenseAbility) && mas.spDefenseAbilityRate >= 100f)
-						{
-							mas.spDefenseAbilityMinGuarantee = "0";
-							mas.spDefenseAbilityMinGuaranteeRate = 0f;
-						}
-						break;
-					case AbilityData.ABILITY_STATE.SPD:
-						if (this.HasAbility(mas.speedAbility) && mas.speedAbilityRate >= 100f)
-						{
-							mas.speedAbilityMinGuarantee = "0";
-							mas.speedAbilityMinGuaranteeRate = 0f;
-						}
-						break;
-					}
+				case AbilityData.ABILITY_STATE.HP:
+					info.hpAbilityRate = 0f;
+					break;
+				case AbilityData.ABILITY_STATE.ATK:
+					info.attackAbilityRate = 0f;
+					break;
+				case AbilityData.ABILITY_STATE.DEF:
+					info.defenseAbilityRate = 0f;
+					break;
+				case AbilityData.ABILITY_STATE.S_ATK:
+					info.spAttackAbilityRate = 0f;
+					break;
+				case AbilityData.ABILITY_STATE.S_DEF:
+					info.spDefenseAbilityRate = 0f;
+					break;
+				case AbilityData.ABILITY_STATE.SPD:
+					info.speedAbilityRate = 0f;
+					break;
 				}
 			}
-			return result;
-		}
-
-		private void ClearMonsterAbilityStatusInfoRate(MonsterAbilityStatusInfo mas)
-		{
-			mas.hpAbilityRate = 0f;
-			mas.attackAbilityRate = 0f;
-			mas.defenseAbilityRate = 0f;
-			mas.spAttackAbilityRate = 0f;
-			mas.spDefenseAbilityRate = 0f;
-			mas.speedAbilityRate = 0f;
-		}
-
-		public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList MakeUseMonsterForAbility(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList _userMonster)
-		{
-			return new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList
-			{
-				hpAbilityFlg = _userMonster.hpAbilityFlg,
-				hpAbility = _userMonster.hpAbility,
-				attackAbilityFlg = _userMonster.attackAbilityFlg,
-				attackAbility = _userMonster.attackAbility,
-				defenseAbilityFlg = _userMonster.defenseAbilityFlg,
-				defenseAbility = _userMonster.defenseAbility,
-				spAttackAbilityFlg = _userMonster.spAttackAbilityFlg,
-				spAttackAbility = _userMonster.spAttackAbility,
-				spDefenseAbilityFlg = _userMonster.spDefenseAbilityFlg,
-				spDefenseAbility = _userMonster.spDefenseAbility,
-				speedAbilityFlg = _userMonster.speedAbilityFlg,
-				speedAbility = _userMonster.speedAbility
-			};
 		}
 
 		public bool IsSuccsessAbilityUpgrade(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList beforeUserMonster, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList afterUserMonster)
 		{
 			int num = 0;
 			int num2 = 0;
-			int abilityNum = int.Parse(beforeUserMonster.hpAbility);
-			num += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(beforeUserMonster.attackAbility);
-			num += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(beforeUserMonster.defenseAbility);
-			num += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(beforeUserMonster.spAttackAbility);
-			num += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(beforeUserMonster.spDefenseAbility);
-			num += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(beforeUserMonster.speedAbility);
-			num += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(afterUserMonster.hpAbility);
-			num2 += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(afterUserMonster.attackAbility);
-			num2 += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(afterUserMonster.defenseAbility);
-			num2 += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(afterUserMonster.spAttackAbility);
-			num2 += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(afterUserMonster.spDefenseAbility);
-			num2 += this.CheckAndFixAbility(abilityNum);
-			abilityNum = int.Parse(afterUserMonster.speedAbility);
-			num2 += this.CheckAndFixAbility(abilityNum);
+			num += this.GetMedalParcentage(beforeUserMonster.hpAbility);
+			num += this.GetMedalParcentage(beforeUserMonster.attackAbility);
+			num += this.GetMedalParcentage(beforeUserMonster.defenseAbility);
+			num += this.GetMedalParcentage(beforeUserMonster.spAttackAbility);
+			num += this.GetMedalParcentage(beforeUserMonster.spDefenseAbility);
+			num += this.GetMedalParcentage(beforeUserMonster.speedAbility);
+			num2 += this.GetMedalParcentage(afterUserMonster.hpAbility);
+			num2 += this.GetMedalParcentage(afterUserMonster.attackAbility);
+			num2 += this.GetMedalParcentage(afterUserMonster.defenseAbility);
+			num2 += this.GetMedalParcentage(afterUserMonster.spAttackAbility);
+			num2 += this.GetMedalParcentage(afterUserMonster.spDefenseAbility);
+			num2 += this.GetMedalParcentage(afterUserMonster.speedAbility);
 			return num < num2;
 		}
 
@@ -707,21 +498,17 @@ namespace Ability
 
 		public enum GOLD_UPGRADE_STATE
 		{
-			HAS = 1,
+			NONE,
+			HAS,
 			INHERIT,
-			UPGRADE,
-			NONE
+			UPGRADE
 		}
 
-		public class UpgradeState
+		public class GoldMedalInheritanceState
 		{
 			public AbilityData.ABILITY_STATE abilityState;
 
 			public AbilityData.GOLD_UPGRADE_STATE goldUpState;
-
-			public int totalGoldNum;
-
-			public bool isGoldOver;
 		}
 	}
 }

@@ -36,8 +36,8 @@ namespace System
 
 		/// <summary>Initializes a new instance of <see cref="T:System.IntPtr" /> using the specified pointer to an unspecified type.</summary>
 		/// <param name="value">A pointer to an unspecified type. </param>
-		[ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
 		[CLSCompliant(false)]
+		[ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
 		public unsafe IntPtr(void* value)
 		{
 			this.m_value = value;

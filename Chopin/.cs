@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Security.Cryptography;
 
-internal abstract class \uE00A
+internal class \uE00A
 {
-	internal abstract byte[] \uE003(byte[] \uE000);
+	private DeriveBytes \uE000;
 
-	internal abstract byte[] \uE003(byte[] \uE000, int \uE001, int \uE002);
+	internal \uE00A(string \uE010, byte[] \uE011, int \uE012)
+	{
+		this.\uE000 = new Rfc2898DeriveBytes(\uE010, \uE011, \uE012);
+	}
 
-	internal abstract byte[] \uE005(byte[] \uE000);
+	internal byte[] \uE000(int \uE013)
+	{
+		return this.\uE000.GetBytes(\uE013);
+	}
 
-	internal abstract byte[] \uE005(byte[] \uE000, int \uE001, int \uE002);
-
-	internal abstract byte[] \uE006(string \uE000);
-
-	internal abstract string \uE008(byte[] \uE000);
-
-	internal abstract string \uE008(byte[] \uE000, int \uE001, int \uE002);
+	internal void \uE001()
+	{
+		this.\uE000.Reset();
+	}
 }

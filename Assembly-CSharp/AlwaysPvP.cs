@@ -11,8 +11,8 @@ public class AlwaysPvP : BattleAlways
 	[SerializeField]
 	public GameObject guardObject;
 
-	[SerializeField]
 	[Header("右下のメッセージ")]
+	[SerializeField]
 	public MultiConnetionMessage connetionMessage;
 
 	[Header("ダイアログ")]

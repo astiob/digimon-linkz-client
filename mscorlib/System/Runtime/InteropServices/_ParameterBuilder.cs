@@ -4,11 +4,11 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.ParameterBuilder" /> class to unmanaged code.</summary>
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[TypeLibImportClass(typeof(ParameterBuilder))]
-	[Guid("36329EBA-F97A-3565-BC07-0ED5C6EF19FC")]
 	[CLSCompliant(false)]
 	[ComVisible(true)]
+	[TypeLibImportClass(typeof(ParameterBuilder))]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("36329EBA-F97A-3565-BC07-0ED5C6EF19FC")]
 	public interface _ParameterBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

@@ -16,30 +16,27 @@ namespace UI.Gasha
 		{
 			ExecGashaBase execGashaBase = null;
 			MasterDataMng.AssetCategory prizeAssetsCategory = gashaInfo.GetPrizeAssetsCategory();
-			if (prizeAssetsCategory != MasterDataMng.AssetCategory.CHIP)
+			if (prizeAssetsCategory != MasterDataMng.AssetCategory.MONSTER)
 			{
-				if (prizeAssetsCategory != MasterDataMng.AssetCategory.DUNGEON_TICKET)
+				if (prizeAssetsCategory != MasterDataMng.AssetCategory.CHIP)
 				{
-					if (prizeAssetsCategory == MasterDataMng.AssetCategory.MONSTER)
+					if (prizeAssetsCategory == MasterDataMng.AssetCategory.DUNGEON_TICKET)
 					{
-						if (isTutorial && FactoryExecGasha.IsOnlyCutScene(gashaInfo.priceType.GetCostAssetsCategory()))
-						{
-							execGashaBase = new ExecGashaMonsterCutSceneOnly();
-						}
-						else
-						{
-							execGashaBase = new ExecGashaMonster();
-						}
+						execGashaBase = new ExecGashaTicket();
 					}
 				}
 				else
 				{
-					execGashaBase = new ExecGashaTicket();
+					execGashaBase = new ExecGashaChip();
 				}
+			}
+			else if (isTutorial && FactoryExecGasha.IsOnlyCutScene(gashaInfo.priceType.GetCostAssetsCategory()))
+			{
+				execGashaBase = new ExecGashaMonsterCutSceneOnly();
 			}
 			else
 			{
-				execGashaBase = new ExecGashaChip();
+				execGashaBase = new ExecGashaMonster();
 			}
 			Debug.Assert(null != execGashaBase, "ガシャ実行機能の作成に失敗.");
 			execGashaBase.SetGashaInfo(gashaInfo);

@@ -43,7 +43,7 @@ public sealed class CMD_BlockList : CMD
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy0(false);
 			GUICollider.EnableAllCollider("CMD_BlockList");
 		}, null));
 	}
@@ -79,12 +79,10 @@ public sealed class CMD_BlockList : CMD
 		this.cautionText.SetActive(0 == BlockManager.instance().blockList.Count);
 		this.listParts.SetActive(true);
 		this.guiSelectPanelFriend.initLocation = true;
-		GUISelectPanelFriend guiselectPanelFriend = this.guiSelectPanelFriend;
-		Action cb = delegate()
+		base.StartCoroutine(this.guiSelectPanelFriend.AllBuild(BlockManager.instance().blockList, 0f, 0f, delegate
 		{
 			this.listParts.SetActive(false);
-		};
-		base.StartCoroutine(guiselectPanelFriend.AllBuild(BlockManager.instance().blockList, 0f, 0f, cb));
+		}));
 	}
 
 	public void OnClickReturn()

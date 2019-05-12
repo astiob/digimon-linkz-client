@@ -8,10 +8,6 @@ using UnityEngine;
 
 public sealed class PVPPartySelect3 : MonoBehaviour
 {
-	private const string onButtonSprite = "Common02_Btn_Red";
-
-	private const string offButtonSprite = "Common02_Btn_Gray_a";
-
 	[SerializeField]
 	private GameObject goMN_ICON_CHG;
 
@@ -112,8 +108,8 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject switchSkillPanelBtn;
 
-	[SerializeField]
 	[Header("ステータス下のリーダースキル表示")]
+	[SerializeField]
 	private MonsterLeaderSkill leaderSkill;
 
 	private MonsterData DataChg;
@@ -139,6 +135,10 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 	private bool selectDataSend;
 
 	private bool isUpdate;
+
+	private const string onButtonSprite = "Common02_Btn_Red";
+
+	private const string offButtonSprite = "Common02_Btn_Gray_a";
 
 	public void SetData(ColosseumMatchingEventListener listener)
 	{
@@ -362,7 +362,7 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 		if (this.DataChg != null)
 		{
 			this.monsterBasicInfo.SetMonsterData(this.DataChg);
-			this.monsterStatusList.SetValues(this.DataChg, false);
+			this.monsterStatusList.SetValues(this.DataChg, false, false);
 			this.monsterLeaderSkill.SetSkill(this.DataChg);
 			this.detailedMonsterLeaderSkill.SetSkill(this.DataChg);
 			this.leaderSkill.SetSkill(this.DataChg);
@@ -506,7 +506,7 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 		return result;
 	}
 
-	private void SetSelectNumberIcon(int number, bool active, Vector3 pos)
+	private void SetSelectNumberIcon(int number, bool active, Vector3 pos = default(Vector3))
 	{
 		if (number >= this.selectNumObjList.Count || number < 0)
 		{

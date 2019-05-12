@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions
 {
 	/// <summary>Allows the use of declarative security actions to determine host protection requirements. This class cannot be inherited.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Delegate, AllowMultiple = true, Inherited = false)]
+	[ComVisible(true)]
 	[Serializable]
 	public sealed class HostProtectionAttribute : CodeAccessSecurityAttribute
 	{

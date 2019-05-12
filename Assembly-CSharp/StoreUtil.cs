@@ -500,20 +500,33 @@ public class StoreUtil : MonoBehaviour
 	private string GetCurrencyCodeFromCountryCode(string code)
 	{
 		string result = "JPY";
-		switch (code)
+		if (code != null)
 		{
-		case "US":
-			result = "USD";
-			break;
-		case "KR":
-			result = "KRW";
-			break;
-		case "CN":
-			result = "CNY";
-			break;
-		case "JP":
-			result = "JPY";
-			break;
+			if (!(code == "US"))
+			{
+				if (!(code == "KR"))
+				{
+					if (!(code == "CN"))
+					{
+						if (code == "JP")
+						{
+							result = "JPY";
+						}
+					}
+					else
+					{
+						result = "CNY";
+					}
+				}
+				else
+				{
+					result = "KRW";
+				}
+			}
+			else
+			{
+				result = "USD";
+			}
 		}
 		return result;
 	}

@@ -4,11 +4,11 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.LocalBuilder" /> class to unmanaged code.</summary>
-	[Guid("4E6350D1-A08B-3DEC-9A3E-C465F9AEEC0C")]
 	[TypeLibImportClass(typeof(LocalBuilder))]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("4E6350D1-A08B-3DEC-9A3E-C465F9AEEC0C")]
 	[ComVisible(true)]
 	[CLSCompliant(false)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface _LocalBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

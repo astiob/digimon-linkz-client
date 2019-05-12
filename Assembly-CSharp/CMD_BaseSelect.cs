@@ -8,6 +8,7 @@ using Picturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_BaseSelect : CMD
@@ -115,8 +116,8 @@ public sealed class CMD_BaseSelect : CMD
 	[SerializeField]
 	private UILabel ngTX_SORT_DISP;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	[SerializeField]
@@ -163,6 +164,12 @@ public sealed class CMD_BaseSelect : CMD
 	private BaseSelectIconGrayOut iconGrayOut;
 
 	private BaseSelectMonsterList monsterList;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
 
 	public static MonsterSortType IconSortType
 	{
@@ -234,9 +241,12 @@ public sealed class CMD_BaseSelect : CMD
 
 	private IEnumerator InitBaseSelect(Action<int> f, float sizeX, float sizeY, float aT)
 	{
-		bool success = false;
+		CMD_BaseSelect.<InitBaseSelect>c__Iterator0.<InitBaseSelect>c__AnonStorey1 <InitBaseSelect>c__AnonStorey = new CMD_BaseSelect.<InitBaseSelect>c__Iterator0.<InitBaseSelect>c__AnonStorey1();
+		<InitBaseSelect>c__AnonStorey.<>f__ref$0 = this;
+		<InitBaseSelect>c__AnonStorey.success = false;
 		this.chipBaseSelect.ClearChipIcons();
-		switch (CMD_BaseSelect.BaseType)
+		CMD_BaseSelect.BASE_TYPE baseType = CMD_BaseSelect.BaseType;
+		switch (baseType)
 		{
 		case CMD_BaseSelect.BASE_TYPE.EVOLVE:
 		{
@@ -247,12 +257,12 @@ public sealed class CMD_BaseSelect : CMD
 			}
 			yield return AppCoroutine.Start(task.Run(delegate
 			{
-				success = true;
+				<InitBaseSelect>c__AnonStorey.success = true;
 			}, delegate(Exception nop)
 			{
-				success = false;
+				<InitBaseSelect>c__AnonStorey.success = false;
 			}, null), false);
-			if (success)
+			if (<InitBaseSelect>c__AnonStorey.success)
 			{
 				this.goPlateMeat.SetActive(false);
 				this.goPlateClustar.SetActive(true);
@@ -272,15 +282,15 @@ public sealed class CMD_BaseSelect : CMD
 				yield return AppCoroutine.Start(task.Run(delegate
 				{
 					meatExpUpData = DataMng.Instance().GetCampaignInfo(GameWebAPI.RespDataCP_Campaign.CampaignType.MeatExpUp);
-					success = true;
+					<InitBaseSelect>c__AnonStorey.success = true;
 				}, delegate(Exception nop)
 				{
-					success = false;
+					<InitBaseSelect>c__AnonStorey.success = false;
 				}, null), false);
 			}
 			else
 			{
-				success = true;
+				<InitBaseSelect>c__AnonStorey.success = true;
 			}
 			if (meatExpUpData != null)
 			{
@@ -301,7 +311,7 @@ public sealed class CMD_BaseSelect : CMD
 		}
 		case CMD_BaseSelect.BASE_TYPE.LABO:
 		{
-			success = true;
+			<InitBaseSelect>c__AnonStorey.success = true;
 			this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
 			this.campaignLabel.Refresh();
 			string elementTypeName = string.Empty;
@@ -317,7 +327,7 @@ public sealed class CMD_BaseSelect : CMD
 			break;
 		}
 		case CMD_BaseSelect.BASE_TYPE.CHIP:
-			success = true;
+			<InitBaseSelect>c__AnonStorey.success = true;
 			this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
 			this.campaignLabel.Refresh();
 			base.PartsTitle.SetTitle(StringMaster.GetString("ChipInstalling-02"));
@@ -325,7 +335,7 @@ public sealed class CMD_BaseSelect : CMD
 			break;
 		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
 		{
-			success = true;
+			<InitBaseSelect>c__AnonStorey.success = true;
 			this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
 			this.campaignLabel.Refresh();
 			string _elementTypeName = string.Empty;
@@ -345,12 +355,12 @@ public sealed class CMD_BaseSelect : CMD
 			APIRequestTask task = Singleton<UserDataMng>.Instance.RequestUserSoulData(false);
 			yield return AppCoroutine.Start(task.Run(delegate
 			{
-				success = true;
+				<InitBaseSelect>c__AnonStorey.success = true;
 			}, delegate(Exception nop)
 			{
-				success = false;
+				<InitBaseSelect>c__AnonStorey.success = false;
 			}, null), false);
-			if (success)
+			if (<InitBaseSelect>c__AnonStorey.success)
 			{
 				this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
 				this.campaignLabel.Refresh();
@@ -361,28 +371,35 @@ public sealed class CMD_BaseSelect : CMD
 			break;
 		}
 		default:
-			success = true;
+			<InitBaseSelect>c__AnonStorey.success = true;
 			this.campaignLabel.refCampaignType = new GameWebAPI.RespDataCP_Campaign.CampaignType[0];
 			global::Debug.LogError("=========================================== CMD_BaseSelect TYPE設定がない!");
 			break;
 		}
-		if (success)
+		if (<InitBaseSelect>c__AnonStorey.success)
 		{
 			this.ChipNumUpdate();
 			this.InitMonsterList(true);
 			this.ShowChgInfo();
 			base.ShowDLG();
-			switch (CMD_BaseSelect.BaseType)
+			CMD_BaseSelect.BASE_TYPE baseType2 = CMD_BaseSelect.BaseType;
+			if (baseType2 != CMD_BaseSelect.BASE_TYPE.EVOLVE)
 			{
-			case CMD_BaseSelect.BASE_TYPE.EVOLVE:
+				if (baseType2 != CMD_BaseSelect.BASE_TYPE.CHIP)
+				{
+					if (baseType2 == CMD_BaseSelect.BASE_TYPE.MEAL)
+					{
+						base.SetTutorialAnyTime("anytime_second_tutorial_meal");
+					}
+				}
+				else
+				{
+					base.SetTutorialAnyTime("anytime_second_tutorial_chip_equipment");
+				}
+			}
+			else
+			{
 				base.SetTutorialAnyTime("anytime_second_tutorial_evolution");
-				break;
-			case CMD_BaseSelect.BASE_TYPE.MEAL:
-				base.SetTutorialAnyTime("anytime_second_tutorial_meal");
-				break;
-			case CMD_BaseSelect.BASE_TYPE.CHIP:
-				base.SetTutorialAnyTime("anytime_second_tutorial_chip_equipment");
-				break;
 			}
 			base.Show(f, sizeX, sizeY, aT);
 		}
@@ -428,24 +445,41 @@ public sealed class CMD_BaseSelect : CMD
 		if (tutorialObserver != null)
 		{
 			GUIMain.BarrierON(null);
-			switch (CMD_BaseSelect.BaseType)
+			CMD_BaseSelect.BASE_TYPE baseType = CMD_BaseSelect.BaseType;
+			if (baseType != CMD_BaseSelect.BASE_TYPE.EVOLVE)
 			{
-			case CMD_BaseSelect.BASE_TYPE.EVOLVE:
-				tutorialObserver.StartSecondTutorial("second_tutorial_evolution", new Action(GUIMain.BarrierOFF), delegate
+				if (baseType != CMD_BaseSelect.BASE_TYPE.CHIP)
 				{
+					GUIMain.BarrierOFF();
 					GUICollider.EnableAllCollider("CMD_BaseSelect : " + CMD_BaseSelect.BaseType);
-				});
-				goto IL_DB;
-			case CMD_BaseSelect.BASE_TYPE.CHIP:
-				tutorialObserver.StartSecondTutorial("second_tutorial_chip_equipment", new Action(GUIMain.BarrierOFF), delegate
+				}
+				else
 				{
-					GUICollider.EnableAllCollider("CMD_BaseSelect : " + CMD_BaseSelect.BaseType);
-				});
-				goto IL_DB;
+					TutorialObserver tutorialObserver2 = tutorialObserver;
+					string tutorialName = "second_tutorial_chip_equipment";
+					if (CMD_BaseSelect.<>f__mg$cache1 == null)
+					{
+						CMD_BaseSelect.<>f__mg$cache1 = new Action(GUIMain.BarrierOFF);
+					}
+					tutorialObserver2.StartSecondTutorial(tutorialName, CMD_BaseSelect.<>f__mg$cache1, delegate
+					{
+						GUICollider.EnableAllCollider("CMD_BaseSelect : " + CMD_BaseSelect.BaseType);
+					});
+				}
 			}
-			GUIMain.BarrierOFF();
-			GUICollider.EnableAllCollider("CMD_BaseSelect : " + CMD_BaseSelect.BaseType);
-			IL_DB:;
+			else
+			{
+				TutorialObserver tutorialObserver3 = tutorialObserver;
+				string tutorialName2 = "second_tutorial_evolution";
+				if (CMD_BaseSelect.<>f__mg$cache0 == null)
+				{
+					CMD_BaseSelect.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+				}
+				tutorialObserver3.StartSecondTutorial(tutorialName2, CMD_BaseSelect.<>f__mg$cache0, delegate
+				{
+					GUICollider.EnableAllCollider("CMD_BaseSelect : " + CMD_BaseSelect.BaseType);
+				});
+			}
 		}
 		else
 		{
@@ -497,12 +531,12 @@ public sealed class CMD_BaseSelect : CMD
 			{
 				ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 				FarmCameraControlForCMD.On();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy1(animation);
 				RestrictionInput.EndLoad();
 			}, delegate(Exception nop)
 			{
 				FarmCameraControlForCMD.On();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy1(animation);
 				RestrictionInput.EndLoad();
 			}, null), false);
 		}
@@ -514,7 +548,7 @@ public sealed class CMD_BaseSelect : CMD
 		if (CMD_BaseSelect.DataChg != null)
 		{
 			this.monsterBasicInfo.SetMonsterData(CMD_BaseSelect.DataChg);
-			this.monsterStatusList.SetValues(CMD_BaseSelect.DataChg, false);
+			this.monsterStatusList.SetValues(CMD_BaseSelect.DataChg, false, false);
 			this.monsterLeaderSkill.SetSkill(CMD_BaseSelect.DataChg);
 			this.detailedMonsterLeaderSkill.SetSkill(CMD_BaseSelect.DataChg);
 			this.monsterUniqueSkill.SetSkill(CMD_BaseSelect.DataChg);
@@ -684,15 +718,15 @@ public sealed class CMD_BaseSelect : CMD
 		case CMD_BaseSelect.BASE_TYPE.EVOLVE:
 			list = MonsterFilter.Filter(list, MonsterFilterType.CAN_EVOLVE);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.EVOLVE;
-			goto IL_10E;
+			goto IL_10C;
 		case CMD_BaseSelect.BASE_TYPE.MEAL:
 			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
-			goto IL_10E;
+			goto IL_10C;
 		case CMD_BaseSelect.BASE_TYPE.LABO:
 			list = MonsterFilter.Filter(list, MonsterFilterType.RESEARCH_TARGET);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.LABO;
-			goto IL_10E;
+			goto IL_10C;
 		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
 			if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
 			{
@@ -704,14 +738,14 @@ public sealed class CMD_BaseSelect : CMD
 				list = MonsterFilter.Filter(list, MonsterFilterType.HAVE_MEDALS);
 			}
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT;
-			goto IL_10E;
+			goto IL_10C;
 		case CMD_BaseSelect.BASE_TYPE.VERSION_UP:
 			list = MonsterFilter.Filter(list, MonsterFilterType.CAN_VERSION_UP);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.VERSION_UP;
-			goto IL_10E;
+			goto IL_10C;
 		}
 		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
-		IL_10E:
+		IL_10C:
 		monsterDataMng.SortMDList(list);
 		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.EVOLVE)
 		{
@@ -780,6 +814,7 @@ public sealed class CMD_BaseSelect : CMD
 		this.targetMonsterList = list;
 		list = MonsterDataMng.Instance().SelectionMDList(list);
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+		this.csSelectPanelMonsterIcon.ClearIconDungeonBonus();
 		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.VERSION_UP)
 		{
 			bool flag2 = false;
@@ -821,9 +856,12 @@ public sealed class CMD_BaseSelect : CMD
 							}
 							if (!flag3)
 							{
-								bool flag4 = false;
-								MonsterAbilityStatusInfo mas = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon2, monsterData, ref flag4);
-								float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(mas);
+								MonsterAbilityStatusInfo monsterAbilityStatusInfo = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon2, monsterData);
+								MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(baseDigimon2.userMonster.monsterId);
+								int goldMedalMaxNum = MonsterArousalData.GetGoldMedalMaxNum(monsterMasterByMonsterId.Simple.rare);
+								List<AbilityData.GoldMedalInheritanceState> goldMedalInheritanceList = ClassSingleton<AbilityData>.Instance.GetGoldMedalInheritanceList(baseDigimon2.userMonster, monsterData.userMonster);
+								ClassSingleton<AbilityData>.Instance.AdjustMedalInheritanceRate(monsterAbilityStatusInfo, goldMedalInheritanceList, goldMedalMaxNum);
+								float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(monsterAbilityStatusInfo);
 								if (totalAbilityRate <= 0f)
 								{
 									GUIMonsterIcon icon6 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
@@ -944,9 +982,12 @@ public sealed class CMD_BaseSelect : CMD
 					MonsterData baseDigimon = CMD_PairSelectBase.instance.baseDigimon;
 					if (baseDigimon != null && baseDigimon != tappedMonsterData)
 					{
-						bool flag2 = false;
-						MonsterAbilityStatusInfo mas = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon, tappedMonsterData, ref flag2);
-						float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(mas);
+						MonsterAbilityStatusInfo monsterAbilityStatusInfo = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon, tappedMonsterData);
+						MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(baseDigimon.userMonster.monsterId);
+						int goldMedalMaxNum = MonsterArousalData.GetGoldMedalMaxNum(monsterMasterByMonsterId.Simple.rare);
+						List<AbilityData.GoldMedalInheritanceState> goldMedalInheritanceList = ClassSingleton<AbilityData>.Instance.GetGoldMedalInheritanceList(baseDigimon.userMonster, tappedMonsterData.userMonster);
+						ClassSingleton<AbilityData>.Instance.AdjustMedalInheritanceRate(monsterAbilityStatusInfo, goldMedalInheritanceList, goldMedalMaxNum);
+						float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(monsterAbilityStatusInfo);
 						if (totalAbilityRate <= 0f)
 						{
 							isCheckDim = false;

@@ -49,7 +49,7 @@ public class BattleInputPvP : BattleInputBasic
 		}
 		base.battleStateData.isShowRetireWindow = false;
 		base.stateManager.time.SetPlaySpeed(false, false);
-		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
+		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		base.stateManager.soundPlayer.SetPauseVolume(false);
 		SoundPlayer.PlayButtonEnter();
 		base.StartCoroutine(this.SendRetire());

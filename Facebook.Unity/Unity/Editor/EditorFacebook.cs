@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Facebook.Unity.Editor
 {
-	internal class EditorFacebook : FacebookBase, IMobileFacebookImplementation, ICanvasFacebookImplementation, IMobileFacebook, IMobileFacebookResultHandler, IFacebook, IFacebookResultHandler, ICanvasFacebook, ICanvasFacebookResultHandler, IPayFacebook
+	internal class EditorFacebook : FacebookBase, IMobileFacebookImplementation, IMobileFacebook, IFacebook, IMobileFacebookResultHandler, IFacebookResultHandler, ICanvasFacebookImplementation, ICanvasFacebook, IPayFacebook, ICanvasFacebookResultHandler
 	{
 		private const string WarningMessage = "You are using the facebook SDK in the Unity Editor. Behavior may not be the same as when used on iOS, Android, or Web.";
 
@@ -83,19 +83,9 @@ namespace Facebook.Unity.Editor
 			this.editorWrapper.ShowMockShareDialog(new Utilities.Callback<ResultContainer>(this.OnShareLinkComplete), "FeedShare", base.CallbackManager.AddFacebookDelegate<IShareResult>(callback));
 		}
 
-		public override void GameGroupCreate(string name, string description, string privacy, FacebookDelegate<IGroupCreateResult> callback)
-		{
-			this.editorWrapper.ShowGameGroupCreateMockDialog(new Utilities.Callback<ResultContainer>(this.OnGroupCreateComplete), base.CallbackManager.AddFacebookDelegate<IGroupCreateResult>(callback));
-		}
-
-		public override void GameGroupJoin(string id, FacebookDelegate<IGroupJoinResult> callback)
-		{
-			this.editorWrapper.ShowGameGroupJoinMockDialog(new Utilities.Callback<ResultContainer>(this.OnGroupJoinComplete), base.CallbackManager.AddFacebookDelegate<IGroupJoinResult>(callback));
-		}
-
 		public override void ActivateApp(string appId)
 		{
-			FacebookLogger.Info("This only needs to be called for iOS or Android.");
+			FacebookLogger.Log("Pew! Pretending to send this off.  Doesn't actually work in the editor");
 		}
 
 		public override void GetAppLink(FacebookDelegate<IAppLinkResult> callback)
@@ -114,6 +104,11 @@ namespace Facebook.Unity.Editor
 		public override void AppEventsLogPurchase(float logPurchase, string currency, Dictionary<string, object> parameters)
 		{
 			FacebookLogger.Log("Pew! Pretending to send this off.  Doesn't actually work in the editor");
+		}
+
+		public bool IsImplicitPurchaseLoggingEnabled()
+		{
+			return true;
 		}
 
 		public void AppInvite(Uri appLinkUrl, Uri previewImageUrl, FacebookDelegate<IAppInviteResult> callback)
@@ -144,6 +139,11 @@ namespace Facebook.Unity.Editor
 		}
 
 		public void PayWithProductId(string productId, string action, int quantity, int? quantityMin, int? quantityMax, string requestId, string pricepointId, string testCurrency, FacebookDelegate<IPayResult> callback)
+		{
+			this.editorWrapper.ShowPayMockDialog(new Utilities.Callback<ResultContainer>(this.OnPayComplete), base.CallbackManager.AddFacebookDelegate<IPayResult>(callback));
+		}
+
+		public void PayWithProductId(string productId, string action, string developerPayload, string testCurrency, FacebookDelegate<IPayResult> callback)
 		{
 			this.editorWrapper.ShowPayMockDialog(new Utilities.Callback<ResultContainer>(this.OnPayComplete), base.CallbackManager.AddFacebookDelegate<IPayResult>(callback));
 		}
@@ -185,22 +185,10 @@ namespace Facebook.Unity.Editor
 			base.CallbackManager.OnFacebookResponse(result);
 		}
 
-		public override void OnGroupCreateComplete(ResultContainer resultContainer)
-		{
-			GroupCreateResult result = new GroupCreateResult(resultContainer);
-			base.CallbackManager.OnFacebookResponse(result);
-		}
-
-		public override void OnGroupJoinComplete(ResultContainer resultContainer)
-		{
-			GroupJoinResult result = new GroupJoinResult(resultContainer);
-			base.CallbackManager.OnFacebookResponse(result);
-		}
-
 		public override void OnLoginComplete(ResultContainer resultContainer)
 		{
 			LoginResult result = new LoginResult(resultContainer);
-			base.OnAuthResponse(result);
+			this.OnAuthResponse(result);
 		}
 
 		public override void OnShareLinkComplete(ResultContainer resultContainer)

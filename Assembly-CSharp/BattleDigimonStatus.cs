@@ -77,20 +77,20 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel leaderSkillDescription;
 
-	[SerializeField]
 	[Header("特化型")]
+	[SerializeField]
 	private UILabel specificType;
 
 	[Header("固有技")]
 	[SerializeField]
 	private BattleDigimonStatus.Skill deathblow;
 
-	[SerializeField]
 	[Header("継承技1")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance1;
 
-	[SerializeField]
 	[Header("継承技2")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance2;
 
 	[SerializeField]
@@ -104,16 +104,16 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel lvLocalize;
 
-	[SerializeField]
 	[Header("HPローカライズ")]
+	[SerializeField]
 	private UILabel hpLocalize;
 
-	[SerializeField]
 	[Header("友情度ローカライズ")]
+	[SerializeField]
 	private UILabel friendLocalize;
 
-	[SerializeField]
 	[Header("ATKローカライズ")]
+	[SerializeField]
 	private UILabel atkLocalize;
 
 	[Header("DEFローカライズ")]
@@ -124,24 +124,24 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel satkLocalize;
 
-	[SerializeField]
 	[Header("SDEFローカライズ")]
+	[SerializeField]
 	private UILabel sdefLocalize;
 
-	[SerializeField]
 	[Header("SPDローカライズ")]
+	[SerializeField]
 	private UILabel spdLocalize;
 
-	[SerializeField]
 	[Header("Luckローカライズ")]
+	[SerializeField]
 	private UILabel luckLocalize;
 
-	[SerializeField]
 	[Header("リーダースキルローカライズ")]
+	[SerializeField]
 	private UILabel lSkillLocalize;
 
-	[SerializeField]
 	[Header("装着チップ")]
+	[SerializeField]
 	private ChipIcon[] chipIcons;
 
 	private void Awake()
@@ -200,6 +200,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			this.leaderSkillName.text = StringMaster.GetString("SystemNone");
 			this.leaderSkillDescription.text = string.Empty;
 		}
+		characterStatus.InitializeSkillExtraStatus();
 		if (characterStatus.skillStatus.Length > 1)
 		{
 			this.deathblow.name.text = characterStatus.skillStatus[1].name;

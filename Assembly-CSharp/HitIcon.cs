@@ -7,16 +7,16 @@ using UnityEngine;
 
 public class HitIcon : MonoBehaviour
 {
-	[SerializeField]
 	[Header("アニメーション 通常 有利 不利 の順")]
+	[SerializeField]
 	private UITweener[] tween;
 
-	[SerializeField]
 	[Header("通常のUI")]
+	[SerializeField]
 	private HitIcon.Data standard = new HitIcon.Data();
 
-	[SerializeField]
 	[Header("ステージ効果用のUI")]
+	[SerializeField]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
 	[Header("耐性結果を表示するフォントテクスチャ")]
@@ -31,8 +31,8 @@ public class HitIcon : MonoBehaviour
 
 	private Dictionary<string, string> dictionary;
 
-	[SerializeField]
 	[Header("ステージ効果上昇UI")]
+	[SerializeField]
 	private UISprite upSprite;
 
 	[Header("ステージ効果減少UI")]
@@ -43,8 +43,8 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private HitIcon.LanguageFont languageFont;
 
-	[SerializeField]
 	[Header("海外用フォントデータ")]
+	[SerializeField]
 	private HitIcon.LanguageFont usLanguageFont;
 
 	private void Awake()
@@ -96,6 +96,7 @@ public class HitIcon : MonoBehaviour
 			case AffectEffect.HpBorderlineSpDamage:
 			case AffectEffect.DefenseThroughDamage:
 			case AffectEffect.SpDefenseThroughDamage:
+			case AffectEffect.RefHpRateNonAttribute:
 				this.ShowDamage(data, onDamage, onWeak, onCrithical, isCounter, isReflection, extraEffectType);
 				return;
 			case AffectEffect.AttackUp:
@@ -302,7 +303,7 @@ public class HitIcon : MonoBehaviour
 		case Strength.Drain:
 			return this.standardEffectFontTexture.green;
 		case Strength.Invalid:
-			return this.standardEffectFontTexture.blue;
+			return this.standardEffectFontTexture.gray;
 		default:
 			return this.standardEffectFontTexture.white;
 		}
@@ -321,7 +322,7 @@ public class HitIcon : MonoBehaviour
 		case Strength.Drain:
 			return this.resistanceFontTexture.green;
 		case Strength.Invalid:
-			return this.resistanceFontTexture.blue;
+			return this.resistanceFontTexture.gray;
 		default:
 			return this.resistanceFontTexture.blue;
 		}
@@ -600,7 +601,7 @@ public class HitIcon : MonoBehaviour
 	private void ShowInvalid(HitIcon.Data data)
 	{
 		data.middleMesh.text = this.GetString("HitIconInvalid");
-		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		this.ChangeFontTexture(this.standardEffectFontTexture.gray, new TextMeshPro[]
 		{
 			data.middleMesh
 		});
@@ -858,6 +859,8 @@ public class HitIcon : MonoBehaviour
 		public Texture blue;
 
 		public Texture green;
+
+		public Texture gray;
 	}
 
 	[Serializable]
@@ -876,6 +879,8 @@ public class HitIcon : MonoBehaviour
 		public Texture purple;
 
 		public Texture white;
+
+		public Texture gray;
 	}
 
 	[Serializable]

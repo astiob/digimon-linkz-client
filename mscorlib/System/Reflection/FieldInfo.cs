@@ -227,8 +227,8 @@ namespace System.Reflection
 		/// <exception cref="T:System.FieldAccessException">The caller does not have permission to access this field. </exception>
 		/// <exception cref="T:System.Reflection.TargetException">The <paramref name="obj" /> parameter is null and the field is an instance field. </exception>
 		/// <exception cref="T:System.ArgumentException">The field does not exist on the object.-or- The <paramref name="value" /> parameter cannot be converted and stored in the field. </exception>
-		[DebuggerHidden]
 		[DebuggerStepThrough]
+		[DebuggerHidden]
 		public void SetValue(object obj, object value)
 		{
 			this.SetValue(obj, value, BindingFlags.Default, null, null);

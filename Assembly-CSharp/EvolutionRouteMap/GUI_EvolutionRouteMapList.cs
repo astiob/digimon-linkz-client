@@ -8,10 +8,10 @@ namespace EvolutionRouteMap
 {
 	public sealed class GUI_EvolutionRouteMapList : CMDRecycleViewUDWrapper
 	{
-		private const int RECYCLE_SECTOR_NUM = 1;
-
 		[SerializeField]
 		private CMD_EvolutionRouteMap dialogRoot;
+
+		private const int RECYCLE_SECTOR_NUM = 1;
 
 		private List<EvolutionDiagramData.IconMonster> routeDataList;
 

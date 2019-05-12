@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
 	[AddComponentMenu("Image Effects/Rendering/Sun Shafts")]
 	public class SunShafts : PostEffectsBase
 	{

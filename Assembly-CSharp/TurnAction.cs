@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class TurnAction : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[Header("スキル名のスキナー")]
 	[SerializeField]
 	private UIComponentSkinner skillNameSkinner;
 
-	[SerializeField]
 	[Header("スキル名のTween")]
+	[SerializeField]
 	private TweenTransform skinllNameTweenTransform;
 
 	[Header("スキル名のテキスト")]

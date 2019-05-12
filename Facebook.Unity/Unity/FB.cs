@@ -1,9 +1,10 @@
-﻿using Facebook.Unity.Arcade;
-using Facebook.Unity.Canvas;
+﻿using Facebook.Unity.Canvas;
 using Facebook.Unity.Editor;
+using Facebook.Unity.Gameroom;
 using Facebook.Unity.Mobile;
 using Facebook.Unity.Mobile.Android;
 using Facebook.Unity.Mobile.IOS;
+using Facebook.Unity.Settings;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,13 +17,15 @@ namespace Facebook.Unity
 
 		private static IFacebook facebook;
 
-		private static bool isInitCalled;
+		private static bool isInitCalled = false;
 
 		private static string facebookDomain = "facebook.com";
 
 		private static string graphApiVersion = "v2.6";
 
 		public static string AppId { get; private set; }
+
+		public static string ClientToken { get; private set; }
 
 		public static string GraphApiVersion
 		{
@@ -99,68 +102,64 @@ namespace Facebook.Unity
 
 		public static void Init(InitDelegate onInitComplete = null, HideUnityDelegate onHideUnity = null, string authResponse = null)
 		{
-			FB.Init(FacebookSettings.AppId, FacebookSettings.Cookie, FacebookSettings.Logging, FacebookSettings.Status, FacebookSettings.Xfbml, FacebookSettings.FrictionlessRequests, authResponse, "en_US", onHideUnity, onInitComplete);
+			FB.Init(FacebookSettings.AppId, FacebookSettings.ClientToken, FacebookSettings.Cookie, FacebookSettings.Logging, FacebookSettings.Status, FacebookSettings.Xfbml, FacebookSettings.FrictionlessRequests, authResponse, "en_US", onHideUnity, onInitComplete);
 		}
 
-		public static void Init(string appId, bool cookie = true, bool logging = true, bool status = true, bool xfbml = false, bool frictionlessRequests = true, string authResponse = null, string javascriptSDKLocale = "en_US", HideUnityDelegate onHideUnity = null, InitDelegate onInitComplete = null)
+		public static void Init(string appId, string clientToken = null, bool cookie = true, bool logging = true, bool status = true, bool xfbml = false, bool frictionlessRequests = true, string authResponse = null, string javascriptSDKLocale = "en_US", HideUnityDelegate onHideUnity = null, InitDelegate onInitComplete = null)
 		{
 			if (string.IsNullOrEmpty(appId))
 			{
 				throw new ArgumentException("appId cannot be null or empty!");
 			}
 			FB.AppId = appId;
-			if (!FB.isInitCalled)
-			{
-				FB.isInitCalled = true;
-				if (Constants.IsEditor)
-				{
-					FB.OnDLLLoadedDelegate = delegate()
-					{
-						((EditorFacebook)FB.facebook).Init(onInitComplete);
-					};
-					ComponentFactory.GetComponent<EditorFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
-				}
-				else
-				{
-					switch (Constants.CurrentPlatform)
-					{
-					case FacebookUnityPlatform.Android:
-						FB.OnDLLLoadedDelegate = delegate()
-						{
-							((AndroidFacebook)FB.facebook).Init(appId, onHideUnity, onInitComplete);
-						};
-						ComponentFactory.GetComponent<AndroidFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
-						break;
-					case FacebookUnityPlatform.IOS:
-						FB.OnDLLLoadedDelegate = delegate()
-						{
-							((IOSFacebook)FB.facebook).Init(appId, frictionlessRequests, FacebookSettings.IosURLSuffix, onHideUnity, onInitComplete);
-						};
-						ComponentFactory.GetComponent<IOSFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
-						break;
-					case FacebookUnityPlatform.WebGL:
-					case FacebookUnityPlatform.WebPlayer:
-						FB.OnDLLLoadedDelegate = delegate()
-						{
-							((CanvasFacebook)FB.facebook).Init(appId, cookie, logging, status, xfbml, FacebookSettings.ChannelUrl, authResponse, frictionlessRequests, javascriptSDKLocale, Constants.DebugMode, onHideUnity, onInitComplete);
-						};
-						ComponentFactory.GetComponent<CanvasFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
-						break;
-					case FacebookUnityPlatform.Arcade:
-						FB.OnDLLLoadedDelegate = delegate()
-						{
-							((ArcadeFacebook)FB.facebook).Init(appId, onHideUnity, onInitComplete);
-						};
-						ComponentFactory.GetComponent<ArcadeFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
-						break;
-					default:
-						throw new NotImplementedException("Facebook API does not yet support this platform");
-					}
-				}
-			}
-			else
+			FB.ClientToken = clientToken;
+			if (FB.isInitCalled)
 			{
 				FacebookLogger.Warn("FB.Init() has already been called.  You only need to call this once and only once.");
+				return;
+			}
+			FB.isInitCalled = true;
+			if (Constants.IsEditor)
+			{
+				FB.OnDLLLoadedDelegate = delegate()
+				{
+					((EditorFacebook)FB.facebook).Init(onInitComplete);
+				};
+				ComponentFactory.GetComponent<EditorFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
+				return;
+			}
+			switch (Constants.CurrentPlatform)
+			{
+			case FacebookUnityPlatform.Android:
+				FB.OnDLLLoadedDelegate = delegate()
+				{
+					((AndroidFacebook)FB.facebook).Init(appId, onHideUnity, onInitComplete);
+				};
+				ComponentFactory.GetComponent<AndroidFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
+				return;
+			case FacebookUnityPlatform.IOS:
+				FB.OnDLLLoadedDelegate = delegate()
+				{
+					((IOSFacebook)FB.facebook).Init(appId, frictionlessRequests, FacebookSettings.IosURLSuffix, onHideUnity, onInitComplete);
+				};
+				ComponentFactory.GetComponent<IOSFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
+				return;
+			case FacebookUnityPlatform.WebGL:
+				FB.OnDLLLoadedDelegate = delegate()
+				{
+					((CanvasFacebook)FB.facebook).Init(appId, cookie, logging, status, xfbml, FacebookSettings.ChannelUrl, authResponse, frictionlessRequests, javascriptSDKLocale, Constants.DebugMode, onHideUnity, onInitComplete);
+				};
+				ComponentFactory.GetComponent<CanvasFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
+				return;
+			case FacebookUnityPlatform.Gameroom:
+				FB.OnDLLLoadedDelegate = delegate()
+				{
+					((GameroomFacebook)FB.facebook).Init(appId, onHideUnity, onInitComplete);
+				};
+				ComponentFactory.GetComponent<GameroomFacebookLoader>(ComponentFactory.IfNotExist.AddNew);
+				return;
+			default:
+				throw new NotSupportedException("The facebook sdk does not support this platform");
 			}
 		}
 
@@ -236,16 +235,6 @@ namespace Facebook.Unity
 			FB.FacebookImpl.GetAppLink(callback);
 		}
 
-		public static void GameGroupCreate(string name, string description, string privacy = "CLOSED", FacebookDelegate<IGroupCreateResult> callback = null)
-		{
-			FB.FacebookImpl.GameGroupCreate(name, description, privacy, callback);
-		}
-
-		public static void GameGroupJoin(string id, FacebookDelegate<IGroupJoinResult> callback = null)
-		{
-			FB.FacebookImpl.GameGroupJoin(id, callback);
-		}
-
 		public static void LogAppEvent(string logEvent, float? valueToSum = null, Dictionary<string, object> parameters = null)
 		{
 			FB.FacebookImpl.AppEventsLogEvent(logEvent, valueToSum, parameters);
@@ -265,11 +254,9 @@ namespace Facebook.Unity
 			if (FB.facebook != null)
 			{
 				FacebookLogger.Info(string.Format("Using Facebook Unity SDK v{0} with {1}", FacebookSdkVersion.Build, FB.FacebookImpl.SDKUserAgent));
+				return;
 			}
-			else
-			{
-				FacebookLogger.Info(string.Format("Using Facebook Unity SDK v{0}", FacebookSdkVersion.Build));
-			}
+			FacebookLogger.Info(string.Format("Using Facebook Unity SDK v{0}", FacebookSdkVersion.Build));
 		}
 
 		private delegate void OnDLLLoaded();
@@ -297,6 +284,11 @@ namespace Facebook.Unity
 			public static void PayWithProductId(string productId, string action = "purchaseiap", int quantity = 1, int? quantityMin = null, int? quantityMax = null, string requestId = null, string pricepointId = null, string testCurrency = null, FacebookDelegate<IPayResult> callback = null)
 			{
 				FB.Canvas.FacebookPayImpl.PayWithProductId(productId, action, quantity, quantityMin, quantityMax, requestId, pricepointId, testCurrency, callback);
+			}
+
+			public static void PayWithProductId(string productId, string action = "purchaseiap", string developerPayload = null, string testCurrency = null, FacebookDelegate<IPayResult> callback = null)
+			{
+				FB.Canvas.FacebookPayImpl.PayWithProductId(productId, action, developerPayload, testCurrency, callback);
 			}
 		}
 
@@ -345,6 +337,11 @@ namespace Facebook.Unity
 			{
 				FB.Mobile.MobileFacebookImpl.RefreshCurrentAccessToken(callback);
 			}
+
+			public static bool IsImplicitPurchaseLoggingEnabled()
+			{
+				return FB.Mobile.MobileFacebookImpl.IsImplicitPurchaseLoggingEnabled();
+			}
 		}
 
 		public sealed class Android
@@ -354,8 +351,38 @@ namespace Facebook.Unity
 				get
 				{
 					AndroidFacebook androidFacebook = FB.FacebookImpl as AndroidFacebook;
-					return (androidFacebook == null) ? string.Empty : androidFacebook.KeyHash;
+					if (androidFacebook == null)
+					{
+						return string.Empty;
+					}
+					return androidFacebook.KeyHash;
 				}
+			}
+		}
+
+		public sealed class Gameroom
+		{
+			private static IGameroomFacebook GameroomFacebookImpl
+			{
+				get
+				{
+					IGameroomFacebook gameroomFacebook = FB.FacebookImpl as IGameroomFacebook;
+					if (gameroomFacebook == null)
+					{
+						throw new InvalidOperationException("Attempt to call Gameroom interface on non Windows platform");
+					}
+					return gameroomFacebook;
+				}
+			}
+
+			public static void PayPremium(FacebookDelegate<IPayResult> callback = null)
+			{
+				FB.Gameroom.GameroomFacebookImpl.PayPremium(callback);
+			}
+
+			public static void HasLicense(FacebookDelegate<IHasLicenseResult> callback = null)
+			{
+				FB.Gameroom.GameroomFacebookImpl.HasLicense(callback);
 			}
 		}
 
@@ -368,7 +395,7 @@ namespace Facebook.Unity
 				FB.facebook = this.FBGameObject.Facebook;
 				FB.OnDLLLoadedDelegate();
 				FB.LogVersion();
-				UnityEngine.Object.Destroy(this);
+				Object.Destroy(this);
 			}
 		}
 	}

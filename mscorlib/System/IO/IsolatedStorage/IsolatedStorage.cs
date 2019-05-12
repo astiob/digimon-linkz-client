@@ -24,8 +24,8 @@ namespace System.IO.IsolatedStorage
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="ControlPolicy" />
 		/// </PermissionSet>
-		[MonoTODO("requires manifest support")]
 		[ComVisible(false)]
+		[MonoTODO("requires manifest support")]
 		public object ApplicationIdentity
 		{
 			get

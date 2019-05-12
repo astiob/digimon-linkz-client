@@ -1,5 +1,6 @@
 ﻿using Cutscene;
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CutSceneMain : MonoBehaviour
@@ -10,11 +11,26 @@ public sealed class CutSceneMain : MonoBehaviour
 
 	private static GameObject goGUI_CAM;
 
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache0;
+
+	public static void FadeReqCutScene(CutsceneDataBase cutsceneData, Action startSceneCallBack, Action endFadeInCallBack, float outSec = 0.5f, float inSec = 0.5f)
+	{
+		CutSceneMain.FadeReqCutScene(cutsceneData, startSceneCallBack, null, delegate(int i)
+		{
+			endFadeInCallBack();
+		}, outSec, inSec);
+	}
+
 	public static void FadeReqCutScene(CutsceneDataBase cutsceneData, Action startSceneCallBack, Action endSceneCallBack, Action<int> endFadeInCallBack, float outSec = 0.5f, float inSec = 0.5f)
 	{
 		CutSceneMain.cs_startSceneCallBack = startSceneCallBack;
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
-		GUIFadeControll.SetLoadInfo(new Action<int>(CutSceneMain.ExecCutScene), string.Empty, string.Empty, string.Empty, endFadeInCallBack, false);
+		if (CutSceneMain.<>f__mg$cache0 == null)
+		{
+			CutSceneMain.<>f__mg$cache0 = new Action<int>(CutSceneMain.ExecCutScene);
+		}
+		GUIFadeControll.SetLoadInfo(CutSceneMain.<>f__mg$cache0, string.Empty, string.Empty, string.Empty, endFadeInCallBack, false);
 		CutSceneMain.cutscene = CutsceneFactory.Create(cutsceneData);
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.GetOrthoCamera().gameObject);
 	}

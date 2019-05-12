@@ -44,8 +44,8 @@ public class MenuDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel helpLocalize;
 
-	[SerializeField]
 	[Header("リタイアローカライズ")]
+	[SerializeField]
 	private UILabel retireLocalize;
 
 	[Header("獲得EXPローカライズ")]

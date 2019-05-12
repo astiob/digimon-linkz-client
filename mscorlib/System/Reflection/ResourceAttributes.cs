@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Reflection
 {
 	/// <summary>Specifies the attributes for a manifest resource.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum ResourceAttributes
 	{

@@ -6,10 +6,6 @@ using UnityEngine;
 
 public class CMD_OptionSettings : CMD
 {
-	private const int AUTO_FLAG_OFF = 1;
-
-	private const int AUTO_FLAG_ON = 0;
-
 	private readonly int pushNoticeOn = 1;
 
 	private readonly int pushNoticeOff;
@@ -75,6 +71,10 @@ public class CMD_OptionSettings : CMD
 	private int autoBattleState;
 
 	private int initAutoBattleState;
+
+	private const int AUTO_FLAG_OFF = 1;
+
+	private const int AUTO_FLAG_ON = 0;
 
 	[SerializeField]
 	private GameObject systemEnvironmentWindow;

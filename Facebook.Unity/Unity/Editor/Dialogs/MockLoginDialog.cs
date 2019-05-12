@@ -58,8 +58,7 @@ namespace Facebook.Unity.Editor.Dialogs
 					}
 					List<string> list = new List<string>();
 					List<string> list2 = new List<string>();
-					List<object> list3 = permResult.ResultDictionary["data"] as List<object>;
-					foreach (object obj in list3)
+					foreach (object obj in (permResult.ResultDictionary["data"] as List<object>))
 					{
 						Dictionary<string, object> dictionary = (Dictionary<string, object>)obj;
 						if (dictionary["status"] as string == "granted")
@@ -71,8 +70,7 @@ namespace Facebook.Unity.Editor.Dialogs
 							list2.Add(dictionary["permission"] as string);
 						}
 					}
-					AccessToken accessToken = new AccessToken(this.accessToken, facebookID, DateTime.UtcNow.AddDays(60.0), list, new DateTime?(DateTime.UtcNow));
-					IDictionary<string, object> dictionary2 = (IDictionary<string, object>)Json.Deserialize(accessToken.ToJson());
+					IDictionary<string, object> dictionary2 = (IDictionary<string, object>)Json.Deserialize(new AccessToken(this.accessToken, facebookID, DateTime.UtcNow.AddDays(60.0), list, new DateTime?(DateTime.UtcNow)).ToJson());
 					dictionary2.Add("granted_permissions", list);
 					dictionary2.Add("declined_permissions", list2);
 					if (!string.IsNullOrEmpty(this.CallbackID))

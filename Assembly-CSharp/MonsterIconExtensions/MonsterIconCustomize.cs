@@ -26,6 +26,10 @@ namespace MonsterIconExtensions
 			{
 				self.Lock.SetLock();
 			}
+			else
+			{
+				self.Lock.SetUnlock();
+			}
 			if (isGimmick)
 			{
 				self.Gimmick.SetGimmickIcon();
@@ -40,6 +44,10 @@ namespace MonsterIconExtensions
 			if (monster.GetMonster().IsLocked)
 			{
 				self.Lock.SetLock();
+			}
+			else
+			{
+				self.Lock.SetUnlock();
 			}
 		}
 
@@ -66,7 +74,7 @@ namespace MonsterIconExtensions
 			self.Thumbnail.SetEmptyIcon();
 			if (null != self.Lock)
 			{
-				self.Lock.ClearLock();
+				self.Lock.SetUnlock();
 			}
 			if (null != self.New)
 			{

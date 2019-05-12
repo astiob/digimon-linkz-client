@@ -4,21 +4,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using WebAPIRequest;
 
 public class CMD_ModalPresentBox : CMD
 {
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel lbTitle;
 
 	[Header("残り受取件数")]
 	[SerializeField]
 	private UILabel lbSubtitle;
 
-	[SerializeField]
 	[Header("初期メッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -37,8 +38,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnGetAll;
 
-	[SerializeField]
 	[Header("履歴ボタン")]
+	[SerializeField]
 	private GameObject goBtnHistory;
 
 	[SerializeField]
@@ -74,6 +75,9 @@ public class CMD_ModalPresentBox : CMD
 	private bool isReceived;
 
 	public int nowPage;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public static CMD_ModalPresentBox Instance
 	{
@@ -114,7 +118,7 @@ public class CMD_ModalPresentBox : CMD
 				ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 				ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 				RestrictionInput.EndLoad();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy0(animation);
 			}, null, null));
 		}
 		else
@@ -150,7 +154,7 @@ public class CMD_ModalPresentBox : CMD
 			this.isReceived = false;
 			this.ChangeDisplayBox();
 			this.ShowDLG();
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy1(f, sizeX, sizeY, aT);
 		});
 	}
 
@@ -203,7 +207,7 @@ public class CMD_ModalPresentBox : CMD
 		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy0(false);
 		}, null));
 	}
 
@@ -317,7 +321,7 @@ public class CMD_ModalPresentBox : CMD
 			this.candidateList.Add(this.prizeDataList.prizeData[i]);
 			receiveIds[i] = this.prizeDataList.prizeData[i].receiveId;
 		}
-		GameWebAPI.RequestPR_PrizeReceive request = new GameWebAPI.RequestPR_PrizeReceive
+		GameWebAPI.RequestPR_PrizeReceive requestPR_PrizeReceive = new GameWebAPI.RequestPR_PrizeReceive
 		{
 			SetSendData = delegate(GameWebAPI.PR_Req_PrizeReceiveIds param)
 			{
@@ -329,7 +333,12 @@ public class CMD_ModalPresentBox : CMD
 				this.DispReceiveResultModal(response);
 			}
 		};
-		base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request = requestPR_PrizeReceive;
+		if (CMD_ModalPresentBox.<>f__mg$cache0 == null)
+		{
+			CMD_ModalPresentBox.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		base.StartCoroutine(request.RunOneTime(CMD_ModalPresentBox.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null));
@@ -363,8 +372,10 @@ public class CMD_ModalPresentBox : CMD
 			cmd_ModalMessage2.Title = StringMaster.GetString("Present-03");
 			cmd_ModalMessage2.Info = this.GetPresentCountDescription(this.receivedPresentCountList);
 			cmd_ModalMessage2.AdjustSize();
-			foreach (string receiveId in data.prizeReceiveIds)
+			string[] prizeReceiveIds = data.prizeReceiveIds;
+			for (int i = 0; i < prizeReceiveIds.Length; i++)
 			{
+				string receiveId = prizeReceiveIds[i];
 				GameWebAPI.RespDataPR_PrizeData.PrizeData prizeData = this.prizeDataList.prizeData.SingleOrDefault((GameWebAPI.RespDataPR_PrizeData.PrizeData x) => x.receiveId == receiveId);
 				if (prizeData != null && int.Parse(prizeData.assetCategoryId) == 16)
 				{
@@ -417,12 +428,9 @@ public class CMD_ModalPresentBox : CMD
 			{
 				if (this.receivedPresentCountList.ContainsKey(assetCategoryId))
 				{
-					Dictionary<string, int> dictionary2;
-					Dictionary<string, int> dictionary = dictionary2 = this.receivedPresentCountList;
-					string key2;
-					string key = key2 = assetCategoryId;
-					int num2 = dictionary2[key2];
-					dictionary[key] = num2 + num;
+					Dictionary<string, int> dictionary;
+					string key;
+					(dictionary = this.receivedPresentCountList)[key = assetCategoryId] = dictionary[key] + num;
 				}
 				else
 				{
@@ -435,12 +443,9 @@ public class CMD_ModalPresentBox : CMD
 			}
 			else if (this.limitPresentCountList.ContainsKey(assetCategoryId))
 			{
-				Dictionary<string, int> dictionary4;
-				Dictionary<string, int> dictionary3 = dictionary4 = this.limitPresentCountList;
+				Dictionary<string, int> dictionary;
 				string key2;
-				string key3 = key2 = assetCategoryId;
-				int num2 = dictionary4[key2];
-				dictionary3[key3] = num2 + num;
+				(dictionary = this.limitPresentCountList)[key2 = assetCategoryId] = dictionary[key2] + num;
 			}
 			else
 			{

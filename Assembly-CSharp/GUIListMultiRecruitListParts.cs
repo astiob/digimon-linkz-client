@@ -109,17 +109,24 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == this.data.worldStageId);
 		this.lbQuestName.text = worldStageM2.name + "\n" + this.data.dungeonName;
 		string moodType = this.data.moodType;
-		switch (moodType)
+		if (moodType != null)
 		{
-		case "1":
-			this.lbMoodType.text = StringMaster.GetString("RecruitRule-06");
-			goto IL_15D;
-		case "2":
-			this.lbMoodType.text = StringMaster.GetString("RecruitRule-07");
-			goto IL_15D;
+			if (moodType == "1")
+			{
+				this.lbMoodType.text = StringMaster.GetString("RecruitRule-06");
+				goto IL_125;
+			}
+			if (moodType == "2")
+			{
+				this.lbMoodType.text = StringMaster.GetString("RecruitRule-07");
+				goto IL_125;
+			}
+			if (!(moodType == "3"))
+			{
+			}
 		}
 		this.lbMoodType.text = StringMaster.GetString("RecruitRule-08");
-		IL_15D:
+		IL_125:
 		this.lbNowMemberNum.text = string.Format(StringMaster.GetString("SystemFraction"), this.data.memberCount, 3);
 		if (!this.isOpenedQuest)
 		{
@@ -164,9 +171,9 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 				}, StringMaster.GetString("Recruit-04"), StringMaster.GetString("Recruit-05"), AlertManager.ButtonActionType.Close, false);
 				return;
 			}
-			if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+			if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON))
 			{
-				if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
+				if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON))
 				{
 					MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 					GameWebAPI.RespDataWD_GetDungeonInfo respDataWD_GetDungeonInfo = new GameWebAPI.RespDataWD_GetDungeonInfo();

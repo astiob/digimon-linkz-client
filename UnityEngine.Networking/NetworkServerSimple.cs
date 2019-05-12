@@ -7,7 +7,7 @@ namespace UnityEngine.Networking
 {
 	public class NetworkServerSimple
 	{
-		private bool m_Initialized;
+		private bool m_Initialized = false;
 
 		private int m_ListenPort;
 
@@ -17,9 +17,9 @@ namespace UnityEngine.Networking
 
 		private bool m_UseWebSockets;
 
-		private byte[] m_MsgBuffer;
+		private byte[] m_MsgBuffer = null;
 
-		private NetworkReader m_MsgReader;
+		private NetworkReader m_MsgReader = null;
 
 		private Type m_NetworkConnectionClass = typeof(NetworkConnection);
 
@@ -127,24 +127,23 @@ namespace UnityEngine.Networking
 
 		public virtual void Initialize()
 		{
-			if (this.m_Initialized)
+			if (!this.m_Initialized)
 			{
-				return;
-			}
-			this.m_Initialized = true;
-			NetworkTransport.Init();
-			this.m_MsgBuffer = new byte[65535];
-			this.m_MsgReader = new NetworkReader(this.m_MsgBuffer);
-			if (this.m_HostTopology == null)
-			{
-				ConnectionConfig connectionConfig = new ConnectionConfig();
-				connectionConfig.AddChannel(QosType.Reliable);
-				connectionConfig.AddChannel(QosType.Unreliable);
-				this.m_HostTopology = new HostTopology(connectionConfig, 8);
-			}
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("NetworkServerSimple initialize.");
+				this.m_Initialized = true;
+				NetworkTransport.Init();
+				this.m_MsgBuffer = new byte[65535];
+				this.m_MsgReader = new NetworkReader(this.m_MsgBuffer);
+				if (this.m_HostTopology == null)
+				{
+					ConnectionConfig connectionConfig = new ConnectionConfig();
+					connectionConfig.AddChannel(QosType.ReliableSequenced);
+					connectionConfig.AddChannel(QosType.Unreliable);
+					this.m_HostTopology = new HostTopology(connectionConfig, 8);
+				}
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("NetworkServerSimple initialize.");
+				}
 			}
 		}
 
@@ -172,21 +171,26 @@ namespace UnityEngine.Networking
 			{
 				this.m_ServerHostId = NetworkTransport.AddHost(this.m_HostTopology, serverListenPort, ipAddress);
 			}
+			bool result;
 			if (this.m_ServerHostId == -1)
 			{
-				return false;
+				result = false;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log(string.Concat(new object[]
+				if (LogFilter.logDebug)
 				{
-					"NetworkServerSimple listen: ",
-					ipAddress,
-					":",
-					this.m_ListenPort
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"NetworkServerSimple listen: ",
+						ipAddress,
+						":",
+						this.m_ListenPort
+					}));
+				}
+				result = true;
 			}
-			return true;
+			return result;
 		}
 
 		public bool Listen(int serverListenPort)
@@ -207,15 +211,20 @@ namespace UnityEngine.Networking
 			{
 				this.m_ServerHostId = NetworkTransport.AddHost(this.m_HostTopology, serverListenPort);
 			}
+			bool result;
 			if (this.m_ServerHostId == -1)
 			{
-				return false;
+				result = false;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log("NetworkServerSimple listen " + this.m_ListenPort);
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("NetworkServerSimple listen " + this.m_ListenPort);
+				}
+				result = true;
 			}
-			return true;
+			return result;
 		}
 
 		public void ListenRelay(string relayIp, int relayPort, NetworkID netGuid, SourceID sourceId, NodeID nodeId)
@@ -280,70 +289,95 @@ namespace UnityEngine.Networking
 
 		public void Update()
 		{
-			if (this.m_ServerHostId == -1)
+			if (this.m_ServerHostId != -1)
 			{
-				return;
-			}
-			NetworkEventType networkEventType;
-			if (this.m_RelaySlotId != -1)
-			{
-				byte error;
-				networkEventType = NetworkTransport.ReceiveRelayEventFromHost(this.m_ServerHostId, out error);
-				if (networkEventType != NetworkEventType.Nothing && LogFilter.logDebug)
+				NetworkEventType networkEventType;
+				if (this.m_RelaySlotId != -1)
 				{
-					Debug.Log("NetGroup event:" + networkEventType);
-				}
-				if (networkEventType == NetworkEventType.ConnectEvent && LogFilter.logDebug)
-				{
-					Debug.Log("NetGroup server connected");
-				}
-				if (networkEventType == NetworkEventType.DisconnectEvent && LogFilter.logDebug)
-				{
-					Debug.Log("NetGroup server disconnected");
-				}
-			}
-			do
-			{
-				byte error;
-				int connectionId;
-				int channelId;
-				int receivedSize;
-				networkEventType = NetworkTransport.ReceiveFromHost(this.m_ServerHostId, out connectionId, out channelId, this.m_MsgBuffer, this.m_MsgBuffer.Length, out receivedSize, out error);
-				if (networkEventType != NetworkEventType.Nothing)
-				{
-				}
-				switch (networkEventType)
-				{
-				case NetworkEventType.DataEvent:
-					this.HandleData(connectionId, channelId, receivedSize, error);
-					break;
-				case NetworkEventType.ConnectEvent:
-					this.HandleConnect(connectionId, error);
-					break;
-				case NetworkEventType.DisconnectEvent:
-					this.HandleDisconnect(connectionId, error);
-					break;
-				case NetworkEventType.Nothing:
-					break;
-				default:
-					if (LogFilter.logError)
+					byte b;
+					networkEventType = NetworkTransport.ReceiveRelayEventFromHost(this.m_ServerHostId, out b);
+					if (networkEventType != NetworkEventType.Nothing)
 					{
-						Debug.LogError("Unknown network message type received: " + networkEventType);
+						if (LogFilter.logDebug)
+						{
+							Debug.Log("NetGroup event:" + networkEventType);
+						}
 					}
-					break;
+					if (networkEventType == NetworkEventType.ConnectEvent)
+					{
+						if (LogFilter.logDebug)
+						{
+							Debug.Log("NetGroup server connected");
+						}
+					}
+					if (networkEventType == NetworkEventType.DisconnectEvent)
+					{
+						if (LogFilter.logDebug)
+						{
+							Debug.Log("NetGroup server disconnected");
+						}
+					}
 				}
+				do
+				{
+					byte b;
+					int connectionId;
+					int channelId;
+					int receivedSize;
+					networkEventType = NetworkTransport.ReceiveFromHost(this.m_ServerHostId, out connectionId, out channelId, this.m_MsgBuffer, this.m_MsgBuffer.Length, out receivedSize, out b);
+					if (networkEventType != NetworkEventType.Nothing)
+					{
+						if (LogFilter.logDev)
+						{
+							Debug.Log(string.Concat(new object[]
+							{
+								"Server event: host=",
+								this.m_ServerHostId,
+								" event=",
+								networkEventType,
+								" error=",
+								b
+							}));
+						}
+					}
+					switch (networkEventType)
+					{
+					case NetworkEventType.DataEvent:
+						this.HandleData(connectionId, channelId, receivedSize, b);
+						break;
+					case NetworkEventType.ConnectEvent:
+						this.HandleConnect(connectionId, b);
+						break;
+					case NetworkEventType.DisconnectEvent:
+						this.HandleDisconnect(connectionId, b);
+						break;
+					case NetworkEventType.Nothing:
+						break;
+					default:
+						if (LogFilter.logError)
+						{
+							Debug.LogError("Unknown network message type received: " + networkEventType);
+						}
+						break;
+					}
+				}
+				while (networkEventType != NetworkEventType.Nothing);
+				this.UpdateConnections();
 			}
-			while (networkEventType != NetworkEventType.Nothing);
-			this.UpdateConnections();
 		}
 
 		public NetworkConnection FindConnection(int connectionId)
 		{
+			NetworkConnection result;
 			if (connectionId < 0 || connectionId >= this.m_Connections.Count)
 			{
-				return null;
+				result = null;
 			}
-			return this.m_Connections[connectionId];
+			else
+			{
+				result = this.m_Connections[connectionId];
+			}
+			return result;
 		}
 
 		public bool SetConnectionAtIndex(NetworkConnection conn)
@@ -352,23 +386,33 @@ namespace UnityEngine.Networking
 			{
 				this.m_Connections.Add(null);
 			}
+			bool result;
 			if (this.m_Connections[conn.connectionId] != null)
 			{
-				return false;
+				result = false;
 			}
-			this.m_Connections[conn.connectionId] = conn;
-			conn.SetHandlers(this.m_MessageHandlers);
-			return true;
+			else
+			{
+				this.m_Connections[conn.connectionId] = conn;
+				conn.SetHandlers(this.m_MessageHandlers);
+				result = true;
+			}
+			return result;
 		}
 
 		public bool RemoveConnectionAtIndex(int connectionId)
 		{
+			bool result;
 			if (connectionId < 0 || connectionId >= this.m_Connections.Count)
 			{
-				return false;
+				result = false;
 			}
-			this.m_Connections[connectionId] = null;
-			return true;
+			else
+			{
+				this.m_Connections[connectionId] = null;
+				result = true;
+			}
+			return result;
 		}
 
 		private void HandleConnect(int connectionId, byte error)
@@ -380,23 +424,26 @@ namespace UnityEngine.Networking
 			if (error != 0)
 			{
 				this.OnConnectError(connectionId, error);
-				return;
 			}
-			string networkAddress;
-			int num;
-			NetworkID networkID;
-			NodeID nodeID;
-			byte b;
-			NetworkTransport.GetConnectionInfo(this.m_ServerHostId, connectionId, out networkAddress, out num, out networkID, out nodeID, out b);
-			NetworkConnection networkConnection = (NetworkConnection)Activator.CreateInstance(this.m_NetworkConnectionClass);
-			networkConnection.SetHandlers(this.m_MessageHandlers);
-			networkConnection.Initialize(networkAddress, this.m_ServerHostId, connectionId, this.m_HostTopology);
-			while (this.m_Connections.Count <= connectionId)
+			else
 			{
-				this.m_Connections.Add(null);
+				string networkAddress;
+				int num;
+				NetworkID networkID;
+				NodeID nodeID;
+				byte lastError;
+				NetworkTransport.GetConnectionInfo(this.m_ServerHostId, connectionId, out networkAddress, out num, out networkID, out nodeID, out lastError);
+				NetworkConnection networkConnection = (NetworkConnection)Activator.CreateInstance(this.m_NetworkConnectionClass);
+				networkConnection.SetHandlers(this.m_MessageHandlers);
+				networkConnection.Initialize(networkAddress, this.m_ServerHostId, connectionId, this.m_HostTopology);
+				networkConnection.lastError = (NetworkError)lastError;
+				while (this.m_Connections.Count <= connectionId)
+				{
+					this.m_Connections.Add(null);
+				}
+				this.m_Connections[connectionId] = networkConnection;
+				this.OnConnected(networkConnection);
 			}
-			this.m_Connections[connectionId] = networkConnection;
-			this.OnConnected(networkConnection);
 		}
 
 		private void HandleDisconnect(int connectionId, byte error)
@@ -406,27 +453,36 @@ namespace UnityEngine.Networking
 				Debug.Log("NetworkServerSimple disconnect client:" + connectionId);
 			}
 			NetworkConnection networkConnection = this.FindConnection(connectionId);
-			if (networkConnection == null)
+			if (networkConnection != null)
 			{
-				return;
-			}
-			if (error != 0 && error != 6)
-			{
-				this.m_Connections[connectionId] = null;
-				if (LogFilter.logError)
+				networkConnection.lastError = (NetworkError)error;
+				if (error != 0)
 				{
-					Debug.LogError("Server client disconnect error:" + connectionId);
+					if (error != 6)
+					{
+						this.m_Connections[connectionId] = null;
+						if (LogFilter.logError)
+						{
+							Debug.LogError(string.Concat(new object[]
+							{
+								"Server client disconnect error, connectionId: ",
+								connectionId,
+								" error: ",
+								(NetworkError)error
+							}));
+						}
+						this.OnDisconnectError(networkConnection, error);
+						return;
+					}
 				}
-				this.OnDisconnectError(networkConnection, error);
-				return;
+				networkConnection.Disconnect();
+				this.m_Connections[connectionId] = null;
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("Server lost client:" + connectionId);
+				}
+				this.OnDisconnected(networkConnection);
 			}
-			networkConnection.Disconnect();
-			this.m_Connections[connectionId] = null;
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("Server lost client:" + connectionId);
-			}
-			this.OnDisconnected(networkConnection);
 		}
 
 		private void HandleData(int connectionId, int channelId, int receivedSize, byte error)
@@ -438,46 +494,48 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("HandleData Unknown connectionId:" + connectionId);
 				}
-				return;
 			}
-			if (error != 0)
+			else
 			{
-				this.OnDataError(networkConnection, error);
-				return;
+				networkConnection.lastError = (NetworkError)error;
+				if (error != 0)
+				{
+					this.OnDataError(networkConnection, error);
+				}
+				else
+				{
+					this.m_MsgReader.SeekZero();
+					this.OnData(networkConnection, receivedSize, channelId);
+				}
 			}
-			this.m_MsgReader.SeekZero();
-			this.OnData(networkConnection, receivedSize, channelId);
 		}
 
 		public void SendBytesTo(int connectionId, byte[] bytes, int numBytes, int channelId)
 		{
 			NetworkConnection networkConnection = this.FindConnection(connectionId);
-			if (networkConnection == null)
+			if (networkConnection != null)
 			{
-				return;
+				networkConnection.SendBytes(bytes, numBytes, channelId);
 			}
-			networkConnection.SendBytes(bytes, numBytes, channelId);
 		}
 
 		public void SendWriterTo(int connectionId, NetworkWriter writer, int channelId)
 		{
 			NetworkConnection networkConnection = this.FindConnection(connectionId);
-			if (networkConnection == null)
+			if (networkConnection != null)
 			{
-				return;
+				networkConnection.SendWriter(writer, channelId);
 			}
-			networkConnection.SendWriter(writer, channelId);
 		}
 
 		public void Disconnect(int connectionId)
 		{
 			NetworkConnection networkConnection = this.FindConnection(connectionId);
-			if (networkConnection == null)
+			if (networkConnection != null)
 			{
-				return;
+				networkConnection.Disconnect();
+				this.m_Connections[connectionId] = null;
 			}
-			networkConnection.Disconnect();
-			this.m_Connections[connectionId] = null;
 		}
 
 		public void DisconnectAllConnections()
@@ -520,7 +578,7 @@ namespace UnityEngine.Networking
 
 		public virtual void OnData(NetworkConnection conn, int receivedSize, int channelId)
 		{
-			conn.TransportRecieve(this.m_MsgBuffer, receivedSize, channelId);
+			conn.TransportReceive(this.m_MsgBuffer, receivedSize, channelId);
 		}
 	}
 }

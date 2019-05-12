@@ -46,26 +46,19 @@
     <Compile Include="Unity\AppInviteResult.cs" />
     <Compile Include="Unity\AppLinkResult.cs" />
     <Compile Include="Unity\AppRequestResult.cs" />
-    <Compile Include="Unity\Arcade\ArcadeFacebook.cs" />
-    <Compile Include="Unity\Arcade\ArcadeFacebookGameObject.cs" />
-    <Compile Include="Unity\Arcade\ArcadeFacebookLoader.cs" />
-    <Compile Include="Unity\Arcade\IArcadeFacebook.cs" />
-    <Compile Include="Unity\Arcade\IArcadeFacebookImplementation.cs" />
-    <Compile Include="Unity\Arcade\IArcadeFacebookResultHandler.cs" />
-    <Compile Include="Unity\Arcade\IArcadeWrapper.cs" />
     <Compile Include="Unity\AsyncRequestString.cs" />
+    <Compile Include="Unity\AsyncRequestStringWrapper.cs" />
     <Compile Include="Unity\CallbackManager.cs" />
-    <Compile Include="Unity\Canvas\CanvasConstants.cs" />
     <Compile Include="Unity\Canvas\CanvasFacebook.cs" />
     <Compile Include="Unity\Canvas\CanvasFacebookGameObject.cs" />
     <Compile Include="Unity\Canvas\CanvasFacebookLoader.cs" />
-    <Compile Include="Unity\Canvas\CanvasJSWrapper.cs" />
     <Compile Include="Unity\Canvas\ICanvasFacebook.cs" />
     <Compile Include="Unity\Canvas\ICanvasFacebookCallbackHandler.cs" />
     <Compile Include="Unity\Canvas\ICanvasFacebookImplementation.cs" />
     <Compile Include="Unity\Canvas\ICanvasFacebookResultHandler.cs" />
     <Compile Include="Unity\Canvas\ICanvasJSWrapper.cs" />
     <Compile Include="Unity\Canvas\JsBridge.cs" />
+    <Compile Include="Unity\CodelessIAPAutoLog.cs" />
     <Compile Include="Unity\ComponentFactory.cs" />
     <Compile Include="Unity\Constants.cs" />
     <Compile Include="Unity\Editor\Dialogs\EmptyMockDialog.cs" />
@@ -81,31 +74,44 @@
     <Compile Include="Unity\FacebookDelegate.cs" />
     <Compile Include="Unity\FacebookGameObject.cs" />
     <Compile Include="Unity\FacebookLogger.cs" />
+    <Compile Include="Unity\FacebookScheduler.cs" />
+    <Compile Include="Unity\FacebookSchedulerFactory.cs" />
     <Compile Include="Unity\FacebookSdkVersion.cs" />
-    <Compile Include="Unity\FacebookSettings.cs" />
     <Compile Include="Unity\FacebookUnityPlatform.cs" />
     <Compile Include="Unity\FB.cs" />
+    <Compile Include="Unity\FBUnityUtility.cs" />
+    <Compile Include="Unity\Gameroom\GameroomFacebook.cs" />
+    <Compile Include="Unity\Gameroom\GameroomFacebookGameObject.cs" />
+    <Compile Include="Unity\Gameroom\GameroomFacebookLoader.cs" />
+    <Compile Include="Unity\Gameroom\IGameroomFacebook.cs" />
+    <Compile Include="Unity\Gameroom\IGameroomFacebookImplementation.cs" />
+    <Compile Include="Unity\Gameroom\IGameroomFacebookResultHandler.cs" />
+    <Compile Include="Unity\Gameroom\IGameroomWrapper.cs" />
     <Compile Include="Unity\GraphResult.cs" />
     <Compile Include="Unity\GroupCreateResult.cs" />
     <Compile Include="Unity\GroupJoinResult.cs" />
+    <Compile Include="Unity\HasLicenseResult.cs" />
     <Compile Include="Unity\HideUnityDelegate.cs" />
     <Compile Include="Unity\HttpMethod.cs" />
     <Compile Include="Unity\IAccessTokenRefreshResult.cs" />
     <Compile Include="Unity\IAppInviteResult.cs" />
     <Compile Include="Unity\IAppLinkResult.cs" />
     <Compile Include="Unity\IAppRequestResult.cs" />
+    <Compile Include="Unity\IAsyncRequestStringWrapper.cs" />
     <Compile Include="Unity\IFacebook.cs" />
     <Compile Include="Unity\IFacebookCallbackHandler.cs" />
     <Compile Include="Unity\IFacebookImplementation.cs" />
     <Compile Include="Unity\IFacebookLogger.cs" />
     <Compile Include="Unity\IFacebookResultHandler.cs" />
+    <Compile Include="Unity\IFacebookScheduler.cs" />
+    <Compile Include="Unity\IFacebookSchedulerFactory.cs" />
     <Compile Include="Unity\IGraphResult.cs" />
     <Compile Include="Unity\IGroupCreateResult.cs" />
     <Compile Include="Unity\IGroupJoinResult.cs" />
+    <Compile Include="Unity\IHasLicenseResult.cs" />
     <Compile Include="Unity\IInternalResult.cs" />
     <Compile Include="Unity\ILoginResult.cs" />
     <Compile Include="Unity\InitDelegate.cs" />
-    <Compile Include="Unity\IOSWrapper.cs" />
     <Compile Include="Unity\IPayFacebook.cs" />
     <Compile Include="Unity\IPayResult.cs" />
     <Compile Include="Unity\IResult.cs" />
@@ -116,7 +122,6 @@
     <Compile Include="Unity\Mobile\Android\AndroidFacebook.cs" />
     <Compile Include="Unity\Mobile\Android\AndroidFacebookGameObject.cs" />
     <Compile Include="Unity\Mobile\Android\AndroidFacebookLoader.cs" />
-    <Compile Include="Unity\Mobile\Android\AndroidWrapper.cs" />
     <Compile Include="Unity\Mobile\Android\IAndroidWrapper.cs" />
     <Compile Include="Unity\Mobile\IMobileFacebook.cs" />
     <Compile Include="Unity\Mobile\IMobileFacebookCallbackHandler.cs" />
@@ -137,16 +142,20 @@
     <Compile Include="Unity\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Facebook.Unity.Settings\Facebook.Unity.Settings.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Name>Facebook.Unity.Settings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797D}</Project>
       <Name>UnityEngine</Name>
     </ProjectReference>
   </ItemGroup>

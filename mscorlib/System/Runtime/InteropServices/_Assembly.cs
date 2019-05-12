@@ -7,11 +7,11 @@ using System.Runtime.Serialization;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the public members of the <see cref="T:System.Reflection.Assembly" /> class to unmanaged code.</summary>
+	[CLSCompliant(false)]
+	[InterfaceType(ComInterfaceType.InterfaceIsDual)]
+	[ComVisible(true)]
 	[Guid("17156360-2F1A-384A-BC52-FDE93C215C5B")]
 	[TypeLibImportClass(typeof(Assembly))]
-	[InterfaceType(ComInterfaceType.InterfaceIsDual)]
-	[CLSCompliant(false)]
-	[ComVisible(true)]
 	public interface _Assembly
 	{
 		/// <summary>Provides COM objects with version-independent access to the <see cref="E:System.Reflection.Assembly.ModuleResolve" /> event.</summary>

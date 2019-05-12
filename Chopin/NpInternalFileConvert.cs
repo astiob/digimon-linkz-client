@@ -9,7 +9,7 @@ namespace CROOZ.Chopin.Core
 
 		public NpInternalFileConvert(string path, NpAesConvert crypto)
 		{
-			this.\uE000 = new \uE014(path, crypto.\uE000);
+			this.\uE000 = new \uE014(path, crypto.\uE001);
 		}
 
 		public Stream GetStream()

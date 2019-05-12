@@ -25,7 +25,7 @@ namespace TS
 				{
 					goto IL_51;
 				}
-				IL_108:
+				IL_10E:
 				i++;
 				continue;
 				IL_51:
@@ -61,7 +61,7 @@ namespace TS
 					strArrange = text,
 					lineNum = i + 1
 				});
-				goto IL_108;
+				goto IL_10E;
 			}
 			return list;
 		}

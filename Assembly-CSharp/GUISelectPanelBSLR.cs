@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -196,17 +197,17 @@ public class GUISelectPanelBSLR : GUICollider
 		base.Awake();
 		this.listViewRect = base.boundingRect;
 		this.horizonMoveBorder = 160f;
-		this.onTouchBegan += delegate(Touch touch, Vector2 pos)
+		base.onTouchBegan += delegate(Touch touch, Vector2 pos)
 		{
 			this.isAdjusting = false;
 			this.CancelMoveLR();
 		};
-		this.onTouchMoved += delegate(Touch touch, Vector2 pos)
+		base.onTouchMoved += delegate(Touch touch, Vector2 pos)
 		{
 			this.isAdjusting = false;
 			this.CancelMoveLR();
 		};
-		this.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
+		base.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 		{
 			this.isAdjusting = false;
 			this.CancelMoveLR();
@@ -217,34 +218,47 @@ public class GUISelectPanelBSLR : GUICollider
 	{
 		Transform transform = null;
 		Transform transform2 = null;
-		foreach (object obj in base.transform)
+		IEnumerator enumerator = base.transform.GetEnumerator();
+		try
 		{
-			Transform transform3 = (Transform)obj;
-			if (transform3.name == "MoveLeftBtn")
+			while (enumerator.MoveNext())
 			{
-				this.goMoveLeft = transform3.gameObject;
-				this.csMoveLeft = this.goMoveLeft.GetComponent<GUICollider>();
-				if (this.csMoveLeft != null)
+				object obj = enumerator.Current;
+				Transform transform3 = (Transform)obj;
+				if (transform3.name == "MoveLeftBtn")
 				{
-					this.csMoveLeft.onTouchBegan += delegate(Touch touch, Vector2 pos)
+					this.goMoveLeft = transform3.gameObject;
+					this.csMoveLeft = this.goMoveLeft.GetComponent<GUICollider>();
+					if (this.csMoveLeft != null)
 					{
-						this.OnTouchMoveLeft();
-					};
+						this.csMoveLeft.onTouchBegan += delegate(Touch touch, Vector2 pos)
+						{
+							this.OnTouchMoveLeft();
+						};
+					}
+					transform2 = transform3;
 				}
-				transform2 = transform3;
+				if (transform3.name == "MoveRightBtn")
+				{
+					this.goMoveRight = transform3.gameObject;
+					this.csMoveRight = this.goMoveRight.GetComponent<GUICollider>();
+					if (this.csMoveRight != null)
+					{
+						this.csMoveRight.onTouchBegan += delegate(Touch touch, Vector2 pos)
+						{
+							this.OnTouchMoveRight();
+						};
+					}
+					transform = transform3;
+				}
 			}
-			if (transform3.name == "MoveRightBtn")
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
 			{
-				this.goMoveRight = transform3.gameObject;
-				this.csMoveRight = this.goMoveRight.GetComponent<GUICollider>();
-				if (this.csMoveRight != null)
-				{
-					this.csMoveRight.onTouchBegan += delegate(Touch touch, Vector2 pos)
-					{
-						this.OnTouchMoveRight();
-					};
-				}
-				transform = transform3;
+				disposable.Dispose();
 			}
 		}
 		if (base.transform.parent != null)
@@ -662,7 +676,7 @@ public class GUISelectPanelBSLR : GUICollider
 	{
 		base.Update();
 		this.panelSpeed_ = this.scrollSpeed;
-		if (!this.isTouchMoved)
+		if (!base.isTouchMoved)
 		{
 			this.panelSpeed_ = this.selectLoc;
 			if (!this.enableEternalScroll)

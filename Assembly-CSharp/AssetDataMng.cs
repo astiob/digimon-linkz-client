@@ -8,8 +8,6 @@ using UnityEngine;
 
 public class AssetDataMng : MonoBehaviour
 {
-	public const int MAX_DL_STREAM = 4;
-
 	public bool ShowExtraIcon;
 
 	private bool isInitialized;
@@ -47,6 +45,8 @@ public class AssetDataMng : MonoBehaviour
 	private string www_err_bk = string.Empty;
 
 	private Dictionary<string, AssetBundleInfoData> dlList;
+
+	public const int MAX_DL_STREAM = 4;
 
 	private int curInfoIDX = -1;
 

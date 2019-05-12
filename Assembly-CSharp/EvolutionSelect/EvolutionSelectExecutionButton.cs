@@ -12,6 +12,8 @@ namespace EvolutionSelect
 		[SerializeField]
 		private UILabel buttonText;
 
+		private Action<CMD> onPushYesButton;
+
 		private void ShowFailedLockMonster()
 		{
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
@@ -30,10 +32,11 @@ namespace EvolutionSelect
 
 		private void ShowConfirmExecution(string title, string info)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.listPartsRoot.OnCloseEvolveDo), "CMD_Confirm", null) as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(null, "CMD_Confirm", null) as CMD_Confirm;
 			string monsterName = this.listPartsRoot.Data.md_next.monsterMG.monsterName;
 			cmd_Confirm.Title = title;
 			cmd_Confirm.Info = string.Format("{0}\n\n{1}", monsterName, info);
+			cmd_Confirm.SetActionYesButton(this.onPushYesButton);
 		}
 
 		private void OnPushedButton()
@@ -70,8 +73,9 @@ namespace EvolutionSelect
 			}
 		}
 
-		public void Initialize()
+		public void Initialize(Action<CMD> pushConfirmYesButton)
 		{
+			this.onPushYesButton = pushConfirmYesButton;
 			string evotuionType = this.listPartsRoot.GetEvotuionType();
 			if ("2" == evotuionType)
 			{

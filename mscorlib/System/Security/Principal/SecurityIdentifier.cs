@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal
 {
 	/// <summary>Represents a security identifier (SID) and provides marshaling and comparison operations for SIDs.</summary>
-	[ComVisible(false)]
 	[MonoTODO("not implemented")]
+	[ComVisible(false)]
 	public sealed class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier>
 	{
 		private string _value;

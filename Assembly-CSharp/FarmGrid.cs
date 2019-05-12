@@ -79,15 +79,15 @@ public sealed class FarmGrid
 		{
 			int num = gridIndex % field.fieldHorizontal;
 			int num2 = gridIndex / field.fieldHorizontal;
-			float new_x = (float)num * this.farmField.gridHorizontal + this.farmField.gridHorizontal * 0.5f + field.originPosition.x;
-			float new_z = -((float)num2 * this.farmField.gridVertical + this.farmField.gridVertical * 0.5f) + field.originPosition.y;
+			float newX = (float)num * this.farmField.gridHorizontal + this.farmField.gridHorizontal * 0.5f + field.originPosition.x;
+			float newZ = -((float)num2 * this.farmField.gridVertical + this.farmField.gridVertical * 0.5f) + field.originPosition.y;
 			if (!localPosition)
 			{
-				zero.Set(new_x, this.farmField.transform.parent.localPosition.y, new_z);
+				zero.Set(newX, this.farmField.transform.parent.localPosition.y, newZ);
 			}
 			else
 			{
-				zero.Set(new_x, 0f, new_z);
+				zero.Set(newX, 0f, newZ);
 			}
 		}
 		return zero;

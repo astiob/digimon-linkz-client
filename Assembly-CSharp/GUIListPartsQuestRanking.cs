@@ -5,8 +5,8 @@ using UnityEngine;
 
 public sealed class GUIListPartsQuestRanking : GUIListPartBS
 {
-	[SerializeField]
 	[Header("キャラサムネの位置")]
+	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
 	[Header("ユーザーネーム")]
@@ -21,8 +21,8 @@ public sealed class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[SerializeField]
 	[Header("Nextポイント")]
+	[SerializeField]
 	private UILabel lbTX_NextPoint;
 
 	[Header("ランキング順位")]

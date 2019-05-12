@@ -98,8 +98,8 @@ namespace System.Security.Permissions
 
 		/// <summary>Creates an XML encoding of the permission and its current state.</summary>
 		/// <returns>An XML encoding of the permission, including any state information.</returns>
-		[ComVisible(false)]
 		[MonoTODO("(2.0) new override - something must have been added ???")]
+		[ComVisible(false)]
 		public override SecurityElement ToXml()
 		{
 			return base.ToXml();

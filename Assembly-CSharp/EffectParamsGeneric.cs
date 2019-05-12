@@ -6,8 +6,8 @@ using UnityEngine.Serialization;
 
 public abstract class EffectParamsGeneric : MonoBehaviour
 {
-	[SerializeField]
 	[FormerlySerializedAs("effectAnimation")]
+	[SerializeField]
 	protected Animation _effectAnimation;
 
 	protected bool _isPlaying;
@@ -38,6 +38,8 @@ public abstract class EffectParamsGeneric : MonoBehaviour
 		}
 	}
 
+	public string PoolKey { get; set; }
+
 	private void Awake()
 	{
 		this._particleSystems = base.GetComponentsInChildren<ParticleSystem>(true);
@@ -57,19 +59,39 @@ public abstract class EffectParamsGeneric : MonoBehaviour
 
 	public IEnumerator Initialize(Camera renderCamera)
 	{
-		bool isActive = base.gameObject.activeSelf;
+		bool activeSelf = base.gameObject.activeSelf;
 		base.gameObject.SetActive(true);
 		if (!this._isAwakeInitialized)
 		{
 			this.InitializeAwake();
 		}
 		this._renderCamera = renderCamera;
-		foreach (BillboardObject b in this._billboardObjects)
+		foreach (BillboardObject billboardObject in this._billboardObjects)
 		{
-			b.lookTarget = this._renderCamera;
+			billboardObject.lookTarget = this._renderCamera;
 		}
-		base.gameObject.SetActive(isActive);
+		base.gameObject.SetActive(activeSelf);
 		yield break;
+	}
+
+	public void InitializeFast(Camera renderCamera)
+	{
+		if (this._isAwakeInitialized)
+		{
+			return;
+		}
+		bool activeSelf = base.gameObject.activeSelf;
+		base.gameObject.SetActive(true);
+		if (!this._isAwakeInitialized)
+		{
+			this.InitializeAwake();
+		}
+		this._renderCamera = renderCamera;
+		foreach (BillboardObject billboardObject in this._billboardObjects)
+		{
+			billboardObject.lookTarget = this._renderCamera;
+		}
+		base.gameObject.SetActive(activeSelf);
 	}
 
 	private void InitializeAwake()

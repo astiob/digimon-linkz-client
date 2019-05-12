@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class RoundLimitStart : RoundStart
 {
-	private const string animationName = "Battle_Limit_Round";
-
 	[SerializeField]
 	private Animation roundLimitAnima;
 
@@ -14,6 +12,8 @@ public class RoundLimitStart : RoundStart
 
 	[SerializeField]
 	private UILabel roundLimitLabel;
+
+	private const string animationName = "Battle_Limit_Round";
 
 	private void Awake()
 	{

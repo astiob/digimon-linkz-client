@@ -215,17 +215,19 @@ public class CharacterStateControlChip
 		}
 		GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList = ChipEffectStatus.GetInvocationList(chipTriggerList.ToArray(), triggerType, this.characterStateControl.groupId.ToInt32(), this.characterStateControl, BattleStateManager.current.hierarchyData.areaId);
 		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
-		GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect;
-		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect2 in chipTriggerList)
+		using (List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>.Enumerator enumerator = chipTriggerList.GetEnumerator())
 		{
-			chipEffect = chipEffect2;
-			if (!invocationList.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect item) => item.chipEffectId == chipEffect.chipEffectId).Any<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>())
+			while (enumerator.MoveNext())
 			{
-				int key = chipEffect.chipEffectId.ToInt32();
-				if (this.potencyChipIdList.ContainsKey(key))
+				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect = enumerator.Current;
+				if (!invocationList.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect item) => item.chipEffectId == chipEffect.chipEffectId).Any<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>())
 				{
-					this.potencyChipIdList.Remove(key);
-					list.Add(chipEffect);
+					int key = chipEffect.chipEffectId.ToInt32();
+					if (this.potencyChipIdList.ContainsKey(key))
+					{
+						this.potencyChipIdList.Remove(key);
+						list.Add(chipEffect);
+					}
 				}
 			}
 		}
@@ -247,6 +249,30 @@ public class CharacterStateControlChip
 			if (chipEffectDataToId != null && chipEffectDataToId.effectTrigger.ToInt32() == (int)triggerType)
 			{
 				list.Add(chipEffectDataToId);
+			}
+		}
+		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in list)
+		{
+			this.potencyChipIdList.Remove(chipEffect.chipEffectId.ToInt32());
+		}
+		this.AddChipParam(false, list.ToArray(), true, false);
+	}
+
+	public void RemovePotencyChip(EffectStatusBase.EffectTriggerType[] triggerTypes)
+	{
+		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+		foreach (int num in this.potencyChipIdList.Keys)
+		{
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(num.ToString());
+			if (chipEffectDataToId != null)
+			{
+				for (int i = 0; i < triggerTypes.Length; i++)
+				{
+					if (chipEffectDataToId.effectTrigger.ToInt32() == (int)triggerTypes[i])
+					{
+						list.Add(chipEffectDataToId);
+					}
+				}
 			}
 		}
 		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in list)
@@ -293,14 +319,11 @@ public class CharacterStateControlChip
 				{
 					if (this.chipEffectCount[num] <= 0)
 					{
-						goto IL_3AB;
+						goto IL_3A8;
 					}
-					Dictionary<int, int> dictionary2;
-					Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
-					int num2;
-					int key = num2 = num;
-					num2 = dictionary2[num2];
-					dictionary[key] = num2 - 1;
+					Dictionary<int, int> dictionary;
+					int key;
+					(dictionary = this.chipEffectCount)[key = num] = dictionary[key] - 1;
 				}
 				if (chipEffect.effectType.ToInt32() == 57)
 				{
@@ -369,7 +392,7 @@ public class CharacterStateControlChip
 					this.stagingChipIdList.Add(num, chipEffect.chipId.ToInt32());
 				}
 			}
-			IL_3AB:;
+			IL_3A8:;
 		}
 		return list;
 	}
@@ -497,10 +520,8 @@ public class CharacterStateControlChip
 	{
 		if (this.chipEffectCount.ContainsKey(chipEffectId))
 		{
-			Dictionary<int, int> dictionary2;
-			Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
-			int num = dictionary2[chipEffectId];
-			dictionary[chipEffectId] = num + value;
+			Dictionary<int, int> dictionary;
+			(dictionary = this.chipEffectCount)[chipEffectId] = dictionary[chipEffectId] + value;
 		}
 	}
 

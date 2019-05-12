@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -15,13 +16,21 @@ namespace System.Net.NetworkInformation
 	{
 		private const int DefaultCount = 1;
 
-		private const string PingBinPath = "/bin/ping";
-
 		private const int default_timeout = 4000;
 
 		private const int identifier = 1;
 
 		private const uint linux_cap_version = 537333798u;
+
+		private static readonly string[] PingBinPaths = new string[]
+		{
+			"/bin/ping",
+			"/sbin/ping",
+			"/usr/sbin/ping",
+			"/system/bin/ping"
+		};
+
+		private static readonly string PingBinPath;
 
 		private static readonly byte[] default_buffer = new byte[0];
 
@@ -40,10 +49,22 @@ namespace System.Net.NetworkInformation
 				{
 					Ping.canSendPrivileged = true;
 				}
+				foreach (string text in Ping.PingBinPaths)
+				{
+					if (File.Exists(text))
+					{
+						Ping.PingBinPath = text;
+						break;
+					}
+				}
 			}
 			else
 			{
 				Ping.canSendPrivileged = true;
+			}
+			if (Ping.PingBinPath == null)
+			{
+				Ping.PingBinPath = "/bin/ping";
 			}
 		}
 
@@ -373,7 +394,7 @@ namespace System.Net.NetworkInformation
 			System.Diagnostics.Process process = new System.Diagnostics.Process();
 			string arguments = this.BuildPingArgs(address, timeout, options);
 			long roundtripTime = 0L;
-			process.StartInfo.FileName = "/bin/ping";
+			process.StartInfo.FileName = Ping.PingBinPath;
 			process.StartInfo.Arguments = arguments;
 			process.StartInfo.CreateNoWindow = true;
 			process.StartInfo.UseShellExecute = false;

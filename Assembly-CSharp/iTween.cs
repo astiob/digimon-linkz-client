@@ -242,27 +242,32 @@ public class iTween : MonoBehaviour
 		args = iTween.CleanArgs(args);
 		if (!args.Contains("includechildren") || (bool)args["includechildren"])
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				Hashtable hashtable = (Hashtable)args.Clone();
-				hashtable["ischild"] = true;
-				iTween.ColorFrom(transform.gameObject, hashtable);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					Hashtable hashtable = (Hashtable)args.Clone();
+					hashtable["ischild"] = true;
+					iTween.ColorFrom(transform.gameObject, hashtable);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 		if (!args.Contains("easetype"))
 		{
 			args.Add("easetype", iTween.EaseType.linear);
 		}
-		if (target.GetComponent<GUITexture>())
-		{
-			color = (color2 = target.GetComponent<GUITexture>().color);
-		}
-		else if (target.GetComponent<GUIText>())
-		{
-			color = (color2 = target.GetComponent<GUIText>().material.color);
-		}
-		else if (target.GetComponent<Renderer>())
+		if (target.GetComponent<Renderer>())
 		{
 			color = (color2 = target.GetComponent<Renderer>().material.color);
 		}
@@ -303,15 +308,7 @@ public class iTween : MonoBehaviour
 			color.a = (float)args["alpha"];
 			args.Remove("alpha");
 		}
-		if (target.GetComponent<GUITexture>())
-		{
-			target.GetComponent<GUITexture>().color = color;
-		}
-		else if (target.GetComponent<GUIText>())
-		{
-			target.GetComponent<GUIText>().material.color = color;
-		}
-		else if (target.GetComponent<Renderer>())
+		if (target.GetComponent<Renderer>())
 		{
 			target.GetComponent<Renderer>().material.color = color;
 		}
@@ -341,12 +338,25 @@ public class iTween : MonoBehaviour
 		args = iTween.CleanArgs(args);
 		if (!args.Contains("includechildren") || (bool)args["includechildren"])
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				Hashtable hashtable = (Hashtable)args.Clone();
-				hashtable["ischild"] = true;
-				iTween.ColorTo(transform.gameObject, hashtable);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					Hashtable hashtable = (Hashtable)args.Clone();
+					hashtable["ischild"] = true;
+					iTween.ColorTo(transform.gameObject, hashtable);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 		if (!args.Contains("easetype"))
@@ -489,20 +499,29 @@ public class iTween : MonoBehaviour
 		{
 			Vector3 eulerAngles2 = target.transform.eulerAngles;
 			string text = (string)args["axis"];
-			switch (text)
+			if (text != null)
 			{
-			case "x":
-				eulerAngles2.y = eulerAngles.y;
-				eulerAngles2.z = eulerAngles.z;
-				break;
-			case "y":
-				eulerAngles2.x = eulerAngles.x;
-				eulerAngles2.z = eulerAngles.z;
-				break;
-			case "z":
-				eulerAngles2.x = eulerAngles.x;
-				eulerAngles2.y = eulerAngles.y;
-				break;
+				if (!(text == "x"))
+				{
+					if (!(text == "y"))
+					{
+						if (text == "z")
+						{
+							eulerAngles2.x = eulerAngles.x;
+							eulerAngles2.y = eulerAngles.y;
+						}
+					}
+					else
+					{
+						eulerAngles2.x = eulerAngles.x;
+						eulerAngles2.z = eulerAngles.z;
+					}
+				}
+				else
+				{
+					eulerAngles2.y = eulerAngles.y;
+					eulerAngles2.z = eulerAngles.z;
+				}
 			}
 			target.transform.eulerAngles = eulerAngles2;
 		}
@@ -1102,236 +1121,225 @@ public class iTween : MonoBehaviour
 		case "value":
 		{
 			string text2 = this.method;
-			switch (text2)
+			if (text2 != null)
 			{
-			case "float":
-				this.GenerateFloatTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyFloatTargets);
-				break;
-			case "vector2":
-				this.GenerateVector2Targets();
-				this.apply = new iTween.ApplyTween(this.ApplyVector2Targets);
-				break;
-			case "vector3":
-				this.GenerateVector3Targets();
-				this.apply = new iTween.ApplyTween(this.ApplyVector3Targets);
-				break;
-			case "color":
-				this.GenerateColorTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyColorTargets);
-				break;
-			case "rect":
-				this.GenerateRectTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyRectTargets);
-				break;
+				if (!(text2 == "float"))
+				{
+					if (!(text2 == "vector2"))
+					{
+						if (!(text2 == "vector3"))
+						{
+							if (!(text2 == "color"))
+							{
+								if (text2 == "rect")
+								{
+									this.GenerateRectTargets();
+									this.apply = new iTween.ApplyTween(this.ApplyRectTargets);
+								}
+							}
+							else
+							{
+								this.GenerateColorTargets();
+								this.apply = new iTween.ApplyTween(this.ApplyColorTargets);
+							}
+						}
+						else
+						{
+							this.GenerateVector3Targets();
+							this.apply = new iTween.ApplyTween(this.ApplyVector3Targets);
+						}
+					}
+					else
+					{
+						this.GenerateVector2Targets();
+						this.apply = new iTween.ApplyTween(this.ApplyVector2Targets);
+					}
+				}
+				else
+				{
+					this.GenerateFloatTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyFloatTargets);
+				}
 			}
 			break;
 		}
 		case "color":
 		{
-			string text2 = this.method;
-			if (text2 != null)
+			string text3 = this.method;
+			if (text3 != null)
 			{
-				if (iTween.<>f__switch$mapD == null)
+				if (text3 == "to")
 				{
-					iTween.<>f__switch$mapD = new Dictionary<string, int>(1)
-					{
-						{
-							"to",
-							0
-						}
-					};
-				}
-				int num2;
-				if (iTween.<>f__switch$mapD.TryGetValue(text2, out num2))
-				{
-					if (num2 == 0)
-					{
-						this.GenerateColorToTargets();
-						this.apply = new iTween.ApplyTween(this.ApplyColorToTargets);
-					}
+					this.GenerateColorToTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyColorToTargets);
 				}
 			}
 			break;
 		}
 		case "audio":
 		{
-			string text2 = this.method;
-			if (text2 != null)
+			string text4 = this.method;
+			if (text4 != null)
 			{
-				if (iTween.<>f__switch$mapE == null)
+				if (text4 == "to")
 				{
-					iTween.<>f__switch$mapE = new Dictionary<string, int>(1)
-					{
-						{
-							"to",
-							0
-						}
-					};
-				}
-				int num2;
-				if (iTween.<>f__switch$mapE.TryGetValue(text2, out num2))
-				{
-					if (num2 == 0)
-					{
-						this.GenerateAudioToTargets();
-						this.apply = new iTween.ApplyTween(this.ApplyAudioToTargets);
-					}
+					this.GenerateAudioToTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyAudioToTargets);
 				}
 			}
 			break;
 		}
 		case "move":
 		{
-			string text2 = this.method;
-			if (text2 != null)
+			string text5 = this.method;
+			if (text5 != null)
 			{
-				if (iTween.<>f__switch$mapF == null)
+				if (!(text5 == "to"))
 				{
-					iTween.<>f__switch$mapF = new Dictionary<string, int>(3)
+					if (text5 == "by" || text5 == "add")
 					{
-						{
-							"to",
-							0
-						},
-						{
-							"by",
-							1
-						},
-						{
-							"add",
-							1
-						}
-					};
+						this.GenerateMoveByTargets();
+						this.apply = new iTween.ApplyTween(this.ApplyMoveByTargets);
+					}
 				}
-				int num2;
-				if (iTween.<>f__switch$mapF.TryGetValue(text2, out num2))
+				else if (this.tweenArguments.Contains("path"))
 				{
-					if (num2 != 0)
-					{
-						if (num2 == 1)
-						{
-							this.GenerateMoveByTargets();
-							this.apply = new iTween.ApplyTween(this.ApplyMoveByTargets);
-						}
-					}
-					else if (this.tweenArguments.Contains("path"))
-					{
-						this.GenerateMoveToPathTargets();
-						this.apply = new iTween.ApplyTween(this.ApplyMoveToPathTargets);
-					}
-					else
-					{
-						this.GenerateMoveToTargets();
-						this.apply = new iTween.ApplyTween(this.ApplyMoveToTargets);
-					}
+					this.GenerateMoveToPathTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyMoveToPathTargets);
+				}
+				else
+				{
+					this.GenerateMoveToTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyMoveToTargets);
 				}
 			}
 			break;
 		}
 		case "scale":
 		{
-			string text2 = this.method;
-			switch (text2)
+			string text6 = this.method;
+			if (text6 != null)
 			{
-			case "to":
-				this.GenerateScaleToTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyScaleToTargets);
-				break;
-			case "by":
-				this.GenerateScaleByTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyScaleToTargets);
-				break;
-			case "add":
-				this.GenerateScaleAddTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyScaleToTargets);
-				break;
+				if (!(text6 == "to"))
+				{
+					if (!(text6 == "by"))
+					{
+						if (text6 == "add")
+						{
+							this.GenerateScaleAddTargets();
+							this.apply = new iTween.ApplyTween(this.ApplyScaleToTargets);
+						}
+					}
+					else
+					{
+						this.GenerateScaleByTargets();
+						this.apply = new iTween.ApplyTween(this.ApplyScaleToTargets);
+					}
+				}
+				else
+				{
+					this.GenerateScaleToTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyScaleToTargets);
+				}
 			}
 			break;
 		}
 		case "rotate":
 		{
-			string text2 = this.method;
-			switch (text2)
+			string text7 = this.method;
+			if (text7 != null)
 			{
-			case "to":
-				this.GenerateRotateToTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyRotateToTargets);
-				break;
-			case "add":
-				this.GenerateRotateAddTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyRotateAddTargets);
-				break;
-			case "by":
-				this.GenerateRotateByTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyRotateAddTargets);
-				break;
+				if (!(text7 == "to"))
+				{
+					if (!(text7 == "add"))
+					{
+						if (text7 == "by")
+						{
+							this.GenerateRotateByTargets();
+							this.apply = new iTween.ApplyTween(this.ApplyRotateAddTargets);
+						}
+					}
+					else
+					{
+						this.GenerateRotateAddTargets();
+						this.apply = new iTween.ApplyTween(this.ApplyRotateAddTargets);
+					}
+				}
+				else
+				{
+					this.GenerateRotateToTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyRotateToTargets);
+				}
 			}
 			break;
 		}
 		case "shake":
 		{
-			string text2 = this.method;
-			switch (text2)
+			string text8 = this.method;
+			if (text8 != null)
 			{
-			case "position":
-				this.GenerateShakePositionTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyShakePositionTargets);
-				break;
-			case "scale":
-				this.GenerateShakeScaleTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyShakeScaleTargets);
-				break;
-			case "rotation":
-				this.GenerateShakeRotationTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyShakeRotationTargets);
-				break;
+				if (!(text8 == "position"))
+				{
+					if (!(text8 == "scale"))
+					{
+						if (text8 == "rotation")
+						{
+							this.GenerateShakeRotationTargets();
+							this.apply = new iTween.ApplyTween(this.ApplyShakeRotationTargets);
+						}
+					}
+					else
+					{
+						this.GenerateShakeScaleTargets();
+						this.apply = new iTween.ApplyTween(this.ApplyShakeScaleTargets);
+					}
+				}
+				else
+				{
+					this.GenerateShakePositionTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyShakePositionTargets);
+				}
 			}
 			break;
 		}
 		case "punch":
 		{
-			string text2 = this.method;
-			switch (text2)
+			string text9 = this.method;
+			if (text9 != null)
 			{
-			case "position":
-				this.GeneratePunchPositionTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyPunchPositionTargets);
-				break;
-			case "rotation":
-				this.GeneratePunchRotationTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyPunchRotationTargets);
-				break;
-			case "scale":
-				this.GeneratePunchScaleTargets();
-				this.apply = new iTween.ApplyTween(this.ApplyPunchScaleTargets);
-				break;
+				if (!(text9 == "position"))
+				{
+					if (!(text9 == "rotation"))
+					{
+						if (text9 == "scale")
+						{
+							this.GeneratePunchScaleTargets();
+							this.apply = new iTween.ApplyTween(this.ApplyPunchScaleTargets);
+						}
+					}
+					else
+					{
+						this.GeneratePunchRotationTargets();
+						this.apply = new iTween.ApplyTween(this.ApplyPunchRotationTargets);
+					}
+				}
+				else
+				{
+					this.GeneratePunchPositionTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyPunchPositionTargets);
+				}
 			}
 			break;
 		}
 		case "look":
 		{
-			string text2 = this.method;
-			if (text2 != null)
+			string text10 = this.method;
+			if (text10 != null)
 			{
-				if (iTween.<>f__switch$map14 == null)
+				if (text10 == "to")
 				{
-					iTween.<>f__switch$map14 = new Dictionary<string, int>(1)
-					{
-						{
-							"to",
-							0
-						}
-					};
-				}
-				int num2;
-				if (iTween.<>f__switch$map14.TryGetValue(text2, out num2))
-				{
-					if (num2 == 0)
-					{
-						this.GenerateLookToTargets();
-						this.apply = new iTween.ApplyTween(this.ApplyLookToTargets);
-					}
+					this.GenerateLookToTargets();
+					this.apply = new iTween.ApplyTween(this.ApplyLookToTargets);
 				}
 			}
 			break;
@@ -1397,17 +1405,7 @@ public class iTween : MonoBehaviour
 
 	private void GenerateColorToTargets()
 	{
-		if (base.GetComponent<GUITexture>())
-		{
-			this.colors = new Color[1, 3];
-			this.colors[0, 0] = (this.colors[0, 1] = base.GetComponent<GUITexture>().color);
-		}
-		else if (base.GetComponent<GUIText>())
-		{
-			this.colors = new Color[1, 3];
-			this.colors[0, 0] = (this.colors[0, 1] = base.GetComponent<GUIText>().material.color);
-		}
-		else if (base.GetComponent<Renderer>())
+		if (base.GetComponent<Renderer>())
 		{
 			this.colors = new Color[base.GetComponent<Renderer>().materials.Length, 3];
 			for (int i = 0; i < base.GetComponent<Renderer>().materials.Length; i++)
@@ -1565,27 +1563,36 @@ public class iTween : MonoBehaviour
 		if (this.tweenArguments.Contains("axis"))
 		{
 			string text = (string)this.tweenArguments["axis"];
-			switch (text)
+			if (text != null)
 			{
-			case "x":
-				this.vector3s[1].y = this.vector3s[0].y;
-				this.vector3s[1].z = this.vector3s[0].z;
-				break;
-			case "y":
-				this.vector3s[1].x = this.vector3s[0].x;
-				this.vector3s[1].z = this.vector3s[0].z;
-				break;
-			case "z":
-				this.vector3s[1].x = this.vector3s[0].x;
-				this.vector3s[1].y = this.vector3s[0].y;
-				break;
+				if (!(text == "x"))
+				{
+					if (!(text == "y"))
+					{
+						if (text == "z")
+						{
+							this.vector3s[1].x = this.vector3s[0].x;
+							this.vector3s[1].y = this.vector3s[0].y;
+						}
+					}
+					else
+					{
+						this.vector3s[1].x = this.vector3s[0].x;
+						this.vector3s[1].z = this.vector3s[0].z;
+					}
+				}
+				else
+				{
+					this.vector3s[1].y = this.vector3s[0].y;
+					this.vector3s[1].z = this.vector3s[0].z;
+				}
 			}
 		}
 		this.vector3s[1] = new Vector3(this.clerp(this.vector3s[0].x, this.vector3s[1].x, 1f), this.clerp(this.vector3s[0].y, this.vector3s[1].y, 1f), this.clerp(this.vector3s[0].z, this.vector3s[1].z, 1f));
 		if (this.tweenArguments.Contains("speed"))
 		{
-			float num2 = Math.Abs(Vector3.Distance(this.vector3s[0], this.vector3s[1]));
-			this.time = num2 / (float)this.tweenArguments["speed"];
+			float num = Math.Abs(Vector3.Distance(this.vector3s[0], this.vector3s[1]));
+			this.time = num / (float)this.tweenArguments["speed"];
 		}
 	}
 
@@ -2205,15 +2212,7 @@ public class iTween : MonoBehaviour
 			this.colors[i, 2].b = this.ease(this.colors[i, 0].b, this.colors[i, 1].b, this.percentage);
 			this.colors[i, 2].a = this.ease(this.colors[i, 0].a, this.colors[i, 1].a, this.percentage);
 		}
-		if (base.GetComponent<GUITexture>())
-		{
-			base.GetComponent<GUITexture>().color = this.colors[0, 2];
-		}
-		else if (base.GetComponent<GUIText>())
-		{
-			base.GetComponent<GUIText>().material.color = this.colors[0, 2];
-		}
-		else if (base.GetComponent<Renderer>())
+		if (base.GetComponent<Renderer>())
 		{
 			for (int j = 0; j < this.colors.GetLength(0); j++)
 			{
@@ -2226,15 +2225,7 @@ public class iTween : MonoBehaviour
 		}
 		if (this.percentage == 1f)
 		{
-			if (base.GetComponent<GUITexture>())
-			{
-				base.GetComponent<GUITexture>().color = this.colors[0, 1];
-			}
-			else if (base.GetComponent<GUIText>())
-			{
-				base.GetComponent<GUIText>().material.color = this.colors[0, 1];
-			}
-			else if (base.GetComponent<Renderer>())
+			if (base.GetComponent<Renderer>())
 			{
 				for (int k = 0; k < this.colors.GetLength(0); k++)
 				{
@@ -2783,10 +2774,23 @@ public class iTween : MonoBehaviour
 		Color[] array = new Color[4];
 		if (!args.Contains("includechildren") || (bool)args["includechildren"])
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.ColorUpdate(transform.gameObject, args);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.ColorUpdate(transform.gameObject, args);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 		float num;
@@ -2799,15 +2803,7 @@ public class iTween : MonoBehaviour
 		{
 			num = iTween.Defaults.updateTime;
 		}
-		if (target.GetComponent<GUITexture>())
-		{
-			array[0] = (array[1] = target.GetComponent<GUITexture>().color);
-		}
-		else if (target.GetComponent<GUIText>())
-		{
-			array[0] = (array[1] = target.GetComponent<GUIText>().material.color);
-		}
-		else if (target.GetComponent<Renderer>())
+		if (target.GetComponent<Renderer>())
 		{
 			array[0] = (array[1] = target.GetComponent<Renderer>().material.color);
 		}
@@ -2842,15 +2838,7 @@ public class iTween : MonoBehaviour
 		array[3].g = Mathf.SmoothDamp(array[0].g, array[1].g, ref array[2].g, num);
 		array[3].b = Mathf.SmoothDamp(array[0].b, array[1].b, ref array[2].b, num);
 		array[3].a = Mathf.SmoothDamp(array[0].a, array[1].a, ref array[2].a, num);
-		if (target.GetComponent<GUITexture>())
-		{
-			target.GetComponent<GUITexture>().color = array[3];
-		}
-		else if (target.GetComponent<GUIText>())
-		{
-			target.GetComponent<GUIText>().material.color = array[3];
-		}
-		else if (target.GetComponent<Renderer>())
+		if (target.GetComponent<Renderer>())
 		{
 			target.GetComponent<Renderer>().material.color = array[3];
 		}
@@ -3203,20 +3191,29 @@ public class iTween : MonoBehaviour
 			{
 				array[4] = target.transform.eulerAngles;
 				string text = (string)args["axis"];
-				switch (text)
+				if (text != null)
 				{
-				case "x":
-					array[4].y = array[0].y;
-					array[4].z = array[0].z;
-					break;
-				case "y":
-					array[4].x = array[0].x;
-					array[4].z = array[0].z;
-					break;
-				case "z":
-					array[4].x = array[0].x;
-					array[4].y = array[0].y;
-					break;
+					if (!(text == "x"))
+					{
+						if (!(text == "y"))
+						{
+							if (text == "z")
+							{
+								array[4].x = array[0].x;
+								array[4].y = array[0].y;
+							}
+						}
+						else
+						{
+							array[4].x = array[0].x;
+							array[4].z = array[0].z;
+						}
+					}
+					else
+					{
+						array[4].y = array[0].y;
+						array[4].z = array[0].z;
+					}
 				}
 				target.transform.eulerAngles = array[4];
 			}
@@ -3601,10 +3598,6 @@ public class iTween : MonoBehaviour
 
 	public static void CameraFadeSwap(Texture2D texture)
 	{
-		if (iTween.cameraFade)
-		{
-			iTween.cameraFade.GetComponent<GUITexture>().texture = texture;
-		}
 	}
 
 	public static GameObject CameraFadeAdd(Texture2D texture, int depth)
@@ -3615,9 +3608,6 @@ public class iTween : MonoBehaviour
 		}
 		iTween.cameraFade = new GameObject("iTween Camera Fade");
 		iTween.cameraFade.transform.position = new Vector3(0.5f, 0.5f, (float)depth);
-		iTween.cameraFade.AddComponent<GUITexture>();
-		iTween.cameraFade.GetComponent<GUITexture>().texture = texture;
-		iTween.cameraFade.GetComponent<GUITexture>().color = new Color(0.5f, 0.5f, 0.5f, 0f);
 		return iTween.cameraFade;
 	}
 
@@ -3629,9 +3619,6 @@ public class iTween : MonoBehaviour
 		}
 		iTween.cameraFade = new GameObject("iTween Camera Fade");
 		iTween.cameraFade.transform.position = new Vector3(0.5f, 0.5f, (float)iTween.Defaults.cameraFadeDepth);
-		iTween.cameraFade.AddComponent<GUITexture>();
-		iTween.cameraFade.GetComponent<GUITexture>().texture = texture;
-		iTween.cameraFade.GetComponent<GUITexture>().color = new Color(0.5f, 0.5f, 0.5f, 0f);
 		return iTween.cameraFade;
 	}
 
@@ -3643,9 +3630,6 @@ public class iTween : MonoBehaviour
 		}
 		iTween.cameraFade = new GameObject("iTween Camera Fade");
 		iTween.cameraFade.transform.position = new Vector3(0.5f, 0.5f, (float)iTween.Defaults.cameraFadeDepth);
-		iTween.cameraFade.AddComponent<GUITexture>();
-		iTween.cameraFade.GetComponent<GUITexture>().texture = iTween.CameraTexture(Color.black);
-		iTween.cameraFade.GetComponent<GUITexture>().color = new Color(0.5f, 0.5f, 0.5f, 0f);
 		return iTween.cameraFade;
 	}
 
@@ -3663,10 +3647,23 @@ public class iTween : MonoBehaviour
 		iTween.Resume(target);
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.Resume(transform.gameObject, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.Resume(transform.gameObject, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -3699,10 +3696,23 @@ public class iTween : MonoBehaviour
 		}
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.Resume(transform.gameObject, type, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.Resume(transform.gameObject, type, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -3752,10 +3762,23 @@ public class iTween : MonoBehaviour
 		iTween.Pause(target);
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.Pause(transform.gameObject, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.Pause(transform.gameObject, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -3800,10 +3823,23 @@ public class iTween : MonoBehaviour
 		}
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.Pause(transform.gameObject, type, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.Pause(transform.gameObject, type, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -3931,10 +3967,23 @@ public class iTween : MonoBehaviour
 		iTween.Stop(target);
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.Stop(transform.gameObject, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.Stop(transform.gameObject, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -3979,10 +4028,23 @@ public class iTween : MonoBehaviour
 		}
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.Stop(transform.gameObject, type, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.Stop(transform.gameObject, type, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -3999,10 +4061,23 @@ public class iTween : MonoBehaviour
 		}
 		if (includechildren)
 		{
-			foreach (object obj in target.transform)
+			IEnumerator enumerator = target.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				iTween.StopByName(transform.gameObject, name, true);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					iTween.StopByName(transform.gameObject, name, true);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 	}
@@ -4208,31 +4283,70 @@ public class iTween : MonoBehaviour
 	{
 		Hashtable hashtable = new Hashtable(args.Count);
 		Hashtable hashtable2 = new Hashtable(args.Count);
-		foreach (object obj in args)
+		IDictionaryEnumerator enumerator = args.GetEnumerator();
+		try
 		{
-			DictionaryEntry dictionaryEntry = (DictionaryEntry)obj;
-			hashtable.Add(dictionaryEntry.Key, dictionaryEntry.Value);
-		}
-		foreach (object obj2 in hashtable)
-		{
-			DictionaryEntry dictionaryEntry2 = (DictionaryEntry)obj2;
-			if (dictionaryEntry2.Value.GetType() == typeof(int))
+			while (enumerator.MoveNext())
 			{
-				int num = (int)dictionaryEntry2.Value;
-				float num2 = (float)num;
-				args[dictionaryEntry2.Key] = num2;
-			}
-			if (dictionaryEntry2.Value.GetType() == typeof(double))
-			{
-				double num3 = (double)dictionaryEntry2.Value;
-				float num4 = (float)num3;
-				args[dictionaryEntry2.Key] = num4;
+				object obj = enumerator.Current;
+				DictionaryEntry dictionaryEntry = (DictionaryEntry)obj;
+				hashtable.Add(dictionaryEntry.Key, dictionaryEntry.Value);
 			}
 		}
-		foreach (object obj3 in args)
+		finally
 		{
-			DictionaryEntry dictionaryEntry3 = (DictionaryEntry)obj3;
-			hashtable2.Add(dictionaryEntry3.Key.ToString().ToLower(), dictionaryEntry3.Value);
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
+		}
+		IDictionaryEnumerator enumerator2 = hashtable.GetEnumerator();
+		try
+		{
+			while (enumerator2.MoveNext())
+			{
+				object obj2 = enumerator2.Current;
+				DictionaryEntry dictionaryEntry2 = (DictionaryEntry)obj2;
+				if (dictionaryEntry2.Value.GetType() == typeof(int))
+				{
+					int num = (int)dictionaryEntry2.Value;
+					float num2 = (float)num;
+					args[dictionaryEntry2.Key] = num2;
+				}
+				if (dictionaryEntry2.Value.GetType() == typeof(double))
+				{
+					double num3 = (double)dictionaryEntry2.Value;
+					float num4 = (float)num3;
+					args[dictionaryEntry2.Key] = num4;
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable2;
+			if ((disposable2 = (enumerator2 as IDisposable)) != null)
+			{
+				disposable2.Dispose();
+			}
+		}
+		IDictionaryEnumerator enumerator3 = args.GetEnumerator();
+		try
+		{
+			while (enumerator3.MoveNext())
+			{
+				object obj3 = enumerator3.Current;
+				DictionaryEntry dictionaryEntry3 = (DictionaryEntry)obj3;
+				hashtable2.Add(dictionaryEntry3.Key.ToString().ToLower(), dictionaryEntry3.Value);
+			}
+		}
+		finally
+		{
+			IDisposable disposable3;
+			if ((disposable3 = (enumerator3 as IDisposable)) != null)
+			{
+				disposable3.Dispose();
+			}
 		}
 		args = hashtable2;
 		return args;
@@ -4281,13 +4395,13 @@ public class iTween : MonoBehaviour
 		{
 			if (this.tweenArguments["namedcolorvalue"].GetType() == typeof(iTween.NamedValueColor))
 			{
-				this.namedcolorvalue = (iTween.NamedValueColor)((int)this.tweenArguments["namedcolorvalue"]);
+				this.namedcolorvalue = (iTween.NamedValueColor)this.tweenArguments["namedcolorvalue"];
 			}
 			else
 			{
 				try
 				{
-					this.namedcolorvalue = (iTween.NamedValueColor)((int)Enum.Parse(typeof(iTween.NamedValueColor), (string)this.tweenArguments["namedcolorvalue"], true));
+					this.namedcolorvalue = (iTween.NamedValueColor)Enum.Parse(typeof(iTween.NamedValueColor), (string)this.tweenArguments["namedcolorvalue"], true);
 				}
 				catch
 				{
@@ -4304,13 +4418,13 @@ public class iTween : MonoBehaviour
 		{
 			if (this.tweenArguments["looptype"].GetType() == typeof(iTween.LoopType))
 			{
-				this.loopType = (iTween.LoopType)((int)this.tweenArguments["looptype"]);
+				this.loopType = (iTween.LoopType)this.tweenArguments["looptype"];
 			}
 			else
 			{
 				try
 				{
-					this.loopType = (iTween.LoopType)((int)Enum.Parse(typeof(iTween.LoopType), (string)this.tweenArguments["looptype"], true));
+					this.loopType = (iTween.LoopType)Enum.Parse(typeof(iTween.LoopType), (string)this.tweenArguments["looptype"], true);
 				}
 				catch
 				{
@@ -4327,13 +4441,13 @@ public class iTween : MonoBehaviour
 		{
 			if (this.tweenArguments["easetype"].GetType() == typeof(iTween.EaseType))
 			{
-				this.easeType = (iTween.EaseType)((int)this.tweenArguments["easetype"]);
+				this.easeType = (iTween.EaseType)this.tweenArguments["easetype"];
 			}
 			else
 			{
 				try
 				{
-					this.easeType = (iTween.EaseType)((int)Enum.Parse(typeof(iTween.EaseType), (string)this.tweenArguments["easetype"], true));
+					this.easeType = (iTween.EaseType)Enum.Parse(typeof(iTween.EaseType), (string)this.tweenArguments["easetype"], true);
 				}
 				catch
 				{
@@ -4350,13 +4464,13 @@ public class iTween : MonoBehaviour
 		{
 			if (this.tweenArguments["space"].GetType() == typeof(Space))
 			{
-				this.space = (Space)((int)this.tweenArguments["space"]);
+				this.space = (Space)this.tweenArguments["space"];
 			}
 			else
 			{
 				try
 				{
-					this.space = (Space)((int)Enum.Parse(typeof(Space), (string)this.tweenArguments["space"], true));
+					this.space = (Space)Enum.Parse(typeof(Space), (string)this.tweenArguments["space"], true);
 				}
 				catch
 				{
@@ -4571,18 +4685,31 @@ public class iTween : MonoBehaviour
 					iTween.Dispose();
 					return;
 				}
-				foreach (object obj in this.tweenArguments)
+				IDictionaryEnumerator enumerator = this.tweenArguments.GetEnumerator();
+				try
 				{
-					DictionaryEntry dictionaryEntry = (DictionaryEntry)obj;
-					if (!iTween.tweenArguments.Contains(dictionaryEntry.Key))
+					while (enumerator.MoveNext())
 					{
-						iTween.Dispose();
-						return;
+						object obj = enumerator.Current;
+						DictionaryEntry dictionaryEntry = (DictionaryEntry)obj;
+						if (!iTween.tweenArguments.Contains(dictionaryEntry.Key))
+						{
+							iTween.Dispose();
+							return;
+						}
+						if (!iTween.tweenArguments[dictionaryEntry.Key].Equals(this.tweenArguments[dictionaryEntry.Key]) && (string)dictionaryEntry.Key != "id")
+						{
+							iTween.Dispose();
+							return;
+						}
 					}
-					if (!iTween.tweenArguments[dictionaryEntry.Key].Equals(this.tweenArguments[dictionaryEntry.Key]) && (string)dictionaryEntry.Key != "id")
+				}
+				finally
+				{
+					IDisposable disposable;
+					if ((disposable = (enumerator as IDisposable)) != null)
 					{
-						iTween.Dispose();
-						return;
+						disposable.Dispose();
 					}
 				}
 				this.Dispose();
@@ -4975,6 +5102,10 @@ public class iTween : MonoBehaviour
 		return num3 * Mathf.Pow(2f, -10f * (value -= 1f)) * Mathf.Sin((value * num - num4) * 6.28318548f / num2) * 0.5f + end + start;
 	}
 
+	private delegate float EasingFunction(float start, float end, float Value);
+
+	private delegate void ApplyTween();
+
 	public enum EaseType
 	{
 		easeInQuad,
@@ -5084,8 +5215,4 @@ public class iTween : MonoBehaviour
 			return 0.5f * ((-a + 3f * a2 - 3f * vector + b) * (num3 * num3 * num3) + (2f * a - 5f * a2 + 4f * vector - b) * (num3 * num3) + (-a + vector) * num3 + 2f * a2);
 		}
 	}
-
-	private delegate float EasingFunction(float start, float end, float Value);
-
-	private delegate void ApplyTween();
 }

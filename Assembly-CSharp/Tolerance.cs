@@ -357,20 +357,24 @@ public class Tolerance
 			};
 			for (int i = 0; i < addTolerances.Length; i++)
 			{
-				switch (array[i])
+				Strength strength = array[i];
+				if (strength != Strength.None)
 				{
-				case Strength.None:
-					if (addTolerances[i] > 0)
+					if (strength != Strength.Strong)
 					{
-						array[i] = Strength.Strong;
+						if (strength == Strength.Weak)
+						{
+							if (addTolerances[i] > 0)
+							{
+								array[i] = Strength.None;
+							}
+							else if (addTolerances[i] < 0)
+							{
+								array[i] = Strength.Weak;
+							}
+						}
 					}
-					else if (addTolerances[i] < 0)
-					{
-						array[i] = Strength.Weak;
-					}
-					break;
-				case Strength.Strong:
-					if (addTolerances[i] > 0)
+					else if (addTolerances[i] > 0)
 					{
 						array[i] = Strength.Strong;
 					}
@@ -378,17 +382,14 @@ public class Tolerance
 					{
 						array[i] = Strength.None;
 					}
-					break;
-				case Strength.Weak:
-					if (addTolerances[i] > 0)
-					{
-						array[i] = Strength.None;
-					}
-					else if (addTolerances[i] < 0)
-					{
-						array[i] = Strength.Weak;
-					}
-					break;
+				}
+				else if (addTolerances[i] > 0)
+				{
+					array[i] = Strength.Strong;
+				}
+				else if (addTolerances[i] < 0)
+				{
+					array[i] = Strength.Weak;
 				}
 			}
 			return new Tolerance(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13]);

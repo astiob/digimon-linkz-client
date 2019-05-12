@@ -26,8 +26,8 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 		if (base.battleStateData.IsChipSkill())
 		{
 			this.skillStatus = base.hierarchyData.GetSkillStatus(currentCharacter.chipSkillId);
-			GameWebAPI.RespDataMA_ChipM.Chip chipData = ChipDataMng.GetChipMainData(currentCharacter.currentChipId);
-			applyName = chipData.name;
+			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(currentCharacter.currentChipId);
+			applyName = chipMainData.name;
 		}
 		else
 		{
@@ -42,12 +42,12 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 		}
 		else
 		{
-			bool isBigBoss = false;
+			bool flag = false;
 			if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
 			{
-				isBigBoss = true;
+				flag = true;
 			}
-			if (currentCharacter.isEnemy && isBigBoss)
+			if (currentCharacter.isEnemy && flag)
 			{
 				this.cameraKey = "BigBoss/skillF";
 			}
@@ -57,13 +57,13 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 			}
 		}
 		this.currentActiveRevivalEffect = base.battleStateData.GetIsActiveRevivalReservedEffect();
-		foreach (AlwaysEffectParams a in this.currentActiveRevivalEffect)
+		foreach (AlwaysEffectParams alwaysEffectParams in this.currentActiveRevivalEffect)
 		{
 			base.stateManager.threeDAction.StopAlwaysEffectAction(new AlwaysEffectParams[]
 			{
-				a
+				alwaysEffectParams
 			});
-			base.stateManager.soundPlayer.TryStopSE(a);
+			base.stateManager.soundPlayer.TryStopSE(alwaysEffectParams);
 		}
 		if (this.skillStatus.TryGetInvocationSEID(out this.gettedId))
 		{

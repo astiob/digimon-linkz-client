@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace SmartBeat
@@ -16,6 +17,9 @@ namespace SmartBeat
 
 		private static DateTime mLatestTime;
 
+		[CompilerGenerated]
+		private static Application.LogCallback <>f__mg$cache0;
+
 		public static void init(string appKey)
 		{
 			SmartBeat.init(appKey, true);
@@ -28,13 +32,17 @@ namespace SmartBeat
 			{
 				return;
 			}
-			SmartBeat.SingleInstance obj = instance;
+			object obj = instance;
 			lock (obj)
 			{
 				if (!instance.getInitialized())
 				{
 					instance.setInitialized();
-					Application.logMessageReceived += SmartBeat.HandleLog;
+					if (SmartBeat.<>f__mg$cache0 == null)
+					{
+						SmartBeat.<>f__mg$cache0 = new Application.LogCallback(SmartBeat.HandleLog);
+					}
+					Application.logMessageReceived += SmartBeat.<>f__mg$cache0;
 					AndroidJavaClass androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 					AndroidJavaObject @static = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");
 					AndroidJavaObject androidJavaObject = @static.Call<AndroidJavaObject>("getApplication", new object[0]);
@@ -193,7 +201,7 @@ namespace SmartBeat
 				if (flag2)
 				{
 					text = "/smartbeat_screenshot" + string.Format("_{0:00}", SmartBeat.SingleInstance.getInstance().getImageCount()) + ".png";
-					Application.CaptureScreenshot(text);
+					ScreenCapture.CaptureScreenshot(text);
 				}
 				string text2 = stackTrace;
 				if (text2.Length <= 0)

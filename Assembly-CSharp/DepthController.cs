@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,31 +7,58 @@ using UnityEngine;
 [AddComponentMenu("GUI/DepthController")]
 public class DepthController : MonoBehaviour
 {
-	private int myDepthNow;
-
-	private int depth;
-
-	private int add;
-
 	private bool ADD_MODE = true;
 
-	private int min = int.MaxValue;
+	private int _myDepthNow;
 
-	private int max = int.MinValue;
+	private int _depth;
 
-	private bool isCheckWidgetDepth;
+	private int _addValue;
 
-	private List<GameObject> gameObjectList = new List<GameObject>();
+	private int _minValue = int.MaxValue;
+
+	private int _maxValue = int.MinValue;
+
+	private UIWidget _uiWidget;
+
+	private bool _isCheckWidgetDepth;
+
+	private List<GameObject> _gameObjectList = new List<GameObject>();
+
+	private Dictionary<int, List<UIWidget>> _childWidget = new Dictionary<int, List<UIWidget>>();
+
+	private void Awake()
+	{
+		this._uiWidget = base.GetComponent<UIWidget>();
+		this.InitWidgetDepth(base.transform);
+		if (Application.isPlaying)
+		{
+			return;
+		}
+		if (this.ADD_MODE)
+		{
+			if (this._uiWidget != null)
+			{
+				this._myDepthNow = this._uiWidget.depth;
+			}
+		}
+		else if (this._uiWidget != null)
+		{
+			this._myDepthNow = this._uiWidget.depth;
+			this._depth = this._uiWidget.depth;
+			this.SetWidgetDepth(base.transform, this._depth);
+		}
+	}
 
 	public void CheckWidgetDepth(Transform tm)
 	{
-		this.gameObjectList.Clear();
+		this._gameObjectList.Clear();
 		GameObject gameObject = tm.gameObject;
 		while (!gameObject.activeInHierarchy)
 		{
 			if (!gameObject.activeSelf)
 			{
-				this.gameObjectList.Add(gameObject);
+				this._gameObjectList.Add(gameObject);
 			}
 			gameObject.SetActive(true);
 			gameObject = gameObject.transform.parent.gameObject;
@@ -42,40 +70,36 @@ public class DepthController : MonoBehaviour
 			{
 				DepthControllerHash depthControllerHash = tm.gameObject.AddComponent<DepthControllerHash>();
 				depthControllerHash.originDepth = component.depth;
+				if (!this._childWidget.ContainsKey(depthControllerHash.originDepth))
+				{
+					this._childWidget.Add(depthControllerHash.originDepth, new List<UIWidget>());
+				}
+				this._childWidget[depthControllerHash.originDepth].Add(component);
 			}
-			this.min = Mathf.Min(this.min, component.depth);
-			this.max = Mathf.Max(this.max, component.depth);
+			this._minValue = Mathf.Min(this._minValue, component.depth);
+			this._maxValue = Mathf.Max(this._maxValue, component.depth);
 		}
-		foreach (GameObject gameObject2 in this.gameObjectList)
+		foreach (GameObject gameObject2 in this._gameObjectList)
 		{
 			gameObject2.SetActive(false);
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator2 = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			this.CheckWidgetDepth(tm2);
-		}
-	}
-
-	private void Awake()
-	{
-		UIWidget component = base.GetComponent<UIWidget>();
-		if (Application.isPlaying)
-		{
-			return;
-		}
-		if (this.ADD_MODE)
-		{
-			if (component != null)
+			while (enumerator2.MoveNext())
 			{
-				this.myDepthNow = component.depth;
+				object obj = enumerator2.Current;
+				Transform tm2 = (Transform)obj;
+				this.CheckWidgetDepth(tm2);
 			}
 		}
-		else if (component != null)
+		finally
 		{
-			this.myDepthNow = component.depth;
-			this.depth = component.depth;
-			this.SetWidgetDepth(base.transform, this.depth);
+			IDisposable disposable;
+			if ((disposable = (enumerator2 as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -88,52 +112,67 @@ public class DepthController : MonoBehaviour
 		if (this.ADD_MODE)
 		{
 			UIWidget component = base.gameObject.GetComponent<UIWidget>();
-			if (component != null && this.myDepthNow != component.depth)
+			if (component != null && this._myDepthNow != component.depth)
 			{
-				this.add = component.depth - this.myDepthNow;
-				component.depth = this.myDepthNow;
-				this.AddWidgetDepth(base.transform, this.add);
-				this.myDepthNow = component.depth;
+				this._addValue = component.depth - this._myDepthNow;
+				component.depth = this._myDepthNow;
+				this.AddWidgetDepth(base.transform, this._addValue);
+				this._myDepthNow = component.depth;
 			}
 		}
 		else
 		{
 			UIWidget component2 = base.gameObject.GetComponent<UIWidget>();
-			if (component2 != null && this.myDepthNow != component2.depth)
+			if (component2 != null && this._myDepthNow != component2.depth)
 			{
-				this.myDepthNow = component2.depth;
-				this.depth = component2.depth;
-				this.SetWidgetDepth(base.transform, this.depth);
+				this._myDepthNow = component2.depth;
+				this._depth = component2.depth;
+				this.SetWidgetDepth(base.transform, this._depth);
 			}
 		}
 	}
 
-	private void SetWidgetDepthInternal(Transform tm, int depth)
+	private void InitWidgetDepth(Transform t)
 	{
-		UIWidget component = tm.GetComponent<UIWidget>();
-		DepthControllerHash component2 = tm.GetComponent<DepthControllerHash>();
-		int num = this.max - this.min;
-		if (component != null && component2 != null)
+		if (!this._isCheckWidgetDepth)
 		{
-			component.depth = num * depth + component2.originDepth;
-		}
-		foreach (object obj in tm)
-		{
-			Transform tm2 = (Transform)obj;
-			this.SetWidgetDepthInternal(tm2, depth);
+			this._minValue = int.MaxValue;
+			this._maxValue = int.MinValue;
+			this.CheckWidgetDepth(t);
+			this._isCheckWidgetDepth = true;
 		}
 	}
 
 	public void SetWidgetDepth(Transform tm, int depth)
 	{
-		if (!this.isCheckWidgetDepth)
+		this.InitWidgetDepth(tm);
+		List<int> list = new List<int>(this._childWidget.Keys);
+		for (int i = 0; i < list.Count; i++)
 		{
-			this.min = int.MaxValue;
-			this.max = int.MinValue;
-			this.CheckWidgetDepth(tm);
-			this.isCheckWidgetDepth = true;
+			int num = list[i];
+			for (int j = 0; j < this._childWidget[num].Count; j++)
+			{
+				int num2 = this._maxValue - this._minValue;
+				this._childWidget[num][j].depth = num2 * depth + num;
+			}
 		}
-		this.SetWidgetDepthInternal(tm, depth);
+	}
+
+	public void SetWidgetManualDepth(Transform tm, int depth)
+	{
+		this.InitWidgetDepth(tm);
+		List<int> list = new List<int>(this._childWidget.Keys);
+		for (int i = 0; i < list.Count; i++)
+		{
+			int key = list[i];
+			for (int j = 0; j < this._childWidget[key].Count; j++)
+			{
+				int num = this._maxValue - this._minValue;
+				DepthControllerHash component = this._childWidget[key][j].GetComponent<DepthControllerHash>();
+				this._childWidget[key][j].manualDepth = num * depth + component.originDepth;
+				this._childWidget[key][j].SetDepthFromManualDepth();
+			}
+		}
 	}
 
 	public void AddWidgetDepth(Transform tm, int add)
@@ -143,10 +182,23 @@ public class DepthController : MonoBehaviour
 		{
 			component.depth += add;
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			this.AddWidgetDepth(tm2, add);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				this.AddWidgetDepth(tm2, add);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -155,32 +207,81 @@ public class DepthController : MonoBehaviour
 		this.SetWidgetDepth(base.transform, depth);
 	}
 
+	public void SetWidgetManualDepth(int depth)
+	{
+		this.SetWidgetManualDepth(base.transform, depth);
+	}
+
 	public void AddWidgetDepth(int add)
 	{
 		this.AddWidgetDepth(base.transform, add);
 	}
 
-	public static void SetWidgetDepth_2(Transform tm, int depth)
+	public UIPanel GetPanel()
+	{
+		if (this._uiWidget == null)
+		{
+			return null;
+		}
+		if (this._uiWidget.panel == null)
+		{
+			return this._uiWidget.transform.parent.GetComponent<UIPanel>();
+		}
+		return this._uiWidget.panel;
+	}
+
+	public int GetManualDepth()
+	{
+		if (this._uiWidget == null)
+		{
+			return 0;
+		}
+		return this._uiWidget.manualDepth;
+	}
+
+	public int GetDepth()
+	{
+		if (this._uiWidget == null)
+		{
+			return 0;
+		}
+		return this._uiWidget.depth;
+	}
+
+	public static void SetWidgetDepth_Static(Transform tm, int depth)
 	{
 		UIWidget component = tm.gameObject.GetComponent<UIWidget>();
 		if (component != null)
 		{
-			int num = depth - component.depth;
-			DepthController.AddWidgetDepth_2(tm, num);
+			int add = depth - component.depth;
+			DepthController.AddWidgetDepth_Static(tm, add);
 		}
 	}
 
-	public static void AddWidgetDepth_2(Transform tm, int add)
+	public static void AddWidgetDepth_Static(Transform tm, int add)
 	{
 		UIWidget component = tm.gameObject.GetComponent<UIWidget>();
 		if (component != null)
 		{
 			component.depth += add;
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			DepthController.AddWidgetDepth_2(tm2, add);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				DepthController.AddWidgetDepth_Static(tm2, add);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -191,10 +292,23 @@ public class DepthController : MonoBehaviour
 		{
 			component.SetDirty();
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			DepthController.RefreshWidgetDrawCall(tm2);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				DepthController.RefreshWidgetDrawCall(tm2);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 }

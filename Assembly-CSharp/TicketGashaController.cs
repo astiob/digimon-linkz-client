@@ -6,20 +6,20 @@ using UnityEngine;
 
 public sealed class TicketGashaController : CutsceneBase
 {
-	[SerializeField]
 	[Header("カードアニメフレーム間隔")]
+	[SerializeField]
 	private int cardAnimIntervalFrame;
 
 	[Header("メインカメラ")]
 	[SerializeField]
 	private Camera mainCam;
 
-	[SerializeField]
 	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
+	[SerializeField]
 	private List<GameObject> goCardEfcList;
 
-	[SerializeField]
 	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
+	[SerializeField]
 	private List<GameObject> goCardAnimList;
 
 	[SerializeField]

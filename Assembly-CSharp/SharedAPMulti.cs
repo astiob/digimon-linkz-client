@@ -5,26 +5,26 @@ using UnityEngine;
 
 public sealed class SharedAPMulti : MonoBehaviour
 {
-	public const float deltaTime = 0.2f;
-
 	[SerializeField]
 	private int _APNum;
 
-	[SerializeField]
 	[Header("APアイコン")]
+	[SerializeField]
 	private SharedApNotes[] apNotes = new SharedApNotes[16];
 
 	[Header("AP Maxエフェクト")]
 	[SerializeField]
 	private GameObject multiAPMaxEffect;
 
-	[SerializeField]
 	[Header("分子数字")]
+	[SerializeField]
 	private UITextReplacer numLabel;
 
 	[Header("スラッシュ分母数字")]
 	[SerializeField]
 	private UITextReplacer maxNumLabel;
+
+	public const float deltaTime = 0.2f;
 
 	private bool isPlayedFirstAnimation;
 
@@ -257,14 +257,14 @@ public sealed class SharedAPMulti : MonoBehaviour
 		{
 			global::Debug.Log("共有APのUIの最後");
 			this.RefreshNumLabel();
-			foreach (Action hpUpHudAction in this.HpUpHudActions)
+			foreach (Action action in this.HpUpHudActions)
 			{
-				hpUpHudAction();
+				action();
 			}
 			this.HpUpHudActions.Clear();
-			foreach (Action hpGaugeUpHudAction in this.HpGaugeUpHudActions)
+			foreach (Action action2 in this.HpGaugeUpHudActions)
 			{
-				hpGaugeUpHudAction();
+				action2();
 			}
 			this.isPlayingSharedAp = false;
 			this.HpGaugeUpHudActions.Clear();

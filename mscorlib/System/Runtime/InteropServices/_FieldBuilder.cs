@@ -4,11 +4,11 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.FieldBuilder" /> class to unmanaged code.</summary>
-	[Guid("CE1A3BF5-975E-30CC-97C9-1EF70F8F3993")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[CLSCompliant(false)]
 	[ComVisible(true)]
+	[Guid("CE1A3BF5-975E-30CC-97C9-1EF70F8F3993")]
 	[TypeLibImportClass(typeof(FieldBuilder))]
+	[CLSCompliant(false)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface _FieldBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

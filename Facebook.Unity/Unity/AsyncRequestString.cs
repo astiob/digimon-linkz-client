@@ -42,7 +42,7 @@ namespace Facebook.Unity
 			WWW www;
 			if (this.method == HttpMethod.GET)
 			{
-				string text = (!this.url.AbsoluteUri.Contains("?")) ? "?" : "&";
+				string text = this.url.AbsoluteUri.Contains("?") ? "&" : "?";
 				if (this.formData != null)
 				{
 					foreach (KeyValuePair<string, string> keyValuePair in this.formData)
@@ -51,7 +51,10 @@ namespace Facebook.Unity
 					}
 				}
 				Dictionary<string, string> dictionary = new Dictionary<string, string>();
-				dictionary["User-Agent"] = Constants.GraphApiUserAgent;
+				if (Constants.CurrentPlatform != FacebookUnityPlatform.WebGL)
+				{
+					dictionary["User-Agent"] = Constants.GraphApiUserAgent;
+				}
 				www = new WWW(this.url + text, null, dictionary);
 			}
 			else
@@ -71,7 +74,10 @@ namespace Facebook.Unity
 						this.query.AddField(keyValuePair2.Key, keyValuePair2.Value);
 					}
 				}
-				this.query.headers["User-Agent"] = Constants.GraphApiUserAgent;
+				if (Constants.CurrentPlatform != FacebookUnityPlatform.WebGL)
+				{
+					this.query.headers["User-Agent"] = Constants.GraphApiUserAgent;
+				}
 				www = new WWW(this.url.AbsoluteUri, this.query);
 			}
 			yield return www;
@@ -80,7 +86,7 @@ namespace Facebook.Unity
 				this.callback(new GraphResult(www));
 			}
 			www.Dispose();
-			UnityEngine.Object.Destroy(this);
+			Object.Destroy(this);
 			yield break;
 		}
 

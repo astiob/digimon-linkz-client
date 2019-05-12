@@ -13,7 +13,7 @@ namespace Facebook.Unity.Mobile.IOS
 
 		private IIOSWrapper iosWrapper;
 
-		public IOSFacebook() : this(new IOSWrapper(), new CallbackManager())
+		public IOSFacebook() : this(IOSFacebook.GetIOSWrapper(), new CallbackManager())
 		{
 		}
 
@@ -81,7 +81,7 @@ namespace Facebook.Unity.Mobile.IOS
 			{
 				text = (filters.First<object>() as string);
 			}
-			this.iosWrapper.AppRequest(this.AddCallback<IAppRequestResult>(callback), message, (actionType == null) ? string.Empty : actionType.ToString(), (objectId == null) ? string.Empty : objectId, (to == null) ? null : to.ToArray<string>(), (to == null) ? 0 : to.Count<string>(), (text == null) ? string.Empty : text, (excludeIds == null) ? null : excludeIds.ToArray<string>(), (excludeIds == null) ? 0 : excludeIds.Count<string>(), maxRecipients != null, (maxRecipients == null) ? 0 : maxRecipients.Value, data, title);
+			this.iosWrapper.AppRequest(this.AddCallback<IAppRequestResult>(callback), message, (actionType != null) ? actionType.ToString() : string.Empty, (objectId != null) ? objectId : string.Empty, (to != null) ? to.ToArray<string>() : null, (to != null) ? to.Count<string>() : 0, (text != null) ? text : string.Empty, (excludeIds != null) ? excludeIds.ToArray<string>() : null, (excludeIds != null) ? excludeIds.Count<string>() : 0, maxRecipients != null, (maxRecipients != null) ? maxRecipients.Value : 0, data, title);
 		}
 
 		public override void AppInvite(Uri appLinkUrl, Uri previewImageUrl, FacebookDelegate<IAppInviteResult> callback)
@@ -106,19 +106,9 @@ namespace Facebook.Unity.Mobile.IOS
 
 		public override void FeedShare(string toId, Uri link, string linkName, string linkCaption, string linkDescription, Uri picture, string mediaSource, FacebookDelegate<IShareResult> callback)
 		{
-			string link2 = (!(link != null)) ? string.Empty : link.ToString();
-			string picture2 = (!(picture != null)) ? string.Empty : picture.ToString();
+			string link2 = (link != null) ? link.ToString() : string.Empty;
+			string picture2 = (picture != null) ? picture.ToString() : string.Empty;
 			this.iosWrapper.FeedShare(this.AddCallback<IShareResult>(callback), toId, link2, linkName, linkCaption, linkDescription, picture2, mediaSource);
-		}
-
-		public override void GameGroupCreate(string name, string description, string privacy, FacebookDelegate<IGroupCreateResult> callback)
-		{
-			this.iosWrapper.CreateGameGroup(this.AddCallback<IGroupCreateResult>(callback), name, description, privacy);
-		}
-
-		public override void GameGroupJoin(string id, FacebookDelegate<IGroupJoinResult> callback)
-		{
-			this.iosWrapper.JoinGameGroup(Convert.ToInt32(base.CallbackManager.AddFacebookDelegate<IGroupJoinResult>(callback)), id);
 		}
 
 		public override void AppEventsLogEvent(string logEvent, float? valueToSum, Dictionary<string, object> parameters)
@@ -127,17 +117,20 @@ namespace Facebook.Unity.Mobile.IOS
 			if (valueToSum != null)
 			{
 				this.iosWrapper.LogAppEvent(logEvent, (double)valueToSum.Value, nativeDict.NumEntries, nativeDict.Keys, nativeDict.Values);
+				return;
 			}
-			else
-			{
-				this.iosWrapper.LogAppEvent(logEvent, 0.0, nativeDict.NumEntries, nativeDict.Keys, nativeDict.Values);
-			}
+			this.iosWrapper.LogAppEvent(logEvent, 0.0, nativeDict.NumEntries, nativeDict.Keys, nativeDict.Values);
 		}
 
 		public override void AppEventsLogPurchase(float logPurchase, string currency, Dictionary<string, object> parameters)
 		{
 			IOSFacebook.NativeDict nativeDict = IOSFacebook.MarshallDict(parameters);
 			this.iosWrapper.LogPurchaseAppEvent((double)logPurchase, currency, nativeDict.NumEntries, nativeDict.Keys, nativeDict.Values);
+		}
+
+		public override bool IsImplicitPurchaseLoggingEnabled()
+		{
+			return false;
 		}
 
 		public override void ActivateApp(string appId)
@@ -166,9 +159,7 @@ namespace Facebook.Unity.Mobile.IOS
 
 		private static IIOSWrapper GetIOSWrapper()
 		{
-			Assembly assembly = Assembly.Load("Facebook.Unity.IOS");
-			Type type = assembly.GetType("Facebook.Unity.IOS.IOSWrapper");
-			return (IIOSWrapper)Activator.CreateInstance(type);
+			return (IIOSWrapper)Activator.CreateInstance(Assembly.Load("Facebook.Unity.IOS").GetType("Facebook.Unity.IOS.IOSWrapper"));
 		}
 
 		private static IOSFacebook.NativeDict MarshallDict(Dictionary<string, object> dict)
@@ -183,7 +174,9 @@ namespace Facebook.Unity.Mobile.IOS
 				{
 					nativeDict.Keys[nativeDict.NumEntries] = keyValuePair.Key;
 					nativeDict.Values[nativeDict.NumEntries] = keyValuePair.Value.ToString();
-					nativeDict.NumEntries++;
+					IOSFacebook.NativeDict nativeDict2 = nativeDict;
+					int numEntries = nativeDict2.NumEntries;
+					nativeDict2.NumEntries = numEntries + 1;
 				}
 			}
 			return nativeDict;
@@ -201,7 +194,9 @@ namespace Facebook.Unity.Mobile.IOS
 				{
 					nativeDict.Keys[nativeDict.NumEntries] = keyValuePair.Key;
 					nativeDict.Values[nativeDict.NumEntries] = keyValuePair.Value;
-					nativeDict.NumEntries++;
+					IOSFacebook.NativeDict nativeDict2 = nativeDict;
+					int numEntries = nativeDict2.NumEntries;
+					nativeDict2.NumEntries = numEntries + 1;
 				}
 			}
 			return nativeDict;
@@ -209,8 +204,7 @@ namespace Facebook.Unity.Mobile.IOS
 
 		private int AddCallback<T>(FacebookDelegate<T> callback) where T : IResult
 		{
-			string value = base.CallbackManager.AddFacebookDelegate<T>(callback);
-			return Convert.ToInt32(value);
+			return Convert.ToInt32(base.CallbackManager.AddFacebookDelegate<T>(callback));
 		}
 
 		public enum FBInsightsFlushBehavior

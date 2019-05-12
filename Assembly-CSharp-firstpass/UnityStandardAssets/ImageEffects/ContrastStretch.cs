@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Color Adjustments/Contrast Stretch")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Color Adjustments/Contrast Stretch")]
 	public class ContrastStretch : MonoBehaviour
 	{
 		public float adaptationSpeed = 0.02f;
@@ -138,7 +138,7 @@ namespace UnityStandardAssets.ImageEffects
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
-			RenderTexture renderTexture = RenderTexture.GetTemporary(source.width / 1, source.height / 1);
+			RenderTexture renderTexture = RenderTexture.GetTemporary(source.width, source.height);
 			Graphics.Blit(source, renderTexture, this.materialLum);
 			while (renderTexture.width > 1 || renderTexture.height > 1)
 			{

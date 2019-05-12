@@ -59,6 +59,8 @@ public enum AffectEffect
 	HpSettingFixable,
 	HpSettingPercentage,
 	Escape,
+	Nothing,
+	RefHpRateNonAttribute,
 	gimmickSpecialAttackUp,
 	gimmickSpecialAttackDown
 }

@@ -4,7 +4,7 @@ using System.Collections;
 namespace System.ComponentModel
 {
 	/// <summary>Provides functionality to an object to return a list that can be bound to a data source.</summary>
-	[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	[MergableProperty(false)]
 	public interface IListSource
 	{

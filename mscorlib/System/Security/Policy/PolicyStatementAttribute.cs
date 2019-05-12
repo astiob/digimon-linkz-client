@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy
 {
 	/// <summary>Defines special attribute flags for security policy on code groups.</summary>
-	[ComVisible(true)]
 	[Flags]
+	[ComVisible(true)]
 	[Serializable]
 	public enum PolicyStatementAttribute
 	{

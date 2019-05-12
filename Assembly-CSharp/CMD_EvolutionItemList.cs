@@ -21,8 +21,8 @@ public sealed class CMD_EvolutionItemList : CMD
 	[SerializeField]
 	private GameObject verupPartsParent;
 
-	[SerializeField]
 	[Header("コアプラグインの親")]
+	[SerializeField]
 	private GameObject corePluginPartsParent;
 
 	[Header("バージョンアップ耐性変化の親")]
@@ -33,28 +33,28 @@ public sealed class CMD_EvolutionItemList : CMD
 	[SerializeField]
 	private GameObject goWrapPlugin;
 
-	[SerializeField]
 	[Header("ソウルリストのwraper")]
+	[SerializeField]
 	private GameObject goWrapSoul;
 
-	[SerializeField]
 	[Header("バージョンアップリストのwraper")]
+	[SerializeField]
 	private GameObject goWrapVerup;
 
 	[Header("コアプラグインリストのwraper")]
 	[SerializeField]
 	private GameObject goWrapCorePlugin;
 
-	[SerializeField]
 	[Header("バージョンアップ耐性変化リストのwraper")]
+	[SerializeField]
 	private GameObject goWrapVerupAttrChange;
 
 	[Header("ソウル用パーツ")]
 	[SerializeField]
 	private GameObject soulListParts;
 
-	[SerializeField]
 	[Header("進化素材未所持メッセージ")]
+	[SerializeField]
 	private GameObject goNoEvolutionItemMsg;
 
 	private GUISelectPanelEvolutionItemList csPluginPartsParent;
@@ -79,11 +79,6 @@ public sealed class CMD_EvolutionItemList : CMD
 		CMD_EvolutionItemList.instance = this;
 		this.userSoulData = DataMng.Instance().RespDataUS_SoulInfo.userSoulData;
 		this.soulNumList = new Dictionary<CMD_EvolutionItemList.SOUL_GROUP, int>();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
 	}
 
 	public override void ClosePanel(bool animation = true)
@@ -147,7 +142,7 @@ public sealed class CMD_EvolutionItemList : CMD
 		this.csCorePluginPartsParent = this.corePluginPartsParent.GetComponent<GUISelectPanelEvolutionItemList>();
 		this.csVerupAttrChangePartsParent = this.verupAttrChangePartsParent.GetComponent<GUISelectPanelEvolutionItemList>();
 		this.csPluginPartsParent.SetData(this.normalPluginDataList.ToArray());
-		this.csPluginPartsParent.AllBuild(this.normalPluginDataList.Count, true, 1f, 1f, null, null);
+		this.csPluginPartsParent.AllBuild(this.normalPluginDataList.Count, true, 1f, 1f, null, null, true);
 		this.soulListParts.SetActive(false);
 		this.goWrapPlugin.SetActive(true);
 	}
@@ -157,22 +152,24 @@ public sealed class CMD_EvolutionItemList : CMD
 		this.normalPluginDataList = new List<GameWebAPI.UserSoulData>();
 		Dictionary<GameWebAPI.UserSoulData, string> dictionary = new Dictionary<GameWebAPI.UserSoulData, string>();
 		List<GameWebAPI.RespDataMA_GetSoulM.SoulM> list = MasterDataMng.Instance().RespDataMA_SoulM.soulM.Where((GameWebAPI.RespDataMA_GetSoulM.SoulM x) => int.Parse(x.soulGroup) == 0).ToList<GameWebAPI.RespDataMA_GetSoulM.SoulM>();
-		GameWebAPI.RespDataMA_GetSoulM.SoulM soul;
-		foreach (GameWebAPI.RespDataMA_GetSoulM.SoulM soul2 in list)
+		using (List<GameWebAPI.RespDataMA_GetSoulM.SoulM>.Enumerator enumerator = list.GetEnumerator())
 		{
-			soul = soul2;
-			GameWebAPI.UserSoulData userSoulData = this.userSoulData.Where((GameWebAPI.UserSoulData userSoul) => userSoul.soulId == soul.soulId).Max<GameWebAPI.UserSoulData>();
-			if (userSoulData != null)
+			while (enumerator.MoveNext())
 			{
-				dictionary.Add(userSoulData, soul.rare);
-			}
-			else
-			{
-				dictionary.Add(new GameWebAPI.UserSoulData
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soul = enumerator.Current;
+				GameWebAPI.UserSoulData userSoulData = this.userSoulData.Where((GameWebAPI.UserSoulData userSoul) => userSoul.soulId == soul.soulId).Max<GameWebAPI.UserSoulData>();
+				if (userSoulData != null)
 				{
-					soulId = soul.soulId,
-					num = "0"
-				}, soul.rare);
+					dictionary.Add(userSoulData, soul.rare);
+				}
+				else
+				{
+					dictionary.Add(new GameWebAPI.UserSoulData
+					{
+						soulId = soul.soulId,
+						num = "0"
+					}, soul.rare);
+				}
 			}
 		}
 		IOrderedEnumerable<KeyValuePair<GameWebAPI.UserSoulData, string>> orderedEnumerable = dictionary.OrderByDescending((KeyValuePair<GameWebAPI.UserSoulData, string> y) => y.Value);
@@ -225,26 +222,26 @@ public sealed class CMD_EvolutionItemList : CMD
 		if (!panel.isLoading() && !panel.isLoaded())
 		{
 			panel.setStatusLoading();
-			List<GameWebAPI.UserSoulData> soulList = new List<GameWebAPI.UserSoulData>();
-			foreach (GameWebAPI.UserSoulData soul in this.userSoulData)
+			List<GameWebAPI.UserSoulData> list = new List<GameWebAPI.UserSoulData>();
+			foreach (GameWebAPI.UserSoulData userSoulData in this.userSoulData)
 			{
-				GameWebAPI.RespDataMA_GetSoulM.SoulM sm = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(soul.soulId);
-				if (int.Parse(sm.soulGroup) == (int)soulGroup)
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(userSoulData.soulId);
+				if (int.Parse(soul.soulGroup) == (int)soulGroup)
 				{
-					soulList.Add(soul);
+					list.Add(userSoulData);
 				}
 			}
-			this.soulNumList.Add(soulGroup, soulList.Count);
-			panel.SetData(soulList.ToArray());
-			panel.AllBuild(soulList.Count, true, 1f, 1f, null, null);
+			this.soulNumList.Add(soulGroup, list.Count);
+			panel.SetData(list.ToArray());
+			panel.AllBuild(list.Count, true, 1f, 1f, null, null, true);
 			panel.setStatusLoaded();
 		}
 		yield return null;
 		if (panel.isLoaded())
 		{
-			int soulNum = 0;
-			this.soulNumList.TryGetValue(soulGroup, out soulNum);
-			if (soulNum == 0)
+			int num = 0;
+			this.soulNumList.TryGetValue(soulGroup, out num);
+			if (num == 0)
 			{
 				this.goNoEvolutionItemMsg.SetActive(true);
 			}

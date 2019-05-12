@@ -1,6 +1,7 @@
 ﻿using Master;
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class APIAlert
@@ -8,6 +9,9 @@ public sealed class APIAlert
 	public Action ClosedAction;
 
 	private bool isOpen;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public bool IsOpen()
 	{
@@ -56,17 +60,23 @@ public sealed class APIAlert
 		}
 		else
 		{
-			switch (error.responseDataError.venus_status)
+			WWWResponse.VenusStatus venus_status = (WWWResponse.VenusStatus)error.responseDataError.venus_status;
+			if (venus_status != WWWResponse.VenusStatus.RESPONSE_MAINTENANCE)
 			{
-			case 3:
-				this.ShowServerMaintenance(error.responseDataError.message);
-				return;
-			case 5:
-				this.ShowVersionError(error.responseDataError);
-				return;
+				if (venus_status != WWWResponse.VenusStatus.RESPONSE_OLDVERSION)
+				{
+					this.SetJsonParseExceptionMessage(error);
+					this.ShowJsonParseError();
+				}
+				else
+				{
+					this.ShowVersionError(error.responseDataError);
+				}
 			}
-			this.SetJsonParseExceptionMessage(error);
-			this.ShowJsonParseError();
+			else
+			{
+				this.ShowServerMaintenance(error.responseDataError.message);
+			}
 		}
 	}
 
@@ -124,7 +134,11 @@ public sealed class APIAlert
 		if (Loading.IsShow())
 		{
 			Loading.Invisible();
-			this.ClosedAction = new Action(Loading.ResumeDisplay);
+			if (APIAlert.<>f__mg$cache0 == null)
+			{
+				APIAlert.<>f__mg$cache0 = new Action(Loading.ResumeDisplay);
+			}
+			this.ClosedAction = APIAlert.<>f__mg$cache0;
 		}
 		AlertManager.onCreateAlert = delegate(bool isCreate, CMD_Alert alert)
 		{
@@ -155,24 +169,27 @@ public sealed class APIAlert
 	private void OnClosed(int selectButtonIndex)
 	{
 		this.isOpen = false;
-		switch (selectButtonIndex)
+		if (selectButtonIndex != 2)
 		{
-		case 1:
-			this.SelectedRetryButton = true;
-			if (this.ClosedAction != null)
+			if (selectButtonIndex != 1)
 			{
-				this.ClosedAction();
+				if (selectButtonIndex == 3)
+				{
+					this.ToTop();
+				}
 			}
-			break;
-		case 2:
-			if (this.ClosedAction != null)
+			else
 			{
-				this.ClosedAction();
+				this.SelectedRetryButton = true;
+				if (this.ClosedAction != null)
+				{
+					this.ClosedAction();
+				}
 			}
-			break;
-		case 3:
-			this.ToTop();
-			break;
+		}
+		else if (this.ClosedAction != null)
+		{
+			this.ClosedAction();
 		}
 	}
 

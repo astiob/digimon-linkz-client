@@ -22,50 +22,21 @@ namespace CharacterDetailsUI
 		[SerializeField]
 		private GameObject buttonEvolution;
 
-		private bool isLocked;
+		private CharacterDetailsProtection protection;
 
-		private void SetTextFailedProtectionDialog(CMD_ModalMessage dialog, CMD_CharacterDetailed.LockMode lockMode)
-		{
-			switch (lockMode)
-			{
-			case CMD_CharacterDetailed.LockMode.Laboratory:
-				if (CMD_PairSelectBase.instance.baseDigimon != null && CMD_PairSelectBase.instance.baseDigimon == CMD_CharacterDetailed.DataChg)
-				{
-					dialog.Info = StringMaster.GetString("CharaDetailsNotLockBase");
-				}
-				else if (CMD_PairSelectBase.instance.partnerDigimon != null && CMD_PairSelectBase.instance.partnerDigimon == CMD_CharacterDetailed.DataChg)
-				{
-					dialog.Info = StringMaster.GetString("CharaDetailsNotLockPartner");
-				}
-				else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
-				{
-					dialog.Info = StringMaster.GetString("CharaDetailsNotLockBase");
-				}
-				else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
-				{
-					dialog.Info = StringMaster.GetString("CharaDetailsNotLockPartner");
-				}
-				break;
-			case CMD_CharacterDetailed.LockMode.Farewell:
-				dialog.Info = StringMaster.GetString("CharaDetailsNotLockSale");
-				break;
-			case CMD_CharacterDetailed.LockMode.Reinforcement:
-			case CMD_CharacterDetailed.LockMode.Succession:
-			case CMD_CharacterDetailed.LockMode.Arousal:
-				dialog.Info = StringMaster.GetString("CharaDetailsNotLockPartner");
-				break;
-			case CMD_CharacterDetailed.LockMode.Evolution:
-				dialog.Info = StringMaster.GetString("CharaDetailsNotLockBase");
-				break;
-			}
-		}
+		private bool isLocked;
 
 		private void OpenDialogFailedProtection(CMD_CharacterDetailed.LockMode lockMode)
 		{
 			global::Debug.Assert(!this.isLocked, "ロック中に更にロックすることはできない");
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("CharaDetailsNotLock");
-			this.SetTextFailedProtectionDialog(cmd_ModalMessage, lockMode);
+			if (this.protection == null)
+			{
+				this.protection = new CharacterDetailsProtection();
+			}
+			this.protection.SetErrorText(lockMode);
+			cmd_ModalMessage.Info = this.protection.GetErrorText();
 		}
 
 		private APIRequestTask RequestUserProtectMonster(string userMonsterId, bool changeLockState)
@@ -155,9 +126,6 @@ namespace CharacterDetailsUI
 		private void OnPushedEvolutionRouteMapButton()
 		{
 			MonsterData showCharacterMonsterData = this.dialogRoot.GetShowCharacterMonsterData();
-			FarmCameraControlForCMD.ClearRefCT();
-			FarmCameraControlForCMD.On();
-			GUIMain.DestroyAllDialog(null);
 			CMD_EvolutionRouteMap.CreateDialog(null, showCharacterMonsterData.GetMonsterMaster());
 		}
 

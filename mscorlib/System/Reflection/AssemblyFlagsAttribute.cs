@@ -12,8 +12,8 @@ namespace System.Reflection
 
 		/// <summary>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyFlagsAttribute" /> class with the specified combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags, cast as an unsigned integer value.</summary>
 		/// <param name="flags">A bitwise combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags, cast as an unsigned integer value, representing just-in-time (JIT) compiler options, longevity, whether an assembly is retargetable, and whether it has a full or tokenized public key.</param>
-		[CLSCompliant(false)]
 		[Obsolete("")]
+		[CLSCompliant(false)]
 		public AssemblyFlagsAttribute(uint flags)
 		{
 			this.flags = flags;

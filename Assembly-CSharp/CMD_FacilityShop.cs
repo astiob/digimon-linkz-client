@@ -4,6 +4,7 @@ using Master;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_FacilityShop : CMD
@@ -25,6 +26,12 @@ public sealed class CMD_FacilityShop : CMD
 	private CMD_FacilityShop.ViewedList viewedList;
 
 	private int[] newFacilityItemList;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Func<FacilityConditionM, bool> <>f__mg$cache1;
 
 	protected override void Awake()
 	{
@@ -179,7 +186,13 @@ public sealed class CMD_FacilityShop : CMD
 		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_facility_shop", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_facility_shop";
+			if (CMD_FacilityShop.<>f__mg$cache0 == null)
+			{
+				CMD_FacilityShop.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_FacilityShop.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_FacilityShop");
 			});
@@ -197,16 +210,16 @@ public sealed class CMD_FacilityShop : CMD
 		Vector3 localPosition = component.transform.localPosition;
 		component.SetOriginalPos(this.facilityListOriginalItem.transform.localPosition);
 		component.transform.localPosition = localPosition;
-		Rect rect = default(Rect);
-		Rect rect2 = rect;
-		rect2.xMin = component2.size.x * -0.5f;
-		rect2.xMax = component2.size.x * 0.5f;
-		rect2.yMin = component2.size.y * -0.5f - 40f;
-		rect2.yMax = component2.size.y * 0.5f;
-		rect = rect2;
-		rect.yMin = rect.y - GUIMain.VerticalSpaceSize;
-		rect.yMax = rect.y + rect.height + GUIMain.VerticalSpaceSize;
-		listUI.ListWindowViewRect = rect;
+		Rect listWindowViewRect = new Rect
+		{
+			xMin = component2.size.x * -0.5f,
+			xMax = component2.size.x * 0.5f,
+			yMin = component2.size.y * -0.5f - 40f,
+			yMax = component2.size.y * 0.5f
+		};
+		listWindowViewRect.yMin = listWindowViewRect.y - GUIMain.VerticalSpaceSize;
+		listWindowViewRect.yMax = listWindowViewRect.y + listWindowViewRect.height + GUIMain.VerticalSpaceSize;
+		listUI.ListWindowViewRect = listWindowViewRect;
 		listUI.selectParts = this.facilityListOriginalItem;
 		listUI.initLocation = true;
 		listUI.AllBuild(listItemCount);
@@ -214,7 +227,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetFacilityDetail(GUISelectPanelFacility listUI, FacilityM[] facilityData)
 	{
-		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey380 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey380();
+		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey1 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey1();
 		<SetFacilityDetail>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>();
 		if (<SetFacilityDetail>c__AnonStorey.items == null)
 		{
@@ -227,7 +240,12 @@ public sealed class CMD_FacilityShop : CMD
 			bool[] isClearConditions = null;
 			if (facilityCondition != null)
 			{
-				isClearConditions = facilityCondition.Select((FacilityConditionM x) => FacilityShopFilter.CheckFacilityCondition(x)).ToArray<bool>();
+				IEnumerable<FacilityConditionM> source = facilityCondition;
+				if (CMD_FacilityShop.<>f__mg$cache1 == null)
+				{
+					CMD_FacilityShop.<>f__mg$cache1 = new Func<FacilityConditionM, bool>(FacilityShopFilter.CheckFacilityCondition);
+				}
+				isClearConditions = source.Select(CMD_FacilityShop.<>f__mg$cache1).ToArray<bool>();
 			}
 			<SetFacilityDetail>c__AnonStorey.items[i].SetDetail(facilityData[i], facilityCondition, isClearConditions, new Action<FacilityShopItem>(this.OnPushedBuyButton));
 			BoxCollider component = <SetFacilityDetail>c__AnonStorey.items[i].GetComponent<BoxCollider>();
@@ -248,7 +266,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetNewIcon(GUISelectPanelFacility listUI)
 	{
-		CMD_FacilityShop.<SetNewIcon>c__AnonStorey382 <SetNewIcon>c__AnonStorey = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey382();
+		CMD_FacilityShop.<SetNewIcon>c__AnonStorey3 <SetNewIcon>c__AnonStorey = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey3();
 		<SetNewIcon>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
 		if (<SetNewIcon>c__AnonStorey.items == null)
 		{

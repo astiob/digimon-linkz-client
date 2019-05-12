@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Describes the original settings of the FUNCFLAGS in the COM type library from where this method was imported.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum TypeLibFuncFlags
 	{

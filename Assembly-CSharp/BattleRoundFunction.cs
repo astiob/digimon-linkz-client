@@ -229,7 +229,7 @@ public class BattleRoundFunction : BattleFunctionBase
 		{
 			this.onStun = true;
 			this.onFreeze = true;
-			sortedCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Stun);
+			sortedCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Stun, false);
 		}
 		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep))
 		{
@@ -257,7 +257,7 @@ public class BattleRoundFunction : BattleFunctionBase
 				}
 				else
 				{
-					sortedCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape);
+					sortedCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape, false);
 					string format = StringMaster.GetString("BattleNotice-21");
 					string str = string.Format(format, sortedCharacter.characterDatas.name);
 					base.stateManager.uiControl.ApplyWarning(str, sortedCharacter.isEnemy);
@@ -327,9 +327,9 @@ public class BattleRoundFunction : BattleFunctionBase
 	{
 		if (this.onEscape)
 		{
-			string format = StringMaster.GetString("BattleNotice-20");
-			string str = string.Format(format, sortedCharacter.characterDatas.name);
-			base.stateManager.uiControl.ApplyWarning(str, sortedCharacter.isEnemy);
+			string @string = StringMaster.GetString("BattleNotice-20");
+			string value = string.Format(@string, sortedCharacter.characterDatas.name);
+			base.stateManager.uiControl.ApplyWarning(value, sortedCharacter.isEnemy);
 		}
 		else if (this.onStun)
 		{
@@ -346,6 +346,10 @@ public class BattleRoundFunction : BattleFunctionBase
 		else if (this.onPowerCharge)
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.PowerCharge, sortedCharacter);
+		}
+		else
+		{
+			base.stateManager.uiControl.ApplyWarning(sortedCharacter.currentSkillStatus.name, sortedCharacter.isEnemy);
 		}
 		if (this.onEscape)
 		{

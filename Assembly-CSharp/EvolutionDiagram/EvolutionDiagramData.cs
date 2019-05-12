@@ -1,6 +1,7 @@
 ﻿using Monster;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace EvolutionDiagram
 {
@@ -24,6 +25,30 @@ namespace EvolutionDiagram
 
 		private List<EvolutionDiagramData.IconMonster> partsDataList;
 
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache0;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache1;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache2;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache3;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache4;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache5;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache6;
+
+		[CompilerGenerated]
+		private static Comparison<EvolutionDiagramData.IconMonster> <>f__mg$cache7;
+
 		public EvolutionDiagramData()
 		{
 			this.monsterListChild = new List<EvolutionDiagramData.IconMonster>();
@@ -34,13 +59,48 @@ namespace EvolutionDiagram
 			this.monsterListArmor = new List<EvolutionDiagramData.IconMonster>();
 			this.monsterListHybrid = new List<EvolutionDiagramData.IconMonster>();
 			EvolutionDiagramDataCreator.CreateMonsterDataList(this);
-			this.monsterListChild.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
-			this.monsterListGrowing.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
-			this.monsterListPipe.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
-			this.monsterListPerfect.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
-			this.monsterListUltimate.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
-			this.monsterListArmor.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
-			this.monsterListHybrid.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
+			List<EvolutionDiagramData.IconMonster> list = this.monsterListChild;
+			if (EvolutionDiagramData.<>f__mg$cache0 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache0 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list.Sort(EvolutionDiagramData.<>f__mg$cache0);
+			List<EvolutionDiagramData.IconMonster> list2 = this.monsterListGrowing;
+			if (EvolutionDiagramData.<>f__mg$cache1 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache1 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list2.Sort(EvolutionDiagramData.<>f__mg$cache1);
+			List<EvolutionDiagramData.IconMonster> list3 = this.monsterListPipe;
+			if (EvolutionDiagramData.<>f__mg$cache2 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache2 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list3.Sort(EvolutionDiagramData.<>f__mg$cache2);
+			List<EvolutionDiagramData.IconMonster> list4 = this.monsterListPerfect;
+			if (EvolutionDiagramData.<>f__mg$cache3 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache3 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list4.Sort(EvolutionDiagramData.<>f__mg$cache3);
+			List<EvolutionDiagramData.IconMonster> list5 = this.monsterListUltimate;
+			if (EvolutionDiagramData.<>f__mg$cache4 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache4 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list5.Sort(EvolutionDiagramData.<>f__mg$cache4);
+			List<EvolutionDiagramData.IconMonster> list6 = this.monsterListArmor;
+			if (EvolutionDiagramData.<>f__mg$cache5 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache5 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list6.Sort(EvolutionDiagramData.<>f__mg$cache5);
+			List<EvolutionDiagramData.IconMonster> list7 = this.monsterListHybrid;
+			if (EvolutionDiagramData.<>f__mg$cache6 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache6 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list7.Sort(EvolutionDiagramData.<>f__mg$cache6);
 			this.monsterListAll = new List<EvolutionDiagramData.IconMonster>();
 			this.monsterListAll.AddRange(this.monsterListChild);
 			this.monsterListAll.AddRange(this.monsterListGrowing);
@@ -49,7 +109,12 @@ namespace EvolutionDiagram
 			this.monsterListAll.AddRange(this.monsterListUltimate);
 			this.monsterListAll.AddRange(this.monsterListArmor);
 			this.monsterListAll.AddRange(this.monsterListHybrid);
-			this.monsterListAll.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
+			List<EvolutionDiagramData.IconMonster> list8 = this.monsterListAll;
+			if (EvolutionDiagramData.<>f__mg$cache7 == null)
+			{
+				EvolutionDiagramData.<>f__mg$cache7 = new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId);
+			}
+			list8.Sort(EvolutionDiagramData.<>f__mg$cache7);
 		}
 
 		public void AddMonsterData(EvolutionDiagramData.IconMonster monsterData)

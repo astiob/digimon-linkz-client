@@ -76,7 +76,7 @@ public class BattleInputMulti : BattleInputBasic
 		}
 		base.battleStateData.isShowRetireWindow = false;
 		base.stateManager.time.SetPlaySpeed(false, false);
-		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
+		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		base.stateManager.soundPlayer.SetPauseVolume(false);
 		SoundPlayer.PlayButtonEnter();
 		base.StartCoroutine(this.Retire());
@@ -97,7 +97,7 @@ public class BattleInputMulti : BattleInputBasic
 		base.stateManager.uiControl.SetTouchEnable(true);
 		Action onFinished = delegate()
 		{
-			base.battleStateData.isShowRetireWindow = false;
+			this.battleStateData.isShowRetireWindow = false;
 		};
 		IEnumerator wait = base.stateManager.uiControlMulti.WaitOpenCloseDialog(false, base.ui.dialogRetire.gameObject, base.ui.dialogRetire.openCloseDialog, onFinished);
 		while (wait.MoveNext())

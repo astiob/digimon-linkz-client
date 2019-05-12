@@ -1,5 +1,6 @@
 ﻿using Master;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -94,44 +95,57 @@ public class CMD_ChatSort : CMD
 			UISprite component2 = this.goRefineBtnList[i].GetComponent<UISprite>();
 			this.clRefineBtnList.Add(component);
 			this.spRefineBtnList.Add(component2);
-			foreach (object obj in this.goRefineBtnList[i].transform)
+			IEnumerator enumerator = this.goRefineBtnList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				if (i < 4)
+				while (enumerator.MoveNext())
 				{
-					switch (i + 1)
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					if (i < 4)
 					{
-					case 1:
-						component3.text = StringMaster.GetString("ChatCategory-04");
-						break;
-					case 2:
-						component3.text = StringMaster.GetString("ChatCategory-05");
-						break;
-					case 3:
-						component3.text = StringMaster.GetString("ChatCategory-03");
-						break;
-					case 4:
-						component3.text = StringMaster.GetString("ChatCategory-06");
-						break;
-					}
-				}
-				else
-				{
-					int num = i - 3;
-					if (num != 1)
-					{
-						if (num == 2)
+						switch (i + 1)
 						{
-							component3.text = StringMaster.GetString("ChatCategory-01");
+						case 1:
+							component3.text = StringMaster.GetString("ChatCategory-04");
+							break;
+						case 2:
+							component3.text = StringMaster.GetString("ChatCategory-05");
+							break;
+						case 3:
+							component3.text = StringMaster.GetString("ChatCategory-03");
+							break;
+						case 4:
+							component3.text = StringMaster.GetString("ChatCategory-06");
+							break;
 						}
 					}
 					else
 					{
-						component3.text = StringMaster.GetString("ChatCategory-02");
+						int num = i - 3;
+						if (num != 1)
+						{
+							if (num == 2)
+							{
+								component3.text = StringMaster.GetString("ChatCategory-01");
+							}
+						}
+						else
+						{
+							component3.text = StringMaster.GetString("ChatCategory-02");
+						}
 					}
+					this.lbRefineBtnList.Add(component3);
 				}
-				this.lbRefineBtnList.Add(component3);
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 			this.SetupRefineBtnColor(i);
 			switch (i)
@@ -187,29 +201,40 @@ public class CMD_ChatSort : CMD
 			UISprite component2 = this.goSortBtnList[i].GetComponent<UISprite>();
 			this.clSortBtnList.Add(component);
 			this.spSortBtnList.Add(component2);
-			int num;
-			foreach (object obj in this.goSortBtnList[i].transform)
+			IEnumerator enumerator = this.goSortBtnList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				num = i + 1;
-				if (num != 1)
+				while (enumerator.MoveNext())
 				{
-					if (num == 2)
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					int num = i + 1;
+					if (num != 1)
 					{
-						component3.text = StringMaster.GetString("ChatSortFew");
+						if (num == 2)
+						{
+							component3.text = StringMaster.GetString("ChatSortFew");
+						}
 					}
+					else
+					{
+						component3.text = StringMaster.GetString("ChatSortMany");
+					}
+					this.lbSortBtnList.Add(component3);
 				}
-				else
-				{
-					component3.text = StringMaster.GetString("ChatSortMany");
-				}
-				this.lbSortBtnList.Add(component3);
 			}
-			num = i;
-			if (num != 0)
+			finally
 			{
-				if (num == 1)
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
+			}
+			if (i != 0)
+			{
+				if (i == 1)
 				{
 					component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 					{

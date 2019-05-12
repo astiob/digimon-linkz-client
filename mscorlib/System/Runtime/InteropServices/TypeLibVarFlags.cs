@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Describes the original settings of the <see cref="T:System.Runtime.InteropServices.VARFLAGS" /> in the COM type library from which the variable was imported.</summary>
-	[ComVisible(true)]
 	[Flags]
+	[ComVisible(true)]
 	[Serializable]
 	public enum TypeLibVarFlags
 	{

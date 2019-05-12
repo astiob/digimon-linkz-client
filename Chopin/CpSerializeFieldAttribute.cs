@@ -9,20 +9,6 @@ namespace CROOZ.Chopin.Core
 
 		private int \uE001;
 
-		public CpSerializeFieldAttribute(string name) : this(int.MaxValue, name)
-		{
-		}
-
-		public CpSerializeFieldAttribute(int order) : this(order, null)
-		{
-		}
-
-		public CpSerializeFieldAttribute(int order, string name)
-		{
-			this.\uE001 = order;
-			this.\uE000 = name;
-		}
-
 		public string Name
 		{
 			get
@@ -37,6 +23,20 @@ namespace CROOZ.Chopin.Core
 			{
 				return this.\uE001;
 			}
+		}
+
+		public CpSerializeFieldAttribute(string name) : this(int.MaxValue, name)
+		{
+		}
+
+		public CpSerializeFieldAttribute(int order) : this(order, null)
+		{
+		}
+
+		public CpSerializeFieldAttribute(int order, string name)
+		{
+			this.\uE001 = order;
+			this.\uE000 = name;
 		}
 	}
 }

@@ -3,12 +3,6 @@ using UnityEngine;
 
 public interface ITouchEvent
 {
-	event Action<Touch, Vector2> onTouchBegan;
-
-	event Action<Touch, Vector2> onTouchMoved;
-
-	event Action<Touch, Vector2, bool> onTouchEnded;
-
 	string gName { get; }
 
 	GameObject gObject { get; }
@@ -34,4 +28,10 @@ public interface ITouchEvent
 	bool isTouchMoved { get; }
 
 	bool isTouchEnded { get; }
+
+	event Action<Touch, Vector2> onTouchBegan;
+
+	event Action<Touch, Vector2> onTouchMoved;
+
+	event Action<Touch, Vector2, bool> onTouchEnded;
 }

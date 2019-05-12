@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Tutorial;
 using TutorialRequestHeader;
 using UnityEngine;
@@ -14,10 +15,6 @@ using WebAPIRequest;
 
 public sealed class TutorialControlToGame : MonoBehaviour
 {
-	public const int GASHA_RESULT_UI = 0;
-
-	public const int EVOLUTION_DETAIL_UI = 1;
-
 	private TutorialEmphasizeUI emphasizeUI;
 
 	private int tutorialBattleDungeonId;
@@ -28,6 +25,10 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	private GameObject digimon;
 
+	public const int GASHA_RESULT_UI = 0;
+
+	public const int EVOLUTION_DETAIL_UI = 1;
+
 	private bool isBackgroundDownload;
 
 	private bool isStandardDownload;
@@ -35,6 +36,9 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	private List<GameObject> effectObjects = new List<GameObject>();
 
 	private Dictionary<string, Action> tutorialActionList;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public bool IsBackgroundDownload
 	{
@@ -230,8 +234,8 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		}
 		else
 		{
-			TutorialScene scene = this.GetTutorialScene();
-			scene.SetBackGround(TutorialScene.BackGroundType.BLUE, skipBattle);
+			TutorialScene tutorialScene = this.GetTutorialScene();
+			tutorialScene.SetBackGround(TutorialScene.BackGroundType.BLUE, skipBattle);
 		}
 		yield break;
 	}
@@ -698,8 +702,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	private TutorialEmphasizeUI FindEmphasizeUI(string uiType)
 	{
 		TutorialEmphasizeUI tutorialEmphasizeUI = null;
-		string uiType2 = uiType;
-		switch (uiType2)
+		switch (uiType)
 		{
 		case "MEAL_DIGI":
 		{
@@ -878,7 +881,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 					onPushedEvent();
 					EventDelegate.Execute(holdPressButtonEvents);
 				};
-				gameObject = this.emphasizeUI.transform.FindChild("MonsterButtonGraphicRootScaler/MonsterButtonGraphicRoot").gameObject;
+				gameObject = this.emphasizeUI.transform.Find("MonsterButtonGraphicRootScaler/MonsterButtonGraphicRoot").gameObject;
 				break;
 			}
 			case TutorialEmphasizeUI.UiNameType.GASHA:
@@ -945,7 +948,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			{
 				GUICollider component = this.emphasizeUI.GetComponent<GUICollider>();
 				component.activeCollider = false;
-				goto IL_160;
+				goto IL_161;
 			}
 			case TutorialEmphasizeUI.UiNameType.PARTY:
 			{
@@ -958,14 +961,14 @@ public sealed class TutorialControlToGame : MonoBehaviour
 					}
 				}
 				UnityEngine.Object.Destroy(this.emphasizeUI);
-				goto IL_160;
+				goto IL_161;
 			}
 			case TutorialEmphasizeUI.UiNameType.RECOVERY:
 			{
 				HoldPressButton component2 = this.emphasizeUI.GetComponent<HoldPressButton>();
 				component2.enabled = true;
 				UnityEngine.Object.Destroy(this.emphasizeUI);
-				goto IL_160;
+				goto IL_161;
 			}
 			case TutorialEmphasizeUI.UiNameType.RECOVERY_NO:
 			case TutorialEmphasizeUI.UiNameType.ATTACK:
@@ -977,25 +980,25 @@ public sealed class TutorialControlToGame : MonoBehaviour
 					HoldPressButton component3 = this.emphasizeUI.GetComponent<HoldPressButton>();
 					component3.enabled = true;
 					UnityEngine.Object.Destroy(this.emphasizeUI);
-					goto IL_160;
+					goto IL_161;
 				}
 				if (uiName != TutorialEmphasizeUI.UiNameType.OPERATION)
 				{
-					goto IL_160;
+					goto IL_161;
 				}
 				break;
 			case TutorialEmphasizeUI.UiNameType.DIGISTONE:
 			{
 				BoxCollider componentInChildren = this.emphasizeUI.GetComponentInChildren<BoxCollider>();
 				componentInChildren.enabled = true;
-				goto IL_160;
+				goto IL_161;
 			}
 			case TutorialEmphasizeUI.UiNameType.SKILL_HOLD:
 				UnityEngine.Object.Destroy(this.emphasizeUI);
-				goto IL_160;
+				goto IL_161;
 			}
 			UnityEngine.Object.Destroy(this.emphasizeUI);
-			IL_160:
+			IL_161:
 			this.emphasizeUI = null;
 		}
 	}
@@ -1058,7 +1061,12 @@ public sealed class TutorialControlToGame : MonoBehaviour
 				{
 					RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
 					APIRequestTask task = farmScenery.SaveFarmObjectPosition(completed);
-					yield return base.StartCoroutine(task.Run(new Action(RestrictionInput.EndLoad), null, null));
+					TaskBase task2 = task;
+					if (TutorialControlToGame.<>f__mg$cache0 == null)
+					{
+						TutorialControlToGame.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+					}
+					yield return base.StartCoroutine(task2.Run(TutorialControlToGame.<>f__mg$cache0, null, null));
 				}
 				else
 				{
@@ -1254,9 +1262,36 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void StartEffect(int type, Action completed)
 	{
-		switch (type)
+		if (type != 0)
 		{
-		case 0:
+			if (type != 1)
+			{
+				if (type == 2)
+				{
+					base.StartCoroutine(this.LoadPrefab<TutorialShutdown>("Tutorial/TutorialShutdown", false, Singleton<GUIMain>.Instance.transform, delegate(TutorialShutdown shutdown)
+					{
+						shutdown.name = TutorialControlToGame.ScreenEffectType.SHUT_DOWN.ToString();
+						this.effectObjects.Add(shutdown.gameObject);
+						shutdown.OnFinishedAnimation = completed;
+						shutdown.gameObject.SetActive(true);
+					}));
+				}
+			}
+			else
+			{
+				base.StartCoroutine(this.LoadPrefab<Transform>("Tutorial/TutorialConnecting", true, Singleton<GUIMain>.Instance.transform, delegate(Transform connect)
+				{
+					connect.name = TutorialControlToGame.ScreenEffectType.CONNECTING.ToString();
+					this.effectObjects.Add(connect.gameObject);
+					if (completed != null)
+					{
+						completed();
+					}
+				}));
+			}
+		}
+		else
+		{
 			base.StartCoroutine(this.LoadPrefab<TutorialSiren>("Tutorial/TutorialSiren", true, Singleton<GUIMain>.Instance.transform, delegate(TutorialSiren siren)
 			{
 				siren.name = TutorialControlToGame.ScreenEffectType.CIRCLE_FADE.ToString();
@@ -1266,27 +1301,6 @@ public sealed class TutorialControlToGame : MonoBehaviour
 					completed();
 				}
 			}));
-			break;
-		case 1:
-			base.StartCoroutine(this.LoadPrefab<Transform>("Tutorial/TutorialConnecting", true, Singleton<GUIMain>.Instance.transform, delegate(Transform connect)
-			{
-				connect.name = TutorialControlToGame.ScreenEffectType.CONNECTING.ToString();
-				this.effectObjects.Add(connect.gameObject);
-				if (completed != null)
-				{
-					completed();
-				}
-			}));
-			break;
-		case 2:
-			base.StartCoroutine(this.LoadPrefab<TutorialShutdown>("Tutorial/TutorialShutdown", false, Singleton<GUIMain>.Instance.transform, delegate(TutorialShutdown shutdown)
-			{
-				shutdown.name = TutorialControlToGame.ScreenEffectType.SHUT_DOWN.ToString();
-				this.effectObjects.Add(shutdown.gameObject);
-				shutdown.OnFinishedAnimation = completed;
-				shutdown.gameObject.SetActive(true);
-			}));
-			break;
 		}
 	}
 
@@ -1297,7 +1311,8 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			GameObject gameObject = this.effectObjects[i];
 			if (null != gameObject)
 			{
-				string text = ((TutorialControlToGame.ScreenEffectType)type).ToString();
+				TutorialControlToGame.ScreenEffectType screenEffectType = (TutorialControlToGame.ScreenEffectType)type;
+				string text = screenEffectType.ToString();
 				if (!string.IsNullOrEmpty(text) && text == gameObject.name)
 				{
 					this.effectObjects.Remove(gameObject);

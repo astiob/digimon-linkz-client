@@ -106,8 +106,8 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			}
 			if (!this.isOutCharacterView || this.lastCharacter == null || this.lastCharacter != this.currentCharacter.targetCharacter || base.battleStateData.commandSelectTweenTargetCamera.isMoving)
 			{
+				base.stateManager.uiControl.ApplyCurrentSelectArrow(true, base.stateManager.uiControl.GetHUDCenterPosition2DFunction(this.currentCharacter), this.currentCharacter.myIndex);
 				base.stateManager.uiControl.RepositionCharacterHUDPosition(base.battleStateData.GetTotalCharacters());
-				base.stateManager.uiControl.ApplyCurrentSelectArrow(true, base.stateManager.uiControl.GetHUDCenterPosition2DFunction(this.currentCharacter));
 			}
 			if (this.isOutCharacterView)
 			{
@@ -124,7 +124,7 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			base.stateManager.targetSelect.AutoPlayCharacterAndAttackSelectFunction(this.currentCharacter);
 		}
 		Block_10:
-		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
+		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		base.stateManager.uiControl.SetHudCollider(false);
 		yield break;
 	}
@@ -137,7 +137,7 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 	protected override void GetEventThisState(EventState eventState)
 	{
 		base.stateManager.uiControl.HideCharacterHUDFunction();
-		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
+		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		base.stateManager.cameraControl.StopTweenCameraMotionAction(base.battleStateData.commandSelectTweenTargetCamera);
 	}
 

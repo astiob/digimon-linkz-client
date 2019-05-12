@@ -28,10 +28,10 @@ namespace AdventureScene
 			try
 			{
 				this.charaId = int.Parse(commandParams[1]);
-				float new_x = float.Parse(commandParams[2]);
-				float new_y = float.Parse(commandParams[3]);
-				float new_z = float.Parse(commandParams[4]);
-				this.stageLocalPosition.Set(new_x, new_y, new_z);
+				float newX = float.Parse(commandParams[2]);
+				float newY = float.Parse(commandParams[3]);
+				float newZ = float.Parse(commandParams[4]);
+				this.stageLocalPosition.Set(newX, newY, newZ);
 				base.SetWaitScriptEngine(true);
 				result = true;
 			}

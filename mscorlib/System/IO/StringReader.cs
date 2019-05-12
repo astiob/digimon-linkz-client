@@ -121,34 +121,28 @@ namespace System.IO
 		public override string ReadLine()
 		{
 			this.CheckObjectDisposedException();
-			if (this.nextChar >= this.source.Length)
+			int i;
+			for (i = this.nextChar; i < this.sourceLength; i++)
 			{
-				return null;
-			}
-			int num = this.source.IndexOf('\r', this.nextChar);
-			int num2 = this.source.IndexOf('\n', this.nextChar);
-			bool flag = false;
-			int num3;
-			if (num == -1)
-			{
-				if (num2 == -1)
+				char c = this.source[i];
+				if (c == '\r' || c == '\n')
 				{
-					return this.ReadToEnd();
+					string result = this.source.Substring(this.nextChar, i - this.nextChar);
+					this.nextChar = i + 1;
+					if (c == '\r' && this.nextChar < this.sourceLength && this.source[this.nextChar] == '\n')
+					{
+						this.nextChar++;
+					}
+					return result;
 				}
-				num3 = num2;
 			}
-			else if (num2 == -1)
+			if (i > this.nextChar)
 			{
-				num3 = num;
+				string result2 = this.source.Substring(this.nextChar, i - this.nextChar);
+				this.nextChar = i;
+				return result2;
 			}
-			else
-			{
-				num3 = ((num <= num2) ? num : num2);
-				flag = (num + 1 == num2);
-			}
-			string result = this.source.Substring(this.nextChar, num3 - this.nextChar);
-			this.nextChar = num3 + ((!flag) ? 1 : 2);
-			return result;
+			return null;
 		}
 
 		/// <summary>Reads the stream as a string, either in its entirety or from the current position to the end of the stream.</summary>

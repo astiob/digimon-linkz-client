@@ -14,8 +14,8 @@ public class StageParams : MonoBehaviour
 	[Range(0f, 8f)]
 	private float sunLightIntensity = 1f;
 
-	[Range(0f, 8f)]
 	[SerializeField]
+	[Range(0f, 8f)]
 	private float sunLightBounceLight = 1f;
 
 	[SerializeField]
@@ -33,8 +33,8 @@ public class StageParams : MonoBehaviour
 	[SerializeField]
 	private Color ambientGroundColor = Color.black;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float ambientIntensity = 1f;
 
 	[SerializeField]

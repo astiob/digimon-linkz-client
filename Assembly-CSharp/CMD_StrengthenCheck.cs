@@ -7,48 +7,44 @@ using UnityEngine;
 public sealed class CMD_StrengthenCheck : CMD
 {
 	[SerializeField]
-	[Header("サムネイルのアイコン達")]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[Header("タイトルのラベル")]
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("消費クラスタのラベル")]
 	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[Header("強化前のレベルのラベル")]
 	[SerializeField]
 	private UILabel beforeLevelLabel;
 
-	[Header("強化後のレベルのラベル")]
 	[SerializeField]
 	private UILabel afterLevelLabel;
 
 	[SerializeField]
-	[Header("上昇値のレベルのラベル")]
 	private UILabel plusLevelLabel;
 
 	[SerializeField]
-	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]
-	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
 	private GameObject btnGroup;
 
-	public override void ClosePanel(bool animation = true)
+	private Action<CMD> onPushYesButton;
+
+	private void OnPushYesButton()
 	{
-		base.ClosePanel(animation);
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton(this);
+		}
+		this.ClosePanel(true);
 	}
 
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string useCluster, string beforeLevel, string afterLevel, string plusLevel, bool isLevelMax)
@@ -146,5 +142,10 @@ public sealed class CMD_StrengthenCheck : CMD
 			component3.AddWidgetDepth(guimonsterIcon.transform, add);
 		}
 		NGUITools.DestroyImmediate(goEmpty);
+	}
+
+	public void SetActionYesButton(Action<CMD> action)
+	{
+		this.onPushYesButton = action;
 	}
 }

@@ -18,12 +18,12 @@ namespace Colosseum.Matching
 		[SerializeField]
 		private GameObject matchingProcessEffect;
 
-		[SerializeField]
 		[Header("マッチング完了アニメオブジェクト")]
+		[SerializeField]
 		private GameObject matchingFinishedEffect;
 
-		[SerializeField]
 		[Header("キャラの勝利アニメを見せる時間（秒）")]
+		[SerializeField]
 		private float winAnimationWait;
 
 		[Header("キャラが消えてから情報が出るまでの時間（秒）")]
@@ -34,8 +34,8 @@ namespace Colosseum.Matching
 		[SerializeField]
 		private UITexture renderTargetTexture;
 
-		[SerializeField]
 		[Header("転送エフェクトの乗算色(アルファは０固定)")]
+		[SerializeField]
 		private Color renderTextureColor;
 
 		private int monsterCount;
@@ -117,7 +117,7 @@ namespace Colosseum.Matching
 			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(resource);
 			if (null != this.transferEffectMaterial)
 			{
-				Transform transform = gameObject.transform.FindChild("transferCharacter/UpEffect");
+				Transform transform = gameObject.transform.Find("transferCharacter/UpEffect");
 				if (null != transform)
 				{
 					Renderer component = transform.GetComponent<Renderer>();

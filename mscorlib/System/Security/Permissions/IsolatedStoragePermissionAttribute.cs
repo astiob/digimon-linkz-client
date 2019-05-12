@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions
 {
 	/// <summary>Allows security actions for <see cref="T:System.Security.Permissions.IsolatedStoragePermission" /> to be applied to code using declarative security.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+	[ComVisible(true)]
 	[Serializable]
 	public abstract class IsolatedStoragePermissionAttribute : CodeAccessSecurityAttribute
 	{

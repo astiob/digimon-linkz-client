@@ -81,68 +81,80 @@ namespace Facebook.MiniJSON
 						return Json.Parser.TOKEN.NONE;
 					}
 					char peekChar = this.PeekChar;
-					switch (peekChar)
+					if (peekChar <= '[')
 					{
-					case ',':
-						this.json.Read();
-						return Json.Parser.TOKEN.COMMA;
-					case '-':
-					case '0':
-					case '1':
-					case '2':
-					case '3':
-					case '4':
-					case '5':
-					case '6':
-					case '7':
-					case '8':
-					case '9':
-						return Json.Parser.TOKEN.NUMBER;
-					default:
 						switch (peekChar)
 						{
-						case '[':
-							return Json.Parser.TOKEN.SQUARED_OPEN;
+						case '"':
+							return Json.Parser.TOKEN.STRING;
+						case '#':
+						case '$':
+						case '%':
+						case '&':
+						case '\'':
+						case '(':
+						case ')':
+						case '*':
+						case '+':
+						case '.':
+						case '/':
+							break;
+						case ',':
+							this.json.Read();
+							return Json.Parser.TOKEN.COMMA;
+						case '-':
+						case '0':
+						case '1':
+						case '2':
+						case '3':
+						case '4':
+						case '5':
+						case '6':
+						case '7':
+						case '8':
+						case '9':
+							return Json.Parser.TOKEN.NUMBER;
+						case ':':
+							return Json.Parser.TOKEN.COLON;
 						default:
-							switch (peekChar)
+							if (peekChar == '[')
 							{
-							case '{':
-								return Json.Parser.TOKEN.CURLY_OPEN;
-							default:
-								if (peekChar != '"')
-								{
-									string nextWord = this.NextWord;
-									if (nextWord != null)
-									{
-										if (nextWord == "false")
-										{
-											return Json.Parser.TOKEN.FALSE;
-										}
-										if (nextWord == "true")
-										{
-											return Json.Parser.TOKEN.TRUE;
-										}
-										if (nextWord == "null")
-										{
-											return Json.Parser.TOKEN.NULL;
-										}
-									}
-									return Json.Parser.TOKEN.NONE;
-								}
-								return Json.Parser.TOKEN.STRING;
-							case '}':
-								this.json.Read();
-								return Json.Parser.TOKEN.CURLY_CLOSE;
+								return Json.Parser.TOKEN.SQUARED_OPEN;
 							}
 							break;
-						case ']':
+						}
+					}
+					else
+					{
+						if (peekChar == ']')
+						{
 							this.json.Read();
 							return Json.Parser.TOKEN.SQUARED_CLOSE;
 						}
-						break;
-					case ':':
-						return Json.Parser.TOKEN.COLON;
+						if (peekChar == '{')
+						{
+							return Json.Parser.TOKEN.CURLY_OPEN;
+						}
+						if (peekChar == '}')
+						{
+							this.json.Read();
+							return Json.Parser.TOKEN.CURLY_CLOSE;
+						}
 					}
+					string nextWord = this.NextWord;
+					if (nextWord == "false")
+					{
+						return Json.Parser.TOKEN.FALSE;
+					}
+					if (nextWord == "true")
+					{
+						return Json.Parser.TOKEN.TRUE;
+					}
+					if (!(nextWord == "null"))
+					{
+						return Json.Parser.TOKEN.NONE;
+					}
+					return Json.Parser.TOKEN.NULL;
 				}
 			}
 
@@ -169,35 +181,33 @@ namespace Facebook.MiniJSON
 				for (;;)
 				{
 					Json.Parser.TOKEN nextToken = this.NextToken;
-					switch (nextToken)
+					if (nextToken == Json.Parser.TOKEN.NONE)
 					{
-					case Json.Parser.TOKEN.NONE:
-						goto IL_37;
-					default:
-						if (nextToken != Json.Parser.TOKEN.COMMA)
-						{
-							string text = this.ParseString();
-							if (text == null)
-							{
-								goto Block_2;
-							}
-							if (this.NextToken != Json.Parser.TOKEN.COLON)
-							{
-								goto Block_3;
-							}
-							this.json.Read();
-							dictionary[text] = this.ParseValue();
-						}
 						break;
-					case Json.Parser.TOKEN.CURLY_CLOSE:
+					}
+					if (nextToken == Json.Parser.TOKEN.CURLY_CLOSE)
+					{
 						return dictionary;
 					}
+					if (nextToken != Json.Parser.TOKEN.COMMA)
+					{
+						string text = this.ParseString();
+						if (text == null)
+						{
+							goto Block_4;
+						}
+						if (this.NextToken != Json.Parser.TOKEN.COLON)
+						{
+							goto Block_5;
+						}
+						this.json.Read();
+						dictionary[text] = this.ParseValue();
+					}
 				}
-				IL_37:
 				return null;
-				Block_2:
+				Block_4:
 				return null;
-				Block_3:
+				Block_5:
 				return null;
 			}
 
@@ -209,23 +219,21 @@ namespace Facebook.MiniJSON
 				while (flag)
 				{
 					Json.Parser.TOKEN nextToken = this.NextToken;
-					switch (nextToken)
+					if (nextToken == Json.Parser.TOKEN.NONE)
 					{
-					case Json.Parser.TOKEN.SQUARED_CLOSE:
-						flag = false;
-						break;
-					default:
-					{
-						if (nextToken == Json.Parser.TOKEN.NONE)
-						{
-							return null;
-						}
-						object item = this.ParseByToken(nextToken);
-						list.Add(item);
-						break;
+						return null;
 					}
-					case Json.Parser.TOKEN.COMMA:
-						break;
+					if (nextToken != Json.Parser.TOKEN.SQUARED_CLOSE)
+					{
+						if (nextToken != Json.Parser.TOKEN.COMMA)
+						{
+							object item = this.ParseByToken(nextToken);
+							list.Add(item);
+						}
+					}
+					else
+					{
+						flag = false;
 					}
 				}
 				return list;
@@ -241,6 +249,10 @@ namespace Facebook.MiniJSON
 			{
 				switch (token)
 				{
+				case Json.Parser.TOKEN.CURLY_OPEN:
+					return this.ParseObject();
+				case Json.Parser.TOKEN.SQUARED_OPEN:
+					return this.ParseArray();
 				case Json.Parser.TOKEN.STRING:
 					return this.ParseString();
 				case Json.Parser.TOKEN.NUMBER:
@@ -251,16 +263,8 @@ namespace Facebook.MiniJSON
 					return false;
 				case Json.Parser.TOKEN.NULL:
 					return null;
-				default:
-					switch (token)
-					{
-					case Json.Parser.TOKEN.CURLY_OPEN:
-						return this.ParseObject();
-					case Json.Parser.TOKEN.SQUARED_OPEN:
-						return this.ParseArray();
-					}
-					return null;
 				}
+				return null;
 			}
 
 			private string ParseString()
@@ -288,51 +292,52 @@ namespace Facebook.MiniJSON
 						else
 						{
 							nextChar = this.NextChar;
-							switch (nextChar)
+							if (nextChar <= '\\')
 							{
-							case 'r':
-								stringBuilder.Append('\r');
-								break;
-							default:
-								if (nextChar != '"' && nextChar != '/' && nextChar != '\\')
+								if (nextChar == '"' || nextChar == '/' || nextChar == '\\')
 								{
-									if (nextChar != 'b')
+									stringBuilder.Append(nextChar);
+								}
+							}
+							else if (nextChar <= 'f')
+							{
+								if (nextChar != 'b')
+								{
+									if (nextChar == 'f')
 									{
-										if (nextChar != 'f')
-										{
-											if (nextChar == 'n')
-											{
-												stringBuilder.Append('\n');
-											}
-										}
-										else
-										{
-											stringBuilder.Append('\f');
-										}
-									}
-									else
-									{
-										stringBuilder.Append('\b');
+										stringBuilder.Append('\f');
 									}
 								}
 								else
 								{
-									stringBuilder.Append(nextChar);
+									stringBuilder.Append('\b');
 								}
-								break;
-							case 't':
-								stringBuilder.Append('\t');
-								break;
-							case 'u':
-							{
-								StringBuilder stringBuilder2 = new StringBuilder();
-								for (int i = 0; i < 4; i++)
-								{
-									stringBuilder2.Append(this.NextChar);
-								}
-								stringBuilder.Append((char)Convert.ToInt32(stringBuilder2.ToString(), 16));
-								break;
 							}
+							else if (nextChar != 'n')
+							{
+								switch (nextChar)
+								{
+								case 'r':
+									stringBuilder.Append('\r');
+									break;
+								case 't':
+									stringBuilder.Append('\t');
+									break;
+								case 'u':
+								{
+									StringBuilder stringBuilder2 = new StringBuilder();
+									for (int i = 0; i < 4; i++)
+									{
+										stringBuilder2.Append(this.NextChar);
+									}
+									stringBuilder.Append((char)Convert.ToInt32(stringBuilder2.ToString(), 16));
+									break;
+								}
+								}
+							}
+							else
+							{
+								stringBuilder.Append('\n');
 							}
 						}
 					}
@@ -401,66 +406,56 @@ namespace Facebook.MiniJSON
 
 			private void SerializeValue(object value)
 			{
-				string str;
-				IList array;
-				IDictionary obj;
 				if (value == null)
 				{
 					this.builder.Append("null");
+					return;
 				}
-				else if ((str = (value as string)) != null)
+				string str;
+				if ((str = (value as string)) != null)
 				{
 					this.SerializeString(str);
+					return;
 				}
-				else if (value is bool)
+				if (value is bool)
 				{
 					this.builder.Append(value.ToString().ToLower());
+					return;
 				}
-				else if ((array = (value as IList)) != null)
+				IList array;
+				if ((array = (value as IList)) != null)
 				{
 					this.SerializeArray(array);
+					return;
 				}
-				else if ((obj = (value as IDictionary)) != null)
+				IDictionary obj;
+				if ((obj = (value as IDictionary)) != null)
 				{
 					this.SerializeObject(obj);
+					return;
 				}
-				else if (value is char)
+				if (value is char)
 				{
 					this.SerializeString(value.ToString());
+					return;
 				}
-				else
-				{
-					this.SerializeOther(value);
-				}
+				this.SerializeOther(value);
 			}
 
 			private void SerializeObject(IDictionary obj)
 			{
 				bool flag = true;
 				this.builder.Append('{');
-				IEnumerator enumerator = obj.Keys.GetEnumerator();
-				try
+				foreach (object obj2 in obj.Keys)
 				{
-					while (enumerator.MoveNext())
+					if (!flag)
 					{
-						object obj2 = enumerator.Current;
-						if (!flag)
-						{
-							this.builder.Append(',');
-						}
-						this.SerializeString(obj2.ToString());
-						this.builder.Append(':');
-						this.SerializeValue(obj[obj2]);
-						flag = false;
+						this.builder.Append(',');
 					}
-				}
-				finally
-				{
-					IDisposable disposable;
-					if ((disposable = (enumerator as IDisposable)) != null)
-					{
-						disposable.Dispose();
-					}
+					this.SerializeString(obj2.ToString());
+					this.builder.Append(':');
+					this.SerializeValue(obj[obj2]);
+					flag = false;
 				}
 				this.builder.Append('}');
 			}
@@ -469,27 +464,14 @@ namespace Facebook.MiniJSON
 			{
 				this.builder.Append('[');
 				bool flag = true;
-				IEnumerator enumerator = array.GetEnumerator();
-				try
+				foreach (object value in array)
 				{
-					while (enumerator.MoveNext())
+					if (!flag)
 					{
-						object value = enumerator.Current;
-						if (!flag)
-						{
-							this.builder.Append(',');
-						}
-						this.SerializeValue(value);
-						flag = false;
+						this.builder.Append(',');
 					}
-				}
-				finally
-				{
-					IDisposable disposable;
-					if ((disposable = (enumerator as IDisposable)) != null)
-					{
-						disposable.Dispose();
-					}
+					this.SerializeValue(value);
+					flag = false;
 				}
 				this.builder.Append(']');
 			}
@@ -498,8 +480,10 @@ namespace Facebook.MiniJSON
 			{
 				this.builder.Append('"');
 				char[] array = str.ToCharArray();
-				foreach (char c in array)
+				int i = 0;
+				while (i < array.Length)
 				{
+					char c = array[i];
 					switch (c)
 					{
 					case '\b':
@@ -511,38 +495,41 @@ namespace Facebook.MiniJSON
 					case '\n':
 						this.builder.Append("\\n");
 						break;
-					default:
-						if (c != '"')
-						{
-							if (c != '\\')
-							{
-								int num = Convert.ToInt32(c);
-								if (num >= 32 && num <= 126)
-								{
-									this.builder.Append(c);
-								}
-								else
-								{
-									this.builder.Append("\\u" + Convert.ToString(num, 16).PadLeft(4, '0'));
-								}
-							}
-							else
-							{
-								this.builder.Append("\\\\");
-							}
-						}
-						else
-						{
-							this.builder.Append("\\\"");
-						}
-						break;
+					case '\v':
+						goto IL_DD;
 					case '\f':
 						this.builder.Append("\\f");
 						break;
 					case '\r':
 						this.builder.Append("\\r");
 						break;
+					default:
+						if (c != '"')
+						{
+							if (c != '\\')
+							{
+								goto IL_DD;
+							}
+							this.builder.Append("\\\\");
+						}
+						else
+						{
+							this.builder.Append("\\\"");
+						}
+						break;
 					}
+					IL_123:
+					i++;
+					continue;
+					IL_DD:
+					int num = Convert.ToInt32(c);
+					if (num >= 32 && num <= 126)
+					{
+						this.builder.Append(c);
+						goto IL_123;
+					}
+					this.builder.Append("\\u" + Convert.ToString(num, 16).PadLeft(4, '0'));
+					goto IL_123;
 				}
 				this.builder.Append('"');
 			}
@@ -552,11 +539,9 @@ namespace Facebook.MiniJSON
 				if (value is float || value is int || value is uint || value is long || value is double || value is sbyte || value is byte || value is short || value is ushort || value is ulong || value is decimal)
 				{
 					this.builder.Append(value.ToString());
+					return;
 				}
-				else
-				{
-					this.SerializeString(value.ToString());
-				}
+				this.SerializeString(value.ToString());
 			}
 		}
 	}

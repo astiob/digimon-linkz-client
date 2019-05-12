@@ -3,11 +3,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 public class FarmScenery : MonoBehaviour
 {
 	public List<FarmObject> farmObjects = new List<FarmObject>();
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	private GameObject LoadFarmModel(int facilityID)
 	{
@@ -286,16 +291,16 @@ public class FarmScenery : MonoBehaviour
 			num++;
 		}
 		List<UserFacility[]> readFacility = new List<UserFacility[]>();
-		for (int i = 0; i < 6; i++)
+		for (int j = 0; j < 6; j++)
 		{
 			readFacility.Add(new UserFacility[num]);
 		}
 		int parallelIndex = 0;
 		int dataIndex = 0;
-		for (int j = 0; j < userFacilitys.Count; j++)
+		for (int k = 0; k < userFacilitys.Count; k++)
 		{
-			UserFacility[] data = readFacility[parallelIndex];
-			data[dataIndex] = userFacilitys[j];
+			UserFacility[] array = readFacility[parallelIndex];
+			array[dataIndex] = userFacilitys[k];
 			parallelIndex++;
 			if (6 <= parallelIndex)
 			{
@@ -304,13 +309,13 @@ public class FarmScenery : MonoBehaviour
 			}
 		}
 		Coroutine[] coroutineList = new Coroutine[6];
-		for (int k = 0; k < 6; k++)
-		{
-			coroutineList[k] = base.StartCoroutine(this.ReadFacility(readFacility[k]));
-		}
 		for (int l = 0; l < 6; l++)
 		{
-			yield return coroutineList[l];
+			coroutineList[l] = base.StartCoroutine(this.ReadFacility(readFacility[l]));
+		}
+		for (int i = 0; i < 6; i++)
+		{
+			yield return coroutineList[i];
 		}
 		farmRoot.ResetSetteingFence();
 		yield break;
@@ -535,13 +540,13 @@ public class FarmScenery : MonoBehaviour
 		{
 			FarmObject farmObject = this.farmObjects[i];
 			FarmGrid.GridPosition gridPosition = farmField.Grid.GetGridPosition(farmObject.GetBaseGridPosition3D());
-			FacilityPosition data = new FacilityPosition
+			FacilityPosition item = new FacilityPosition
 			{
 				userFacilityId = farmObject.userFacilityID,
 				positionX = gridPosition.x,
 				positionY = gridPosition.y
 			};
-			facilityPositions.Add(data);
+			facilityPositions.Add(item);
 		}
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		RequestFA_FacilityAllArrangement request = new RequestFA_FacilityAllArrangement
@@ -568,7 +573,12 @@ public class FarmScenery : MonoBehaviour
 				}
 			}
 		};
-		yield return base.StartCoroutine(request.Run(new Action(RestrictionInput.EndLoad), null, null));
+		RequestBase request2 = request;
+		if (FarmScenery.<>f__mg$cache0 == null)
+		{
+			FarmScenery.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		yield return base.StartCoroutine(request2.Run(FarmScenery.<>f__mg$cache0, null, null));
 		yield break;
 	}
 

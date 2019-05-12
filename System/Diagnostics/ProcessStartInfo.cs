@@ -80,7 +80,7 @@ namespace System.Diagnostics
 		[System.ComponentModel.DefaultValue("")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		[MonitoringDescription("Command line agruments for this process.")]
-		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
 		public string Arguments
 		{
@@ -117,7 +117,7 @@ namespace System.Diagnostics
 		/// <filterpriority>1</filterpriority>
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
 		[System.ComponentModel.DefaultValue(null)]
-		[System.ComponentModel.Editor("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.Editor("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[MonitoringDescription("Environment variables used for this process.")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		public System.Collections.Specialized.StringDictionary EnvironmentVariables
@@ -186,8 +186,8 @@ namespace System.Diagnostics
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		[MonitoringDescription("The name of the resource to start this process.")]
-		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		[System.ComponentModel.Editor("System.Diagnostics.Design.StartFileNameEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.Editor("System.Diagnostics.Design.StartFileNameEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.DefaultValue("")]
 		public string FileName
 		{
@@ -304,7 +304,7 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets the verb to use when opening the application or document specified by the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property.</summary>
 		/// <returns>The action to take with the file that the process opens. The default is an empty string ("").</returns>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.VerbConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.VerbConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.DefaultValue("")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		[MonitoringDescription("The verb to apply to a used document.")]
@@ -359,11 +359,11 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets the initial directory for the process to be started.</summary>
 		/// <returns>The fully qualified name of the directory that contains the process to be started. The default is an empty string ("").</returns>
 		/// <filterpriority>1</filterpriority>
-		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.DefaultValue("")]
 		[MonitoringDescription("The initial directory for this process.")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
-		[System.ComponentModel.Editor("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.Editor("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		public string WorkingDirectory
 		{

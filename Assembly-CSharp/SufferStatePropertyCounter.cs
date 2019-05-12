@@ -32,9 +32,11 @@ public class SufferStatePropertyCounter
 			}
 			if (array2.Length > 0)
 			{
-				foreach (SufferStateProperty.Data notIsMultiHitThroughData in array2)
+				SufferStateProperty.Data[] array3 = array2;
+				for (int i = 0; i < array3.Length; i++)
 				{
-					if (!this.countDictionary[key].Where((SufferStatePropertyCounter.CountData item) => item.id == notIsMultiHitThroughData.id).Any<SufferStatePropertyCounter.CountData>())
+					SufferStateProperty.Data notIsMultiHitThroughData = array3[i];
+					if (!this.countDictionary[key].Where((SufferStatePropertyCounter.CountData item) => item.characterStateControl == value && item.id == notIsMultiHitThroughData.id).Any<SufferStatePropertyCounter.CountData>())
 					{
 						SufferStatePropertyCounter.CountData countData = new SufferStatePropertyCounter.CountData();
 						countData.characterStateControl = value;
@@ -54,22 +56,24 @@ public class SufferStatePropertyCounter
 		{
 			return;
 		}
-		SufferStatePropertyCounter.CountData countData;
-		foreach (SufferStatePropertyCounter.CountData countData2 in list)
+		using (List<SufferStatePropertyCounter.CountData>.Enumerator enumerator = list.GetEnumerator())
 		{
-			countData = countData2;
-			HaveSufferState currentSufferState = countData.characterStateControl.currentSufferState;
-			if (currentSufferState.FindSufferState(key))
+			while (enumerator.MoveNext())
 			{
-				SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
-				SufferStateProperty.Data[] array = sufferStateProperty.GetNotIsMultiHitThroughDatas();
-				if (!string.IsNullOrEmpty(countData.id))
+				SufferStatePropertyCounter.CountData countData = enumerator.Current;
+				HaveSufferState currentSufferState = countData.characterStateControl.currentSufferState;
+				if (currentSufferState.FindSufferState(key))
 				{
-					array = array.Where((SufferStateProperty.Data item) => countData.id == item.id).ToArray<SufferStateProperty.Data>();
-				}
-				if (array.Length > 0)
-				{
-					sufferStateProperty.AddCurrentKeepCount(array, -1);
+					SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
+					SufferStateProperty.Data[] array = sufferStateProperty.GetNotIsMultiHitThroughDatas();
+					if (!string.IsNullOrEmpty(countData.id))
+					{
+						array = array.Where((SufferStateProperty.Data item) => countData.id == item.id).ToArray<SufferStateProperty.Data>();
+					}
+					if (array.Length > 0)
+					{
+						sufferStateProperty.AddCurrentKeepCount(array, -1);
+					}
 				}
 			}
 		}

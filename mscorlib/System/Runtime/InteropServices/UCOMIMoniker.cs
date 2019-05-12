@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IMoniker" /> instead.</summary>
+	[Guid("0000000f-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Obsolete]
-	[Guid("0000000f-0000-0000-c000-000000000046")]
 	[ComImport]
 	public interface UCOMIMoniker
 	{

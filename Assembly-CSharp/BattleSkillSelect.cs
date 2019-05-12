@@ -4,64 +4,64 @@ using UnityEngine;
 
 public class BattleSkillSelect : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("エモーション送信機能（マルチ）")]
+	[SerializeField]
 	public EmotionSenderMulti emotionSenderMulti;
 
 	[Header("エモーション送信機能（PvP）")]
 	[SerializeField]
 	public EmotionSenderMulti emotionSenderPvP;
 
-	[SerializeField]
 	[Header("ボタンオブジェクト")]
+	[SerializeField]
 	public GameObject monsterButtonRoot;
 
 	[Header("残りターン/マルチバトルのみ")]
 	[SerializeField]
 	public RemainingTurn remainingTurnMiddle;
 
-	[SerializeField]
 	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
+	[SerializeField]
 	public GameObject skillButtonRoot;
 
-	[SerializeField]
 	[Header("コライダー")]
+	[SerializeField]
 	private Collider[] colliderValues;
 
-	[SerializeField]
 	[Header("タッチ判定")]
+	[SerializeField]
 	public UITouchChecker[] touchChecker;
 
 	[Header("スキル説明1の命中率のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc1HitRateLocalize;
 
-	[SerializeField]
 	[Header("スキル説明2の命中率のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc2HitRateLocalize;
 
-	[SerializeField]
 	[Header("スキル説明3の命中率のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc3HitRateLocalize;
 
-	[SerializeField]
 	[Header("スキル説明1の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc1PowerLocalize;
 
 	[Header("スキル説明2の威力のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc2PowerLocalize;
 
-	[SerializeField]
 	[Header("スキル説明3の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc3PowerLocalize;
 
-	[SerializeField]
 	[Header("Leftの親")]
+	[SerializeField]
 	private Transform leftParent;
 
 	[Header("スキルボタン")]

@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IPersistFile" /> instead.</summary>
-	[Obsolete]
 	[Guid("0000010b-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Obsolete]
 	[ComImport]
 	public interface UCOMIPersistFile
 	{

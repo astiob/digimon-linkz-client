@@ -5,6 +5,7 @@ using MonsterList.InheritSkill;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_Succession : CMD
@@ -47,12 +48,10 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private CMD_Succession.SkillTab materialMonsterSkillTab2;
 
-	[Header("所持クラスタ数")]
 	[SerializeField]
 	private UILabel myClusterLabel;
 
 	[SerializeField]
-	[Header("必要クラスタ数")]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -95,6 +94,14 @@ public sealed class CMD_Succession : CMD
 	private GameObject goSelectPanelMonsterIcon;
 
 	private GUISelectPanelMonsterIcon csSelectPanelMonsterIcon;
+
+	private CMD_CharacterDetailed detailedWindow;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
 
 	private MonsterData baseDigimon { get; set; }
 
@@ -150,7 +157,13 @@ public sealed class CMD_Succession : CMD
 		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_succession", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_succession";
+			if (CMD_Succession.<>f__mg$cache0 == null)
+			{
+				CMD_Succession.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_Succession.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_Succession");
 			});
@@ -173,8 +186,24 @@ public sealed class CMD_Succession : CMD
 
 	private void OnTouchDecide()
 	{
-		CMD_InheritCheck cmd_InheritCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSuccession), "CMD_InheritCheck", null) as CMD_InheritCheck;
-		cmd_InheritCheck.SetParams(this.selecterPartnerDigimons, this.useClusterLabel.text, this.baseDigimonSkillNumber, this.partnerDigimonSkillNumber);
+		if (!this.IsMATLevelMax())
+		{
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
+			cmd_ModalMessage.Title = StringMaster.GetString("SuccessionTitle");
+			cmd_ModalMessage.Info = StringMaster.GetString("SuccessionFailedLv");
+		}
+		else if (this.IsSameSkill())
+		{
+			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
+			cmd_ModalMessage2.Title = StringMaster.GetString("SuccessionTitle");
+			cmd_ModalMessage2.Info = StringMaster.GetString("SuccessionFailedSame");
+		}
+		else
+		{
+			CMD_InheritCheck cmd_InheritCheck = GUIMain.ShowCommonDialog(null, "CMD_InheritCheck", null) as CMD_InheritCheck;
+			cmd_InheritCheck.SetActionYesButton(new Action<CMD>(this.OnPushConfirmYesButton));
+			cmd_InheritCheck.SetParams(this.selecterPartnerDigimons, this.useClusterLabel.text, this.baseDigimonSkillNumber, this.partnerDigimonSkillNumber);
+		}
 	}
 
 	private void OnBaseDigimonSkill1()
@@ -278,42 +307,24 @@ public sealed class CMD_Succession : CMD
 		return a == b;
 	}
 
-	private void OnCloseSuccession(int idx)
+	private void OnPushConfirmYesButton(CMD confirmPopup)
 	{
-		if (idx == 0)
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		confirmPopup.SetCloseAction(delegate(int noop)
 		{
-			if (!this.IsMATLevelMax())
-			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
-				cmd_ModalMessage.Title = StringMaster.GetString("SuccessionTitle");
-				cmd_ModalMessage.Info = StringMaster.GetString("SuccessionFailedLv");
-			}
-			else if (this.IsSameSkill())
-			{
-				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
-				cmd_ModalMessage2.Title = StringMaster.GetString("SuccessionTitle");
-				cmd_ModalMessage2.Info = StringMaster.GetString("SuccessionFailedSame");
-			}
-			else
-			{
-				this.ExecSuccession();
-			}
-		}
+			this.ExecSuccession();
+		});
 	}
 
 	private void ExecSuccession()
 	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		string materialMonster = this.selecterPartnerDigimons[0].userMonster.userMonsterId;
-		string materialModelId = this.selecterPartnerDigimons[0].GetMonsterMaster().Group.modelId;
-		string materialGrowStep = this.selecterPartnerDigimons[0].GetMonsterMaster().Group.growStep;
 		this.useClusterBK = this.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
 		GameWebAPI.RequestMN_MonsterInheritance requestMN_MonsterInheritance = new GameWebAPI.RequestMN_MonsterInheritance();
 		requestMN_MonsterInheritance.SetSendData = delegate(GameWebAPI.MN_Req_Success param)
 		{
 			param.baseUserMonsterId = this.baseDigimon.userMonster.userMonsterId;
-			param.materialUserMonsterId = materialMonster;
 			param.baseCommonSkillNumber = this.baseDigimonSkillNumber;
+			param.materialUserMonsterId = this.selecterPartnerDigimons[0].userMonster.userMonsterId;
 			param.materialCommonSkillNumber = this.partnerDigimonSkillNumber;
 		};
 		requestMN_MonsterInheritance.OnReceived = delegate(GameWebAPI.RespDataMN_SuccessExec response)
@@ -323,7 +334,9 @@ public sealed class CMD_Succession : CMD
 		GameWebAPI.RequestMN_MonsterInheritance request = requestMN_MonsterInheritance;
 		base.StartCoroutine(request.Run(delegate()
 		{
-			this.EndSuccession(materialModelId, materialGrowStep);
+			string modelId = this.selecterPartnerDigimons[0].GetMonsterMaster().Group.modelId;
+			string growStep = this.selecterPartnerDigimons[0].GetMonsterMaster().Group.growStep;
+			this.EndSuccession(modelId, growStep);
 		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
@@ -334,24 +347,24 @@ public sealed class CMD_Succession : CMD
 	{
 		string[] userMonsterIdList = this.selecterPartnerDigimons.Select((MonsterData x) => x.userMonster.userMonsterId).ToArray<string>();
 		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
-		ChipDataMng.DeleteEquipChip(userMonsterIdList);
-		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
+		ChipDataMng.GetUserChipSlotData().RemoveMonsterChipData(userMonsterIdList);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		this.InitMonsterList(false);
-		CutsceneDataInheritance cutsceneData = new CutsceneDataInheritance
+		CutsceneDataInheritance cutsceneDataInheritance = new CutsceneDataInheritance();
+		cutsceneDataInheritance.path = "Cutscenes/Inheritance";
+		cutsceneDataInheritance.baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
+		cutsceneDataInheritance.materialModelId = materialMonsterModelId;
+		CutsceneDataInheritance cutsceneDataInheritance2 = cutsceneDataInheritance;
+		if (CMD_Succession.<>f__mg$cache1 == null)
 		{
-			path = "Cutscenes/Inheritance",
-			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
-			materialModelId = materialMonsterModelId,
-			endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-		};
+			CMD_Succession.<>f__mg$cache1 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+		}
+		cutsceneDataInheritance2.endCallback = CMD_Succession.<>f__mg$cache1;
+		CutsceneDataInheritance cutsceneData = cutsceneDataInheritance;
 		Loading.Invisible();
 		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
 		{
-			if (PartsUpperCutinController.Instance != null)
-			{
-				PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.InheritanceComplete, null);
-			}
+			this.detailedWindow.StartAnimation();
 			RestrictionInput.EndLoad();
 		}, 0.5f, 0.5f);
 	}
@@ -381,12 +394,11 @@ public sealed class CMD_Succession : CMD
 		this.monsterList.SetGrayOutDeckMonster(this.baseDigimon);
 		this.monsterList.SetGrayOutUserMonsterList(this.baseDigimon);
 		this.BtnCont();
-		CMD_CharacterDetailed.DataChg = this.baseDigimon;
-		GUIMain.ShowCommonDialog(delegate(int nop)
+		this.detailedWindow = CMD_CharacterDetailed.CreateWindow(this.baseDigimon, delegate()
 		{
 			this.leftLargeMonsterIcon.Lock = this.baseDigimon.userMonster.IsLocked;
 			icon.Lock = this.baseDigimon.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed", null);
+		}, 1);
 	}
 
 	private void ShowChgInfo()
@@ -488,6 +500,7 @@ public sealed class CMD_Succession : CMD
 		this.targetMonsterList = list;
 		list = MonsterDataMng.Instance().SelectionMDList(list);
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+		this.csSelectPanelMonsterIcon.ClearIconDungeonBonus();
 		BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
 		this.sortButton = componentsInChildren[0];
 		this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);
@@ -734,8 +747,8 @@ public sealed class CMD_Succession : CMD
 		[SerializeField]
 		private UISprite sprite;
 
-		[SerializeField]
 		[Header("ラベル")]
+		[SerializeField]
 		private UILabelEx label;
 
 		public void On()

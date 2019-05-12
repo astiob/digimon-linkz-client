@@ -2,8 +2,8 @@
 using Monster;
 using MonsterPicturebook;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CMD_Picturebook : CMD
@@ -14,11 +14,15 @@ public class CMD_Picturebook : CMD
 	[SerializeField]
 	private UILabel haveMonsterCountLabel;
 
-	private GUISelectPanelPicturebookIcon selectPanelPicturebookIcon;
+	[SerializeField]
+	private GUISelectPanelViewPartsUD selectPanelPicturebook;
 
 	private List<string> collectionIdList;
 
 	private List<PicturebookMonster> collectionIconMonsterDataList;
+
+	[CompilerGenerated]
+	private static Comparison<PicturebookMonster> <>f__mg$cache0;
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
@@ -26,16 +30,13 @@ public class CMD_Picturebook : CMD
 		string userId = DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 		this.SetCommonUI();
 		base.HideDLG();
-		APIRequestTask apirequestTask = this.LoadPicturebookData(userId);
-		apirequestTask.Add(new NormalTask(delegate()
+		APIRequestTask task = this.LoadPicturebookData(userId);
+		base.StartCoroutine(task.Run(delegate
 		{
 			this.CreateAllMonsterData();
-			return this.InitializeMonsterList();
-		}));
-		base.StartCoroutine(apirequestTask.Run(delegate
-		{
+			this.CreateSelectPanel();
 			this.ShowDLG();
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 			RestrictionInput.EndLoad();
 		}, delegate(Exception noop)
 		{
@@ -47,7 +48,10 @@ public class CMD_Picturebook : CMD
 	public override void ClosePanel(bool animation = true)
 	{
 		FarmCameraControlForCMD.On();
+		PicturebookItem.ClearMonsterTex();
 		base.ClosePanel(animation);
+		this.selectPanelPicturebook.FadeOutAllListParts(null, false);
+		this.selectPanelPicturebook.SetHideScrollBarAllWays(true);
 	}
 
 	protected override void WindowOpened()
@@ -66,26 +70,18 @@ public class CMD_Picturebook : CMD
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("PicturebookTitle"));
 		this.thumbnail.transform.gameObject.SetActive(false);
-		this.selectPanelPicturebookIcon = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelPicturebookIcon", base.gameObject).GetComponent<GUISelectPanelPicturebookIcon>();
-		this.selectPanelPicturebookIcon.ScrollBarPosX = 580f;
-		this.selectPanelPicturebookIcon.ScrollBarBGPosX = 580f;
-		this.selectPanelPicturebookIcon.transform.localPosition = new Vector3(this.selectPanelPicturebookIcon.transform.localPosition.x, this.selectPanelPicturebookIcon.transform.localPosition.y, 20f);
-		Vector3 localPosition = this.selectPanelPicturebookIcon.transform.localPosition;
-		localPosition.x = -50f;
-		GUICollider component = this.selectPanelPicturebookIcon.GetComponent<GUICollider>();
-		component.SetOriginalPos(localPosition);
-		if (this.goEFC_FOOTER != null)
+	}
+
+	private void CreateSelectPanel()
+	{
+		this.selectPanelPicturebook.gameObject.SetActive(true);
+		int num = this.collectionIconMonsterDataList.Count / PicturebookItem.ITEM_COUNT_PER_LINE;
+		if (this.collectionIconMonsterDataList.Count % PicturebookItem.ITEM_COUNT_PER_LINE > 0)
 		{
-			this.selectPanelPicturebookIcon.transform.parent = this.goEFC_FOOTER.transform;
+			num++;
 		}
-		Rect listWindowViewRect = default(Rect);
-		listWindowViewRect.xMin = -480f;
-		listWindowViewRect.xMax = 480f;
-		listWindowViewRect.yMin = -297f - GUIMain.VerticalSpaceSize;
-		listWindowViewRect.yMax = 180f + GUIMain.VerticalSpaceSize;
-		this.selectPanelPicturebookIcon.ListWindowViewRect = listWindowViewRect;
-		this.selectPanelPicturebookIcon.selectParts = GUIManager.LoadCommonGUI("ListParts/ListPartsThumbnail", null);
-		this.selectPanelPicturebookIcon.selectParts.transform.SetParent(this.thumbnail.transform);
+		PicturebookItem.MakeAllMonsterTex(this, this.collectionIconMonsterDataList.Count);
+		this.selectPanelPicturebook.AllBuild(num, true, 1f, 1f, null, this, true);
 	}
 
 	private APIRequestTask LoadPicturebookData(string targetUserID)
@@ -103,7 +99,7 @@ public class CMD_Picturebook : CMD
 				this.collectionIdList = new List<string>();
 				for (int i = 0; i < userCollectionList.Length; i++)
 				{
-					if ("1" == userCollectionList[i].collectionStatus)
+					if (userCollectionList[i].IsHave())
 					{
 						this.collectionIdList.Add(userCollectionList[i].monsterCollectionId);
 					}
@@ -116,7 +112,7 @@ public class CMD_Picturebook : CMD
 	private void Initialize(Action onInitialized)
 	{
 		this.CreateAllMonsterData();
-		base.StartCoroutine(this.InitializeMonsterList());
+		this.CreateSelectPanel();
 		if (onInitialized != null)
 		{
 			onInitialized();
@@ -138,7 +134,12 @@ public class CMD_Picturebook : CMD
 				}
 			}
 		}
-		this.collectionIconMonsterDataList.Sort(new Comparison<PicturebookMonster>(CMD_Picturebook.CompareByCollectionId));
+		List<PicturebookMonster> list = this.collectionIconMonsterDataList;
+		if (CMD_Picturebook.<>f__mg$cache0 == null)
+		{
+			CMD_Picturebook.<>f__mg$cache0 = new Comparison<PicturebookMonster>(CMD_Picturebook.CompareByCollectionId);
+		}
+		list.Sort(CMD_Picturebook.<>f__mg$cache0);
 	}
 
 	private bool ExistCollectionId(string collectionId)
@@ -154,6 +155,15 @@ public class CMD_Picturebook : CMD
 			}
 		}
 		return result;
+	}
+
+	public PicturebookMonster GetMonsterData(int listId)
+	{
+		if (this.collectionIconMonsterDataList.Count <= listId)
+		{
+			return null;
+		}
+		return this.collectionIconMonsterDataList[listId];
 	}
 
 	private static int CompareByCollectionId(PicturebookMonster dataA, PicturebookMonster dataB)
@@ -173,17 +183,6 @@ public class CMD_Picturebook : CMD
 			picturebookMonster.isUnknown = true;
 		}
 		return picturebookMonster;
-	}
-
-	private IEnumerator InitializeMonsterList()
-	{
-		this.selectPanelPicturebookIcon.initLocation = true;
-		Vector3 iconScale = this.thumbnail.transform.localScale;
-		this.selectPanelPicturebookIcon.useLocationRecord = true;
-		yield return base.StartCoroutine(this.selectPanelPicturebookIcon.AllBuild(this.collectionIconMonsterDataList, iconScale, new Action<PicturebookMonster>(this.PressMIconShort)));
-		UnityEngine.Object.Destroy(this.selectPanelPicturebookIcon.selectParts);
-		this.selectPanelPicturebookIcon.selectParts = null;
-		yield break;
 	}
 
 	public void PressMIconShort(PicturebookMonster monsterData)

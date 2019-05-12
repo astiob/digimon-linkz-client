@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class CMD_ModalMessageNoBtn : CMD
+public sealed class CMD_ModalMessageNoBtn : CMD
 {
 	[SerializeField]
 	private UILabel textLabel;
@@ -11,29 +11,9 @@ public class CMD_ModalMessageNoBtn : CMD
 		this.textLabel.text = text;
 	}
 
-	protected override void Awake()
+	public void SetFontSize(int size)
 	{
-		base.Awake();
-	}
-
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
-	{
-		base.Show(f, sizeX, sizeY, aT);
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
+		this.textLabel.fontSize = size;
 	}
 
 	public void AdjustSize()

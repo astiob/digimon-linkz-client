@@ -24,12 +24,9 @@ public class BattleWaveControl : BattleFunctionBase
 			int num = 0;
 			if (dictionary.ContainsKey(prefabId))
 			{
-				Dictionary<string, int> dictionary3;
-				Dictionary<string, int> dictionary2 = dictionary3 = dictionary;
-				string key2;
-				string key = key2 = prefabId;
-				int num2 = dictionary3[key2];
-				dictionary2[key] = num2 + 1;
+				Dictionary<string, int> dictionary2;
+				string key;
+				(dictionary2 = dictionary)[key = prefabId] = dictionary2[key] + 1;
 				num = dictionary[prefabId];
 			}
 			else
@@ -125,7 +122,7 @@ public class BattleWaveControl : BattleFunctionBase
 				SufferStateProperty sufferStateProperty = characterStateControl.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Sleep);
 				if (sufferStateProperty.isActive && sufferStateProperty.GetSleepGetupOccurrence())
 				{
-					characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
+					characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep, false);
 				}
 			}
 		}

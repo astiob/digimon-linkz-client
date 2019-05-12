@@ -70,7 +70,7 @@ namespace UnityEngine.Networking
 					Debug.LogError(string.Concat(new object[]
 					{
 						"Send Error: ",
-						b,
+						(NetworkError)b,
 						" channel:",
 						channelId,
 						" bytesToSend:",

@@ -9,7 +9,7 @@ namespace UnityEngine.UI
 {
 	[AddComponentMenu("UI/Dropdown", 35)]
 	[RequireComponent(typeof(RectTransform))]
-	public class Dropdown : Selectable, IEventSystemHandler, IPointerClickHandler, ISubmitHandler, ICancelHandler
+	public class Dropdown : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, IEventSystemHandler
 	{
 		[SerializeField]
 		private RectTransform m_Template;
@@ -20,15 +20,15 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private Image m_CaptionImage;
 
-		[SerializeField]
 		[Space]
+		[SerializeField]
 		private Text m_ItemText;
 
 		[SerializeField]
 		private Image m_ItemImage;
 
-		[SerializeField]
 		[Space]
+		[SerializeField]
 		private int m_Value;
 
 		[Space]
@@ -47,7 +47,7 @@ namespace UnityEngine.UI
 
 		private TweenRunner<FloatTween> m_AlphaTweenRunner;
 
-		private bool validTemplate;
+		private bool validTemplate = false;
 
 		private static Dropdown.OptionData s_NoOptionData = new Dropdown.OptionData();
 
@@ -153,13 +153,13 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (Application.isPlaying && (value == this.m_Value || this.options.Count == 0))
+				if (!Application.isPlaying || (value != this.m_Value && this.options.Count != 0))
 				{
-					return;
+					this.m_Value = Mathf.Clamp(value, 0, this.options.Count - 1);
+					this.RefreshShownValue();
+					UISystemProfilerApi.AddMarker("Dropdown.value", this);
+					this.m_OnValueChanged.Invoke(this.m_Value);
 				}
-				this.m_Value = Mathf.Clamp(value, 0, this.options.Count - 1);
-				this.RefreshShownValue();
-				this.m_OnValueChanged.Invoke(this.m_Value);
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace UnityEngine.UI
 				}
 				else
 				{
-					this.m_CaptionText.text = string.Empty;
+					this.m_CaptionText.text = "";
 				}
 			}
 			if (this.m_CaptionImage)
@@ -245,49 +245,53 @@ namespace UnityEngine.UI
 			if (!this.m_Template)
 			{
 				Debug.LogError("The dropdown template is not assigned. The template needs to be assigned and must have a child GameObject with a Toggle component serving as the item.", this);
-				return;
 			}
-			GameObject gameObject = this.m_Template.gameObject;
-			gameObject.SetActive(true);
-			Toggle componentInChildren = this.m_Template.GetComponentInChildren<Toggle>();
-			this.validTemplate = true;
-			if (!componentInChildren || componentInChildren.transform == this.template)
+			else
 			{
-				this.validTemplate = false;
-				Debug.LogError("The dropdown template is not valid. The template must have a child GameObject with a Toggle component serving as the item.", this.template);
+				GameObject gameObject = this.m_Template.gameObject;
+				gameObject.SetActive(true);
+				Toggle componentInChildren = this.m_Template.GetComponentInChildren<Toggle>();
+				this.validTemplate = true;
+				if (!componentInChildren || componentInChildren.transform == this.template)
+				{
+					this.validTemplate = false;
+					Debug.LogError("The dropdown template is not valid. The template must have a child GameObject with a Toggle component serving as the item.", this.template);
+				}
+				else if (!(componentInChildren.transform.parent is RectTransform))
+				{
+					this.validTemplate = false;
+					Debug.LogError("The dropdown template is not valid. The child GameObject with a Toggle component (the item) must have a RectTransform on its parent.", this.template);
+				}
+				else if (this.itemText != null && !this.itemText.transform.IsChildOf(componentInChildren.transform))
+				{
+					this.validTemplate = false;
+					Debug.LogError("The dropdown template is not valid. The Item Text must be on the item GameObject or children of it.", this.template);
+				}
+				else if (this.itemImage != null && !this.itemImage.transform.IsChildOf(componentInChildren.transform))
+				{
+					this.validTemplate = false;
+					Debug.LogError("The dropdown template is not valid. The Item Image must be on the item GameObject or children of it.", this.template);
+				}
+				if (!this.validTemplate)
+				{
+					gameObject.SetActive(false);
+				}
+				else
+				{
+					Dropdown.DropdownItem dropdownItem = componentInChildren.gameObject.AddComponent<Dropdown.DropdownItem>();
+					dropdownItem.text = this.m_ItemText;
+					dropdownItem.image = this.m_ItemImage;
+					dropdownItem.toggle = componentInChildren;
+					dropdownItem.rectTransform = (RectTransform)componentInChildren.transform;
+					Canvas orAddComponent = Dropdown.GetOrAddComponent<Canvas>(gameObject);
+					orAddComponent.overrideSorting = true;
+					orAddComponent.sortingOrder = 30000;
+					Dropdown.GetOrAddComponent<GraphicRaycaster>(gameObject);
+					Dropdown.GetOrAddComponent<CanvasGroup>(gameObject);
+					gameObject.SetActive(false);
+					this.validTemplate = true;
+				}
 			}
-			else if (!(componentInChildren.transform.parent is RectTransform))
-			{
-				this.validTemplate = false;
-				Debug.LogError("The dropdown template is not valid. The child GameObject with a Toggle component (the item) must have a RectTransform on its parent.", this.template);
-			}
-			else if (this.itemText != null && !this.itemText.transform.IsChildOf(componentInChildren.transform))
-			{
-				this.validTemplate = false;
-				Debug.LogError("The dropdown template is not valid. The Item Text must be on the item GameObject or children of it.", this.template);
-			}
-			else if (this.itemImage != null && !this.itemImage.transform.IsChildOf(componentInChildren.transform))
-			{
-				this.validTemplate = false;
-				Debug.LogError("The dropdown template is not valid. The Item Image must be on the item GameObject or children of it.", this.template);
-			}
-			if (!this.validTemplate)
-			{
-				gameObject.SetActive(false);
-				return;
-			}
-			Dropdown.DropdownItem dropdownItem = componentInChildren.gameObject.AddComponent<Dropdown.DropdownItem>();
-			dropdownItem.text = this.m_ItemText;
-			dropdownItem.image = this.m_ItemImage;
-			dropdownItem.toggle = componentInChildren;
-			dropdownItem.rectTransform = (RectTransform)componentInChildren.transform;
-			Canvas orAddComponent = Dropdown.GetOrAddComponent<Canvas>(gameObject);
-			orAddComponent.overrideSorting = true;
-			orAddComponent.sortingOrder = 30000;
-			Dropdown.GetOrAddComponent<GraphicRaycaster>(gameObject);
-			Dropdown.GetOrAddComponent<CanvasGroup>(gameObject);
-			gameObject.SetActive(false);
-			this.validTemplate = true;
 		}
 
 		private static T GetOrAddComponent<T>(GameObject go) where T : Component
@@ -317,115 +321,113 @@ namespace UnityEngine.UI
 
 		public void Show()
 		{
-			if (!this.IsActive() || !this.IsInteractable() || this.m_Dropdown != null)
+			if (this.IsActive() && this.IsInteractable() && !(this.m_Dropdown != null))
 			{
-				return;
-			}
-			if (!this.validTemplate)
-			{
-				this.SetupTemplate();
 				if (!this.validTemplate)
 				{
-					return;
-				}
-			}
-			List<Canvas> list = ListPool<Canvas>.Get();
-			base.gameObject.GetComponentsInParent<Canvas>(false, list);
-			if (list.Count == 0)
-			{
-				return;
-			}
-			Canvas canvas = list[0];
-			ListPool<Canvas>.Release(list);
-			this.m_Template.gameObject.SetActive(true);
-			this.m_Dropdown = this.CreateDropdownList(this.m_Template.gameObject);
-			this.m_Dropdown.name = "Dropdown List";
-			this.m_Dropdown.SetActive(true);
-			RectTransform rectTransform = this.m_Dropdown.transform as RectTransform;
-			rectTransform.SetParent(this.m_Template.transform.parent, false);
-			Dropdown.DropdownItem componentInChildren = this.m_Dropdown.GetComponentInChildren<Dropdown.DropdownItem>();
-			GameObject gameObject = componentInChildren.rectTransform.parent.gameObject;
-			RectTransform rectTransform2 = gameObject.transform as RectTransform;
-			componentInChildren.rectTransform.gameObject.SetActive(true);
-			Rect rect = rectTransform2.rect;
-			Rect rect2 = componentInChildren.rectTransform.rect;
-			Vector2 vector = rect2.min - rect.min + componentInChildren.rectTransform.localPosition;
-			Vector2 vector2 = rect2.max - rect.max + componentInChildren.rectTransform.localPosition;
-			Vector2 size = rect2.size;
-			this.m_Items.Clear();
-			Toggle toggle = null;
-			for (int i = 0; i < this.options.Count; i++)
-			{
-				Dropdown.OptionData data = this.options[i];
-				Dropdown.DropdownItem item = this.AddItem(data, this.value == i, componentInChildren, this.m_Items);
-				if (!(item == null))
-				{
-					item.toggle.isOn = (this.value == i);
-					item.toggle.onValueChanged.AddListener(delegate(bool x)
+					this.SetupTemplate();
+					if (!this.validTemplate)
 					{
-						this.OnSelectItem(item.toggle);
-					});
-					if (item.toggle.isOn)
-					{
-						item.toggle.Select();
-					}
-					if (toggle != null)
-					{
-						Navigation navigation = toggle.navigation;
-						Navigation navigation2 = item.toggle.navigation;
-						navigation.mode = Navigation.Mode.Explicit;
-						navigation2.mode = Navigation.Mode.Explicit;
-						navigation.selectOnDown = item.toggle;
-						navigation.selectOnRight = item.toggle;
-						navigation2.selectOnLeft = toggle;
-						navigation2.selectOnUp = toggle;
-						toggle.navigation = navigation;
-						item.toggle.navigation = navigation2;
-					}
-					toggle = item.toggle;
-				}
-			}
-			Vector2 sizeDelta = rectTransform2.sizeDelta;
-			sizeDelta.y = size.y * (float)this.m_Items.Count + vector.y - vector2.y;
-			rectTransform2.sizeDelta = sizeDelta;
-			float num = rectTransform.rect.height - rectTransform2.rect.height;
-			if (num > 0f)
-			{
-				rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y - num);
-			}
-			Vector3[] array = new Vector3[4];
-			rectTransform.GetWorldCorners(array);
-			RectTransform rectTransform3 = canvas.transform as RectTransform;
-			Rect rect3 = rectTransform3.rect;
-			for (int j = 0; j < 2; j++)
-			{
-				bool flag = false;
-				for (int k = 0; k < 4; k++)
-				{
-					Vector3 vector3 = rectTransform3.InverseTransformPoint(array[k]);
-					if (vector3[j] < rect3.min[j] || vector3[j] > rect3.max[j])
-					{
-						flag = true;
-						break;
+						return;
 					}
 				}
-				if (flag)
+				List<Canvas> list = ListPool<Canvas>.Get();
+				base.gameObject.GetComponentsInParent<Canvas>(false, list);
+				if (list.Count != 0)
 				{
-					RectTransformUtility.FlipLayoutOnAxis(rectTransform, j, false, false);
+					Canvas canvas = list[0];
+					ListPool<Canvas>.Release(list);
+					this.m_Template.gameObject.SetActive(true);
+					this.m_Dropdown = this.CreateDropdownList(this.m_Template.gameObject);
+					this.m_Dropdown.name = "Dropdown List";
+					this.m_Dropdown.SetActive(true);
+					RectTransform rectTransform = this.m_Dropdown.transform as RectTransform;
+					rectTransform.SetParent(this.m_Template.transform.parent, false);
+					Dropdown.DropdownItem componentInChildren = this.m_Dropdown.GetComponentInChildren<Dropdown.DropdownItem>();
+					GameObject gameObject = componentInChildren.rectTransform.parent.gameObject;
+					RectTransform rectTransform2 = gameObject.transform as RectTransform;
+					componentInChildren.rectTransform.gameObject.SetActive(true);
+					Rect rect = rectTransform2.rect;
+					Rect rect2 = componentInChildren.rectTransform.rect;
+					Vector2 vector = rect2.min - rect.min + componentInChildren.rectTransform.localPosition;
+					Vector2 vector2 = rect2.max - rect.max + componentInChildren.rectTransform.localPosition;
+					Vector2 size = rect2.size;
+					this.m_Items.Clear();
+					Toggle toggle = null;
+					for (int i = 0; i < this.options.Count; i++)
+					{
+						Dropdown.OptionData data = this.options[i];
+						Dropdown.DropdownItem item = this.AddItem(data, this.value == i, componentInChildren, this.m_Items);
+						if (!(item == null))
+						{
+							item.toggle.isOn = (this.value == i);
+							item.toggle.onValueChanged.AddListener(delegate(bool x)
+							{
+								this.OnSelectItem(item.toggle);
+							});
+							if (item.toggle.isOn)
+							{
+								item.toggle.Select();
+							}
+							if (toggle != null)
+							{
+								Navigation navigation = toggle.navigation;
+								Navigation navigation2 = item.toggle.navigation;
+								navigation.mode = Navigation.Mode.Explicit;
+								navigation2.mode = Navigation.Mode.Explicit;
+								navigation.selectOnDown = item.toggle;
+								navigation.selectOnRight = item.toggle;
+								navigation2.selectOnLeft = toggle;
+								navigation2.selectOnUp = toggle;
+								toggle.navigation = navigation;
+								item.toggle.navigation = navigation2;
+							}
+							toggle = item.toggle;
+						}
+					}
+					Vector2 sizeDelta = rectTransform2.sizeDelta;
+					sizeDelta.y = size.y * (float)this.m_Items.Count + vector.y - vector2.y;
+					rectTransform2.sizeDelta = sizeDelta;
+					float num = rectTransform.rect.height - rectTransform2.rect.height;
+					if (num > 0f)
+					{
+						rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y - num);
+					}
+					Vector3[] array = new Vector3[4];
+					rectTransform.GetWorldCorners(array);
+					RectTransform rectTransform3 = canvas.transform as RectTransform;
+					Rect rect3 = rectTransform3.rect;
+					for (int j = 0; j < 2; j++)
+					{
+						bool flag = false;
+						for (int k = 0; k < 4; k++)
+						{
+							Vector3 vector3 = rectTransform3.InverseTransformPoint(array[k]);
+							if (vector3[j] < rect3.min[j] || vector3[j] > rect3.max[j])
+							{
+								flag = true;
+								break;
+							}
+						}
+						if (flag)
+						{
+							RectTransformUtility.FlipLayoutOnAxis(rectTransform, j, false, false);
+						}
+					}
+					for (int l = 0; l < this.m_Items.Count; l++)
+					{
+						RectTransform rectTransform4 = this.m_Items[l].rectTransform;
+						rectTransform4.anchorMin = new Vector2(rectTransform4.anchorMin.x, 0f);
+						rectTransform4.anchorMax = new Vector2(rectTransform4.anchorMax.x, 0f);
+						rectTransform4.anchoredPosition = new Vector2(rectTransform4.anchoredPosition.x, vector.y + size.y * (float)(this.m_Items.Count - 1 - l) + size.y * rectTransform4.pivot.y);
+						rectTransform4.sizeDelta = new Vector2(rectTransform4.sizeDelta.x, size.y);
+					}
+					this.AlphaFadeList(0.15f, 0f, 1f);
+					this.m_Template.gameObject.SetActive(false);
+					componentInChildren.gameObject.SetActive(false);
+					this.m_Blocker = this.CreateBlocker(canvas);
 				}
 			}
-			for (int l = 0; l < this.m_Items.Count; l++)
-			{
-				RectTransform rectTransform4 = this.m_Items[l].rectTransform;
-				rectTransform4.anchorMin = new Vector2(rectTransform4.anchorMin.x, 0f);
-				rectTransform4.anchorMax = new Vector2(rectTransform4.anchorMax.x, 0f);
-				rectTransform4.anchoredPosition = new Vector2(rectTransform4.anchoredPosition.x, vector.y + size.y * (float)(this.m_Items.Count - 1 - l) + size.y * rectTransform4.pivot.y);
-				rectTransform4.sizeDelta = new Vector2(rectTransform4.sizeDelta.x, size.y);
-			}
-			this.AlphaFadeList(0.15f, 0f, 1f);
-			this.m_Template.gameObject.SetActive(false);
-			componentInChildren.gameObject.SetActive(false);
-			this.m_Blocker = this.CreateBlocker(canvas);
 		}
 
 		protected virtual GameObject CreateBlocker(Canvas rootCanvas)
@@ -478,7 +480,7 @@ namespace UnityEngine.UI
 			Dropdown.DropdownItem dropdownItem = this.CreateItem(itemTemplate);
 			dropdownItem.rectTransform.SetParent(itemTemplate.rectTransform.parent, false);
 			dropdownItem.gameObject.SetActive(true);
-			dropdownItem.gameObject.name = "Item " + items.Count + ((data.text == null) ? string.Empty : (": " + data.text));
+			dropdownItem.gameObject.name = "Item " + items.Count + ((data.text == null) ? "" : (": " + data.text));
 			if (dropdownItem.toggle != null)
 			{
 				dropdownItem.toggle.isOn = false;
@@ -504,29 +506,27 @@ namespace UnityEngine.UI
 
 		private void AlphaFadeList(float duration, float start, float end)
 		{
-			if (end.Equals(start))
+			if (!end.Equals(start))
 			{
-				return;
+				FloatTween info = new FloatTween
+				{
+					duration = duration,
+					startValue = start,
+					targetValue = end
+				};
+				info.AddOnChangedCallback(new UnityAction<float>(this.SetAlpha));
+				info.ignoreTimeScale = true;
+				this.m_AlphaTweenRunner.StartTween(info);
 			}
-			FloatTween info = new FloatTween
-			{
-				duration = duration,
-				startValue = start,
-				targetValue = end
-			};
-			info.AddOnChangedCallback(new UnityAction<float>(this.SetAlpha));
-			info.ignoreTimeScale = true;
-			this.m_AlphaTweenRunner.StartTween(info);
 		}
 
 		private void SetAlpha(float alpha)
 		{
-			if (!this.m_Dropdown)
+			if (this.m_Dropdown)
 			{
-				return;
+				CanvasGroup component = this.m_Dropdown.GetComponent<CanvasGroup>();
+				component.alpha = alpha;
 			}
-			CanvasGroup component = this.m_Dropdown.GetComponent<CanvasGroup>();
-			component.alpha = alpha;
 		}
 
 		public void Hide()
@@ -549,19 +549,15 @@ namespace UnityEngine.UI
 
 		private IEnumerator DelayedDestroyDropdownList(float delay)
 		{
-			float waitTime = Time.realtimeSinceStartup + delay;
-			while (Time.realtimeSinceStartup < waitTime)
-			{
-				yield return null;
-			}
+			yield return new WaitForSecondsRealtime(delay);
 			for (int i = 0; i < this.m_Items.Count; i++)
 			{
 				if (this.m_Items[i] != null)
 				{
 					this.DestroyItem(this.m_Items[i]);
 				}
-				this.m_Items.Clear();
 			}
+			this.m_Items.Clear();
 			if (this.m_Dropdown != null)
 			{
 				this.DestroyDropdownList(this.m_Dropdown);
@@ -587,15 +583,14 @@ namespace UnityEngine.UI
 					break;
 				}
 			}
-			if (num < 0)
+			if (num >= 0)
 			{
-				return;
+				this.value = num;
+				this.Hide();
 			}
-			this.value = num;
-			this.Hide();
 		}
 
-		protected internal class DropdownItem : MonoBehaviour, IEventSystemHandler, IPointerEnterHandler, ICancelHandler
+		protected internal class DropdownItem : MonoBehaviour, IPointerEnterHandler, ICancelHandler, IEventSystemHandler
 		{
 			[SerializeField]
 			private Text m_Text;

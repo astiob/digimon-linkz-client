@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IConnectionPointContainer" /> instead.</summary>
+	[Obsolete]
 	[Guid("b196b284-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[Obsolete]
 	[ComImport]
 	public interface UCOMIConnectionPointContainer
 	{

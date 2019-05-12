@@ -6,8 +6,8 @@ using System.Security.Permissions;
 namespace System.Security
 {
 	/// <summary>Defines the underlying structure of all code access permissions.</summary>
-	[MonoTODO("CAS support is experimental (and unsupported).")]
 	[ComVisible(true)]
+	[MonoTODO("CAS support is experimental (and unsupported).")]
 	[Serializable]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk
 	{

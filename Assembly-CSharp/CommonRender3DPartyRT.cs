@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,12 +19,25 @@ public class CommonRender3DPartyRT : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-		foreach (object obj in base.gameObject.transform)
+		IEnumerator enumerator = base.gameObject.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			if (transform.name == "Cam3D")
+			while (enumerator.MoveNext())
 			{
-				this.cam = transform.gameObject.GetComponent<Camera>();
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				if (transform.name == "Cam3D")
+				{
+					this.cam = transform.gameObject.GetComponent<Camera>();
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
 			}
 		}
 	}

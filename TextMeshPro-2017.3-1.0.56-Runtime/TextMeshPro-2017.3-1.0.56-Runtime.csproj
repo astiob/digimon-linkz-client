@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TMPro</RootNamespace>
+    <AssemblyName>TextMeshPro-2017.3-1.0.56-Runtime</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CaretInfo.cs" />
+    <Compile Include="CaretPosition.cs" />
+    <Compile Include="ColorTween.cs" />
+    <Compile Include="Compute_DistanceTransform_EventTypes.cs" />
+    <Compile Include="Compute_DT_EventArgs.cs" />
+    <Compile Include="Extents.cs" />
+    <Compile Include="FaceInfo.cs" />
+    <Compile Include="FastAction.2.cs" />
+    <Compile Include="FastAction.3.cs" />
+    <Compile Include="FastAction.4.cs" />
+    <Compile Include="FastAction.cs" />
+    <Compile Include="FloatTween.cs" />
+    <Compile Include="FontCreationSetting.cs" />
+    <Compile Include="FontStyles.cs" />
+    <Compile Include="FontWeights.cs" />
+    <Compile Include="GlyphValueRecord.cs" />
+    <Compile Include="ITextElement.cs" />
+    <Compile Include="ITweenValue.cs" />
+    <Compile Include="KerningPair.cs" />
+    <Compile Include="KerningPairKey.cs" />
+    <Compile Include="KerningTable.cs" />
+    <Compile Include="MaskingOffsetMode.cs" />
+    <Compile Include="MaskingTypes.cs" />
+    <Compile Include="MaterialReference.cs" />
+    <Compile Include="MaterialReferenceManager.cs" />
+    <Compile Include="Mesh_Extents.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetPropertyUtility.cs" />
+    <Compile Include="ShaderUtilities.cs" />
+    <Compile Include="SpriteAssetUtilities\SpriteAssetImportFormats.cs" />
+    <Compile Include="SpriteAssetUtilities\TexturePacker.cs" />
+    <Compile Include="TagAttribute.cs" />
+    <Compile Include="TagType.cs" />
+    <Compile Include="TagUnits.cs" />
+    <Compile Include="TextAlignmentOptions.cs" />
+    <Compile Include="TextContainer.cs" />
+    <Compile Include="TextContainerAnchors.cs" />
+    <Compile Include="TextMeshPro.cs" />
+    <Compile Include="TextMeshProUGUI.cs" />
+    <Compile Include="TextOverflowModes.cs" />
+    <Compile Include="TextRenderFlags.cs" />
+    <Compile Include="TextureMappingOptions.cs" />
+    <Compile Include="TMPro_EventManager.cs" />
+    <Compile Include="TMPro_ExtensionMethods.cs" />
+    <Compile Include="TMP_Asset.cs" />
+    <Compile Include="TMP_BasicXmlTagStack.cs" />
+    <Compile Include="TMP_CharacterInfo.cs" />
+    <Compile Include="TMP_ColorGradient.cs" />
+    <Compile Include="TMP_Compatibility.cs" />
+    <Compile Include="TMP_DefaultControls.cs" />
+    <Compile Include="TMP_Dropdown.cs" />
+    <Compile Include="TMP_FontAsset.cs" />
+    <Compile Include="TMP_FontUtilities.cs" />
+    <Compile Include="TMP_FontWeights.cs" />
+    <Compile Include="TMP_Glyph.cs" />
+    <Compile Include="TMP_InputField.cs" />
+    <Compile Include="TMP_InputValidator.cs" />
+    <Compile Include="TMP_LineInfo.cs" />
+    <Compile Include="TMP_LinkInfo.cs" />
+    <Compile Include="TMP_ListPool.cs" />
+    <Compile Include="TMP_MaterialManager.cs" />
+    <Compile Include="TMP_Math.cs" />
+    <Compile Include="TMP_MeshInfo.cs" />
+    <Compile Include="TMP_ObjectPool.cs" />
+    <Compile Include="TMP_PageInfo.cs" />
+    <Compile Include="TMP_ScrollbarEventHandler.cs" />
+    <Compile Include="TMP_SelectionCaret.cs" />
+    <Compile Include="TMP_Settings.cs" />
+    <Compile Include="TMP_Sprite.cs" />
+    <Compile Include="TMP_SpriteAnimator.cs" />
+    <Compile Include="TMP_SpriteAsset.cs" />
+    <Compile Include="TMP_SpriteInfo.cs" />
+    <Compile Include="TMP_Style.cs" />
+    <Compile Include="TMP_StyleSheet.cs" />
+    <Compile Include="TMP_SubMesh.cs" />
+    <Compile Include="TMP_SubMeshUI.cs" />
+    <Compile Include="TMP_Text.cs" />
+    <Compile Include="TMP_TextElement.cs" />
+    <Compile Include="TMP_TextElementType.cs" />
+    <Compile Include="TMP_TextInfo.cs" />
+    <Compile Include="TMP_TextUtilities.cs" />
+    <Compile Include="TMP_UpdateManager.cs" />
+    <Compile Include="TMP_UpdateRegistry.cs" />
+    <Compile Include="TMP_Vertex.cs" />
+    <Compile Include="TMP_VertexDataUpdateFlags.cs" />
+    <Compile Include="TMP_WordInfo.cs" />
+    <Compile Include="TMP_XmlTagStack.cs" />
+    <Compile Include="TweenRunner.cs" />
+    <Compile Include="VertexGradient.cs" />
+    <Compile Include="VertexSortingOrder.cs" />
+    <Compile Include="WordWrapState.cs" />
+    <Compile Include="XML_TagAttribute.cs" />
+    <Compile Include="_HorizontalAlignmentOptions.cs" />
+    <Compile Include="_VerticalAlignmentOptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Core\System.Core.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Name>System.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Name>System</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857996}</Project>
+      <Name>UnityEngine.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797D}</Project>
+      <Name>UnityEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

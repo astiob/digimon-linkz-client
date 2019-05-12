@@ -50,7 +50,7 @@ namespace UnityEngine.Networking
 			NetworkCRC.singleton.m_Scripts.Clear();
 			foreach (Type type in callingAssembly.GetTypes())
 			{
-				if (type.BaseType == typeof(NetworkBehaviour))
+				if (type.GetBaseType() == typeof(NetworkBehaviour))
 				{
 					MethodInfo method = type.GetMethod(".cctor", BindingFlags.Static);
 					if (method != null)
@@ -73,6 +73,7 @@ namespace UnityEngine.Networking
 
 		private bool ValidateInternal(CRCMessageEntry[] remoteScripts, int numChannels)
 		{
+			bool result;
 			if (this.m_Scripts.Count != remoteScripts.Length)
 			{
 				if (LogFilter.logWarn)
@@ -80,34 +81,52 @@ namespace UnityEngine.Networking
 					Debug.LogWarning("Network configuration mismatch detected. The number of networked scripts on the client does not match the number of networked scripts on the server. This could be caused by lazy loading of scripts on the client. This warning can be disabled by the checkbox in NetworkManager Script CRC Check.");
 				}
 				this.Dump(remoteScripts);
-				return false;
+				result = false;
 			}
-			foreach (CRCMessageEntry crcmessageEntry in remoteScripts)
+			else
 			{
-				if (LogFilter.logDebug)
+				foreach (CRCMessageEntry crcmessageEntry in remoteScripts)
 				{
-					Debug.Log(string.Concat(new object[]
+					if (LogFilter.logDebug)
 					{
-						"Script: ",
-						crcmessageEntry.name,
-						" Channel: ",
-						crcmessageEntry.channel
-					}));
-				}
-				if (this.m_Scripts.ContainsKey(crcmessageEntry.name))
-				{
-					int num = this.m_Scripts[crcmessageEntry.name];
-					if (num != (int)crcmessageEntry.channel)
+						Debug.Log(string.Concat(new object[]
+						{
+							"Script: ",
+							crcmessageEntry.name,
+							" Channel: ",
+							crcmessageEntry.channel
+						}));
+					}
+					if (this.m_Scripts.ContainsKey(crcmessageEntry.name))
+					{
+						int num = this.m_Scripts[crcmessageEntry.name];
+						if (num != (int)crcmessageEntry.channel)
+						{
+							if (LogFilter.logError)
+							{
+								Debug.LogError(string.Concat(new object[]
+								{
+									"HLAPI CRC Channel Mismatch. Script: ",
+									crcmessageEntry.name,
+									" LocalChannel: ",
+									num,
+									" RemoteChannel: ",
+									crcmessageEntry.channel
+								}));
+							}
+							this.Dump(remoteScripts);
+							return false;
+						}
+					}
+					if ((int)crcmessageEntry.channel >= numChannels)
 					{
 						if (LogFilter.logError)
 						{
 							Debug.LogError(string.Concat(new object[]
 							{
-								"HLAPI CRC Channel Mismatch. Script: ",
+								"HLAPI CRC channel out of range! Script: ",
 								crcmessageEntry.name,
-								" LocalChannel: ",
-								num,
-								" RemoteChannel: ",
+								" Channel: ",
 								crcmessageEntry.channel
 							}));
 						}
@@ -115,23 +134,9 @@ namespace UnityEngine.Networking
 						return false;
 					}
 				}
-				if ((int)crcmessageEntry.channel >= numChannels)
-				{
-					if (LogFilter.logError)
-					{
-						Debug.LogError(string.Concat(new object[]
-						{
-							"HLAPI CRC channel out of range! Script: ",
-							crcmessageEntry.name,
-							" Channel: ",
-							crcmessageEntry.channel
-						}));
-					}
-					this.Dump(remoteScripts);
-					return false;
-				}
+				result = true;
 			}
-			return true;
+			return result;
 		}
 
 		private void Dump(CRCMessageEntry[] remoteScripts)

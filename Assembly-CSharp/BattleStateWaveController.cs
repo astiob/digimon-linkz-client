@@ -35,8 +35,12 @@ public class BattleStateWaveController : BattleStateBase
 					characterStateControl.CharacterParams.gameObject.SetActive(false);
 				}
 			}
-			base.stateManager.threeDAction.StopHitEffectAction(base.battleStateData.enemiesDeathEffect);
-			base.stateManager.threeDAction.StopHitEffectAction(base.battleStateData.enemiesLastDeadEffect);
+			base.stateManager.threeDAction.StopHitEffectAction(base.battleStateData.UseDeathEffect.ToArray());
+			base.stateManager.threeDAction.StopHitEffectAction(base.battleStateData.UseLastDeadEffect.ToArray());
+			BattleEffectManager.Instance.ReturnEffect(base.battleStateData.UseDeathEffect.ToArray());
+			BattleEffectManager.Instance.ReturnEffect(base.battleStateData.UseLastDeadEffect.ToArray());
+			base.battleStateData.UseDeathEffect.Clear();
+			base.battleStateData.UseLastDeadEffect.Clear();
 		}
 		base.battleStateData.currentRoundNumber = 1;
 		base.battleStateData.currentWaveNumber++;

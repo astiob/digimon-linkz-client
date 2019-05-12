@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	/// <summary>Provides the managed definition of the IBindCtx interface.</summary>
-	[Guid("0000000e-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("0000000e-0000-0000-c000-000000000046")]
 	[ComImport]
 	public interface IBindCtx
 	{

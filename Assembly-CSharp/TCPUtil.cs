@@ -8,6 +8,10 @@ using UnityEngine;
 
 public class TCPUtil : Singleton<TCPUtil>, INpCloud
 {
+	private string projectId = "gsdigimon";
+
+	private string SocketCtrl = "socket/ActiveController";
+
 	private const string MESSAGE_KEY_ERROR = "errorMsg";
 
 	private const string MESSAGE_KEY_DEFAULT = "activityList";
@@ -17,10 +21,6 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 	public const string TCP_SHARDING_PVP = "pvp";
 
 	public const string TCP_SHARDING_MULTI = "multi";
-
-	private string projectId = "gsdigimon";
-
-	private string SocketCtrl = "socket/ActiveController";
 
 	private string myUserId;
 
@@ -440,10 +440,23 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 	{
 		TCPUtil.isTCPSending = false;
 		this.confirmationChecks = new Dictionary<TCPMessageType, List<string>>();
-		foreach (object obj in Enum.GetValues(typeof(TCPMessageType)))
+		IEnumerator enumerator = Enum.GetValues(typeof(TCPMessageType)).GetEnumerator();
+		try
 		{
-			TCPMessageType key = (TCPMessageType)((int)obj);
-			this.confirmationChecks[key] = new List<string>();
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				TCPMessageType key = (TCPMessageType)obj;
+				this.confirmationChecks[key] = new List<string>();
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -472,9 +485,9 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		TCPUtil.isTCPSending = true;
 		int waitingCount = 0;
 		List<int> InsistentlySendUserIdList = new List<int>();
-		foreach (int user in TCPSendUserIdList)
+		foreach (int item in TCPSendUserIdList)
 		{
-			InsistentlySendUserIdList.Add(user);
+			InsistentlySendUserIdList.Add(item);
 		}
 		for (;;)
 		{
@@ -484,9 +497,9 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 				this.myUserId,
 				waitingCount
 			});
-			for (int ci = 0; ci < this.confirmationChecks[tcpMessageType].Count; ci++)
+			for (int i = 0; i < this.confirmationChecks[tcpMessageType].Count; i++)
 			{
-				InsistentlySendUserIdList.Remove(int.Parse(this.confirmationChecks[tcpMessageType][ci]));
+				InsistentlySendUserIdList.Remove(int.Parse(this.confirmationChecks[tcpMessageType][i]));
 			}
 			bool sendResult = this.SendMessageForTarget(tcpMessageType, message, InsistentlySendUserIdList, TCPKey);
 			yield return AppCoroutine.Start(Util.WaitForRealTime(1f), false);

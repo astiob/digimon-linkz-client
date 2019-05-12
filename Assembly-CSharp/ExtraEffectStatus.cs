@@ -1,6 +1,7 @@
 ﻿using BattleStateMachineInternal;
 using Monster;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -383,15 +384,28 @@ public class ExtraEffectStatus : EffectStatusBase
 		if (currentSufferState != null)
 		{
 			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, 0, effectType));
-			foreach (object obj in Enum.GetValues(typeof(SufferStateProperty.SufferType)))
+			IEnumerator enumerator3 = Enum.GetValues(typeof(SufferStateProperty.SufferType)).GetEnumerator();
+			try
 			{
-				SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)((int)obj);
-				if (sufferType != SufferStateProperty.SufferType.Null)
+				while (enumerator3.MoveNext())
 				{
-					if (currentSufferState.FindSufferState(sufferType))
+					object obj = enumerator3.Current;
+					SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)obj;
+					if (sufferType != SufferStateProperty.SufferType.Null)
 					{
-						list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, (int)sufferType, effectType));
+						if (currentSufferState.FindSufferState(sufferType))
+						{
+							list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, (int)sufferType, effectType));
+						}
 					}
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator3 as IDisposable)) != null)
+				{
+					disposable.Dispose();
 				}
 			}
 		}

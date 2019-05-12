@@ -19,17 +19,23 @@ namespace MonsterIcon
 		public void SetPlayerIndex(int playerIndex)
 		{
 			this.sprite.enabled = true;
-			switch (playerIndex)
+			if (playerIndex != 0)
 			{
-			case 0:
+				if (playerIndex != 1)
+				{
+					if (playerIndex == 2)
+					{
+						this.sprite.spriteName = "MultiBattle_P3";
+					}
+				}
+				else
+				{
+					this.sprite.spriteName = "MultiBattle_P2";
+				}
+			}
+			else
+			{
 				this.sprite.spriteName = "MultiBattle_P1";
-				break;
-			case 1:
-				this.sprite.spriteName = "MultiBattle_P2";
-				break;
-			case 2:
-				this.sprite.spriteName = "MultiBattle_P3";
-				break;
 			}
 		}
 

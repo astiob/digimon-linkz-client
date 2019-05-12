@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Provides control over the casing of names when exported to a type library.</summary>
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("fa1f3615-acb9-486d-9eac-1bef87e36b09")]
 	[ComVisible(true)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITypeLibExporterNameProvider
 	{
 		/// <summary>Returns a list of names to control the casing of.</summary>

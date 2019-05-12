@@ -296,11 +296,10 @@ public class StoreInit : MonoBehaviour
 			this.getProductsSucceed = false;
 			return null;
 		}));
-		Action<Exception> onFailed = delegate(Exception nop)
+		return productsID2.Run(null, delegate(Exception nop)
 		{
 			this.getProductsSucceed = false;
-		};
-		return productsID2.Run(null, onFailed, null);
+		}, null);
 	}
 
 	public enum STATUS

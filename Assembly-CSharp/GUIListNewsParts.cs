@@ -43,20 +43,26 @@ public class GUIListNewsParts : GUIListPartBS
 		base.ShowGUI();
 		string arg = string.Empty;
 		string groupType = this.Data.groupType;
-		switch (groupType)
+		if (groupType != null)
 		{
-		case "1":
-			arg = StringMaster.GetString("InfomationTitle");
-			goto IL_C3;
-		case "2":
-			arg = StringMaster.GetString("InfomationUpdate");
-			goto IL_C3;
-		case "3":
-			arg = StringMaster.GetString("InfomationEvent");
-			goto IL_C3;
+			if (groupType == "1")
+			{
+				arg = StringMaster.GetString("InfomationTitle");
+				goto IL_93;
+			}
+			if (groupType == "2")
+			{
+				arg = StringMaster.GetString("InfomationUpdate");
+				goto IL_93;
+			}
+			if (groupType == "3")
+			{
+				arg = StringMaster.GetString("InfomationEvent");
+				goto IL_93;
+			}
 		}
 		arg = StringMaster.GetString("InfomationOther");
-		IL_C3:
+		IL_93:
 		this.newsTitle.text = string.Format(StringMaster.GetString("InfomationSubTitle"), arg);
 		this.newsDetails.text = this.Data.title;
 		string text = string.Empty;

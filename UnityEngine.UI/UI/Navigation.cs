@@ -14,16 +14,16 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private Selectable m_SelectOnUp;
 
-		[SerializeField]
 		[FormerlySerializedAs("selectOnDown")]
+		[SerializeField]
 		private Selectable m_SelectOnDown;
 
 		[FormerlySerializedAs("selectOnLeft")]
 		[SerializeField]
 		private Selectable m_SelectOnLeft;
 
-		[SerializeField]
 		[FormerlySerializedAs("selectOnRight")]
+		[SerializeField]
 		private Selectable m_SelectOnRight;
 
 		public Navigation.Mode mode

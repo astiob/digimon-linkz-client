@@ -283,6 +283,10 @@ namespace BattleStateMachineInternal
 				return AffectEffect.HpSettingPercentage;
 			case 69:
 				return AffectEffect.Escape;
+			case 70:
+				return AffectEffect.Nothing;
+			case 71:
+				return AffectEffect.RefHpRateNonAttribute;
 			default:
 				global::Debug.LogError("AffectEffectの値が不正です. (" + value + ")");
 				return AffectEffect.Damage;
@@ -298,30 +302,6 @@ namespace BattleStateMachineInternal
 		{
 			switch (value)
 			{
-			case 39:
-				return PowerType.Fixable;
-			default:
-				if (value == 14)
-				{
-					return PowerType.Fixable;
-				}
-				if (value == 23)
-				{
-					return PowerType.Fixable;
-				}
-				if (value == 58)
-				{
-					return PowerType.Fixable;
-				}
-				if (value != 67)
-				{
-					return PowerType.Percentage;
-				}
-				return PowerType.Fixable;
-			case 41:
-				return PowerType.Fixable;
-			case 42:
-				return PowerType.Fixable;
 			case 47:
 				return PowerType.Fixable;
 			case 48:
@@ -330,6 +310,35 @@ namespace BattleStateMachineInternal
 				return PowerType.Fixable;
 			case 50:
 				return PowerType.Fixable;
+			default:
+				switch (value)
+				{
+				case 39:
+					return PowerType.Fixable;
+				default:
+					if (value == 14)
+					{
+						return PowerType.Fixable;
+					}
+					if (value == 23)
+					{
+						return PowerType.Fixable;
+					}
+					if (value == 58)
+					{
+						return PowerType.Fixable;
+					}
+					if (value != 67)
+					{
+						return PowerType.Percentage;
+					}
+					return PowerType.Fixable;
+				case 41:
+					return PowerType.Fixable;
+				case 42:
+					return PowerType.Fixable;
+				}
+				break;
 			}
 		}
 
@@ -337,18 +346,18 @@ namespace BattleStateMachineInternal
 		{
 			switch (value)
 			{
-			case 34:
+			case 47:
+				return TechniqueType.Physics;
+			case 48:
+				return TechniqueType.Special;
+			case 49:
+				return TechniqueType.Physics;
+			case 50:
 				return TechniqueType.Special;
 			default:
 				switch (value)
 				{
-				case 47:
-					return TechniqueType.Physics;
-				case 48:
-					return TechniqueType.Special;
-				case 49:
-					return TechniqueType.Physics;
-				case 50:
+				case 34:
 					return TechniqueType.Special;
 				default:
 					switch (value)
@@ -365,29 +374,39 @@ namespace BattleStateMachineInternal
 						return TechniqueType.Special;
 					}
 					break;
+				case 36:
+					return TechniqueType.Physics;
+				case 37:
+					return TechniqueType.Special;
 				}
 				break;
-			case 36:
-				return TechniqueType.Physics;
-			case 37:
-				return TechniqueType.Special;
 			}
 		}
 
 		public static Strength IntToStrength(string value)
 		{
-			switch (value)
+			if (value != null)
 			{
-			case "-1":
-				return Strength.Weak;
-			case "0":
-				return Strength.None;
-			case "1":
-				return Strength.Strong;
-			case "2":
-				return Strength.Drain;
-			case "99":
-				return Strength.Invalid;
+				if (value == "-1")
+				{
+					return Strength.Weak;
+				}
+				if (value == "0")
+				{
+					return Strength.None;
+				}
+				if (value == "1")
+				{
+					return Strength.Strong;
+				}
+				if (value == "2")
+				{
+					return Strength.Drain;
+				}
+				if (value == "99")
+				{
+					return Strength.Invalid;
+				}
 			}
 			global::Debug.LogError("Strengthの値が不正です. (" + value + ")");
 			return Strength.None;

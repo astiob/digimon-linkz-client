@@ -96,8 +96,8 @@ namespace System
 		/// <summary>Gets a handle to the module that contains the type represented by the current instance.</summary>
 		/// <returns>A <see cref="T:System.ModuleHandle" /> structure representing a handle to the module that contains the type represented by the current instance.</returns>
 		/// <filterpriority>1</filterpriority>
-		[CLSCompliant(false)]
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+		[CLSCompliant(false)]
 		public ModuleHandle GetModuleHandle()
 		{
 			if (this.value == IntPtr.Zero)

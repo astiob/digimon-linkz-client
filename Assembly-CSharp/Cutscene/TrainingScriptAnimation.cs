@@ -90,10 +90,10 @@ namespace Cutscene
 			{
 				this.laserEffectList[i] = FxLaser.Create(resource, baseMonster.transform);
 				float rotationEulerAngleY = FxLaser.GetRotationEulerAngleY(materialNum, i);
-				this.laserEffectList[i].SetTransform(characterCenterTarget.localPosition.y, rotationEulerAngleY);
+				this.laserEffectList[i].SetTransform(characterCenterTarget.position.y, rotationEulerAngleY);
 			}
-			this.sphereParticle.transform.localPosition = characterCenterTarget.localPosition;
-			this.auraParticle.transform.localPosition = characterCenterTarget.localPosition;
+			this.sphereParticle.transform.position = characterCenterTarget.position;
+			this.auraParticle.transform.position = characterCenterTarget.position;
 		}
 
 		public bool IsPlaying()

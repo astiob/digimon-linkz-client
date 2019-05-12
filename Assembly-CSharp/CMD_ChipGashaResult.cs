@@ -24,8 +24,8 @@ public sealed class CMD_ChipGashaResult : CMD
 	[SerializeField]
 	private int iconNumX;
 
-	[SerializeField]
 	[Header("アイコン登場時間(フレーム数)")]
+	[SerializeField]
 	private int showChipInterval = 16;
 
 	[Header("BLUE エフェクト")]
@@ -36,8 +36,8 @@ public sealed class CMD_ChipGashaResult : CMD
 	[SerializeField]
 	private GameObject goEFC_GOLD;
 
-	[SerializeField]
 	[Header("RAINBOW エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_RAINBOW;
 
 	[Header("BG TEX")]
@@ -107,26 +107,25 @@ public sealed class CMD_ChipGashaResult : CMD
 
 	private void CreateChipIconEffect()
 	{
-		CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey395 <CreateChipIconEffect>c__AnonStorey = new CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey395();
-		<CreateChipIconEffect>c__AnonStorey.<>f__this = this;
+		CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey1 <CreateChipIconEffect>c__AnonStorey = new CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey1();
+		<CreateChipIconEffect>c__AnonStorey.$this = this;
 		<CreateChipIconEffect>c__AnonStorey.i = 0;
 		while (<CreateChipIconEffect>c__AnonStorey.i < CMD_ChipGashaResult.UserChipList.Count)
 		{
-			CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey396 <CreateChipIconEffect>c__AnonStorey2 = new CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey396();
-			<CreateChipIconEffect>c__AnonStorey2.<>f__ref$917 = <CreateChipIconEffect>c__AnonStorey;
-			<CreateChipIconEffect>c__AnonStorey2.<>f__this = this;
+			CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey2 <CreateChipIconEffect>c__AnonStorey2 = new CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey2();
+			<CreateChipIconEffect>c__AnonStorey2.<>f__ref$1 = <CreateChipIconEffect>c__AnonStorey;
 			<CreateChipIconEffect>c__AnonStorey2.effectPosition = this.goICON_START_POS.transform.localPosition;
 			float num = (float)(<CreateChipIconEffect>c__AnonStorey.i % this.iconNumX);
 			float num2 = (float)(<CreateChipIconEffect>c__AnonStorey.i / this.iconNumX);
-			CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey396 <CreateChipIconEffect>c__AnonStorey3 = <CreateChipIconEffect>c__AnonStorey2;
+			CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey2 <CreateChipIconEffect>c__AnonStorey3 = <CreateChipIconEffect>c__AnonStorey2;
 			<CreateChipIconEffect>c__AnonStorey3.effectPosition.x = <CreateChipIconEffect>c__AnonStorey3.effectPosition.x + this.iconOffset.x * num;
-			CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey396 <CreateChipIconEffect>c__AnonStorey4 = <CreateChipIconEffect>c__AnonStorey2;
+			CMD_ChipGashaResult.<CreateChipIconEffect>c__AnonStorey2 <CreateChipIconEffect>c__AnonStorey4 = <CreateChipIconEffect>c__AnonStorey2;
 			<CreateChipIconEffect>c__AnonStorey4.effectPosition.y = <CreateChipIconEffect>c__AnonStorey4.effectPosition.y + this.iconOffset.y * num2;
 			<CreateChipIconEffect>c__AnonStorey2.effectPosition.z = -5f;
 			<CreateChipIconEffect>c__AnonStorey2.chipMaster = ChipDataMng.GetChipMainData(CMD_ChipGashaResult.UserChipList[<CreateChipIconEffect>c__AnonStorey.i].chipId.ToString());
 			ChipDataMng.MakePrefabByChipData(<CreateChipIconEffect>c__AnonStorey2.chipMaster, this.goICON_START_POS, <CreateChipIconEffect>c__AnonStorey2.effectPosition, Vector3.one, delegate(ChipIcon icon)
 			{
-				<CreateChipIconEffect>c__AnonStorey2.<>f__this.OnLoadedChipIcon(CMD_ChipGashaResult.UserAssetList[<CreateChipIconEffect>c__AnonStorey2.<>f__ref$917.i], <CreateChipIconEffect>c__AnonStorey2.chipMaster, icon, <CreateChipIconEffect>c__AnonStorey2.effectPosition);
+				<CreateChipIconEffect>c__AnonStorey2.<>f__ref$1.$this.OnLoadedChipIcon(CMD_ChipGashaResult.UserAssetList[<CreateChipIconEffect>c__AnonStorey2.<>f__ref$1.i], <CreateChipIconEffect>c__AnonStorey2.chipMaster, icon, <CreateChipIconEffect>c__AnonStorey2.effectPosition);
 			}, -1, -1, true);
 			<CreateChipIconEffect>c__AnonStorey.i++;
 		}
@@ -148,10 +147,9 @@ public sealed class CMD_ChipGashaResult : CMD
 			};
 		}
 		ChipEfc chipEfc = this.CreateTicketEffect(loadChipInfo.effectType, base.transform, effectPosition);
-		Vector3 localScale = chipIcon.transform.localScale;
 		chipIcon.transform.parent = chipEfc.goCHIP_THUMB.transform;
 		chipIcon.transform.localPosition = chipEfc.goCHIP_THUMB.transform.localPosition;
-		chipIcon.transform.localScale = localScale;
+		chipIcon.transform.localScale = Vector3.one;
 		chipEfc.goCHIP_THUMB.GetComponent<UITexture>().enabled = false;
 		chipEfc.spNew.enabled = (1 == loadChipInfo.isNew);
 		this.chipEffectList.Add(chipEfc);
@@ -160,23 +158,26 @@ public sealed class CMD_ChipGashaResult : CMD
 	private ChipEfc CreateTicketEffect(string effectType, Transform parentTransform, Vector3 effectPosition)
 	{
 		GameObject original;
-		switch (effectType)
+		if (effectType != null && !(effectType == "1"))
 		{
-		case "2":
-			original = this.goEFC_GOLD;
-			goto IL_9B;
-		case "3":
-			original = this.goEFC_RAINBOW;
-			goto IL_9B;
+			if (effectType == "2")
+			{
+				original = this.goEFC_GOLD;
+				goto IL_61;
+			}
+			if (effectType == "3")
+			{
+				original = this.goEFC_RAINBOW;
+				goto IL_61;
+			}
 		}
 		original = this.goEFC_BLUE;
-		IL_9B:
+		IL_61:
 		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
-		Vector3 localScale = gameObject.transform.localScale;
 		gameObject.SetActive(true);
 		gameObject.transform.parent = parentTransform;
 		gameObject.transform.localPosition = effectPosition;
-		gameObject.transform.localScale = localScale;
+		gameObject.transform.localScale = Vector3.one;
 		ChipEfc component = gameObject.GetComponent<ChipEfc>();
 		component.enabled = true;
 		return component;
@@ -261,7 +262,24 @@ public sealed class CMD_ChipGashaResult : CMD
 		}
 		else
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_ChipGashaResult", null);
+			CMD_ChipGashaResult cmd_ChipGashaResult = GUIMain.ShowCommonDialog(null, "CMD_ChipGashaResult", null) as CMD_ChipGashaResult;
+			cmd_ChipGashaResult.startButton.gameObject.SetActive(false);
+		}
+	}
+
+	public void OnOpenMenuReceiver()
+	{
+		for (int i = 0; i < this.chipEffectList.Count; i++)
+		{
+			this.chipEffectList[i].EnableParticle(false);
+		}
+	}
+
+	public void OnCloseMenuReceiver()
+	{
+		for (int i = 0; i < this.chipEffectList.Count; i++)
+		{
+			this.chipEffectList[i].EnableParticle(true);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CMD : CommonDialog
@@ -102,6 +103,9 @@ public class CMD : CommonDialog
 	private bool isReActing;
 
 	private bool isParentActing;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public PartsTitleBase PartsTitle
 	{
@@ -205,25 +209,51 @@ public class CMD : CommonDialog
 		}
 		if (null != this.goEFC_BG)
 		{
-			foreach (object obj in this.goEFC_BG.transform)
+			IEnumerator enumerator = this.goEFC_BG.transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				this.ecEFC_BG = transform.gameObject.GetComponent<EfcCont>();
-				if (null == this.ecEFC_BG)
+				while (enumerator.MoveNext())
 				{
-					this.ecEFC_BG = transform.gameObject.AddComponent<EfcCont>();
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					this.ecEFC_BG = transform.gameObject.GetComponent<EfcCont>();
+					if (null == this.ecEFC_BG)
+					{
+						this.ecEFC_BG = transform.gameObject.AddComponent<EfcCont>();
+					}
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
 				}
 			}
 		}
 		if (null != this.goEFC_CTR)
 		{
-			foreach (object obj2 in this.goEFC_CTR.transform)
+			IEnumerator enumerator2 = this.goEFC_CTR.transform.GetEnumerator();
+			try
 			{
-				Transform transform2 = (Transform)obj2;
-				this.ecEFC_CTR = transform2.gameObject.GetComponent<EfcCont>();
-				if (null == this.ecEFC_CTR)
+				while (enumerator2.MoveNext())
 				{
-					this.ecEFC_CTR = transform2.gameObject.AddComponent<EfcCont>();
+					object obj2 = enumerator2.Current;
+					Transform transform2 = (Transform)obj2;
+					this.ecEFC_CTR = transform2.gameObject.GetComponent<EfcCont>();
+					if (null == this.ecEFC_CTR)
+					{
+						this.ecEFC_CTR = transform2.gameObject.AddComponent<EfcCont>();
+					}
+				}
+			}
+			finally
+			{
+				IDisposable disposable2;
+				if ((disposable2 = (enumerator2 as IDisposable)) != null)
+				{
+					disposable2.Dispose();
 				}
 			}
 		}
@@ -670,7 +700,12 @@ public class CMD : CommonDialog
 		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartHelp(tutorialName, new Action(GUIMain.BarrierOFF));
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			if (CMD.<>f__mg$cache0 == null)
+			{
+				CMD.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartHelp(tutorialName, CMD.<>f__mg$cache0);
 		}
 	}
 }

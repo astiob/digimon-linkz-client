@@ -6,16 +6,16 @@ using UnityEngine;
 
 public class GUIListPartsQuestSelect : GUIListPartBS
 {
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
 	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("NEW スプライト")]
+	[SerializeField]
 	private UISprite spNew;
 
 	private QuestData.WorldAreaData areaData;

@@ -174,12 +174,10 @@ namespace Colosseum.Matching
 		{
 			return this.httpAPI.RequestOpponentReadyState(request as GameWebAPI.ColosseumPrepareStatusLogic, delegate(GameWebAPI.RespData_ColosseumPrepareStatusLogic response)
 			{
-				switch (response.GetResultCodeEnum)
+				GameWebAPI.RespData_ColosseumPrepareStatusLogic.PrepareStatusCode getResultCodeEnum = response.GetResultCodeEnum;
+				if (getResultCodeEnum == GameWebAPI.RespData_ColosseumPrepareStatusLogic.PrepareStatusCode.READY || getResultCodeEnum == GameWebAPI.RespData_ColosseumPrepareStatusLogic.PrepareStatusCode.CANT_START)
 				{
-				case GameWebAPI.RespData_ColosseumPrepareStatusLogic.PrepareStatusCode.READY:
-				case GameWebAPI.RespData_ColosseumPrepareStatusLogic.PrepareStatusCode.CANT_START:
 					this.eventListener.OnSyncMatchingFinish();
-					break;
 				}
 			});
 		}

@@ -22,8 +22,6 @@ public class BattleInitialize : BattleFunctionBase
 
 	public const string BattleInternalResourcesRootName = "BattleInternalResourcesRoot";
 
-	private Dictionary<string, List<HitEffectParams>> hitEffectObject = new Dictionary<string, List<HitEffectParams>>();
-
 	public void InitializeRoots()
 	{
 		base.battleStateData.characterRoot = new GameObject("CharacterRoot").transform;
@@ -89,25 +87,22 @@ public class BattleInitialize : BattleFunctionBase
 
 	public List<IEnumerator> LoadHitEffectsByFlags(SkillStatus[] skillStatusList)
 	{
-		List<IEnumerator> list = new List<IEnumerator>();
+		List<IEnumerator> result = new List<IEnumerator>();
+		this.SetHitEffectPool("EFF_COM_HIT_WEAK");
 		if (!base.stateManager.onEnableTutorial)
 		{
-			string hitEffectId = "EFF_COM_SPECIALATTACK_U";
-			IEnumerator item = this.LoadHitEffects(hitEffectId, AffectEffect.gimmickSpecialAttackUp, false);
-			list.Add(item);
-			string hitEffectId2 = "EFF_COM_SPECIALATTACK_D";
-			IEnumerator item2 = this.LoadHitEffects(hitEffectId2, AffectEffect.gimmickSpecialAttackDown, false);
-			list.Add(item2);
+			this.SetHitEffectPool("EFF_COM_SPECIALATTACK_U", AffectEffect.gimmickSpecialAttackUp.ToString());
+			this.SetHitEffectPool("EFF_COM_SPECIALATTACK_D", AffectEffect.gimmickSpecialAttackDown.ToString());
 		}
-		List<AffectEffect> list2 = new List<AffectEffect>();
+		List<AffectEffect> list = new List<AffectEffect>();
 		bool flag = false;
 		foreach (SkillStatus skillStatus in skillStatusList)
 		{
 			foreach (AffectEffectProperty affectEffectProperty in skillStatus.affectEffect)
 			{
-				if (!list2.Contains(affectEffectProperty.type))
+				if (!list.Contains(affectEffectProperty.type))
 				{
-					list2.Add(affectEffectProperty.type);
+					list.Add(affectEffectProperty.type);
 				}
 				if (affectEffectProperty.useDrain)
 				{
@@ -115,434 +110,248 @@ public class BattleInitialize : BattleFunctionBase
 				}
 			}
 		}
-		foreach (AffectEffect affectEffect in list2)
+		foreach (AffectEffect affectEffect in list)
 		{
 			if (affectEffect == AffectEffect.Damage)
 			{
-				string hitEffectId3 = "EFF_COM_HIT_NORMAL";
-				IEnumerator item3 = this.LoadHitEffects(hitEffectId3, AffectEffect.Damage, Strength.None, true);
-				list.Add(item3);
-				string hitEffectId4 = "EFF_COM_HIT_WEAK";
-				IEnumerator item4 = this.LoadHitEffects(hitEffectId4, AffectEffect.Damage, Strength.Strong, true);
-				list.Add(item4);
-				string hitEffectId5 = "EFF_COM_HIT_CRITICAL";
-				IEnumerator item5 = this.LoadHitEffects(hitEffectId5, AffectEffect.Damage, Strength.Weak, true);
-				list.Add(item5);
-				string hitEffectId6 = "EFF_COM_HIT_WEAK";
-				IEnumerator item6 = this.LoadHitEffects(hitEffectId6, AffectEffect.Damage, Strength.Invalid, true);
-				list.Add(item6);
-				string hitEffectId7 = "EFF_COM_HIT_WEAK";
-				IEnumerator item7 = this.LoadHitEffects(hitEffectId7, AffectEffect.Invalid, true);
-				list.Add(item7);
+				this.SetHitEffectPool("EFF_COM_HIT_NORMAL");
+				this.SetHitEffectPool("EFF_COM_HIT_WEAK");
+				this.SetHitEffectPool("EFF_COM_HIT_CRITICAL");
 				if (base.battleMode != BattleMode.Tutorial)
 				{
-					string hitEffectId8 = "EFF_COM_S_HEAL";
-					IEnumerator item8 = this.LoadHitEffects(hitEffectId8, AffectEffect.Damage, Strength.Drain, true);
-					list.Add(item8);
+					this.SetHitEffectPool("EFF_COM_S_HEAL");
 				}
 				if (flag)
 				{
-					string hitEffectId9 = "EFF_COM_M_HEAL";
-					IEnumerator item9 = this.LoadHitEffects(hitEffectId9, AffectEffect.HpRevival, true);
-					list.Add(item9);
+					this.SetHitEffectPool("EFF_COM_M_HEAL", AffectEffect.HpRevival.ToString());
 				}
 			}
 			else if (affectEffect == AffectEffect.AttackUp)
 			{
-				string hitEffectId10 = "EFF_COM_UP";
-				IEnumerator item10 = this.LoadHitEffects(hitEffectId10, AffectEffect.AttackUp, true);
-				list.Add(item10);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.AttackUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.AttackDown)
 			{
-				string hitEffectId11 = "EFF_COM_DOWN";
-				IEnumerator item11 = this.LoadHitEffects(hitEffectId11, AffectEffect.AttackDown, true);
-				list.Add(item11);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.AttackDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.SpAttackUp)
 			{
-				string hitEffectId12 = "EFF_COM_UP";
-				IEnumerator item12 = this.LoadHitEffects(hitEffectId12, AffectEffect.SpAttackUp, true);
-				list.Add(item12);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.SpAttackUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.SpAttackDown)
 			{
-				string hitEffectId13 = "EFF_COM_DOWN";
-				IEnumerator item13 = this.LoadHitEffects(hitEffectId13, AffectEffect.SpAttackDown, true);
-				list.Add(item13);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.SpAttackDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.DefenceUp)
 			{
-				string hitEffectId14 = "EFF_COM_UP";
-				IEnumerator item14 = this.LoadHitEffects(hitEffectId14, AffectEffect.DefenceUp, true);
-				list.Add(item14);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.DefenceUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.DefenceDown)
 			{
-				string hitEffectId15 = "EFF_COM_DOWN";
-				IEnumerator item15 = this.LoadHitEffects(hitEffectId15, AffectEffect.DefenceDown, true);
-				list.Add(item15);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.DefenceDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.SpDefenceUp)
 			{
-				string hitEffectId16 = "EFF_COM_UP";
-				IEnumerator item16 = this.LoadHitEffects(hitEffectId16, AffectEffect.SpDefenceUp, true);
-				list.Add(item16);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.SpDefenceUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.SpDefenceDown)
 			{
-				string hitEffectId17 = "EFF_COM_DOWN";
-				IEnumerator item17 = this.LoadHitEffects(hitEffectId17, AffectEffect.SpDefenceDown, true);
-				list.Add(item17);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.SpDefenceDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.PowerCharge)
 			{
-				string hitEffectId18 = "EFF_COM_SPIRIT";
-				IEnumerator item18 = this.LoadHitEffects(hitEffectId18, AffectEffect.PowerCharge, false);
-				list.Add(item18);
+				this.SetHitEffectPool("EFF_COM_SPIRIT", AffectEffect.PowerCharge.ToString());
 			}
 			else if (affectEffect == AffectEffect.Protect)
 			{
-				string hitEffectId19 = "EFF_COM_GUARD";
-				IEnumerator item19 = this.LoadHitEffects(hitEffectId19, AffectEffect.Protect, false);
-				list.Add(item19);
+				this.SetHitEffectPool("EFF_COM_GUARD", AffectEffect.Protect.ToString());
 			}
 			else if (affectEffect == AffectEffect.Destruct)
 			{
-				string hitEffectId20 = "EFF_COM_DEATH";
-				IEnumerator item20 = this.LoadHitEffects(hitEffectId20, AffectEffect.Destruct, false);
-				list.Add(item20);
+				this.SetHitEffectPool("EFF_COM_DEATH", AffectEffect.Destruct.ToString());
 			}
 			else if (affectEffect == AffectEffect.Poison)
 			{
-				string hitEffectId21 = "EFF_COM_POISONATTACK";
-				IEnumerator item21 = this.LoadHitEffects(hitEffectId21, AffectEffect.Poison, true);
-				list.Add(item21);
+				this.SetHitEffectPool("EFF_COM_POISONATTACK", AffectEffect.Poison.ToString());
 			}
 			else if (affectEffect == AffectEffect.Counter)
 			{
-				string hitEffectId22 = "EFF_COM_COUNTER_P";
-				IEnumerator item22 = this.LoadHitEffects(hitEffectId22, AffectEffect.Counter, false);
-				list.Add(item22);
+				this.SetHitEffectPool("EFF_COM_COUNTER_P", AffectEffect.Counter.ToString());
 			}
 			else if (affectEffect == AffectEffect.Reflection)
 			{
-				string hitEffectId23 = "EFF_COM_COUNTER_M";
-				IEnumerator item23 = this.LoadHitEffects(hitEffectId23, AffectEffect.Reflection, false);
-				list.Add(item23);
+				this.SetHitEffectPool("EFF_COM_COUNTER_M", AffectEffect.Reflection.ToString());
 			}
 			else if (affectEffect == AffectEffect.Confusion)
 			{
-				string hitEffectId24 = "EFF_COM_CONFUSIONATTACK";
-				IEnumerator item24 = this.LoadHitEffects(hitEffectId24, AffectEffect.Confusion, true);
-				list.Add(item24);
+				this.SetHitEffectPool("EFF_COM_CONFUSIONATTACK", AffectEffect.Confusion.ToString());
 			}
 			else if (affectEffect == AffectEffect.CorrectionUpReset)
 			{
-				string hitEffectId25 = "EFF_COM_DOWN";
-				IEnumerator item25 = this.LoadHitEffects(hitEffectId25, AffectEffect.CorrectionUpReset, true);
-				list.Add(item25);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.CorrectionUpReset.ToString());
 			}
 			else if (affectEffect == AffectEffect.CorrectionDownReset)
 			{
-				string hitEffectId26 = "EFF_COM_UP";
-				IEnumerator item26 = this.LoadHitEffects(hitEffectId26, AffectEffect.CorrectionDownReset, true);
-				list.Add(item26);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.CorrectionDownReset.ToString());
 			}
 			else if (affectEffect == AffectEffect.HateUp)
 			{
-				string hitEffectId27 = "EFF_COM_DOWN";
-				IEnumerator item27 = this.LoadHitEffects(hitEffectId27, AffectEffect.HateUp, false);
-				list.Add(item27);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.HateUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.HateDown)
 			{
-				string hitEffectId28 = "EFF_COM_UP";
-				IEnumerator item28 = this.LoadHitEffects(hitEffectId28, AffectEffect.HateDown, false);
-				list.Add(item28);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.HateDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.HitRateUp)
 			{
-				string hitEffectId29 = "EFF_COM_UP";
-				IEnumerator item29 = this.LoadHitEffects(hitEffectId29, AffectEffect.HitRateUp, true);
-				list.Add(item29);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.HitRateUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.HitRateDown)
 			{
-				string hitEffectId30 = "EFF_COM_DOWN";
-				IEnumerator item30 = this.LoadHitEffects(hitEffectId30, AffectEffect.HitRateDown, true);
-				list.Add(item30);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.HitRateDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.HpRevival || affectEffect == AffectEffect.HpSettingFixable || affectEffect == AffectEffect.HpSettingPercentage)
 			{
-				string hitEffectId31 = "EFF_COM_M_HEAL";
-				IEnumerator item31 = this.LoadHitEffects(hitEffectId31, AffectEffect.HpRevival, true);
-				list.Add(item31);
+				this.SetHitEffectPool("EFF_COM_M_HEAL", AffectEffect.HpRevival.ToString());
 			}
 			else if (affectEffect == AffectEffect.InstantDeath)
 			{
-				string hitEffectId32 = "EFF_COM_DEATHATTACK";
-				IEnumerator item32 = this.LoadHitEffects(hitEffectId32, AffectEffect.InstantDeath, true);
-				list.Add(item32);
+				this.SetHitEffectPool("EFF_COM_DEATHATTACK", AffectEffect.InstantDeath.ToString());
 			}
 			else if (affectEffect == AffectEffect.Paralysis)
 			{
-				string hitEffectId33 = "EFF_COM_PARALYSISATTACK";
-				IEnumerator item33 = this.LoadHitEffects(hitEffectId33, AffectEffect.Paralysis, true);
-				list.Add(item33);
+				this.SetHitEffectPool("EFF_COM_PARALYSISATTACK", AffectEffect.Paralysis.ToString());
 			}
 			else if (affectEffect == AffectEffect.Stun)
 			{
-				string hitEffectId34 = "EFF_COM_BUGATTACK";
-				IEnumerator item34 = this.LoadHitEffects(hitEffectId34, AffectEffect.Stun, true);
-				list.Add(item34);
+				this.SetHitEffectPool("EFF_COM_BUGATTACK", AffectEffect.Stun.ToString());
 			}
 			else if (affectEffect == AffectEffect.SufferStatusClear)
 			{
-				string hitEffectId35 = "EFF_COM_UP";
-				IEnumerator item35 = this.LoadHitEffects(hitEffectId35, AffectEffect.SufferStatusClear, true);
-				list.Add(item35);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.SufferStatusClear.ToString());
 			}
 			else if (affectEffect == AffectEffect.SpeedDown)
 			{
-				string hitEffectId36 = "EFF_COM_DOWN";
-				IEnumerator item36 = this.LoadHitEffects(hitEffectId36, AffectEffect.SpeedDown, true);
-				list.Add(item36);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.SpeedDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.SpeedUp)
 			{
-				string hitEffectId37 = "EFF_COM_UP";
-				IEnumerator item37 = this.LoadHitEffects(hitEffectId37, AffectEffect.SpeedUp, true);
-				list.Add(item37);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.SpeedUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.Sleep)
 			{
-				string hitEffectId38 = "EFF_COM_SLEEPATTACK";
-				IEnumerator item38 = this.LoadHitEffects(hitEffectId38, AffectEffect.Sleep, true);
-				list.Add(item38);
+				this.SetHitEffectPool("EFF_COM_SLEEPATTACK", AffectEffect.Sleep.ToString());
 			}
 			else if (affectEffect == AffectEffect.SkillLock)
 			{
-				string hitEffectId39 = "EFF_COM_CRYSTALATTACK";
-				IEnumerator item39 = this.LoadHitEffects(hitEffectId39, AffectEffect.SkillLock, true);
-				list.Add(item39);
+				this.SetHitEffectPool("EFF_COM_CRYSTALATTACK", AffectEffect.SkillLock.ToString());
 			}
 			else if (affectEffect == AffectEffect.SatisfactionRateDown)
 			{
-				string hitEffectId40 = "EFF_COM_DOWN";
-				IEnumerator item40 = this.LoadHitEffects(hitEffectId40, AffectEffect.SatisfactionRateDown, true);
-				list.Add(item40);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.SatisfactionRateDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.SatisfactionRateUp)
 			{
-				string hitEffectId41 = "EFF_COM_UP";
-				IEnumerator item41 = this.LoadHitEffects(hitEffectId41, AffectEffect.SatisfactionRateUp, true);
-				list.Add(item41);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.SatisfactionRateUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.ApRevival)
 			{
-				string hitEffectId42 = "EFF_COM_M_HEAL";
-				IEnumerator item42 = this.LoadHitEffects(hitEffectId42, AffectEffect.ApRevival, false);
-				list.Add(item42);
+				this.SetHitEffectPool("EFF_COM_M_HEAL", AffectEffect.ApRevival.ToString());
 			}
 			else if (affectEffect == AffectEffect.ApUp)
 			{
-				string hitEffectId43 = "EFF_COM_UP";
-				IEnumerator item43 = this.LoadHitEffects(hitEffectId43, AffectEffect.ApUp, false);
-				list.Add(item43);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.ApUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.ApDown)
 			{
-				string hitEffectId44 = "EFF_COM_DOWN";
-				IEnumerator item44 = this.LoadHitEffects(hitEffectId44, AffectEffect.ApDown, false);
-				list.Add(item44);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.ApDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.ApConsumptionUp)
 			{
-				string hitEffectId45 = "EFF_COM_DOWN";
-				IEnumerator item45 = this.LoadHitEffects(hitEffectId45, AffectEffect.ApConsumptionUp, false);
-				list.Add(item45);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.ApConsumptionUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.ApConsumptionDown)
 			{
-				string hitEffectId46 = "EFF_COM_UP";
-				IEnumerator item46 = this.LoadHitEffects(hitEffectId46, AffectEffect.ApConsumptionDown, false);
-				list.Add(item46);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.ApConsumptionDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.TurnBarrier)
 			{
-				string hitEffectId47 = "EFF_COM_GUARD";
-				IEnumerator item47 = this.LoadHitEffects(hitEffectId47, AffectEffect.TurnBarrier, true);
-				list.Add(item47);
+				this.SetHitEffectPool("EFF_COM_GUARD", AffectEffect.TurnBarrier.ToString());
 			}
 			else if (affectEffect == AffectEffect.CountBarrier)
 			{
-				string hitEffectId48 = "EFF_COM_GUARD";
-				IEnumerator item48 = this.LoadHitEffects(hitEffectId48, AffectEffect.CountBarrier, true);
-				list.Add(item48);
+				this.SetHitEffectPool("EFF_COM_GUARD", AffectEffect.CountBarrier.ToString());
 			}
 			else if (affectEffect == AffectEffect.CountGuard)
 			{
-				string hitEffectId49 = "EFF_COM_GUARD";
-				IEnumerator item49 = this.LoadHitEffects(hitEffectId49, AffectEffect.CountGuard, true);
-				list.Add(item49);
+				this.SetHitEffectPool("EFF_COM_GUARD", AffectEffect.CountGuard.ToString());
 			}
 			else if (affectEffect == AffectEffect.Recommand)
 			{
-				string hitEffectId50 = "EFF_COM_M_HEAL";
-				IEnumerator item50 = this.LoadHitEffects(hitEffectId50, AffectEffect.Recommand, false);
-				list.Add(item50);
+				this.SetHitEffectPool("EFF_COM_M_HEAL", AffectEffect.Recommand.ToString());
 			}
 			else if (affectEffect == AffectEffect.DamageRateUp)
 			{
-				string hitEffectId51 = "EFF_COM_UP";
-				IEnumerator item51 = this.LoadHitEffects(hitEffectId51, AffectEffect.DamageRateUp, true);
-				list.Add(item51);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.DamageRateUp.ToString());
 			}
 			else if (affectEffect == AffectEffect.DamageRateDown)
 			{
-				string hitEffectId52 = "EFF_COM_DOWN";
-				IEnumerator item52 = this.LoadHitEffects(hitEffectId52, AffectEffect.DamageRateDown, true);
-				list.Add(item52);
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.DamageRateDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.Regenerate)
 			{
-				string hitEffectId53 = "EFF_COM_M_HEAL";
-				IEnumerator item53 = this.LoadHitEffects(hitEffectId53, AffectEffect.Regenerate, true);
-				list.Add(item53);
+				this.SetHitEffectPool("EFF_COM_M_HEAL", AffectEffect.Regenerate.ToString());
 			}
 			else if (affectEffect == AffectEffect.TurnEvasion)
 			{
-				string hitEffectId54 = "EFF_COM_UP";
-				IEnumerator item54 = this.LoadHitEffects(hitEffectId54, AffectEffect.TurnEvasion, true);
-				list.Add(item54);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.TurnEvasion.ToString());
 			}
 			else if (affectEffect == AffectEffect.CountEvasion)
 			{
-				string hitEffectId55 = "EFF_COM_UP";
-				IEnumerator item55 = this.LoadHitEffects(hitEffectId55, AffectEffect.CountEvasion, true);
-				list.Add(item55);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.CountEvasion.ToString());
 			}
 			else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
 			{
-				string hitEffectId56 = "EFF_COM_HIT_RATIO";
-				IEnumerator item56 = this.LoadHitEffects(hitEffectId56, AffectEffect.ReferenceTargetHpRate, true);
-				list.Add(item56);
+				this.SetHitEffectPool("EFF_COM_HIT_RATIO", AffectEffect.ReferenceTargetHpRate.ToString());
 			}
 			else if (affectEffect == AffectEffect.ApDrain)
 			{
-				string hitEffectId57 = "EFF_COM_S_APDRAIN";
-				IEnumerator item57 = this.LoadHitEffects(hitEffectId57, AffectEffect.ApDrain, false);
-				list.Add(item57);
-				string hitEffectId58 = "EFF_COM_DOWN";
-				IEnumerator item58 = this.LoadHitEffects(hitEffectId58, AffectEffect.ApDown, false);
-				list.Add(item58);
+				this.SetHitEffectPool("EFF_COM_S_APDRAIN", AffectEffect.ApDown.ToString());
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.ApDown.ToString());
 			}
 			else if (affectEffect == AffectEffect.Escape)
 			{
-				string hitEffectId59 = "EFF_COM_UP";
-				IEnumerator item59 = this.LoadHitEffects(hitEffectId59, AffectEffect.Escape, true);
-				list.Add(item59);
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.Escape.ToString());
+			}
+			else if (affectEffect == AffectEffect.RefHpRateNonAttribute)
+			{
+				this.SetHitEffectPool("EFF_COM_HIT_RATIO", AffectEffect.RefHpRateNonAttribute.ToString());
 			}
 		}
-		return list;
+		return result;
 	}
 
-	private IEnumerator LoadHitEffects(string hitEffectId, AffectEffect affectEffect, bool isTotal = false)
+	private void SetEffectPool(string key, Transform parent, GameObject prefab)
 	{
-		BattleDebug.Log(string.Concat(new string[]
-		{
-			"-- ヒットエフェクト複数ロード hitEffectId[",
-			hitEffectId,
-			"] affectEffect[",
-			affectEffect.ToString(),
-			"] : 開始"
-		}));
-		IEnumerator<HitEffectParams[]> loadEffect = this.LoadHitEffects(hitEffectId, isTotal);
-		while (loadEffect.MoveNext())
-		{
-			yield return null;
-		}
-		base.battleStateData.hitEffects.Add(affectEffect.ToString(), loadEffect.Current);
-		BattleDebug.Log(string.Concat(new string[]
-		{
-			"-- ヒットエフェクト複数ロード hitEffectId[",
-			hitEffectId,
-			"] affectEffect[",
-			affectEffect.ToString(),
-			"] : 完了"
-		}));
-		yield break;
+		BattleEffectManager.Instance.SetPool(key, parent, prefab);
 	}
 
-	private IEnumerator LoadHitEffects(string hitEffectId, AffectEffect affectEffect, Strength strength, bool isTotal = false)
+	public void SetHitEffectPool(string key)
 	{
-		BattleDebug.Log(string.Concat(new string[]
-		{
-			"-- ヒットエフェクト複数ロード hitEffectId[",
-			hitEffectId,
-			"] affectEffect[",
-			affectEffect.ToString(),
-			"] strength[",
-			strength.ToString(),
-			"] : 開始"
-		}));
-		IEnumerator<HitEffectParams[]> loadEffect = this.LoadHitEffects(hitEffectId, isTotal);
-		while (loadEffect.MoveNext())
-		{
-			yield return null;
-		}
-		base.battleStateData.hitEffects.Add(affectEffect.ToString(), strength.ToString(), loadEffect.Current);
-		BattleDebug.Log(string.Concat(new string[]
-		{
-			"-- ヒットエフェクト複数ロード hitEffectId[",
-			hitEffectId,
-			"] affectEffect[",
-			affectEffect.ToString(),
-			"] strength[",
-			strength.ToString(),
-			"] : 完了"
-		}));
-		yield break;
+		this.SetHitEffectPool(key, key);
 	}
 
-	private IEnumerator<HitEffectParams[]> LoadHitEffects(string hitEffectId, bool isTotal = false)
+	public void SetHitEffectPool(string prefab_key, string key)
 	{
-		List<HitEffectParams> hitEffectLoadedObjects = null;
-		this.hitEffectObject.TryGetValue(hitEffectId, out hitEffectLoadedObjects);
-		int createCount = base.battleStateData.maxCharacterLength;
-		if (isTotal)
+		GameObject hitEffectPrefab = base.stateManager.serverControl.GetHitEffectPrefab(prefab_key);
+		hitEffectPrefab.name = prefab_key;
+		HitEffectParams component = hitEffectPrefab.GetComponent<HitEffectParams>();
+		if (component != null)
 		{
-			createCount = base.battleStateData.totalPreloadCharacterLength;
+			base.stateManager.soundPlayer.AddEffectSe(component.seId);
 		}
-		int hitEffectLoadedObjectsLength = 0;
-		if (hitEffectLoadedObjects != null)
-		{
-			hitEffectLoadedObjectsLength = hitEffectLoadedObjects.Count;
-		}
-		createCount = Math.Max(createCount - hitEffectLoadedObjectsLength, 0);
-		Transform thisHitEffectRoot = new GameObject(hitEffectId).transform;
-		thisHitEffectRoot.SetParent(base.battleStateData.hitEffectRoot);
-		HitEffectParams[] hitEffectParams = new HitEffectParams[createCount];
-		for (int i = 0; i < createCount; i++)
-		{
-			IEnumerator loadHitEffect = this.LoadHitEffect(hitEffectId, i, delegate(HitEffectParams h, int index)
-			{
-				hitEffectParams[index] = h;
-				h.transform.SetParent(thisHitEffectRoot);
-			});
-			while (loadHitEffect.MoveNext())
-			{
-				yield return null;
-			}
-		}
-		if (!this.hitEffectObject.ContainsKey(hitEffectId))
-		{
-			this.hitEffectObject[hitEffectId] = new List<HitEffectParams>();
-		}
-		this.hitEffectObject[hitEffectId].AddRange(hitEffectParams);
-		yield return this.hitEffectObject[hitEffectId].ToArray();
-		yield break;
+		BattleEffectManager.Instance.SetCamera(base.hierarchyData.cameraObject.camera3D);
+		BattleEffectManager.Instance.SetPool(key, base.battleStateData.hitEffectRoot.transform, hitEffectPrefab);
 	}
 
 	public IEnumerator LoadAlwaysEffect(string effectId, int index, Action<AlwaysEffectParams, int> result)

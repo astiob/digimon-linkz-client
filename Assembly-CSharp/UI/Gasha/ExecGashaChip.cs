@@ -1,6 +1,7 @@
 ﻿using Cutscene;
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using User;
 
@@ -8,6 +9,9 @@ namespace UI.Gasha
 {
 	public sealed class ExecGashaChip : ExecGashaBase
 	{
+		[CompilerGenerated]
+		private static Action <>f__mg$cache0;
+
 		private GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] SetGashaResult(GameWebAPI.RespDataGA_ExecChip gashaResult, int playCount)
 		{
 			UserHomeInfo.dirtyMyPage = true;
@@ -68,7 +72,12 @@ namespace UI.Gasha
 				SoundMng.Instance().PlayGameBGM("bgm_202");
 			};
 			Loading.Invisible();
-			CutSceneMain.FadeReqCutScene(cutsceneDataChipGasha, new Action(CMD_ChipGashaResult.CreateDialog), null, new Action<int>(this.OnShowedGashaResultDialog), 0.5f, 0.5f);
+			CutsceneDataBase cutsceneData = cutsceneDataChipGasha;
+			if (ExecGashaChip.<>f__mg$cache0 == null)
+			{
+				ExecGashaChip.<>f__mg$cache0 = new Action(CMD_ChipGashaResult.CreateDialog);
+			}
+			CutSceneMain.FadeReqCutScene(cutsceneData, ExecGashaChip.<>f__mg$cache0, null, new Action<int>(this.OnShowedGashaResultDialog), 0.5f, 0.5f);
 		}
 
 		protected override void OnShowedGashaResultDialog(int noop)
@@ -79,6 +88,8 @@ namespace UI.Gasha
 
 		public override IEnumerator Exec(GameWebAPI.GA_Req_ExecGacha playGashaRequestParam, bool isTutorial)
 		{
+			GameWebAPI.RespDataGA_ExecChip gashaResult = null;
+			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] userChipList = null;
 			GameWebAPI.RequestGA_ChipExec request = new GameWebAPI.RequestGA_ChipExec
 			{
 				SetSendData = delegate(GameWebAPI.GA_Req_ExecChip param)
@@ -88,8 +99,8 @@ namespace UI.Gasha
 				},
 				OnReceived = delegate(GameWebAPI.RespDataGA_ExecChip response)
 				{
-					GameWebAPI.RespDataGA_ExecChip gashaResult = response;
-					GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] userChipList = this.SetGashaResult(gashaResult, playGashaRequestParam.playCount);
+					gashaResult = response;
+					userChipList = this.SetGashaResult(gashaResult, playGashaRequestParam.playCount);
 				}
 			};
 			yield return AppCoroutine.Start(request.Run(delegate()

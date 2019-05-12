@@ -20,21 +20,30 @@ public sealed class GUIScreenPvPResult : GUIScreen
 	protected override void Update()
 	{
 		base.Update();
-		switch (this.seq)
+		GUIScreenPvPResult.UpdateState updateState = (GUIScreenPvPResult.UpdateState)this.seq;
+		if (updateState != GUIScreenPvPResult.UpdateState.Initialize)
 		{
-		case 0:
-			this.seq = 1;
-			break;
-		case 1:
-			this.timeCt++;
-			if (this.timeCt >= 20)
+			if (updateState != GUIScreenPvPResult.UpdateState.OpenResult)
 			{
-				RestrictionInput.EndLoad();
-				this.OpenResultUI();
-				this.timeCt = 0;
-				this.seq = 2;
+				if (updateState != GUIScreenPvPResult.UpdateState.Wait)
+				{
+				}
 			}
-			break;
+			else
+			{
+				this.timeCt++;
+				if (this.timeCt >= 20)
+				{
+					RestrictionInput.EndLoad();
+					this.OpenResultUI();
+					this.timeCt = 0;
+					this.seq = 2;
+				}
+			}
+		}
+		else
+		{
+			this.seq = 1;
 		}
 	}
 

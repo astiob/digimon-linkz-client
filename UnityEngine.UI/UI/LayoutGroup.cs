@@ -1,21 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[RequireComponent(typeof(RectTransform))]
 	[DisallowMultipleComponent]
 	[ExecuteInEditMode]
-	public abstract class LayoutGroup : UIBehaviour, ILayoutElement, ILayoutController, ILayoutGroup
+	[RequireComponent(typeof(RectTransform))]
+	public abstract class LayoutGroup : UIBehaviour, ILayoutElement, ILayoutGroup, ILayoutController
 	{
 		[SerializeField]
 		protected RectOffset m_Padding = new RectOffset();
 
-		[SerializeField]
 		[FormerlySerializedAs("m_Alignment")]
-		protected TextAnchor m_ChildAlignment;
+		[SerializeField]
+		protected TextAnchor m_ChildAlignment = TextAnchor.UpperLeft;
 
 		[NonSerialized]
 		private RectTransform m_Rect;
@@ -215,16 +216,22 @@ namespace UnityEngine.UI
 			float num = requiredSpaceWithoutPadding + (float)((axis != 0) ? this.padding.vertical : this.padding.horizontal);
 			float num2 = this.rectTransform.rect.size[axis];
 			float num3 = num2 - num;
-			float num4;
+			float alignmentOnAxis = this.GetAlignmentOnAxis(axis);
+			return (float)((axis != 0) ? this.padding.top : this.padding.left) + num3 * alignmentOnAxis;
+		}
+
+		protected float GetAlignmentOnAxis(int axis)
+		{
+			float result;
 			if (axis == 0)
 			{
-				num4 = (float)(this.childAlignment % TextAnchor.MiddleLeft) * 0.5f;
+				result = (float)(this.childAlignment % TextAnchor.MiddleLeft) * 0.5f;
 			}
 			else
 			{
-				num4 = (float)(this.childAlignment / TextAnchor.MiddleLeft) * 0.5f;
+				result = (float)(this.childAlignment / TextAnchor.MiddleLeft) * 0.5f;
 			}
-			return (float)((axis != 0) ? this.padding.top : this.padding.left) + num3 * num4;
+			return result;
 		}
 
 		protected void SetLayoutInputForAxis(float totalMin, float totalPreferred, float totalFlexible, int axis)
@@ -234,14 +241,22 @@ namespace UnityEngine.UI
 			this.m_TotalFlexibleSize[axis] = totalFlexible;
 		}
 
+		protected void SetChildAlongAxis(RectTransform rect, int axis, float pos)
+		{
+			if (!(rect == null))
+			{
+				this.m_Tracker.Add(this, rect, DrivenTransformProperties.Anchors | ((axis != 0) ? DrivenTransformProperties.AnchoredPositionY : DrivenTransformProperties.AnchoredPositionX));
+				rect.SetInsetAndSizeFromParentEdge((axis != 0) ? RectTransform.Edge.Top : RectTransform.Edge.Left, pos, rect.sizeDelta[axis]);
+			}
+		}
+
 		protected void SetChildAlongAxis(RectTransform rect, int axis, float pos, float size)
 		{
-			if (rect == null)
+			if (!(rect == null))
 			{
-				return;
+				this.m_Tracker.Add(this, rect, DrivenTransformProperties.Anchors | ((axis != 0) ? (DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.SizeDeltaY) : (DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.SizeDeltaX)));
+				rect.SetInsetAndSizeFromParentEdge((axis != 0) ? RectTransform.Edge.Top : RectTransform.Edge.Left, pos, size);
 			}
-			this.m_Tracker.Add(this, rect, DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.AnchorMinX | DrivenTransformProperties.AnchorMinY | DrivenTransformProperties.AnchorMaxX | DrivenTransformProperties.AnchorMaxY | DrivenTransformProperties.SizeDeltaX | DrivenTransformProperties.SizeDeltaY);
-			rect.SetInsetAndSizeFromParentEdge((axis != 0) ? RectTransform.Edge.Top : RectTransform.Edge.Left, pos, size);
 		}
 
 		private bool isRootLayoutGroup
@@ -269,21 +284,33 @@ namespace UnityEngine.UI
 
 		protected void SetProperty<T>(ref T currentValue, T newValue)
 		{
-			if ((currentValue == null && newValue == null) || (currentValue != null && currentValue.Equals(newValue)))
+			if ((currentValue != null || newValue != null) && (currentValue == null || !currentValue.Equals(newValue)))
 			{
-				return;
+				currentValue = newValue;
+				this.SetDirty();
 			}
-			currentValue = newValue;
-			this.SetDirty();
 		}
 
 		protected void SetDirty()
 		{
-			if (!this.IsActive())
+			if (this.IsActive())
 			{
-				return;
+				if (!CanvasUpdateRegistry.IsRebuildingLayout())
+				{
+					LayoutRebuilder.MarkLayoutForRebuild(this.rectTransform);
+				}
+				else
+				{
+					base.StartCoroutine(this.DelayedSetDirty(this.rectTransform));
+				}
 			}
-			LayoutRebuilder.MarkLayoutForRebuild(this.rectTransform);
+		}
+
+		private IEnumerator DelayedSetDirty(RectTransform rectTransform)
+		{
+			yield return null;
+			LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+			yield break;
 		}
 	}
 }

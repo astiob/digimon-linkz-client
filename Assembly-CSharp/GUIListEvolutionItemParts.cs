@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GUIListEvolutionItemParts : GUIListPartBS
 {
-	[SerializeField]
 	[Header("素材用アイコンのGUICollider")]
+	[SerializeField]
 	private GUICollider colSoul;
 
 	[Header("素材用アイコンのUITexture")]
@@ -24,8 +24,8 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[SerializeField]
 	private GameObject goNumBG;
 
-	[SerializeField]
 	[Header("親のパネル")]
+	[SerializeField]
 	private GUISelectPanelEvolutionItemList parentPanel;
 
 	private string soulId;

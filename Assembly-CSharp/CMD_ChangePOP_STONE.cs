@@ -26,9 +26,19 @@ public sealed class CMD_ChangePOP_STONE : CMD, IPayConfirmNotice
 	[SerializeField]
 	private GameObject ruleButtonObject;
 
+	[SerializeField]
+	private UIAssetsNumber assetPossessionNumber;
+
+	[SerializeField]
+	private UIAssetsNumber assetCostNumber;
+
 	public Action OnPushedYesAction;
 
 	public Action OnPushedNoAction;
+
+	private Action<UnityEngine.Object> onPushYesButton;
+
+	private bool beEnough;
 
 	private object useDetail;
 
@@ -101,9 +111,30 @@ public sealed class CMD_ChangePOP_STONE : CMD, IPayConfirmNotice
 
 	private void OnPushedYesButton()
 	{
-		if (this.OnPushedYesAction != null && null == GUIManager.CheckTopDialog("CMDWebWindow", null))
+		if (null == GUIManager.CheckTopDialog("CMDWebWindow", null))
 		{
-			this.OnPushedYesAction();
+			if (this.OnPushedYesAction != null)
+			{
+				this.OnPushedYesAction();
+			}
+			if (this.onPushYesButton != null)
+			{
+				if (this.beEnough)
+				{
+					this.onPushYesButton(this);
+				}
+				else
+				{
+					base.SetWindowClosedAction(delegate
+					{
+						GUIMain.ShowCommonDialog(delegate(int n)
+						{
+							GUIPlayerStatus.RefreshParams_S(false);
+						}, "CMD_Shop", null);
+					});
+					this.ClosePanel(true);
+				}
+			}
 		}
 	}
 
@@ -131,5 +162,33 @@ public sealed class CMD_ChangePOP_STONE : CMD, IPayConfirmNotice
 	public object GetUseDetail()
 	{
 		return this.useDetail;
+	}
+
+	public void SetAssetIcon(int category, string assetsValue)
+	{
+	}
+
+	public void SetPushActionYesButton(Action<UnityEngine.Object> action)
+	{
+		this.onPushYesButton = action;
+	}
+
+	public void SetMessage(string title, string info)
+	{
+		this.Title = title;
+		this.Info = info;
+	}
+
+	public void SetAssetValue(int category, int cost)
+	{
+		int userInventoryNumber = this.assetPossessionNumber.GetUserInventoryNumber(category);
+		this.assetPossessionNumber.SetNumber(category, userInventoryNumber);
+		this.assetCostNumber.SetNumber(category, cost);
+		this.beEnough = (userInventoryNumber >= cost);
+		if (!this.beEnough)
+		{
+			this.costNum.color = Color.red;
+			this.yesButtonLabel.text = StringMaster.GetString("SystemButtonGoShop");
+		}
 	}
 }

@@ -20,6 +20,7 @@ namespace UnityEngine.EventSystems
 
 		protected bool GetPointerData(int id, out PointerEventData data, bool create)
 		{
+			bool result;
 			if (!this.m_PointerData.TryGetValue(id, out data) && create)
 			{
 				data = new PointerEventData(base.eventSystem)
@@ -27,9 +28,13 @@ namespace UnityEngine.EventSystems
 					pointerId = id
 				};
 				this.m_PointerData.Add(id, data);
-				return true;
+				result = true;
 			}
-			return false;
+			else
+			{
+				result = false;
+			}
+			return result;
 		}
 
 		protected void RemovePointerData(PointerEventData data)
@@ -58,10 +63,17 @@ namespace UnityEngine.EventSystems
 			}
 			pointerEventData.position = input.position;
 			pointerEventData.button = PointerEventData.InputButton.Left;
-			base.eventSystem.RaycastAll(pointerEventData, this.m_RaycastResultCache);
-			RaycastResult pointerCurrentRaycast = BaseInputModule.FindFirstRaycast(this.m_RaycastResultCache);
-			pointerEventData.pointerCurrentRaycast = pointerCurrentRaycast;
-			this.m_RaycastResultCache.Clear();
+			if (input.phase == TouchPhase.Canceled)
+			{
+				pointerEventData.pointerCurrentRaycast = default(RaycastResult);
+			}
+			else
+			{
+				base.eventSystem.RaycastAll(pointerEventData, this.m_RaycastResultCache);
+				RaycastResult pointerCurrentRaycast = BaseInputModule.FindFirstRaycast(this.m_RaycastResultCache);
+				pointerEventData.pointerCurrentRaycast = pointerCurrentRaycast;
+				this.m_RaycastResultCache.Clear();
+			}
 			return pointerEventData;
 		}
 
@@ -74,23 +86,28 @@ namespace UnityEngine.EventSystems
 			to.pointerEnter = from.pointerEnter;
 		}
 
-		protected static PointerEventData.FramePressState StateForMouseButton(int buttonId)
+		protected PointerEventData.FramePressState StateForMouseButton(int buttonId)
 		{
-			bool mouseButtonDown = Input.GetMouseButtonDown(buttonId);
-			bool mouseButtonUp = Input.GetMouseButtonUp(buttonId);
+			bool mouseButtonDown = base.input.GetMouseButtonDown(buttonId);
+			bool mouseButtonUp = base.input.GetMouseButtonUp(buttonId);
+			PointerEventData.FramePressState result;
 			if (mouseButtonDown && mouseButtonUp)
 			{
-				return PointerEventData.FramePressState.PressedAndReleased;
+				result = PointerEventData.FramePressState.PressedAndReleased;
 			}
-			if (mouseButtonDown)
+			else if (mouseButtonDown)
 			{
-				return PointerEventData.FramePressState.Pressed;
+				result = PointerEventData.FramePressState.Pressed;
 			}
-			if (mouseButtonUp)
+			else if (mouseButtonUp)
 			{
-				return PointerEventData.FramePressState.Released;
+				result = PointerEventData.FramePressState.Released;
 			}
-			return PointerEventData.FramePressState.NotChanged;
+			else
+			{
+				result = PointerEventData.FramePressState.NotChanged;
+			}
+			return result;
 		}
 
 		protected virtual PointerInputModule.MouseState GetMousePointerEventData()
@@ -105,12 +122,20 @@ namespace UnityEngine.EventSystems
 			pointerEventData.Reset();
 			if (pointerData)
 			{
-				pointerEventData.position = Input.mousePosition;
+				pointerEventData.position = base.input.mousePosition;
 			}
-			Vector2 vector = Input.mousePosition;
-			pointerEventData.delta = vector - pointerEventData.position;
-			pointerEventData.position = vector;
-			pointerEventData.scrollDelta = Input.mouseScrollDelta;
+			Vector2 mousePosition = base.input.mousePosition;
+			if (Cursor.lockState == CursorLockMode.Locked)
+			{
+				pointerEventData.position = new Vector2(-1f, -1f);
+				pointerEventData.delta = Vector2.zero;
+			}
+			else
+			{
+				pointerEventData.delta = mousePosition - pointerEventData.position;
+				pointerEventData.position = mousePosition;
+			}
+			pointerEventData.scrollDelta = base.input.mouseScrollDelta;
 			pointerEventData.button = PointerEventData.InputButton.Left;
 			base.eventSystem.RaycastAll(pointerEventData, this.m_RaycastResultCache);
 			RaycastResult pointerCurrentRaycast = BaseInputModule.FindFirstRaycast(this.m_RaycastResultCache);
@@ -124,9 +149,9 @@ namespace UnityEngine.EventSystems
 			this.GetPointerData(-3, out pointerEventData3, true);
 			this.CopyFromTo(pointerEventData, pointerEventData3);
 			pointerEventData3.button = PointerEventData.InputButton.Middle;
-			this.m_MouseState.SetButtonState(PointerEventData.InputButton.Left, PointerInputModule.StateForMouseButton(0), pointerEventData);
-			this.m_MouseState.SetButtonState(PointerEventData.InputButton.Right, PointerInputModule.StateForMouseButton(1), pointerEventData2);
-			this.m_MouseState.SetButtonState(PointerEventData.InputButton.Middle, PointerInputModule.StateForMouseButton(2), pointerEventData3);
+			this.m_MouseState.SetButtonState(PointerEventData.InputButton.Left, this.StateForMouseButton(0), pointerEventData);
+			this.m_MouseState.SetButtonState(PointerEventData.InputButton.Right, this.StateForMouseButton(1), pointerEventData2);
+			this.m_MouseState.SetButtonState(PointerEventData.InputButton.Middle, this.StateForMouseButton(2), pointerEventData3);
 			return this.m_MouseState;
 		}
 
@@ -144,28 +169,30 @@ namespace UnityEngine.EventSystems
 
 		protected virtual void ProcessMove(PointerEventData pointerEvent)
 		{
-			GameObject gameObject = pointerEvent.pointerCurrentRaycast.gameObject;
-			base.HandlePointerExitAndEnter(pointerEvent, gameObject);
+			GameObject newEnterTarget = (Cursor.lockState != CursorLockMode.Locked) ? pointerEvent.pointerCurrentRaycast.gameObject : null;
+			base.HandlePointerExitAndEnter(pointerEvent, newEnterTarget);
 		}
 
 		protected virtual void ProcessDrag(PointerEventData pointerEvent)
 		{
-			bool flag = pointerEvent.IsPointerMoving();
-			if (flag && pointerEvent.pointerDrag != null && !pointerEvent.dragging && PointerInputModule.ShouldStartDrag(pointerEvent.pressPosition, pointerEvent.position, (float)base.eventSystem.pixelDragThreshold, pointerEvent.useDragThreshold))
+			if (pointerEvent.IsPointerMoving() && Cursor.lockState != CursorLockMode.Locked && !(pointerEvent.pointerDrag == null))
 			{
-				ExecuteEvents.Execute<IBeginDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.beginDragHandler);
-				pointerEvent.dragging = true;
-			}
-			if (pointerEvent.dragging && flag && pointerEvent.pointerDrag != null)
-			{
-				if (pointerEvent.pointerPress != pointerEvent.pointerDrag)
+				if (!pointerEvent.dragging && PointerInputModule.ShouldStartDrag(pointerEvent.pressPosition, pointerEvent.position, (float)base.eventSystem.pixelDragThreshold, pointerEvent.useDragThreshold))
 				{
-					ExecuteEvents.Execute<IPointerUpHandler>(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerUpHandler);
-					pointerEvent.eligibleForClick = false;
-					pointerEvent.pointerPress = null;
-					pointerEvent.rawPointerPress = null;
+					ExecuteEvents.Execute<IBeginDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.beginDragHandler);
+					pointerEvent.dragging = true;
 				}
-				ExecuteEvents.Execute<IDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.dragHandler);
+				if (pointerEvent.dragging)
+				{
+					if (pointerEvent.pointerPress != pointerEvent.pointerDrag)
+					{
+						ExecuteEvents.Execute<IPointerUpHandler>(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerUpHandler);
+						pointerEvent.eligibleForClick = false;
+						pointerEvent.pointerPress = null;
+						pointerEvent.rawPointerPress = null;
+					}
+					ExecuteEvents.Execute<IDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.dragHandler);
+				}
 			}
 		}
 
@@ -212,7 +239,7 @@ namespace UnityEngine.EventSystems
 
 		protected class ButtonState
 		{
-			private PointerEventData.InputButton m_Button;
+			private PointerEventData.InputButton m_Button = PointerEventData.InputButton.Left;
 
 			private PointerInputModule.MouseButtonEventData m_EventData;
 

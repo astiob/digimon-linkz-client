@@ -6,32 +6,32 @@ public sealed class CMD_InstallingPOP : CMD
 {
 	private Action _successCallback;
 
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
 	[Header("チップテクスチャ")]
 	[SerializeField]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("チップランクプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
-	[SerializeField]
 	[Header("はいラベル")]
+	[SerializeField]
 	private UILabel yesLabel;
 
-	[SerializeField]
 	[Header("いいえラベル")]
+	[SerializeField]
 	private UILabel noLabel;
 
-	[SerializeField]
 	[Header("チップ名ラベル")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("チップ説明ラベル")]
+	[SerializeField]
 	private UILabel chipDescLabel;
 
 	[Header("チップ装着メッセージラベル")]
@@ -123,29 +123,21 @@ public sealed class CMD_InstallingPOP : CMD
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		this.equip.act = 1;
-		GameWebAPI.ChipEquipLogic request = ChipDataMng.RequestAPIChipEquip(this.equip, new Action<int, GameWebAPI.RequestMonsterList>(this.EndAttachment));
-		Action<Exception> onFailed = delegate(Exception noop)
+		GameWebAPI.ChipEquipLogic request = ChipDataMng.RequestAPIChipEquip(this.equip, new Action<int>(this.EndAttachment));
+		base.StartCoroutine(request.Run(null, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 			GUIMain.BarrierOFF();
-		};
-		base.StartCoroutine(request.Run(null, onFailed, null));
+		}, null));
 	}
 
-	private void EndAttachment(int resultCode, GameWebAPI.RequestMonsterList subRequest)
+	private void EndAttachment(int resultCode)
 	{
 		if (resultCode == 1)
 		{
 			this.successCallback();
-			base.StartCoroutine(subRequest.Run(delegate()
-			{
-				RestrictionInput.EndLoad();
-				base.ClosePanel(true);
-			}, delegate(Exception noop)
-			{
-				RestrictionInput.EndLoad();
-				GUIMain.BarrierOFF();
-			}, null));
+			RestrictionInput.EndLoad();
+			base.ClosePanel(true);
 		}
 		else
 		{
@@ -168,7 +160,7 @@ public sealed class CMD_InstallingPOP : CMD
 		string message = string.Format(StringMaster.GetString("ChipDataMismatchMesage"), resultCode);
 		AlertManager.ShowModalMessage(delegate(int modal)
 		{
-			base.ClosePanel(true);
+			this.<ClosePanel>__BaseCallProxy0(true);
 		}, @string, message, AlertManager.ButtonActionType.Close, false);
 	}
 

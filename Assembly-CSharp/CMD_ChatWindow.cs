@@ -100,7 +100,7 @@ public class CMD_ChatWindow : CMD
 			this.SetGrayButton(true);
 			this.setInitLabel();
 			this.SetCommonUI();
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		});
 	}
 

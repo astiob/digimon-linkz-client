@@ -480,8 +480,8 @@ namespace System.Security.Cryptography
 
 		/// <summary>Gets a <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object that describes additional information about a cryptographic key pair. </summary>
 		/// <returns>A <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object that describes additional information about a cryptographic key pair.</returns>
-		[ComVisible(false)]
 		[MonoTODO("Always return null")]
+		[ComVisible(false)]
 		public CspKeyContainerInfo CspKeyContainerInfo
 		{
 			get

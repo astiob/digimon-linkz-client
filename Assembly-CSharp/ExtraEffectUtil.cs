@@ -37,15 +37,14 @@ public class ExtraEffectUtil
 		return ExtraEffectUtil.CheckExtraStageParams(monsterData, effectArray);
 	}
 
-	public static bool CheckExtraParams(MonsterData monsterData, GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus)
+	private static bool CheckExtraParams(MonsterData monsterData, GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus)
 	{
 		if (float.Parse(eventPointBonus.effectValue) < 0f)
 		{
 			return false;
 		}
 		ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType = (ExtraEffectUtil.EventPointBonusTargetSubType)int.Parse(eventPointBonus.targetSubType);
-		ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType2 = eventPointBonusTargetSubType;
-		switch (eventPointBonusTargetSubType2)
+		switch (eventPointBonusTargetSubType)
 		{
 		case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterTribe:
 			if (monsterData.monsterMG.tribe.Equals(eventPointBonus.targetValue))
@@ -86,7 +85,7 @@ public class ExtraEffectUtil
 			break;
 		}
 		default:
-			if (eventPointBonusTargetSubType2 == ExtraEffectUtil.EventPointBonusTargetSubType.MonsterIntegrationGroup)
+			if (eventPointBonusTargetSubType == ExtraEffectUtil.EventPointBonusTargetSubType.MonsterIntegrationGroup)
 			{
 				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] monsterIntegrationGroupM = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster.monsterIntegrationGroupM;
 				for (int i = 0; i < monsterIntegrationGroupM.Length; i++)
@@ -262,9 +261,24 @@ public class ExtraEffectUtil
 	{
 		switch (type)
 		{
-		case EffectStatusBase.ExtraEffectType.SkillPower:
-		case EffectStatusBase.ExtraEffectType.SkillHit:
+		case EffectStatusBase.ExtraEffectType.Atk:
+			return float.Parse(data.userMonster.attack);
+		case EffectStatusBase.ExtraEffectType.Def:
+			return float.Parse(data.userMonster.defense);
+		case EffectStatusBase.ExtraEffectType.Hp:
+			return float.Parse(data.userMonster.hp);
+		case EffectStatusBase.ExtraEffectType.Speed:
+			return float.Parse(data.userMonster.speed);
+		case EffectStatusBase.ExtraEffectType.Satk:
+			return float.Parse(data.userMonster.spAttack);
+		case EffectStatusBase.ExtraEffectType.Sdef:
+			return float.Parse(data.userMonster.spDefense);
+		default:
 		{
+			if (type != EffectStatusBase.ExtraEffectType.SkillPower && type != EffectStatusBase.ExtraEffectType.SkillHit)
+			{
+				return 0f;
+			}
 			float result = 0f;
 			if (skillType == 1)
 			{
@@ -280,20 +294,7 @@ public class ExtraEffectUtil
 			}
 			return result;
 		}
-		case EffectStatusBase.ExtraEffectType.Atk:
-			return float.Parse(data.userMonster.attack);
-		case EffectStatusBase.ExtraEffectType.Def:
-			return float.Parse(data.userMonster.defense);
-		case EffectStatusBase.ExtraEffectType.Hp:
-			return float.Parse(data.userMonster.hp);
-		case EffectStatusBase.ExtraEffectType.Speed:
-			return float.Parse(data.userMonster.speed);
-		case EffectStatusBase.ExtraEffectType.Satk:
-			return float.Parse(data.userMonster.spAttack);
-		case EffectStatusBase.ExtraEffectType.Sdef:
-			return float.Parse(data.userMonster.spDefense);
 		}
-		return 0f;
 	}
 
 	private static int GetExtraChipValue(MonsterData monsterData, EffectStatusBase.ExtraEffectType effectType)
@@ -311,11 +312,6 @@ public class ExtraEffectUtil
 				EffectStatusBase.ExtraEffectType effectType2 = EffectStatusBase.ExtraEffectType.Non;
 				switch (effectType)
 				{
-				case EffectStatusBase.ExtraEffectType.SkillPower:
-				case EffectStatusBase.ExtraEffectType.SkillHit:
-					num3 = 0;
-					effectType2 = EffectStatusBase.ExtraEffectType.Non;
-					break;
 				case EffectStatusBase.ExtraEffectType.Atk:
 					num3 = monsterData.userMonster.attack.ToInt32();
 					effectType2 = EffectStatusBase.ExtraEffectType.Atk;
@@ -339,6 +335,13 @@ public class ExtraEffectUtil
 				case EffectStatusBase.ExtraEffectType.Sdef:
 					num3 = monsterData.userMonster.spDefense.ToInt32();
 					effectType2 = EffectStatusBase.ExtraEffectType.Sdef;
+					break;
+				default:
+					if (effectType == EffectStatusBase.ExtraEffectType.SkillPower || effectType == EffectStatusBase.ExtraEffectType.SkillHit)
+					{
+						num3 = 0;
+						effectType2 = EffectStatusBase.ExtraEffectType.Non;
+					}
 					break;
 				}
 				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
@@ -396,33 +399,6 @@ public class ExtraEffectUtil
 			result = CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId.ToInt32();
 		}
 		return result;
-	}
-
-	public static GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] GetExtraEffectArray(string worldDungeonId)
-	{
-		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM[] worldDungeonExtraEffectManageM = MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectManageM.worldDungeonExtraEffectManageM;
-		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] worldDungeonExtraEffectM = MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectM.worldDungeonExtraEffectM;
-		List<string> list = new List<string>();
-		foreach (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM worldDungeonExtraEffectManageM2 in worldDungeonExtraEffectManageM)
-		{
-			if (worldDungeonExtraEffectManageM2.worldDungeonId == worldDungeonId)
-			{
-				list.Add(worldDungeonExtraEffectManageM2.worldDungeonExtraEffectId);
-			}
-		}
-		List<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> list2 = new List<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM>();
-		foreach (string b in list)
-		{
-			foreach (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM worldDungeonExtraEffectM2 in worldDungeonExtraEffectM)
-			{
-				if (worldDungeonExtraEffectM2.worldDungeonExtraEffectId == b)
-				{
-					list2.Add(worldDungeonExtraEffectM2);
-					break;
-				}
-			}
-		}
-		return list2.ToArray();
 	}
 
 	private static Tolerance ResistanceToTolerance(MonsterData monsterData)

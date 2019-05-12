@@ -59,8 +59,8 @@ namespace UnityStandardAssets.ImageEffects
 			}
 			Matrix4x4 projectionMatrix = base.GetComponent<Camera>().projectionMatrix;
 			Matrix4x4 inverse = projectionMatrix.inverse;
-			Vector4 vector = new Vector4(-2f / ((float)Screen.width * projectionMatrix[0]), -2f / ((float)Screen.height * projectionMatrix[5]), (1f - projectionMatrix[2]) / projectionMatrix[0], (1f + projectionMatrix[6]) / projectionMatrix[5]);
-			this.aoMaterial.SetVector("_ProjInfo", vector);
+			Vector4 value = new Vector4(-2f / ((float)Screen.width * projectionMatrix[0]), -2f / ((float)Screen.height * projectionMatrix[5]), (1f - projectionMatrix[2]) / projectionMatrix[0], (1f + projectionMatrix[6]) / projectionMatrix[5]);
+			this.aoMaterial.SetVector("_ProjInfo", value);
 			this.aoMaterial.SetMatrix("_ProjectionInv", inverse);
 			this.aoMaterial.SetTexture("_Rand", this.rand);
 			this.aoMaterial.SetFloat("_Radius", this.radius);

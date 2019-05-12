@@ -42,6 +42,20 @@ public class PartsUpperCutinController : MonoBehaviour
 		PartsUpperCutinController.instance = null;
 	}
 
+	public static PartsUpperCutinController Create(Transform parentObject, int sortingOrder)
+	{
+		PartsUpperCutinController original = Resources.Load<PartsUpperCutinController>("UI/PartsUpperCutin");
+		PartsUpperCutinController partsUpperCutinController = UnityEngine.Object.Instantiate<PartsUpperCutinController>(original);
+		Transform transform = partsUpperCutinController.transform;
+		transform.parent = parentObject;
+		transform.localScale = Vector3.one;
+		transform.localPosition = Vector3.zero;
+		transform.localRotation = Quaternion.identity;
+		UIPanel component = partsUpperCutinController.GetComponent<UIPanel>();
+		component.sortingOrder = sortingOrder;
+		return partsUpperCutinController;
+	}
+
 	public Coroutine PlayAnimator(PartsUpperCutinController.AnimeType PlayType, Action OnPlayed = null)
 	{
 		if (!this.Lock())
@@ -67,7 +81,7 @@ public class PartsUpperCutinController : MonoBehaviour
 		{
 			yield return null;
 		}
-		this.cutinAnimator.Stop();
+		this.cutinAnimator.StopPlayback();
 		this.cutinAnimator.enabled = false;
 		this.UnLock();
 		if (OnPlayed != null)
@@ -106,7 +120,7 @@ public class PartsUpperCutinController : MonoBehaviour
 		Combine,
 		TalentBlooms,
 		BloomsFailed,
-		VersionUp,
+		NONE,
 		StageClear,
 		MissionClear,
 		Versionup

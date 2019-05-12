@@ -24,11 +24,11 @@ public class SkillConverter
 					list3.Add(receiveSkillDetailM);
 				}
 			}
-			if (list2.Count<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>() == 0)
+			if (!list2.Any<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>())
 			{
 				UnityEngine.Debug.LogWarning("skillId " + skillM2.skillId + " " + skillM2.name);
 			}
-			while (list2.Count<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>() > 0)
+			while (list2.Any<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>())
 			{
 				List<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM> list4 = new List<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>();
 				List<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM> list5 = new List<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>();

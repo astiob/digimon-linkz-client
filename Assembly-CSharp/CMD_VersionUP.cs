@@ -5,6 +5,7 @@ using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_VersionUP : CMD_PairSelectBase
@@ -25,6 +26,15 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 
 	private GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList updatedUserMonster_bk;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache2;
+
 	public string CurSelectedSoulId { get; set; }
 
 	protected override void ShowSecondTutorial()
@@ -33,7 +43,13 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 		if (tutorialObserver != null)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_version_up", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_version_up";
+			if (CMD_VersionUP.<>f__mg$cache0 == null)
+			{
+				CMD_VersionUP.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_VersionUP.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_VersionUP");
 			});
@@ -45,45 +61,25 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 		base.SetTutorialAnyTime("anytime_second_tutorial_version_up");
 	}
 
-	protected override void OpenConfirmTargetParameter(int selectButtonIndex)
+	private void OnPushDecide()
 	{
-		if (selectButtonIndex == 1)
+		CMD_VersionUpModal cmd_VersionUpModal = GUIMain.ShowCommonDialog(null, "CMD_VersionUpModal", null) as CMD_VersionUpModal;
+		int beforeMaxLevel = int.Parse(this.baseDigimon.monsterM.maxLevel);
+		int afterMaxLevel = int.Parse(this.medList_cache[0].md_next.monsterM.maxLevel);
+		int num = int.Parse(this.medList_cache[0].md_next.monsterM.rare);
+		bool isSkillAdd = num == 6;
+		cmd_VersionUpModal.SetMonsterIcon(this.medList_cache[0].md_next);
+		cmd_VersionUpModal.ShowDetail(beforeMaxLevel, afterMaxLevel, isSkillAdd);
+		cmd_VersionUpModal.SetDescription(this.baseDigimon);
+		cmd_VersionUpModal.SetActionYesButton(delegate
 		{
-			CMD_VersionUpModal cmd_VersionUpModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_VersionUpModal", null) as CMD_VersionUpModal;
-			cmd_VersionUpModal.ShowIcon(this.medList_cache[0].md_next, true);
-			int oldLev = int.Parse(this.baseDigimon.monsterM.maxLevel);
-			int newLev = int.Parse(this.medList_cache[0].md_next.monsterM.maxLevel);
-			bool isSkillAdd = false;
-			int num = int.Parse(this.medList_cache[0].md_next.monsterM.rare);
-			if (num == 6)
-			{
-				isSkillAdd = true;
-			}
-			cmd_VersionUpModal.ShowDetail(oldLev, newLev, isSkillAdd);
-			cmd_VersionUpModal.SetChipParams(this.baseDigimon);
-		}
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			this.DoExec();
+		});
 	}
 
-	protected override void DoExec(int result)
+	private void DoExec()
 	{
-		if (result == -1)
-		{
-			return;
-		}
-		if (result > 0)
-		{
-			RestrictionInput.EndLoad();
-			DataMng.Instance().CampaignErrorCloseAllCommonDialog(result == 1, delegate
-			{
-				RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-				DataMng.Instance().ReloadCampaign(delegate
-				{
-					RestrictionInput.EndLoad();
-				});
-			});
-			RestrictionInput.EndLoad();
-			return;
-		}
 		this.useClusterBK = this.CalcCluster();
 		GameWebAPI.RequestMN_VersionUP request = new GameWebAPI.RequestMN_VersionUP
 		{
@@ -114,86 +110,68 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 
 	protected override void EndSuccess()
 	{
-		bool hasChip = this.ResetChipAfterExec();
+		bool isEquipChip = this.baseDigimon.GetChipEquip().IsAttachedChip();
+		if (isEquipChip)
+		{
+			base.RemoveEquipChip(false, this.baseDigimon.userMonster.userMonsterId);
+		}
 		string modelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
 		this.DeleteUsedSoul();
-		string[] userMonsterIdList = new string[]
-		{
-			this.baseDigimon.userMonster.userMonsterId
-		};
-		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
-		ChipDataMng.DeleteEquipChip(userMonsterIdList);
-		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(this.baseDigimon.userMonster.userMonsterId);
+		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlot(this.baseDigimon.userMonster.userMonsterId);
 		GooglePlayGamesTool.Instance.Laboratory();
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonsterList());
 		MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(this.updatedUserMonster_bk.userMonsterId);
-		CutsceneDataVersionUp cutsceneData = new CutsceneDataVersionUp
+		CutsceneDataVersionUp cutsceneDataVersionUp = new CutsceneDataVersionUp();
+		cutsceneDataVersionUp.path = "Cutscenes/VersionUp";
+		cutsceneDataVersionUp.beforeModelId = modelId;
+		cutsceneDataVersionUp.afterModelId = userMonster.GetMonsterMaster().Group.modelId;
+		CutsceneDataVersionUp cutsceneDataVersionUp2 = cutsceneDataVersionUp;
+		if (CMD_VersionUP.<>f__mg$cache1 == null)
 		{
-			path = "Cutscenes/VersionUp",
-			beforeModelId = modelId,
-			afterModelId = userMonster.GetMonsterMaster().Group.modelId,
-			endCallback = delegate()
-			{
-				CutSceneMain.FadeReqCutSceneEnd();
-				if (null != this.characterDetailed)
-				{
-					this.DisableCutinButton(this.characterDetailed.transform);
-				}
-				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-				if (null != partsMenu)
-				{
-					partsMenu.SetEnableMenuButton(false);
-				}
-			}
-		};
+			CMD_VersionUP.<>f__mg$cache1 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+		}
+		cutsceneDataVersionUp2.endCallback = CMD_VersionUP.<>f__mg$cache1;
+		CutsceneDataVersionUp cutsceneData = cutsceneDataVersionUp;
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(base.StartCutSceneCallBack), null, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, delegate()
 		{
-			if (PartsUpperCutinController.Instance != null)
-			{
-				PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.Versionup, delegate
-				{
-					this.ShowStoreChipDialog(hasChip);
-				});
-			}
-			if (!hasChip)
+			this.OnStartCutScene(isEquipChip);
+		}, delegate()
+		{
+			this.characterDetailed.StartAnimation();
+			if (!isEquipChip)
 			{
 				RestrictionInput.EndLoad();
-				this.EnableCutinButton();
-				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-				if (null != partsMenu)
-				{
-					partsMenu.SetEnableMenuButton(true);
-				}
 			}
 		}, 0.5f, 0.5f);
 	}
 
-	private bool ResetChipAfterExec()
+	private void OnStartCutScene(bool isResetEquipChip)
 	{
-		bool result = this.baseDigimon.GetChipEquip().IsAttachedChip();
-		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(this.baseDigimon.userMonster.userMonsterId);
-		if (monsterChipList != null)
+		base.RemoveBaseDigimon();
+		base.RemovePartnerDigimon();
+		this.ClearTargetStatus();
+		DataMng.Instance().US_PlayerInfoSubChipNum(this.useClusterBK);
+		base.UpdateClusterNum();
+		GUIPlayerStatus.RefreshParams_S(false);
+		string userMonsterId = this.GetUserMonsterData().userMonsterId;
+		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
+		Action endCutin = null;
+		if (isResetEquipChip)
 		{
-			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in monsterChipList)
+			if (CMD_VersionUP.<>f__mg$cache2 == null)
 			{
-				if (userChipList.userMonsterId == int.Parse(this.baseDigimon.userMonster.userMonsterId))
-				{
-					userChipList.userMonsterId = 0;
-				}
+				CMD_VersionUP.<>f__mg$cache2 = new Action(RestrictionInput.EndLoad);
 			}
+			endCutin = CMD_VersionUP.<>f__mg$cache2;
 		}
-		return result;
+		this.characterDetailed = CMD_CharacterDetailed.CreateWindow(monsterDataByUserMonsterID, isResetEquipChip, endCutin);
 	}
 
 	protected override string GetTitle()
 	{
 		return StringMaster.GetString("VersionUpTitle");
-	}
-
-	protected override string GetStoreChipInfo()
-	{
-		return StringMaster.GetString("VersionUPCautionChip");
 	}
 
 	protected override void ClearTargetStatus()
@@ -209,14 +187,10 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 
 	protected override int CalcCluster()
 	{
-		int result;
+		int result = 0;
 		if (this.baseDigimon != null)
 		{
 			result = EvolutionData.CalcClusterForVersionUp(this.baseDigimon.monsterM.monsterId);
-		}
-		else
-		{
-			result = 0;
 		}
 		return result;
 	}
@@ -287,7 +261,7 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 
 	protected override void OnBaseSelected()
 	{
-		this.versionUpDetail.ShowIcon(this.medList_cache[0].md_next, true);
+		this.versionUpDetail.SetMonsterIcon(this.medList_cache[0].md_next, true);
 	}
 
 	protected override bool CheckMaterial()
@@ -361,22 +335,6 @@ public sealed class CMD_VersionUP : CMD_PairSelectBase
 			int num = int.Parse(userEvolutionMaterial.num);
 			userEvolutionMaterial.num = (num - versionUpItem.NeedNum).ToString();
 		}
-	}
-
-	protected override void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
-	{
-	}
-
-	protected override void SetPartnerTouchAct_L(GUIMonsterIcon cs)
-	{
-	}
-
-	protected override void OpenBaseDigimonNonePop()
-	{
-	}
-
-	protected override void AddButton()
-	{
 	}
 
 	private void ShowItemIcon()

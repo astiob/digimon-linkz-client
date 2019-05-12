@@ -5,20 +5,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[SerializeField]
 	[Header("エリア名 ステージ名")]
+	[SerializeField]
 	private UILabel lbAreaName;
 
 	[SerializeField]
 	private UILabel lbStageName;
 
-	[SerializeField]
 	[Header("リーダースキル名")]
+	[SerializeField]
 	private UILabel lbTXT_LEADERSKILL;
 
 	[SerializeField]
@@ -34,8 +35,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_PASSWORD_EXP;
 
-	[SerializeField]
 	[Header("フレンドボタン")]
+	[SerializeField]
 	private GameObject goBTN_FRIEND;
 
 	[Header("チャットボタン")]
@@ -56,8 +57,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private BoxCollider coBTN_READY;
 
-	[SerializeField]
 	[Header("決定ボタン")]
+	[SerializeField]
 	private GameObject goBTN_DECIDE;
 
 	[SerializeField]
@@ -78,8 +79,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーションコンポーネント")]
+	[SerializeField]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]
@@ -147,6 +148,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 	public List<string> recruitedFriendIdList;
 
 	private CMD_MultiRecruitTop parentDialog;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
 
 	public static GameWebAPI.ResponseData_Common_MultiRoomList.room StageDataBk { get; set; }
 
@@ -444,20 +451,26 @@ public class CMD_MultiRecruitPartyWait : CMD
 		}
 		string title = null;
 		string info = null;
-		switch (roomOutType)
+		if (roomOutType != CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.BREAK)
 		{
-		case CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.BREAK:
+			if (roomOutType != CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.TIMEOUT)
+			{
+				if (roomOutType == CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.MEMBER_EXPIRE)
+				{
+					title = StringMaster.GetString("MultiRecruit-13");
+					info = StringMaster.GetString("MultiRecruit-14");
+				}
+			}
+			else
+			{
+				title = StringMaster.GetString("MultiRecruit-10");
+				info = StringMaster.GetString("MultiRecruit-12");
+			}
+		}
+		else
+		{
 			title = StringMaster.GetString("MultiRecruit-10");
 			info = StringMaster.GetString("MultiRecruit-11");
-			break;
-		case CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.TIMEOUT:
-			title = StringMaster.GetString("MultiRecruit-10");
-			info = StringMaster.GetString("MultiRecruit-12");
-			break;
-		case CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.MEMBER_EXPIRE:
-			title = StringMaster.GetString("MultiRecruit-13");
-			info = StringMaster.GetString("MultiRecruit-14");
-			break;
 		}
 		AppCoroutine.Start(this.DispErrorModal(title, info), true);
 	}
@@ -725,14 +738,39 @@ public class CMD_MultiRecruitPartyWait : CMD
 				this.monsterInfoList[i].HideStatusPanel();
 			}
 		}
+		QuestBonusPack questBonus = this.CreateQuestBonus();
+		QuestBonusTargetCheck checker = new QuestBonusTargetCheck();
 		for (int j = 0; j < this.monsterInfoList.Length; j++)
 		{
+			this.monsterInfoList[j].SetQuestBonus(questBonus, checker);
 			this.emotionSenderMulti.iconSpriteParents.Add(this.monsterInfoList[j].GetEmotionParentObject());
 		}
 		for (int k = 0; k < 3; k++)
 		{
 			this.UpdateMonsterUISingle(true, k);
 		}
+	}
+
+	private QuestBonusPack CreateQuestBonus()
+	{
+		string areaId = string.Empty;
+		string stageId = string.Empty;
+		string dungeonId = string.Empty;
+		if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
+		{
+			areaId = CMD_MultiRecruitPartyWait.roomCreateData.multiRoomInfo.worldAreaId;
+			stageId = CMD_MultiRecruitPartyWait.roomCreateData.multiRoomInfo.worldStageId;
+			dungeonId = CMD_MultiRecruitPartyWait.roomCreateData.multiRoomInfo.worldDungeonId;
+		}
+		else
+		{
+			areaId = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo.worldAreaId;
+			stageId = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo.worldStageId;
+			dungeonId = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo.worldDungeonId;
+		}
+		QuestBonusPack questBonusPack = new QuestBonusPack();
+		questBonusPack.CreateQuestBonus(areaId, stageId, dungeonId);
+		return questBonusPack;
 	}
 
 	private void UpdateMonsterUISingle(bool isReset, int updatePosition)
@@ -968,10 +1006,10 @@ public class CMD_MultiRecruitPartyWait : CMD
 	private void OnClickCancelExec(IEnumerator ie)
 	{
 		MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		RequestBase request;
+		RequestBase requestBase;
 		if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
 		{
-			request = new GameWebAPI.MultiRoomBreakup
+			requestBase = new GameWebAPI.MultiRoomBreakup
 			{
 				OnReceived = delegate(WebAPI.ResponseData resData)
 				{
@@ -992,9 +1030,14 @@ public class CMD_MultiRecruitPartyWait : CMD
 				MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 				AppCoroutine.Start(ie, true);
 			};
-			request = multiRoomLeave;
+			requestBase = multiRoomLeave;
 		}
-		AppCoroutine.Start(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request = requestBase;
+		if (CMD_MultiRecruitPartyWait.<>f__mg$cache0 == null)
+		{
+			CMD_MultiRecruitPartyWait.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		AppCoroutine.Start(request.Run(CMD_MultiRecruitPartyWait.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null), true);
@@ -1044,26 +1087,26 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		if (this.TCPSendUserIdList.Count > 0)
 		{
-			RecruitShareUserInfo message = new RecruitShareUserInfo();
-			message.monsInfo = new GameWebAPI.Common_MonsterData(md);
-			message.roomId = this.roomInfo.multiRoomId;
-			message.userId = this.myUserId;
-			message.isReady = this.isReady;
-			message.nickname = this.myNickname;
-			message.titleId = this.myTitleId;
-			message.isRequestMemberData = isRequestMemberData;
-			message.hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.RecruitShareUserInfo, this.myUserId, TCPMessageType.None);
-			message.positionNumber = this.myPositionNumber;
+			RecruitShareUserInfo recruitShareUserInfo = new RecruitShareUserInfo();
+			recruitShareUserInfo.monsInfo = new GameWebAPI.Common_MonsterData(md);
+			recruitShareUserInfo.roomId = this.roomInfo.multiRoomId;
+			recruitShareUserInfo.userId = this.myUserId;
+			recruitShareUserInfo.isReady = this.isReady;
+			recruitShareUserInfo.nickname = this.myNickname;
+			recruitShareUserInfo.titleId = this.myTitleId;
+			recruitShareUserInfo.isRequestMemberData = isRequestMemberData;
+			recruitShareUserInfo.hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.RecruitShareUserInfo, this.myUserId, TCPMessageType.None);
+			recruitShareUserInfo.positionNumber = this.myPositionNumber;
 			if (isOwnerSubMonster && CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
 			{
-				message.subMonsInfo = new GameWebAPI.Common_MonsterData(this.ownerSubMonsterData);
+				recruitShareUserInfo.subMonsInfo = new GameWebAPI.Common_MonsterData(this.ownerSubMonsterData);
 			}
 			Action<List<int>> sendFaildAction = null;
 			if (isRequestMemberData)
 			{
 				sendFaildAction = new Action<List<int>>(this.SendFaildRequestMember);
 			}
-			AppCoroutine.Start(Singleton<TCPUtil>.Instance.SendMessageInsistently<RecruitShareUserInfo>(TCPMessageType.RecruitShareUserInfo, message, this.TCPSendUserIdList, "multiRecruit", sendFaildAction), false);
+			AppCoroutine.Start(Singleton<TCPUtil>.Instance.SendMessageInsistently<RecruitShareUserInfo>(TCPMessageType.RecruitShareUserInfo, recruitShareUserInfo, this.TCPSendUserIdList, "multiRecruit", sendFaildAction), false);
 			yield break;
 		}
 		yield break;
@@ -1071,22 +1114,25 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private void SendFaildRequestMember(List<int> faildMemberList)
 	{
-		int member;
-		foreach (int member2 in faildMemberList)
+		using (List<int>.Enumerator enumerator = faildMemberList.GetEnumerator())
 		{
-			member = member2;
-			if (member == int.Parse(this.leaderMonsterData.userMonster.userId))
+			while (enumerator.MoveNext())
 			{
-				this.GetRoomStatus(delegate(int x)
+				int member = enumerator.Current;
+				CMD_MultiRecruitPartyWait $this = this;
+				if (member == int.Parse(this.leaderMonsterData.userMonster.userId))
 				{
-					this.UpdateMonsterUISingle(false, 0);
-					this.CheckAndSetOwnerSubMonster();
-					this.TCPSendUserIdList.RemoveAll((int user) => user == member);
-				});
-			}
-			else
-			{
-				this.SendTCPGetMemberList();
+					this.GetRoomStatus(delegate(int x)
+					{
+						$this.UpdateMonsterUISingle(false, 0);
+						$this.CheckAndSetOwnerSubMonster();
+						$this.TCPSendUserIdList.RemoveAll((int user) => user == member);
+					});
+				}
+				else
+				{
+					this.SendTCPGetMemberList();
+				}
 			}
 		}
 	}
@@ -1343,34 +1389,36 @@ public class CMD_MultiRecruitPartyWait : CMD
 			foreach (KeyValuePair<string, object> keyValuePair6 in arg)
 			{
 				Dictionary<object, object> dictionary4 = (Dictionary<object, object>)keyValuePair6.Value;
-				KeyValuePair<object, object> c;
-				foreach (KeyValuePair<object, object> c2 in dictionary4)
+				using (Dictionary<object, object>.Enumerator enumerator7 = dictionary4.GetEnumerator())
 				{
-					c = c2;
-					global::Debug.Log("切断データ受信");
-					global::Debug.Log(c.Key + " == " + c.Value);
-					if (c.Key.ToString() == "ri" && c.Value.ToString() == this.roomInfo.multiRoomId)
+					while (enumerator7.MoveNext())
 					{
-						flag2 = true;
-					}
-					else if (c.Key.ToString() == "ui" && flag2)
-					{
-						global::Debug.Log(c.Value.ToString() + " が切断しました");
-						if (c.Value.ToString() != this.leaderMonsterData.userMonster.userId)
+						KeyValuePair<object, object> c = enumerator7.Current;
+						global::Debug.Log("切断データ受信");
+						global::Debug.Log(c.Key + " == " + c.Value);
+						if (c.Key.ToString() == "ri" && c.Value.ToString() == this.roomInfo.multiRoomId)
 						{
-							this.AnotherMemberRoomOut(c.Value.ToString());
+							flag2 = true;
 						}
-						else if (this.partsMonsInfoList[0].Data == null)
+						else if (c.Key.ToString() == "ui" && flag2)
 						{
-							List<int> faildMemberList = new List<int>
+							global::Debug.Log(c.Value.ToString() + " が切断しました");
+							if (c.Value.ToString() != this.leaderMonsterData.userMonster.userId)
 							{
-								int.Parse(c.Value.ToString())
-							};
-							this.SendFaildRequestMember(faildMemberList);
-						}
-						else
-						{
-							this.TCPSendUserIdList.RemoveAll((int user) => user.ToString() == c.Value.ToString());
+								this.AnotherMemberRoomOut(c.Value.ToString());
+							}
+							else if (this.partsMonsInfoList[0].Data == null)
+							{
+								List<int> faildMemberList = new List<int>
+								{
+									int.Parse(c.Value.ToString())
+								};
+								this.SendFaildRequestMember(faildMemberList);
+							}
+							else
+							{
+								this.TCPSendUserIdList.RemoveAll((int user) => user.ToString() == c.Value.ToString());
+							}
 						}
 					}
 				}
@@ -1382,54 +1430,6 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		switch (tcpMessageType)
 		{
-		case TCPMessageType.Confirmation:
-		{
-			ConfirmationData confirmationData = TCPData<ConfirmationData>.Convert(messageObj);
-			bool flag = Singleton<TCPUtil>.Instance.CheckHash(confirmationData.hashValue, this.hashValueQueue);
-			bool flag2 = this.CheckStillAlive(int.Parse(confirmationData.playerUserId));
-			if (flag || !flag2)
-			{
-				return false;
-			}
-			bool flag3 = false;
-			for (int i = 0; i < Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType].Count; i++)
-			{
-				if (confirmationData.playerUserId == Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType][i])
-				{
-					flag3 = true;
-				}
-			}
-			if (!flag3)
-			{
-				Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType].Add(confirmationData.playerUserId);
-			}
-			global::Debug.LogFormat("{0}から確認用{1}を受信しました", new object[]
-			{
-				confirmationData.playerUserId,
-				(TCPMessageType)confirmationData.tcpMessageType
-			});
-			break;
-		}
-		default:
-			switch (tcpMessageType)
-			{
-			case TCPMessageType.None:
-				return false;
-			case TCPMessageType.Emotion:
-			{
-				EmotionData emotionData = TCPData<EmotionData>.Convert(messageObj);
-				if (!this.CheckStillAlive(int.Parse(emotionData.playerUserId)))
-				{
-					return false;
-				}
-				if (base.gameObject.activeSelf)
-				{
-					this.emotionSenderMulti.SetEmotion(emotionData.iconSpritesIndex, emotionData.emotionType, true);
-				}
-				break;
-			}
-			}
-			break;
 		case TCPMessageType.RecruitShareUserInfo:
 		{
 			RecruitShareUserInfo recruitShareUserInfo = TCPData<RecruitShareUserInfo>.Convert(messageObj);
@@ -1535,6 +1535,55 @@ public class CMD_MultiRecruitPartyWait : CMD
 			Singleton<TCPUtil>.Instance.SendConfirmation(TCPMessageType.RecruitReady, recruitReady.userId, this.myUserId, "multiRecruit");
 			break;
 		}
+		default:
+			switch (tcpMessageType)
+			{
+			case TCPMessageType.None:
+				return false;
+			default:
+				if (tcpMessageType == TCPMessageType.Confirmation)
+				{
+					ConfirmationData confirmationData = TCPData<ConfirmationData>.Convert(messageObj);
+					bool flag = Singleton<TCPUtil>.Instance.CheckHash(confirmationData.hashValue, this.hashValueQueue);
+					bool flag2 = this.CheckStillAlive(int.Parse(confirmationData.playerUserId));
+					if (flag || !flag2)
+					{
+						return false;
+					}
+					bool flag3 = false;
+					for (int i = 0; i < Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType].Count; i++)
+					{
+						if (confirmationData.playerUserId == Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType][i])
+						{
+							flag3 = true;
+						}
+					}
+					if (!flag3)
+					{
+						Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType].Add(confirmationData.playerUserId);
+					}
+					global::Debug.LogFormat("{0}から確認用{1}を受信しました", new object[]
+					{
+						confirmationData.playerUserId,
+						(TCPMessageType)confirmationData.tcpMessageType
+					});
+				}
+				break;
+			case TCPMessageType.Emotion:
+			{
+				EmotionData emotionData = TCPData<EmotionData>.Convert(messageObj);
+				if (!this.CheckStillAlive(int.Parse(emotionData.playerUserId)))
+				{
+					return false;
+				}
+				if (base.gameObject.activeSelf)
+				{
+					this.emotionSenderMulti.SetEmotion(emotionData.iconSpritesIndex, emotionData.emotionType, true);
+				}
+				break;
+			}
+			}
+			break;
 		}
 		return true;
 	}
@@ -1645,8 +1694,13 @@ public class CMD_MultiRecruitPartyWait : CMD
 				}
 			}
 		};
-		RequestBase request = multiRoomStatusInfoLogic;
-		AppCoroutine.Start(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase requestBase = multiRoomStatusInfoLogic;
+		RequestBase request = requestBase;
+		if (CMD_MultiRecruitPartyWait.<>f__mg$cache1 == null)
+		{
+			CMD_MultiRecruitPartyWait.<>f__mg$cache1 = new Action(RestrictionInput.EndLoad);
+		}
+		AppCoroutine.Start(request.Run(CMD_MultiRecruitPartyWait.<>f__mg$cache1, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null), true);

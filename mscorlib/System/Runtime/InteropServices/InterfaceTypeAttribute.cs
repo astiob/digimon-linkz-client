@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Indicates whether a managed interface is dual, dispatch-only, or IUnknown -only when exposed to COM.</summary>
-	[AttributeUsage(AttributeTargets.Interface, Inherited = false)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Interface, Inherited = false)]
 	public sealed class InterfaceTypeAttribute : Attribute
 	{
 		private ComInterfaceType intType;

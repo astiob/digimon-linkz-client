@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace OAuth
 {
-	public class WebParameterCollection : IEnumerable<WebParameter>, ICollection<WebParameter>, IList<WebParameter>, IEnumerable
+	public class WebParameterCollection : IList<WebParameter>, IEnumerable, ICollection<WebParameter>, IEnumerable<WebParameter>
 	{
 		private IList<WebParameter> _parameters;
 
@@ -33,11 +33,6 @@ namespace OAuth
 		public WebParameterCollection(int capacity)
 		{
 			this._parameters = new List<WebParameter>(capacity);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
 		}
 
 		public virtual WebParameter this[string name]
@@ -137,6 +132,11 @@ namespace OAuth
 		public virtual IEnumerator<WebParameter> GetEnumerator()
 		{
 			return this._parameters.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
 		}
 
 		public virtual void Add(WebParameter parameter)

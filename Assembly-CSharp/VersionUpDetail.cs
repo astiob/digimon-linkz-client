@@ -2,10 +2,10 @@
 using System;
 using UnityEngine;
 
-public class VersionUpDetail : MonoBehaviour
+public sealed class VersionUpDetail : MonoBehaviour
 {
-	[SerializeField]
 	[Header("デジモンのサムネイル用のアイコン")]
+	[SerializeField]
 	private UISprite charaIcon;
 
 	[Header("バージョンアップ 文言")]
@@ -28,11 +28,11 @@ public class VersionUpDetail : MonoBehaviour
 	[SerializeField]
 	private UILabel lbTXT_SkillUp;
 
-	private GUIMonsterIcon csMonsterIcon;
+	private GUIMonsterIcon monsterIcon;
 
 	public void ClearStatus()
 	{
-		this.ShowIcon(null, false);
+		this.SetMonsterIcon(null, false);
 		this.charaIcon.spriteName = "Common02_Thumbnail_none";
 		this.lbTXT_VerUp.text = string.Empty;
 		this.lbTXT_LevBefore.text = string.Empty;
@@ -41,28 +41,28 @@ public class VersionUpDetail : MonoBehaviour
 		this.lbTXT_SkillUp.text = string.Empty;
 	}
 
-	public void ShowIcon(MonsterData md, bool active)
+	public void SetMonsterIcon(MonsterData md, bool active)
 	{
 		if (!active)
 		{
-			if (this.csMonsterIcon != null)
+			if (this.monsterIcon != null)
 			{
-				UnityEngine.Object.Destroy(this.csMonsterIcon.gameObject);
-				this.csMonsterIcon = null;
+				UnityEngine.Object.Destroy(this.monsterIcon.gameObject);
+				this.monsterIcon = null;
 			}
 		}
 		else
 		{
-			if (this.csMonsterIcon != null)
+			if (this.monsterIcon != null)
 			{
-				UnityEngine.Object.Destroy(this.csMonsterIcon.gameObject);
+				UnityEngine.Object.Destroy(this.monsterIcon.gameObject);
 			}
 			GameObject gameObject = this.charaIcon.gameObject;
-			this.csMonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, gameObject.transform.localScale, gameObject.transform.localPosition, gameObject.transform.parent, true, false);
+			this.monsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, gameObject.transform.localScale, gameObject.transform.localPosition, gameObject.transform.parent, true, false);
 			UIWidget component = gameObject.GetComponent<UIWidget>();
 			if (component != null)
 			{
-				DepthController.SetWidgetDepth_2(this.csMonsterIcon.gameObject.transform, component.depth + 2);
+				DepthController.SetWidgetDepth_Static(this.monsterIcon.gameObject.transform, component.depth + 2);
 			}
 		}
 	}

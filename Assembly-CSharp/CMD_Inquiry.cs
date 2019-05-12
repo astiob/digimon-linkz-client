@@ -65,7 +65,7 @@ public sealed class CMD_Inquiry : CMD
 			RestrictionInput.EndLoad();
 			this.contactCode.text = this.GetMoldedContactCode(this.responseContactCode);
 			this.ShowDLG();
-			this.Show(closeEvent, sizeX, sizeY, showTime);
+			this.<Show>__BaseCallProxy0(closeEvent, sizeX, sizeY, showTime);
 		}, delegate(Exception nop)
 		{
 			if (!string.IsNullOrEmpty(apiId))

@@ -404,8 +404,8 @@ namespace System.Resources
 		/// <exception cref="T:System.ArgumentNullException">
 		///   <paramref name="name" /> is null.</exception>
 		/// <exception cref="T:System.Resources.MissingManifestResourceException">No usable set of resources is found, and there are no neutral resources.</exception>
-		[ComVisible(false)]
 		[CLSCompliant(false)]
+		[ComVisible(false)]
 		public UnmanagedMemoryStream GetStream(string name)
 		{
 			return this.GetStream(name, null);
@@ -419,8 +419,8 @@ namespace System.Resources
 		/// <exception cref="T:System.ArgumentNullException">
 		///   <paramref name="name" /> is null.</exception>
 		/// <exception cref="T:System.Resources.MissingManifestResourceException">No usable set of resources is found, and there are no neutral resources.</exception>
-		[ComVisible(false)]
 		[CLSCompliant(false)]
+		[ComVisible(false)]
 		public UnmanagedMemoryStream GetStream(string name, CultureInfo culture)
 		{
 			if (name == null)

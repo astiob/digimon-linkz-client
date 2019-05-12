@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using UI.Common;
 using UnityEngine;
 
 public sealed class MonsterMedalList : MonoBehaviour
@@ -21,30 +21,6 @@ public sealed class MonsterMedalList : MonoBehaviour
 
 	[SerializeField]
 	private UISprite speedIcon;
-
-	private Dictionary<string, string> medalLevelTable;
-
-	private void Awake()
-	{
-		this.SetMedalTable();
-	}
-
-	private void SetMedalTable()
-	{
-		this.medalLevelTable = new Dictionary<string, string>();
-		this.medalLevelTable.Add("5", "1");
-		this.medalLevelTable.Add("6", "2");
-		this.medalLevelTable.Add("7", "3");
-		this.medalLevelTable.Add("8", "4");
-		this.medalLevelTable.Add("9", "5");
-		this.medalLevelTable.Add("10", "6");
-		this.medalLevelTable.Add("15", "1");
-		this.medalLevelTable.Add("16", "2");
-		this.medalLevelTable.Add("17", "3");
-		this.medalLevelTable.Add("18", "4");
-		this.medalLevelTable.Add("19", "5");
-		this.medalLevelTable.Add("20", "6");
-	}
 
 	public void SetActive(bool isActive)
 	{
@@ -94,24 +70,13 @@ public sealed class MonsterMedalList : MonoBehaviour
 
 	private void SetMedalIcon(string medalType, string medalPercentage, UISprite iconSprite)
 	{
-		string empty = string.Empty;
-		if (medalPercentage == null)
-		{
-			medalPercentage = string.Empty;
-		}
-		if (this.medalLevelTable == null)
-		{
-			this.SetMedalTable();
-		}
-		this.medalLevelTable.TryGetValue(medalPercentage, out empty);
-		iconSprite.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType);
+		iconSprite.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType, medalPercentage);
 		if (string.IsNullOrEmpty(iconSprite.spriteName))
 		{
 			iconSprite.gameObject.SetActive(false);
 		}
 		else
 		{
-			iconSprite.spriteName += empty;
 			iconSprite.gameObject.SetActive(true);
 		}
 	}

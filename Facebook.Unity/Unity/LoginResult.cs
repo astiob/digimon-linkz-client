@@ -7,13 +7,13 @@ namespace Facebook.Unity
 	{
 		public const string LastRefreshKey = "last_refresh";
 
-		public static readonly string UserIdKey = (!Constants.IsWeb) ? "user_id" : "userID";
+		public static readonly string UserIdKey = Constants.IsWeb ? "userID" : "user_id";
 
-		public static readonly string ExpirationTimestampKey = (!Constants.IsWeb) ? "expiration_timestamp" : "expiresIn";
+		public static readonly string ExpirationTimestampKey = Constants.IsWeb ? "expiresIn" : "expiration_timestamp";
 
-		public static readonly string PermissionsKey = (!Constants.IsWeb) ? "permissions" : "grantedScopes";
+		public static readonly string PermissionsKey = Constants.IsWeb ? "grantedScopes" : "permissions";
 
-		public static readonly string AccessTokenKey = (!Constants.IsWeb) ? "access_token" : "accessToken";
+		public static readonly string AccessTokenKey = Constants.IsWeb ? "accessToken" : "access_token";
 
 		internal LoginResult(ResultContainer resultContainer) : base(resultContainer)
 		{

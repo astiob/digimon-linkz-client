@@ -4,19 +4,19 @@ namespace CROOZ.Chopin.Core
 {
 	public class NpAesConvert
 	{
-		private \uE002 \uE000;
+		private \uE008 \uE000;
 
-		public NpAesConvert()
-		{
-			this.\uE000 = new \uE002();
-		}
-
-		internal \uE002 \uE000
+		internal \uE008 \uE001
 		{
 			get
 			{
 				return this.\uE000;
 			}
+		}
+
+		public NpAesConvert()
+		{
+			this.\uE000 = new \uE008();
 		}
 
 		public byte[] Encrypt(string text)

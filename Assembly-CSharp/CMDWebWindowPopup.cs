@@ -162,7 +162,7 @@ public sealed class CMDWebWindowPopup : CMDWebWindow
 			base.StartCoroutine(task.Run(delegate
 			{
 				RestrictionInput.EndLoad();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy0(animation);
 			}, null, null));
 		}
 		else

@@ -354,7 +354,7 @@ public sealed class GUIFace : MonoBehaviour
 			zero.y = 1f;
 			component.ScaleTo(zero, 0.2f, null, iTween.EaseType.spring, 0f);
 			component.ColorTo(c, 0.2f, null, iTween.EaseType.spring, 0f);
-			Transform transform = gameObject.transform.FindChild("Campaign");
+			Transform transform = gameObject.transform.Find("Campaign");
 			if (transform != null)
 			{
 				component = transform.GetComponent<EfcCont>();
@@ -381,7 +381,7 @@ public sealed class GUIFace : MonoBehaviour
 			component.MoveTo(zero, 0.2f, null, iTween.EaseType.linear, 0f);
 			component.ScaleTo(zero, 0.2f, null, iTween.EaseType.linear, 0f);
 			component.ColorTo(c, 0.2f, null, iTween.EaseType.linear, 0f);
-			Transform transform = gameObject.transform.FindChild("Campaign");
+			Transform transform = gameObject.transform.Find("Campaign");
 			if (transform != null)
 			{
 				component = transform.GetComponent<EfcCont>();
@@ -477,7 +477,7 @@ public sealed class GUIFace : MonoBehaviour
 				zero.x = (zero.y = 1f);
 				component.ScaleTo(zero, time, null, iTween.EaseType.spring, 0f);
 				component.ColorTo(c, time, null, iTween.EaseType.spring, 0f);
-				Transform transform = gameObject.transform.FindChild("Campaign");
+				Transform transform = gameObject.transform.Find("Campaign");
 				if (null != transform)
 				{
 					component = transform.GetComponent<EfcCont>();
@@ -504,7 +504,7 @@ public sealed class GUIFace : MonoBehaviour
 				component2.activeCollider = false;
 				component.ScaleTo(Vector2.one, time2, null, iTween.EaseType.linear, 0f);
 				component.ColorTo(c, time2, null, iTween.EaseType.linear, 0f);
-				Transform transform2 = gameObject2.transform.FindChild("Campaign");
+				Transform transform2 = gameObject2.transform.Find("Campaign");
 				if (null != transform2)
 				{
 					component = transform2.GetComponent<EfcCont>();
@@ -525,17 +525,43 @@ public sealed class GUIFace : MonoBehaviour
 
 	public void ShowGUI()
 	{
-		foreach (object obj in base.transform)
+		IEnumerator enumerator = base.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			foreach (object obj2 in transform)
+			while (enumerator.MoveNext())
 			{
-				Transform transform2 = (Transform)obj2;
-				GUICollider component = transform2.gameObject.GetComponent<GUICollider>();
-				if (null != component)
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				IEnumerator enumerator2 = transform.GetEnumerator();
+				try
 				{
-					component.ShowGUI();
+					while (enumerator2.MoveNext())
+					{
+						object obj2 = enumerator2.Current;
+						Transform transform2 = (Transform)obj2;
+						GUICollider component = transform2.gameObject.GetComponent<GUICollider>();
+						if (null != component)
+						{
+							component.ShowGUI();
+						}
+					}
 				}
+				finally
+				{
+					IDisposable disposable;
+					if ((disposable = (enumerator2 as IDisposable)) != null)
+					{
+						disposable.Dispose();
+					}
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable2;
+			if ((disposable2 = (enumerator as IDisposable)) != null)
+			{
+				disposable2.Dispose();
 			}
 		}
 		if (base.gameObject.activeSelf)
@@ -549,17 +575,43 @@ public sealed class GUIFace : MonoBehaviour
 
 	public void HideGUI()
 	{
-		foreach (object obj in base.transform)
+		IEnumerator enumerator = base.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			foreach (object obj2 in transform)
+			while (enumerator.MoveNext())
 			{
-				Transform transform2 = (Transform)obj2;
-				GUICollider component = transform2.gameObject.GetComponent<GUICollider>();
-				if (null != component)
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				IEnumerator enumerator2 = transform.GetEnumerator();
+				try
 				{
-					component.HideGUI();
+					while (enumerator2.MoveNext())
+					{
+						object obj2 = enumerator2.Current;
+						Transform transform2 = (Transform)obj2;
+						GUICollider component = transform2.gameObject.GetComponent<GUICollider>();
+						if (null != component)
+						{
+							component.HideGUI();
+						}
+					}
 				}
+				finally
+				{
+					IDisposable disposable;
+					if ((disposable = (enumerator2 as IDisposable)) != null)
+					{
+						disposable.Dispose();
+					}
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable2;
+			if ((disposable2 = (enumerator as IDisposable)) != null)
+			{
+				disposable2.Dispose();
 			}
 		}
 		if (base.gameObject.activeSelf)

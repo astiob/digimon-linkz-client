@@ -73,7 +73,7 @@ public sealed class CMD_ModalItemPackDetail : CMD
 	{
 		this.csSelectPanel_Item.ZPos = -15f;
 		this.csSelectPanel_Omake.ZPos = -40f;
-		this.csSelectPanel_Item.AllBuild(CMD_ModalItemPackDetail.Data.itemList.Count, true, 1f, 1f, null, this);
-		this.csSelectPanel_Omake.AllBuild(CMD_ModalItemPackDetail.Data.omakeList.Count, true, 1f, 1f, null, this);
+		this.csSelectPanel_Item.AllBuild(CMD_ModalItemPackDetail.Data.itemList.Count, true, 1f, 1f, null, this, true);
+		this.csSelectPanel_Omake.AllBuild(CMD_ModalItemPackDetail.Data.omakeList.Count, true, 1f, 1f, null, this, true);
 	}
 }

@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Allows the user to specify the ProgID of a class.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+	[ComVisible(true)]
 	public sealed class ProgIdAttribute : Attribute
 	{
 		private string pid;

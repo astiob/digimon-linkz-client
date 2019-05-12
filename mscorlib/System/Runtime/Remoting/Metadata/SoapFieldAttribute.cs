@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Remoting.Metadata
 {
 	/// <summary>Customizes SOAP generation and processing for a field. This class cannot be inherited.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Field)]
+	[ComVisible(true)]
 	public sealed class SoapFieldAttribute : SoapAttribute
 	{
 		private int _order;

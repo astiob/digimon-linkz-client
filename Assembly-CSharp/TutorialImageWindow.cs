@@ -50,9 +50,9 @@ public class TutorialImageWindow : MonoBehaviour
 		this.pageNum = pageResourcesNames.Count;
 		if (isDisplayThumbnail)
 		{
-			Vector3 pos = base.transform.localPosition;
-			pos.x += 100f;
-			base.transform.localPosition = pos;
+			Vector3 localPosition = base.transform.localPosition;
+			localPosition.x += 100f;
+			base.transform.localPosition = localPosition;
 		}
 		for (int i = 0; i < pageResourcesNames.Count; i++)
 		{

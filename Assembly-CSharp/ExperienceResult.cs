@@ -15,52 +15,52 @@ public class ExperienceResult : ResultBase
 
 	private readonly Vector3 BIG_LABEL_SIZE = new Vector3(1.35f, 1.35f, 1f);
 
-	[SerializeField]
 	[Header("カウントアップするときのラベルの色")]
+	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("経験値などが入ってる")]
+	[SerializeField]
 	private GameObject acquisitionGO;
 
 	[Header("デジモン部分")]
 	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[SerializeField]
 	[Header("デジモンに吸収されるパーティクルを消す")]
+	[SerializeField]
 	private GameObject particleRemover;
 
 	[Header("取得経験値のラベル")]
 	[SerializeField]
 	private UILabel getExp;
 
-	[SerializeField]
 	[Header("取得経験値の文言ラベル")]
+	[SerializeField]
 	private UILabel getExpText;
 
-	[SerializeField]
 	[Header("取得クラスタのラベル")]
+	[SerializeField]
 	private UILabel getCluster;
 
 	[Header("取得クラスタの文言ラベル")]
 	[SerializeField]
 	private UILabel getClusterText;
 
-	[SerializeField]
 	[Header("取得友情度【リーダー】のラベル")]
+	[SerializeField]
 	private UILabel getFriendPointForLeader;
 
-	[SerializeField]
 	[Header("取得友情度【リーダー】の文言ラベル")]
+	[SerializeField]
 	private UILabel getFriendPointForLeaderText;
 
-	[SerializeField]
 	[Header("取得友情度のラベル")]
+	[SerializeField]
 	private UILabel getFriendPoint;
 
-	[SerializeField]
 	[Header("取得友情度の文言ラベル")]
+	[SerializeField]
 	private UILabel getFriendPointText;
 
 	private ExperienceResult.SkipCount skipCount;
@@ -395,33 +395,33 @@ public class ExperienceResult : ResultBase
 			for (int i = 0; i < this.digimonInfos.Length; i++)
 			{
 				NGUITools.SetActiveSelf(this.digimonInfos[i].gameObject, true);
-				TweenAlpha tw = this.digimonInfos[i].gameObject.AddComponent<TweenAlpha>();
-				tw.from = 0f;
-				tw.to = 1f;
+				TweenAlpha tweenAlpha = this.digimonInfos[i].gameObject.AddComponent<TweenAlpha>();
+				tweenAlpha.from = 0f;
+				tweenAlpha.to = 1f;
 				if (!this.isMulti)
 				{
 					string tgtId = this.deckData.monsterList[i].userMonsterId;
-					GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList memoryUserMonster = this.memoryMonsterList.Single((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == tgtId);
-					MonsterData digimonData = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(tgtId, false);
-					this.digimonInfos[i].CreateDetails(memoryUserMonster.ex.ToInt32(), memoryUserMonster.level.ToInt32(), digimonData.monsterM.maxLevel.ToInt32());
+					GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterList = this.memoryMonsterList.Single((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == tgtId);
+					MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(tgtId, false);
+					this.digimonInfos[i].CreateDetails(userMonsterList.ex.ToInt32(), userMonsterList.level.ToInt32(), monsterDataByUserMonsterID.monsterM.maxLevel.ToInt32());
 				}
 				else
 				{
-					GameWebAPI.RespData_WorldMultiStartInfo startInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
+					GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 					int partyIndex = DataMng.Instance().GetPartyIndex(i);
 					int monsterIndex = DataMng.Instance().GetMonsterIndex(i);
-					GameWebAPI.RespData_WorldMultiStartInfo.Party party = startInfo.party[partyIndex];
-					GameWebAPI.Common_MonsterData userMonster = party.userMonsters[monsterIndex];
-					MonsterData userMonsterData = userMonster.ToMonsterData();
-					string tgtId2 = userMonster.userMonsterId;
-					GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList memoryUserMonster2 = this.memoryMonsterList.SingleOrDefault((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == tgtId2);
-					if (memoryUserMonster2 != null)
+					GameWebAPI.RespData_WorldMultiStartInfo.Party party = respData_WorldMultiStartInfo.party[partyIndex];
+					GameWebAPI.Common_MonsterData common_MonsterData = party.userMonsters[monsterIndex];
+					MonsterData monsterData = common_MonsterData.ToMonsterData();
+					string tgtId = common_MonsterData.userMonsterId;
+					GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterList2 = this.memoryMonsterList.SingleOrDefault((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == tgtId);
+					if (userMonsterList2 != null)
 					{
-						this.digimonInfos[i].CreateDetails(memoryUserMonster2.ex.ToInt32(), memoryUserMonster2.level.ToInt32(), userMonsterData.monsterM.maxLevel.ToInt32());
+						this.digimonInfos[i].CreateDetails(userMonsterList2.ex.ToInt32(), userMonsterList2.level.ToInt32(), monsterData.monsterM.maxLevel.ToInt32());
 					}
 					else
 					{
-						this.digimonInfos[i].CreateDetails(userMonsterData);
+						this.digimonInfos[i].CreateDetails(monsterData);
 					}
 				}
 			}
@@ -502,9 +502,9 @@ public class ExperienceResult : ResultBase
 		while (!isFinishExpCountUp)
 		{
 			isFinishExpCountUp = true;
-			foreach (BattleResultDigimonInfo digimonInfo in this.digimonInfos)
+			foreach (BattleResultDigimonInfo battleResultDigimonInfo in this.digimonInfos)
 			{
-				if (!digimonInfo.IsFinishExpCountUp())
+				if (!battleResultDigimonInfo.IsFinishExpCountUp())
 				{
 					isFinishExpCountUp = false;
 					break;
@@ -589,7 +589,7 @@ public class ExperienceResult : ResultBase
 				tgtId = this.deckData.monsterList[i].userMonsterId;
 				GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterList = this.memoryMonsterList.Single((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == tgtId);
 				num = userMonsterList.friendship.ToInt32();
-				goto IL_163;
+				goto IL_15F;
 			}
 			GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 			int partyIndex = DataMng.Instance().GetPartyIndex(i);
@@ -606,13 +606,13 @@ public class ExperienceResult : ResultBase
 						break;
 					}
 				}
-				goto IL_163;
+				goto IL_15F;
 			}
 			array[i] = 0;
-			IL_1C6:
+			IL_1C1:
 			i++;
 			continue;
-			IL_163:
+			IL_15F:
 			MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(tgtId, false);
 			if (string.IsNullOrEmpty(monsterDataByUserMonsterID.userMonster.friendship))
 			{
@@ -625,7 +625,7 @@ public class ExperienceResult : ResultBase
 			}
 			int num3 = num2 - num;
 			array[i] = num3;
-			goto IL_1C6;
+			goto IL_1C1;
 		}
 		return array;
 	}
@@ -635,19 +635,19 @@ public class ExperienceResult : ResultBase
 		yield return new WaitForSeconds(0.6f);
 		for (int i = 0; i < this.digimonInfos.Length; i++)
 		{
-			int upVal = this.friendShipAddPoints[this.digimonInfos[i].DigimonNo];
-			if (upVal > 0)
+			int num = this.friendShipAddPoints[this.digimonInfos[i].DigimonNo];
+			if (num > 0)
 			{
-				this.digimonInfos[i].AddFriend(upVal);
+				this.digimonInfos[i].AddFriend(num);
 			}
 		}
 		bool isFinishFriendShipUp = false;
 		while (!isFinishFriendShipUp)
 		{
 			isFinishFriendShipUp = true;
-			foreach (BattleResultDigimonInfo digimonInfo in this.digimonInfos)
+			foreach (BattleResultDigimonInfo battleResultDigimonInfo in this.digimonInfos)
 			{
-				if (!digimonInfo.IsFinishFriendShipUp())
+				if (!battleResultDigimonInfo.IsFinishFriendShipUp())
 				{
 					isFinishFriendShipUp = false;
 					break;
@@ -733,7 +733,7 @@ public class ExperienceResult : ResultBase
 			string text = string.Empty;
 			if (respData_WorldMultiStartInfo == null)
 			{
-				goto IL_D5;
+				goto IL_D6;
 			}
 			int partyIndex = DataMng.Instance().GetPartyIndex(i);
 			int monsterIndex = DataMng.Instance().GetMonsterIndex(i);
@@ -741,21 +741,21 @@ public class ExperienceResult : ResultBase
 			if (int.Parse(common_MonsterData.userId) == DataMng.Instance().RespDataCM_Login.playerInfo.UserId)
 			{
 				text = common_MonsterData.userMonsterId;
-				goto IL_D5;
+				goto IL_D6;
 			}
-			IL_136:
+			IL_137:
 			i++;
 			continue;
-			IL_D5:
+			IL_D6:
 			if (aliveInfo[i] == 1 && deckList.monsterList.Length > i)
 			{
 				string text2 = (respData_WorldMultiStartInfo != null) ? text : deckList.monsterList[i].userMonsterId;
 				MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(text2, false);
 				list.Add(monsterDataByUserMonsterID);
 				aliveUserMonsterIds.Add(int.Parse(text2));
-				goto IL_136;
+				goto IL_137;
 			}
-			goto IL_136;
+			goto IL_137;
 		}
 		GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
 		requestMonsterList.SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)

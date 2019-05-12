@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Resources
 {
 	/// <summary>Informs the <see cref="T:System.Resources.ResourceManager" /> of the neutral culture of an assembly. This class cannot be inherited.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Assembly)]
+	[ComVisible(true)]
 	public sealed class NeutralResourcesLanguageAttribute : Attribute
 	{
 		private string culture;

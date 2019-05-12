@@ -48,105 +48,45 @@ namespace CharacterDetailsUI
 		private CharacterSkillInfo extraSkillInfo;
 
 		[SerializeField]
-		private GameObject resistanceNone;
-
-		[SerializeField]
-		private GameObject resistanceFire;
-
-		[SerializeField]
-		private GameObject resistanceWater;
-
-		[SerializeField]
-		private GameObject resistanceThunder;
-
-		[SerializeField]
-		private GameObject resistanceNature;
-
-		[SerializeField]
-		private GameObject resistanceLight;
-
-		[SerializeField]
-		private GameObject resistanceDark;
-
-		[SerializeField]
-		private GameObject resistanceStun;
-
-		[SerializeField]
-		private GameObject resistanceSkillLock;
-
-		[SerializeField]
-		private GameObject resistanceSleep;
-
-		[SerializeField]
-		private GameObject resistanceParalysis;
-
-		[SerializeField]
-		private GameObject resistanceConfusion;
-
-		[SerializeField]
-		private GameObject resistancePoison;
-
-		[SerializeField]
-		private GameObject resistanceDeath;
-
-		[SerializeField]
-		private Transform levelUpParent;
-
-		[SerializeField]
-		private Transform tranceParent;
-
-		[SerializeField]
 		private ChipBaseSelect chipBaseSelect;
 
 		[SerializeField]
 		private UILabel nextMonsterResistanceAlert;
 
-		private GameObject particleGameObject;
-
 		private int pageNo;
 
 		private bool viewExtraSkillPage;
 
-		private Animation ShowLevelUpAnimation()
+		[SerializeField]
+		private CharacterStatusResistance resistance;
+
+		[SerializeField]
+		private CharacterStatusReinforcement reinforcement;
+
+		private bool enablePageChange;
+
+		public CharacterStatusResistance GetResistance()
 		{
-			string path = "UICommon/Parts/LevelUp";
-			GameObject original = Resources.Load(path, typeof(GameObject)) as GameObject;
-			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
-			DepthController depthController = gameObject.GetComponent<DepthController>();
-			if (null == depthController)
-			{
-				depthController = gameObject.AddComponent<DepthController>();
-			}
-			Transform transform = gameObject.transform;
-			int depth = this.windowBackground.depth;
-			depthController.AddWidgetDepth(transform, depth + 10);
-			transform.SetParent(this.levelUpParent);
-			transform.localPosition = Vector3.zero;
-			transform.localScale = Vector3.one;
-			Animation component = gameObject.GetComponent<Animation>();
-			component.Play("LevelUp");
-			return component;
+			return this.resistance;
 		}
 
-		private Animation ShowTranceAnimation()
+		public CharacterStatusReinforcement GetReinforcement()
 		{
-			string path = "UICommon/Parts/AwakeningParts";
-			GameObject original = Resources.Load(path, typeof(GameObject)) as GameObject;
-			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
-			DepthController depthController = gameObject.GetComponent<DepthController>();
-			if (null == depthController)
+			return this.reinforcement;
+		}
+
+		public void OnPushStatusList()
+		{
+			if (this.enablePageChange)
 			{
-				depthController = gameObject.AddComponent<DepthController>();
+				this.pageNo++;
+				this.pageNo = this.SetPageContent(this.pageNo);
 			}
-			Transform transform = gameObject.transform;
-			int depth = this.windowBackground.depth;
-			depthController.AddWidgetDepth(transform, depth + 10);
-			transform.SetParent(this.tranceParent);
-			transform.localPosition = Vector3.zero;
-			transform.localScale = Vector3.one;
-			Animation component = gameObject.GetComponent<Animation>();
-			component.Play("Awakening");
-			return component;
+		}
+
+		public void EnablePage(bool enable)
+		{
+			this.enablePageChange = enable;
 		}
 
 		private bool AnyMatchStrongResistance(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster, string tranceResistance, string tranceStatusAilment)
@@ -250,28 +190,32 @@ namespace CharacterDetailsUI
 			{
 				pageNo = 0;
 			}
-			switch (this.pageContent[pageNo])
+			CharacterStatusList.PageType pageType = this.pageContent[pageNo];
+			if (pageType != CharacterStatusList.PageType.STATUS)
 			{
-			case CharacterStatusList.PageType.STATUS:
-				if (!this.statusPage.activeSelf)
+				if (pageType != CharacterStatusList.PageType.SKILL)
 				{
-					this.statusPage.SetActive(true);
+					if (pageType == CharacterStatusList.PageType.CHIP)
+					{
+						if (this.statusPage.activeSelf)
+						{
+							this.statusPage.SetActive(false);
+						}
+						if (this.skillPage.activeSelf)
+						{
+							this.skillPage.SetActive(false);
+						}
+						if (this.extraSkillPage.activeSelf)
+						{
+							this.extraSkillPage.SetActive(false);
+						}
+						if (!this.chipPage.activeSelf)
+						{
+							this.chipPage.SetActive(true);
+						}
+					}
 				}
-				if (this.skillPage.activeSelf)
-				{
-					this.skillPage.SetActive(false);
-				}
-				if (this.extraSkillPage.activeSelf)
-				{
-					this.extraSkillPage.SetActive(false);
-				}
-				if (this.chipPage.activeSelf)
-				{
-					this.chipPage.SetActive(false);
-				}
-				break;
-			case CharacterStatusList.PageType.SKILL:
-				if (!this.viewExtraSkillPage)
+				else if (!this.viewExtraSkillPage)
 				{
 					if (this.statusPage.activeSelf)
 					{
@@ -309,11 +253,12 @@ namespace CharacterDetailsUI
 						this.chipPage.SetActive(false);
 					}
 				}
-				break;
-			case CharacterStatusList.PageType.CHIP:
-				if (this.statusPage.activeSelf)
+			}
+			else
+			{
+				if (!this.statusPage.activeSelf)
 				{
-					this.statusPage.SetActive(false);
+					this.statusPage.SetActive(true);
 				}
 				if (this.skillPage.activeSelf)
 				{
@@ -323,11 +268,10 @@ namespace CharacterDetailsUI
 				{
 					this.extraSkillPage.SetActive(false);
 				}
-				if (!this.chipPage.activeSelf)
+				if (this.chipPage.activeSelf)
 				{
-					this.chipPage.SetActive(true);
+					this.chipPage.SetActive(false);
 				}
-				break;
 			}
 			return pageNo;
 		}
@@ -346,7 +290,7 @@ namespace CharacterDetailsUI
 			int exp = int.Parse(monsterData.userMonster.ex);
 			DataMng.ExperienceInfo experienceInfo = DataMng.Instance().GetExperienceInfo(exp);
 			this.basicInfo.SetMonsterData(monsterData, experienceInfo);
-			this.statusList.SetValues(monsterData, true);
+			this.statusList.SetValues(monsterData, true, true);
 			this.changeValueList.SetValues(monsterData);
 			this.resistanceList.SetValues(monsterData);
 			this.medalList.SetValues(monsterData.userMonster);
@@ -388,149 +332,6 @@ namespace CharacterDetailsUI
 		public void SetPage(int page)
 		{
 			this.pageNo = this.SetPageContent(page);
-		}
-
-		public void NextPage()
-		{
-			this.pageNo++;
-			this.pageNo = this.SetPageContent(this.pageNo);
-		}
-
-		public Animation ShowLevelUpParticle(Transform windowRootTransform)
-		{
-			string path = "Cutscenes/NewFX6";
-			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
-			gameObject.name = "LevelUpParticle";
-			Transform transform = gameObject.transform;
-			transform.SetParent(this.levelUpParent);
-			transform.localPosition = Vector3.zero;
-			Animation result = this.ShowLevelUpAnimation();
-			SoundMng.Instance().TryPlaySE("SEInternal/Common/se_101", 0f, false, true, null, -1);
-			return result;
-		}
-
-		public Animation ShowTranceParticle(Transform windowRootTransform)
-		{
-			string path = "Cutscenes/NewFX10";
-			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
-			gameObject.name = "TranceParticle";
-			Transform transform = gameObject.transform;
-			transform.SetParent(this.tranceParent);
-			transform.localPosition = Vector3.zero;
-			Animation result = this.ShowTranceAnimation();
-			SoundMng.Instance().TryPlaySE("SEInternal/Common/se_101", 0f, false, true, null, -1);
-			return result;
-		}
-
-		public GameObject GetTranceEffectObject(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM oldResistance, string newResistanceIds)
-		{
-			List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceListByJson = MonsterResistanceData.GetUniqueResistanceListByJson(newResistanceIds);
-			this.particleGameObject = null;
-			for (int i = 0; i < uniqueResistanceListByJson.Count; i++)
-			{
-				if ("1" == uniqueResistanceListByJson[i].none && "1" != oldResistance.none)
-				{
-					this.particleGameObject = this.resistanceNone;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].fire && "1" != oldResistance.fire)
-				{
-					this.particleGameObject = this.resistanceFire;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].water && "1" != oldResistance.water)
-				{
-					this.particleGameObject = this.resistanceWater;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].thunder && "1" != oldResistance.thunder)
-				{
-					this.particleGameObject = this.resistanceThunder;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].nature && "1" != oldResistance.nature)
-				{
-					this.particleGameObject = this.resistanceNature;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].dark && "1" != oldResistance.dark)
-				{
-					this.particleGameObject = this.resistanceDark;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].light && "1" != oldResistance.light)
-				{
-					this.particleGameObject = this.resistanceLight;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].stun && "1" != oldResistance.stun)
-				{
-					this.particleGameObject = this.resistanceStun;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].skillLock && "1" != oldResistance.skillLock)
-				{
-					this.particleGameObject = this.resistanceSkillLock;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].sleep && "1" != oldResistance.sleep)
-				{
-					this.particleGameObject = this.resistanceSleep;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].paralysis && "1" != oldResistance.paralysis)
-				{
-					this.particleGameObject = this.resistanceParalysis;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].confusion && "1" != oldResistance.confusion)
-				{
-					this.particleGameObject = this.resistanceConfusion;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].poison && "1" != oldResistance.poison)
-				{
-					this.particleGameObject = this.resistancePoison;
-					break;
-				}
-				if ("1" == uniqueResistanceListByJson[i].death && "1" != oldResistance.death)
-				{
-					this.particleGameObject = this.resistanceDeath;
-					break;
-				}
-			}
-			if (null != this.particleGameObject)
-			{
-				this.particleGameObject.SetActive(true);
-			}
-			return this.particleGameObject;
-		}
-
-		public void TranceEffectActiveSet(bool active)
-		{
-			if (this.particleGameObject != null)
-			{
-				this.particleGameObject.SetActive(active);
-			}
-		}
-
-		public void StartTranceEffect(GameObject particleGameObject, UIPanel cutinPanel)
-		{
-			if (null != particleGameObject)
-			{
-				particleGameObject.SetActive(true);
-				RenderFrontThanNGUI component = particleGameObject.GetComponent<RenderFrontThanNGUI>();
-				if (component != null)
-				{
-					UIPanel uipanel = this.tranceParent.GetComponent<UIPanel>();
-					if (null == uipanel)
-					{
-						uipanel = this.tranceParent.gameObject.AddComponent<UIPanel>();
-					}
-					uipanel.sortingOrder = component.GetSortOrder() + 1;
-					cutinPanel.sortingOrder = component.GetSortOrder() + 1;
-				}
-			}
 		}
 
 		public void SetViewNextEvolutionMonster(string monsterId, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)

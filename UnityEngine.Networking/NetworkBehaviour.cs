@@ -4,17 +4,17 @@ using System.ComponentModel;
 
 namespace UnityEngine.Networking
 {
-	[AddComponentMenu("")]
 	[RequireComponent(typeof(NetworkIdentity))]
+	[AddComponentMenu("")]
 	public class NetworkBehaviour : MonoBehaviour
 	{
-		private const float k_DefaultSendInterval = 0.1f;
-
 		private uint m_SyncVarDirtyBits;
 
 		private float m_LastSendTime;
 
 		private bool m_SyncVarGuard;
+
+		private const float k_DefaultSendInterval = 0.1f;
 
 		private NetworkIdentity m_MyView;
 
@@ -112,20 +112,36 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		internal NetworkIdentity netIdentity
+		{
+			get
+			{
+				return this.myView;
+			}
+		}
+
 		private NetworkIdentity myView
 		{
 			get
 			{
+				NetworkIdentity myView;
 				if (this.m_MyView == null)
 				{
 					this.m_MyView = base.GetComponent<NetworkIdentity>();
-					if (this.m_MyView == null && LogFilter.logError)
+					if (this.m_MyView == null)
 					{
-						Debug.LogError("There is no NetworkIdentity on this object. Please add one.");
+						if (LogFilter.logError)
+						{
+							Debug.LogError("There is no NetworkIdentity on this object. Please add one.");
+						}
 					}
-					return this.m_MyView;
+					myView = this.m_MyView;
 				}
-				return this.m_MyView;
+				else
+				{
+					myView = this.m_MyView;
+				}
+				return myView;
 			}
 		}
 
@@ -138,18 +154,19 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogWarning("Trying to send command for object without authority.");
 				}
-				return;
 			}
-			if (ClientScene.readyConnection == null)
+			else if (ClientScene.readyConnection == null)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("Send command attempted with no client running [client=" + this.connectionToServer + "].");
 				}
-				return;
 			}
-			writer.FinishMessage();
-			ClientScene.readyConnection.SendWriter(writer, channelId);
+			else
+			{
+				writer.FinishMessage();
+				ClientScene.readyConnection.SendWriter(writer, channelId);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -167,10 +184,29 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogWarning("ClientRpc call on un-spawned object");
 				}
-				return;
 			}
-			writer.FinishMessage();
-			NetworkServer.SendWriterToReady(base.gameObject, writer, channelId);
+			else
+			{
+				writer.FinishMessage();
+				NetworkServer.SendWriterToReady(base.gameObject, writer, channelId);
+			}
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		protected void SendTargetRPCInternal(NetworkConnection conn, NetworkWriter writer, int channelId, string rpcName)
+		{
+			if (!this.isServer)
+			{
+				if (LogFilter.logWarn)
+				{
+					Debug.LogWarning("TargetRpc call on un-spawned object");
+				}
+			}
+			else
+			{
+				writer.FinishMessage();
+				conn.SendWriter(writer, channelId);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -188,10 +224,12 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogWarning("SendEvent no server?");
 				}
-				return;
 			}
-			writer.FinishMessage();
-			NetworkServer.SendWriterToReady(base.gameObject, writer, channelId);
+			else
+			{
+				writer.FinishMessage();
+				NetworkServer.SendWriterToReady(base.gameObject, writer, channelId);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -209,107 +247,108 @@ namespace UnityEngine.Networking
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected static void RegisterCommandDelegate(Type invokeClass, int cmdHash, NetworkBehaviour.CmdDelegate func)
 		{
-			if (NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
+			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return;
-			}
-			NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
-			invoker.invokeType = NetworkBehaviour.UNetInvokeType.Command;
-			invoker.invokeClass = invokeClass;
-			invoker.invokeFunction = func;
-			NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
-			if (LogFilter.logDev)
-			{
-				Debug.Log(string.Concat(new object[]
+				NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
+				invoker.invokeType = NetworkBehaviour.UNetInvokeType.Command;
+				invoker.invokeClass = invokeClass;
+				invoker.invokeFunction = func;
+				NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
+				if (LogFilter.logDev)
 				{
-					"RegisterCommandDelegate hash:",
-					cmdHash,
-					" ",
-					func.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterCommandDelegate hash:",
+						cmdHash,
+						" ",
+						func.GetMethodName()
+					}));
+				}
 			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected static void RegisterRpcDelegate(Type invokeClass, int cmdHash, NetworkBehaviour.CmdDelegate func)
 		{
-			if (NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
+			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return;
-			}
-			NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
-			invoker.invokeType = NetworkBehaviour.UNetInvokeType.ClientRpc;
-			invoker.invokeClass = invokeClass;
-			invoker.invokeFunction = func;
-			NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
-			if (LogFilter.logDev)
-			{
-				Debug.Log(string.Concat(new object[]
+				NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
+				invoker.invokeType = NetworkBehaviour.UNetInvokeType.ClientRpc;
+				invoker.invokeClass = invokeClass;
+				invoker.invokeFunction = func;
+				NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
+				if (LogFilter.logDev)
 				{
-					"RegisterRpcDelegate hash:",
-					cmdHash,
-					" ",
-					func.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterRpcDelegate hash:",
+						cmdHash,
+						" ",
+						func.GetMethodName()
+					}));
+				}
 			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected static void RegisterEventDelegate(Type invokeClass, int cmdHash, NetworkBehaviour.CmdDelegate func)
 		{
-			if (NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
+			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return;
-			}
-			NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
-			invoker.invokeType = NetworkBehaviour.UNetInvokeType.SyncEvent;
-			invoker.invokeClass = invokeClass;
-			invoker.invokeFunction = func;
-			NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
-			if (LogFilter.logDev)
-			{
-				Debug.Log(string.Concat(new object[]
+				NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
+				invoker.invokeType = NetworkBehaviour.UNetInvokeType.SyncEvent;
+				invoker.invokeClass = invokeClass;
+				invoker.invokeFunction = func;
+				NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
+				if (LogFilter.logDev)
 				{
-					"RegisterEventDelegate hash:",
-					cmdHash,
-					" ",
-					func.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterEventDelegate hash:",
+						cmdHash,
+						" ",
+						func.GetMethodName()
+					}));
+				}
 			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected static void RegisterSyncListDelegate(Type invokeClass, int cmdHash, NetworkBehaviour.CmdDelegate func)
 		{
-			if (NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
+			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return;
-			}
-			NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
-			invoker.invokeType = NetworkBehaviour.UNetInvokeType.SyncList;
-			invoker.invokeClass = invokeClass;
-			invoker.invokeFunction = func;
-			NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
-			if (LogFilter.logDev)
-			{
-				Debug.Log(string.Concat(new object[]
+				NetworkBehaviour.Invoker invoker = new NetworkBehaviour.Invoker();
+				invoker.invokeType = NetworkBehaviour.UNetInvokeType.SyncList;
+				invoker.invokeClass = invokeClass;
+				invoker.invokeFunction = func;
+				NetworkBehaviour.s_CmdHandlerDelegates[cmdHash] = invoker;
+				if (LogFilter.logDev)
 				{
-					"RegisterSyncListDelegate hash:",
-					cmdHash,
-					" ",
-					func.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterSyncListDelegate hash:",
+						cmdHash,
+						" ",
+						func.GetMethodName()
+					}));
+				}
 			}
 		}
 
 		internal static string GetInvoker(int cmdHash)
 		{
+			string result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return null;
+				result = null;
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			return invoker.DebugString();
+			else
+			{
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				result = invoker.DebugString();
+			}
+			return result;
 		}
 
 		internal static bool GetInvokerForHashCommand(int cmdHash, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
@@ -335,6 +374,7 @@ namespace UnityEngine.Networking
 		private static bool GetInvokerForHash(int cmdHash, NetworkBehaviour.UNetInvokeType invokeType, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
 		{
 			NetworkBehaviour.Invoker invoker = null;
+			bool result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.TryGetValue(cmdHash, out invoker))
 			{
 				if (LogFilter.logDev)
@@ -343,9 +383,9 @@ namespace UnityEngine.Networking
 				}
 				invokeClass = null;
 				invokeFunction = null;
-				return false;
+				result = false;
 			}
-			if (invoker == null)
+			else if (invoker == null)
 			{
 				if (LogFilter.logDev)
 				{
@@ -353,9 +393,9 @@ namespace UnityEngine.Networking
 				}
 				invokeClass = null;
 				invokeFunction = null;
-				return false;
+				result = false;
 			}
-			if (invoker.invokeType != invokeType)
+			else if (invoker.invokeType != invokeType)
 			{
 				if (LogFilter.logError)
 				{
@@ -363,11 +403,15 @@ namespace UnityEngine.Networking
 				}
 				invokeClass = null;
 				invokeFunction = null;
-				return false;
+				result = false;
 			}
-			invokeClass = invoker.invokeClass;
-			invokeFunction = invoker.invokeFunction;
-			return true;
+			else
+			{
+				invokeClass = invoker.invokeClass;
+				invokeFunction = invoker.invokeFunction;
+				result = true;
+			}
+			return result;
 		}
 
 		internal static void DumpInvokers()
@@ -380,7 +424,7 @@ namespace UnityEngine.Networking
 					"  Invoker:",
 					keyValuePair.Value.invokeClass,
 					":",
-					keyValuePair.Value.invokeFunction.Method.Name,
+					keyValuePair.Value.invokeFunction.GetMethodName(),
 					" ",
 					keyValuePair.Value.invokeType,
 					" ",
@@ -396,106 +440,148 @@ namespace UnityEngine.Networking
 
 		internal bool InvokeCommandDelegate(int cmdHash, NetworkReader reader)
 		{
+			bool result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return false;
+				result = false;
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.Command)
+			else
 			{
-				return false;
-			}
-			if (base.GetType() != invoker.invokeClass)
-			{
-				if (!base.GetType().IsSubclassOf(invoker.invokeClass))
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.Command)
 				{
-					return false;
+					result = false;
+				}
+				else
+				{
+					if (base.GetType() != invoker.invokeClass)
+					{
+						if (!base.GetType().IsSubclassOf(invoker.invokeClass))
+						{
+							return false;
+						}
+					}
+					invoker.invokeFunction(this, reader);
+					result = true;
 				}
 			}
-			invoker.invokeFunction(this, reader);
-			return true;
+			return result;
 		}
 
 		internal bool InvokeRpcDelegate(int cmdHash, NetworkReader reader)
 		{
+			bool result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return false;
+				result = false;
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.ClientRpc)
+			else
 			{
-				return false;
-			}
-			if (base.GetType() != invoker.invokeClass)
-			{
-				if (!base.GetType().IsSubclassOf(invoker.invokeClass))
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.ClientRpc)
 				{
-					return false;
+					result = false;
+				}
+				else
+				{
+					if (base.GetType() != invoker.invokeClass)
+					{
+						if (!base.GetType().IsSubclassOf(invoker.invokeClass))
+						{
+							return false;
+						}
+					}
+					invoker.invokeFunction(this, reader);
+					result = true;
 				}
 			}
-			invoker.invokeFunction(this, reader);
-			return true;
+			return result;
 		}
 
 		internal bool InvokeSyncEventDelegate(int cmdHash, NetworkReader reader)
 		{
+			bool result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return false;
+				result = false;
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.SyncEvent)
+			else
 			{
-				return false;
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.SyncEvent)
+				{
+					result = false;
+				}
+				else
+				{
+					invoker.invokeFunction(this, reader);
+					result = true;
+				}
 			}
-			invoker.invokeFunction(this, reader);
-			return true;
+			return result;
 		}
 
 		internal bool InvokeSyncListDelegate(int cmdHash, NetworkReader reader)
 		{
+			bool result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return false;
+				result = false;
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.SyncList)
+			else
 			{
-				return false;
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				if (invoker.invokeType != NetworkBehaviour.UNetInvokeType.SyncList)
+				{
+					result = false;
+				}
+				else if (base.GetType() != invoker.invokeClass)
+				{
+					result = false;
+				}
+				else
+				{
+					invoker.invokeFunction(this, reader);
+					result = true;
+				}
 			}
-			if (base.GetType() != invoker.invokeClass)
-			{
-				return false;
-			}
-			invoker.invokeFunction(this, reader);
-			return true;
+			return result;
 		}
 
 		internal static string GetCmdHashHandlerName(int cmdHash)
 		{
+			string result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return cmdHash.ToString();
+				result = cmdHash.ToString();
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			return invoker.invokeType + ":" + invoker.invokeFunction.Method.Name;
+			else
+			{
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				result = invoker.invokeType + ":" + invoker.invokeFunction.GetMethodName();
+			}
+			return result;
 		}
 
 		private static string GetCmdHashPrefixName(int cmdHash, string prefix)
 		{
+			string result;
 			if (!NetworkBehaviour.s_CmdHandlerDelegates.ContainsKey(cmdHash))
 			{
-				return cmdHash.ToString();
+				result = cmdHash.ToString();
 			}
-			NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
-			string text = invoker.invokeFunction.Method.Name;
-			int num = text.IndexOf(prefix);
-			if (num > -1)
+			else
 			{
-				text = text.Substring(prefix.Length);
+				NetworkBehaviour.Invoker invoker = NetworkBehaviour.s_CmdHandlerDelegates[cmdHash];
+				string text = invoker.invokeFunction.GetMethodName();
+				int num = text.IndexOf(prefix);
+				if (num > -1)
+				{
+					text = text.Substring(prefix.Length);
+				}
+				result = text;
 			}
-			return text;
+			return result;
 		}
 
 		internal static string GetCmdHashCmdName(int cmdHash)
@@ -521,54 +607,68 @@ namespace UnityEngine.Networking
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected void SetSyncVarGameObject(GameObject newGameObject, ref GameObject gameObjectField, uint dirtyBit, ref NetworkInstanceId netIdField)
 		{
-			if (this.m_SyncVarGuard)
+			if (!this.m_SyncVarGuard)
 			{
-				return;
-			}
-			NetworkInstanceId networkInstanceId = default(NetworkInstanceId);
-			if (newGameObject != null)
-			{
-				NetworkIdentity component = newGameObject.GetComponent<NetworkIdentity>();
-				if (component != null)
+				NetworkInstanceId networkInstanceId = default(NetworkInstanceId);
+				if (newGameObject != null)
 				{
-					networkInstanceId = component.netId;
-					if (networkInstanceId.IsEmpty() && LogFilter.logWarn)
+					NetworkIdentity component = newGameObject.GetComponent<NetworkIdentity>();
+					if (component != null)
 					{
-						Debug.LogWarning("SetSyncVarGameObject GameObject " + newGameObject + " has a zero netId. Maybe it is not spawned yet?");
+						networkInstanceId = component.netId;
+						if (networkInstanceId.IsEmpty())
+						{
+							if (LogFilter.logWarn)
+							{
+								Debug.LogWarning("SetSyncVarGameObject GameObject " + newGameObject + " has a zero netId. Maybe it is not spawned yet?");
+							}
+						}
 					}
 				}
-			}
-			NetworkInstanceId networkInstanceId2 = default(NetworkInstanceId);
-			if (gameObjectField != null)
-			{
-				networkInstanceId2 = gameObjectField.GetComponent<NetworkIdentity>().netId;
-			}
-			if (networkInstanceId != networkInstanceId2)
-			{
-				if (LogFilter.logDev)
+				NetworkInstanceId networkInstanceId2 = default(NetworkInstanceId);
+				if (gameObjectField != null)
 				{
-					Debug.Log(string.Concat(new object[]
-					{
-						"SetSyncVar GameObject ",
-						base.GetType().Name,
-						" bit [",
-						dirtyBit,
-						"] netfieldId:",
-						networkInstanceId2,
-						"->",
-						networkInstanceId
-					}));
+					networkInstanceId2 = gameObjectField.GetComponent<NetworkIdentity>().netId;
 				}
-				this.SetDirtyBit(dirtyBit);
-				gameObjectField = newGameObject;
-				netIdField = networkInstanceId;
+				if (networkInstanceId != networkInstanceId2)
+				{
+					if (LogFilter.logDev)
+					{
+						Debug.Log(string.Concat(new object[]
+						{
+							"SetSyncVar GameObject ",
+							base.GetType().Name,
+							" bit [",
+							dirtyBit,
+							"] netfieldId:",
+							networkInstanceId2,
+							"->",
+							networkInstanceId
+						}));
+					}
+					this.SetDirtyBit(dirtyBit);
+					gameObjectField = newGameObject;
+					netIdField = networkInstanceId;
+				}
 			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected void SetSyncVar<T>(T value, ref T fieldValue, uint dirtyBit)
 		{
-			if (!value.Equals(fieldValue))
+			bool flag = false;
+			if (value == null)
+			{
+				if (fieldValue != null)
+				{
+					flag = true;
+				}
+			}
+			else
+			{
+				flag = !value.Equals(fieldValue);
+			}
+			if (flag)
 			{
 				if (LogFilter.logDev)
 				{
@@ -602,9 +702,12 @@ namespace UnityEngine.Networking
 
 		internal int GetDirtyChannel()
 		{
-			if (Time.time - this.m_LastSendTime > this.GetNetworkSendInterval() && this.m_SyncVarDirtyBits != 0u)
+			if (Time.time - this.m_LastSendTime > this.GetNetworkSendInterval())
 			{
-				return this.GetNetworkChannel();
+				if (this.m_SyncVarDirtyBits != 0u)
+				{
+					return this.GetNetworkChannel();
+				}
 			}
 			return -1;
 		}
@@ -679,6 +782,10 @@ namespace UnityEngine.Networking
 			return 0.1f;
 		}
 
+		public delegate void CmdDelegate(NetworkBehaviour obj, NetworkReader reader);
+
+		protected delegate void EventDelegate(List<Delegate> targets, NetworkReader reader);
+
 		protected enum UNetInvokeType
 		{
 			Command,
@@ -703,13 +810,9 @@ namespace UnityEngine.Networking
 					":",
 					this.invokeClass,
 					":",
-					this.invokeFunction.Method.Name
+					this.invokeFunction.GetMethodName()
 				});
 			}
 		}
-
-		public delegate void CmdDelegate(NetworkBehaviour obj, NetworkReader reader);
-
-		protected delegate void EventDelegate(List<Delegate> targets, NetworkReader reader);
 	}
 }

@@ -1,15 +1,24 @@
 ﻿using FarmData;
 using System;
+using System.Runtime.CompilerServices;
 
 public sealed class StockFacilityConfirmation : FacilityConfirmation
 {
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
 	protected override void TaskSaveFarmObject(FarmScenery farmScenery)
 	{
 		int facilityID = base.GetFacilityID();
 		UserFacility stockFacilityByfacilityId = Singleton<UserDataMng>.Instance.GetStockFacilityByfacilityId(facilityID);
 		int userFacilityId = stockFacilityByfacilityId.userFacilityId;
-		APIRequestTask task = farmScenery.SaveStockFarmObjectPosition(userFacilityId, new Action<int>(base.OnFinishedToSave));
-		base.StartCoroutine(task.Run(new Action(RestrictionInput.EndLoad), null, null));
+		APIRequestTask apirequestTask = farmScenery.SaveStockFarmObjectPosition(userFacilityId, new Action<int>(base.OnFinishedToSave));
+		TaskBase task = apirequestTask;
+		if (StockFacilityConfirmation.<>f__mg$cache0 == null)
+		{
+			StockFacilityConfirmation.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		base.StartCoroutine(task.Run(StockFacilityConfirmation.<>f__mg$cache0, null, null));
 	}
 
 	protected override bool CheckExtendBuild()

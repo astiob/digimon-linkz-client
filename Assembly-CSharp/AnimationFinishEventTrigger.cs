@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class AnimationFinishEventTrigger : MonoBehaviour
@@ -17,14 +18,27 @@ public class AnimationFinishEventTrigger : MonoBehaviour
 	private void AddEvent(Animation animation)
 	{
 		string functionName = "OnFinishAnimationTrigger";
-		foreach (object obj in animation)
+		IEnumerator enumerator = animation.GetEnumerator();
+		try
 		{
-			AnimationState animationState = (AnimationState)obj;
-			AnimationEvent animationEvent = new AnimationEvent();
-			animationEvent.functionName = functionName;
-			animationEvent.stringParameter = animationState.clip.name;
-			animationEvent.time = animationState.clip.length;
-			animationState.clip.AddEvent(animationEvent);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				AnimationState animationState = (AnimationState)obj;
+				AnimationEvent animationEvent = new AnimationEvent();
+				animationEvent.functionName = functionName;
+				animationEvent.stringParameter = animationState.clip.name;
+				animationEvent.time = animationState.clip.length;
+				animationState.clip.AddEvent(animationEvent);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 

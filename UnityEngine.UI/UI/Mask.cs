@@ -5,17 +5,17 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[DisallowMultipleComponent]
-	[RequireComponent(typeof(RectTransform))]
-	[ExecuteInEditMode]
 	[AddComponentMenu("UI/Mask", 13)]
+	[ExecuteInEditMode]
+	[RequireComponent(typeof(RectTransform))]
+	[DisallowMultipleComponent]
 	public class Mask : UIBehaviour, ICanvasRaycastFilter, IMaterialModifier
 	{
 		[NonSerialized]
 		private RectTransform m_RectTransform;
 
-		[FormerlySerializedAs("m_ShowGraphic")]
 		[SerializeField]
+		[FormerlySerializedAs("m_ShowGraphic")]
 		private bool m_ShowMaskGraphic = true;
 
 		[NonSerialized]
@@ -52,14 +52,13 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (this.m_ShowMaskGraphic == value)
+				if (this.m_ShowMaskGraphic != value)
 				{
-					return;
-				}
-				this.m_ShowMaskGraphic = value;
-				if (this.graphic != null)
-				{
-					this.graphic.SetMaterialDirty();
+					this.m_ShowMaskGraphic = value;
+					if (this.graphic != null)
+					{
+						this.graphic.SetMaterialDirty();
+					}
 				}
 			}
 		}
@@ -77,10 +76,9 @@ namespace UnityEngine.UI
 			}
 		}
 
-		[Obsolete("use Mask.enabled instead", true)]
 		public virtual bool MaskEnabled()
 		{
-			throw new NotSupportedException();
+			return this.IsActive() && this.graphic != null;
 		}
 
 		[Obsolete("Not used anymore.")]
@@ -122,40 +120,51 @@ namespace UnityEngine.UI
 
 		public virtual Material GetModifiedMaterial(Material baseMaterial)
 		{
-			if (this.graphic == null || !base.isActiveAndEnabled)
+			Material result;
+			if (!this.MaskEnabled())
 			{
-				return baseMaterial;
+				result = baseMaterial;
 			}
-			Transform stopAfter = MaskUtilities.FindRootSortOverrideCanvas(base.transform);
-			int stencilDepth = MaskUtilities.GetStencilDepth(base.transform, stopAfter);
-			if (stencilDepth >= 8)
+			else
 			{
-				Debug.LogError("Attempting to use a stencil mask with depth > 8", base.gameObject);
-				return baseMaterial;
+				Transform stopAfter = MaskUtilities.FindRootSortOverrideCanvas(base.transform);
+				int stencilDepth = MaskUtilities.GetStencilDepth(base.transform, stopAfter);
+				if (stencilDepth >= 8)
+				{
+					Debug.LogError("Attempting to use a stencil mask with depth > 8", base.gameObject);
+					result = baseMaterial;
+				}
+				else
+				{
+					int num = 1 << stencilDepth;
+					if (num == 1)
+					{
+						Material maskMaterial = StencilMaterial.Add(baseMaterial, 1, StencilOp.Replace, CompareFunction.Always, (!this.m_ShowMaskGraphic) ? ((ColorWriteMask)0) : ColorWriteMask.All);
+						StencilMaterial.Remove(this.m_MaskMaterial);
+						this.m_MaskMaterial = maskMaterial;
+						Material unmaskMaterial = StencilMaterial.Add(baseMaterial, 1, StencilOp.Zero, CompareFunction.Always, (ColorWriteMask)0);
+						StencilMaterial.Remove(this.m_UnmaskMaterial);
+						this.m_UnmaskMaterial = unmaskMaterial;
+						this.graphic.canvasRenderer.popMaterialCount = 1;
+						this.graphic.canvasRenderer.SetPopMaterial(this.m_UnmaskMaterial, 0);
+						result = this.m_MaskMaterial;
+					}
+					else
+					{
+						Material maskMaterial2 = StencilMaterial.Add(baseMaterial, num | num - 1, StencilOp.Replace, CompareFunction.Equal, (!this.m_ShowMaskGraphic) ? ((ColorWriteMask)0) : ColorWriteMask.All, num - 1, num | num - 1);
+						StencilMaterial.Remove(this.m_MaskMaterial);
+						this.m_MaskMaterial = maskMaterial2;
+						this.graphic.canvasRenderer.hasPopInstruction = true;
+						Material unmaskMaterial2 = StencilMaterial.Add(baseMaterial, num - 1, StencilOp.Replace, CompareFunction.Equal, (ColorWriteMask)0, num - 1, num | num - 1);
+						StencilMaterial.Remove(this.m_UnmaskMaterial);
+						this.m_UnmaskMaterial = unmaskMaterial2;
+						this.graphic.canvasRenderer.popMaterialCount = 1;
+						this.graphic.canvasRenderer.SetPopMaterial(this.m_UnmaskMaterial, 0);
+						result = this.m_MaskMaterial;
+					}
+				}
 			}
-			int num = 1 << stencilDepth;
-			if (num == 1)
-			{
-				Material maskMaterial = StencilMaterial.Add(baseMaterial, 1, StencilOp.Replace, CompareFunction.Always, (!this.m_ShowMaskGraphic) ? ((ColorWriteMask)0) : ColorWriteMask.All);
-				StencilMaterial.Remove(this.m_MaskMaterial);
-				this.m_MaskMaterial = maskMaterial;
-				Material unmaskMaterial = StencilMaterial.Add(baseMaterial, 1, StencilOp.Zero, CompareFunction.Always, (ColorWriteMask)0);
-				StencilMaterial.Remove(this.m_UnmaskMaterial);
-				this.m_UnmaskMaterial = unmaskMaterial;
-				this.graphic.canvasRenderer.popMaterialCount = 1;
-				this.graphic.canvasRenderer.SetPopMaterial(this.m_UnmaskMaterial, 0);
-				return this.m_MaskMaterial;
-			}
-			Material maskMaterial2 = StencilMaterial.Add(baseMaterial, num | num - 1, StencilOp.Replace, CompareFunction.Equal, (!this.m_ShowMaskGraphic) ? ((ColorWriteMask)0) : ColorWriteMask.All, num - 1, num | num - 1);
-			StencilMaterial.Remove(this.m_MaskMaterial);
-			this.m_MaskMaterial = maskMaterial2;
-			this.graphic.canvasRenderer.hasPopInstruction = true;
-			Material unmaskMaterial2 = StencilMaterial.Add(baseMaterial, num - 1, StencilOp.Replace, CompareFunction.Equal, (ColorWriteMask)0, num - 1, num | num - 1);
-			StencilMaterial.Remove(this.m_UnmaskMaterial);
-			this.m_UnmaskMaterial = unmaskMaterial2;
-			this.graphic.canvasRenderer.popMaterialCount = 1;
-			this.graphic.canvasRenderer.SetPopMaterial(this.m_UnmaskMaterial, 0);
-			return this.m_MaskMaterial;
+			return result;
 		}
 	}
 }

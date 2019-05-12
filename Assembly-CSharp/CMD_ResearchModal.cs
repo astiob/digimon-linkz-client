@@ -1,7 +1,5 @@
 ﻿using Master;
-using Monster;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class CMD_ResearchModal : CMD_ModalMessageBtn2
@@ -21,9 +19,19 @@ public sealed class CMD_ResearchModal : CMD_ModalMessageBtn2
 	[SerializeField]
 	private LaboratoryPartsStatusDetail statusDetail;
 
-	[Header("説明文・警告のメッセージのラベル")]
 	[SerializeField]
 	private UILabel messageLabel;
+
+	private Action onPushYesButton;
+
+	private void OnPushYesButton()
+	{
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton();
+		}
+		this.ClosePanel(true);
+	}
 
 	protected override void Awake()
 	{
@@ -71,18 +79,18 @@ public sealed class CMD_ResearchModal : CMD_ModalMessageBtn2
 		}
 	}
 
-	public void SetChipParams(MonsterData baseMonsterData, MonsterData partnerMonsterData)
+	public void SetAlertEquipChip(MonsterData baseMonsterData, MonsterData partnerMonsterData)
 	{
-		bool flag = MonsterUserDataMng.AnyChipEquipMonster(new List<MonsterData>
-		{
-			baseMonsterData,
-			partnerMonsterData
-		});
-		if (flag)
+		if (baseMonsterData.GetChipEquip().IsAttachedChip() || partnerMonsterData.GetChipEquip().IsAttachedChip())
 		{
 			UILabel uilabel = this.messageLabel;
 			uilabel.text = uilabel.text + "\n" + StringMaster.GetString("LaboratoryPrecautionChip");
 			base.GetComponent<UIWidget>().height += this.messageLabel.fontSize * 2 + this.messageLabel.spacingY;
 		}
+	}
+
+	public void SetActionYesButton(Action action)
+	{
+		this.onPushYesButton = action;
 	}
 }

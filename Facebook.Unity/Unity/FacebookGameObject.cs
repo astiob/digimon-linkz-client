@@ -9,7 +9,7 @@ namespace Facebook.Unity
 
 		public void Awake()
 		{
-			UnityEngine.Object.DontDestroyOnLoad(this);
+			Object.DontDestroyOnLoad(this);
 			AccessToken.CurrentAccessToken = null;
 			this.OnAwake();
 		}
@@ -32,16 +32,6 @@ namespace Facebook.Unity
 		public void OnGetAppLinkComplete(string message)
 		{
 			this.Facebook.OnGetAppLinkComplete(new ResultContainer(message));
-		}
-
-		public void OnGroupCreateComplete(string message)
-		{
-			this.Facebook.OnGroupCreateComplete(new ResultContainer(message));
-		}
-
-		public void OnGroupJoinComplete(string message)
-		{
-			this.Facebook.OnGroupJoinComplete(new ResultContainer(message));
 		}
 
 		public void OnAppRequestsComplete(string message)

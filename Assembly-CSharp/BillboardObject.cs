@@ -14,20 +14,20 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private bool _onIgnoreUpdate;
 
-	[SerializeField]
 	[FormerlySerializedAs("onIgnoreManage")]
+	[SerializeField]
 	private bool _onIgnoreManage;
 
-	[SerializeField]
 	[FormerlySerializedAs("onIgnoreManage")]
+	[SerializeField]
 	private bool _onIgnoreFollowingTransformOverride;
 
 	[FormerlySerializedAs("onManualPosition")]
 	[SerializeField]
 	private bool _onManualPosition;
 
-	[SerializeField]
 	[FormerlySerializedAs("manualPositionTransform")]
+	[SerializeField]
 	private Transform _manualPositionTransform;
 
 	[FormerlySerializedAs("manualLocalPosition")]
@@ -40,9 +40,9 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private Vector3 _manualDistanceLocalPosition = Vector3.zero;
 
+	[FormerlySerializedAs("distance")]
 	[FormerlySerializedAs("_distance")]
 	[SerializeField]
-	[FormerlySerializedAs("distance")]
 	private float _localDistance;
 
 	[SerializeField]
@@ -58,23 +58,23 @@ public class BillboardObject : MonoBehaviour
 	[SerializeField]
 	private bool _onUseLocalScaleAnimation;
 
-	[SerializeField]
 	[FormerlySerializedAs("onBillboard")]
+	[SerializeField]
 	private bool _onBillboard;
 
 	[SerializeField]
 	private bool _freezeDistanceThisVector;
 
-	[SerializeField]
 	[FormerlySerializedAs("xFreeze")]
+	[SerializeField]
 	private bool _xFreeze;
 
 	[FormerlySerializedAs("yFreeze")]
 	[SerializeField]
 	private bool _yFreeze;
 
-	[SerializeField]
 	[FormerlySerializedAs("zFreeze")]
+	[SerializeField]
 	private bool _zFreeze;
 
 	private Transform cachedTransform;

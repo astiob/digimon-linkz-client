@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions
 {
 	/// <summary>Specifies the type of access to files allowed through the File dialog boxes.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum FileDialogPermissionAccess
 	{

@@ -893,7 +893,7 @@ public class CharacterStateControl
 		this.m_extraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, speed, this, EffectStatusBase.ExtraEffectType.Speed);
 	}
 
-	private void InitializeSkillExtraStatus()
+	public void InitializeSkillExtraStatus()
 	{
 		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
 		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
@@ -1021,7 +1021,7 @@ public class CharacterStateControl
 		this._currentHp = this.defaultMaxHpWithLeaderSkill;
 		this.isDiedJustBefore = false;
 		this.isEscape = false;
-		this.currentSufferState.RemoveAllSufferState();
+		this.currentSufferState.RevivalSufferState();
 		this.InitializeSpecialCorrectionStatus();
 		this.chip.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpPercentage);
 		this.chip.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpFixed);
@@ -1235,70 +1235,71 @@ public class CharacterStateControl
 		}
 		List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> list = new List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>();
 		GameWebAPI.RespDataMA_EventPointBonusM respDataMA_EventPointBonusMaster = MasterDataMng.Instance().RespDataMA_EventPointBonusMaster;
-		foreach (GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus3 in respDataMA_EventPointBonusMaster.eventPointBonusM)
+		foreach (GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus2 in respDataMA_EventPointBonusMaster.eventPointBonusM)
 		{
-			if (eventPointBonus3.worldDungeonId == b && eventPointBonus3.effectType != "0")
+			if (eventPointBonus2.worldDungeonId == b && eventPointBonus2.effectType != "0")
 			{
-				list.Add(eventPointBonus3);
+				list.Add(eventPointBonus2);
 			}
 		}
-		GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus;
-		foreach (GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus2 in list)
+		using (List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>.Enumerator enumerator = list.GetEnumerator())
 		{
-			eventPointBonus = eventPointBonus2;
-			ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType = (ExtraEffectUtil.EventPointBonusTargetSubType)int.Parse(eventPointBonus.targetSubType);
-			ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType2 = eventPointBonusTargetSubType;
-			switch (eventPointBonusTargetSubType2)
+			while (enumerator.MoveNext())
 			{
-			case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterTribe:
-				if (this.characterDatas.tribe.Equals(eventPointBonus.targetValue))
+				GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus = enumerator.Current;
+				ExtraEffectUtil.EventPointBonusTargetSubType eventPointBonusTargetSubType = (ExtraEffectUtil.EventPointBonusTargetSubType)int.Parse(eventPointBonus.targetSubType);
+				switch (eventPointBonusTargetSubType)
 				{
-					return true;
-				}
-				break;
-			case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterGroup:
-				if (this.characterStatus.groupId.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
-			case ExtraEffectUtil.EventPointBonusTargetSubType.GrowStep:
-			{
-				string text = MonsterGrowStepData.ToGrowStepString(this.characterDatas.growStep);
-				if (text.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
-			}
-			case ExtraEffectUtil.EventPointBonusTargetSubType.SkillId:
-				if (this.skillStatus[2].skillId.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				if (this.leaderSkillStatus.leaderSkillId.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
-			case ExtraEffectUtil.EventPointBonusTargetSubType.ChipId:
-				if (this.chipIds.Where((int item) => item == eventPointBonus.targetValue.ToInt32()).Any<int>())
-				{
-					return true;
-				}
-				break;
-			default:
-				if (eventPointBonusTargetSubType2 == ExtraEffectUtil.EventPointBonusTargetSubType.MonsterIntegrationGroup)
-				{
-					foreach (string value in this.characterStatus.monsterIntegrationIds)
+				case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterTribe:
+					if (this.characterDatas.tribe.Equals(eventPointBonus.targetValue))
 					{
-						if (eventPointBonus.targetValue.Equals(value))
+						return true;
+					}
+					break;
+				case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterGroup:
+					if (this.characterStatus.groupId.Equals(eventPointBonus.targetValue))
+					{
+						return true;
+					}
+					break;
+				case ExtraEffectUtil.EventPointBonusTargetSubType.GrowStep:
+				{
+					string text = MonsterGrowStepData.ToGrowStepString(this.characterDatas.growStep);
+					if (text.Equals(eventPointBonus.targetValue))
+					{
+						return true;
+					}
+					break;
+				}
+				case ExtraEffectUtil.EventPointBonusTargetSubType.SkillId:
+					if (this.skillStatus[2].skillId.Equals(eventPointBonus.targetValue))
+					{
+						return true;
+					}
+					if (this.leaderSkillStatus.leaderSkillId.Equals(eventPointBonus.targetValue))
+					{
+						return true;
+					}
+					break;
+				case ExtraEffectUtil.EventPointBonusTargetSubType.ChipId:
+					if (this.chipIds.Where((int item) => item == eventPointBonus.targetValue.ToInt32()).Any<int>())
+					{
+						return true;
+					}
+					break;
+				default:
+					if (eventPointBonusTargetSubType == ExtraEffectUtil.EventPointBonusTargetSubType.MonsterIntegrationGroup)
+					{
+						foreach (string value in this.characterStatus.monsterIntegrationIds)
 						{
-							return true;
+							if (eventPointBonus.targetValue.Equals(value))
+							{
+								return true;
+							}
 						}
 					}
+					break;
 				}
-				break;
 			}
 		}
 		return false;
@@ -1448,6 +1449,11 @@ public class CharacterStateControl
 		this.chip.RemovePotencyChip(triggerType);
 	}
 
+	public void RemovePotencyChip(EffectStatusBase.EffectTriggerType[] triggerType)
+	{
+		this.chip.RemovePotencyChip(triggerType);
+	}
+
 	public void AddChipEffectCount(int chipEffectId, int value)
 	{
 		this.chip.AddChipEffectCount(chipEffectId, value);
@@ -1511,16 +1517,6 @@ public class CharacterStateControl
 		return list.ToArray();
 	}
 
-	public override bool Equals(object obj)
-	{
-		return base.Equals(obj);
-	}
-
-	public override int GetHashCode()
-	{
-		return base.GetHashCode();
-	}
-
 	public static bool operator ==(CharacterStateControl a, CharacterStateControl b)
 	{
 		if (object.ReferenceEquals(a, b))
@@ -1537,5 +1533,15 @@ public class CharacterStateControl
 	public static bool operator !=(CharacterStateControl a, CharacterStateControl b)
 	{
 		return !(a == b);
+	}
+
+	public override bool Equals(object obj)
+	{
+		return base.Equals(obj);
+	}
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
 	}
 }

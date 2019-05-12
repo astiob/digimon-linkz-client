@@ -25,10 +25,10 @@ namespace AdventureScene
 			{
 				float num = this.animationTime / this.currentTime;
 				num = Mathf.Clamp01(num);
-				float new_x = Mathf.Lerp(this.startEulerAngles.x, this.endEulerAngles.x, num);
-				float new_y = Mathf.Lerp(this.startEulerAngles.y, this.endEulerAngles.y, num);
-				float new_z = Mathf.Lerp(this.startEulerAngles.z, this.endEulerAngles.z, num);
-				this.currentEulerAngles.Set(new_x, new_y, new_z);
+				float newX = Mathf.Lerp(this.startEulerAngles.x, this.endEulerAngles.x, num);
+				float newY = Mathf.Lerp(this.startEulerAngles.y, this.endEulerAngles.y, num);
+				float newZ = Mathf.Lerp(this.startEulerAngles.z, this.endEulerAngles.z, num);
+				this.currentEulerAngles.Set(newX, newY, newZ);
 				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.camera3D.transform.localEulerAngles = this.currentEulerAngles;
 				return false;
 			}

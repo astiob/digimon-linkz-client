@@ -1,6 +1,7 @@
 ﻿using DigiChat.Tools;
 using Master;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using WebAPIRequest;
@@ -192,26 +193,39 @@ public class CMD_CreateChatGroup : CMD
 			UISprite component2 = this.goCategoryBtnList[i].GetComponent<UISprite>();
 			this.clCategoryBtnList.Add(component);
 			this.spCategoryBtnList.Add(component2);
-			foreach (object obj in this.goCategoryBtnList[i].transform)
+			IEnumerator enumerator = this.goCategoryBtnList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				switch (i + 1)
+				while (enumerator.MoveNext())
 				{
-				case 1:
-					component3.text = StringMaster.GetString("ChatCategory-04");
-					break;
-				case 2:
-					component3.text = StringMaster.GetString("ChatCategory-05");
-					break;
-				case 3:
-					component3.text = StringMaster.GetString("ChatCategory-03");
-					break;
-				case 4:
-					component3.text = StringMaster.GetString("ChatCategory-06");
-					break;
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					switch (i + 1)
+					{
+					case 1:
+						component3.text = StringMaster.GetString("ChatCategory-04");
+						break;
+					case 2:
+						component3.text = StringMaster.GetString("ChatCategory-05");
+						break;
+					case 3:
+						component3.text = StringMaster.GetString("ChatCategory-03");
+						break;
+					case 4:
+						component3.text = StringMaster.GetString("ChatCategory-06");
+						break;
+					}
+					this.lbCategoryBtnList.Add(component3);
 				}
-				this.lbCategoryBtnList.Add(component3);
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 			switch (i)
 			{
@@ -254,29 +268,40 @@ public class CMD_CreateChatGroup : CMD
 			UISprite component2 = this.goApprovalBtnList[i].GetComponent<UISprite>();
 			this.clApprovalBtnList.Add(component);
 			this.spApprovalBtnList.Add(component2);
-			int num;
-			foreach (object obj in this.goApprovalBtnList[i].transform)
+			IEnumerator enumerator = this.goApprovalBtnList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.GetComponent<UILabel>();
-				num = i + 1;
-				if (num != 1)
+				while (enumerator.MoveNext())
 				{
-					if (num == 2)
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.GetComponent<UILabel>();
+					int num = i + 1;
+					if (num != 1)
 					{
-						component3.text = StringMaster.GetString("ChatCategory-01");
+						if (num == 2)
+						{
+							component3.text = StringMaster.GetString("ChatCategory-01");
+						}
 					}
+					else
+					{
+						component3.text = StringMaster.GetString("ChatCategory-02");
+					}
+					this.lbApprovalBtnList.Add(component3);
 				}
-				else
-				{
-					component3.text = StringMaster.GetString("ChatCategory-02");
-				}
-				this.lbApprovalBtnList.Add(component3);
 			}
-			num = i;
-			if (num != 0)
+			finally
 			{
-				if (num == 1)
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
+			}
+			if (i != 0)
+			{
+				if (i == 1)
 				{
 					component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 					{
@@ -476,7 +501,7 @@ public class CMD_CreateChatGroup : CMD
 		{
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
 			{
-				base.ClosePanel(true);
+				this.<ClosePanel>__BaseCallProxy0(true);
 				ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName = this.groupNameInput.value;
 				CMD_ChatWindow.instance.UpdateChatWindowTitle = ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupName;
 				CMD_ChatTop.instance.GetUserChatGroupListExec();

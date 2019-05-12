@@ -39,9 +39,9 @@ namespace UnityEngine.Networking
 		public static void WriteInstance(NetworkWriter writer, SyncListString items)
 		{
 			writer.Write((ushort)items.Count);
-			foreach (string value in items)
+			for (int i = 0; i < items.Count; i++)
 			{
-				writer.Write(value);
+				writer.Write(items[i]);
 			}
 		}
 	}

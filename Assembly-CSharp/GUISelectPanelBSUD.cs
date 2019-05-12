@@ -306,7 +306,7 @@ public class GUISelectPanelBSUD : GUICollider
 	{
 		base.Update();
 		this.panelSpeed_ = this.scrollSpeed;
-		if (!this.isTouchMoved)
+		if (!base.isTouchMoved)
 		{
 			this.panelSpeed_ = this.selectLoc;
 			if (this.EnableScroll)

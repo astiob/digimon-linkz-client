@@ -282,7 +282,7 @@ public class CMD_ChatMenu : CMD
 			this.UpdateJoinGroupData();
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
 			{
-				base.ClosePanel(false);
+				this.<ClosePanel>__BaseCallProxy0(false);
 				CMD_ChatWindow.instance.ClosePanel(true);
 				CMD_ChatTop.instance.GetUserChatGroupListExec();
 			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
@@ -326,7 +326,7 @@ public class CMD_ChatMenu : CMD
 			this.UpdateJoinGroupData();
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
 			{
-				this.ClosePanel(true);
+				this.<ClosePanel>__BaseCallProxy0(true);
 				CMD_ChatWindow.instance.PushedChatReturnBtn();
 				CMD_ChatTop.instance.GetUserChatGroupListExec();
 			}, "CMD_ModalMessage", null) as CMD_ModalMessage;

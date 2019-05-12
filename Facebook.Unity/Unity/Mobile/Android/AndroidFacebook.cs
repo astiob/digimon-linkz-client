@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Facebook.Unity.Mobile.Android
 {
@@ -10,16 +11,16 @@ namespace Facebook.Unity.Mobile.Android
 
 		private bool limitEventUsage;
 
-		private IAndroidWrapper facebookJava;
+		private IAndroidWrapper androidWrapper;
 
-		public AndroidFacebook() : this(new AndroidWrapper(), new CallbackManager())
+		public AndroidFacebook() : this(AndroidFacebook.GetAndroidWrapper(), new CallbackManager())
 		{
 		}
 
-		public AndroidFacebook(IAndroidWrapper facebookJavaClass, CallbackManager callbackManager) : base(callbackManager)
+		public AndroidFacebook(IAndroidWrapper androidWrapper, CallbackManager callbackManager) : base(callbackManager)
 		{
 			this.KeyHash = string.Empty;
-			this.facebookJava = facebookJavaClass;
+			this.androidWrapper = androidWrapper;
 		}
 
 		public string KeyHash { get; private set; }
@@ -49,7 +50,7 @@ namespace Facebook.Unity.Mobile.Android
 		{
 			get
 			{
-				return this.facebookJava.CallStatic<string>("GetSdkVersion");
+				return this.androidWrapper.CallStatic<string>("GetSdkVersion");
 			}
 		}
 
@@ -59,8 +60,7 @@ namespace Facebook.Unity.Mobile.Android
 			base.Init(onInitComplete);
 			MethodArguments methodArguments = new MethodArguments();
 			methodArguments.AddString("appId", appId);
-			AndroidFacebook.JavaMethodCall<IResult> javaMethodCall = new AndroidFacebook.JavaMethodCall<IResult>(this, "Init");
-			javaMethodCall.Call(methodArguments);
+			new AndroidFacebook.JavaMethodCall<IResult>(this, "Init").Call(methodArguments);
 		}
 
 		public override void LogInWithReadPermissions(IEnumerable<string> permissions, FacebookDelegate<ILoginResult> callback)
@@ -85,8 +85,7 @@ namespace Facebook.Unity.Mobile.Android
 
 		public override void LogOut()
 		{
-			AndroidFacebook.JavaMethodCall<IResult> javaMethodCall = new AndroidFacebook.JavaMethodCall<IResult>(this, "Logout");
-			javaMethodCall.Call(null);
+			new AndroidFacebook.JavaMethodCall<IResult>(this, "Logout").Call(null);
 		}
 
 		public override void AppRequest(string message, OGActionType? actionType, string objectId, IEnumerable<string> to, IEnumerable<object> filters, IEnumerable<string> excludeIds, int? maxRecipients, string data, string title, FacebookDelegate<IAppRequestResult> callback)
@@ -154,28 +153,6 @@ namespace Facebook.Unity.Mobile.Android
 			}.Call(methodArguments);
 		}
 
-		public override void GameGroupCreate(string name, string description, string privacy, FacebookDelegate<IGroupCreateResult> callback)
-		{
-			MethodArguments methodArguments = new MethodArguments();
-			methodArguments.AddString("name", name);
-			methodArguments.AddString("description", description);
-			methodArguments.AddString("privacy", privacy);
-			new AndroidFacebook.JavaMethodCall<IGroupCreateResult>(this, "GameGroupCreate")
-			{
-				Callback = callback
-			}.Call(methodArguments);
-		}
-
-		public override void GameGroupJoin(string id, FacebookDelegate<IGroupJoinResult> callback)
-		{
-			MethodArguments methodArguments = new MethodArguments();
-			methodArguments.AddString("id", id);
-			new AndroidFacebook.JavaMethodCall<IGroupJoinResult>(this, "GameGroupJoin")
-			{
-				Callback = callback
-			}.Call(methodArguments);
-		}
-
 		public override void GetAppLink(FacebookDelegate<IAppLinkResult> callback)
 		{
 			new AndroidFacebook.JavaMethodCall<IAppLinkResult>(this, "GetAppLink")
@@ -190,8 +167,7 @@ namespace Facebook.Unity.Mobile.Android
 			methodArguments.AddString("logEvent", logEvent);
 			methodArguments.AddNullablePrimitive<float>("valueToSum", valueToSum);
 			methodArguments.AddDictionary("parameters", parameters);
-			AndroidFacebook.JavaMethodCall<IResult> javaMethodCall = new AndroidFacebook.JavaMethodCall<IResult>(this, "LogAppEvent");
-			javaMethodCall.Call(methodArguments);
+			new AndroidFacebook.JavaMethodCall<IResult>(this, "LogAppEvent").Call(methodArguments);
 		}
 
 		public override void AppEventsLogPurchase(float logPurchase, string currency, Dictionary<string, object> parameters)
@@ -200,8 +176,12 @@ namespace Facebook.Unity.Mobile.Android
 			methodArguments.AddPrimative<float>("logPurchase", logPurchase);
 			methodArguments.AddString("currency", currency);
 			methodArguments.AddDictionary("parameters", parameters);
-			AndroidFacebook.JavaMethodCall<IResult> javaMethodCall = new AndroidFacebook.JavaMethodCall<IResult>(this, "LogAppEvent");
-			javaMethodCall.Call(methodArguments);
+			new AndroidFacebook.JavaMethodCall<IResult>(this, "LogAppEvent").Call(methodArguments);
+		}
+
+		public override bool IsImplicitPurchaseLoggingEnabled()
+		{
+			return this.androidWrapper.CallStatic<bool>("IsImplicitPurchaseLoggingEnabled");
 		}
 
 		public override void ActivateApp(string appId)
@@ -230,9 +210,14 @@ namespace Facebook.Unity.Mobile.Android
 			this.CallFB("SetShareDialogMode", mode.ToString());
 		}
 
+		private static IAndroidWrapper GetAndroidWrapper()
+		{
+			return (IAndroidWrapper)Activator.CreateInstance(Assembly.Load("Facebook.Unity.Android").GetType("Facebook.Unity.Android.AndroidWrapper"));
+		}
+
 		private void CallFB(string method, string args)
 		{
-			this.facebookJava.CallStatic(method, new object[]
+			this.androidWrapper.CallStatic(method, new object[]
 			{
 				args
 			});

@@ -5,9 +5,9 @@ namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.TypeBuilder" /> class to unmanaged code.</summary>
 	[ComVisible(true)]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid("7E5678EE-48B3-3F83-B076-C58543498A58")]
 	[TypeLibImportClass(typeof(TypeBuilder))]
+	[Guid("7E5678EE-48B3-3F83-B076-C58543498A58")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[CLSCompliant(false)]
 	public interface _TypeBuilder
 	{

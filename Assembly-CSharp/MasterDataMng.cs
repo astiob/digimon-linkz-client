@@ -33,6 +33,7 @@ public sealed class MasterDataMng : MonoBehaviour
 	{
 		MasterDataMng.instance = this;
 		this.CreateMasterData<MA_AssetCategoryMaster>();
+		this.CreateMasterData<MA_AssetSalesBonusMaster>();
 		this.CreateMasterData<MA_MonsterMasterWithoutGroupData>();
 		this.CreateMasterData<MA_MonsterMasterOnlyGroupData>();
 		this.CreateMasterData<MA_MonsterEvolutionMaster>();
@@ -94,8 +95,10 @@ public sealed class MasterDataMng : MonoBehaviour
 		this.CreateMasterData<MA_MonsterSpecificTypeMaster>();
 		this.CreateMasterData<MA_MonsterStatusAilmentMaster>();
 		this.CreateMasterData<MA_MonsterStatusAilmentGroupMaster>();
+		this.CreateMasterData<MA_MonsterAutoLoadChipMaster>();
 		this.CreateMasterData<MA_WorldDungeonAdventureSceneMaster>();
 		this.CreateMasterData<MA_MonsterIntegrationGroupMaster>();
+		this.CreateMasterData<MA_WorldStageForceOpenMaster>();
 	}
 
 	private void CreateMasterData<MasterT>() where MasterT : MasterBase, new()
@@ -119,6 +122,15 @@ public sealed class MasterDataMng : MonoBehaviour
 		{
 			MA_AssetCategoryMaster ma_AssetCategoryMaster = this.GetMaster(MasterId.ASSET_CATEGORY) as MA_AssetCategoryMaster;
 			return ma_AssetCategoryMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.ResponseAssetSalesBonusMaster AssetSalesBonusMaster
+	{
+		get
+		{
+			MA_AssetSalesBonusMaster ma_AssetSalesBonusMaster = this.GetMaster(MasterId.ASSET_SALES_BONUS) as MA_AssetSalesBonusMaster;
+			return ma_AssetSalesBonusMaster.GetMasterData();
 		}
 	}
 
@@ -326,6 +338,15 @@ public sealed class MasterDataMng : MonoBehaviour
 		{
 			MA_WorldDungeonExtraEffectManageMaster ma_WorldDungeonExtraEffectManageMaster = this.GetMaster(MasterId.WORLD_DUNGEON_EXTRA_EFFECT_MANAGE) as MA_WorldDungeonExtraEffectManageMaster;
 			return ma_WorldDungeonExtraEffectManageMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.ResponseWorldStageForceOpenMaster WorldStageForceOpenMaster
+	{
+		get
+		{
+			MA_WorldStageForceOpenMaster ma_WorldStageForceOpenMaster = this.GetMaster(MasterId.WORLD_STAGE_FORCE_OPEN) as MA_WorldStageForceOpenMaster;
+			return ma_WorldStageForceOpenMaster.GetMasterData();
 		}
 	}
 
@@ -553,6 +574,15 @@ public sealed class MasterDataMng : MonoBehaviour
 		}
 	}
 
+	public GameWebAPI.ResponseMonsterAutoLoadChipMaster MonsterAutoLoadChipMaster
+	{
+		get
+		{
+			MA_MonsterAutoLoadChipMaster ma_MonsterAutoLoadChipMaster = this.GetMaster(MasterId.MONSTER_AUTO_LOAD_CHIP) as MA_MonsterAutoLoadChipMaster;
+			return ma_MonsterAutoLoadChipMaster.GetMasterData();
+		}
+	}
+
 	public GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster ResponseWorldDungeonAdventureSceneMaster
 	{
 		get
@@ -682,7 +712,8 @@ public sealed class MasterDataMng : MonoBehaviour
 
 	public enum AssetCategory
 	{
-		MONSTER = 1,
+		NONE,
+		MONSTER,
 		DIGI_STONE,
 		LINK_POINT,
 		TIP,

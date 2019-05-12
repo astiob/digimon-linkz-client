@@ -185,7 +185,14 @@ public sealed class InputControll : MonoBehaviour
 		this.bTouchOne = false;
 		this.bTouchTwo = false;
 		this.ResetPos();
-		this.prevTouch = new Dictionary<int, Touch>();
+		if (this.prevTouch == null)
+		{
+			this.prevTouch = new Dictionary<int, Touch>();
+		}
+		else
+		{
+			this.prevTouch.Clear();
+		}
 	}
 
 	private void ResetPos()
@@ -308,71 +315,55 @@ public sealed class InputControll : MonoBehaviour
 			string tag = raycasts[i].transform.tag;
 			if (tag != null)
 			{
-				if (InputControll.<>f__switch$map36 == null)
+				InputControll.TouchObjectType type;
+				if (!(tag == "Farm.Facility"))
 				{
-					InputControll.<>f__switch$map36 = new Dictionary<string, int>(4)
+					if (!(tag == "Farm.Chara"))
 					{
+						if (!(tag == "Farm.Other"))
 						{
-							"Farm.Facility",
-							0
-						},
-						{
-							"Farm.Chara",
-							1
-						},
-						{
-							"Farm.Other",
-							2
-						},
-						{
-							"Farm.Field",
-							3
+							if (!(tag == "Farm.Field"))
+							{
+								goto IL_107;
+							}
+							field.Grid.UpdateSelectGrid(raycasts[i].point);
+							goto IL_1C8;
 						}
-					};
-				}
-				int num;
-				if (InputControll.<>f__switch$map36.TryGetValue(tag, out num))
-				{
-					InputControll.TouchObjectType type;
-					switch (num)
-					{
-					case 0:
-						type = InputControll.TouchObjectType.FACILITY;
-						break;
-					case 1:
-						type = InputControll.TouchObjectType.CHARA;
-						break;
-					case 2:
-						type = InputControll.TouchObjectType.OTHER;
-						break;
-					case 3:
-						field.Grid.UpdateSelectGrid(raycasts[i].point);
-						goto IL_1FD;
-					default:
-						goto IL_13E;
-					}
-					if (null == result.transform)
-					{
-						result.Set(type, raycasts[i].transform, isInvalidCharaTap);
+						else
+						{
+							type = InputControll.TouchObjectType.OTHER;
+						}
 					}
 					else
 					{
-						Vector3 vector = result.transform.position;
-						vector = ((result.type == InputControll.TouchObjectType.CHARA) ? (vector - b) : vector);
-						Vector3 vector2 = raycasts[i].transform.position;
-						vector2 = ((result.type == InputControll.TouchObjectType.CHARA) ? (vector2 - b) : vector2);
-						if (this.GetCameraDistanceXZ(vector) > this.GetCameraDistanceXZ(vector2))
-						{
-							result.Set(type, raycasts[i].transform, isInvalidCharaTap);
-						}
+						type = InputControll.TouchObjectType.CHARA;
+					}
+				}
+				else
+				{
+					type = InputControll.TouchObjectType.FACILITY;
+				}
+				if (null == result.transform)
+				{
+					result.Set(type, raycasts[i].transform, isInvalidCharaTap);
+				}
+				else
+				{
+					Vector3 vector = result.transform.position;
+					vector = ((result.type == InputControll.TouchObjectType.CHARA) ? (vector - b) : vector);
+					Vector3 vector2 = raycasts[i].transform.position;
+					vector2 = ((result.type == InputControll.TouchObjectType.CHARA) ? (vector2 - b) : vector2);
+					if (this.GetCameraDistanceXZ(vector) > this.GetCameraDistanceXZ(vector2))
+					{
+						result.Set(type, raycasts[i].transform, isInvalidCharaTap);
 					}
 				}
 			}
-			IL_1FD:
+			IL_1C8:
 			i++;
 			continue;
-			IL_13E:
-			goto IL_1FD;
+			IL_107:
+			goto IL_1C8;
 		}
 		return result;
 	}

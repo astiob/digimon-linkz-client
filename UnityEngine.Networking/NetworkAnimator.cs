@@ -3,10 +3,10 @@ using UnityEngine.Networking.NetworkSystem;
 
 namespace UnityEngine.Networking
 {
+	[DisallowMultipleComponent]
+	[AddComponentMenu("Network/NetworkAnimator")]
 	[RequireComponent(typeof(NetworkIdentity))]
 	[RequireComponent(typeof(Animator))]
-	[AddComponentMenu("Network/NetworkAnimator")]
-	[DisallowMultipleComponent]
 	public class NetworkAnimator : NetworkBehaviour
 	{
 		[SerializeField]
@@ -71,45 +71,53 @@ namespace UnityEngine.Networking
 			return (this.m_ParameterSendBits & 1u << index) != 0u;
 		}
 
+		private bool sendMessagesAllowed
+		{
+			get
+			{
+				if (base.isServer)
+				{
+					if (!base.localPlayerAuthority)
+					{
+						return true;
+					}
+					if (base.netIdentity != null && base.netIdentity.clientAuthorityOwner == null)
+					{
+						return true;
+					}
+				}
+				return base.hasAuthority;
+			}
+		}
+
 		internal void ResetParameterOptions()
 		{
 			Debug.Log("ResetParameterOptions");
 			this.m_ParameterSendBits = 0u;
 		}
 
-		public override void OnStartAuthority()
-		{
-			this.m_ParameterWriter = new NetworkWriter();
-		}
-
 		private void FixedUpdate()
 		{
-			if (this.m_ParameterWriter == null)
+			if (this.sendMessagesAllowed)
 			{
-				return;
-			}
-			this.CheckSendRate();
-			int stateHash;
-			float normalizedTime;
-			if (!this.CheckAnimStateChanged(out stateHash, out normalizedTime))
-			{
-				return;
-			}
-			AnimationMessage animationMessage = new AnimationMessage();
-			animationMessage.netId = base.netId;
-			animationMessage.stateHash = stateHash;
-			animationMessage.normalizedTime = normalizedTime;
-			this.m_ParameterWriter.SeekZero();
-			this.WriteParameters(this.m_ParameterWriter, false);
-			animationMessage.parameters = this.m_ParameterWriter.ToArray();
-			if (base.hasAuthority || ClientScene.readyConnection != null)
-			{
-				ClientScene.readyConnection.Send(40, animationMessage);
-				return;
-			}
-			if (base.isServer && !base.localPlayerAuthority)
-			{
-				NetworkServer.SendToReady(base.gameObject, 40, animationMessage);
+				if (this.m_ParameterWriter == null)
+				{
+					this.m_ParameterWriter = new NetworkWriter();
+				}
+				this.CheckSendRate();
+				int stateHash;
+				float normalizedTime;
+				if (this.CheckAnimStateChanged(out stateHash, out normalizedTime))
+				{
+					AnimationMessage animationMessage = new AnimationMessage();
+					animationMessage.netId = base.netId;
+					animationMessage.stateHash = stateHash;
+					animationMessage.normalizedTime = normalizedTime;
+					this.m_ParameterWriter.SeekZero();
+					this.WriteParameters(this.m_ParameterWriter, false);
+					animationMessage.parameters = this.m_ParameterWriter.ToArray();
+					this.SendMessage(40, animationMessage);
+				}
 			}
 		}
 
@@ -117,6 +125,7 @@ namespace UnityEngine.Networking
 		{
 			stateHash = 0;
 			normalizedTime = 0f;
+			bool result;
 			if (this.m_Animator.IsInTransition(0))
 			{
 				AnimatorTransitionInfo animatorTransitionInfo = this.m_Animator.GetAnimatorTransitionInfo(0);
@@ -124,9 +133,12 @@ namespace UnityEngine.Networking
 				{
 					this.m_TransitionHash = animatorTransitionInfo.fullPathHash;
 					this.m_AnimationHash = 0;
-					return true;
+					result = true;
 				}
-				return false;
+				else
+				{
+					result = false;
+				}
 			}
 			else
 			{
@@ -140,15 +152,19 @@ namespace UnityEngine.Networking
 					}
 					this.m_TransitionHash = 0;
 					this.m_AnimationHash = currentAnimatorStateInfo.fullPathHash;
-					return true;
+					result = true;
 				}
-				return false;
+				else
+				{
+					result = false;
+				}
 			}
+			return result;
 		}
 
 		private void CheckSendRate()
 		{
-			if (this.GetNetworkSendInterval() != 0f && this.m_SendTimer < Time.time)
+			if (this.sendMessagesAllowed && this.GetNetworkSendInterval() != 0f && this.m_SendTimer < Time.time)
 			{
 				this.m_SendTimer = Time.time + this.GetNetworkSendInterval();
 				AnimationParametersMessage animationParametersMessage = new AnimationParametersMessage();
@@ -156,15 +172,19 @@ namespace UnityEngine.Networking
 				this.m_ParameterWriter.SeekZero();
 				this.WriteParameters(this.m_ParameterWriter, true);
 				animationParametersMessage.parameters = this.m_ParameterWriter.ToArray();
-				if (base.hasAuthority && ClientScene.readyConnection != null)
-				{
-					ClientScene.readyConnection.Send(41, animationParametersMessage);
-					return;
-				}
-				if (base.isServer && !base.localPlayerAuthority)
-				{
-					NetworkServer.SendToReady(base.gameObject, 41, animationParametersMessage);
-				}
+				this.SendMessage(41, animationParametersMessage);
+			}
+		}
+
+		private void SendMessage(short type, MessageBase msg)
+		{
+			if (base.isServer)
+			{
+				NetworkServer.SendToReady(base.gameObject, type, msg);
+			}
+			else if (ClientScene.readyConnection != null)
+			{
+				ClientScene.readyConnection.Send(type, msg);
 			}
 		}
 
@@ -228,24 +248,22 @@ namespace UnityEngine.Networking
 
 		internal void HandleAnimMsg(AnimationMessage msg, NetworkReader reader)
 		{
-			if (base.hasAuthority)
+			if (!base.hasAuthority)
 			{
-				return;
+				if (msg.stateHash != 0)
+				{
+					this.m_Animator.Play(msg.stateHash, 0, msg.normalizedTime);
+				}
+				this.ReadParameters(reader, false);
 			}
-			if (msg.stateHash != 0)
-			{
-				this.m_Animator.Play(msg.stateHash, 0, msg.normalizedTime);
-			}
-			this.ReadParameters(reader, false);
 		}
 
 		internal void HandleAnimParamsMsg(AnimationParametersMessage msg, NetworkReader reader)
 		{
-			if (base.hasAuthority)
+			if (!base.hasAuthority)
 			{
-				return;
+				this.ReadParameters(reader, true);
 			}
-			this.ReadParameters(reader, true);
 		}
 
 		internal void HandleAnimTriggerMsg(int hash)
@@ -310,6 +328,7 @@ namespace UnityEngine.Networking
 
 		public override bool OnSerialize(NetworkWriter writer, bool forceAll)
 		{
+			bool result;
 			if (forceAll)
 			{
 				if (this.m_Animator.IsInTransition(0))
@@ -325,9 +344,13 @@ namespace UnityEngine.Networking
 					writer.Write(currentAnimatorStateInfo.normalizedTime);
 				}
 				this.WriteParameters(writer, false);
-				return true;
+				result = true;
 			}
-			return false;
+			else
+			{
+				result = false;
+			}
+			return result;
 		}
 
 		public override void OnDeserialize(NetworkReader reader, bool initialState)
@@ -361,9 +384,8 @@ namespace UnityEngine.Networking
 						readyConnection.Send(42, animationTriggerMessage);
 					}
 				}
-				return;
 			}
-			if (base.isServer && !base.localPlayerAuthority)
+			else if (base.isServer && !base.localPlayerAuthority)
 			{
 				NetworkServer.SendToReady(base.gameObject, 42, animationTriggerMessage);
 			}
@@ -383,16 +405,15 @@ namespace UnityEngine.Networking
 				}));
 			}
 			GameObject gameObject = NetworkServer.FindLocalObject(NetworkAnimator.s_AnimationMessage.netId);
-			if (gameObject == null)
+			if (!(gameObject == null))
 			{
-				return;
-			}
-			NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
-			if (component != null)
-			{
-				NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationMessage.parameters);
-				component.HandleAnimMsg(NetworkAnimator.s_AnimationMessage, reader);
-				NetworkServer.SendToReady(gameObject, 40, NetworkAnimator.s_AnimationMessage);
+				NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
+				if (component != null)
+				{
+					NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationMessage.parameters);
+					component.HandleAnimMsg(NetworkAnimator.s_AnimationMessage, reader);
+					NetworkServer.SendToReady(gameObject, 40, NetworkAnimator.s_AnimationMessage);
+				}
 			}
 		}
 
@@ -410,16 +431,15 @@ namespace UnityEngine.Networking
 				}));
 			}
 			GameObject gameObject = NetworkServer.FindLocalObject(NetworkAnimator.s_AnimationParametersMessage.netId);
-			if (gameObject == null)
+			if (!(gameObject == null))
 			{
-				return;
-			}
-			NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
-			if (component != null)
-			{
-				NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationParametersMessage.parameters);
-				component.HandleAnimParamsMsg(NetworkAnimator.s_AnimationParametersMessage, reader);
-				NetworkServer.SendToReady(gameObject, 41, NetworkAnimator.s_AnimationParametersMessage);
+				NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
+				if (component != null)
+				{
+					NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationParametersMessage.parameters);
+					component.HandleAnimParamsMsg(NetworkAnimator.s_AnimationParametersMessage, reader);
+					NetworkServer.SendToReady(gameObject, 41, NetworkAnimator.s_AnimationParametersMessage);
+				}
 			}
 		}
 
@@ -437,15 +457,14 @@ namespace UnityEngine.Networking
 				}));
 			}
 			GameObject gameObject = NetworkServer.FindLocalObject(NetworkAnimator.s_AnimationTriggerMessage.netId);
-			if (gameObject == null)
+			if (!(gameObject == null))
 			{
-				return;
-			}
-			NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
-			if (component != null)
-			{
-				component.HandleAnimTriggerMsg(NetworkAnimator.s_AnimationTriggerMessage.hash);
-				NetworkServer.SendToReady(gameObject, 42, NetworkAnimator.s_AnimationTriggerMessage);
+				NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
+				if (component != null)
+				{
+					component.HandleAnimTriggerMsg(NetworkAnimator.s_AnimationTriggerMessage.hash);
+					NetworkServer.SendToReady(gameObject, 42, NetworkAnimator.s_AnimationTriggerMessage);
+				}
 			}
 		}
 
@@ -453,15 +472,14 @@ namespace UnityEngine.Networking
 		{
 			netMsg.ReadMessage<AnimationMessage>(NetworkAnimator.s_AnimationMessage);
 			GameObject gameObject = ClientScene.FindLocalObject(NetworkAnimator.s_AnimationMessage.netId);
-			if (gameObject == null)
+			if (!(gameObject == null))
 			{
-				return;
-			}
-			NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
-			if (component != null)
-			{
-				NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationMessage.parameters);
-				component.HandleAnimMsg(NetworkAnimator.s_AnimationMessage, reader);
+				NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
+				if (component != null)
+				{
+					NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationMessage.parameters);
+					component.HandleAnimMsg(NetworkAnimator.s_AnimationMessage, reader);
+				}
 			}
 		}
 
@@ -469,15 +487,14 @@ namespace UnityEngine.Networking
 		{
 			netMsg.ReadMessage<AnimationParametersMessage>(NetworkAnimator.s_AnimationParametersMessage);
 			GameObject gameObject = ClientScene.FindLocalObject(NetworkAnimator.s_AnimationParametersMessage.netId);
-			if (gameObject == null)
+			if (!(gameObject == null))
 			{
-				return;
-			}
-			NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
-			if (component != null)
-			{
-				NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationParametersMessage.parameters);
-				component.HandleAnimParamsMsg(NetworkAnimator.s_AnimationParametersMessage, reader);
+				NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
+				if (component != null)
+				{
+					NetworkReader reader = new NetworkReader(NetworkAnimator.s_AnimationParametersMessage.parameters);
+					component.HandleAnimParamsMsg(NetworkAnimator.s_AnimationParametersMessage, reader);
+				}
 			}
 		}
 
@@ -485,14 +502,13 @@ namespace UnityEngine.Networking
 		{
 			netMsg.ReadMessage<AnimationTriggerMessage>(NetworkAnimator.s_AnimationTriggerMessage);
 			GameObject gameObject = ClientScene.FindLocalObject(NetworkAnimator.s_AnimationTriggerMessage.netId);
-			if (gameObject == null)
+			if (!(gameObject == null))
 			{
-				return;
-			}
-			NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
-			if (component != null)
-			{
-				component.HandleAnimTriggerMsg(NetworkAnimator.s_AnimationTriggerMessage.hash);
+				NetworkAnimator component = gameObject.GetComponent<NetworkAnimator>();
+				if (component != null)
+				{
+					component.HandleAnimTriggerMsg(NetworkAnimator.s_AnimationTriggerMessage.hash);
+				}
 			}
 		}
 	}

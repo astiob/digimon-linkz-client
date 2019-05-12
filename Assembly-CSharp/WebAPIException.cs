@@ -57,7 +57,7 @@ public sealed class WebAPIException : Exception
 		else
 		{
 			WWWResponse.VenusStatus venus_status = (WWWResponse.VenusStatus)this.responseDataError.venus_status;
-			if (venus_status == WWWResponse.VenusStatus.RESPONSE_ERROR || venus_status == WWWResponse.VenusStatus.RESPONSE_SERVER_LOAD_HIGH || venus_status == WWWResponse.VenusStatus.RESPONSE_PENALTY)
+			if (venus_status == WWWResponse.VenusStatus.RESPONSE_ERROR || venus_status == WWWResponse.VenusStatus.RESPONSE_PENALTY || venus_status == WWWResponse.VenusStatus.RESPONSE_SERVER_LOAD_HIGH)
 			{
 				result = false;
 			}

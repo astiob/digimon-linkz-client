@@ -8,8 +8,8 @@ public sealed class BattleStateManager : MonoBehaviour
 {
 	public BattleAdventureSceneManager battleAdventureSceneManager;
 
-	[SerializeField]
 	[Header("シングルUI")]
+	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
 	[Header("マルチUI")]
@@ -396,26 +396,36 @@ public sealed class BattleStateManager : MonoBehaviour
 		this.input = base.GetComponent<BattleInputBasic>();
 		if (this.battleUiComponents == null && this.input == null)
 		{
-			switch (this.battleMode)
+			BattleMode battleMode = this.battleMode;
+			if (battleMode != BattleMode.Single)
 			{
-			case BattleMode.Single:
+				if (battleMode != BattleMode.Multi)
+				{
+					if (battleMode == BattleMode.PvP)
+					{
+						this.battleUiComponents = this.battleUIComponentsPvP;
+						this.input = this.battleUiComponents.gameObject.AddComponent<BattleInputPvP>();
+					}
+				}
+				else
+				{
+					this.battleUiComponents = this.battleUIComponentsMulti;
+					this.input = this.battleUiComponents.gameObject.AddComponent<BattleInputMulti>();
+				}
+			}
+			else
+			{
 				this.battleUiComponents = this.battleUIComponentsSingle;
 				this.input = this.battleUiComponents.gameObject.AddComponent<BattleInputSingle>();
-				break;
-			case BattleMode.Multi:
-				this.battleUiComponents = this.battleUIComponentsMulti;
-				this.input = this.battleUiComponents.gameObject.AddComponent<BattleInputMulti>();
-				break;
-			case BattleMode.PvP:
-				this.battleUiComponents = this.battleUIComponentsPvP;
-				this.input = this.battleUiComponents.gameObject.AddComponent<BattleInputPvP>();
-				break;
 			}
 			this.battleUIComponentsSingle.enabled = (this.battleMode == BattleMode.Single);
 			this.battleUIComponentsMulti.enabled = (this.battleMode == BattleMode.Multi);
 			this.battleUIComponentsPvP.enabled = (this.battleMode == BattleMode.PvP);
 		}
-		this.battleUiComponents.Init();
+		if (this.battleUiComponents != null)
+		{
+			this.battleUiComponents.Init();
+		}
 		this._stateProperty = BattleActionProperties.GetProperties(this.battleMode);
 		this._uiProperty = BattleActionProperties.GetUIProperties(this.battleMode);
 		if (BattleStateManager.onAutoServerConnect)

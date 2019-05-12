@@ -1,6 +1,7 @@
 ﻿using BattleStateMachineInternal;
 using JsonFx.Json;
 using Master;
+using Monster;
 using Quest;
 using Save;
 using System;
@@ -15,11 +16,11 @@ using UnityEngine;
 
 public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 {
+	private List<string> cachedJsonForSave;
+
 	public const string saveFileName = "SAVE_DT.binary";
 
 	public const string subSaveFileName = "SUB_SAVE_DT.binary";
-
-	private List<string> cachedJsonForSave;
 
 	public bool IsBattleRecoverable;
 
@@ -54,7 +55,8 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		typeof(Transform),
 		typeof(TweenCameraTargetFunction),
 		typeof(int[]),
-		typeof(List<FraudDataLog>)
+		typeof(List<FraudDataLog>),
+		typeof(List<HitEffectParams>)
 	};
 
 	private string[] variableNameBlackList = new string[]
@@ -149,11 +151,10 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			}
 		};
 		GameWebAPI.WorldResultLogic request = worldResultLogic;
-		Action<Exception> onFailed = delegate(Exception nop)
+		return request.Run(null, delegate(Exception nop)
 		{
 			global::Debug.LogError("RequestWorldStartDataDelete is failed.");
-		};
-		return request.Run(null, onFailed, null);
+		}, null);
 	}
 
 	public void OpenBattleRecoverConfirm(Action onBattleRecover, Action onCancel)
@@ -193,6 +194,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			{
 				yield return null;
 			}
+			this.SetCacheChipIconResources();
 			RestrictionInput.EndLoad();
 			BattleStateManager.StartSingle(0.5f, 0.5f, true, null);
 		}
@@ -201,6 +203,38 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			QuestStart.StartEventStage(DataMng.Instance().GetResultUtilData().last_dng_req);
 		}
 		yield break;
+	}
+
+	private void SetCacheChipIconResources()
+	{
+		string selectDeckNum = DataMng.Instance().RespDataMN_DeckList.selectDeckNum;
+		GameWebAPI.RespDataMN_GetDeckList.DeckList deckList = null;
+		GameWebAPI.RespDataMN_GetDeckList.DeckList[] deckList2 = DataMng.Instance().RespDataMN_DeckList.deckList;
+		for (int i = 0; i < deckList2.Length; i++)
+		{
+			if (selectDeckNum == deckList2[i].deckNum)
+			{
+				deckList = deckList2[i];
+				break;
+			}
+		}
+		int[] array = null;
+		for (int j = 0; j < deckList.monsterList.Length; j++)
+		{
+			MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(deckList.monsterList[j].userMonsterId);
+			MonsterChipEquipData chipEquip = userMonster.GetChipEquip();
+			array = chipEquip.GetChipIdList();
+		}
+		for (int k = 0; k < array.Length; k++)
+		{
+			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(array[k]);
+			string iconPath = chipMainData.GetIconPath();
+			if (!AssetDataMng.Instance().IsAssetBundleData(iconPath))
+			{
+				UnityEngine.Object resource = AssetDataMng.Instance().LoadObject(iconPath, null, true);
+				AssetDataCacheMng.Instance().AddCache(iconPath, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, resource);
+			}
+		}
 	}
 
 	private void GoFarm(Action closeAction)
@@ -389,37 +423,44 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		}
 		try
 		{
-			string[] jsonObj = JsonReader.Deserialize<string[]>(tmpJsonStr);
-			if (jsonObj.Length < 3)
+			string[] array = JsonReader.Deserialize<string[]>(tmpJsonStr);
+			if (array.Length < 3)
 			{
 				global::Debug.LogError("jsonObj format error");
 				res = false;
 			}
-			if (res && VersionManager.version == jsonObj[0])
+			if (res && VersionManager.version == array[0])
 			{
-				GameWebAPI.RespDataWD_DungeonStart dungeon = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
-				string startId = string.Empty;
-				string worldDungeonId = string.Empty;
-				if (dungeon == null)
+				GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
+				string b = string.Empty;
+				string text = string.Empty;
+				if (respDataWD_DungeonStart == null)
 				{
 					global::Debug.LogError("dungeon data is null");
 					res = false;
 				}
 				else
 				{
-					startId = dungeon.startId;
-					worldDungeonId = dungeon.worldDungeonId;
-					this.SetRetryData(worldDungeonId);
+					b = respDataWD_DungeonStart.startId;
+					text = respDataWD_DungeonStart.worldDungeonId;
+					this.SetRetryData(text);
 				}
-				VersatileDataStore versatileJsonObj = JsonReader.Deserialize<VersatileDataStore>(jsonObj[1]);
-				string startIdFromJsonObj = versatileJsonObj.startId;
-				string worldDungeonIdFromJsonObj = versatileJsonObj.worldDungeonId;
-				UnityEngine.Random.seed = versatileJsonObj.randomSeed;
-				if (res && startIdFromJsonObj == startId && worldDungeonIdFromJsonObj == worldDungeonId)
+				VersatileDataStore versatileDataStore = JsonReader.Deserialize<VersatileDataStore>(array[1]);
+				string startId = versatileDataStore.startId;
+				string worldDungeonId = versatileDataStore.worldDungeonId;
+				if (versatileDataStore.randomSeed != 0)
 				{
-					this.cachedJsonArr = new string[jsonObj.Length - 1];
-					int unuseCnt = 2;
-					Array.Copy(jsonObj, unuseCnt, this.cachedJsonArr, 0, jsonObj.Length - unuseCnt);
+					UnityEngine.Random.InitState(versatileDataStore.randomSeed);
+				}
+				else
+				{
+					UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(versatileDataStore.randomState);
+				}
+				if (res && startId == b && worldDungeonId == text)
+				{
+					this.cachedJsonArr = new string[array.Length - 1];
+					int num = 2;
+					Array.Copy(array, num, this.cachedJsonArr, 0, array.Length - num);
 					callback(res);
 					yield break;
 				}
@@ -431,9 +472,8 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				res = false;
 			}
 		}
-		catch (Exception ex2)
+		catch (Exception ex)
 		{
-			Exception ex = ex2;
 			global::Debug.LogErrorFormat("Error:{0}", new object[]
 			{
 				ex.Message
@@ -602,13 +642,13 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 								{
 									if (propInfoName == "enemies")
 									{
-										goto IL_286;
+										goto IL_279;
 									}
 									global::Debug.LogErrorFormat("ありえない変数名:{0}です。", new object[]
 									{
 										propInfoName
 									});
-									goto IL_286;
+									goto IL_279;
 								}
 							}
 							else if (propInfoType == typeof(CharacterStateControl[][]))
@@ -639,7 +679,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 						num++;
 					}
 				}
-				IL_286:;
+				IL_279:;
 			}
 		}
 		catch (Exception ex)
@@ -750,10 +790,10 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		{
 			worldDungeonId = respDataWD_DungeonStart.worldDungeonId,
 			startId = respDataWD_DungeonStart.startId,
-			randomSeed = UnityEngine.Random.seed,
-			hashCode = hashCode
+			hashCode = hashCode,
+			randomState = JsonUtility.ToJson(UnityEngine.Random.state)
 		};
-		UnityEngine.Random.seed = versatileDataStore.randomSeed;
+		UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(versatileDataStore.randomState);
 		string item = JsonWriter.Serialize(versatileDataStore);
 		jsonObjs.Insert(0, item);
 		jsonObjs.Insert(0, VersionManager.version);
