@@ -656,8 +656,11 @@ public class SkillStatus
 			num5 = ((!isPhysics) ? attackerCharacter.extraSpecialAttackPower : attackerCharacter.extraAttackPower);
 			num6 = ((!isPhysics) ? targetCharacter.extraSpecialDefencePower : targetCharacter.extraDefencePower);
 		}
-		float num7 = attackerCharacter.leaderSkillResult.attackUpPercent * (float)num5;
-		float num8 = targetCharacter.leaderSkillResult.defenceUpPercent * (float)num6;
+		float num7 = (!isPhysics) ? attackerCharacter.leaderSkillResult.specialAttackUpPercent : attackerCharacter.leaderSkillResult.attackUpPercent;
+		float num8 = (!isPhysics) ? attackerCharacter.leaderSkillResult.specialDefenceUpPercent : targetCharacter.leaderSkillResult.defenceUpPercent;
+		float num9 = num7 * (float)num5;
+		float num10 = num8 * (float)num6;
+		global::Debug.Log(string.Format("onLeaderAttackUp {0} | onLeaderDefenceUp {1}", num9, num10));
 		SufferStateProperty.SufferType sufferType = SufferStateProperty.SufferType.AttackUp;
 		SufferStateProperty.SufferType sufferType2 = SufferStateProperty.SufferType.AttackDown;
 		SufferStateProperty.SufferType sufferType3 = SufferStateProperty.SufferType.DefenceUp;
@@ -689,8 +692,8 @@ public class SkillStatus
 		{
 			num4 = sufferStateProperty4.downPercent * (float)num6;
 		}
-		attackCalced = (float)num5 + num - num2 + num7;
-		defenceCalced = (float)num6 + num3 - num4 + num8;
+		attackCalced = (float)num5 + num - num2 + num9;
+		defenceCalced = (float)num6 + num3 - num4 + num10;
 		attackCalced = Mathf.Min(attackCalced, (float)num5 * 2.2f);
 		attackCalced = Mathf.Max(attackCalced, (float)num5 * 0.6f);
 		defenceCalced = Mathf.Min(defenceCalced, (float)num6 * 2.2f);

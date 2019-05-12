@@ -100,10 +100,9 @@ public class PicturebookMonsterIcon : GUIListPartBS
 
 	public static void SetTextureMonsterParts(ref PicturebookItem.TextureData textureData, string resourcePath, string assetBundlePath)
 	{
-		bool flag = false;
 		Texture2D texture2D = Resources.Load(resourcePath) as Texture2D;
 		Texture2D texture2D2 = Resources.Load(resourcePath + "_alpha") as Texture2D;
-		if (null != texture2D && null != texture2D2 && !flag)
+		if (texture2D == null && texture2D2 == null)
 		{
 			Texture2D texture2D3 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, null) as Texture2D;
 			if (null != texture2D3)

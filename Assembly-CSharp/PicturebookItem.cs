@@ -26,9 +26,9 @@ public class PicturebookItem : GUIListPartBS
 			{
 				break;
 			}
-			string monsterId = monsterData.monsterMaster.Simple.monsterId;
-			string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(monsterId);
-			string resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(monsterId);
+			string iconId = monsterData.monsterMaster.Simple.iconId;
+			string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(iconId);
+			string resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(iconId);
 			PicturebookItem.TextureData textureData = new PicturebookItem.TextureData();
 			textureData._monsterTexture = new Texture2D(PicturebookItem.ICON_TEXTURE_CX, PicturebookItem.ICON_TEXTURE_CY);
 			textureData._monsterAlphaTexture = new Texture2D(PicturebookItem.ICON_TEXTURE_CX, PicturebookItem.ICON_TEXTURE_CY);

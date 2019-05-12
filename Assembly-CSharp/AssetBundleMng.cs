@@ -257,7 +257,7 @@ public class AssetBundleMng : MonoBehaviour
 				}
 				else if (!string.IsNullOrEmpty(resultWWW.error))
 				{
-					if (!forceDL)
+					if (!forceDL && this.isOpenAlert(resultWWW.error))
 					{
 						this.OpenAlert();
 					}
@@ -856,5 +856,10 @@ public class AssetBundleMng : MonoBehaviour
 	public List<AB_DownLoadInfo> GetODLStreamList()
 	{
 		return this.abdlI_ODLStreamList;
+	}
+
+	private bool isOpenAlert(string msg)
+	{
+		return msg != "Received no data in response";
 	}
 }
