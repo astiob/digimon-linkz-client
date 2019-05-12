@@ -75,12 +75,12 @@ public class CMD_ChipGashaResult : CMD
 	[SerializeField]
 	private GameObject goEFC_BLUE;
 
-	[SerializeField]
 	[Header("GOLD エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_GOLD;
 
-	[Header("RAINBOW エフェクト")]
 	[SerializeField]
+	[Header("RAINBOW エフェクト")]
 	private GameObject goEFC_RAINBOW;
 
 	[Header("BG TEX")]

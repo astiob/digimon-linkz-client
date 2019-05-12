@@ -57,8 +57,8 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[Header("取り消しボタンスプライト")]
 	[SerializeField]
+	[Header("取り消しボタンスプライト")]
 	private UISprite spCancelBtn;
 
 	[Header("取り消しボタンラベル")]

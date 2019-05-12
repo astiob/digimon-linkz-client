@@ -16,16 +16,16 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択してないときの外枠色")]
 	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[SerializeField]
 	[Header("選択時の外枠色")]
+	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[Header("残り時間のラベル")]
@@ -40,16 +40,16 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
-	[SerializeField]
 	[Header("外枠のスプライト")]
+	[SerializeField]
 	private UISprite frameSprite;
 
 	[SerializeField]
 	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
-	[Header("バッジスプライト")]
 	[SerializeField]
+	[Header("バッジスプライト")]
 	private UISprite spBadge;
 
 	private bool isTouchEndFromChild;

@@ -18,20 +18,20 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 	[Header("元レベルのテキスト")]
 	private UILabel oldLevel;
 
-	[Header("新しいレベルのLv部分")]
 	[SerializeField]
+	[Header("新しいレベルのLv部分")]
 	private GameObject newLevelTitle;
 
-	[Header("新しいレベルのテキスト")]
 	[SerializeField]
+	[Header("新しいレベルのテキスト")]
 	private UILabel newLevel;
 
-	[SerializeField]
 	[Header("経験値のテキスト")]
+	[SerializeField]
 	private UILabel exp;
 
-	[SerializeField]
 	[Header("経験値の数字のテキスト")]
+	[SerializeField]
 	private UILabel expNum;
 
 	[Header("レベルアップアイコン")]
@@ -42,16 +42,16 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 
 	private Animation levelUpAnimtion;
 
-	[Header("友情度アップアイコン")]
 	[SerializeField]
+	[Header("友情度アップアイコン")]
 	private GameObject friendUpIcon;
 
 	private Transform friendUpIconTrans;
 
 	private Animation friendUpAnimtion;
 
-	[SerializeField]
 	[Header("下向きの矢印")]
+	[SerializeField]
 	private UISprite arrow;
 
 	[SerializeField]
@@ -62,8 +62,8 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 	[Header("ゲージの背景")]
 	private GameObject expGaugeBG;
 
-	[Header("黄色の経験値ゲージ")]
 	[SerializeField]
+	[Header("黄色の経験値ゲージ")]
 	private UIProgressBar expGauge;
 
 	[SerializeField]

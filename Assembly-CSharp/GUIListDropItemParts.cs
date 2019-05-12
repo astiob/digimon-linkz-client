@@ -37,8 +37,8 @@ public class GUIListDropItemParts : GUIListPartBS
 	[SerializeField]
 	private GameObject goLuckPlayerIcons;
 
-	[Header("マルチの文字アイコン")]
 	[SerializeField]
+	[Header("マルチの文字アイコン")]
 	private UILabel multiIcons;
 
 	[Header("マルチのオーナー報酬アイコン")]

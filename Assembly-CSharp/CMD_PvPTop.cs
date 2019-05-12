@@ -16,8 +16,8 @@ public class CMD_PvPTop : CMD
 
 	private static CMD_PvPTop instance;
 
-	[Header("以下,PvPTopに関する設定")]
 	[SerializeField]
+	[Header("以下,PvPTopに関する設定")]
 	private UILabel lastTimeLabel;
 
 	[SerializeField]
@@ -69,8 +69,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private GameObject nationwideTextG;
 
-	[SerializeField]
 	[Header("拡張全国バトルボタン")]
+	[SerializeField]
 	private GUICollider nationwideExtraCollider;
 
 	[SerializeField]
@@ -150,8 +150,8 @@ public class CMD_PvPTop : CMD
 	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
+	[SerializeField]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
 	[SerializeField]

@@ -200,6 +200,17 @@ public class StoreUtil : MonoBehaviour
 		return null;
 	}
 
+	public double GetStorePriceFromProductId(string productId)
+	{
+		StoreUtil.StoreProductInfo storeProductInfo_ByProductId = this.GetStoreProductInfo_ByProductId(productId);
+		if (storeProductInfo_ByProductId != null)
+		{
+			double num = double.Parse(storeProductInfo_ByProductId.priceAmountMicros);
+			return num / 1000000.0;
+		}
+		return 0.0;
+	}
+
 	public int GetNumFromProductId(string productId)
 	{
 		List<StoreUtil.StoneStoreData> list = this.GetStoneStoreDataList();
@@ -407,7 +418,7 @@ public class StoreUtil : MonoBehaviour
 		{
 			currency = storeProductInfo_ByProductId.currencyCode;
 		}
-		AdjustWrapper.Instance.TrackEvent(AdjustWrapper.EVENT_ID_SEND_PAYMENT, (double)float.Parse(this.GetPriceFromProductId(this._productId)), currency);
+		AdjustWrapper.Instance.TrackEvent(AdjustWrapper.EVENT_ID_SEND_PAYMENT, this.GetStorePriceFromProductId(this._productId), currency);
 		GUICollider.EnableAllCollider("StoreUtil");
 	}
 

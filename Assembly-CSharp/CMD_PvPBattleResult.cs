@@ -28,8 +28,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject acquisitionRoot;
 
-	[Header("DP表示ルート")]
 	[SerializeField]
+	[Header("DP表示ルート")]
 	private GameObject dpRoot;
 
 	[Header("ランク表示用スプライト")]

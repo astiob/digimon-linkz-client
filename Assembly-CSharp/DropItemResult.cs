@@ -12,20 +12,20 @@ public class DropItemResult : ResultBase
 
 	public const int MAX_SCROLL_HEIGHT = 2;
 
-	[SerializeField]
 	[Header("Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogo;
 
 	[SerializeField]
 	[Header("スキップ用Winのロゴ")]
 	private GameObject winLogoForSkip;
 
-	[Header("エリア名とステージ名が入ってるGameObject")]
 	[SerializeField]
+	[Header("エリア名とステージ名が入ってるGameObject")]
 	private GameObject titleGO;
 
-	[SerializeField]
 	[Header("エリア名")]
+	[SerializeField]
 	private UILabel areaName;
 
 	[Header("ステージ名")]

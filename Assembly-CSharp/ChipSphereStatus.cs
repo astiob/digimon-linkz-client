@@ -32,12 +32,12 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private UILabel messageLabel;
 
-	[SerializeField]
 	[Header("ボタンのラベル")]
+	[SerializeField]
 	private UILabel buttonLabel;
 
-	[Header("強化ボタンのラベル")]
 	[SerializeField]
+	[Header("強化ボタンのラベル")]
 	private UILabel reinforcementButtonLabel;
 
 	[SerializeField]

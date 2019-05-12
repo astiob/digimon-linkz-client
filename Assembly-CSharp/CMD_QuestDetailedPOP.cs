@@ -15,8 +15,8 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private const int BOSS_ID_AP_FREE = 4;
 
-	[SerializeField]
 	[Header("出現する敵リスト")]
+	[SerializeField]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	private GameObject goContentsROOT;
 
-	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	[SerializeField]
+	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	private GameObject goPointContentsROOT;
 
 	[SerializeField]
@@ -64,16 +64,16 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getClusterTitleLabel;
 
-	[SerializeField]
 	[Header("取得できるクラスタ数")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
 	[SerializeField]
 	[Header("消費するスタミナタイトル")]
 	private UILabel getStaminaTitleLabel;
 
-	[Header("消費するスタミナ")]
 	[SerializeField]
+	[Header("消費するスタミナ")]
 	private UILabel getStaminaLabel;
 
 	[Header("バトルボタン")]

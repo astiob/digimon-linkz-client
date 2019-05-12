@@ -73,8 +73,8 @@ public sealed class CMD_ArousalTOP : CMD
 	[Header("パートナーデジモンのラベル")]
 	private UILabel partnerTitleLabel;
 
-	[Header("決定ボタンのラベル")]
 	[SerializeField]
+	[Header("決定ボタンのラベル")]
 	private UILabel buttonSubmitLabel;
 
 	[SerializeField]

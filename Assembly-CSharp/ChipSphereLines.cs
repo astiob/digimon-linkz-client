@@ -39,12 +39,12 @@ public sealed class ChipSphereLines : MonoBehaviour
 	[SerializeField]
 	private UISprite rightDownToUp;
 
-	[SerializeField]
 	[Header("上の中から左の光るライン")]
+	[SerializeField]
 	private UISprite upMiddleToLeft;
 
-	[Header("上の中から右の光るライン")]
 	[SerializeField]
+	[Header("上の中から右の光るライン")]
 	private UISprite upMiddleToRight;
 
 	[Header("レアキャプチャ限定ライン")]

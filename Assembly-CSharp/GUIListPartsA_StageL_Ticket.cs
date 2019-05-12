@@ -130,7 +130,16 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 			}
 			if (!string.IsNullOrEmpty(this.data.wdi.expireTime))
 			{
-				this.ngTXT_TICKET_EXPIRE_TIME.text = string.Format(StringMaster.GetString("ExchangeTimeLimit"), this.data.wdi.expireTime);
+				DateTime dateTime = TimeUtility.ToJPLocalDateTime(this.data.wdi.closeTime);
+				string arg = string.Format(StringMaster.GetString("CountDownYMDhm"), new object[]
+				{
+					dateTime.Year,
+					dateTime.Month,
+					dateTime.Day,
+					dateTime.Hour,
+					dateTime.Minute
+				});
+				this.ngTXT_TICKET_EXPIRE_TIME.text = string.Format(StringMaster.GetString("ExchangeTimeLimit"), arg);
 				this.isLimit = true;
 			}
 			else
@@ -141,18 +150,18 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 			this.isFree = (dungeonTicketM.freeFlg == "1");
 			if (this.ngTXT_TICKET_UPDATE_TIME != null)
 			{
-				string arg = string.Empty;
+				string arg2 = string.Empty;
 				string updateTime = this.data.wdi.updateTime;
 				int num = updateTime.IndexOf(' ', 0);
 				if (num != -1)
 				{
-					arg = updateTime.Substring(0, num);
+					arg2 = updateTime.Substring(0, num);
 				}
 				else
 				{
-					arg = updateTime;
+					arg2 = updateTime;
 				}
-				this.ngTXT_TICKET_UPDATE_TIME.text = string.Format(StringMaster.GetString("TicketQuestUpdateTime2"), arg);
+				this.ngTXT_TICKET_UPDATE_TIME.text = string.Format(StringMaster.GetString("TicketQuestUpdateTime2"), arg2);
 			}
 			this.SetBGColor(false);
 		}

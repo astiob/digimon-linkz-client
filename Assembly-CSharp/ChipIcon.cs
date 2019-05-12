@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class ChipIcon : MonoBehaviour
 {
-	[Header("装備アイコン")]
 	[SerializeField]
+	[Header("装備アイコン")]
 	private UISprite equipment;
 
 	[Header("選択中のメッセージラベル")]
@@ -18,8 +18,8 @@ public class ChipIcon : MonoBehaviour
 	[SerializeField]
 	private UITexture iconTexture;
 
-	[SerializeField]
 	[Header("ランクアイコン")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	[Header("複数選択時のメッセージラベル")]
