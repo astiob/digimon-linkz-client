@@ -10,25 +10,25 @@ public class UILabel : UIWidget
 
 	public UILabel.Crispness keepCrispWhenShrunk = UILabel.Crispness.OnDesktop;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Font mTrueTypeFont;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIFont mFont;
 
-	[HideInInspector]
-	[SerializeField]
 	[Multiline(6)]
+	[SerializeField]
+	[HideInInspector]
 	private string mText = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mFontSize = 16;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private FontStyle mFontStyle;
 
 	[SerializeField]
@@ -39,36 +39,36 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private bool mEncoding = true;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mMaxLineCount;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel.Effect mEffectStyle;
 
 	[SerializeField]
 	[HideInInspector]
 	private Color mEffectColor = Color.black;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private NGUIText.SymbolStyle mSymbols = NGUIText.SymbolStyle.Normal;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector2 mEffectDistance = Vector2.one;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel.Overflow mOverflow;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMaterial;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mApplyGradient;
 
 	[HideInInspector]
@@ -79,8 +79,8 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingX;
 
 	[HideInInspector]
@@ -95,32 +95,32 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private float mFloatSpacingX;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mFloatSpacingY;
 
 	[HideInInspector]
 	[SerializeField]
 	private bool mOverflowEllipsis;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mShrinkToFit;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mMaxLineWidth;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mMaxLineHeight;
 
 	[SerializeField]
 	[HideInInspector]
 	private float mLineWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mMultiline = true;
 
 	[NonSerialized]

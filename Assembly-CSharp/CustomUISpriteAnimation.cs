@@ -6,8 +6,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class CustomUISpriteAnimation : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected float mFPS = 30f;
 
 	[SerializeField]
@@ -18,8 +18,8 @@ public class CustomUISpriteAnimation : MonoBehaviour
 	[HideInInspector]
 	protected bool mLoop = true;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected bool mSnap = true;
 
 	protected UISprite mSprite;

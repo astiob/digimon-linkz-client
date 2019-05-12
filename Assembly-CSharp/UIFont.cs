@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Font")]
+[ExecuteInEditMode]
 public class UIFont : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMat;
 
 	[SerializeField]
@@ -22,24 +22,24 @@ public class UIFont : MonoBehaviour
 	[SerializeField]
 	private UIAtlas mAtlas;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIFont mReplacement;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private List<BMSymbol> mSymbols = new List<BMSymbol>();
 
 	[SerializeField]
 	[HideInInspector]
 	private Font mDynamicFont;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mDynamicFontSize = 16;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private FontStyle mDynamicFontStyle;
 
 	[NonSerialized]

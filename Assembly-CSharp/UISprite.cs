@@ -9,12 +9,12 @@ public class UISprite : UIBasicSprite
 	[HideInInspector]
 	private UIAtlas mAtlas;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private string mSpriteName;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mFillCenter = true;
 
 	[NonSerialized]

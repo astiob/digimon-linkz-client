@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(UITweener))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(UITweener))]
 public class UITweenerActivePlay : MonoBehaviour
 {
 	[SerializeField]

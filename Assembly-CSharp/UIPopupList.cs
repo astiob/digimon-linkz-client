@@ -67,16 +67,16 @@ public class UIPopupList : UIWidgetContainer
 	[HideInInspector]
 	protected UISprite mBackground;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UISprite mHighlight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UILabel mHighlightedLabel;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected List<UILabel> mLabelList = new List<UILabel>();
 
 	[HideInInspector]
@@ -97,8 +97,8 @@ public class UIPopupList : UIWidgetContainer
 	[SerializeField]
 	private string functionName = "OnSelectionChange";
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float textScale;
 
 	[SerializeField]

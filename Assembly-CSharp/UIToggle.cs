@@ -35,8 +35,8 @@ public class UIToggle : UIWidgetContainer
 	[SerializeField]
 	private UISprite checkSprite;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Animation checkAnimation;
 
 	[SerializeField]
@@ -47,8 +47,8 @@ public class UIToggle : UIWidgetContainer
 	[HideInInspector]
 	private string functionName = "OnActivate";
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool startsChecked;
 
 	private bool mIsActive = true;

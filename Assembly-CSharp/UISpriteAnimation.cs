@@ -11,12 +11,12 @@ public class UISpriteAnimation : MonoBehaviour
 	[SerializeField]
 	protected int mFPS = 30;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected string mPrefix = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mLoop = true;
 
 	[HideInInspector]

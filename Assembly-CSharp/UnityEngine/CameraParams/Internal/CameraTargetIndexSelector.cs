@@ -2,8 +2,8 @@
 
 namespace UnityEngine.CameraParams.Internal
 {
-	[AddComponentMenu("Digimon Effects/Tools/Camera Target Index Selector")]
 	[DisallowMultipleComponent]
+	[AddComponentMenu("Digimon Effects/Tools/Camera Target Index Selector")]
 	public sealed class CameraTargetIndexSelector : MonoBehaviour
 	{
 		[SerializeField]

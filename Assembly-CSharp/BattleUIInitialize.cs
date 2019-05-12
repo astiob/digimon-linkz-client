@@ -7,8 +7,8 @@ public class BattleUIInitialize : MonoBehaviour
 {
 	private const int LoadingGaugeInterval = 10000;
 
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[SerializeField]
@@ -19,20 +19,20 @@ public class BattleUIInitialize : MonoBehaviour
 	[SerializeField]
 	private UIGaugeManager loadingGauge;
 
-	[Header("ローディングのパーセンテージ")]
 	[SerializeField]
+	[Header("ローディングのパーセンテージ")]
 	private UITextReplacer loadingText;
 
-	[SerializeField]
 	[Header("ローディングのパーセンテージ")]
+	[SerializeField]
 	private UILabel loadingLabel;
 
 	[SerializeField]
 	[Header("ローディングのメッセージのローカライズ")]
 	private UITextReplacer loadingMessageText;
 
-	[Header("ローディングのメッセージのローカライズ")]
 	[SerializeField]
+	[Header("ローディングのメッセージのローカライズ")]
 	private UILabel loadingMessageLabel;
 
 	private int currentLoadingLevel = 1;

@@ -29,8 +29,8 @@ public class UIPlayAnimation : MonoBehaviour
 
 	public List<EventDelegate> onFinished = new List<EventDelegate>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
 	[HideInInspector]

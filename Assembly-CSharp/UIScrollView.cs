@@ -2,8 +2,8 @@
 using UnityEngine;
 
 [RequireComponent(typeof(UIPanel))]
-[AddComponentMenu("NGUI/Interaction/Scroll View")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Scroll View")]
 public class UIScrollView : MonoBehaviour
 {
 	public static BetterList<UIScrollView> list = new BetterList<UIScrollView>();
@@ -48,8 +48,8 @@ public class UIScrollView : MonoBehaviour
 	[HideInInspector]
 	private Vector3 scale = new Vector3(1f, 0f, 0f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector2 relativePositionOnReset = Vector2.zero;
 
 	protected Transform mTrans;

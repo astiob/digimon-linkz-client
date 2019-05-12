@@ -23,28 +23,28 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel digistoneNumber;
 
-	[Header("復活タイトル")]
 	[SerializeField]
+	[Header("復活タイトル")]
 	private UILabel revivalLocalize;
 
-	[Header("特定商取引法に基づく表記ローカライズ")]
 	[SerializeField]
+	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
 	[SerializeField]
 	[Header("足りないエッセージローカライズ(マルチバトル用)")]
 	private UILabel notEnoughConsumeMessageLocalize;
 
-	[SerializeField]
 	[Header("消費メッセージローカライズ")]
+	[SerializeField]
 	private UILabel consumeMessageLocalize;
 
-	[SerializeField]
 	[Header("所持ローカライズ")]
+	[SerializeField]
 	private UILabel haveLocalize;
 
-	[SerializeField]
 	[Header("閉じるローカライズ")]
+	[SerializeField]
 	private UILabel closeLocalize;
 
 	[SerializeField]

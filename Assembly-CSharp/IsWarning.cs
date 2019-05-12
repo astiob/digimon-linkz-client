@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class IsWarning : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("Allyのタイトルバーのスキナー")]
 	[SerializeField]
+	[Header("Allyのタイトルバーのスキナー")]
 	private UIComponentSkinner allyTitleBarSkinner;
 
 	[Header("メッセージ")]

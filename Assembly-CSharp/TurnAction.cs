@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class TurnAction : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("スキル名のスキナー")]
+	[SerializeField]
 	private UIComponentSkinner skillNameSkinner;
 
 	[Header("スキル名のTween")]

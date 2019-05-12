@@ -5,8 +5,8 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/Atlas")]
 public class UIAtlas : MonoBehaviour
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material material;
 
 	[HideInInspector]
@@ -21,12 +21,12 @@ public class UIAtlas : MonoBehaviour
 	[HideInInspector]
 	private UIAtlas mReplacement;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIAtlas.Coordinates mCoordinates;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private List<UIAtlas.Sprite> sprites = new List<UIAtlas.Sprite>();
 
 	private int mPMA = -1;

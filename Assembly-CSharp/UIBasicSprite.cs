@@ -3,25 +3,25 @@ using UnityEngine;
 
 public abstract class UIBasicSprite : UIWidget
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIBasicSprite.Type mType;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIBasicSprite.FillDirection mFillDirection = UIBasicSprite.FillDirection.Radial360;
 
-	[Range(0f, 1f)]
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
+	[Range(0f, 1f)]
 	protected float mFillAmount = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected bool mInvert;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIBasicSprite.Flip mFlip;
 
 	[HideInInspector]

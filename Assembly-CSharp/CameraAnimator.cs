@@ -14,8 +14,8 @@ public class CameraAnimator : MonoBehaviour
 
 	private static CameraAnimatorManager manager;
 
-	[Range(1f, 179f)]
 	[SerializeField]
+	[Range(1f, 179f)]
 	private float _fieldOfView = 60f;
 
 	private int _myIndex;

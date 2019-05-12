@@ -8,16 +8,16 @@ public class BattleStartAction : MonoBehaviour
 	[Header("タイトル")]
 	private GameObject titleRoot;
 
-	[Header("味方のリーダースキルのUI")]
 	[SerializeField]
+	[Header("味方のリーダースキルのUI")]
 	private BattleStartAction.LeaderSkillUI playerLeaderSkillUI;
 
 	[Header("敵のリーダースキルのUI")]
 	[SerializeField]
 	private BattleStartAction.LeaderSkillUI enemyLeaderSkillUI;
 
-	[Header("VSの時のメッセージ")]
 	[SerializeField]
+	[Header("VSの時のメッセージ")]
 	public UIWidget pvpVSUi;
 
 	public void SetActive(bool value)
@@ -96,8 +96,8 @@ public class BattleStartAction : MonoBehaviour
 		[SerializeField]
 		public GameObject leaderSkillUIPlayer;
 
-		[SerializeField]
 		[Header("リーダースキルの名前")]
+		[SerializeField]
 		public UILabel leaderSkillNamePlayer;
 	}
 }

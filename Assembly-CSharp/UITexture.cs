@@ -13,20 +13,20 @@ public class UITexture : UIBasicSprite
 	[SerializeField]
 	private Texture mTexture;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMat;
 
 	[SerializeField]
 	[HideInInspector]
 	private Shader mShader;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mFixedAspect;
 
 	[NonSerialized]

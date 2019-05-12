@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ChipThumbnailAdvent : MonoBehaviour
 {
-	[SerializeField]
 	[Header("チップアイコン")]
+	[SerializeField]
 	private ChipIcon chipIcon;
 
 	[SerializeField]

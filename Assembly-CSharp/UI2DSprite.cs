@@ -9,8 +9,8 @@ public class UI2DSprite : UIBasicSprite
 	[HideInInspector]
 	private Sprite mSprite;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMat;
 
 	[HideInInspector]
@@ -21,8 +21,8 @@ public class UI2DSprite : UIBasicSprite
 	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mFixedAspect;
 
 	[HideInInspector]

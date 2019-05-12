@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Widget")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Widget")]
 public class UIWidget : UIRect
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected Color mColor = Color.white;
 
 	[HideInInspector]
@@ -22,8 +22,8 @@ public class UIWidget : UIRect
 	[HideInInspector]
 	protected int mHeight = 100;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mDepth;
 
 	public UIWidget.OnDimensionsChanged onChange;
@@ -683,8 +683,8 @@ public class UIWidget : UIRect
 		return (num != 0) ? num : UIWidget.PanelCompareFunc(left, right);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int PanelCompareFunc(UIWidget left, UIWidget right)
 	{
 		if (left.mDepth < right.mDepth)

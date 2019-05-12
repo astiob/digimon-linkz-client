@@ -23,8 +23,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 
 	private GUICollider _selectCollider;
 
-	[SerializeField]
 	[Header("リサイクルビュー X方向 パーツカウント")]
+	[SerializeField]
 	protected int PARTS_CT_MN = 1;
 
 	[Header("リサイクルビュー Y MAX")]

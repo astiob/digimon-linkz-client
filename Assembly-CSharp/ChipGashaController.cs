@@ -9,8 +9,8 @@ public sealed class ChipGashaController : CutsceneBase
 	[SerializeField]
 	private GameObject lightLocatorRoot;
 
-	[SerializeField]
 	[Header("動作ロケーターのゲームオブジェクト一覧")]
+	[SerializeField]
 	private List<GameObject> goLocatorList;
 
 	[Header("動作ロケーター光弾用のゲームオブジェクト一覧")]
@@ -21,8 +21,8 @@ public sealed class ChipGashaController : CutsceneBase
 	[Header("光弾エフェクト")]
 	private GameObject goPartsLight;
 
-	[Header("青色→青色")]
 	[SerializeField]
+	[Header("青色→青色")]
 	private GameObject goPartsBlue;
 
 	[Header("青色→黄色")]

@@ -15,8 +15,8 @@ public class HitIcon : MonoBehaviour
 	[Header("通常のUI")]
 	private HitIcon.Data standard = new HitIcon.Data();
 
-	[SerializeField]
 	[Header("ステージ効果用のUI")]
+	[SerializeField]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
 	[SerializeField]
@@ -27,8 +27,8 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
 
-	[Header("ステージ効果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("ステージ効果を表示するフォントテクスチャ")]
 	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
 
 	private MaterialPropertyBlock materialPropertyBlock;
@@ -43,8 +43,8 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private UISprite downSprite;
 
-	[Header("国内用フォントデータ")]
 	[SerializeField]
+	[Header("国内用フォントデータ")]
 	private HitIcon.LanguageFont languageFont;
 
 	[SerializeField]

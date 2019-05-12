@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.CameraParams.Internal;
 using UnityEngine.Serialization;
 
-[AddComponentMenu("Digimon Effects/Camera Params")]
 [DisallowMultipleComponent]
+[AddComponentMenu("Digimon Effects/Camera Params")]
 public class CameraParams : MonoBehaviour
 {
 	public static CameraParams current;

@@ -5,40 +5,40 @@ using UnityEngine;
 
 public class ItemInfoField : MonoBehaviour
 {
-	[Header("Box画像(ノーマル)")]
 	[SerializeField]
+	[Header("Box画像(ノーマル)")]
 	private GameObject normalBoxImage;
 
-	[Header("Box画像(レア)")]
 	[SerializeField]
+	[Header("Box画像(レア)")]
 	private GameObject rareBoxImage;
 
-	[Header("Box(ノーマル)")]
 	[SerializeField]
+	[Header("Box(ノーマル)")]
 	private GameObject normalBox;
 
 	[SerializeField]
 	[Header("Box(レア)")]
 	private GameObject rareBox;
 
-	[SerializeField]
 	[Header("Wave & Roundのテキスト")]
+	[SerializeField]
 	private UILabel waveAndRoundText;
 
-	[SerializeField]
 	[Header("残りRoundのテキスト")]
+	[SerializeField]
 	private UILabel remainingRoundText;
 
-	[Header("Box数テキスト(ノーマル)")]
 	[SerializeField]
+	[Header("Box数テキスト(ノーマル)")]
 	private UILabel normalBoxNumberText;
 
-	[SerializeField]
 	[Header("Box数テキスト(レア)")]
+	[SerializeField]
 	private UILabel rareBoxNumberText;
 
-	[Header("BoxのTween(ノーマル)")]
 	[SerializeField]
+	[Header("BoxのTween(ノーマル)")]
 	private UITweener normalBoxTween;
 
 	[Header("BoxのTween(レア)")]

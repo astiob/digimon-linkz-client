@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class BattleUIComponents : MonoBehaviour
 {
-	[Header("UIRoot")]
 	[SerializeField]
+	[Header("UIRoot")]
 	private UIRoot _uiRoot;
 
 	[SerializeField]
@@ -16,8 +16,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[Header("ロードUI")]
 	public BattleUIInitialize initializeUi;
 
-	[SerializeField]
 	[Header("AlwaysのPrefab")]
+	[SerializeField]
 	public BattleAlways battleAlwaysUi;
 
 	[SerializeField]
@@ -32,44 +32,44 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private UIWidget _extraStartUi;
 
-	[Header("ラウンド開始時のテロップ")]
 	[SerializeField]
+	[Header("ラウンド開始時のテロップ")]
 	public RoundStart roundStart;
 
 	[SerializeField]
 	[Header("ラウンド開始時のテロップ(制限ラウンド)")]
 	public RoundLimitStart roundLimitStart;
 
-	[Header("ラウンド開始時のテロップ(スピードクリア設定)")]
 	[SerializeField]
+	[Header("ラウンド開始時のテロップ(スピードクリア設定)")]
 	public RoundChallengeStart roundChallengeStart;
 
-	[SerializeField]
 	[Header("敵ターン開始時のテロップ")]
+	[SerializeField]
 	private UIWidget _enemyTurnUi;
 
-	[SerializeField]
 	[Header("タイムオーバー時のテロップ")]
+	[SerializeField]
 	private UIWidget _timeOverUi;
 
 	[Header("状態異常による警告テロップ")]
 	[SerializeField]
 	public IsWarning isWarning;
 
-	[SerializeField]
 	[Header("PlayerWinnerのPrefab")]
+	[SerializeField]
 	public PlayerWinner playerWinnerUi;
 
-	[SerializeField]
 	[Header("ウェーブ開始時のテロップ")]
+	[SerializeField]
 	private UIWidget _nextWaveUi;
 
-	[Header("プレイヤーの敗北UI")]
 	[SerializeField]
+	[Header("プレイヤーの敗北UI")]
 	private UIWidget _playerFailUi;
 
-	[SerializeField]
 	[Header("コンテニューダイアログ")]
+	[SerializeField]
 	private UIWidget _continueUi;
 
 	[SerializeField]
@@ -80,15 +80,15 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private BattleSkillSelect _skillSelectUi;
 
-	[SerializeField]
 	[Header("復活ダイアログ")]
+	[SerializeField]
 	public CharacterRevivalDialog characterRevivalDialog;
 
 	[NonSerialized]
 	public MenuDialog menuDialog;
 
-	[SerializeField]
 	[Header("コンテニューダイアログ")]
+	[SerializeField]
 	public DialogContinue dialogContinue;
 
 	[Header("オートボタン")]
@@ -102,57 +102,57 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	public UIButton menuButton;
 
-	[SerializeField]
 	[Header("スキル発動時のテロップ")]
+	[SerializeField]
 	public TurnAction turnAction;
 
-	[SerializeField]
 	[Header("ItemInfoFieldのPrefab")]
+	[SerializeField]
 	public ItemInfoField itemInfoField;
 
 	[NonSerialized]
 	public GameObject helpDialog;
 
-	[SerializeField]
 	[Header("初期誘導UI")]
+	[SerializeField]
 	public BattleUIInitialInduction initialInduction;
 
-	[Header("ヒットアイコンUI")]
 	[SerializeField]
+	[Header("ヒットアイコンUI")]
 	private GameObject _hitIconObject;
 
-	[SerializeField]
 	[Header("HUD")]
+	[SerializeField]
 	private GameObject _hudObject;
 
 	[Header("ビッグボス用のHUD")]
 	public GameObject bigBossHudObject;
 
-	[SerializeField]
 	[Header("ターゲットアイコン（カーソル）")]
+	[SerializeField]
 	private GameObject _manualSelectTargetObject;
 
 	[Header("ターゲットアイコン（アロー）")]
 	[SerializeField]
 	private GameObject _toleranceIconObject;
 
-	[SerializeField]
 	[Header("ドロップアイテム")]
+	[SerializeField]
 	private GameObject _droppingItemObject;
 
 	[Header("特効効果テロップ")]
 	public BattleExtraEffectUI battleExtraEffectUI;
 
-	[SerializeField]
 	[Header("Winのオブジェクト(PvP限定)")]
+	[SerializeField]
 	public GameObject winGameObject;
 
 	[SerializeField]
 	[Header("ステージ効果による上昇減少アイコン")]
 	private GameObject _battleGimmickStatusObject;
 
-	[SerializeField]
 	[Header("チップ効果発動時の演出用")]
+	[SerializeField]
 	private ChipBarLnvocation _chipBarLnvocation;
 
 	[SerializeField]

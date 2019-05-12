@@ -9,16 +9,16 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("Rootのオブジェクト(Dialog)")]
 	[SerializeField]
+	[Header("Rootのオブジェクト(Dialog)")]
 	private GameObject rootObject;
 
-	[SerializeField]
 	[Header("ボタン")]
+	[SerializeField]
 	private UIButton button;
 
-	[SerializeField]
 	[Header("テキスト")]
+	[SerializeField]
 	private UILabel text;
 
 	[Header("モニター")]
@@ -29,12 +29,12 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[Header("ウィンドウTween")]
 	private UITweener windowTween;
 
-	[Header("モニターTween")]
 	[SerializeField]
+	[Header("モニターTween")]
 	private UITweener monitorTween;
 
-	[SerializeField]
 	[Header("テキストTween")]
+	[SerializeField]
 	private UITweener textTween;
 
 	[SerializeField]

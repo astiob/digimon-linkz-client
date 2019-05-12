@@ -19,8 +19,8 @@ public class RoundChallengeStart : RoundStart
 	[SerializeField]
 	private UILabel roundLimitRankLabelBack;
 
-	[Header("スピードクリアランク表示のカラー")]
 	[SerializeField]
+	[Header("スピードクリアランク表示のカラー")]
 	private Color[] rankGradientTopColor;
 
 	[SerializeField]

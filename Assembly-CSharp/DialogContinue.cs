@@ -9,24 +9,24 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("特定商取引ボタン")]
 	private UIButton specificTradeButton;
 
-	[Header("リタイアボタン")]
 	[SerializeField]
+	[Header("リタイアボタン")]
 	private UIButton retireButton;
 
-	[Header("復活ボタン")]
 	[SerializeField]
+	[Header("復活ボタン")]
 	private UIButton revivalButton;
 
-	[Header("所持デジストーンの数")]
 	[SerializeField]
+	[Header("所持デジストーンの数")]
 	private UILabel digistoneNumLabel;
 
-	[SerializeField]
 	[Header("バックグラウンド")]
+	[SerializeField]
 	private GameObject background;
 
-	[Header("デジストーン説明のローカライズ")]
 	[SerializeField]
+	[Header("デジストーン説明のローカライズ")]
 	private UILabel digistoneDescription;
 
 	[SerializeField]
@@ -37,12 +37,12 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("リタイアボタンのコライダー")]
 	private Collider retireButtonCollider;
 
-	[Header("復活ボタンボタンのコライダー")]
 	[SerializeField]
+	[Header("復活ボタンボタンのコライダー")]
 	private Collider revivalButtonCollider;
 
-	[SerializeField]
 	[Header("UIOpenCloseDialog")]
+	[SerializeField]
 	public UIOpenCloseDialog openCloseDialog;
 
 	[SerializeField]
@@ -61,8 +61,8 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("復活する/ショップへ移動ローカライズ")]
 	private UILabel revivalOrShopLocalize;
 
-	[Header("所持デジストーンローカライズ")]
 	[SerializeField]
+	[Header("所持デジストーンローカライズ")]
 	private UILabel haveDigistoneLocalize;
 
 	[SerializeField]

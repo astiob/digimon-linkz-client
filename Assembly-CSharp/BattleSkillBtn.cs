@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class BattleSkillBtn : MonoBehaviour
 {
-	[SerializeField]
 	[Header("スキルボタンが2つのときの位置")]
+	[SerializeField]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
-	[SerializeField]
 	[Header("スキルボタンが3つのときの位置")]
+	[SerializeField]
 	private Vector3 threeButtonPosition = Vector3.zero;
 
 	[Header("ボタン")]
@@ -21,12 +21,12 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UILabel skillName;
 
-	[Header("スキル説明")]
 	[SerializeField]
+	[Header("スキル説明")]
 	private UILabel skillDescription;
 
-	[Header("必要AP数")]
 	[SerializeField]
+	[Header("必要AP数")]
 	private UILabel ap;
 
 	[Header("命中率")]
@@ -65,20 +65,20 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UISprite skillLockSprite;
 
-	[Header("スキルONボタン")]
 	[SerializeField]
+	[Header("スキルONボタン")]
 	private GameObject onSkillButton;
 
 	[Header("実行ボタンスプライト")]
 	[SerializeField]
 	private UISprite execButtonSprite;
 
-	[Header("スキルOFfボタン")]
 	[SerializeField]
+	[Header("スキルOFfボタン")]
 	private GameObject offSkillButton;
 
-	[Header("スキルボタンスプライト")]
 	[SerializeField]
+	[Header("スキルボタンスプライト")]
 	private UISprite skillButtonSprite;
 
 	private SkillType skillType;
