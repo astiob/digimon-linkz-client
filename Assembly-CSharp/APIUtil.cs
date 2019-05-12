@@ -384,7 +384,7 @@ public sealed class APIUtil : MonoBehaviour
 		request = requestCL_GetColosseumReward;
 		yield return base.StartCoroutine(request.Run(null, null, null));
 		yield return base.StartCoroutine(Singleton<UserDataMng>.Instance.RequestUserMonsterFriendshipTime(true).Run(null, null, null));
-		yield return base.StartCoroutine(ClassSingleton<BattleDataStore>.Instance.RequestWorldStartDataLogic(true).Run(null, null, null));
+		yield return base.StartCoroutine(ClassSingleton<BattleDataStore>.Instance.RequestWorldStartDataLogic().Run(null, null, null));
 		yield break;
 	}
 

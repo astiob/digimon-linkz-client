@@ -594,9 +594,9 @@ public class BattleUIControlBasic : BattleUIControl
 		}
 	}
 
-	public void ApplyMonsterButtonIcon(int index, Sprite image, CharacterStateControl characterStatus, bool isLeader)
+	public void ApplyMonsterButtonIcon(int index, CharacterStateControl characterStatus, bool isLeade, string resourcePath, string assetBundlePath)
 	{
-		base.ui.skillSelectUi.monsterButton[index].ApplyMonsterButtonIcon(image, characterStatus, isLeader);
+		base.ui.skillSelectUi.monsterButton[index].ApplyMonsterButtonIcon(characterStatus, isLeade, resourcePath, assetBundlePath);
 		base.ui.skillSelectUi.monsterButton[index].SetPlayerNameActive(base.battleMode == BattleMode.Multi);
 		base.ui.skillSelectUi.monsterButton[index].SetPlayerNumber(0);
 	}

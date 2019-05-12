@@ -230,7 +230,7 @@ public class Battle3DAction : BattleFunctionBase
 				int num = 0;
 				int num2 = 0;
 				characterStateControl.GetDifferenceExtraPram(out num, out num2);
-				bool flag = characterStateControl.IsPoint();
+				bool flag = characterStateControl.isEffectiveBonus();
 				if (num > 0 || flag)
 				{
 					upCharacters.Add(characterStateControl.CharacterParams);

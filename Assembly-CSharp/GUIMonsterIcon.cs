@@ -74,6 +74,8 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	private static Shader shader;
 
+	private static Shader shaderGray;
+
 	private int select_num = -1;
 
 	private string dimm_mess = string.Empty;
@@ -375,6 +377,15 @@ public class GUIMonsterIcon : GUIListPartBS
 			GUIMonsterIcon.shader = Shader.Find("Unlit With Mask/Alpha Blended");
 		}
 		return GUIMonsterIcon.shader;
+	}
+
+	public static Shader GetIconShaderGray()
+	{
+		if (null == GUIMonsterIcon.shaderGray)
+		{
+			GUIMonsterIcon.shaderGray = Shader.Find("Unlit With Mask/Alpha Blended For Grayscale");
+		}
+		return GUIMonsterIcon.shaderGray;
 	}
 
 	private void SetThumbnailMonster(UITexture iconTexture, MonsterData iconMonsterData, bool isLoadASync)

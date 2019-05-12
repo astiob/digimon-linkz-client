@@ -44,9 +44,13 @@ public class CommonRender3DPartyRT : MonoBehaviour
 
 	protected virtual void OnDestroy()
 	{
+		if (this.cam != null && this.cam.targetTexture != null)
+		{
+			this.cam.targetTexture = null;
+		}
 		if (this.renderTex != null)
 		{
-			UnityEngine.Object.DestroyImmediate(this.renderTex);
+			UnityEngine.Object.Destroy(this.renderTex);
 		}
 	}
 

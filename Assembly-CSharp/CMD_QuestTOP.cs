@@ -118,12 +118,7 @@ public class CMD_QuestTOP : CMD
 			AppCoroutine.Start(this.CloseImmidiate_OpenQuestSelect(1), false);
 			return;
 		}
-		List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(CMD_QuestTOP.AreaData.data.worldAreaId, false);
-		if (0 >= worldStageData_ByAreaID.Count)
-		{
-			AppCoroutine.Start(this.CloseImmidiate_OpenQuestSelect(1), false);
-			return;
-		}
+		List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(CMD_QuestTOP.AreaData.data.worldAreaId);
 		if (CMD_QuestTOP.AreaData.data.type == "3" || CMD_QuestTOP.AreaData.data.type == "4")
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
@@ -242,10 +237,13 @@ public class CMD_QuestTOP : CMD
 		{
 			AppCoroutine.Start(this.DownloadBannerTexture(bgpath), false);
 		}
-		string anyTimeQuestTopTutorialFileName = this.GetAnyTimeQuestTopTutorialFileName(this.worldStageData[0].worldStageM.worldAreaId);
-		if (!string.IsNullOrEmpty(anyTimeQuestTopTutorialFileName))
+		if (this.worldStageData.Count > 0)
 		{
-			base.SetTutorialAnyTime(anyTimeQuestTopTutorialFileName);
+			string anyTimeQuestTopTutorialFileName = this.GetAnyTimeQuestTopTutorialFileName(this.worldStageData[0].worldStageM.worldAreaId);
+			if (!string.IsNullOrEmpty(anyTimeQuestTopTutorialFileName))
+			{
+				base.SetTutorialAnyTime(anyTimeQuestTopTutorialFileName);
+			}
 		}
 	}
 
@@ -567,17 +565,20 @@ public class CMD_QuestTOP : CMD
 		{
 			this.worldDungeonData = new List<QuestData.WorldDungeonData>();
 		}
-		QuestData.WorldStageData worldStageData = this.worldStageData[this.currentSelected];
-		if (worldStageData != null && worldStageData.wdi.isOpen == 1)
+		if (this.currentSelected >= 0)
 		{
-			this.goLP_DNG.SetActive(true);
-			this.csSelectPanelS_DungeonR.initLocation = true;
-			List<QuestData.WorldDungeonData> list = new List<QuestData.WorldDungeonData>();
-			for (int j = 0; j < this.worldDungeonData.Count; j++)
+			QuestData.WorldStageData worldStageData = this.worldStageData[this.currentSelected];
+			if (worldStageData != null && worldStageData.wdi.isOpen == 1)
 			{
-				list.Add(this.worldDungeonData[j]);
+				this.goLP_DNG.SetActive(true);
+				this.csSelectPanelS_DungeonR.initLocation = true;
+				List<QuestData.WorldDungeonData> list = new List<QuestData.WorldDungeonData>();
+				for (int j = 0; j < this.worldDungeonData.Count; j++)
+				{
+					list.Add(this.worldDungeonData[j]);
+				}
+				this.csSelectPanelS_DungeonR.AllBuild(list);
 			}
-			this.csSelectPanelS_DungeonR.AllBuild(list);
 		}
 		this.goLP_DNG.SetActive(false);
 	}
@@ -1007,7 +1008,7 @@ public class CMD_QuestTOP : CMD
 
 	private void InitQuest()
 	{
-		this.worldStageData = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(CMD_QuestTOP.AreaData.data.worldAreaId, false);
+		this.worldStageData = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(CMD_QuestTOP.AreaData.data.worldAreaId);
 		if (ClassSingleton<QuestTOPAccessor>.Instance == null || !ClassSingleton<QuestTOPAccessor>.Instance.nextAreaFlg)
 		{
 			this.currentSelected = 0;

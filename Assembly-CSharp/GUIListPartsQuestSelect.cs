@@ -52,7 +52,7 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 
 	private void ShowData()
 	{
-		List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(this.areaData.data.worldAreaId, false);
+		List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(this.areaData.data.worldAreaId);
 		QuestData.WORLD_STATUS world_STATUS = ClassSingleton<QuestData>.Instance.CheckAreaStatus(worldStageData_ByAreaID, this.areaData.data.worldAreaId);
 		if (world_STATUS == QuestData.WORLD_STATUS.UNLOCK_NEW)
 		{

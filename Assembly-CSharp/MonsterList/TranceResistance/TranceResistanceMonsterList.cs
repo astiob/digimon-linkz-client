@@ -69,6 +69,22 @@ namespace MonsterList.TranceResistance
 			}
 		}
 
+		public void ClearIconGrayOutPartnerMonsterCheckLock(MonsterData ignoreMonster, string monsterGroupId)
+		{
+			List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList();
+			for (int i = 0; i < monsterDataList.Count; i++)
+			{
+				if (monsterDataList[i] != ignoreMonster && !monsterDataList[i].userMonster.IsLocked && monsterDataList[i].monsterMG.monsterGroupId == monsterGroupId && !MonsterGrowStepData.IsUltimateScope(monsterDataList[i].GetMonsterMaster().Group.growStep))
+				{
+					GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterDataList[i]);
+					if (null != icon)
+					{
+						this.iconGrayOut.SetIdleIcon(icon);
+					}
+				}
+			}
+		}
+
 		public void ClearIconGrayOutPartnerMonster(MonsterData baseDigimon, List<MonsterData> partnerMonsterList)
 		{
 			List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList();

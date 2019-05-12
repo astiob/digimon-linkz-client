@@ -35,13 +35,9 @@ public class BattleEffectManager
 		BattleEffectManager._camera = cam;
 	}
 
-	~BattleEffectManager()
-	{
-		this.DisposeAllPool();
-	}
-
 	public void Destroy()
 	{
+		this.DisposeAllPool();
 		BattleEffectManager._instance = null;
 	}
 

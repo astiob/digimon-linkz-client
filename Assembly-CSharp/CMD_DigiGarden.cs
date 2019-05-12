@@ -17,6 +17,10 @@ public sealed class CMD_DigiGarden : CMD
 
 	private GUISelectPanelDigiGarden csSelectPanel;
 
+	private GameWebAPI.RespDataUS_GetGardenInfo gardenInfoList;
+
+	private DateTime endDateTime = DateTime.Now;
+
 	private Action finishedActionCutScene;
 
 	private readonly Vector3 eggPos_1 = new Vector3(-1.12f, 0f, -1.03f);
@@ -121,6 +125,7 @@ public sealed class CMD_DigiGarden : CMD
 	{
 		base.Awake();
 		CMD_DigiGarden.instance = this;
+		this.endDateTime = ServerDateTime.Now;
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -351,8 +356,8 @@ public sealed class CMD_DigiGarden : CMD
 	{
 		if (!this.IsOfflineModeFlag)
 		{
-			DateTime d = DateTime.Parse(monsterData.userMonster.growEndDate);
-			TimeSpan timeSpan = d - ServerDateTime.Now;
+			this.endDateTime = DateTime.Parse(monsterData.userMonster.growEndDate);
+			TimeSpan timeSpan = this.endDateTime - ServerDateTime.Now;
 			if (timeSpan.TotalSeconds <= 0.0)
 			{
 				this.growNeedStone = 0;
@@ -381,17 +386,17 @@ public sealed class CMD_DigiGarden : CMD
 	private IEnumerator GrowExecInfoAPI(MonsterData monsterData, TimeSpan timeSpan)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-		GameWebAPI.RespDataUS_GetGardenInfo gardenInfoList = null;
+		this.gardenInfoList = null;
 		GameWebAPI.RequestUS_GetGardenInfo request = new GameWebAPI.RequestUS_GetGardenInfo
 		{
 			OnReceived = delegate(GameWebAPI.RespDataUS_GetGardenInfo response)
 			{
-				gardenInfoList = response;
+				this.gardenInfoList = response;
 			}
 		};
 		return request.Run(delegate()
 		{
-			int shortenTimeValue = this.GetShortenTimeValue(gardenInfoList, monsterData.userMonster.userMonsterId);
+			int shortenTimeValue = this.GetShortenTimeValue(this.gardenInfoList, monsterData.userMonster.userMonsterId);
 			this.growNeedStone = this.GetCostEvolution(shortenTimeValue, timeSpan);
 			this.OpenConfirmShortenTime(this.growNeedStone, timeSpan, delegate(CMD confirmPopup)
 			{
@@ -494,8 +499,8 @@ public sealed class CMD_DigiGarden : CMD
 
 	private void ExecGrow(MonsterData monsterData)
 	{
-		DateTime d = DateTime.Parse(monsterData.userMonster.growEndDate);
-		double timeSpan = (double)((int)(d - ServerDateTime.Now).TotalSeconds);
+		this.endDateTime = DateTime.Parse(monsterData.userMonster.growEndDate);
+		double timeSpan = (double)((int)(this.endDateTime - ServerDateTime.Now).TotalSeconds);
 		GameWebAPI.RequestMN_MonsterEvolutionInGarden requestMN_MonsterEvolutionInGarden = new GameWebAPI.RequestMN_MonsterEvolutionInGarden();
 		requestMN_MonsterEvolutionInGarden.SetSendData = delegate(GameWebAPI.MN_Req_Grow param)
 		{
@@ -935,6 +940,12 @@ public sealed class CMD_DigiGarden : CMD
 			if (!this.IsOfflineModeFlag)
 			{
 				this.InitMonsterList();
+				if (this.gardenInfoList != null)
+				{
+					TimeSpan timeSpan = this.endDateTime - ServerDateTime.Now;
+					int shortenTimeValue = this.GetShortenTimeValue(this.gardenInfoList, monsterData.userMonster.userMonsterId);
+					this.growNeedStone = this.GetCostEvolution(shortenTimeValue, timeSpan);
+				}
 				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= this.growNeedStone;
 			}
 		}, delegate()

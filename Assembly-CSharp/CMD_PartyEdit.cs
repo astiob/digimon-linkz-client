@@ -178,6 +178,7 @@ public sealed class CMD_PartyEdit : CMD
 			int num = 0;
 			bool flag = false;
 			GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
+			string ticketID = string.Empty;
 			if (null != CMD_QuestTOP.instance)
 			{
 				QuestData.WorldStageData worldStageData = CMD_QuestTOP.instance.GetWorldStageData();
@@ -187,6 +188,7 @@ public sealed class CMD_PartyEdit : CMD
 					flag = true;
 					num = stageDataBk.dungeon.dungeonTicketNum.ToInt32();
 					arg = worldStageData.worldStageM.name;
+					ticketID = stageDataBk.dungeon.userDungeonTicketId;
 				}
 			}
 			else if (lastDngReq != null)
@@ -198,6 +200,7 @@ public sealed class CMD_PartyEdit : CMD
 					num = int.Parse(ticketQuestDungeonByTicketID.dungeonTicketNum);
 					GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonMaster = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(ticketQuestDungeonByTicketID.worldDungeonId.ToString());
 					arg = worldDungeonMaster.name;
+					ticketID = lastDngReq.userDungeonTicketId;
 				}
 			}
 			if (flag)
@@ -206,6 +209,7 @@ public sealed class CMD_PartyEdit : CMD
 				{
 					if (idx == 0)
 					{
+						PlayerPrefs.SetString("userDungeonTicketId", ticketID);
 						this.OnClickedSaveOperation();
 					}
 				}, "CMD_Confirm", null) as CMD_Confirm;

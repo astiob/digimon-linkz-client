@@ -52,7 +52,7 @@ public sealed class CMD_ChipReinforcement : CMD
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
 		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] array = this.ConvertChipList(ChipDataMng.userChipData);
-		this.chipList = new ChipList(this.goEFC_FOOTER, 8, new Vector2(960f, 450f), array, false);
+		this.chipList = new ChipList(this.goEFC_FOOTER, 8, new Vector2(960f, 450f), array, false, true);
 		this.chipList.SetPosition(new Vector3(-40f, -70f, 0f));
 		this.chipList.SetScrollBarPosX(520f);
 		this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
@@ -116,7 +116,7 @@ public sealed class CMD_ChipReinforcement : CMD
 		Action callback = delegate()
 		{
 			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] array2 = this.ConvertChipList(ChipDataMng.userChipData);
-			this.chipList.ReAllBuild(array2, false);
+			this.chipList.ReAllBuild(array2, false, false);
 			this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 			this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
 			this.messageLabel.gameObject.SetActive(array2.Count<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>() == 0);
@@ -162,7 +162,7 @@ public sealed class CMD_ChipReinforcement : CMD
 			{
 				this.sortNameLabel.text = CMD_ChipSortModal.GetSortName();
 				GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] array = this.ConvertChipList(ChipDataMng.userChipData);
-				this.chipList.ReAllBuild(array, false);
+				this.chipList.ReAllBuild(array, false, false);
 				this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 				this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
 				this.messageLabel.gameObject.SetActive(array.Count<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>() == 0);

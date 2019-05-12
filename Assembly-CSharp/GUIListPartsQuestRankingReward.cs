@@ -9,13 +9,13 @@ using UnityEngine;
 public sealed class GUIListPartsQuestRankingReward : MonoBehaviour
 {
 	[SerializeField]
-	private UILabel itemNameLabel;
-
-	[SerializeField]
 	private UISprite iconSprite;
 
 	[SerializeField]
 	private UITexture iconTexture;
+
+	[SerializeField]
+	private UILabel itemNumLabel;
 
 	private GUIMonsterIcon monsterIcon;
 
@@ -59,15 +59,15 @@ public sealed class GUIListPartsQuestRankingReward : MonoBehaviour
 		{
 			arg = num;
 		}
-		if (this.itemNameLabel != null)
+		if (this.itemNumLabel != null)
 		{
 			if (assetCategory2 == MasterDataMng.AssetCategory.FACILITY_KEY)
 			{
-				this.itemNameLabel.text = this.itemName;
+				this.itemNumLabel.text = this.itemName;
 			}
 			else
 			{
-				this.itemNameLabel.text = string.Format(StringMaster.GetString("SystemItemCount"), this.itemName, arg);
+				this.itemNumLabel.text = string.Format(StringMaster.GetString("SystemItemCount"), string.Empty, arg);
 			}
 		}
 		switch (assetCategory2)
@@ -97,6 +97,7 @@ public sealed class GUIListPartsQuestRankingReward : MonoBehaviour
 		case MasterDataMng.AssetCategory.TIP:
 		case MasterDataMng.AssetCategory.EXP:
 		case MasterDataMng.AssetCategory.MEAT:
+		case MasterDataMng.AssetCategory.TITLE:
 			this.iconSprite.enabled = true;
 			this.iconSprite.spriteName = this.GetSpriteName(assetCategory2);
 			if (callback != null)
@@ -268,7 +269,14 @@ public sealed class GUIListPartsQuestRankingReward : MonoBehaviour
 			result = "Common02_Drop_Exp";
 			break;
 		default:
-			if (assetCategoryId == MasterDataMng.AssetCategory.MEAT)
+			if (assetCategoryId != MasterDataMng.AssetCategory.MEAT)
+			{
+				if (assetCategoryId == MasterDataMng.AssetCategory.TITLE)
+				{
+					result = "Common02_item_title";
+				}
+			}
+			else
 			{
 				result = "Common02_item_meat";
 			}

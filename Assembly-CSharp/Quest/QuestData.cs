@@ -148,41 +148,24 @@ namespace Quest
 		{
 			if (this.worldAreaMList == null)
 			{
-				this.worldAreaMList = this.GetWorldAreaM("2", true, false);
+				this.worldAreaMList = this.GetWorldAreaM("2", false);
 			}
 			return this.worldAreaMList;
 		}
 
-		public List<QuestData.WorldAreaData> GetWorldAreaM(string type, bool omit = true, bool includeTimeOut = false)
+		public List<QuestData.WorldAreaData> GetWorldAreaM(string excludeType, bool includeTimeOut = false)
 		{
 			List<QuestData.WorldAreaData> list = new List<QuestData.WorldAreaData>();
 			GameWebAPI.RespDataMA_GetWorldAreaM respDataMA_WorldAreaM = MasterDataMng.Instance().RespDataMA_WorldAreaM;
 			for (int i = 0; i < respDataMA_WorldAreaM.worldAreaM.Length; i++)
 			{
-				if ((!omit && respDataMA_WorldAreaM.worldAreaM[i].type == type) || (omit && respDataMA_WorldAreaM.worldAreaM[i].type != type))
+				if (respDataMA_WorldAreaM.worldAreaM[i].type != excludeType)
 				{
-					if (includeTimeOut)
+					list.Add(new QuestData.WorldAreaData
 					{
-						list.Add(new QuestData.WorldAreaData
-						{
-							data = respDataMA_WorldAreaM.worldAreaM[i],
-							isActive = true
-						});
-					}
-					else
-					{
-						DateTime dateTime = DateTime.Parse(respDataMA_WorldAreaM.worldAreaM[i].openTime);
-						DateTime value = DateTime.Parse(respDataMA_WorldAreaM.worldAreaM[i].closeTime);
-						DateTime now = ServerDateTime.Now;
-						if (dateTime.CompareTo(now) <= 0 && now.CompareTo(value) <= 0)
-						{
-							list.Add(new QuestData.WorldAreaData
-							{
-								data = respDataMA_WorldAreaM.worldAreaM[i],
-								isActive = true
-							});
-						}
-					}
+						data = respDataMA_WorldAreaM.worldAreaM[i],
+						isActive = true
+					});
 				}
 			}
 			list.Sort(new Comparison<QuestData.WorldAreaData>(this.CompareTime));
@@ -236,7 +219,7 @@ namespace Quest
 		{
 			if (this.worldAreaMList == null)
 			{
-				this.worldAreaMList = this.GetWorldAreaM("2", true, false);
+				this.worldAreaMList = this.GetWorldAreaM("2", false);
 			}
 			this.InitWD_DngInfoDataList();
 			List<RequestBase> list = new List<RequestBase>();
@@ -344,7 +327,7 @@ namespace Quest
 			if (worldId == "1")
 			{
 				QuestData.WD_DngInfoData wd_DngInfoData = new QuestData.WD_DngInfoData();
-				wd_DngInfoData.worldId = worldId;
+				wd_DngInfoData.worldAreaId = "1";
 				wd_DngInfoData.dngInfo = dngInfo;
 				this.WD_DngInfoDataList.Add(wd_DngInfoData);
 				for (int i = 0; i < wd_DngInfoData.dngInfo.worldDungeonInfo.Length; i++)
@@ -354,63 +337,96 @@ namespace Quest
 			}
 			else if (worldId == "3")
 			{
-				List<QuestData.WorldAreaData> worldAreaM_Normal = this.GetWorldAreaM_Normal();
+				List<QuestData.WorldAreaData> wam = this.GetWorldAreaM_Normal();
 				GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
-				for (int j = 0; j < worldAreaM_Normal.Count; j++)
+				List<QuestData.WorldAreaData> list = new List<QuestData.WorldAreaData>();
+				int z;
+				for (z = 0; z < wam.Count; z++)
 				{
-					if (!(worldAreaM_Normal[j].data.worldAreaId == "1") && !(worldAreaM_Normal[j].data.worldAreaId == "8"))
+					if (!(wam[z].data.worldAreaId == "1") && !(wam[z].data.worldAreaId == "8"))
 					{
-						string worldAreaId = worldAreaM_Normal[j].data.worldAreaId;
+						string worldAreaId = wam[z].data.worldAreaId;
 						QuestData.WD_DngInfoData wd_DngInfoData2 = new QuestData.WD_DngInfoData();
-						wd_DngInfoData2.worldId = worldAreaId;
+						wd_DngInfoData2.worldAreaId = worldAreaId;
 						wd_DngInfoData2.dngInfo = new GameWebAPI.RespDataWD_GetDungeonInfo();
-						List<GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo> list = new List<GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo>();
-						for (int k = 0; k < dngInfo.worldDungeonInfo.Length; k++)
+						List<GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo> list2 = new List<GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo>();
+						for (int j = 0; j < dngInfo.worldDungeonInfo.Length; j++)
 						{
-							for (int l = 0; l < worldStageM.Length; l++)
+							string b = dngInfo.worldDungeonInfo[j].worldStageId.ToString();
+							for (int k = 0; k < worldStageM.Length; k++)
 							{
-								if (worldStageM[l].worldStageId == dngInfo.worldDungeonInfo[k].worldStageId.ToString() && worldStageM[l].worldAreaId == wd_DngInfoData2.worldId)
+								if (worldStageM[k].worldStageId == b && worldStageM[k].worldAreaId == wd_DngInfoData2.worldAreaId)
 								{
-									list.Add(dngInfo.worldDungeonInfo[k]);
+									list2.Add(dngInfo.worldDungeonInfo[j]);
 								}
 							}
 						}
-						wd_DngInfoData2.dngInfo.worldDungeonInfo = new GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo[list.Count];
-						for (int k = 0; k < list.Count; k++)
+						wd_DngInfoData2.dngInfo.worldDungeonInfo = new GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo[list2.Count];
+						for (int j = 0; j < list2.Count; j++)
 						{
-							wd_DngInfoData2.dngInfo.worldDungeonInfo[k] = list[k];
+							wd_DngInfoData2.dngInfo.worldDungeonInfo[j] = list2[j];
 						}
 						this.WD_DngInfoDataList.Add(wd_DngInfoData2);
-						if (list.Count > 0)
+						bool flag = false;
+						if (list2.Count > 0)
 						{
-							worldAreaM_Normal[j].isActive = true;
+							wam[z].isActive = true;
+							if (list2[0].timeLeft <= 0)
+							{
+								flag = true;
+							}
 						}
 						else
 						{
-							worldAreaM_Normal[j].isActive = false;
+							wam[z].isActive = false;
+							flag = true;
 						}
-						for (int m = 0; m < wd_DngInfoData2.dngInfo.worldDungeonInfo.Length; m++)
+						if (flag)
 						{
-							wd_DngInfoData2.dngInfo.worldDungeonInfo[m].isEvent = true;
+							GameWebAPI.RespDataMA_WorldEventAreaMaster respDataMA_WorldEventAreaMaster = MasterDataMng.Instance().RespDataMA_WorldEventAreaMaster;
+							GameWebAPI.RespDataMA_WorldEventMaster respDataMA_WorldEventMaster = MasterDataMng.Instance().RespDataMA_WorldEventMaster;
+							if (wam[z].data.type == "3")
+							{
+								GameWebAPI.RespDataMA_WorldEventAreaMaster.WorldEventAreaM areaMaster = respDataMA_WorldEventAreaMaster.worldEventAreaM.SingleOrDefault((GameWebAPI.RespDataMA_WorldEventAreaMaster.WorldEventAreaM x) => x.worldAreaId == wam[z].data.worldAreaId);
+								GameWebAPI.RespDataMA_WorldEventMaster.WorldEventM worldEventM = respDataMA_WorldEventMaster.worldEventM.Where((GameWebAPI.RespDataMA_WorldEventMaster.WorldEventM v) => v.worldEventId == areaMaster.worldEventId).First<GameWebAPI.RespDataMA_WorldEventMaster.WorldEventM>();
+								if (worldEventM != null)
+								{
+									wam[z].isActive = (DateTime.Parse(worldEventM.receiveEndTime) > ServerDateTime.Now);
+									if (wam[z].isActive)
+									{
+										list.Add(wam[z]);
+									}
+								}
+							}
+						}
+						for (int l = 0; l < wd_DngInfoData2.dngInfo.worldDungeonInfo.Length; l++)
+						{
+							wd_DngInfoData2.dngInfo.worldDungeonInfo[l].isEvent = true;
 						}
 					}
 				}
+				foreach (QuestData.WorldAreaData item in list)
+				{
+					wam.Remove(item);
+					wam.Add(item);
+				}
+				list.Clear();
 			}
 			else if (worldId == "8")
 			{
 				string text = "8";
-				List<QuestData.WorldAreaData> worldAreaM_Normal2 = this.GetWorldAreaM_Normal();
-				int n;
-				for (n = 0; n < worldAreaM_Normal2.Count; n++)
+				List<QuestData.WorldAreaData> worldAreaM_Normal = this.GetWorldAreaM_Normal();
+				int m;
+				for (m = 0; m < worldAreaM_Normal.Count; m++)
 				{
-					if (worldAreaM_Normal2[n].data.worldAreaId == text)
+					if (worldAreaM_Normal[m].data.worldAreaId == text)
 					{
 						break;
 					}
 				}
-				if (n == worldAreaM_Normal2.Count)
+				if (m == worldAreaM_Normal.Count)
 				{
-					worldAreaM_Normal2.Add(new QuestData.WorldAreaData
+					worldAreaM_Normal.Add(new QuestData.WorldAreaData
 					{
 						data = new GameWebAPI.RespDataMA_GetWorldAreaM.WorldAreaM(),
 						data = 
@@ -420,35 +436,35 @@ namespace Quest
 					});
 				}
 				QuestData.WD_DngInfoData wd_DngInfoData3 = new QuestData.WD_DngInfoData();
-				wd_DngInfoData3.worldId = text;
+				wd_DngInfoData3.worldAreaId = text;
 				wd_DngInfoData3.dngInfo = new GameWebAPI.RespDataWD_GetDungeonInfo();
 				wd_DngInfoData3.dngInfo.worldDungeonInfo = new GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo[dngInfo.worldDungeonInfo.Length];
-				for (int num = 0; num < dngInfo.worldDungeonInfo.Length; num++)
+				for (int n = 0; n < dngInfo.worldDungeonInfo.Length; n++)
 				{
-					GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo worldDungeonInfo = dngInfo.worldDungeonInfo[num];
-					worldDungeonInfo.sortIdx = num;
+					GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo worldDungeonInfo = dngInfo.worldDungeonInfo[n];
+					worldDungeonInfo.sortIdx = n;
 					worldDungeonInfo.totalTicketNum = 0;
-					for (int num2 = 0; num2 < worldDungeonInfo.dungeons.Length; num2++)
+					for (int num = 0; num < worldDungeonInfo.dungeons.Length; num++)
 					{
-						if (!string.IsNullOrEmpty(worldDungeonInfo.dungeons[num2].dungeonTicketNum))
+						if (!string.IsNullOrEmpty(worldDungeonInfo.dungeons[num].dungeonTicketNum))
 						{
-							worldDungeonInfo.totalTicketNum += int.Parse(worldDungeonInfo.dungeons[num2].dungeonTicketNum);
+							worldDungeonInfo.totalTicketNum += int.Parse(worldDungeonInfo.dungeons[num].dungeonTicketNum);
 						}
 					}
-					wd_DngInfoData3.dngInfo.worldDungeonInfo[num] = worldDungeonInfo;
+					wd_DngInfoData3.dngInfo.worldDungeonInfo[n] = worldDungeonInfo;
 				}
 				if (dngInfo.worldDungeonInfo.Length > 0)
 				{
-					worldAreaM_Normal2[n].isActive = true;
+					worldAreaM_Normal[m].isActive = true;
 				}
 				else
 				{
-					worldAreaM_Normal2[n].isActive = false;
+					worldAreaM_Normal[m].isActive = false;
 				}
 				this.WD_DngInfoDataList.Add(wd_DngInfoData3);
-				for (int num3 = 0; num3 < wd_DngInfoData3.dngInfo.worldDungeonInfo.Length; num3++)
+				for (int num2 = 0; num2 < wd_DngInfoData3.dngInfo.worldDungeonInfo.Length; num2++)
 				{
-					wd_DngInfoData3.dngInfo.worldDungeonInfo[num3].isEvent = false;
+					wd_DngInfoData3.dngInfo.worldDungeonInfo[num2].isEvent = false;
 				}
 			}
 			else if (worldId == "4")
@@ -456,16 +472,16 @@ namespace Quest
 				this.WD_DngInfoStatusTutorial = 3;
 				if (dngInfo.worldDungeonInfo != null)
 				{
-					for (int num4 = 0; num4 < dngInfo.worldDungeonInfo.Length; num4++)
+					for (int num3 = 0; num3 < dngInfo.worldDungeonInfo.Length; num3++)
 					{
-						GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons = dngInfo.worldDungeonInfo[num4].dungeons;
+						GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons = dngInfo.worldDungeonInfo[num3].dungeons;
 						if (dungeons != null)
 						{
-							for (int num5 = 0; num5 < dungeons.Length; num5++)
+							for (int num4 = 0; num4 < dungeons.Length; num4++)
 							{
-								if (dungeons[num5].worldDungeonId == 9001)
+								if (dungeons[num4].worldDungeonId == 9001)
 								{
-									this.WD_DngInfoStatusTutorial = dungeons[num5].status;
+									this.WD_DngInfoStatusTutorial = dungeons[num4].status;
 									break;
 								}
 							}
@@ -502,7 +518,7 @@ namespace Quest
 			return this.WD_DngInfoStatusTutorial == 4;
 		}
 
-		public GameWebAPI.RespDataWD_GetDungeonInfo GetDngeonInfoByWorldId(string worldId)
+		public GameWebAPI.RespDataWD_GetDungeonInfo GetDngeonInfoByWorldAreaId(string worldAreaId)
 		{
 			if (this.WD_DngInfoDataList == null)
 			{
@@ -510,7 +526,7 @@ namespace Quest
 			}
 			for (int i = 0; i < this.WD_DngInfoDataList.Count; i++)
 			{
-				if (this.WD_DngInfoDataList[i].worldId == worldId)
+				if (this.WD_DngInfoDataList[i].worldAreaId == worldAreaId)
 				{
 					return this.WD_DngInfoDataList[i].dngInfo;
 				}
@@ -557,42 +573,40 @@ namespace Quest
 			}
 		}
 
-		public List<QuestData.WorldStageData> GetWorldStageData_ByAreaID(string id, bool addLock = false)
+		public List<QuestData.WorldStageData> GetWorldStageData_ByAreaID(string worldAreaId)
 		{
 			List<QuestData.WorldStageData> list = new List<QuestData.WorldStageData>();
 			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+			GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldAreaId = this.GetDngeonInfoByWorldAreaId(worldAreaId);
 			for (int i = 0; i < worldStageM.Length; i++)
 			{
-				if (worldStageM[i].worldAreaId == id)
+				if (worldStageM[i].worldAreaId == worldAreaId)
 				{
 					int num = 0;
 					List<QuestData.WorldDungeonData> worldDungeonData_ByAreaIdStageId;
 					do
 					{
-						worldDungeonData_ByAreaIdStageId = this.GetWorldDungeonData_ByAreaIdStageId(id, worldStageM[i].worldStageId, num, true, false);
+						worldDungeonData_ByAreaIdStageId = this.GetWorldDungeonData_ByAreaIdStageId(worldAreaId, worldStageM[i].worldStageId, dngeonInfoByWorldAreaId, num, true, false);
 						num++;
 						if (worldDungeonData_ByAreaIdStageId != null && worldDungeonData_ByAreaIdStageId.Count > 0)
 						{
 							int num2 = (int)this.CheckStageStatus(worldDungeonData_ByAreaIdStageId);
-							int stageStartConditionCount = this.GetStageStartConditionCount(worldDungeonData_ByAreaIdStageId);
-							if (addLock || num2 > 1 || stageStartConditionCount > 0)
+							bool flag = this.ExistsCondition(worldDungeonData_ByAreaIdStageId);
+							if (num2 > 1 || flag)
 							{
 								QuestData.WorldStageData worldStageData = new QuestData.WorldStageData();
 								worldStageData.worldStageM = worldStageM[i];
 								worldStageData.wddL = new List<QuestData.WorldDungeonData>();
 								for (int j = 0; j < worldDungeonData_ByAreaIdStageId.Count; j++)
 								{
-									if (worldDungeonData_ByAreaIdStageId[j].status > 1 || worldDungeonData_ByAreaIdStageId[j].wdscMList.Count > 0)
+									if (worldDungeonData_ByAreaIdStageId[j].status > 1 || (worldDungeonData_ByAreaIdStageId[j].wdscMList != null && worldDungeonData_ByAreaIdStageId[j].wdscMList.Count > 0))
 									{
 										worldStageData.wddL.Add(worldDungeonData_ByAreaIdStageId[j]);
 									}
 								}
 								worldStageData.wdi = this.GetLastWorldDungeonInfo;
 								worldStageData.status = num2;
-								if (worldDungeonData_ByAreaIdStageId.Count > 0)
-								{
-									worldStageData.worldStageM.closeTime = ServerDateTime.Now.AddSeconds((double)worldDungeonData_ByAreaIdStageId[0].remainingTime).ToString();
-								}
+								worldStageData.worldStageM.closeTime = ServerDateTime.Now.AddSeconds((double)worldDungeonData_ByAreaIdStageId[0].remainingTime).ToString();
 								worldStageData.dngClearCount = 0;
 								for (int k = 0; k < worldDungeonData_ByAreaIdStageId.Count; k++)
 								{
@@ -602,6 +616,8 @@ namespace Quest
 									}
 								}
 								worldStageData.dngCount = worldDungeonData_ByAreaIdStageId.Count;
+								worldStageData.isViewRanking = worldDungeonData_ByAreaIdStageId[0].isViewRanking;
+								worldStageData.isCounting = worldDungeonData_ByAreaIdStageId[0].isCounting;
 								list.Add(worldStageData);
 							}
 						}
@@ -609,7 +625,7 @@ namespace Quest
 					while (worldDungeonData_ByAreaIdStageId != null);
 				}
 			}
-			if (id == "8")
+			if (worldAreaId == "8")
 			{
 				list.Sort(new Comparison<QuestData.WorldStageData>(this.CompareAccountTicketIdx));
 			}
@@ -704,14 +720,18 @@ namespace Quest
 			return QuestData.WORLD_STATUS.UNLOCK;
 		}
 
-		private int GetStageStartConditionCount(List<QuestData.WorldDungeonData> wddL)
+		private bool ExistsCondition(List<QuestData.WorldDungeonData> worldDungeons)
 		{
-			int num = 0;
-			for (int i = 0; i < wddL.Count; i++)
+			bool result = false;
+			foreach (QuestData.WorldDungeonData worldDungeonData in worldDungeons)
 			{
-				num += wddL[i].wdscMList.Count;
+				if (worldDungeonData.wdscMList != null && 0 < worldDungeonData.wdscMList.Count)
+				{
+					result = true;
+					break;
+				}
 			}
-			return num;
+			return result;
 		}
 
 		public QuestData.WORLD_STATUS CheckAreaStatus(List<QuestData.WorldStageData> wsdL, string AreaID)
@@ -765,24 +785,23 @@ namespace Quest
 			}
 		}
 
-		public List<QuestData.WorldDungeonData> GetWorldDungeonData_ByAreaIdStageId(string aid, string sid, int idx = 0, bool addLock = false, bool addEmpty = false)
+		public List<QuestData.WorldDungeonData> GetWorldDungeonData_ByAreaIdStageId(string worldAreaId, string worldStageId, GameWebAPI.RespDataWD_GetDungeonInfo dungeonInfo, int targetCount = 0, bool addLock = false, bool addEmpty = false)
 		{
 			List<QuestData.WorldDungeonData> list = new List<QuestData.WorldDungeonData>();
 			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
 			List<GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM> list2 = new List<GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM>();
-			GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldId = this.GetDngeonInfoByWorldId(aid);
-			if (dngeonInfoByWorldId == null)
+			if (dungeonInfo == null)
 			{
 				return null;
 			}
 			for (int i = 0; i < worldDungeonM.Length; i++)
 			{
-				if (worldDungeonM[i].worldStageId == sid)
+				if (worldDungeonM[i].worldStageId == worldStageId)
 				{
 					list2.Add(worldDungeonM[i]);
 				}
 			}
-			if (dngeonInfoByWorldId.worldDungeonInfo == null)
+			if (dungeonInfo.worldDungeonInfo == null)
 			{
 				return list;
 			}
@@ -790,38 +809,60 @@ namespace Quest
 			GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo worldDungeonInfo = null;
 			this.wdi_bk = null;
 			int num = 0;
-			int j;
-			for (j = 0; j < dngeonInfoByWorldId.worldDungeonInfo.Length; j++)
+			bool flag = false;
+			bool flag2 = false;
+			for (int j = 0; j < dungeonInfo.worldDungeonInfo.Length; j++)
 			{
-				if (dngeonInfoByWorldId.worldDungeonInfo[j].worldStageId == int.Parse(sid))
+				if (dungeonInfo.worldDungeonInfo[j].worldStageId == int.Parse(worldStageId))
 				{
-					if (idx == num)
+					if (targetCount == num)
 					{
-						worldDungeonInfo = dngeonInfoByWorldId.worldDungeonInfo[j];
+						worldDungeonInfo = dungeonInfo.worldDungeonInfo[j];
 						this.wdi_bk = worldDungeonInfo;
 						array = worldDungeonInfo.dungeons;
+						if (array == null && worldDungeonInfo.timeLeft == 0)
+						{
+							flag = true;
+						}
+						flag2 = true;
 						break;
 					}
 					num++;
 				}
 			}
-			if (j < dngeonInfoByWorldId.worldDungeonInfo.Length)
+			if (flag2)
 			{
-				for (int i = 0; i < list2.Count; i++)
+				if (flag)
 				{
-					for (j = 0; j < array.Length; j++)
+					QuestData.WorldDungeonData item = new QuestData.WorldDungeonData
 					{
-						if (int.Parse(list2[i].worldDungeonId) == array[j].worldDungeonId && (addEmpty || !this.IsEmptyDng(array[j], aid)) && (addLock || array[j].status > 1))
+						stageId = worldDungeonInfo.worldStageId,
+						worldDungeonM = null,
+						dungeon = null,
+						wdscMList = null,
+						isViewRanking = true,
+						isCounting = (1 == worldDungeonInfo.isCounting)
+					};
+					list.Add(item);
+				}
+				else
+				{
+					for (int k = 0; k < list2.Count; k++)
+					{
+						for (int l = 0; l < array.Length; l++)
 						{
-							list.Add(new QuestData.WorldDungeonData
+							if (int.Parse(list2[k].worldDungeonId) == array[l].worldDungeonId && (addEmpty || !this.IsEmptyDng(array[l], worldAreaId)) && (addLock || array[l].status > 1))
 							{
-								stageId = worldDungeonInfo.worldStageId,
-								worldDungeonM = list2[i],
-								dungeon = array[j],
-								status = array[j].status,
-								wdscMList = this.GetWorldDungeonStartConditionM(array[j].worldDungeonId.ToString()),
-								remainingTime = worldDungeonInfo.timeLeft
-							});
+								list.Add(new QuestData.WorldDungeonData
+								{
+									stageId = worldDungeonInfo.worldStageId,
+									worldDungeonM = list2[k],
+									dungeon = array[l],
+									status = array[l].status,
+									wdscMList = this.GetWorldDungeonStartConditionM(array[l].worldDungeonId.ToString()),
+									remainingTime = worldDungeonInfo.timeLeft
+								});
+							}
 						}
 					}
 				}
@@ -846,9 +887,9 @@ namespace Quest
 			return 0;
 		}
 
-		public bool IsEmptyDng(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dng, string aid)
+		public bool IsEmptyDng(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dng, string worldAreaId)
 		{
-			if (aid == "8")
+			if (worldAreaId == "8")
 			{
 				int num = int.Parse(dng.dungeonTicketNum);
 				if (num <= 0)
@@ -869,14 +910,14 @@ namespace Quest
 
 		public GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons GetTicketQuestDungeonByTicketID(string id)
 		{
-			GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldId = this.GetDngeonInfoByWorldId("8");
-			if (dngeonInfoByWorldId == null)
+			GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldAreaId = this.GetDngeonInfoByWorldAreaId("8");
+			if (dngeonInfoByWorldAreaId == null)
 			{
 				return null;
 			}
-			for (int i = 0; i < dngeonInfoByWorldId.worldDungeonInfo.Length; i++)
+			for (int i = 0; i < dngeonInfoByWorldAreaId.worldDungeonInfo.Length; i++)
 			{
-				GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons = dngeonInfoByWorldId.worldDungeonInfo[i].dungeons;
+				GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons = dngeonInfoByWorldAreaId.worldDungeonInfo[i].dungeons;
 				for (int j = 0; j < dungeons.Length; j++)
 				{
 					if (!string.IsNullOrEmpty(dungeons[j].userDungeonTicketId) && dungeons[j].userDungeonTicketId == id)
@@ -1033,6 +1074,11 @@ namespace Quest
 			return result;
 		}
 
+		public static bool IsTicketQuest(string worldAreaId)
+		{
+			return "8" == worldAreaId;
+		}
+
 		public enum WORLD_STATUS
 		{
 			LOCK = 1,
@@ -1050,7 +1096,7 @@ namespace Quest
 
 		public class WD_DngInfoData
 		{
-			public string worldId;
+			public string worldAreaId;
 
 			public GameWebAPI.RespDataWD_GetDungeonInfo dngInfo;
 		}
@@ -1070,6 +1116,10 @@ namespace Quest
 			public int dngClearCount;
 
 			public string closeTime;
+
+			public bool isViewRanking;
+
+			public bool isCounting;
 		}
 
 		public class WorldDungeonData
@@ -1085,6 +1135,10 @@ namespace Quest
 			public List<GameWebAPI.RespDataMA_WorldDungeonStartCondition.WorldDungeonStartConditionM> wdscMList;
 
 			public int remainingTime;
+
+			public bool isViewRanking;
+
+			public bool isCounting;
 		}
 
 		public class DSConditionData

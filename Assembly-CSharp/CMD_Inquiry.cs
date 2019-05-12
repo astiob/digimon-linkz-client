@@ -1,7 +1,6 @@
 ﻿using Master;
 using System;
 using UnityEngine;
-using WebAPIRequest;
 
 public sealed class CMD_Inquiry : CMD
 {
@@ -37,44 +36,12 @@ public sealed class CMD_Inquiry : CMD
 	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showTime)
 	{
 		base.HideDLG();
-		GameWebAPI.RequestCM_InquiryCodeRequest request = new GameWebAPI.RequestCM_InquiryCodeRequest
-		{
-			OnReceived = delegate(GameWebAPI.InquiryCodeRequest response)
-			{
-				this.responseContactCode = response.inquiryCode;
-				this.responseClipbordText = response.result;
-			}
-		};
-		APIRequestTask apirequestTask = new APIRequestTask(request, true);
-		string apiId = string.Empty;
-		if (string.IsNullOrEmpty(ConstValue.CONTACT_SITE_URL))
-		{
-			MasterBase master = MasterDataMng.Instance().GetMaster(MasterId.CODE_MASTER);
-			RequestBase requestBase = master.CreateRequest();
-			apirequestTask.Add(new APIRequestTask(requestBase, true));
-			apiId = requestBase.apiId;
-			GameWebAPI.Instance().AddDisableVersionCheckApiId(apiId);
-		}
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		base.StartCoroutine(apirequestTask.Run(delegate
-		{
-			if (!string.IsNullOrEmpty(apiId))
-			{
-				GameWebAPI.Instance().RemoveDisableVersionCheckApiId(apiId);
-			}
-			RestrictionInput.EndLoad();
-			this.contactCode.text = this.GetMoldedContactCode(this.responseContactCode);
-			this.ShowDLG();
-			this.<Show>__BaseCallProxy0(closeEvent, sizeX, sizeY, showTime);
-		}, delegate(Exception nop)
-		{
-			if (!string.IsNullOrEmpty(apiId))
-			{
-				GameWebAPI.Instance().RemoveDisableVersionCheckApiId(apiId);
-			}
-			RestrictionInput.EndLoad();
-			this.ClosePanel(false);
-		}, null));
+		this.responseContactCode = PlayerPrefs.GetString("InquiryCode", string.Empty);
+		this.contactCode.text = this.GetMoldedContactCode(this.responseContactCode);
+		RestrictionInput.EndLoad();
+		base.ShowDLG();
+		base.Show(closeEvent, sizeX, sizeY, showTime);
 	}
 
 	private string GetMoldedContactCode(string contactCode)
@@ -98,11 +65,11 @@ public sealed class CMD_Inquiry : CMD
 		string key = "LastErrorInfo";
 		if (PlayerPrefs.HasKey(key))
 		{
-			Clipboard.Text = this.responseClipbordText;
+			Clipboard.Text = this.GetClipbordText();
 		}
 		else
 		{
-			Clipboard.Text = this.responseClipbordText + "\n(" + PlayerPrefs.GetString(key) + ")";
+			Clipboard.Text = this.GetClipbordText() + "\n(" + PlayerPrefs.GetString(key) + ")";
 		}
 		Application.OpenURL(ConstValue.CONTACT_SITE_URL);
 	}
@@ -110,5 +77,21 @@ public sealed class CMD_Inquiry : CMD
 	private void OnPushedCloseButton()
 	{
 		this.ClosePanel(true);
+	}
+
+	private string GetClipbordText()
+	{
+		string @string = StringMaster.GetString("Inquiry_MaintenanceText");
+		if (string.IsNullOrEmpty(@string))
+		{
+			return string.Empty;
+		}
+		return string.Format(@string, new object[]
+		{
+			this.responseContactCode,
+			SystemInfo.deviceModel,
+			SystemInfo.operatingSystem,
+			Application.version
+		});
 	}
 }

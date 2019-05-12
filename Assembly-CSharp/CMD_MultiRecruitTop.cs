@@ -233,7 +233,7 @@ public sealed class CMD_MultiRecruitTop : CMD
 			if (idx == 1 && this.passInputJoinData != null)
 			{
 				GameWebAPI.RespDataWD_GetDungeonInfo respDataWD_GetDungeonInfo = new GameWebAPI.RespDataWD_GetDungeonInfo();
-				respDataWD_GetDungeonInfo = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldId(this.passInputJoinData.multiRoomInfo.worldAreaId);
+				respDataWD_GetDungeonInfo = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldAreaId(this.passInputJoinData.multiRoomInfo.worldAreaId);
 				foreach (GameWebAPI.RespDataWD_GetDungeonInfo.WorldDungeonInfo worldDungeonInfo2 in respDataWD_GetDungeonInfo.worldDungeonInfo)
 				{
 					foreach (GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dungeons2 in worldDungeonInfo2.dungeons)

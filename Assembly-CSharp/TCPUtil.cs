@@ -484,6 +484,27 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		}, tcpKey);
 	}
 
+	public void SendConfirmationJoin(TCPMessageType tcpMessageType, string targetId, string myUserId, string tcpKey, bool goBattle)
+	{
+		global::Debug.LogFormat("[SendConfirmation] tcpMessageType:{0}, MyPlayerUserId:{1}, targetId:{2}", new object[]
+		{
+			tcpMessageType,
+			myUserId,
+			targetId
+		});
+		ConfirmationData message = new ConfirmationData
+		{
+			playerUserId = myUserId,
+			hashValue = this.CreateHash(TCPMessageType.Confirmation, myUserId, TCPMessageType.None),
+			tcpMessageType = tcpMessageType.ToInteger(),
+			value1 = goBattle.ToString()
+		};
+		this.SendMessageForTarget(TCPMessageType.Confirmation, message, new List<int>
+		{
+			targetId.ToInt32()
+		}, tcpKey);
+	}
+
 	public IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, List<int> TCPSendUserIdList, string TCPKey = "activityList", Action<List<int>> SendFaildAction = null) where T : class
 	{
 		TCPUtil.isTCPSending = true;

@@ -81,7 +81,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterDungeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonID.ToString());
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
-		return !("8" == worldStageM2.worldAreaId) || !string.IsNullOrEmpty(last_dng_req.userDungeonTicketId);
+		return true;
 	}
 
 	private void OnPushedAgainButton()
@@ -124,7 +124,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterDungeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonID.ToString());
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
-		if ("8" == worldStageM2.worldAreaId)
+		if (QuestData.IsTicketQuest(worldStageM2.worldAreaId))
 		{
 			if (this.isMulti && "-1" == last_dng_req.userDungeonTicketId)
 			{
@@ -167,7 +167,8 @@ public sealed class CMD_BattleNextChoice : CMD
 		}
 		else
 		{
-			List<QuestData.WorldDungeonData> wdd = ClassSingleton<QuestData>.Instance.GetWorldDungeonData_ByAreaIdStageId(worldStageM2.worldAreaId, masterDungeon.worldStageId, 0, false, true);
+			GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldAreaId = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldAreaId(worldStageM2.worldAreaId);
+			List<QuestData.WorldDungeonData> wdd = ClassSingleton<QuestData>.Instance.GetWorldDungeonData_ByAreaIdStageId(worldStageM2.worldAreaId, masterDungeon.worldStageId, dngeonInfoByWorldAreaId, 0, false, true);
 			if (wdd == null)
 			{
 				CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
@@ -617,21 +618,21 @@ public sealed class CMD_BattleNextChoice : CMD
 			return true;
 		}
 		int num = ClearDungeonID + 1;
-		GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldId = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldId("1");
+		GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldAreaId = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldAreaId("1");
 		int num2 = 1;
-		for (int i = 0; i < dngeonInfoByWorldId.worldDungeonInfo.Length; i++)
+		for (int i = 0; i < dngeonInfoByWorldAreaId.worldDungeonInfo.Length; i++)
 		{
-			if (num > num2 + dngeonInfoByWorldId.worldDungeonInfo[i].dungeons.Length)
+			if (num > num2 + dngeonInfoByWorldAreaId.worldDungeonInfo[i].dungeons.Length)
 			{
-				num2 += dngeonInfoByWorldId.worldDungeonInfo[i].dungeons.Length;
+				num2 += dngeonInfoByWorldAreaId.worldDungeonInfo[i].dungeons.Length;
 			}
 			else
 			{
-				for (int j = 0; j < dngeonInfoByWorldId.worldDungeonInfo[i].dungeons.Length; j++)
+				for (int j = 0; j < dngeonInfoByWorldAreaId.worldDungeonInfo[i].dungeons.Length; j++)
 				{
 					if (num == num2)
 					{
-						return dngeonInfoByWorldId.worldDungeonInfo[i].dungeons[j].status > 1;
+						return dngeonInfoByWorldAreaId.worldDungeonInfo[i].dungeons[j].status > 1;
 					}
 					num2++;
 				}

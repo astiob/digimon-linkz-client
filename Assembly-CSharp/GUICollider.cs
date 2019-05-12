@@ -327,12 +327,13 @@ public class GUICollider : LocalTween, ITouchEvent
 		{
 			if (this._UISprite != null)
 			{
-				this._UISprite.height = (int)value;
+				this._UISprite.height = ((0f <= value) ? ((int)value) : 0);
 				this._UISprite.MakePixelPerfect();
 			}
 			if (this.boxCollider != null)
 			{
-				this.boxCollider.size = new Vector2(this.boxCollider.size.x, value);
+				float y = (0f <= value) ? value : 0f;
+				this.boxCollider.size = new Vector2(this.boxCollider.size.x, y);
 			}
 		}
 	}

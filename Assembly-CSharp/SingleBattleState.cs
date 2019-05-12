@@ -53,7 +53,7 @@ public class SingleBattleState : BattleStateMainController
 			}
 		}, delegate(bool isNextWave)
 		{
-			base.SetState(typeof(BattleStatePvPTimeOver));
+			base.SetState(typeof(BattleStateTimeOver));
 		}, delegate(EventState eventState)
 		{
 			if (eventState == EventState.Retire)
@@ -69,7 +69,7 @@ public class SingleBattleState : BattleStateMainController
 		{
 			base.SetState(typeof(BattleStateFadeOut));
 		}));
-		base.AddState(new BattleStatePvPTimeOver(delegate()
+		base.AddState(new BattleStateTimeOver(delegate()
 		{
 			base.SetState(typeof(BattleStateFadeOut));
 		}));
