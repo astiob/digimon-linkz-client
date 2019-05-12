@@ -33,10 +33,6 @@ public static class AssetBundleDiskSpaceCheck
 
 	private static bool IsFreeSpace(long writeSize)
 	{
-		if (Caching.spaceFree <= writeSize)
-		{
-			return false;
-		}
 		long freeSpace = AssetBundleDiskSpaceCheck.GetFreeSpace(Application.temporaryCachePath);
 		return freeSpace > writeSize;
 	}

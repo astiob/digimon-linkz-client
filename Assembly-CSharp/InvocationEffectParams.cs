@@ -13,16 +13,16 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private int _motionIndex;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraMotionId")]
+	[SerializeField]
 	private string _cameraMotionId;
 
-	[FormerlySerializedAs("hideStage")]
 	[SerializeField]
+	[FormerlySerializedAs("hideStage")]
 	private bool _hideStage;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStageBackgroundColor")]
+	[SerializeField]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]
@@ -76,7 +76,7 @@ public class InvocationEffectParams : EffectParamsGeneric
 		yield break;
 	}
 
-	public IEnumerator PlaySkillAnimation(CharacterParams attacker, bool nonStop = false)
+	public IEnumerator PlaySkillAnimation(CharacterParams attacker)
 	{
 		this.m_attacker = attacker;
 		if (attacker != null)
@@ -89,15 +89,7 @@ public class InvocationEffectParams : EffectParamsGeneric
 		{
 			yield return null;
 		}
-		if (!nonStop)
-		{
-			this.StopSkillAnimation();
-		}
-		else
-		{
-			Action stopMethod = new Action(this.StopSkillAnimation);
-			yield return stopMethod;
-		}
+		this.StopSkillAnimation();
 		this.isUpdate = false;
 		yield break;
 	}
@@ -160,15 +152,19 @@ public class InvocationEffectParams : EffectParamsGeneric
 		}
 		if (this._attackAnimationType == SkillType.InheritanceTechnique)
 		{
-			float time = (!(attacker != null)) ? 0f : attacker.AnimationClipLength;
-			while (this._effectAnimation.isPlaying || time > 0f)
+			float motionTime = (!(attacker != null)) ? 0f : attacker.AnimationClipLength;
+			float effectTime = this._effectAnimation[this._effectAnimation.clip.name].length;
+			float time = Mathf.Max(motionTime, effectTime);
+			while (time > 0f)
 			{
-				if (time > 0f)
+				time -= Time.deltaTime;
+				if (!this._effectAnimation.isPlaying && this._effectAnimation.gameObject.activeInHierarchy)
 				{
-					time -= Time.deltaTime;
+					this._effectAnimation.gameObject.SetActive(false);
 				}
 				yield return null;
 			}
+			this._effectAnimation.gameObject.SetActive(true);
 		}
 		else
 		{

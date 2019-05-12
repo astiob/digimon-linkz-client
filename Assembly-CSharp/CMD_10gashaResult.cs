@@ -32,8 +32,8 @@ public class CMD_10gashaResult : CMD
 	[SerializeField]
 	private UISprite buttonSpriteSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTen;
 
 	[Header("シングルキャプチャボタンGUICollider")]
@@ -72,7 +72,7 @@ public class CMD_10gashaResult : CMD
 
 	public static List<bool> IconNewFlagList { get; set; }
 
-	public static GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData RewardsData { get; set; }
+	public static GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] RewardsData { get; set; }
 
 	protected override void Awake()
 	{
@@ -325,10 +325,9 @@ public class CMD_10gashaResult : CMD
 
 	private void GashaRewardSet()
 	{
-		GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(CMD_10gashaResult.RewardsData.assetCategoryId);
-		MasterDataMng.AssetCategory assetCategoryId = (MasterDataMng.AssetCategory)int.Parse(CMD_10gashaResult.RewardsData.assetCategoryId);
 		CMD_CaptureBonus cmd_CaptureBonus = GUIMain.ShowCommonDialog(null, "CMD_CaptureBonus") as CMD_CaptureBonus;
-		cmd_CaptureBonus.DialogDataSet(assetCategory, assetCategoryId, CMD_10gashaResult.RewardsData);
+		cmd_CaptureBonus.DialogDataSet(CMD_10gashaResult.RewardsData);
+		cmd_CaptureBonus.AdjustSize();
 	}
 
 	private void OnClickSingle()

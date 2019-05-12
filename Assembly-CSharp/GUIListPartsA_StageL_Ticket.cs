@@ -35,16 +35,16 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[SerializeField]
 	private UILabel ngTXT_TICKET_NAME;
 
-	[Header("チケット数ラベル")]
 	[SerializeField]
+	[Header("チケット数ラベル")]
 	private UILabel ngTXT_TICKET_NUM;
 
-	[SerializeField]
 	[Header("チケット有効期限")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_EXPIRE_TIME;
 
-	[SerializeField]
 	[Header("チケット更新日")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_UPDATE_TIME;
 
 	[Header("ステージギミック表記Obj")]

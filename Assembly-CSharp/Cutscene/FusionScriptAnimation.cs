@@ -24,7 +24,7 @@ namespace Cutscene
 		private ParticleSystem auraParticle;
 
 		[SerializeField]
-		private UITexture[] arousalTexture;
+		private GameObject arousalAnimator;
 
 		[SerializeField]
 		private ParticleSystem stretchLightParticle;
@@ -111,62 +111,9 @@ namespace Cutscene
 			{
 				yield return new WaitForSeconds(2f);
 				this.sound.PlaySE("SEInternal/Cutscene/se_214");
-				this.arousalTexture[0].alpha = 1f;
-				iTween.ScaleTo(this.arousalTexture[0].gameObject, iTween.Hash(new object[]
-				{
-					"x",
-					0.5,
-					"y",
-					0.5,
-					"easetype",
-					"easeOutQuart",
-					"time",
-					0.1f,
-					"delay",
-					0.2f
-				}));
-				iTween.ScaleTo(this.arousalTexture[0].gameObject, iTween.Hash(new object[]
-				{
-					"x",
-					1,
-					"y",
-					1,
-					"easetype",
-					"easeOutQuart",
-					"time",
-					0f,
-					"delay",
-					0.2f
-				}));
+				this.arousalAnimator.SetActive(true);
 				this.arousalGlitter.Play();
 				yield return new WaitForSeconds(0.45f);
-				this.arousalTexture[1].alpha = 1f;
-				iTween.ScaleTo(this.arousalTexture[1].gameObject, iTween.Hash(new object[]
-				{
-					"x",
-					0.5,
-					"y",
-					0.5,
-					"easetype",
-					"easeOutQuart",
-					"time",
-					0.1f,
-					"delay",
-					0.2f
-				}));
-				iTween.ScaleTo(this.arousalTexture[1].gameObject, iTween.Hash(new object[]
-				{
-					"x",
-					1,
-					"y",
-					1,
-					"easetype",
-					"easeOutQuart",
-					"time",
-					0f,
-					"delay",
-					0.2f
-				}));
 				yield return new WaitForSeconds(0.5f);
 				this.stretchLightParticle.Play();
 			}

@@ -8,15 +8,15 @@ using UnityEngine;
 
 public class CMD_MultiRecruitFriend : CMD
 {
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partFriendParent;
 
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[Header("デフォルトメッセージ")]
 	[SerializeField]
+	[Header("デフォルトメッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -32,8 +32,8 @@ public class CMD_MultiRecruitFriend : CMD
 	[SerializeField]
 	private UISprite spBtnSelectAll;
 
-	[SerializeField]
 	[Header("誘うボタン")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]

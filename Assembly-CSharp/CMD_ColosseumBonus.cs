@@ -14,20 +14,10 @@ public sealed class CMD_ColosseumBonus : CMD
 	[SerializeField]
 	private GameObject rollInnerCircle;
 
-	private GameWebAPI.ColosseumReward[] rewardList;
-
 	[SerializeField]
 	private List<RewardIconRoot> rewardIconRootList = new List<RewardIconRoot>();
 
 	private bool isInitialized;
-
-	public GameWebAPI.ColosseumReward[] RewardList
-	{
-		set
-		{
-			this.rewardList = value;
-		}
-	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
@@ -57,10 +47,10 @@ public sealed class CMD_ColosseumBonus : CMD
 		}
 	}
 
-	public void SetReward(string title)
+	public void SetReward(string title, GameWebAPI.ColosseumReward[] rewardList)
 	{
-		RewardIconRoot rewardIconRoot = this.rewardIconRootList[this.rewardList.Length - 1];
-		rewardIconRoot.SetRewardList(this.rewardList);
+		RewardIconRoot rewardIconRoot = this.rewardIconRootList[rewardList.Length - 1];
+		rewardIconRoot.SetRewardList(rewardList);
 		this.messageLabel.text = rewardIconRoot.itemName;
 		this.titleTextMeshPro.text = title;
 		CountrySetting.ConvertTMProText(ref this.titleTextMeshPro);

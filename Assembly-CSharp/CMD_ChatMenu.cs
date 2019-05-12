@@ -229,11 +229,11 @@ public class CMD_ChatMenu : CMD
 	{
 		if (ChatTools.CheckOnFLG(data.result))
 		{
-			this.SendChatResignGroup(StringMaster.GetString("ChatLog-03"), StringMaster.GetString("ChatConfirmTitle"), StringMaster.GetString("ChatLeavingSuccess"));
+			this.SendChatResignGroup("ChatLog-03", StringMaster.GetString("ChatConfirmTitle"), StringMaster.GetString("ChatLeavingSuccess"));
 		}
 		else if (data.resultCode == 90)
 		{
-			this.SendChatResignGroup(StringMaster.GetString("ChatLog-03"), StringMaster.GetString("SystemConfirm"), StringMaster.GetString("ChatMemberKickNotice"));
+			this.SendChatResignGroup("ChatLog-03", StringMaster.GetString("SystemConfirm"), StringMaster.GetString("ChatMemberKickNotice"));
 		}
 		else
 		{

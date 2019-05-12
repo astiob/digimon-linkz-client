@@ -9,12 +9,12 @@ public class UIScrollBar : UISlider
 	[SerializeField]
 	protected float mSize = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mScroll;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIScrollBar.Direction mDir = UIScrollBar.Direction.Upgraded;
 
 	[Obsolete("Use 'value' instead")]

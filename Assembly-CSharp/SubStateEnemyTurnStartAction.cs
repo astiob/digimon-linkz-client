@@ -9,6 +9,8 @@ public class SubStateEnemyTurnStartAction : BattleStateController
 
 	protected override void EnabledThisState()
 	{
+		CharacterStateControl[] totalCharacters = base.stateManager.battleStateData.GetTotalCharacters();
+		base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(totalCharacters);
 	}
 
 	protected override IEnumerator MainRoutine()

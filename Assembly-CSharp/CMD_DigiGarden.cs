@@ -134,6 +134,7 @@ public class CMD_DigiGarden : CMD
 		this.InitMonsterList(true);
 		this.fullScreenModelTexPos = (this.listScreenModelTexPos = this.modelUiTex.transform.localPosition);
 		this.fullScreenModelTexPos.y = -800f;
+		this.fadeInTime = 0f;
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
 	}

@@ -160,7 +160,6 @@ public class CMD_Tips : CMD
 		BattleToFarm = 4,
 		TutorialToFarm,
 		TutorialToBattle,
-		QuestToPvPBattle,
 		QuestToMultiBattle = 14,
 		QuestSelect_NORMAL = 16,
 		QuestSelect_DESCENT,

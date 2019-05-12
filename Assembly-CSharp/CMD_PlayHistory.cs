@@ -120,6 +120,7 @@ public class CMD_PlayHistory : CMD
 		{
 			this.colosseumRankSprite.gameObject.SetActive(false);
 			this.colosseumNoneDataObj.SetActive(true);
+			this.competitionNumLabel.text = "0";
 			this.outComeNumLabel.text = string.Format(StringMaster.GetString("ColosseumScore"), "0", "0");
 			this.winRate.text = string.Format(StringMaster.GetString("PlayHistory-13"), 0f);
 		}

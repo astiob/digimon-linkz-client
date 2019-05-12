@@ -14,24 +14,24 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	[SerializeField]
 	private UISprite spBaseSab;
 
-	[SerializeField]
 	[Header("ベースのLineスプライト")]
+	[SerializeField]
 	private UISprite spBaseLine;
 
-	[SerializeField]
 	[Header("ベースのGlowスプライト")]
+	[SerializeField]
 	private UISprite spBaseGlow;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
 	[SerializeField]
 	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
-	[SerializeField]
 	[Header("ランキング順位")]
+	[SerializeField]
 	private GameObject goIsMine;
 
 	private string[] keyData = new string[2];
@@ -151,7 +151,7 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 		if (int.Parse(this.keyData[1]) > 0)
 		{
 			this.lbTX_DuelPoint.text = this.valueData.ToString();
-			this.lbTX_RankingNumber.text = this.keyData[0] + "~\n" + this.keyData[1] + StringMaster.GetString("PointQuestRankingRankLabel");
+			this.lbTX_RankingNumber.text = string.Format(StringMaster.GetString("QuestRankingList"), this.keyData[0], this.keyData[1]);
 			this.spBaseSab.gameObject.SetActive(true);
 			this.spBaseLine.gameObject.SetActive(true);
 		}

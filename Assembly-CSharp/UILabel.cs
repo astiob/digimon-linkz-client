@@ -10,8 +10,8 @@ public class UILabel : UIWidget
 
 	public UILabel.Crispness keepCrispWhenShrunk = UILabel.Crispness.OnDesktop;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Font mTrueTypeFont;
 
 	[SerializeField]
@@ -23,16 +23,16 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private string mText = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mFontSize = 16;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private FontStyle mFontStyle;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private NGUIText.Alignment mAlignment;
 
 	[HideInInspector]
@@ -43,12 +43,12 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private int mMaxLineCount;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel.Effect mEffectStyle;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Color mEffectColor = Color.black;
 
 	[SerializeField]
@@ -67,28 +67,28 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Material mMaterial;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mApplyGradient;
 
 	[HideInInspector]
 	[SerializeField]
 	private Color mGradientTop = Color.white;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
 	[SerializeField]
 	[HideInInspector]
 	private int mSpacingX;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingY;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mUseFloatSpacing;
 
 	[HideInInspector]
@@ -111,8 +111,8 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private int mMaxLineWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mMaxLineHeight;
 
 	[SerializeField]

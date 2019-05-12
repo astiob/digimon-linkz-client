@@ -1,6 +1,5 @@
 ﻿using Master;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -26,8 +25,6 @@ public sealed class CMD_ChipReinforcement : CMD
 
 	private ChipList chipList;
 
-	private Action fusionSuccessCallback;
-
 	public static CMD_ChipReinforcement Create(Action<int> callback = null)
 	{
 		return GUIMain.ShowCommonDialog(callback, "CMD_ChipReinforced") as CMD_ChipReinforcement;
@@ -51,16 +48,11 @@ public sealed class CMD_ChipReinforcement : CMD
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
-		AppCoroutine.Start(this.Init(f, sizeX, sizeY, aT), false);
-	}
-
-	private IEnumerator Init(Action<int> f, float sizeX, float sizeY, float aT)
-	{
 		GUICollider.DisableAllCollider("CMD_ChipReinforced");
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
-		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] userChipList = this.ConvertChipList(ChipDataMng.userChipData);
-		this.chipList = new ChipList(this.goEFC_FOOTER, 8, new Vector2(960f, 450f), userChipList, false);
+		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] array = this.ConvertChipList(ChipDataMng.userChipData);
+		this.chipList = new ChipList(this.goEFC_FOOTER, 8, new Vector2(960f, 450f), array, false);
 		this.chipList.SetPosition(new Vector3(-40f, -70f, 0f));
 		this.chipList.SetScrollBarPosX(520f);
 		this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
@@ -71,20 +63,18 @@ public sealed class CMD_ChipReinforcement : CMD
 		this.sortNameLabel.text = CMD_ChipSortModal.GetSortName();
 		this.sortButton.CallBackClass = base.gameObject;
 		this.sortButton.MethodToInvoke = "OnSortButton";
-		this.messageLabel.gameObject.SetActive(userChipList.Count<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>() == 0);
+		this.messageLabel.gameObject.SetActive(array.Count<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>() == 0);
 		this.messageLabel.text = StringMaster.GetString("ChipAdministration-01");
-		int currentListNum = 0;
+		int num = 0;
 		if (ChipDataMng.userChipData != null && ChipDataMng.userChipData.userChipList != null)
 		{
-			currentListNum = ChipDataMng.userChipData.userChipList.Length;
+			num = ChipDataMng.userChipData.userChipList.Length;
 		}
-		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), currentListNum, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
+		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), num, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
 		base.ShowDLG();
 		base.SetTutorialAnyTime("anytime_second_tutorial_chip_reinforcement");
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
-		yield return null;
-		yield break;
 	}
 
 	private void OnShortTouchChip(GUIListChipParts.Data data)
@@ -94,30 +84,30 @@ public sealed class CMD_ChipReinforcement : CMD
 		{
 			if (result > 0)
 			{
-				AppCoroutine.Start(this.Send(data.userChip), false);
+				this.Send(data.userChip);
 			}
 		};
 		CMD_ChipReinforcementModal.Create(data.userChip, callback);
 	}
 
-	private IEnumerator Send(GameWebAPI.RespDataCS_ChipListLogic.UserChipList baseChip)
+	private void Send(GameWebAPI.RespDataCS_ChipListLogic.UserChipList baseChip)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-		int baseChipId = baseChip.userChipId;
+		int userChipId = baseChip.userChipId;
 		GameWebAPI.RespDataMA_ChipM.Chip baseMaterChip = ChipDataMng.GetChipMainData(baseChip);
-		int needCount = baseMaterChip.needChip.ToInt32();
-		int[] needChips = null;
-		if (needCount > 0)
+		int num = baseMaterChip.needChip.ToInt32();
+		int[] array = null;
+		if (num > 0)
 		{
-			needChips = new int[needCount];
-			int i = 0;
-			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip in ChipDataMng.userChipData.userChipList)
+			array = new int[num];
+			int num2 = 0;
+			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList2 in ChipDataMng.userChipData.userChipList)
 			{
-				if (baseChipId != userChip.userChipId && userChip.chipId == baseChip.chipId && userChip.userMonsterId == 0)
+				if (userChipId != userChipList2.userChipId && userChipList2.chipId == baseChip.chipId && userChipList2.userMonsterId == 0)
 				{
-					needChips[i] = userChip.userChipId;
-					i++;
-					if (i >= needChips.Length)
+					array[num2] = userChipList2.userChipId;
+					num2++;
+					if (num2 >= array.Length)
 					{
 						break;
 					}
@@ -126,57 +116,36 @@ public sealed class CMD_ChipReinforcement : CMD
 		}
 		Action callback = delegate()
 		{
-			RestrictionInput.EndLoad();
-			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] array = this.ConvertChipList(ChipDataMng.userChipData);
-			this.chipList.ReAllBuild(array, false);
+			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] array2 = this.ConvertChipList(ChipDataMng.userChipData);
+			this.chipList.ReAllBuild(array2, false);
 			this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 			this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
-			this.messageLabel.gameObject.SetActive(array.Count<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>() == 0);
+			this.messageLabel.gameObject.SetActive(array2.Count<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>() == 0);
 			this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), ChipDataMng.userChipData.userChipList.Length, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
 			GameWebAPI.RespDataMA_ChipM.Chip chipEnhancedData = ChipDataMng.GetChipEnhancedData(baseMaterChip.chipId);
-			CMD_ChipReinforcementAnimation.Create(base.gameObject, chipEnhancedData, null);
+			CMD_ChipReinforcementAnimation.Create(this.gameObject, chipEnhancedData, null);
 		};
-		this.fusionSuccessCallback = callback;
-		GameWebAPI.ChipFusionLogic logic = ChipDataMng.RequestAPIChipFusion(baseChip.userChipId, needChips, new Action<int, GameWebAPI.RequestMonsterList>(this.EndChipFusion));
-		IEnumerator run = logic.Run(null, null, null);
-		while (run.MoveNext())
+		int resultCode = 0;
+		APIRequestTask task = ChipDataMng.RequestAPIChipFusion(baseChip.userChipId, array, delegate(int res)
 		{
-			object obj = run.Current;
-			yield return obj;
-		}
-		yield break;
-	}
-
-	private void EndChipFusion(int resultCode, GameWebAPI.RequestMonsterList subRequest)
-	{
-		if (resultCode == 1)
+			resultCode = res;
+		});
+		AppCoroutine.Start(task.Run(delegate
 		{
-			if (subRequest != null)
+			if (resultCode == 1)
 			{
-				base.StartCoroutine(subRequest.Run(delegate()
-				{
-					this.fusionSuccessCallback();
-				}, delegate(Exception noop)
-				{
-					RestrictionInput.EndLoad();
-					GUIMain.BarrierOFF();
-				}, null));
+				callback();
 			}
 			else
 			{
-				this.fusionSuccessCallback();
+				string @string = StringMaster.GetString("SystemDataMismatchTitle");
+				string message = string.Format(StringMaster.GetString("ChipDataMismatchMesage"), resultCode);
+				AlertManager.ShowModalMessage(delegate(int modal)
+				{
+				}, @string, message, AlertManager.ButtonActionType.Close, false);
 			}
-		}
-		else
-		{
 			RestrictionInput.EndLoad();
-			ChipTools.CheckResultCode(resultCode);
-			string @string = StringMaster.GetString("SystemDataMismatchTitle");
-			string message = string.Format(StringMaster.GetString("ChipDataMismatchMesage"), resultCode);
-			AlertManager.ShowModalMessage(delegate(int modal)
-			{
-			}, @string, message, AlertManager.ButtonActionType.Close, false);
-		}
+		}, null, null), false);
 	}
 
 	private void OnLongTouchChip(GUIListChipParts.Data data)

@@ -31,7 +31,7 @@ namespace MultiBattle.Tools
 			Dictionary<object, object> dictionary = (Dictionary<object, object>)messageObj;
 			foreach (KeyValuePair<object, object> keyValuePair in dictionary)
 			{
-				if (keyValuePair.Key.ToString() == key)
+				if (keyValuePair.Key.ToString() == key && keyValuePair.Value != null)
 				{
 					global::Debug.LogFormat("{0}キー発見.", new object[]
 					{
@@ -138,15 +138,6 @@ namespace MultiBattle.Tools
 				yMin = -342f - GUIMain.VerticalSpaceSize,
 				yMax = 250f + GUIMain.VerticalSpaceSize
 			};
-		}
-
-		public static string AddAreaNameZero(string word)
-		{
-			if (word.Length < 2)
-			{
-				return "0" + word + " ";
-			}
-			return word + " ";
 		}
 	}
 }

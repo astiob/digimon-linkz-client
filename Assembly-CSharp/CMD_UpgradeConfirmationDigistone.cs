@@ -8,10 +8,17 @@ public class CMD_UpgradeConfirmationDigistone : CMD_UpgradeConfirmation
 	[SerializeField]
 	private UILabel ruleButtonLabel;
 
+	[SerializeField]
+	private GameObject ruleButtonObject;
+
 	private void Start()
 	{
 		base.SetFixedString();
 		this.ruleButtonLabel.text = StringMaster.GetString("ShopRule-02");
+		if (this.ruleButtonObject != null)
+		{
+			this.ruleButtonObject.SetActive(true);
+		}
 	}
 
 	protected override void SetPossessionMoney(FacilityUpgradeM masterUpgrade)

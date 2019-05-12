@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(UIPanel))]
 [AddComponentMenu("NGUI/Interaction/Scroll View")]
-[ExecuteInEditMode]
 public class UIScrollView : MonoBehaviour
 {
 	public static BetterList<UIScrollView> list = new BetterList<UIScrollView>();

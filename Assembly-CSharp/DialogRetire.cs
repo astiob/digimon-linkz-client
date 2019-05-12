@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class DialogRetire : MonoBehaviour
 {
-	[Header("Yesボタン")]
 	[SerializeField]
+	[Header("Yesボタン")]
 	private UIButton yesButton;
 
-	[Header("Noボタン")]
 	[SerializeField]
+	[Header("Noボタン")]
 	private UIButton noButton;
 
-	[SerializeField]
 	[Header("開く閉じるダイアログ")]
+	[SerializeField]
 	public UIOpenCloseDialog openCloseDialog;
 
-	[SerializeField]
 	[Header("はいローカライズ")]
+	[SerializeField]
 	private UILabel yesLocalize;
 
-	[SerializeField]
 	[Header("いいえローカライズ")]
+	[SerializeField]
 	private UILabel noLocalize;
 
 	[SerializeField]

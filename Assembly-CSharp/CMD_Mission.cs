@@ -15,8 +15,8 @@ public sealed class CMD_Mission : CMD
 	[SerializeField]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[Header("ミッションの段階終了時カットイン演出コントローラ")]
 	[SerializeField]
+	[Header("ミッションの段階終了時カットイン演出コントローラ")]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
@@ -334,7 +334,7 @@ public sealed class CMD_Mission : CMD
 
 	public override void ClosePanel(bool animation = true)
 	{
-		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 		GUIFace.SetFacilityShopButtonBadge();
 		PartsMenu.SetMenuButtonAlertBadge();

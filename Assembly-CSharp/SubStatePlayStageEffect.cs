@@ -8,7 +8,11 @@ public class SubStatePlayStageEffect : BattleStateController
 {
 	private bool isShowBattleStageEffect;
 
-	private Dictionary<SufferStateProperty.SufferType, List<CharacterStateControl>> countDictionary;
+	private SufferStatePropertyCounter sufferStatePropertyCounter;
+
+	private SubStateEnemiesItemDroppingFunction subStateEnemiesItemDroppingFunction;
+
+	private SubStatePlayHitAnimationAction subStatePlayHitAnimationAction;
 
 	public SubStatePlayStageEffect(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
@@ -16,14 +20,16 @@ public class SubStatePlayStageEffect : BattleStateController
 
 	protected override void AwakeThisState()
 	{
-		base.AddState(new SubStateEnemiesItemDroppingFunction(null, new Action<EventState>(base.SendEventState)));
-		base.AddState(new SubStatePlayHitAnimationAction(null, new Action<EventState>(base.SendEventState)));
+		this.subStateEnemiesItemDroppingFunction = new SubStateEnemiesItemDroppingFunction(null, new Action<EventState>(base.SendEventState));
+		this.subStatePlayHitAnimationAction = new SubStatePlayHitAnimationAction(null, new Action<EventState>(base.SendEventState));
+		base.AddState(this.subStateEnemiesItemDroppingFunction);
+		base.AddState(this.subStatePlayHitAnimationAction);
 	}
 
 	protected override void EnabledThisState()
 	{
 		this.isShowBattleStageEffect = false;
-		this.countDictionary = new Dictionary<SufferStateProperty.SufferType, List<CharacterStateControl>>();
+		this.sufferStatePropertyCounter = new SufferStatePropertyCounter();
 	}
 
 	protected override IEnumerator MainRoutine()
@@ -289,8 +295,8 @@ public class SubStatePlayStageEffect : BattleStateController
 		{
 			yield return null;
 		}
-		base.battleStateData.currentDeadCharacters = targetList.Where((CharacterStateControl item) => item.isDied).ToArray<CharacterStateControl>();
-		base.SetState(typeof(SubStateEnemiesItemDroppingFunction));
+		this.subStateEnemiesItemDroppingFunction.Init(targetList.Where((CharacterStateControl item) => item.isDied).ToArray<CharacterStateControl>());
+		base.SetState(this.subStateEnemiesItemDroppingFunction.GetType());
 		while (base.isWaitState)
 		{
 			yield return null;
@@ -301,11 +307,6 @@ public class SubStatePlayStageEffect : BattleStateController
 			object obj = wait.Current;
 			yield return obj;
 		}
-		base.battleStateData.SEStopFunctionCall();
-		while (base.battleStateData.StopHitAnimationCall())
-		{
-			yield return null;
-		}
 		base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.GetTotalCharacters());
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		base.stateManager.uiControl.ApplyHideHitIcon();
@@ -314,7 +315,10 @@ public class SubStatePlayStageEffect : BattleStateController
 
 	private IEnumerator PlaySkill(SkillStatus status, List<CharacterStateControl> targetList)
 	{
-		this.countDictionary.Clear();
+		foreach (CharacterStateControl character in this.GetTotalCharacters())
+		{
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.DamagePossibility);
+		}
 		foreach (AffectEffectProperty affectEffectProperty in status.affectEffect)
 		{
 			int hitNumber = 1;
@@ -331,147 +335,69 @@ public class SubStatePlayStageEffect : BattleStateController
 				}
 			}
 		}
-		this.UpdateCount(SufferStateProperty.SufferType.CountGuard);
-		this.UpdateCount(SufferStateProperty.SufferType.CountBarrier);
-		this.UpdateCount(SufferStateProperty.SufferType.CountEvasion);
+		foreach (CharacterStateControl character2 in this.GetTotalCharacters())
+		{
+			character2.ClearGutsData();
+		}
+		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountGuard);
+		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountBarrier);
+		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountEvasion);
 		yield break;
 	}
 
 	private IEnumerator PlaySkill(AffectEffectProperty affectEffectProperty, List<CharacterStateControl> targetList)
 	{
-		List<CharacterStateControl> skillResultTargets = new List<CharacterStateControl>();
-		List<bool> skillResultMisses = new List<bool>();
-		List<int> skillResultDamages = new List<int>();
-		List<Strength> skillResultStrength = new List<Strength>();
-		List<AffectEffect> skillResultAffectEffect = new List<AffectEffect>();
-		List<ExtraEffectType> extraEffectTypeList = new List<ExtraEffectType>();
+		SubStatePlayHitAnimationAction.Data data = new SubStatePlayHitAnimationAction.Data();
 		foreach (CharacterStateControl target in targetList)
 		{
 			if (!target.isDied)
 			{
-				int hitIconDigit = 0;
-				bool isHit = affectEffectProperty.OnHit(target);
-				Strength strength = Strength.None;
-				AffectEffect affectEffect = affectEffectProperty.type;
-				if (isHit)
+				SkillResults skillResult = null;
+				if (AffectEffectProperty.IsDamage(affectEffectProperty.type))
 				{
-					if (AffectEffectProperty.IsDamage(affectEffectProperty.type))
+					skillResult = SkillStatus.GetStageDamageSkillResult(affectEffectProperty, null, target);
+					if (!skillResult.onMissHit)
 					{
-						strength = target.tolerance.GetAttributeStrength(affectEffectProperty.attribute);
-						if (strength == Strength.Invalid)
+						if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
 						{
-							affectEffect = AffectEffect.Invalid;
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
 						}
-						else if (target.currentSufferState.onTurnBarrier.isActive)
+						else if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
 						{
-							affectEffect = AffectEffect.TurnBarrier;
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
 						}
-						else if (target.currentSufferState.onCountBarrier.isActive)
+						else if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountGuard))
 						{
-							affectEffect = AffectEffect.CountBarrier;
-							this.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
-						}
-						else if (target.currentSufferState.onTurnEvasion.isActive)
-						{
-							affectEffect = AffectEffect.TurnEvasion;
-						}
-						else if (target.currentSufferState.onCountEvasion.isActive)
-						{
-							affectEffect = AffectEffect.CountEvasion;
-							this.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
-						}
-						else
-						{
-							float reduceDamageRate = SkillStatus.GetReduceDamageRate(target.currentSufferState);
-							if (affectEffectProperty.powerType == PowerType.Fixable)
-							{
-								hitIconDigit = (int)((float)affectEffectProperty.damagePower * reduceDamageRate);
-							}
-							else
-							{
-								hitIconDigit = (int)(affectEffectProperty.damagePercent * (float)target.hp * reduceDamageRate);
-							}
-							if (strength != Strength.Drain)
-							{
-								target.hp -= hitIconDigit;
-							}
-							else
-							{
-								target.hp += hitIconDigit;
-							}
-							if (target.currentSufferState.onCountGuard.isActive)
-							{
-								this.AddCountDictionary(SufferStateProperty.SufferType.CountGuard, target);
-							}
-						}
-					}
-					else if (Tolerance.OnInfluenceToleranceAffectEffect(affectEffectProperty.type))
-					{
-						strength = target.tolerance.GetAffectEffectStrength(affectEffect);
-						if (strength == Strength.Invalid)
-						{
-							affectEffect = AffectEffect.Invalid;
-						}
-						else if (target.currentSufferState.onTurnBarrier.isActive)
-						{
-							affectEffect = AffectEffect.TurnBarrier;
-						}
-						else if (target.currentSufferState.onCountBarrier.isActive)
-						{
-							affectEffect = AffectEffect.CountBarrier;
-							this.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
-						}
-						else if (target.currentSufferState.onTurnEvasion.isActive)
-						{
-							affectEffect = AffectEffect.TurnEvasion;
-						}
-						else if (target.currentSufferState.onCountEvasion.isActive)
-						{
-							affectEffect = AffectEffect.CountEvasion;
-							this.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
-						}
-						else if (affectEffectProperty.type == AffectEffect.InstantDeath)
-						{
-							target.Kill();
-						}
-						else
-						{
-							SufferStateProperty suffer = new SufferStateProperty(affectEffectProperty, base.battleStateData.currentLastGenerateStartTimingSufferState);
-							target.currentSufferState.SetSufferState(suffer, null);
-							base.battleStateData.currentLastGenerateStartTimingSufferState++;
-						}
-					}
-					else
-					{
-						AffectEffect type = affectEffectProperty.type;
-						if (type != AffectEffect.HpRevival)
-						{
-							base.stateManager.skillDetails.AddSufferStateOthers(target, affectEffectProperty);
-						}
-						else
-						{
-							hitIconDigit = base.stateManager.skillDetails.HpRevival(target, affectEffectProperty);
-							skillResultDamages.Add(hitIconDigit);
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountGuard, target);
 						}
 					}
 				}
-				skillResultTargets.Add(target);
-				skillResultMisses.Add(!isHit);
-				skillResultDamages.Add(hitIconDigit);
-				skillResultStrength.Add(strength);
-				skillResultAffectEffect.Add(affectEffect);
-				extraEffectTypeList.Add(ExtraEffectType.Non);
+				else if (Tolerance.OnInfluenceToleranceAffectEffect(affectEffectProperty.type))
+				{
+					skillResult = base.stateManager.skillDetails.GetToleranceSkillResult(affectEffectProperty, null, target);
+					if (!skillResult.onMissHit)
+					{
+						if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
+						{
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
+						}
+						else if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
+						{
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
+						}
+					}
+				}
+				else
+				{
+					skillResult = base.stateManager.skillDetails.GetOtherSkillResult(affectEffectProperty, null, target);
+				}
+				data.AddHitIcon(target, skillResult.hitIconAffectEffect, skillResult.attackPower, skillResult.onWeakHit, skillResult.onMissHit, skillResult.onCriticalHit, false, false, false, skillResult.extraEffectType);
 			}
 		}
-		List<HitIcon> hitIconlist = new List<HitIcon>();
-		Vector3[] hitIconPositions = this.GetHitIconPositions(skillResultTargets);
-		for (int i = 0; i < skillResultTargets.Count; i++)
-		{
-			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(i, hitIconPositions[i], skillResultAffectEffect[i], skillResultDamages[i], skillResultStrength[i], skillResultMisses[i], false, false, false, ExtraEffectType.Non);
-			hitIconlist.Add(hitIcon);
-		}
-		base.battleStateData.SetPlayAnimationActionValues(null, skillResultTargets.ToArray(), affectEffectProperty.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconlist.ToArray(), extraEffectTypeList.ToArray(), affectEffectProperty, false);
-		base.SetState(typeof(SubStatePlayHitAnimationAction));
+		data.time = base.stateManager.stateProperty.multiHitIntervalWaitSecond;
+		data.affectEffectProperty = affectEffectProperty;
+		this.subStatePlayHitAnimationAction.Init(data);
+		base.SetState(this.subStatePlayHitAnimationAction.GetType());
 		while (base.isWaitState)
 		{
 			yield return null;
@@ -479,55 +405,25 @@ public class SubStatePlayStageEffect : BattleStateController
 		yield break;
 	}
 
-	private void AddCountDictionary(SufferStateProperty.SufferType key, CharacterStateControl value)
+	private CharacterStateControl[] GetTotalCharacters()
 	{
-		if (!this.countDictionary.ContainsKey(key))
+		CharacterStateControl[] result;
+		if (base.stateManager.battleMode == BattleMode.PvP)
 		{
-			this.countDictionary.Add(key, new List<CharacterStateControl>());
-		}
-		HaveSufferState currentSufferState = value.currentSufferState;
-		if (currentSufferState.FindSufferState(key))
-		{
-			SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
-			if (sufferStateProperty.isMultiHitThrough)
+			if (base.stateManager.pvpFunction.IsOwner)
 			{
-				sufferStateProperty.currentKeepRound--;
-				if (sufferStateProperty.currentKeepRound <= 0)
-				{
-					currentSufferState.RemoveSufferState(key);
-				}
+				result = base.battleStateData.GetTotalCharacters();
 			}
-			else if (this.countDictionary[key].Contains(value))
+			else
 			{
-				this.countDictionary[key].Add(value);
+				result = base.battleStateData.GetTotalCharactersEnemyFirst();
 			}
 		}
-	}
-
-	private void UpdateCount(SufferStateProperty.SufferType key)
-	{
-		List<CharacterStateControl> list = null;
-		this.countDictionary.TryGetValue(key, out list);
-		if (list == null || list.Count == 0)
+		else
 		{
-			return;
+			result = base.battleStateData.GetTotalCharacters();
 		}
-		foreach (CharacterStateControl characterStateControl in list)
-		{
-			HaveSufferState currentSufferState = characterStateControl.currentSufferState;
-			if (currentSufferState.FindSufferState(key))
-			{
-				SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
-				if (!sufferStateProperty.isMultiHitThrough)
-				{
-					sufferStateProperty.currentKeepRound--;
-					if (sufferStateProperty.currentKeepRound <= 0)
-					{
-						currentSufferState.RemoveSufferState(key);
-					}
-				}
-			}
-		}
+		return result;
 	}
 
 	private IEnumerator PlayNotSkill(ExtraEffectStatus extraEffectStatus, List<CharacterStateControl> targetList)

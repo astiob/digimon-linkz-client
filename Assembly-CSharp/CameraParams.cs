@@ -4,16 +4,16 @@ using UnityEngine;
 using UnityEngine.CameraParams.Internal;
 using UnityEngine.Serialization;
 
-[AddComponentMenu("Digimon Effects/Camera Params")]
 [DisallowMultipleComponent]
+[AddComponentMenu("Digimon Effects/Camera Params")]
 public class CameraParams : MonoBehaviour
 {
 	public static CameraParams current;
 
 	private static readonly Vector3 inverseScale = new Vector3(-1f, 1f, 1f);
 
-	[FormerlySerializedAs("cameraType")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraType")]
 	private CameraParams.CameraType _cameraType;
 
 	[SerializeField]
@@ -24,13 +24,13 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private bool _useAnimation = true;
 
-	[SerializeField]
 	[FormerlySerializedAs("isLoopAnimation")]
+	[SerializeField]
 	private bool _onLoopAnimation;
 
-	[FormerlySerializedAs("fieldOfView")]
-	[Range(1f, 179f)]
 	[SerializeField]
+	[Range(1f, 179f)]
+	[FormerlySerializedAs("fieldOfView")]
 	private float _fieldOfView = 60f;
 
 	[SerializeField]
@@ -45,16 +45,16 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private float _endTime = 3f;
 
-	[FormerlySerializedAs("cameraTarget")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraTarget")]
 	private Transform _cameraTarget;
 
 	[FormerlySerializedAs("cameraLookTarget")]
 	[SerializeField]
 	private Transform _cameraLookTarget;
 
-	[FormerlySerializedAs("onPossibleInverse")]
 	[SerializeField]
+	[FormerlySerializedAs("onPossibleInverse")]
 	private bool _onPossibleInverse;
 
 	[SerializeField]

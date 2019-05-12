@@ -47,8 +47,8 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private CMD_Succession.SkillTab materialMonsterSkillTab2;
 
-	[SerializeField]
 	[Header("所持クラスタ数")]
+	[SerializeField]
 	private UILabel myClusterLabel;
 
 	[Header("必要クラスタ数")]
@@ -64,12 +64,12 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
 
-	[SerializeField]
 	[Header("表示デジモン数")]
+	[SerializeField]
 	private UILabel ngTX_MN_HAVE;
 
-	[Header("ソートのラベル")]
 	[SerializeField]
+	[Header("ソートのラベル")]
 	private UILabel ngTX_SORT_DISP;
 
 	[SerializeField]
@@ -744,8 +744,8 @@ public sealed class CMD_Succession : CMD
 		[Header("スプライト")]
 		private UISprite sprite;
 
-		[SerializeField]
 		[Header("ラベル")]
+		[SerializeField]
 		private UILabelEx label;
 
 		public void On()

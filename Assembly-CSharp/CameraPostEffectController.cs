@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class CameraPostEffectController : MonoBehaviour
 {
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float _effectLevel;
 
 	[NonSerialized]

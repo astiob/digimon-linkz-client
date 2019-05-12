@@ -7,9 +7,9 @@ using UnityEngine;
 
 public abstract class BattleMultiBasicFunction : BattleFunctionBase
 {
-	protected const float countDownWaitingTerm = 1f;
+	protected const float tcpSendWaitingTerm = 2f;
 
-	protected const float tcpWaitingTerm = 1f;
+	protected const float sendTcpWaitTime = 15f;
 
 	private const int MAX_EXCEPTION_COUNT = 3;
 
@@ -230,7 +230,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 				this.ShowDisconnectTCPDialog(null);
 				return;
 			}
-			base.StartCoroutine(this.Reconnect(true));
+			base.StartCoroutine(this.Reconnect());
 		}
 	}
 
@@ -241,17 +241,11 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		{
 			if (isReconnect)
 			{
-				if (base.stateManager.battleMode == BattleMode.PvP)
-				{
-					AppCoroutine.Start(Singleton<TCPMessageSender>.Instance.SendPvPRecoverCommunicate(), false);
-				}
-				else if (base.stateManager.battleMode == BattleMode.Multi)
-				{
-					AppCoroutine.Start(Singleton<TCPMessageSender>.Instance.SendMultiBattleResume(), false);
-				}
+				AppCoroutine.Start(this.ResumeTCP(), false);
 			}
 			else
 			{
+				AppCoroutine.Start(this.SendConnectionNotice(), false);
 				this.isDisconnected = false;
 			}
 		}
@@ -262,6 +256,16 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			this.ShowDisconnectTCPDialog(null);
 		}
 		global::Debug.Log("Initialized TCP");
+	}
+
+	protected virtual IEnumerator SendConnectionNotice()
+	{
+		yield break;
+	}
+
+	protected virtual IEnumerator ResumeTCP()
+	{
+		yield break;
 	}
 
 	private bool ConnectTCPServer(BattleMode battleMode)
@@ -322,7 +326,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		else if (exitCode == 750 || exitCode == 700 || exitCode == 711 || exitCode == 752 || exitCode == 760)
 		{
 			global::Debug.Log("無理やり再接続.");
-			base.StartCoroutine(this.Reconnect(true));
+			base.StartCoroutine(this.Reconnect());
 		}
 		else
 		{
@@ -331,7 +335,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 				if (retry)
 				{
 					global::Debug.Log("無理やり再接続.");
-					return this.Reconnect(true);
+					return this.Reconnect();
 				}
 				global::Debug.LogErrorFormat("その他何らかのエラー. exitCode:{0}.", new object[]
 				{
@@ -343,7 +347,12 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		}
 	}
 
-	protected abstract IEnumerator Reconnect(bool isDialog = true);
+	protected IEnumerator Reconnect()
+	{
+		yield return new WaitForEndOfFrame();
+		this.InitializeTCPClient(true);
+		yield break;
+	}
 
 	private IEnumerator Exception(Func<bool, IEnumerator> function)
 	{
@@ -389,7 +398,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		{
 			randomSeed
 		});
-		IEnumerator wait = base.stateManager.multiBasicFunction.SendMessageInsistently<RandomSeedSyncData>(TCPMessageType.RandomSeedSync, message, 1f);
+		IEnumerator wait = base.stateManager.multiBasicFunction.SendMessageInsistently<RandomSeedSyncData>(TCPMessageType.RandomSeedSync, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -445,7 +454,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			message.targetIdx,
 			message.selectSkillIdx
 		});
-		IEnumerator wait = this.SendMessageInsistently<AttackData>(TCPMessageType.Attack, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<AttackData>(TCPMessageType.Attack, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -513,7 +522,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LeaderChange, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
 			leaderIndex = leaderindex
 		};
-		IEnumerator wait = this.SendMessageInsistently<LeaderChangeData>(TCPMessageType.LeaderChange, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<LeaderChangeData>(TCPMessageType.LeaderChange, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -585,7 +594,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.AdventureScene, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
 			isEnd = ((!this.isAdventureSceneAllEnd) ? 0 : 1)
 		};
-		IEnumerator wait = this.SendMessageInsistently<AdventureSceneData>(TCPMessageType.AdventureScene, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<AdventureSceneData>(TCPMessageType.AdventureScene, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -645,7 +654,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			tcpMessageType = tcpMessageType.ToInteger(),
 			value1 = value1
 		};
-		AppCoroutine.Start(this.SendMessageInsistentlyForTarget<ConfirmationData>(TCPMessageType.Confirmation, message, targetId, enableDisconnected), false);
+		AppCoroutine.Start(this.SendConfirm<ConfirmationData>(TCPMessageType.Confirmation, message, targetId, enableDisconnected), false);
 	}
 
 	protected void RecieveConfirmation(TCPMessageType tcpMessageType, object messageObj)
@@ -686,36 +695,6 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		});
 	}
 
-	private void SendMessageForTarget(TCPMessageType tcpMessageType, object message, string targetId, bool enableDisconnected = true)
-	{
-		if (enableDisconnected && this.isDisconnected)
-		{
-			return;
-		}
-		Dictionary<string, object> data = ClassSingleton<TCPMessageFactory>.Instance.CreateMessage(tcpMessageType, message);
-		if (this.multiUsers == null || this.multiUsers.Length == 0)
-		{
-			return;
-		}
-		global::Debug.Log("targetId: " + targetId);
-		if (Singleton<TCPUtil>.Instance == null)
-		{
-			global::Debug.LogWarning("this.myTCPUtil is null");
-		}
-		else
-		{
-			Singleton<TCPUtil>.Instance.SendTCPRequest(data, new List<int>
-			{
-				targetId.ToInt32()
-			}, this.myTCPKey);
-			global::Debug.LogFormat("[TCPMessage]{0}へ{1}を送信しました.", new object[]
-			{
-				targetId,
-				tcpMessageType
-			});
-		}
-	}
-
 	protected void SendMessageForSync(TCPMessageType tcpMessageType, object message)
 	{
 		this.SendMessageForSync(tcpMessageType, message, true);
@@ -728,15 +707,6 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 
 	private void SendMessageForSync(TCPMessageType tcpMessageType, object message, bool enableDisconnected)
 	{
-		if (enableDisconnected && this.isDisconnected)
-		{
-			return;
-		}
-		Dictionary<string, object> dictionary = ClassSingleton<TCPMessageFactory>.Instance.CreateMessage(tcpMessageType, message);
-		if (this.multiUsers == null || this.multiUsers.Length == 0)
-		{
-			return;
-		}
 		List<string> list = this.GetOtherUsersId().ToList<string>();
 		if (list.Count <= 0)
 		{
@@ -747,62 +717,65 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			this.confirmationChecks[tcpMessageType].Clear();
 			return;
 		}
-		string text = string.Join(",", list.ToArray());
-		global::Debug.LogFormat("他{0}名のID: {1}", new object[]
-		{
-			list.Count,
-			text
-		});
-		if (Singleton<TCPUtil>.Instance == null || dictionary == null)
-		{
-			global::Debug.LogWarning("this.myTCPUtil is null");
-		}
-		else
-		{
-			List<int> to = list.Select((string s) => s.ToInt32()).ToList<int>();
-			Singleton<TCPUtil>.Instance.SendTCPRequest(dictionary, to, this.myTCPKey);
-			global::Debug.LogFormat("[TCPMessage]{0}へ{1}を送信しました", new object[]
-			{
-				text,
-				tcpMessageType
-			});
-		}
+		this.SendMessageForTarget(tcpMessageType, message, list.ToArray(), enableDisconnected);
 	}
 
-	protected IEnumerator SendMessageInsistentlyForTarget<T>(TCPMessageType tcpMessageType, TCPData<T> message, string targetId, bool enableDisconnected = true) where T : class
+	private IEnumerator SendConfirm<T>(TCPMessageType tcpMessageType, TCPData<T> message, string targetId, bool enableDisconnected = true) where T : class
 	{
-		int waitingCount = 0;
+		global::Debug.LogFormat("Send tcpMessageType:{0}", new object[]
+		{
+			tcpMessageType
+		});
+		float sendWaitTime = 2f;
 		for (;;)
 		{
-			global::Debug.LogFormat("[confirmationChecks] tcpMessageType:{0}, confirmationChecks count:{1}, targetId:{2}, waitingCount:{3}", new object[]
+			if (sendWaitTime >= 2f)
 			{
-				tcpMessageType,
-				this.confirmationChecks[tcpMessageType].Count,
-				targetId,
-				waitingCount
-			});
-			this.SendMessageForTarget(tcpMessageType, message, targetId, enableDisconnected);
-			waitingCount++;
-			IEnumerator wait = Util.WaitForRealTime(1f);
-			while (wait.MoveNext())
-			{
-				object obj = wait.Current;
-				yield return obj;
+				sendWaitTime = 0f;
+				this.SendMessageForTarget(tcpMessageType, message, new string[]
+				{
+					targetId
+				}, enableDisconnected);
 			}
-			global::Debug.Log("Util.WaitForRealTime 経過");
-			int count = Mathf.Min(this.otherUserCount, 1);
-			if (this.confirmationChecks[tcpMessageType].Count >= count)
+			sendWaitTime += Time.unscaledDeltaTime;
+			if (this.otherUserCount == 0 || this.confirmationChecks[tcpMessageType].Where((string item) => item == targetId).Any<string>())
 			{
 				break;
 			}
 			yield return null;
 		}
-		this.confirmationChecks[tcpMessageType] = new List<string>();
+		this.confirmationChecks[tcpMessageType].Clear();
 		yield break;
 		yield break;
 	}
 
-	public abstract IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 1f) where T : class;
+	private void SendMessageForTarget(TCPMessageType tcpMessageType, object message, string[] targetIds, bool enableDisconnected = true)
+	{
+		if (enableDisconnected && this.isDisconnected)
+		{
+			return;
+		}
+		Dictionary<string, object> data = ClassSingleton<TCPMessageFactory>.Instance.CreateMessage(tcpMessageType, message);
+		if (this.multiUsers == null || this.multiUsers.Length == 0)
+		{
+			return;
+		}
+		global::Debug.Log("targetIds: " + targetIds);
+		if (Singleton<TCPUtil>.Instance == null)
+		{
+			global::Debug.LogWarning("this.myTCPUtil is null");
+		}
+		else
+		{
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, targetIds.Select((string item) => item.ToInt32()).ToList<int>(), this.myTCPKey);
+			global::Debug.LogFormat("[TCPMessage]{0}を送信しました.", new object[]
+			{
+				tcpMessageType
+			});
+		}
+	}
+
+	public abstract IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 2f) where T : class;
 
 	public abstract IEnumerator WaitAllPlayers(TCPMessageType tcpMessageType);
 

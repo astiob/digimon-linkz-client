@@ -8,8 +8,8 @@ using UnityEngine;
 
 public sealed class CMD_PartyEdit : CMD
 {
-	[Header("スクロールビューの左右をクリッピングするオブジェクト")]
 	[SerializeField]
+	[Header("スクロールビューの左右をクリッピングするオブジェクト")]
 	private GameObject[] clipObjects;
 
 	private Vector3 v3DPos = new Vector3(0f, 4000f, 0f);
@@ -37,11 +37,11 @@ public sealed class CMD_PartyEdit : CMD
 
 	public static CMD_PartyEdit instance;
 
-	public static string replayMultiStageId;
+	public static string replayMultiStageId = string.Empty;
 
-	public static string replayMultiAreaId;
+	public static string replayMultiAreaId = string.Empty;
 
-	public static string replayMultiDungeonId;
+	public static string replayMultiDungeonId = string.Empty;
 
 	public static CMD_PartyEdit.MODE_TYPE ModeType { get; set; }
 

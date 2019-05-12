@@ -2,13 +2,13 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyVersion("1.0.6122.32635")]
-[assembly: AssemblyProduct("")]
-[assembly: SuppressIldasm]
-[assembly: AssemblyCopyright("digimon")]
-[assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyVersion("1.0.6477.23770")]
 [assembly: AssemblyTitle("Secure")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("digimon")]
+[assembly: AssemblyTrademark("")]
+[assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: SuppressIldasm]

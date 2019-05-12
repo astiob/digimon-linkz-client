@@ -4,8 +4,8 @@ using UnityEngine;
 
 public sealed class BaseSelectChipCell : MonoBehaviour
 {
-	[SerializeField]
 	[Header("サムネイルのテクスチャ")]
+	[SerializeField]
 	private UITexture thumbnailTexture;
 
 	[Header("レア度のスプライト")]
@@ -16,8 +16,8 @@ public sealed class BaseSelectChipCell : MonoBehaviour
 	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[Header("非装着のラベル")]
 	[SerializeField]
+	[Header("非装着のラベル")]
 	private UILabel noChipLabel;
 
 	public void SetupIcon(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip)

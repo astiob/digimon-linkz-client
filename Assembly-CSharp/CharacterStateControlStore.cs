@@ -1,5 +1,6 @@
 ﻿using System;
 
+[Serializable]
 public class CharacterStateControlStore
 {
 	public int hp { get; set; }

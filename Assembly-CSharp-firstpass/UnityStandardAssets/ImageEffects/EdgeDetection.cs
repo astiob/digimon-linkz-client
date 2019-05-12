@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[RequireComponent(typeof(Camera))]
 	[AddComponentMenu("Image Effects/Edge Detection/Edge Detection")]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
 	public class EdgeDetection : PostEffectsBase
 	{
 		public EdgeDetection.EdgeDetectMode mode = EdgeDetection.EdgeDetectMode.SobelDepthThin;

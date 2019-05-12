@@ -82,6 +82,7 @@ public class GUIListPartsStone : GUIListPartBS
 		if (this.data.packFlg)
 		{
 			this.SetTimeStatus();
+			this.ngTX_PRICE.text = this.data.storePrice;
 			AppCoroutine.Start(this.LoadBannerTexture(this.data.imgPath), false);
 		}
 		else
@@ -99,7 +100,6 @@ public class GUIListPartsStone : GUIListPartBS
 				this.ngTEX_BANNER.mainTexture = texture;
 				this.ngICON.gameObject.SetActive(false);
 				this.ngTX_NAME.gameObject.SetActive(false);
-				this.ngTX_PRICE.gameObject.SetActive(false);
 			}
 			else
 			{
@@ -108,7 +108,7 @@ public class GUIListPartsStone : GUIListPartBS
 				this.ngICON.gameObject.SetActive(false);
 			}
 		};
-		string downloadURL = ConstValue.APP_ASSET_DOMAIN + "/asset/img/" + path;
+		string downloadURL = AssetDataMng.GetWebAssetImagePath() + "/" + path;
 		yield return TextureManager.instance.Load(downloadURL, callback, 30f, true);
 		yield break;
 	}
@@ -123,7 +123,6 @@ public class GUIListPartsStone : GUIListPartBS
 				this.ngTEX_BANNER.mainTexture = mainTexture;
 				this.ngICON.gameObject.SetActive(false);
 				this.ngTX_NAME.gameObject.SetActive(false);
-				this.ngTX_PRICE.gameObject.SetActive(false);
 			}
 			else
 			{
@@ -141,7 +140,7 @@ public class GUIListPartsStone : GUIListPartBS
 		this.ngICON.spriteName = component.GetSpriteName(this.data.spriteType);
 		this.ngICON.MakePixelPerfect();
 		this.ngTX_NAME.text = this.data.productTitle;
-		this.ngTX_PRICE.text = StringFormat.Yen(this.data.price);
+		this.ngTX_PRICE.text = this.data.storePrice;
 	}
 
 	private void SetTimeStatus()
@@ -347,10 +346,7 @@ public class GUIListPartsStone : GUIListPartBS
 			}
 			return null;
 		}));
-		return apirequestTask.Run(delegate
-		{
-			RestrictionInput.EndLoad();
-		}, delegate(Exception nop)
+		return apirequestTask.Run(new Action(RestrictionInput.EndLoad), delegate(Exception x)
 		{
 			RestrictionInput.EndLoad();
 		}, null);
@@ -369,12 +365,9 @@ public class GUIListPartsStone : GUIListPartBS
 					if (isSuccess && this.data.limitCount > 0)
 					{
 						this.data.purchasedCount++;
-						if (this.data.purchasedCount >= this.data.limitCount)
+						if (this.data.purchasedCount >= this.data.limitCount && CMD_Shop.instance != null)
 						{
-							if (CMD_Shop.instance != null)
-							{
-								CMD_Shop.instance.DeleteListParts(base.IDX);
-							}
+							CMD_Shop.instance.DeleteListParts(base.IDX);
 						}
 					}
 					onCompleted(isSuccess);

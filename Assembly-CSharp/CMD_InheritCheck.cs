@@ -10,8 +10,8 @@ public sealed class CMD_InheritCheck : CMD
 	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("デジモンの継承スキル")]
+	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
 
 	[Header("消費クラスタのラベル")]
@@ -22,12 +22,12 @@ public sealed class CMD_InheritCheck : CMD
 	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
+	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
+	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
 	[SerializeField]

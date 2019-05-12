@@ -60,8 +60,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider showBtnCollider;
 
-	[Header("一覧ボタンのラベル")]
 	[SerializeField]
+	[Header("一覧ボタンのラベル")]
 	private UILabelEx showBtnLabel;
 
 	[SerializeField]
@@ -70,8 +70,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[SerializeField]
 	[Header("お別れボタンのラベル")]
+	[SerializeField]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]
@@ -742,7 +742,11 @@ public sealed class CMD_FarewellListRun : CMD
 				ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 				RestrictionInput.EndLoad();
 				this.ClosePanel(animation);
-			}, null, null));
+			}, delegate(Exception nop)
+			{
+				RestrictionInput.EndLoad();
+				this.ClosePanel(animation);
+			}, null));
 		}
 		else
 		{

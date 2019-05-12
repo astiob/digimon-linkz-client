@@ -57,7 +57,7 @@ namespace AdventureScene
 					component.PlayAttackAnimation(SkillType.Deathblow, this.uniqueSkillIndex);
 					component2.transform.position = component.transform.position;
 					component4.transform.position = component.transform.position;
-					AppCoroutine.Start(component2.PlaySkillAnimation(component, false), new Action(this.OnFinishCommand), false);
+					AppCoroutine.Start(component2.PlaySkillAnimation(component), new Action(this.OnFinishCommand), false);
 					component4.currentTargetCamera = ClassSingleton<AdventureSceneData>.Instance.adventureCamera.camera3D;
 					component4.PlayCameraAnimation(component, false, false);
 					SoundMng.Instance().TryPlaySE("SE/" + text + "/sound", 0f, false, true, null, -1);

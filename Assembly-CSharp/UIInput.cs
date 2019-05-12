@@ -1054,7 +1054,7 @@ public class UIInput : MonoBehaviour
 
 	protected char Validate(string text, int pos, char ch)
 	{
-		if (char.IsSurrogate(ch))
+		if (TextUtil.IsEmojiCheck(ch))
 		{
 			return '\0';
 		}

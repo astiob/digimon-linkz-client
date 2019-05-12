@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ChipSphereStatus : MonoBehaviour
 {
-	[SerializeField]
 	[Header("MenuType")]
+	[SerializeField]
 	private CMD_ChipSphere.MenuType myMenuType;
 
-	[Header("Lookのゲームオブジェクト")]
 	[SerializeField]
+	[Header("Lookのゲームオブジェクト")]
 	private GameObject lookGO;
 
 	[Header("アイコン右下のレア度")]
@@ -24,8 +24,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[Header("アイコンのテクスチャ")]
 	private UITexture chipTexture;
 
-	[Header("アイコンの個数/名前/進化段階名")]
 	[SerializeField]
+	[Header("アイコンの個数/名前/進化段階名")]
 	private UILabel chipNameLabel;
 
 	[SerializeField]
@@ -44,8 +44,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private UISprite buttonSprite;
 
-	[Header("強化ボタンのスプライト")]
 	[SerializeField]
+	[Header("強化ボタンのスプライト")]
 	private UISprite reinforcementButtonSprite;
 
 	[Header("ボタンのコライダー")]

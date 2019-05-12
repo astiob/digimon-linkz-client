@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</ProjectGuid>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnityEngine</RootNamespace>
@@ -836,11 +836,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>System</Name>
     </ProjectReference>
   </ItemGroup>

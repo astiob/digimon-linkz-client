@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ChipEfc : MonoBehaviour
 {
-	[Header("サムネイル OBJ")]
 	[SerializeField]
+	[Header("サムネイル OBJ")]
 	public GameObject goCHIP_THUMB;
 
 	[SerializeField]
@@ -19,8 +19,8 @@ public class ChipEfc : MonoBehaviour
 	[SerializeField]
 	public GameObject goPARTICLE;
 
-	[Header("NEW スプライト")]
 	[SerializeField]
+	[Header("NEW スプライト")]
 	public UISprite spNew;
 
 	private int frameCT;

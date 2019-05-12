@@ -41,7 +41,7 @@ public abstract class CMDWrapper : CMD
 
 	protected abstract void OnOpenedDialog();
 
-	protected abstract void OnCloseStartDialog();
+	protected abstract bool OnCloseStartDialog();
 
 	protected abstract void OnClosedDialog();
 
@@ -103,7 +103,9 @@ public abstract class CMDWrapper : CMD
 			}
 			this.publicDialogCloseStartEvent.Clear();
 		}
-		this.OnCloseStartDialog();
-		base.ClosePanel(animation);
+		if (this.OnCloseStartDialog())
+		{
+			base.ClosePanel(animation);
+		}
 	}
 }

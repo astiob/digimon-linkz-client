@@ -42,9 +42,14 @@ public class TakeoverInput : MonoBehaviour
 		this.takeOverLabel.text = StringMaster.GetString("TakeOver-22");
 		this.topLabel.text = StringMaster.GetString("TakeOver-23");
 		this.underLabel.text = StringMaster.GetString("TakeOver-06");
-		this.takeoverCodeInput.label.text = StringMaster.GetString("TakeOver-16");
-		this.takeoverCodeInput.value = StringMaster.GetString("TakeOver-16");
-		this.userIdInput.value = StringMaster.GetString("FriendSearch-02");
+		string @string = StringMaster.GetString("TakeOver-16");
+		this.takeoverCodeInput.label.text = @string;
+		this.takeoverCodeInput.defaultText = @string;
+		this.takeoverCodeInput.value = string.Empty;
+		string string2 = StringMaster.GetString("FriendSearch-02");
+		this.userIdInput.label.text = string2;
+		this.userIdInput.defaultText = string2;
+		this.userIdInput.value = string.Empty;
 		if (this.takeoverCodeInput != null)
 		{
 			this.takeoverCodeInputDefaultString = this.takeoverCodeInput.value;

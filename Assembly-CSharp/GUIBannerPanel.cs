@@ -50,7 +50,7 @@ public sealed class GUIBannerPanel : GUISelectPanelBSPartsUD
 						parts.SetOriginalPos(new Vector3(xpos, ypos, -5f));
 						parts.Data = bannerInfo;
 						parts.SetBGColor();
-						string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img" + bannerInfo.img;
+						string path = AssetDataMng.GetWebAssetImagePath() + bannerInfo.img;
 						yield return TextureManager.instance.Load(path, new Action<Texture2D>(parts.OnBannerReceived), this.timeOutSeconds, true);
 					}
 					ypos -= pbd.pitchH;

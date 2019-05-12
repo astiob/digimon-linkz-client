@@ -1,11 +1,12 @@
-﻿using Master;
+﻿using Colosseum.Matching;
+using Master;
 using Monster;
 using MonsterList.BaseSelect;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PVPPartySelect3 : MonoBehaviour
+public sealed class PVPPartySelect3 : MonoBehaviour
 {
 	private const string onButtonSprite = "Common02_Btn_Red";
 
@@ -41,8 +42,8 @@ public class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject leaderObj;
 
-	[Header("キャラクターのステータスPanel")]
 	[SerializeField]
+	[Header("キャラクターのステータスPanel")]
 	private StatusPanel statusPanel;
 
 	[SerializeField]
@@ -131,6 +132,8 @@ public class PVPPartySelect3 : MonoBehaviour
 
 	private CMD_PvPMatchingWait pvpMatchingWait;
 
+	private ColosseumMatchingEventListener eventListener;
+
 	private float selectLimitTime = (float)MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_PARTY_SELECT_TIME;
 
 	private bool timerCountCheck;
@@ -154,6 +157,17 @@ public class PVPPartySelect3 : MonoBehaviour
 	public void SetData(CMD_PvPMatchingWait matching)
 	{
 		this.pvpMatchingWait = matching;
+		this.SetData();
+	}
+
+	public void SetData(ColosseumMatchingEventListener listener)
+	{
+		this.eventListener = listener;
+		this.SetData();
+	}
+
+	private void SetData()
+	{
 		this.iconGrayOut = new BaseSelectIconGrayOut();
 		this.iconGrayOut.SetNormalAction(new Action<MonsterData>(this.ActMIconShort), new Action<MonsterData>(this.ActMIconLong));
 		this.iconGrayOut.SetBlockAction(null, new Action<MonsterData>(this.ActMIconLong));
@@ -164,6 +178,7 @@ public class PVPPartySelect3 : MonoBehaviour
 		this.DataChg = null;
 		this.chipBaseSelect.ClearChipIcons();
 		this.monsterMedalList.SetActive(false);
+		this.leaderSkill.ClearSkill();
 		this.selectLimitTime = (float)MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_PARTY_SELECT_TIME;
 		this.timerLabel.text = Mathf.CeilToInt(this.selectLimitTime).ToString();
 		this.timerCountCheck = true;
@@ -200,6 +215,10 @@ public class PVPPartySelect3 : MonoBehaviour
 			this.timerLabel.text = "0";
 			this.timerCountCheck = false;
 			this.PartyDataSend();
+			if (null != this.eventListener)
+			{
+				this.eventListener.OnMonsterSelectTimeOver();
+			}
 		}
 		else
 		{
@@ -233,12 +252,24 @@ public class PVPPartySelect3 : MonoBehaviour
 		{
 			this.AutoPartySetting();
 		}
-		string[] array = new string[3];
-		for (int i = 0; i < this.mySelectMonsterDataList.Length; i++)
+		if (null != this.pvpMatchingWait)
 		{
-			array[i] = this.GetMonsterNumber(this.mySelectMonsterDataList[i]).ToString();
+			string[] array = new string[this.mySelectMonsterDataList.Length];
+			for (int i = 0; i < this.mySelectMonsterDataList.Length; i++)
+			{
+				array[i] = this.GetMonsterNumber(this.mySelectMonsterDataList[i]).ToString();
+			}
+			this.pvpMatchingWait.SendPvPEnemyData(array);
 		}
-		this.pvpMatchingWait.SendPvPEnemyData(array);
+		else
+		{
+			int[] array2 = new int[this.mySelectMonsterDataList.Length];
+			for (int j = 0; j < this.mySelectMonsterDataList.Length; j++)
+			{
+				array2[j] = this.GetMonsterNumber(this.mySelectMonsterDataList[j]);
+			}
+			this.eventListener.OnSelectedMonster(array2);
+		}
 		this.selectButtonSprite.spriteName = "Common02_Btn_Gray_a";
 		this.selectButton.activeCollider = false;
 		this.selectButtonLabel.text = StringMaster.GetString("PvPMonsterSelectButtonOff");
@@ -314,26 +345,6 @@ public class PVPPartySelect3 : MonoBehaviour
 			this.SetSelectNumberIcon(num, false, default(Vector3));
 			this.mySelectMonsterDataList[num] = null;
 		}
-	}
-
-	private void RemoveIcon(MonsterData md)
-	{
-		if (this.DataChg != null)
-		{
-			this.SetEmpty();
-		}
-	}
-
-	public void SetEmpty()
-	{
-		this.DataChg = null;
-		this.chipBaseSelect.ClearChipIcons();
-		this.ShowChgInfo();
-		if (this.goLeftLargeMonsterIcon != null)
-		{
-			UnityEngine.Object.Destroy(this.goLeftLargeMonsterIcon);
-		}
-		this.goMN_ICON_CHG.SetActive(true);
 	}
 
 	private void SetSelectedCharChg()
@@ -430,6 +441,7 @@ public class PVPPartySelect3 : MonoBehaviour
 			this.monsterMedalList.SetActive(false);
 			this.switchDetailSkillPanel(false);
 			this.RequestStatusPage(1);
+			this.leaderSkill.ClearSkill();
 		}
 	}
 

@@ -6,8 +6,8 @@ public class FadeCircle : ScreenEffectBase
 	[SerializeField]
 	private Color baseColor;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float circleCenterX;
 
 	[Range(0f, 1f)]

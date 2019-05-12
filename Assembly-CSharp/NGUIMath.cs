@@ -11,8 +11,8 @@ public static class NGUIMath
 		return from * (1f - factor) + to * factor;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int ClampIndex(int val, int max)
 	{
 		return (val >= 0) ? ((val >= max) ? (max - 1) : val) : 0;
@@ -158,8 +158,8 @@ public static class NGUIMath
 		return num.ToString("X8");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int ColorToInt(Color c)
 	{
 		int num = 0;
@@ -182,8 +182,8 @@ public static class NGUIMath
 		return black;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string IntToBinary(int val, int bits)
 	{
 		string text = string.Empty;
@@ -199,8 +199,8 @@ public static class NGUIMath
 		return text;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color HexToColor(uint val)
 	{
 		return NGUIMath.IntToColor((int)val);
@@ -387,8 +387,8 @@ public static class NGUIMath
 		return new Bounds(Vector3.zero, Vector3.zero);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private static void CalculateRelativeWidgetBounds(Transform content, bool considerInactive, bool isRoot, ref Matrix4x4 toLocal, ref Vector3 vMin, ref Vector3 vMax, ref bool isSet, bool considerChildren)
 	{
 		if (content == null)

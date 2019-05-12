@@ -11,8 +11,8 @@ public class CMD_DeckList : CMD
 	[SerializeField]
 	private ChipBaseSelect baseChipBaseSelect;
 
-	[Header("パートナー用チップ装備")]
 	[SerializeField]
+	[Header("パートナー用チップ装備")]
 	private ChipBaseSelect partnerChipBaseSelect;
 
 	[SerializeField]
@@ -166,8 +166,8 @@ public class CMD_DeckList : CMD
 
 	private static CMD_DeckList instance;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;

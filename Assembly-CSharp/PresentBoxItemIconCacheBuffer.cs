@@ -18,4 +18,9 @@ public sealed class PresentBoxItemIconCacheBuffer : AssetDataCacheBuffer
 		}
 		return PresentBoxItemIconCacheBuffer.instance;
 	}
+
+	public static void ClearCacheBuffer()
+	{
+		PresentBoxItemIconCacheBuffer.instance = null;
+	}
 }

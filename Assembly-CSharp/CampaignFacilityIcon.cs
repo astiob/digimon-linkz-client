@@ -4,6 +4,9 @@ using UnityEngine;
 
 public sealed class CampaignFacilityIcon : MonoBehaviour
 {
+	[SerializeField]
+	private UISprite popTxtImg;
+
 	[NonSerialized]
 	public FarmObject farmObject;
 
@@ -32,6 +35,7 @@ public sealed class CampaignFacilityIcon : MonoBehaviour
 		}
 		GameObject gameObject = GUIManager.LoadCommonGUI("Farm/CampaignBalloon", parent);
 		CampaignFacilityIcon component = gameObject.GetComponent<CampaignFacilityIcon>();
+		component.setLocalizedPopTxtImg();
 		gameObject.SetActive(false);
 		List<FarmObject> farmObjects = instance.Scenery.farmObjects;
 		for (int i = 0; i < farmObjects.Count; i++)
@@ -81,5 +85,9 @@ public sealed class CampaignFacilityIcon : MonoBehaviour
 		UnityEngine.Object.Destroy(base.gameObject);
 		this.farmObject = null;
 		this.farmCamera = null;
+	}
+
+	public void setLocalizedPopTxtImg()
+	{
 	}
 }

@@ -6,8 +6,8 @@ using UnityEngine.Serialization;
 
 public abstract class EffectParamsGeneric : MonoBehaviour
 {
-	[FormerlySerializedAs("effectAnimation")]
 	[SerializeField]
+	[FormerlySerializedAs("effectAnimation")]
 	protected Animation _effectAnimation;
 
 	protected bool _isPlaying;

@@ -57,16 +57,16 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[SerializeField]
 	[Header("取り消しボタンスプライト")]
+	[SerializeField]
 	private UISprite spCancelBtn;
 
 	[SerializeField]
 	[Header("取り消しボタンラベル")]
 	private UILabel lbCancelBtn;
 
-	[SerializeField]
 	[Header("モンスター表示")]
+	[SerializeField]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
 	[SerializeField]
@@ -77,8 +77,8 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("マッチング完了アニメオブジェクト")]
 	private GameObject goMatchingEndAnim;
 
-	[Header("マッチング完了エフェクト")]
 	[SerializeField]
+	[Header("マッチング完了エフェクト")]
 	private Animator MatchingEffectAnimator;
 
 	[SerializeField]
@@ -88,20 +88,20 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private Color renderTextureColor;
 
-	[Header("キャラの勝利アニメを見せる時間（秒）")]
 	[SerializeField]
+	[Header("キャラの勝利アニメを見せる時間（秒）")]
 	private float winAnimationWait;
 
-	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	[SerializeField]
+	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	private float transferWait;
 
-	[Header("３対選択画面")]
 	[SerializeField]
+	[Header("３対選択画面")]
 	private PVPPartySelect3 partySelect;
 
-	[Header("演出チェック用")]
 	[SerializeField]
+	[Header("演出チェック用")]
 	private bool debugAnimation;
 
 	private Coroutine matchingFinishAnimation;
@@ -216,10 +216,7 @@ public class CMD_PvPMatchingWait : CMD
 				this.colosseumUserStatus = resData.userStatus;
 			};
 			GameWebAPI.ColosseumUserStatusLogic request = colosseumUserStatusLogic;
-			yield return base.StartCoroutine(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
-			{
-				RestrictionInput.EndLoad();
-			}, null));
+			yield return base.StartCoroutine(request.Run(new Action(RestrictionInput.EndLoad), null, null));
 		}
 		if (isOpen)
 		{
@@ -244,11 +241,19 @@ public class CMD_PvPMatchingWait : CMD
 					param.isMockBattle = this.isMockBattle;
 					param.userMonsterIdList = idList;
 				},
-				OnReceived = new Action<GameWebAPI.RespData_ColosseumDeckEditLogic>(this.AfterColosseumDeckEdit)
+				OnReceived = delegate(GameWebAPI.RespData_ColosseumDeckEditLogic response)
+				{
+					GameWebAPI.RespData_ColosseumDeckEditLogic data = response;
+				}
 			};
-			yield return base.StartCoroutine(request2.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+			yield return base.StartCoroutine(request2.RunOneTime(delegate()
 			{
 				RestrictionInput.EndLoad();
+				this.AfterColosseumDeckEdit(data);
+			}, delegate(Exception noop)
+			{
+				RestrictionInput.EndLoad();
+				this.SetCancelBtn(true);
 			}, null));
 		}
 		else
@@ -384,9 +389,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_291;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map33 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map34 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map33 = new Dictionary<string, int>(9)
+							CMD_PvPMatchingWait.<>f__switch$map34 = new Dictionary<string, int>(9)
 							{
 								{
 									"0",
@@ -427,7 +432,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map33.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map34.TryGetValue(text, out num))
 						{
 							goto IL_291;
 						}
@@ -538,9 +543,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_13D;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map34 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map35 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map34 = new Dictionary<string, int>(3)
+							CMD_PvPMatchingWait.<>f__switch$map35 = new Dictionary<string, int>(3)
 							{
 								{
 									"1",
@@ -557,7 +562,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map34.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map35.TryGetValue(text, out num))
 						{
 							goto IL_13D;
 						}
@@ -1252,11 +1257,16 @@ public class CMD_PvPMatchingWait : CMD
 
 	private void TCPPvPEnemyData()
 	{
+		int[] array = new int[this.mySelectIndexIdList.Length];
+		for (int i = 0; i < this.mySelectIndexIdList.Length; i++)
+		{
+			array[i] = int.Parse(this.mySelectIndexIdList[i]);
+		}
 		PvPEnemyData message = new PvPEnemyData
 		{
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.PvPEnemyData, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
 			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
-			indexId = this.mySelectIndexIdList
+			indexId = array
 		};
 		Singleton<TCPUtil>.Instance.SendMessageForTarget(TCPMessageType.PvPEnemyData, message, this.TCPSendUserIdList, "enemyData");
 		this.myPartyDataSendCheck = true;

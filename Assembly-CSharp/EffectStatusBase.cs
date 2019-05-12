@@ -70,19 +70,18 @@ public class EffectStatusBase
 		MonsterGroup,
 		GrowStep,
 		Quest,
-		Skill,
+		SkillId,
 		Suffer,
-		MonsterIntegrationGroup
+		MonsterIntegrationGroup,
+		SkillAttribute
 	}
 
 	public enum ExtraEffectType
 	{
 		Non,
-		Damage = 10,
-		SkillDamage,
+		SkillDamage = 10,
+		SkillPower,
 		SkillHit,
-		DefaultAttackDamage = 16,
-		DefaultAttackHit,
 		Atk = 21,
 		Def,
 		Hp,
@@ -108,6 +107,8 @@ public class EffectStatusBase
 		DropRateUp = 70,
 		ExtaraStageRateUp,
 		DropCountUp,
+		FloorLotUp,
+		SpeedClearDropCountUp,
 		StageEffextInvalid = 80,
 		LeaderChange = 90
 	}
@@ -117,7 +118,8 @@ public class EffectStatusBase
 		Non,
 		Overwrite,
 		Ratio,
-		Fixed
+		Fixed,
+		SingleBootFixed = 13
 	}
 
 	public enum EffectTriggerType
@@ -148,7 +150,16 @@ public class EffectStatusBase
 		MonsterIntegrationGroupId,
 		SkillDamageStartedSend,
 		SkillDamageStartedRecieve,
+		SkillDamageHitSend,
+		SkillDamageHitRecieve,
 		SkillDamageEndSend,
-		SkillDamageEndRecieve
+		SkillDamageEndRecieve,
+		DamagePossibility,
+		SkillDamageStartedSendEvery,
+		SkillDamageStartedRecieveEvery,
+		SkillDamageHitSendEvery,
+		SkillDamageHitRecieveEvery,
+		SkillDamageEndSendEvery,
+		SkillDamageEndRecieveEvery
 	}
 }

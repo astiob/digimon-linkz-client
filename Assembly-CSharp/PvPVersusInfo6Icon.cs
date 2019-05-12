@@ -7,8 +7,8 @@ using UnityEngine;
 
 public sealed class PvPVersusInfo6Icon : MonoBehaviour
 {
-	[SerializeField]
 	[Header("対人戦の名称を表示するスプライト")]
+	[SerializeField]
 	private TextMeshPro title;
 
 	[Header("ユーザー情報を表示するUIのルート")]
@@ -19,12 +19,12 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[Header("自分の情報を表示するUI群")]
 	private PvPVersusInfo6Icon.UserDataUI myDataUI;
 
-	[Header("相手の情報を表示するUI群")]
 	[SerializeField]
+	[Header("相手の情報を表示するUI群")]
 	private PvPVersusInfo6Icon.UserDataUI opponentDataUI;
 
-	[Header("背景のDepth値")]
 	[SerializeField]
+	[Header("背景のDepth値")]
 	private int backgroundDepth;
 
 	[SerializeField]
@@ -69,6 +69,12 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	{
 		this.SetUserInfo(userDataList[0], this.myDataUI);
 		this.SetUserInfo(userDataList[1], this.opponentDataUI);
+	}
+
+	public void SetUserInfo(MultiBattleData.PvPUserData myData, MultiBattleData.PvPUserData opponentData)
+	{
+		this.SetUserInfo(myData, this.myDataUI);
+		this.SetUserInfo(opponentData, this.opponentDataUI);
 	}
 
 	private void SetUserInfo(MultiBattleData.PvPUserData userData, PvPVersusInfo6Icon.UserDataUI ui)

@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UIWidget))]
+[ExecuteInEditMode]
 public class AnimatedColor : MonoBehaviour
 {
 	public Color color = Color.white;

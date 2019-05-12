@@ -39,8 +39,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private UILabel possessionClusterLabel;
 
-	[Header("消費クラスタ")]
 	[SerializeField]
+	[Header("消費クラスタ")]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -176,7 +176,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		APIRequestTask task = DataMng.Instance().RequestMyPageData(false);
 		AppCoroutine.Start(task.Run(delegate
 		{
-			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
+			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 			FarmCameraControlForCMD.On();
 			this.ClosePanel(animation);
 			RestrictionInput.EndLoad();

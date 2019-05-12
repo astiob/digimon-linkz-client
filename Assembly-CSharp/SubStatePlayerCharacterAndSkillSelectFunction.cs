@@ -33,6 +33,8 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 		}
 		else if (base.hierarchyData.onAutoPlay == 0)
 		{
+			CharacterStateControl[] totalCharacters = base.stateManager.battleStateData.GetTotalCharacters();
+			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(totalCharacters);
 			base.stateManager.callAction.HideMonsterDescription();
 			base.stateManager.callAction.ForceHideSkillDescription();
 			base.stateManager.targetSelect.TargetManualSelectAndApplyUIFunction(null);

@@ -122,6 +122,7 @@ public sealed class FarmObject_DigiGarden : FarmObject
 
 	public override void OnResumeFromCache()
 	{
+		base.SetNamePlate(true);
 		this.SetAutoActiveCanEvolveParticle();
 	}
 }

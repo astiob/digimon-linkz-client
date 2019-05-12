@@ -8,12 +8,12 @@ public class BattleStartAction : MonoBehaviour
 	[SerializeField]
 	private GameObject titleRoot;
 
-	[Header("味方のリーダースキルのUI")]
 	[SerializeField]
+	[Header("味方のリーダースキルのUI")]
 	private BattleStartAction.LeaderSkillUI playerLeaderSkillUI;
 
-	[Header("敵のリーダースキルのUI")]
 	[SerializeField]
+	[Header("敵のリーダースキルのUI")]
 	private BattleStartAction.LeaderSkillUI enemyLeaderSkillUI;
 
 	[Header("VSの時のメッセージ")]
@@ -88,16 +88,16 @@ public class BattleStartAction : MonoBehaviour
 	[Serializable]
 	private struct LeaderSkillUI
 	{
-		[Header("味方スキル発動ローカライズ")]
 		[SerializeField]
+		[Header("味方スキル発動ローカライズ")]
 		public UILabel leaderSkillLocalize;
 
-		[Header("リーダースキルのオブジェクト")]
 		[SerializeField]
+		[Header("リーダースキルのオブジェクト")]
 		public GameObject leaderSkillUIPlayer;
 
-		[Header("リーダースキルの名前")]
 		[SerializeField]
+		[Header("リーダースキルの名前")]
 		public UILabel leaderSkillNamePlayer;
 	}
 }

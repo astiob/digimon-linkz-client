@@ -39,12 +39,6 @@ public class CMD_OptionSettings : CMD
 	private UILabel autoButtonOffLabel;
 
 	[SerializeField]
-	private UILabel autoButtonTitleLabel;
-
-	[SerializeField]
-	private UILabel autoButtonTextLabel;
-
-	[SerializeField]
 	private List<UILabel> pushNoticeOnLabel;
 
 	[SerializeField]
@@ -92,28 +86,10 @@ public class CMD_OptionSettings : CMD
 	private CMD_OptionSettings.SettingType settingType;
 
 	[SerializeField]
-	private UILabel soundVolumeSettingTitle;
-
-	[SerializeField]
-	private UILabel soundVolumeSettingInfo;
-
-	[SerializeField]
-	private UILabel soundVolumeBgmLabel;
-
-	[SerializeField]
-	private UILabel soundVolumeSeLabel;
-
-	[SerializeField]
 	private GameObject goLanguageSettings;
 
 	[SerializeField]
 	private UIWidget widgetWindow;
-
-	[SerializeField]
-	private UILabel languageSettingTitle;
-
-	[SerializeField]
-	private UILabel languageChangeBtn;
 
 	[SerializeField]
 	private UILabel currentLanguageSetting;
@@ -223,30 +199,6 @@ public class CMD_OptionSettings : CMD
 			base.MultiTab.SetOnOffColor(ConstValue.TAB_YELLOW, Color.white);
 			base.MultiTab.SetFocus(1);
 		}
-		if (null != this.soundVolumeSettingTitle)
-		{
-			this.soundVolumeSettingTitle.text = StringMaster.GetString("Option-01");
-		}
-		if (null != this.soundVolumeSettingInfo)
-		{
-			this.soundVolumeSettingInfo.text = StringMaster.GetString("Option-02");
-		}
-		if (null != this.soundVolumeBgmLabel)
-		{
-			this.soundVolumeBgmLabel.text = StringMaster.GetString("Option-03");
-		}
-		if (null != this.soundVolumeSeLabel)
-		{
-			this.soundVolumeSeLabel.text = StringMaster.GetString("Option-04");
-		}
-		if (null != this.languageSettingTitle)
-		{
-			this.languageSettingTitle.text = StringMaster.GetString("OptionLanguageTitle");
-		}
-		if (null != this.languageChangeBtn)
-		{
-			this.languageChangeBtn.text = StringMaster.GetString("OptionLanguageBtn");
-		}
 		if (null != this.pushTitle)
 		{
 			this.pushTitle.text = StringMaster.GetString("Option-05");
@@ -290,14 +242,6 @@ public class CMD_OptionSettings : CMD
 		if (null != this.gardenEvolutionSubTitle)
 		{
 			this.gardenEvolutionSubTitle.text = StringMaster.GetString("Option-15");
-		}
-		if (null != this.autoButtonTitleLabel)
-		{
-			this.autoButtonTitleLabel.text = StringMaster.GetString("OptionAutoTitle");
-		}
-		if (null != this.autoButtonTextLabel)
-		{
-			this.autoButtonTextLabel.text = StringMaster.GetString("OptionAutoText");
 		}
 		this.CopyOptionList(OptionSetting.Instance.OptionList, this.editOptionList);
 		if (this.editOptionList != null)

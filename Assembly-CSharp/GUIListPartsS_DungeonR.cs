@@ -14,16 +14,16 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
-	[Header("ステージ数用のラベル")]
 	[SerializeField]
+	[Header("ステージ数用のラベル")]
 	private UILabel ngTXT_STAGE;
 
 	[SerializeField]
 	[Header("ステージ名用のラベル")]
 	private UILabel ngTXT_STAGE_NAME;
 
-	[SerializeField]
 	[Header("消費スタミナ用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAMINA;
 
 	[SerializeField]
@@ -38,24 +38,24 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private Color colorNormalStage;
 
-	[Header("マルチ専用のステージ色")]
 	[SerializeField]
+	[Header("マルチ専用のステージ色")]
 	private Color colorMultiStage;
 
-	[Header("ソロ専用のステージ色")]
 	[SerializeField]
+	[Header("ソロ専用のステージ色")]
 	private Color colorSoloStage;
 
-	[SerializeField]
 	[Header("イベント用のステージ背景色")]
+	[SerializeField]
 	private Color colorEventStageBackground;
 
 	[Header("####ソロとマルチステージ名装飾色")]
 	[SerializeField]
 	private Color colorSoloMultiStageNameOutline;
 
-	[SerializeField]
 	[Header("####マルチ専用名装飾色")]
+	[SerializeField]
 	private Color colorMultiStageNameOutline;
 
 	[SerializeField]
@@ -66,8 +66,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("イベント用のステージ名装飾色")]
 	private Color colorEventStageNameOutline;
 
-	[SerializeField]
 	[Header("背景色のパーツ（板）")]
+	[SerializeField]
 	private UISprite backgroundBord;
 
 	[Header("背景色のパーツ（ライン）")]
@@ -82,8 +82,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("回数限定用グレーアウトSPR素材")]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
-	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
+	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
 	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
@@ -132,7 +132,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 
 	public string StageNum { private get; set; }
 
-	public QuestData.WorldDungeonData Data { get; set; }
+	public QuestData.WorldDungeonData WorldDungeonData { get; set; }
 
 	public bool IsEventStage { private get; set; }
 
@@ -155,7 +155,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
-		switch (this.Data.status)
+		switch (this.WorldDungeonData.status)
 		{
 		case 1:
 			this.goNEW.SetActive(false);
@@ -172,7 +172,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		}
 		if (this.ngTXT_STAGE != null)
 		{
-			if (ClassSingleton<QuestData>.Instance.ExistSortieLimit(this.Data.dungeon.worldDungeonId))
+			if (ClassSingleton<QuestData>.Instance.ExistSortieLimit(this.WorldDungeonData.dungeon.worldDungeonId))
 			{
 				this.ngTXT_STAGE.text = StringMaster.GetString("QuestLimited");
 			}
@@ -187,15 +187,15 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		}
 		if (this.ngTXT_STAGE_NAME != null)
 		{
-			this.ngTXT_STAGE_NAME.text = this.Data.worldDungeonM.name;
+			this.ngTXT_STAGE_NAME.text = this.WorldDungeonData.worldDungeonM.name;
 		}
 		if (!this.IsEventStage)
 		{
 			GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
-			this.campaignInfo = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown, this.Data.worldDungeonM.worldStageId);
+			this.campaignInfo = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown, this.WorldDungeonData.worldDungeonM.worldStageId);
 			if (this.ngTXT_STAMINA != null)
 			{
-				int num = int.Parse(this.Data.worldDungeonM.needStamina);
+				int num = int.Parse(this.WorldDungeonData.worldDungeonM.needStamina);
 				if (this.campaignInfo != null)
 				{
 					float num2 = (float)num;
@@ -205,7 +205,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 			}
 			if (null != this.backgroundBord && null != this.backgroundLine)
 			{
-				if (this.Data.worldDungeonM.IsMultiOnly())
+				if (this.WorldDungeonData.worldDungeonM.IsMultiOnly())
 				{
 					this.colorMultiStage.a = this.backgroundBord.color.a;
 					this.backgroundBord.color = this.colorMultiStage;
@@ -215,7 +215,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 					this.ngTXT_STAGE_NAME.effectColor = this.colorMultiStageNameOutline;
 					this.ngTXT_STAMINA.effectColor = this.colorMultiStageNameOutline;
 				}
-				else if (this.Data.worldDungeonM.IsSoloOnly())
+				else if (this.WorldDungeonData.worldDungeonM.IsSoloOnly())
 				{
 					this.colorSoloStage.a = this.backgroundBord.color.a;
 					this.backgroundBord.color = this.colorSoloStage;
@@ -236,9 +236,9 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 					this.ngTXT_STAMINA.effectColor = this.colorSoloMultiStageNameOutline;
 				}
 			}
-			if (DataMng.Instance().StageGimmick.DataDic.ContainsKey(this.Data.worldDungeonM.worldStageId))
+			if (DataMng.Instance().StageGimmick.DataDic.ContainsKey(this.WorldDungeonData.worldDungeonM.worldStageId))
 			{
-				bool flag = DataMng.Instance().StageGimmick.DataDic[this.Data.worldDungeonM.worldStageId].ContainsKey(this.Data.worldDungeonM.worldDungeonId);
+				bool flag = DataMng.Instance().StageGimmick.DataDic[this.WorldDungeonData.worldDungeonM.worldStageId].ContainsKey(this.WorldDungeonData.worldDungeonM.worldDungeonId);
 				if (flag)
 				{
 					this.stateLabelColor.Add(new Color(1f, 0.94f, 0f));
@@ -250,7 +250,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 			DateTime now = ServerDateTime.Now;
 			for (int i = 0; i < respDataCP_Campaign.campaignInfo.Length; i++)
 			{
-				if (this.ExistCampaign(respDataCP_Campaign.campaignInfo[i].GetCmpIdByEnum()) && respDataCP_Campaign.campaignInfo[i].targetValue == this.Data.worldDungeonM.worldStageId && respDataCP_Campaign.campaignInfo[i].IsUnderway(now))
+				if (this.ExistCampaign(respDataCP_Campaign.campaignInfo[i].GetCmpIdByEnum()) && respDataCP_Campaign.campaignInfo[i].targetValue == this.WorldDungeonData.worldDungeonM.worldStageId && respDataCP_Campaign.campaignInfo[i].IsUnderway(now))
 				{
 					list.Add(respDataCP_Campaign.campaignInfo[i]);
 				}
@@ -287,15 +287,15 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		{
 			this.SetEventStageParts();
 		}
-		if (CMD_QuestTOP.instance != null)
+		if (null != CMD_QuestTOP.instance)
 		{
 			QuestData.WorldStageData worldStageData = CMD_QuestTOP.instance.GetWorldStageData();
-			if (worldStageData.worldStageM.worldAreaId == "8")
+			if ("8" == worldStageData.worldStageM.worldAreaId)
 			{
 				this.ngTXT_TICKET_LEFT.gameObject.SetActive(true);
-				if (!string.IsNullOrEmpty(this.Data.dungeon.dungeonTicketNum))
+				if (!string.IsNullOrEmpty(this.WorldDungeonData.dungeon.dungeonTicketNum))
 				{
-					this.ngTXT_TICKET_LEFT.text = string.Format(StringMaster.GetString("TicketQuestLeftNum"), int.Parse(this.Data.dungeon.dungeonTicketNum));
+					this.ngTXT_TICKET_LEFT.text = string.Format(StringMaster.GetString("TicketQuestLeftNum"), int.Parse(this.WorldDungeonData.dungeon.dungeonTicketNum));
 				}
 				else
 				{
@@ -313,12 +313,11 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 
 	public void RefreshShowPlayLimit()
 	{
-		if (this.Data.dungeon.playLimit != null)
+		if (this.WorldDungeonData.dungeon.playLimit != null)
 		{
 			this.ngTXT_PLAY_LIMIT.gameObject.SetActive(true);
-			GameWebAPI.RespDataWD_GetDungeonInfo.PlayLimit playLimit = this.Data.dungeon.playLimit;
+			GameWebAPI.RespDataWD_GetDungeonInfo.PlayLimit playLimit = this.WorldDungeonData.dungeon.playLimit;
 			int num = int.Parse(playLimit.restCount);
-			int num2 = int.Parse(playLimit.maxCount);
 			this.ngTXT_PLAY_LIMIT.gameObject.SetActive(false);
 			this.ngTXT_TICKET_LEFT.gameObject.SetActive(false);
 			this.spGRAYOUT_PLAY_LIMIT.gameObject.SetActive(false);
@@ -335,28 +334,25 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 			{
 				if (playLimit.dailyResetFlg == "1")
 				{
-					text += string.Format(StringMaster.GetString("PlayLimitQuestRestCT_1"), num, num2);
+					text += string.Format(StringMaster.GetString("PlayLimitQuestRestCT_4"), num);
 				}
 				else
 				{
-					text += string.Format(StringMaster.GetString("PlayLimitQuestRestCT_2"), num, num2);
+					text += string.Format(StringMaster.GetString("PlayLimitQuestRestCT_3"), num);
 				}
 			}
 			else
 			{
-				if (num <= 0)
+				if (0 >= num)
 				{
 					text = string.Empty;
 					this.ngTXT_PLAY_LIMIT.gameObject.SetActive(true);
 					this.ngTXT_PLAY_LIMIT.text = StringMaster.GetString("PlayLimitQuestRestNone");
 					this.spGRAYOUT_PLAY_LIMIT.gameObject.SetActive(true);
 					GUICollider component = base.gameObject.GetComponent<GUICollider>();
-					if (component != null)
+					if (null != component)
 					{
 						component.activeCollider = false;
-					}
-					if (playLimit.dailyResetFlg == "0")
-					{
 					}
 					this.ngTXT_TICKET_LEFT.text = text;
 					return;
@@ -377,9 +373,9 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 
 	private void ShowNoContinue()
 	{
-		if (this.ngTXT_NO_CONTINUE != null)
+		if (null != this.ngTXT_NO_CONTINUE)
 		{
-			if (this.Data.worldDungeonM.canContinue == "1")
+			if (this.WorldDungeonData.worldDungeonM.canContinue == "1")
 			{
 				this.ngTXT_NO_CONTINUE.text = string.Empty;
 			}
@@ -392,16 +388,12 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 
 	private void ShowLockStatus()
 	{
-		if (this.Data.status == 1)
+		if (this.WorldDungeonData.status == 1)
 		{
-			this.dngStartCondition_OR_DataList = ClassSingleton<QuestData>.Instance.GetDngStartCondition_OR_DataList(this.Data.wdscMList);
+			this.dngStartCondition_OR_DataList = ClassSingleton<QuestData>.Instance.GetDngStartCondition_OR_DataList(this.WorldDungeonData.wdscMList);
 			if (this.dngStartCondition_OR_DataList.Count <= 0)
 			{
 				this.ngSPR_LOCK.gameObject.SetActive(false);
-			}
-			else if (this.dngStartCondition_OR_DataList.Count <= 1 && this.dngStartCondition_OR_DataList[0].DSCondition_AND_List.Count <= 1)
-			{
-				this.ngSPR_LOCK.gameObject.SetActive(true);
 			}
 			else
 			{
@@ -503,7 +495,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 			float magnitude = (this.beganPostion - pos).magnitude;
 			if (magnitude < 40f && !this.isTouchEndFromChild)
 			{
-				if (this.Data.status == 1)
+				if (this.WorldDungeonData.status == 1)
 				{
 					string text = this.MakeStringLockStatus();
 					if (!string.IsNullOrEmpty(text))
@@ -517,7 +509,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 				{
 					if (CMD_QuestTOP.instance != null)
 					{
-						CMD_QuestTOP.instance.OnClickedDungeon(this.Data, this.ngTXT_STAGE.text, this.campaignInfo);
+						CMD_QuestTOP.instance.OnClickedDungeon(this.WorldDungeonData, this.ngTXT_STAGE.text, this.campaignInfo);
 					}
 				}
 				else
@@ -535,7 +527,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	protected override void Update()
 	{
 		base.Update();
-		if (this.Data == null)
+		if (this.WorldDungeonData == null)
 		{
 			return;
 		}
@@ -544,11 +536,6 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 			this.ShowDropItems();
 			this.isShowedDropItems = true;
 		}
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 
 	private void SetEventStageParts()
@@ -567,7 +554,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 
 	private void OnSelectEventStage()
 	{
-		if (this.Data.status == 4)
+		if (this.WorldDungeonData.status == 4)
 		{
 			QuestStart.OpenConfirmReplayEvent(new Action<int>(this.OnClosedEventConfirm));
 		}
@@ -589,16 +576,16 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	{
 		GameWebAPI.WD_Req_DngStart startInfo = new GameWebAPI.WD_Req_DngStart
 		{
-			dungeonId = this.Data.worldDungeonM.worldDungeonId,
+			dungeonId = this.WorldDungeonData.worldDungeonM.worldDungeonId,
 			deckNum = DataMng.Instance().RespDataMN_DeckList.selectDeckNum,
-			userDungeonTicketId = this.Data.dungeon.userDungeonTicketId
+			userDungeonTicketId = this.WorldDungeonData.dungeon.userDungeonTicketId
 		};
 		QuestStart.StartEventStage(startInfo);
 	}
 
 	private void ShowDropItems()
 	{
-		GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dungeon = this.Data.dungeon;
+		GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dungeon = this.WorldDungeonData.dungeon;
 		List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset> list = new List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset>();
 		for (int i = 0; i < dungeon.dropAssets.Length; i++)
 		{
@@ -642,7 +629,11 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	{
 		this.ngSPR_NEW.spriteName = this.clearMark;
 		this.ngSPR_NEW.MakePixelPerfect();
-		this.ngSPR_NEW.GetComponent<UITweener>().enabled = false;
+		UITweener component = this.ngSPR_NEW.GetComponent<UITweener>();
+		if (null != component)
+		{
+			component.enabled = false;
+		}
 		this.ngSPR_NEW.alpha = 1f;
 	}
 }

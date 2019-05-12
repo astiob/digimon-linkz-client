@@ -341,7 +341,7 @@ public class CloudBackup
 		{
 			yield return AppCoroutine.Start(this.GetInquiryCode(), false);
 		}
-		if (!GooglePlayGamesTool.Instance.IsSignIn)
+		if (!GooglePlayGamesTool.Instance.IsSignIn && PlayerPrefs.GetInt("IsSignOutGoogle", 0) == 0)
 		{
 			yield return AppCoroutine.Start(this.SignInGoogle(), false);
 		}

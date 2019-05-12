@@ -24,12 +24,12 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
-	[Header("外枠のスプライト")]
 	[SerializeField]
+	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[Header("NEWのスプライト")]
 	[SerializeField]
+	[Header("NEWのスプライト")]
 	private UISprite newSprite;
 
 	[Header("NEWをコントロールする")]

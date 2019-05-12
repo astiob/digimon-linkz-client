@@ -225,7 +225,7 @@ public class CMD_GashaTOP : CMD
 		APIRequestTask task = DataMng.Instance().RequestMyPageData(false);
 		return task.Run(delegate
 		{
-			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
+			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 			this.Finalize(animation);
 			RestrictionInput.EndLoad();
 		}, delegate(Exception noop)

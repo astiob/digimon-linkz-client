@@ -81,15 +81,11 @@ public class CharacterStateControlChip
 
 	public int stageChipAddSpeed { get; private set; }
 
-	public bool isDropRateUp { get; private set; }
-
-	public bool isDropCountUp { get; private set; }
-
-	public bool isExtaraStageRateUp { get; private set; }
+	public bool isServerAddValue { get; private set; }
 
 	public CharacterStateControlChip.GutsData gutsData { get; private set; }
 
-	public static CharacterStateControlChip GetNullObect()
+	public static CharacterStateControlChip GetNullObject()
 	{
 		return new CharacterStateControlChip();
 	}
@@ -242,6 +238,24 @@ public class CharacterStateControlChip
 		}
 	}
 
+	public void RemovePotencyChip(EffectStatusBase.EffectTriggerType triggerType)
+	{
+		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+		foreach (int num in this.potencyChipIdList.Keys)
+		{
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(num.ToString());
+			if (chipEffectDataToId != null && chipEffectDataToId.effectTrigger.ToInt32() == (int)triggerType)
+			{
+				list.Add(chipEffectDataToId);
+			}
+		}
+		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in list)
+		{
+			this.potencyChipIdList.Remove(chipEffect.chipEffectId.ToInt32());
+		}
+		this.AddChipParam(false, list.ToArray(), true, false);
+	}
+
 	private List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> GetChipTriggerList(EffectStatusBase.EffectTriggerType triggerType)
 	{
 		if (!this.triggerChips.ContainsKey(triggerType))
@@ -275,140 +289,125 @@ public class CharacterStateControlChip
 			bool flag = true;
 			if (!this.potencyChipIdList.ContainsKey(num))
 			{
-				int num2 = 10000;
-				if (chipEffect.lot != null && chipEffect.lot.Length > 0)
+				if (this.chipEffectCount.ContainsKey(num))
 				{
-					num2 = chipEffect.lot.ToInt32();
+					if (this.chipEffectCount[num] <= 0)
+					{
+						goto IL_3AB;
+					}
+					Dictionary<int, int> dictionary2;
+					Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
+					int num2;
+					int key = num2 = num;
+					num2 = dictionary2[num2];
+					dictionary[key] = num2 - 1;
 				}
-				if (num2 > 0)
+				if (chipEffect.effectType.ToInt32() == 57)
 				{
-					if (num2 != 10000)
+					int value;
+					if (chipEffect.effectSubType.ToInt32() == 1)
 					{
-						int num3 = UnityEngine.Random.Range(0, 10000);
-						if (num3 > num2)
-						{
-							goto IL_305;
-						}
+						value = chipEffect.effectValue.ToInt32();
 					}
-					if (this.chipEffectCount.ContainsKey(num))
+					else if (chipEffect.effectSubType.ToInt32() == 2)
 					{
-						if (this.chipEffectCount[num] <= 0)
-						{
-							goto IL_305;
-						}
-						Dictionary<int, int> dictionary2;
-						Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
-						int num4;
-						int key = num4 = num;
-						num4 = dictionary2[num4];
-						dictionary[key] = num4 - 1;
+						value = chipEffect.effectValue.ToInt32();
 					}
-					if (chipEffect.effectType.ToInt32() == 57)
+					else if (chipEffect.effectSubType.ToInt32() == 3)
 					{
-						int value;
-						if (chipEffect.effectSubType.ToInt32() == 1)
-						{
-							value = chipEffect.effectValue.ToInt32();
-						}
-						else if (chipEffect.effectSubType.ToInt32() == 2)
-						{
-							value = chipEffect.effectValue.ToInt32();
-						}
-						else if (chipEffect.effectSubType.ToInt32() == 3)
-						{
-							value = (int)((float)this.characterStateControl.extraMaxHp * chipEffect.effectValue.ToFloat());
-						}
-						else
-						{
-							value = chipEffect.effectValue.ToInt32();
-						}
-						int hp = Mathf.Clamp(value, 1, this.characterStateControl.extraMaxHp);
-						this.gutsData = new CharacterStateControlChip.GutsData(chipEffect.chipId, chipEffect.chipEffectId, hp);
-						flag = false;
+						value = (int)((float)this.characterStateControl.extraMaxHp * chipEffect.effectValue.ToFloat());
 					}
-					if (chipEffect.effectType.ToInt32() == 61)
+					else
 					{
-						BattleServerControl serverControl = BattleStateManager.current.serverControl;
-						List<AffectEffectProperty> affectEffectPropertyList = serverControl.GetAffectEffectPropertyList(chipEffect.effectValue);
-						if (affectEffectPropertyList != null)
+						value = chipEffect.effectValue.ToInt32();
+					}
+					int hp = Mathf.Clamp(value, 1, this.characterStateControl.extraMaxHp);
+					this.gutsData = new CharacterStateControlChip.GutsData(chipEffect.chipId, chipEffect.chipEffectId, hp);
+					flag = false;
+				}
+				if (chipEffect.effectType.ToInt32() == 61)
+				{
+					bool flag2 = false;
+					if (chipEffect.effectTrigger.ToInt32() == 31 || chipEffect.effectTrigger.ToInt32() == 32 || chipEffect.effectTrigger.ToInt32() == 33 || chipEffect.effectTrigger.ToInt32() == 34 || chipEffect.effectTrigger.ToInt32() == 35 || chipEffect.effectTrigger.ToInt32() == 36)
+					{
+						flag2 = true;
+					}
+					BattleServerControl serverControl = BattleStateManager.current.serverControl;
+					List<AffectEffectProperty> affectEffectPropertyList = serverControl.GetAffectEffectPropertyList(chipEffect.effectValue);
+					if (affectEffectPropertyList != null)
+					{
+						foreach (AffectEffectProperty affectEffectProperty in affectEffectPropertyList)
 						{
-							foreach (AffectEffectProperty addAffectEffect in affectEffectPropertyList)
+							if (flag2)
 							{
-								this.characterStateControl.currentSkillStatus.AddAffectEffect(addAffectEffect);
+								EffectStatusBase.EffectTriggerType key2 = (EffectStatusBase.EffectTriggerType)chipEffect.effectTrigger.ToInt32();
+								if (!this.characterStateControl.everySkillList.ContainsKey(key2))
+								{
+									this.characterStateControl.everySkillList.Add(key2, new List<AffectEffectProperty>());
+								}
+								this.characterStateControl.everySkillList[key2].Add(affectEffectProperty);
+							}
+							else
+							{
+								this.characterStateControl.currentSkillStatus.AddAffectEffect(affectEffectProperty);
 							}
 						}
 					}
-					if (chipEffect.effectType.ToInt32() == 70)
-					{
-						this.isDropRateUp = true;
-					}
-					if (chipEffect.effectType.ToInt32() == 72)
-					{
-						this.isDropCountUp = true;
-					}
-					if (chipEffect.effectType.ToInt32() == 71)
-					{
-						this.isExtaraStageRateUp = true;
-					}
-					list.Add(chipEffect);
-					if (chipEffect.effectType.ToInt32() != 60 && chipEffect.effectType.ToInt32() != 61 && chipEffect.effectType.ToInt32() != 56)
-					{
-						this.potencyChipIdList.Add(num, chipEffect.targetType.ToInt32());
-					}
-					if (flag && !this.stagingChipIdList.ContainsKey(num))
-					{
-						this.stagingChipIdList.Add(num, chipEffect.chipId.ToInt32());
-					}
+					flag = false;
+				}
+				if (chipEffect.effectType.ToInt32() == 70 || chipEffect.effectType.ToInt32() == 72 || chipEffect.effectType.ToInt32() == 71 || chipEffect.effectType.ToInt32() == 73 || chipEffect.effectType.ToInt32() == 74)
+				{
+					this.isServerAddValue = true;
+				}
+				list.Add(chipEffect);
+				if (chipEffect.effectType.ToInt32() != 57 && chipEffect.effectType.ToInt32() != 60 && chipEffect.effectType.ToInt32() != 61 && chipEffect.effectType.ToInt32() != 56 && !this.potencyChipIdList.ContainsKey(num))
+				{
+					this.potencyChipIdList.Add(num, chipEffect.targetType.ToInt32());
+				}
+				if (flag && !this.stagingChipIdList.ContainsKey(num))
+				{
+					this.stagingChipIdList.Add(num, chipEffect.chipId.ToInt32());
 				}
 			}
-			IL_305:;
+			IL_3AB:;
 		}
 		return list;
 	}
 
 	public void RemoveDeadStagingChips()
 	{
-		if (BattleStateManager.current != null)
+		if (BattleStateManager.current == null)
 		{
-			int num = 0;
-			if (this.characterStateControl.isEnemy)
+			return;
+		}
+		Dictionary<int, int> dictionary = new Dictionary<int, int>();
+		foreach (KeyValuePair<int, int> keyValuePair in this.stagingChipIdList)
+		{
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(keyValuePair.Key.ToString());
+			if (chipEffectDataToId.effectTrigger.ToInt32() == 6)
 			{
-				foreach (CharacterStateControl characterStateControl in BattleStateManager.current.battleStateData.enemies)
+				List<AffectEffectProperty> affectEffectPropertyList = BattleStateManager.current.serverControl.GetAffectEffectPropertyList(chipEffectDataToId.effectValue);
+				if (affectEffectPropertyList != null)
 				{
-					if (!characterStateControl.isDied)
+					foreach (AffectEffectProperty affectEffectProperty in affectEffectPropertyList)
 					{
-						num++;
-					}
-				}
-			}
-			else
-			{
-				foreach (CharacterStateControl characterStateControl2 in BattleStateManager.current.battleStateData.playerCharacters)
-				{
-					if (!characterStateControl2.isDied)
-					{
-						num++;
-					}
-				}
-			}
-			if (num == 0)
-			{
-				if (this.characterStateControl.isEnemy)
-				{
-					foreach (CharacterStateControl characterStateControl3 in BattleStateManager.current.battleStateData.enemies)
-					{
-						characterStateControl3.ClearStagingChipIdList();
-					}
-				}
-				else
-				{
-					foreach (CharacterStateControl characterStateControl4 in BattleStateManager.current.battleStateData.playerCharacters)
-					{
-						characterStateControl4.ClearStagingChipIdList();
+						CharacterStateControl[] skillTargetList = BattleStateManager.current.targetSelect.GetSkillTargetList(this.characterStateControl, affectEffectProperty.target);
+						if (skillTargetList.Length != 0)
+						{
+							if (dictionary.ContainsKey(keyValuePair.Key))
+							{
+								dictionary[keyValuePair.Key] = keyValuePair.Value;
+							}
+							else
+							{
+								dictionary.Add(keyValuePair.Key, keyValuePair.Value);
+							}
+						}
 					}
 				}
 			}
 		}
+		this.stagingChipIdList = dictionary;
 	}
 
 	private void AddChipParam(bool isAdd, GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects, bool isAll = true, bool isArea = false)
@@ -539,11 +538,18 @@ public class CharacterStateControlChip
 	{
 		if (this.gutsData != null)
 		{
-			int value = this.gutsData.chipId.ToInt32();
-			int key = this.gutsData.chipEffectId.ToInt32();
-			if (!this.stagingChipIdList.ContainsKey(key))
+			if (!this.gutsData.isUse)
 			{
-				this.stagingChipIdList.Add(key, value);
+				this.AddChipEffectCount(this.gutsData.chipEffectId.ToInt32(), 1);
+			}
+			else
+			{
+				int value = this.gutsData.chipId.ToInt32();
+				int key = this.gutsData.chipEffectId.ToInt32();
+				if (!this.stagingChipIdList.ContainsKey(key))
+				{
+					this.stagingChipIdList.Add(key, value);
+				}
 			}
 		}
 		this.gutsData = null;
@@ -551,6 +557,8 @@ public class CharacterStateControlChip
 
 	public class GutsData
 	{
+		public bool isUse;
+
 		public GutsData(string chipId, string chipEffectId, int hp)
 		{
 			this.chipId = chipId;

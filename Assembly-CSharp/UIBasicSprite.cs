@@ -3,12 +3,12 @@ using UnityEngine;
 
 public abstract class UIBasicSprite : UIWidget
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIBasicSprite.Type mType;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIBasicSprite.FillDirection mFillDirection = UIBasicSprite.FillDirection.Radial360;
 
 	[HideInInspector]

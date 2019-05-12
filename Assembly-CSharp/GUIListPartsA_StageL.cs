@@ -11,12 +11,12 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[SerializeField]
 	private string normalProgress = "Common02_ProgressG";
 
-	[Header("クリア進捗の画像")]
 	[SerializeField]
+	[Header("クリア進捗の画像")]
 	private string clearProgress = "Common02_Progress";
 
-	[Header("進捗の四角")]
 	[SerializeField]
+	[Header("進捗の四角")]
 	private List<GameObject> goPROGRESS_LIST;
 
 	[Header("NEWのGameObject")]
@@ -27,8 +27,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("[の画像のGameObject")]
 	private GameObject goFRAME_L;
 
-	[SerializeField]
 	[Header("]の画像のGameObject")]
+	[SerializeField]
 	private GameObject goFRAME_R;
 
 	[SerializeField]
@@ -37,18 +37,18 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[SerializeField]
 	private GameObject goTXT_AREA_NAME;
 
-	[Header("選択時の背景色")]
 	[SerializeField]
+	[Header("選択時の背景色")]
 	private Color backgroundColor = Util.convertColor(0f, 100f, 0f, 200f);
 
-	[SerializeField]
 	[Header("非選択時の背景色")]
+	[SerializeField]
 	private Color backgroundColorOff = Util.convertColor(0f, 200f, 0f, 70f);
 
 	private Color defalutBackground2Color;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite background;
 
 	private UILabel ngTXT_AREA;
@@ -58,12 +58,12 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("進捗マークのスプライト")]
 	private List<UISprite> progressSprites;
 
-	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
+	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("クリアのマークの画像")]
+	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
 	[SerializeField]
@@ -183,13 +183,9 @@ public class GUIListPartsA_StageL : GUIListPartBS
 			{
 				this.ngTXT_AREA.text = StringMaster.GetString("QuestSpecial");
 			}
-			else if (this.data.worldStageM.worldStageId.Length <= 1)
-			{
-				this.ngTXT_AREA.text = StringMaster.GetString("QuestArea") + " 0" + this.data.worldStageM.worldStageId;
-			}
 			else
 			{
-				this.ngTXT_AREA.text = StringMaster.GetString("QuestArea") + " " + this.data.worldStageM.worldStageId;
+				this.ngTXT_AREA.text = string.Format(StringMaster.GetString("GUIListPartsA_txt"), int.Parse(this.data.worldStageM.worldStageId));
 			}
 		}
 		if (this.ngTXT_AREA_NAME != null)

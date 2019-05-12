@@ -96,6 +96,7 @@ public class GUIScreenHome : GUIScreen
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
 		yield return base.StartCoroutine(tutorialObserver.StartGuidance(new Action<bool>(this.StartedGuidance)));
 		GUIFace.SetFacilityAlertIcon();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetParticleMissionIcon();
 		yield break;
 	}
 
@@ -125,7 +126,8 @@ public class GUIScreenHome : GUIScreen
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		this.MissionProcess();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.MissionTapCheck();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(false);
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 		ClassSingleton<FaceNewsAccessor>.Instance.faceNews.SetBadgeOnly();
 		ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.FrinedListCheck();
@@ -205,12 +207,6 @@ public class GUIScreenHome : GUIScreen
 			GUIScreenHome.homeOpenCallback();
 			GUIScreenHome.homeOpenCallback = null;
 		}
-	}
-
-	private void MissionProcess()
-	{
-		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.MissionTapCheck();
-		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
 	}
 
 	protected IEnumerator CreateFarm()
@@ -326,7 +322,6 @@ public class GUIScreenHome : GUIScreen
 			if (0 < showNum)
 			{
 				this.isInfoShowed = true;
-				Partytrack.start(5789, "07e569a17368b4a04e0eed94ee2937f3");
 			}
 		}
 		yield break;
@@ -500,5 +495,20 @@ public class GUIScreenHome : GUIScreen
 	{
 		List<string> battleCommon = AssetDataCacheData.GetBattleCommon();
 		AssetDataCacheMng.Instance().RegisterCacheType(battleCommon, AssetDataCacheMng.CACHE_TYPE.BATTLE_COMMON, false);
+	}
+
+	private IEnumerator checkAndSyncCountryCode()
+	{
+		if (!DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.countryCode.Equals(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN)))
+		{
+			GameWebAPI.RequestUS_RegisterLanguageInfo requestUS_RegisterLanguageInfo = new GameWebAPI.RequestUS_RegisterLanguageInfo();
+			requestUS_RegisterLanguageInfo.SetSendData = delegate(GameWebAPI.US_Req_RegisterLanguageInfo param)
+			{
+				param.countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			};
+			GameWebAPI.RequestUS_RegisterLanguageInfo request = requestUS_RegisterLanguageInfo;
+			yield return base.StartCoroutine(request.Run(null, null, null));
+		}
+		yield break;
 	}
 }

@@ -6,8 +6,8 @@ public class CMD_MultiBattleParticipateMenu : CMD
 {
 	public static CMD_MultiBattleParticipateMenu instance;
 
-	[SerializeField]
 	[Header("GameObject：参加")]
+	[SerializeField]
 	private GameObject goBtnParticipate;
 
 	[SerializeField]

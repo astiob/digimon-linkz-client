@@ -60,7 +60,7 @@ public class CommonDialog : GUICollider
 
 	private bool _opened;
 
-	private Action<int> actCallBackLast;
+	private Action actCallBackLast;
 
 	[SerializeField]
 	protected bool enableAndroidBackKey = true;
@@ -457,7 +457,7 @@ public class CommonDialog : GUICollider
 		this.act_status = CommonDialog.ACT_STATUS.CLOSED;
 	}
 
-	public void SetLastCallBack(Action<int> act)
+	public void SetLastCallBack(Action act)
 	{
 		this.actCallBackLast = act;
 	}
@@ -535,7 +535,7 @@ public class CommonDialog : GUICollider
 				this.WindowClosed();
 				if (this.actCallBackLast != null)
 				{
-					this.actCallBackLast(0);
+					this.actCallBackLast();
 				}
 			}
 		}

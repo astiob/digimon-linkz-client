@@ -80,25 +80,17 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		base.StartCoroutine(request.Run(delegate()
 		{
 			RestrictionInput.EndLoad();
-			this.AfterGetTcpShardingString(data);
-		}, delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-		}, null));
+			this.hostAddress = data.server;
+			global::Debug.Log("接続先TCPサーバは「" + this.hostAddress + "」です");
+			if (this.afterGetTcpShardingStringAction != null)
+			{
+				this.afterGetTcpShardingStringAction(data.server);
+			}
+		}, null, null));
 		this.parameter = new Dictionary<string, object>();
 		this.parameter.Add("X-AppVer", WebAPIPlatformValue.GetAppVersion());
 		this.header = new Dictionary<string, object>();
 		this.header.Add("headers", this.parameter);
-	}
-
-	private void AfterGetTcpShardingString(GameWebAPI.RespData_GetTcpShardingString data)
-	{
-		this.hostAddress = data.server;
-		global::Debug.Log("接続先TCPサーバは「" + this.hostAddress + "」です");
-		if (this.afterGetTcpShardingStringAction != null)
-		{
-			this.afterGetTcpShardingStringAction(data.server);
-		}
 	}
 
 	public void SetTcpShardingString(GameWebAPI.RespData_GetTcpShardingString data)
@@ -151,7 +143,7 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		this.ResetAllCallBackMethod();
 	}
 
-	private void ResetAllCallBackMethod()
+	public void ResetAllCallBackMethod()
 	{
 		this.afterGetTcpShardingStringAction = null;
 		this.afterConnectTCPAction = null;
@@ -584,20 +576,22 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 
 	public IEnumerator SendSystemMessege(int cgi, string uid, string uname)
 	{
+		string msg = string.Format(StringMaster.GetString("ChatLog-01"), uname);
 		while (!Singleton<TCPUtil>.Instance.CheckPrepareTCPServer())
 		{
 			yield return null;
 		}
 		if (Singleton<TCPUtil>.Instance.ConnectTCPServer(uid))
 		{
-			base.StartCoroutine(this.SendChatMessage(cgi, string.Format(StringMaster.GetString("ChatLog-01"), uname), 3, null));
+			base.StartCoroutine(this.SendChatMessage(cgi, msg, 3, null));
 		}
 		yield break;
 	}
 
 	public void SendSystemMessegeAlreadyConnected(int cgi, string mes, string uname, Action<int> action = null)
 	{
-		base.StartCoroutine(this.SendChatMessage(cgi, string.Format(mes, uname), 3, action));
+		string message = string.Format(StringMaster.GetString(mes), uname);
+		base.StartCoroutine(this.SendChatMessage(cgi, message, 3, action));
 	}
 
 	public void OnJoinRoom(NpRoomParameter roomData)
@@ -659,5 +653,12 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		public int chatGroupId;
 
 		public string target;
+	}
+
+	public class SystemMsg
+	{
+		public string key;
+
+		public string uname;
 	}
 }

@@ -18,4 +18,9 @@ public sealed class TitleIconCacheBuffer : AssetDataCacheBuffer
 		}
 		return TitleIconCacheBuffer.instance;
 	}
+
+	public static void ClearCacheBuffer()
+	{
+		TitleIconCacheBuffer.instance = null;
+	}
 }

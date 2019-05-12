@@ -68,6 +68,8 @@ public class BattleInitialize : BattleFunctionBase
 			characterParams.SetShadowObject();
 			yield return null;
 		}
+		characterParams.PlayIdleAnimation();
+		yield return null;
 		characterParams.Initialize(base.hierarchyData.cameraObject.camera3D);
 		GameObject hasColliderObject = characterParams.collider.gameObject;
 		BattleStateData battleStateData = base.battleStateData;
@@ -113,329 +115,328 @@ public class BattleInitialize : BattleFunctionBase
 				}
 			}
 		}
-		if (flag)
-		{
-			string effectId = "EFF_COM_S_HEAL";
-			Action<HitEffectParams, int> result = delegate(HitEffectParams h, int index)
-			{
-				base.battleStateData.drainEffect = h;
-			};
-			IEnumerator item3 = base.stateManager.initialize.LoadHitEffect(effectId, 0, result);
-			list.Add(item3);
-		}
 		foreach (AffectEffect affectEffect in list2)
 		{
 			if (affectEffect == AffectEffect.Damage)
 			{
 				string hitEffectId3 = "EFF_COM_HIT_NORMAL";
-				IEnumerator item4 = this.LoadHitEffects(hitEffectId3, AffectEffect.Damage, Strength.None, true);
-				list.Add(item4);
+				IEnumerator item3 = this.LoadHitEffects(hitEffectId3, AffectEffect.Damage, Strength.None, true);
+				list.Add(item3);
 				string hitEffectId4 = "EFF_COM_HIT_WEAK";
-				IEnumerator item5 = this.LoadHitEffects(hitEffectId4, AffectEffect.Damage, Strength.Strong, true);
-				list.Add(item5);
+				IEnumerator item4 = this.LoadHitEffects(hitEffectId4, AffectEffect.Damage, Strength.Strong, true);
+				list.Add(item4);
 				string hitEffectId5 = "EFF_COM_HIT_CRITICAL";
-				IEnumerator item6 = this.LoadHitEffects(hitEffectId5, AffectEffect.Damage, Strength.Weak, true);
-				list.Add(item6);
+				IEnumerator item5 = this.LoadHitEffects(hitEffectId5, AffectEffect.Damage, Strength.Weak, true);
+				list.Add(item5);
 				string hitEffectId6 = "EFF_COM_HIT_WEAK";
-				IEnumerator item7 = this.LoadHitEffects(hitEffectId6, AffectEffect.Damage, Strength.Invalid, true);
+				IEnumerator item6 = this.LoadHitEffects(hitEffectId6, AffectEffect.Damage, Strength.Invalid, true);
+				list.Add(item6);
+				string hitEffectId7 = "EFF_COM_HIT_WEAK";
+				IEnumerator item7 = this.LoadHitEffects(hitEffectId7, AffectEffect.Invalid, true);
 				list.Add(item7);
 				if (base.battleMode != BattleMode.Tutorial)
 				{
-					string hitEffectId7 = "EFF_COM_S_HEAL";
-					IEnumerator item8 = this.LoadHitEffects(hitEffectId7, AffectEffect.Damage, Strength.Drain, true);
+					string hitEffectId8 = "EFF_COM_S_HEAL";
+					IEnumerator item8 = this.LoadHitEffects(hitEffectId8, AffectEffect.Damage, Strength.Drain, true);
 					list.Add(item8);
+				}
+				if (flag)
+				{
+					string hitEffectId9 = "EFF_COM_M_HEAL";
+					IEnumerator item9 = this.LoadHitEffects(hitEffectId9, AffectEffect.HpRevival, true);
+					list.Add(item9);
 				}
 			}
 			else if (affectEffect == AffectEffect.AttackUp)
 			{
-				string hitEffectId8 = "EFF_COM_UP";
-				IEnumerator item9 = this.LoadHitEffects(hitEffectId8, AffectEffect.AttackUp, true);
-				list.Add(item9);
+				string hitEffectId10 = "EFF_COM_UP";
+				IEnumerator item10 = this.LoadHitEffects(hitEffectId10, AffectEffect.AttackUp, true);
+				list.Add(item10);
 			}
 			else if (affectEffect == AffectEffect.AttackDown)
 			{
-				string hitEffectId9 = "EFF_COM_DOWN";
-				IEnumerator item10 = this.LoadHitEffects(hitEffectId9, AffectEffect.AttackDown, true);
-				list.Add(item10);
+				string hitEffectId11 = "EFF_COM_DOWN";
+				IEnumerator item11 = this.LoadHitEffects(hitEffectId11, AffectEffect.AttackDown, true);
+				list.Add(item11);
 			}
 			else if (affectEffect == AffectEffect.SpAttackUp)
 			{
-				string hitEffectId10 = "EFF_COM_UP";
-				IEnumerator item11 = this.LoadHitEffects(hitEffectId10, AffectEffect.SpAttackUp, true);
-				list.Add(item11);
+				string hitEffectId12 = "EFF_COM_UP";
+				IEnumerator item12 = this.LoadHitEffects(hitEffectId12, AffectEffect.SpAttackUp, true);
+				list.Add(item12);
 			}
 			else if (affectEffect == AffectEffect.SpAttackDown)
 			{
-				string hitEffectId11 = "EFF_COM_DOWN";
-				IEnumerator item12 = this.LoadHitEffects(hitEffectId11, AffectEffect.SpAttackDown, true);
-				list.Add(item12);
+				string hitEffectId13 = "EFF_COM_DOWN";
+				IEnumerator item13 = this.LoadHitEffects(hitEffectId13, AffectEffect.SpAttackDown, true);
+				list.Add(item13);
 			}
 			else if (affectEffect == AffectEffect.DefenceUp)
 			{
-				string hitEffectId12 = "EFF_COM_UP";
-				IEnumerator item13 = this.LoadHitEffects(hitEffectId12, AffectEffect.DefenceUp, true);
-				list.Add(item13);
+				string hitEffectId14 = "EFF_COM_UP";
+				IEnumerator item14 = this.LoadHitEffects(hitEffectId14, AffectEffect.DefenceUp, true);
+				list.Add(item14);
 			}
 			else if (affectEffect == AffectEffect.DefenceDown)
 			{
-				string hitEffectId13 = "EFF_COM_DOWN";
-				IEnumerator item14 = this.LoadHitEffects(hitEffectId13, AffectEffect.DefenceDown, true);
-				list.Add(item14);
+				string hitEffectId15 = "EFF_COM_DOWN";
+				IEnumerator item15 = this.LoadHitEffects(hitEffectId15, AffectEffect.DefenceDown, true);
+				list.Add(item15);
 			}
 			else if (affectEffect == AffectEffect.SpDefenceUp)
 			{
-				string hitEffectId14 = "EFF_COM_UP";
-				IEnumerator item15 = this.LoadHitEffects(hitEffectId14, AffectEffect.SpDefenceUp, true);
-				list.Add(item15);
+				string hitEffectId16 = "EFF_COM_UP";
+				IEnumerator item16 = this.LoadHitEffects(hitEffectId16, AffectEffect.SpDefenceUp, true);
+				list.Add(item16);
 			}
 			else if (affectEffect == AffectEffect.SpDefenceDown)
 			{
-				string hitEffectId15 = "EFF_COM_DOWN";
-				IEnumerator item16 = this.LoadHitEffects(hitEffectId15, AffectEffect.SpDefenceDown, true);
-				list.Add(item16);
+				string hitEffectId17 = "EFF_COM_DOWN";
+				IEnumerator item17 = this.LoadHitEffects(hitEffectId17, AffectEffect.SpDefenceDown, true);
+				list.Add(item17);
 			}
 			else if (affectEffect == AffectEffect.PowerCharge)
 			{
-				string hitEffectId16 = "EFF_COM_SPIRIT";
-				IEnumerator item17 = this.LoadHitEffects(hitEffectId16, AffectEffect.PowerCharge, false);
-				list.Add(item17);
+				string hitEffectId18 = "EFF_COM_SPIRIT";
+				IEnumerator item18 = this.LoadHitEffects(hitEffectId18, AffectEffect.PowerCharge, false);
+				list.Add(item18);
 			}
 			else if (affectEffect == AffectEffect.Protect)
 			{
-				string hitEffectId17 = "EFF_COM_GUARD";
-				IEnumerator item18 = this.LoadHitEffects(hitEffectId17, AffectEffect.Protect, false);
-				list.Add(item18);
+				string hitEffectId19 = "EFF_COM_GUARD";
+				IEnumerator item19 = this.LoadHitEffects(hitEffectId19, AffectEffect.Protect, false);
+				list.Add(item19);
 			}
 			else if (affectEffect == AffectEffect.Destruct)
 			{
-				string hitEffectId18 = "EFF_COM_DEATH";
-				IEnumerator item19 = this.LoadHitEffects(hitEffectId18, AffectEffect.Destruct, false);
-				list.Add(item19);
+				string hitEffectId20 = "EFF_COM_DEATH";
+				IEnumerator item20 = this.LoadHitEffects(hitEffectId20, AffectEffect.Destruct, false);
+				list.Add(item20);
 			}
 			else if (affectEffect == AffectEffect.Poison)
 			{
-				string hitEffectId19 = "EFF_COM_POISONATTACK";
-				IEnumerator item20 = this.LoadHitEffects(hitEffectId19, AffectEffect.Poison, true);
-				list.Add(item20);
+				string hitEffectId21 = "EFF_COM_POISONATTACK";
+				IEnumerator item21 = this.LoadHitEffects(hitEffectId21, AffectEffect.Poison, true);
+				list.Add(item21);
 			}
 			else if (affectEffect == AffectEffect.Counter)
 			{
-				string hitEffectId20 = "EFF_COM_COUNTER_P";
-				IEnumerator item21 = this.LoadHitEffects(hitEffectId20, AffectEffect.Counter, false);
-				list.Add(item21);
+				string hitEffectId22 = "EFF_COM_COUNTER_P";
+				IEnumerator item22 = this.LoadHitEffects(hitEffectId22, AffectEffect.Counter, false);
+				list.Add(item22);
 			}
 			else if (affectEffect == AffectEffect.Reflection)
 			{
-				string hitEffectId21 = "EFF_COM_COUNTER_M";
-				IEnumerator item22 = this.LoadHitEffects(hitEffectId21, AffectEffect.Reflection, false);
-				list.Add(item22);
+				string hitEffectId23 = "EFF_COM_COUNTER_M";
+				IEnumerator item23 = this.LoadHitEffects(hitEffectId23, AffectEffect.Reflection, false);
+				list.Add(item23);
 			}
 			else if (affectEffect == AffectEffect.Confusion)
 			{
-				string hitEffectId22 = "EFF_COM_CONFUSIONATTACK";
-				IEnumerator item23 = this.LoadHitEffects(hitEffectId22, AffectEffect.Confusion, true);
-				list.Add(item23);
+				string hitEffectId24 = "EFF_COM_CONFUSIONATTACK";
+				IEnumerator item24 = this.LoadHitEffects(hitEffectId24, AffectEffect.Confusion, true);
+				list.Add(item24);
 			}
 			else if (affectEffect == AffectEffect.CorrectionUpReset)
 			{
-				string hitEffectId23 = "EFF_COM_DOWN";
-				IEnumerator item24 = this.LoadHitEffects(hitEffectId23, AffectEffect.CorrectionUpReset, true);
-				list.Add(item24);
+				string hitEffectId25 = "EFF_COM_DOWN";
+				IEnumerator item25 = this.LoadHitEffects(hitEffectId25, AffectEffect.CorrectionUpReset, true);
+				list.Add(item25);
 			}
 			else if (affectEffect == AffectEffect.CorrectionDownReset)
 			{
-				string hitEffectId24 = "EFF_COM_UP";
-				IEnumerator item25 = this.LoadHitEffects(hitEffectId24, AffectEffect.CorrectionDownReset, true);
-				list.Add(item25);
+				string hitEffectId26 = "EFF_COM_UP";
+				IEnumerator item26 = this.LoadHitEffects(hitEffectId26, AffectEffect.CorrectionDownReset, true);
+				list.Add(item26);
 			}
 			else if (affectEffect == AffectEffect.HateUp)
 			{
-				string hitEffectId25 = "EFF_COM_DOWN";
-				IEnumerator item26 = this.LoadHitEffects(hitEffectId25, AffectEffect.HateUp, false);
-				list.Add(item26);
+				string hitEffectId27 = "EFF_COM_DOWN";
+				IEnumerator item27 = this.LoadHitEffects(hitEffectId27, AffectEffect.HateUp, false);
+				list.Add(item27);
 			}
 			else if (affectEffect == AffectEffect.HateDown)
 			{
-				string hitEffectId26 = "EFF_COM_UP";
-				IEnumerator item27 = this.LoadHitEffects(hitEffectId26, AffectEffect.HateDown, false);
-				list.Add(item27);
+				string hitEffectId28 = "EFF_COM_UP";
+				IEnumerator item28 = this.LoadHitEffects(hitEffectId28, AffectEffect.HateDown, false);
+				list.Add(item28);
 			}
 			else if (affectEffect == AffectEffect.HitRateUp)
 			{
-				string hitEffectId27 = "EFF_COM_UP";
-				IEnumerator item28 = this.LoadHitEffects(hitEffectId27, AffectEffect.HitRateUp, true);
-				list.Add(item28);
+				string hitEffectId29 = "EFF_COM_UP";
+				IEnumerator item29 = this.LoadHitEffects(hitEffectId29, AffectEffect.HitRateUp, true);
+				list.Add(item29);
 			}
 			else if (affectEffect == AffectEffect.HitRateDown)
 			{
-				string hitEffectId28 = "EFF_COM_DOWN";
-				IEnumerator item29 = this.LoadHitEffects(hitEffectId28, AffectEffect.HitRateDown, true);
-				list.Add(item29);
-			}
-			else if (affectEffect == AffectEffect.HpRevival)
-			{
-				string hitEffectId29 = "EFF_COM_M_HEAL";
-				IEnumerator item30 = this.LoadHitEffects(hitEffectId29, AffectEffect.HpRevival, true);
+				string hitEffectId30 = "EFF_COM_DOWN";
+				IEnumerator item30 = this.LoadHitEffects(hitEffectId30, AffectEffect.HitRateDown, true);
 				list.Add(item30);
+			}
+			else if (affectEffect == AffectEffect.HpRevival || affectEffect == AffectEffect.HpSettingFixable || affectEffect == AffectEffect.HpSettingPercentage)
+			{
+				string hitEffectId31 = "EFF_COM_M_HEAL";
+				IEnumerator item31 = this.LoadHitEffects(hitEffectId31, AffectEffect.HpRevival, true);
+				list.Add(item31);
 			}
 			else if (affectEffect == AffectEffect.InstantDeath)
 			{
-				string hitEffectId30 = "EFF_COM_DEATHATTACK";
-				IEnumerator item31 = this.LoadHitEffects(hitEffectId30, AffectEffect.InstantDeath, true);
-				list.Add(item31);
+				string hitEffectId32 = "EFF_COM_DEATHATTACK";
+				IEnumerator item32 = this.LoadHitEffects(hitEffectId32, AffectEffect.InstantDeath, true);
+				list.Add(item32);
 			}
 			else if (affectEffect == AffectEffect.Paralysis)
 			{
-				string hitEffectId31 = "EFF_COM_PARALYSISATTACK";
-				IEnumerator item32 = this.LoadHitEffects(hitEffectId31, AffectEffect.Paralysis, true);
-				list.Add(item32);
+				string hitEffectId33 = "EFF_COM_PARALYSISATTACK";
+				IEnumerator item33 = this.LoadHitEffects(hitEffectId33, AffectEffect.Paralysis, true);
+				list.Add(item33);
 			}
 			else if (affectEffect == AffectEffect.Stun)
 			{
-				string hitEffectId32 = "EFF_COM_BUGATTACK";
-				IEnumerator item33 = this.LoadHitEffects(hitEffectId32, AffectEffect.Stun, true);
-				list.Add(item33);
+				string hitEffectId34 = "EFF_COM_BUGATTACK";
+				IEnumerator item34 = this.LoadHitEffects(hitEffectId34, AffectEffect.Stun, true);
+				list.Add(item34);
 			}
 			else if (affectEffect == AffectEffect.SufferStatusClear)
 			{
-				string hitEffectId33 = "EFF_COM_UP";
-				IEnumerator item34 = this.LoadHitEffects(hitEffectId33, AffectEffect.SufferStatusClear, true);
-				list.Add(item34);
+				string hitEffectId35 = "EFF_COM_UP";
+				IEnumerator item35 = this.LoadHitEffects(hitEffectId35, AffectEffect.SufferStatusClear, true);
+				list.Add(item35);
 			}
 			else if (affectEffect == AffectEffect.SpeedDown)
 			{
-				string hitEffectId34 = "EFF_COM_DOWN";
-				IEnumerator item35 = this.LoadHitEffects(hitEffectId34, AffectEffect.SpeedDown, true);
-				list.Add(item35);
+				string hitEffectId36 = "EFF_COM_DOWN";
+				IEnumerator item36 = this.LoadHitEffects(hitEffectId36, AffectEffect.SpeedDown, true);
+				list.Add(item36);
 			}
 			else if (affectEffect == AffectEffect.SpeedUp)
 			{
-				string hitEffectId35 = "EFF_COM_UP";
-				IEnumerator item36 = this.LoadHitEffects(hitEffectId35, AffectEffect.SpeedUp, true);
-				list.Add(item36);
+				string hitEffectId37 = "EFF_COM_UP";
+				IEnumerator item37 = this.LoadHitEffects(hitEffectId37, AffectEffect.SpeedUp, true);
+				list.Add(item37);
 			}
 			else if (affectEffect == AffectEffect.Sleep)
 			{
-				string hitEffectId36 = "EFF_COM_SLEEPATTACK";
-				IEnumerator item37 = this.LoadHitEffects(hitEffectId36, AffectEffect.Sleep, true);
-				list.Add(item37);
+				string hitEffectId38 = "EFF_COM_SLEEPATTACK";
+				IEnumerator item38 = this.LoadHitEffects(hitEffectId38, AffectEffect.Sleep, true);
+				list.Add(item38);
 			}
 			else if (affectEffect == AffectEffect.SkillLock)
 			{
-				string hitEffectId37 = "EFF_COM_CRYSTALATTACK";
-				IEnumerator item38 = this.LoadHitEffects(hitEffectId37, AffectEffect.SkillLock, true);
-				list.Add(item38);
+				string hitEffectId39 = "EFF_COM_CRYSTALATTACK";
+				IEnumerator item39 = this.LoadHitEffects(hitEffectId39, AffectEffect.SkillLock, true);
+				list.Add(item39);
 			}
 			else if (affectEffect == AffectEffect.SatisfactionRateDown)
 			{
-				string hitEffectId38 = "EFF_COM_DOWN";
-				IEnumerator item39 = this.LoadHitEffects(hitEffectId38, AffectEffect.SatisfactionRateDown, true);
-				list.Add(item39);
+				string hitEffectId40 = "EFF_COM_DOWN";
+				IEnumerator item40 = this.LoadHitEffects(hitEffectId40, AffectEffect.SatisfactionRateDown, true);
+				list.Add(item40);
 			}
 			else if (affectEffect == AffectEffect.SatisfactionRateUp)
 			{
-				string hitEffectId39 = "EFF_COM_UP";
-				IEnumerator item40 = this.LoadHitEffects(hitEffectId39, AffectEffect.SatisfactionRateUp, true);
-				list.Add(item40);
+				string hitEffectId41 = "EFF_COM_UP";
+				IEnumerator item41 = this.LoadHitEffects(hitEffectId41, AffectEffect.SatisfactionRateUp, true);
+				list.Add(item41);
 			}
 			else if (affectEffect == AffectEffect.ApRevival)
 			{
-				string hitEffectId40 = "EFF_COM_M_HEAL";
-				IEnumerator item41 = this.LoadHitEffects(hitEffectId40, AffectEffect.ApRevival, false);
-				list.Add(item41);
+				string hitEffectId42 = "EFF_COM_M_HEAL";
+				IEnumerator item42 = this.LoadHitEffects(hitEffectId42, AffectEffect.ApRevival, false);
+				list.Add(item42);
 			}
 			else if (affectEffect == AffectEffect.ApUp)
 			{
-				string hitEffectId41 = "EFF_COM_UP";
-				IEnumerator item42 = this.LoadHitEffects(hitEffectId41, AffectEffect.ApUp, false);
-				list.Add(item42);
+				string hitEffectId43 = "EFF_COM_UP";
+				IEnumerator item43 = this.LoadHitEffects(hitEffectId43, AffectEffect.ApUp, false);
+				list.Add(item43);
 			}
 			else if (affectEffect == AffectEffect.ApDown)
 			{
-				string hitEffectId42 = "EFF_COM_DOWN";
-				IEnumerator item43 = this.LoadHitEffects(hitEffectId42, AffectEffect.ApDown, false);
-				list.Add(item43);
+				string hitEffectId44 = "EFF_COM_DOWN";
+				IEnumerator item44 = this.LoadHitEffects(hitEffectId44, AffectEffect.ApDown, false);
+				list.Add(item44);
 			}
 			else if (affectEffect == AffectEffect.ApConsumptionUp)
 			{
-				string hitEffectId43 = "EFF_COM_DOWN";
-				IEnumerator item44 = this.LoadHitEffects(hitEffectId43, AffectEffect.ApConsumptionUp, false);
-				list.Add(item44);
+				string hitEffectId45 = "EFF_COM_DOWN";
+				IEnumerator item45 = this.LoadHitEffects(hitEffectId45, AffectEffect.ApConsumptionUp, false);
+				list.Add(item45);
 			}
 			else if (affectEffect == AffectEffect.ApConsumptionDown)
 			{
-				string hitEffectId44 = "EFF_COM_UP";
-				IEnumerator item45 = this.LoadHitEffects(hitEffectId44, AffectEffect.ApConsumptionDown, false);
-				list.Add(item45);
+				string hitEffectId46 = "EFF_COM_UP";
+				IEnumerator item46 = this.LoadHitEffects(hitEffectId46, AffectEffect.ApConsumptionDown, false);
+				list.Add(item46);
 			}
 			else if (affectEffect == AffectEffect.TurnBarrier)
 			{
-				string hitEffectId45 = "EFF_COM_GUARD";
-				IEnumerator item46 = this.LoadHitEffects(hitEffectId45, AffectEffect.TurnBarrier, true);
-				list.Add(item46);
+				string hitEffectId47 = "EFF_COM_GUARD";
+				IEnumerator item47 = this.LoadHitEffects(hitEffectId47, AffectEffect.TurnBarrier, true);
+				list.Add(item47);
 			}
 			else if (affectEffect == AffectEffect.CountBarrier)
 			{
-				string hitEffectId46 = "EFF_COM_GUARD";
-				IEnumerator item47 = this.LoadHitEffects(hitEffectId46, AffectEffect.CountBarrier, true);
-				list.Add(item47);
+				string hitEffectId48 = "EFF_COM_GUARD";
+				IEnumerator item48 = this.LoadHitEffects(hitEffectId48, AffectEffect.CountBarrier, true);
+				list.Add(item48);
 			}
 			else if (affectEffect == AffectEffect.CountGuard)
 			{
-				string hitEffectId47 = "EFF_COM_GUARD";
-				IEnumerator item48 = this.LoadHitEffects(hitEffectId47, AffectEffect.CountGuard, true);
-				list.Add(item48);
+				string hitEffectId49 = "EFF_COM_GUARD";
+				IEnumerator item49 = this.LoadHitEffects(hitEffectId49, AffectEffect.CountGuard, true);
+				list.Add(item49);
 			}
 			else if (affectEffect == AffectEffect.Recommand)
 			{
-				string hitEffectId48 = "EFF_COM_M_HEAL";
-				IEnumerator item49 = this.LoadHitEffects(hitEffectId48, AffectEffect.Recommand, false);
-				list.Add(item49);
+				string hitEffectId50 = "EFF_COM_M_HEAL";
+				IEnumerator item50 = this.LoadHitEffects(hitEffectId50, AffectEffect.Recommand, false);
+				list.Add(item50);
 			}
 			else if (affectEffect == AffectEffect.DamageRateUp)
 			{
-				string hitEffectId49 = "EFF_COM_UP";
-				IEnumerator item50 = this.LoadHitEffects(hitEffectId49, AffectEffect.DamageRateUp, true);
-				list.Add(item50);
+				string hitEffectId51 = "EFF_COM_UP";
+				IEnumerator item51 = this.LoadHitEffects(hitEffectId51, AffectEffect.DamageRateUp, true);
+				list.Add(item51);
 			}
 			else if (affectEffect == AffectEffect.DamageRateDown)
 			{
-				string hitEffectId50 = "EFF_COM_DOWN";
-				IEnumerator item51 = this.LoadHitEffects(hitEffectId50, AffectEffect.DamageRateDown, true);
-				list.Add(item51);
+				string hitEffectId52 = "EFF_COM_DOWN";
+				IEnumerator item52 = this.LoadHitEffects(hitEffectId52, AffectEffect.DamageRateDown, true);
+				list.Add(item52);
 			}
 			else if (affectEffect == AffectEffect.Regenerate)
 			{
-				string hitEffectId51 = "EFF_COM_M_HEAL";
-				IEnumerator item52 = this.LoadHitEffects(hitEffectId51, AffectEffect.Regenerate, true);
-				list.Add(item52);
+				string hitEffectId53 = "EFF_COM_M_HEAL";
+				IEnumerator item53 = this.LoadHitEffects(hitEffectId53, AffectEffect.Regenerate, true);
+				list.Add(item53);
 			}
 			else if (affectEffect == AffectEffect.TurnEvasion)
 			{
-				string hitEffectId52 = "EFF_COM_UP";
-				IEnumerator item53 = this.LoadHitEffects(hitEffectId52, AffectEffect.TurnEvasion, true);
-				list.Add(item53);
+				string hitEffectId54 = "EFF_COM_UP";
+				IEnumerator item54 = this.LoadHitEffects(hitEffectId54, AffectEffect.TurnEvasion, true);
+				list.Add(item54);
 			}
 			else if (affectEffect == AffectEffect.CountEvasion)
 			{
-				string hitEffectId53 = "EFF_COM_UP";
-				IEnumerator item54 = this.LoadHitEffects(hitEffectId53, AffectEffect.CountEvasion, true);
-				list.Add(item54);
+				string hitEffectId55 = "EFF_COM_UP";
+				IEnumerator item55 = this.LoadHitEffects(hitEffectId55, AffectEffect.CountEvasion, true);
+				list.Add(item55);
 			}
 			else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
 			{
-				string hitEffectId54 = "EFF_COM_HIT_RATIO";
-				IEnumerator item55 = this.LoadHitEffects(hitEffectId54, AffectEffect.ReferenceTargetHpRate, true);
-				list.Add(item55);
+				string hitEffectId56 = "EFF_COM_HIT_RATIO";
+				IEnumerator item56 = this.LoadHitEffects(hitEffectId56, AffectEffect.ReferenceTargetHpRate, true);
+				list.Add(item56);
 			}
 			else if (affectEffect == AffectEffect.ApDrain)
 			{
-				string hitEffectId55 = "EFF_COM_S_APDRAIN";
-				IEnumerator item56 = this.LoadHitEffects(hitEffectId55, AffectEffect.ApDrain, false);
-				list.Add(item56);
-				string hitEffectId56 = "EFF_COM_DOWN";
-				IEnumerator item57 = this.LoadHitEffects(hitEffectId56, AffectEffect.ApDown, false);
+				string hitEffectId57 = "EFF_COM_S_APDRAIN";
+				IEnumerator item57 = this.LoadHitEffects(hitEffectId57, AffectEffect.ApDrain, false);
 				list.Add(item57);
+				string hitEffectId58 = "EFF_COM_DOWN";
+				IEnumerator item58 = this.LoadHitEffects(hitEffectId58, AffectEffect.ApDown, false);
+				list.Add(item58);
 			}
 		}
 		return list;

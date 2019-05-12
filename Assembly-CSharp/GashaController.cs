@@ -58,10 +58,6 @@ public class GashaController : CutsceneBase
 	{
 	}
 
-	protected override void OnLateUpdate()
-	{
-	}
-
 	public override void SetData(CutsceneDataBase data)
 	{
 		CutsceneDataGasha cutsceneDataGasha = data as CutsceneDataGasha;

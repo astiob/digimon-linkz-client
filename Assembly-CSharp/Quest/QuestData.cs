@@ -815,12 +815,18 @@ namespace Quest
 			if (aid == "8")
 			{
 				int num = int.Parse(dng.dungeonTicketNum);
-				return num <= 0;
+				if (num <= 0)
+				{
+					return true;
+				}
 			}
-			if (dng.playLimit != null)
+			else if (dng.playLimit != null)
 			{
 				int num = int.Parse(dng.playLimit.restCount);
-				return num <= 0 && dng.playLimit.dailyResetFlg == "0" && dng.playLimit.recoveryFlg == "0";
+				if (num <= 0 && dng.playLimit.dailyResetFlg == "0" && dng.playLimit.recoveryFlg == "0")
+				{
+					return true;
+				}
 			}
 			return false;
 		}

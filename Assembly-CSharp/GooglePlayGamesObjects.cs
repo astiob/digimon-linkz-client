@@ -57,6 +57,7 @@ public class GooglePlayGamesObjects : MonoBehaviour
 				return;
 			}
 			GooglePlayGamesTool.Instance.SignOut();
+			PlayerPrefs.SetInt("IsSignOutGoogle", 1);
 			this.googlePlayBtnSprite.spriteName = this.SIGNOUT_PLAY_GAMES_SPRITE_NAME;
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("GoogleLogoutTitle");

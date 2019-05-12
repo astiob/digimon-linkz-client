@@ -9,10 +9,6 @@ public class SubStatePvPSkillDetailsFunction : SubStateSkillDetailsFunction
 	{
 	}
 
-	protected override void AfterEnemyDeadFunction(params CharacterStateControl[] currentDeathCharacters)
-	{
-	}
-
 	protected override IEnumerator SendBattleLogs(CharacterStateControl currentCharacter, List<BattleLogData.AttackLog> attackLog, List<BattleLogData.BuffLog> buffLog)
 	{
 		int count = MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_ACTION_LOG_RETRY_COUNT;
@@ -39,14 +35,14 @@ public class SubStatePvPSkillDetailsFunction : SubStateSkillDetailsFunction
 				if (time < 0f)
 				{
 					time = (float)MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_ACTION_LOG_RETRY_TIME;
-					Singleton<TCPMessageSender>.Instance.SendPvPBattleActionLog(attackData, attackerIndex, isMyAction, base.battleStateData, attackLog, buffLog);
+					base.stateManager.pvpFunction.SendPvPBattleActionLog(attackData, attackerIndex, isMyAction, base.battleStateData, attackLog, buffLog);
 					count--;
 				}
 				yield return null;
 			}
 			yield break;
 		}
-		Singleton<TCPMessageSender>.Instance.SendPvPBattleActionLog(attackData, attackerIndex, isMyAction, base.battleStateData, attackLog, buffLog);
+		base.stateManager.pvpFunction.SendPvPBattleActionLog(attackData, attackerIndex, isMyAction, base.battleStateData, attackLog, buffLog);
 		yield break;
 	}
 

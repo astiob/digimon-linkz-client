@@ -82,18 +82,12 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 			base.stateManager.soundPlayer.TryPlaySE(this.gettedId, 0f, false);
 		}
 		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(this.cameraKey, this.currentCharacter);
-		IEnumerator playSkillAnimation = this.skillStatus.invocationEffectParams.PlaySkillAnimation(this.currentCharacter.CharacterParams, true);
+		IEnumerator playSkillAnimation = this.skillStatus.invocationEffectParams.PlaySkillAnimation(this.currentCharacter.CharacterParams);
 		while (playSkillAnimation.MoveNext())
 		{
-			yield return null;
+			object obj = playSkillAnimation.Current;
+			yield return obj;
 		}
-		Action StopSkillAnim = playSkillAnimation.Current as Action;
-		base.battleStateData.cameraMotionChangeFunction = delegate()
-		{
-			this.currentCharacter.CharacterParams.PlayIdleAnimation();
-			this.currentCharacter.CharacterParams.gameObject.SetActive(false);
-			StopSkillAnim();
-		};
 		yield break;
 	}
 
@@ -115,10 +109,6 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 
 	protected override void GetEventThisState(EventState eventState)
 	{
-		InvocationEffectParams invocationEffectParams = this.skillStatus.invocationEffectParams;
-		if (invocationEffectParams.isPlaying)
-		{
-			invocationEffectParams.StopSkillAnimation();
-		}
+		this.skillStatus.invocationEffectParams.StopSkillAnimation();
 	}
 }

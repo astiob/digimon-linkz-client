@@ -47,6 +47,12 @@ public sealed class GUIScreenTitle : GUIScreen
 	[SerializeField]
 	private GooglePlayGamesObjects googlePlay;
 
+	[SerializeField]
+	private UITexture titleLogo;
+
+	[SerializeField]
+	private UITexture rightSignage;
+
 	private CloudBackup backup = new CloudBackup();
 
 	protected override void Start()
@@ -197,6 +203,10 @@ public sealed class GUIScreenTitle : GUIScreen
 		}
 		APIUtil.Instance().alertOnlyCloseButton = true;
 		yield return base.StartCoroutine(StoreInit.Instance().InitRestoreOperation());
+		if (!Loading.IsShow())
+		{
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		}
 		APIUtil.Instance().alertOnlyCloseButton = false;
 		AgreementConsent agreementConsent = new AgreementConsent();
 		bool isAgreement = false;

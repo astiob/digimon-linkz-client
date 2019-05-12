@@ -9,8 +9,8 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("スキルボタンが2つのときの位置")]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
-	[SerializeField]
 	[Header("スキルボタンが3つのときの位置")]
+	[SerializeField]
 	private Vector3 threeButtonPosition = Vector3.zero;
 
 	[Header("ボタン")]
@@ -21,24 +21,24 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UILabel skillName;
 
-	[Header("スキル説明")]
 	[SerializeField]
+	[Header("スキル説明")]
 	private UILabel skillDescription;
 
-	[Header("必要AP数")]
 	[SerializeField]
+	[Header("必要AP数")]
 	private UILabel ap;
 
-	[Header("命中率")]
 	[SerializeField]
+	[Header("命中率")]
 	private UILabel hitRate;
 
-	[Header("威力")]
 	[SerializeField]
+	[Header("威力")]
 	private UILabel power;
 
-	[Header("Tweener1（開く）")]
 	[SerializeField]
+	[Header("Tweener1（開く）")]
 	private UITweener rotationEffect1;
 
 	[Header("Tweener2（閉じる）")]
@@ -57,17 +57,21 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UISprite attributeSprite;
 
-	[Header("スキル説明UIのルート")]
 	[SerializeField]
+	[Header("スキル説明UIのルート")]
 	private GameObject skillDescriptionRoot;
 
-	[Header("スキルロックアイコン")]
 	[SerializeField]
+	[Header("スキルロックアイコン")]
 	private UISprite skillLockSprite;
 
 	[Header("スキルONボタン")]
 	[SerializeField]
 	private GameObject onSkillButton;
+
+	[SerializeField]
+	[Header("実行ボタンスプライト")]
+	private UISprite execButtonSprite;
 
 	[SerializeField]
 	[Header("スキルOFfボタン")]
@@ -78,6 +82,10 @@ public class BattleSkillBtn : MonoBehaviour
 	private UISprite skillButtonSprite;
 
 	private SkillType skillType;
+
+	public void Awake()
+	{
+	}
 
 	public void ApplySkillButtonData(SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl selectCharacter)
 	{
@@ -97,12 +105,14 @@ public class BattleSkillBtn : MonoBehaviour
 		{
 			num = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectProperty, selectCharacter);
 		}
-		float value = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectProperty, selectCharacter);
-		value = Mathf.Clamp01(value);
+		float num2 = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectProperty, selectCharacter);
+		num2 = Mathf.Clamp01(num2);
 		this.skillType = skills.skillType;
 		this.skillName.text = skills.name;
 		this.skillDescription.text = skills.description;
-		this.hitRate.text = value.ToString("p0");
+		int num3 = (int)Math.Round((double)(num2 * 100f), MidpointRounding.AwayFromZero);
+		string @string = StringMaster.GetString("SystemPercent");
+		this.hitRate.text = string.Format(@string, num3);
 		this.power.text = num.ToString();
 		int correctedAp = skills.GetCorrectedAp(selectCharacter);
 		if (correctedAp <= selectCharacter.ap)

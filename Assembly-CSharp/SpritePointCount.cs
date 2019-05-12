@@ -5,12 +5,12 @@ public class SpritePointCount : MonoBehaviour
 {
 	private const int secondsCount = 60;
 
-	[Header("表示番号のスプライト")]
 	[SerializeField]
+	[Header("表示番号のスプライト")]
 	private UISprite[] numSprite;
 
-	[Header("上桁ゼロ表示しない = true")]
 	[SerializeField]
+	[Header("上桁ゼロ表示しない = true")]
 	private bool dontShowUpperZero;
 
 	[SerializeField]

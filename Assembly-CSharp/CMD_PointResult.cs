@@ -219,14 +219,14 @@ public sealed class CMD_PointResult : CMD
 				this.pointBonusList.Add(gameObject.GetComponent<PointResultBonus>());
 			}
 		}
-		this.basePoint.LabelDataSet(this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[0].eventPointBonusId), string.Format("{0}", this.eventResult.point.bonusPoint[0].point));
+		this.basePoint.LabelDataSet(this.eventResult.point.bonusPoint[0].eventPointBonusMessage, string.Format("{0}", this.eventResult.point.bonusPoint[0].point));
 		for (int j = 1; j <= 5; j++)
 		{
 			if (j >= this.eventResult.point.bonusPoint.Length)
 			{
 				break;
 			}
-			this.pointBonusList[j - 1].LabelDataSet(this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[j].eventPointBonusId), string.Format("{0}", this.eventResult.point.bonusPoint[j].point));
+			this.pointBonusList[j - 1].LabelDataSet(this.eventResult.point.bonusPoint[j].eventPointBonusMessage, string.Format("{0}", this.eventResult.point.bonusPoint[j].point));
 		}
 		this.bonusTotalPoint.SetNum(0);
 		this.totalPoint.SetNum(this.eventResult.point.eventPoint - this.eventResult.point.totalPoint);
@@ -243,9 +243,9 @@ public sealed class CMD_PointResult : CMD
 			{
 				break;
 			}
-			string bonusDetailMessage = this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[num2 + 1].eventPointBonusId);
+			string eventPointBonusMessage = this.eventResult.point.bonusPoint[num2 + 1].eventPointBonusMessage;
 			string pointText = string.Format("{0}", this.eventResult.point.bonusPoint[num2 + 1].point);
-			this.pointBonusList[i].LabelDataSet(bonusDetailMessage, pointText);
+			this.pointBonusList[i].LabelDataSet(eventPointBonusMessage, pointText);
 		}
 	}
 
@@ -559,7 +559,7 @@ public sealed class CMD_PointResult : CMD
 			{
 				break;
 			}
-			this.pointBonusList[num].LabelDataSet(this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[j].eventPointBonusId), string.Format("{0}", this.eventResult.point.bonusPoint[j].point));
+			this.pointBonusList[num].LabelDataSet(this.eventResult.point.bonusPoint[j].eventPointBonusMessage, string.Format("{0}", this.eventResult.point.bonusPoint[j].point));
 			this.pointBonusList[num].gameObject.SetActive(true);
 			this.pointBonusList[num].SetLabelAlpha(1f);
 			num++;
@@ -630,7 +630,7 @@ public sealed class CMD_PointResult : CMD
 			{
 				break;
 			}
-			this.pointBonusList[counter].LabelDataSet(this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[j].eventPointBonusId), string.Format("{0}", this.eventResult.point.bonusPoint[j].point));
+			this.pointBonusList[counter].LabelDataSet(this.eventResult.point.bonusPoint[j].eventPointBonusMessage, string.Format("{0}", this.eventResult.point.bonusPoint[j].point));
 			this.pointBonusList[counter].gameObject.SetActive(true);
 			counter++;
 		}
@@ -693,25 +693,6 @@ public sealed class CMD_PointResult : CMD
 		if (SoundMng.Instance().IsPlayingSE("SEInternal/Common/se_102"))
 		{
 			SoundMng.Instance().TryStopSE("SEInternal/Common/se_102", 0.2f, null);
-		}
-	}
-
-	private void DubugDataSet()
-	{
-		this.eventResult.point.bonusPoint = new GameWebAPI.RespData_AreaEventResult.Point.BonusPoint[15];
-		for (int i = 0; i < this.eventResult.point.bonusPoint.Length; i++)
-		{
-			this.eventResult.point.bonusPoint[i] = new GameWebAPI.RespData_AreaEventResult.Point.BonusPoint();
-			if (i == 0)
-			{
-				this.eventResult.point.bonusPoint[i].point = 100;
-				this.eventResult.point.bonusPoint[i].eventPointBonusId = "99951";
-			}
-			else
-			{
-				this.eventResult.point.bonusPoint[i].point = 1000 * i;
-				this.eventResult.point.bonusPoint[i].eventPointBonusId = "99952";
-			}
 		}
 	}
 

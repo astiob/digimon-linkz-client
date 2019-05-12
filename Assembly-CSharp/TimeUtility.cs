@@ -85,6 +85,36 @@ public static class TimeUtility
 		return string.Format(StringMaster.GetString("StaminaRecoveryTime"), arg);
 	}
 
+	public static DateTime ToJPLocalDateTime(DateTime jpDateTime)
+	{
+		DateTime dateTime = default(DateTime);
+		DateTime dateTime2 = default(DateTime);
+		dateTime2 = jpDateTime;
+		DateTime dateTime3 = new DateTime(dateTime2.AddHours(-9.0).Ticks, DateTimeKind.Utc);
+		return dateTime3.ToLocalTime();
+	}
+
+	public static DateTime DateTimeDifferenceServer(DateTime dateTime)
+	{
+		int num = dateTime.Day - ServerDateTime.Now.Day;
+		int num2 = dateTime.Month - ServerDateTime.Now.Month;
+		int num3 = dateTime.Year - ServerDateTime.Now.Year;
+		DateTime result = dateTime;
+		if (num != 0)
+		{
+			result = result.AddDays((double)(-(double)num));
+		}
+		if (num2 != 0)
+		{
+			result = result.AddMonths(-num2);
+		}
+		if (num3 != 0)
+		{
+			result = result.AddYears(-num3);
+		}
+		return result;
+	}
+
 	private static void GetTimeParts(int totalTime, out int day, out int hour, out int minutes, out int seconds)
 	{
 		day = totalTime / 86400;

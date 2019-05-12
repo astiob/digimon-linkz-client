@@ -1,31 +1,28 @@
 ﻿using Master;
 using System;
-using System.Collections;
 using System.Linq;
 using UnityEngine;
 
 public sealed class CMD_ChipInstalling : CMD
 {
-	private const string hyphen = "-";
-
-	[Header("左下のチップアイコン")]
 	[SerializeField]
+	[Header("左下のチップアイコン")]
 	private ChipIcon chipIcon;
 
-	[Header("左下のチップ名ラベル")]
 	[SerializeField]
+	[Header("左下のチップ名ラベル")]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("左下のチップの説明ラベル")]
+	[SerializeField]
 	private UILabel chipDetailLabel;
 
-	[Header("右下の装着するボタンラベル")]
 	[SerializeField]
+	[Header("右下の装着するボタンラベル")]
 	private UILabel executeButtonLabel;
 
-	[SerializeField]
 	[Header("右下の表示切替ボタンラベル")]
+	[SerializeField]
 	private UILabel changeViewLabel;
 
 	[Header("右下の内容ラベル")]
@@ -40,12 +37,12 @@ public sealed class CMD_ChipInstalling : CMD
 	[Header("右下の装着するボタンコライダー")]
 	private BoxCollider executeButtonCollider;
 
-	[Header("右下の表示切替ボタンスプライト")]
 	[SerializeField]
+	[Header("右下の表示切替ボタンスプライト")]
 	private UISprite changeViewButtonSprite;
 
-	[Header("チップ一覧用親")]
 	[SerializeField]
+	[Header("チップ一覧用親")]
 	private GameObject partsSortListBase;
 
 	[SerializeField]
@@ -70,35 +67,18 @@ public sealed class CMD_ChipInstalling : CMD
 		return cmd_ChipInstalling;
 	}
 
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
-	{
-		AppCoroutine.Start(this.Init(f, sizeX, sizeY, aT, ChipDataMng.userChipData), false);
-	}
-
-	private IEnumerator Init(Action<int> f, float sizeX, float sizeY, float aT, GameWebAPI.RespDataCS_ChipListLogic userChipList)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
 		this.SetupLocalize();
-		this.SetupChips(userChipList);
+		this.SetupChips(ChipDataMng.userChipData);
 		this.SetupChipDetail();
 		this.SetupAttackButton();
 		this.changeViewContentLabel.text = CMD_ChipSortModal.GetSortName();
 		base.ShowDLG();
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
-		yield return null;
-		yield break;
 	}
 
 	private void SetupLocalize()
@@ -110,14 +90,17 @@ public sealed class CMD_ChipInstalling : CMD
 
 	private void SetupChipDetail()
 	{
-		this.SetText(this.chipNameLabel, (this.selectedChip != null) ? this.selectedChip.name : "-");
-		this.SetText(this.chipDetailLabel, (this.selectedChip != null) ? this.selectedChip.detail : "-");
+		if (this.selectedChip == null)
+		{
+			this.chipNameLabel.text = StringMaster.GetString("SystemNoneHyphen");
+			this.chipDetailLabel.text = StringMaster.GetString("SystemNoneHyphen");
+		}
+		else
+		{
+			this.chipNameLabel.text = this.selectedChip.name;
+			this.chipDetailLabel.text = this.selectedChip.detail;
+		}
 		this.chipIcon.SetData(this.selectedChip, -1, -1);
-	}
-
-	private void SetText(UILabel label, string text)
-	{
-		label.text = text;
 	}
 
 	private GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] GetDataList(GameWebAPI.RespDataCS_ChipListLogic data)
@@ -141,18 +124,16 @@ public sealed class CMD_ChipInstalling : CMD
 			this.chipList.AddWidgetDepth(this.partsSortListBase.GetComponent<UIWidget>().depth);
 			if (dataList.Length <= 0)
 			{
-				global::Debug.Log("チップもってないよ");
-				NGUITools.SetActiveSelf(this.emptyChipLabel.gameObject, true);
+				this.emptyChipLabel.gameObject.SetActive(true);
 			}
 			else
 			{
-				NGUITools.SetActiveSelf(this.emptyChipLabel.gameObject, false);
+				this.emptyChipLabel.gameObject.SetActive(false);
 			}
 		}
 		else
 		{
-			global::Debug.Log("チップもってないよ");
-			NGUITools.SetActiveSelf(this.emptyChipLabel.gameObject, true);
+			this.emptyChipLabel.gameObject.SetActive(true);
 		}
 	}
 
@@ -188,7 +169,6 @@ public sealed class CMD_ChipInstalling : CMD
 		this.equip.userChipId = this.selectedUserChipId;
 		CMD_InstallingPOP.Create(this.equip, this.selectedChip, delegate
 		{
-			global::Debug.Log("成功");
 			this.successChipCallback(this.equip.userChipId, this.selectedChip);
 			base.ClosePanel(true);
 		});

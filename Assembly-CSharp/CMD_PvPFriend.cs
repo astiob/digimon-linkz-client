@@ -17,15 +17,15 @@ public class CMD_PvPFriend : CMD
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[Header("デフォルトメッセージ")]
 	[SerializeField]
+	[Header("デフォルトメッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[Header("誘うボタン")]
 	[SerializeField]
+	[Header("誘うボタン")]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]

@@ -501,7 +501,7 @@ public sealed class CMD_BaseSelect : CMD
 			APIRequestTask task = DataMng.Instance().RequestMyPageData(false);
 			AppCoroutine.Start(task.Run(delegate
 			{
-				ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
+				ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 				FarmCameraControlForCMD.On();
 				this.ClosePanel(animation);
 				RestrictionInput.EndLoad();
@@ -1213,7 +1213,7 @@ public sealed class CMD_BaseSelect : CMD
 
 	private void CloseAllCommonDialog(int noop)
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int nop)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			GUIFace.ForceHideDigiviceBtn_S();
 			GUIFace.ForceHideFacilityBtn_S();

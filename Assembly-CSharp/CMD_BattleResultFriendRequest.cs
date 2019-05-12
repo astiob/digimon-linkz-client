@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Master;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ public class CMD_BattleResultFriendRequest : CMD
 	[SerializeField]
 	private GameObject goCloseBtn;
 
+	[SerializeField]
+	private UILabel closeButtonLabel;
+
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		this.Init();
@@ -31,6 +35,7 @@ public class CMD_BattleResultFriendRequest : CMD
 		this.battleResultFriendReqInfoWrap.gameObject.SetActive(false);
 		this.battleResultFriendReqInfoSingleWrap.gameObject.SetActive(false);
 		this.goCloseBtn.gameObject.SetActive(false);
+		this.closeButtonLabel.text = StringMaster.GetString("SystemButtonClose");
 		AppCoroutine.Start(this.ReloadFriend(), false);
 	}
 

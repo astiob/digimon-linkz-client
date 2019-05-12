@@ -19,13 +19,7 @@ namespace Cutscene.Gasha
 
 		public CutsceneSound sound;
 
-		public ParticleSystem rareGlitterParticle;
-
-		public UITexture[] rareLow;
-
-		public UITexture[] rareMiddle;
-
-		public UITexture[] rareHigh;
+		public Animator rareAnimator;
 
 		public GameObject gashaMonster;
 
@@ -37,17 +31,11 @@ namespace Cutscene.Gasha
 
 		private IEnumerator animationTextImage;
 
-		private IEnumerator StartAnimationRareTextImage(UITexture[] textImageList)
+		private IEnumerator StartAnimationRareTextImage(string animatorTriggerName)
 		{
 			this.seHandle1 = this.sound.PlaySE("SEInternal/Cutscene/se_214");
-			this.rareGlitterParticle.Play();
-			textImageList[0].alpha = 1f;
-			for (int i = 0; i < textImageList.Length; i++)
-			{
-				yield return new WaitForSeconds(0.02f);
-				textImageList[i].alpha = 1f;
-			}
-			yield return new WaitForSeconds(1.3f);
+			this.rareAnimator.SetTrigger(animatorTriggerName);
+			yield return new WaitForSeconds(2f);
 			yield break;
 		}
 
@@ -66,26 +54,26 @@ namespace Cutscene.Gasha
 			charaParam.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 			CutsceneCommon.SetBillBoardCamera(this.gashaMonster, this.subCamera);
 			this.cameraSwitcher.SetLookAtObject(charaParam.characterFaceCenterTarget);
-			yield return new WaitForSeconds(1f);
 			if (MonsterGrowStepData.IsRipeScope(this.growStep))
 			{
-				this.animationTextImage = this.StartAnimationRareTextImage(this.rareLow);
+				this.animationTextImage = this.StartAnimationRareTextImage("RareLow");
 				yield return AppCoroutine.Start(this.animationTextImage, false);
 			}
 			else if (MonsterGrowStepData.IsPerfectScope(this.growStep))
 			{
-				this.animationTextImage = this.StartAnimationRareTextImage(this.rareMiddle);
+				this.animationTextImage = this.StartAnimationRareTextImage("RareMiddle");
 				yield return AppCoroutine.Start(this.animationTextImage, false);
 			}
 			else if (MonsterGrowStepData.IsUltimateScope(this.growStep))
 			{
-				this.animationTextImage = this.StartAnimationRareTextImage(this.rareHigh);
+				this.animationTextImage = this.StartAnimationRareTextImage("RareHigh");
 				yield return AppCoroutine.Start(this.animationTextImage, false);
 			}
+			else
+			{
+				yield return null;
+			}
 			this.seHandle2 = this.sound.PlaySE("SEInternal/Cutscene/se_214");
-			GashaAnimationCommon.SetTextureAlpha(this.rareLow, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.rareMiddle, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.rareHigh, 0f);
 			base.EndCallback();
 			yield break;
 		}
@@ -113,9 +101,6 @@ namespace Cutscene.Gasha
 			{
 				this.sound.PlaySE("SEInternal/Cutscene/se_214");
 			}
-			GashaAnimationCommon.SetTextureAlpha(this.rareLow, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.rareMiddle, 0f);
-			GashaAnimationCommon.SetTextureAlpha(this.rareHigh, 0f);
 		}
 	}
 }

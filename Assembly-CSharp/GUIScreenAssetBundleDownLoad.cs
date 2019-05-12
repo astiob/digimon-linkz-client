@@ -197,7 +197,8 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 	private void SetProgressBar(float now, float max)
 	{
 		this.downloadProgressBar.value = now / max;
-		this.downloadProgressValue.text = this.downloadProgressBar.value.ToString("P0");
+		int num = Mathf.FloorToInt(this.downloadProgressBar.value * 100f);
+		this.downloadProgressValue.text = string.Format(StringMaster.GetString("SystemPercent"), num);
 		if (null != this.partsGaugePoint)
 		{
 			this.partsGaugePoint.SetGaugeValue(this.downloadProgressBar.value);
@@ -210,8 +211,7 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		if ("1" != DataMng.Instance().RespDataCM_Login.tutorialStatus.endFlg)
 		{
-			global::Debug.Log("PartyTrack送信：チュートリアルABダウンロード終了");
-			Partytrack.sendEvent(65600);
+			AdjustWrapper.Instance.TrackEvent(AdjustWrapper.EVENT_ID_FINISH_TUTORIAL);
 			TutorialFirstFinishRequest request = new TutorialFirstFinishRequest();
 			yield return base.StartCoroutine(request.RequestFirstTutorialFinish());
 		}

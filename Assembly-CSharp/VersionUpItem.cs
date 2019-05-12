@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class VersionUpItem : GUICollider
 {
-	[Header("アイコン")]
 	[SerializeField]
+	[Header("アイコン")]
 	public UISprite spIcon;
 
 	[Header("アイコン")]
@@ -16,8 +16,8 @@ public class VersionUpItem : GUICollider
 	[Header("素材選択")]
 	public UILabel lbSelect;
 
-	[SerializeField]
 	[Header("個数プレート")]
+	[SerializeField]
 	public UISprite spNumPlate;
 
 	[SerializeField]
@@ -123,6 +123,7 @@ public class VersionUpItem : GUICollider
 			float magnitude = (this.beganPosition - pos).magnitude;
 			if (magnitude < 40f && this.actTouchShort != null)
 			{
+				base.PlaySelectSE();
 				this.actTouchShort();
 			}
 		}
@@ -135,6 +136,7 @@ public class VersionUpItem : GUICollider
 		{
 			if (this.actTouchLong != null)
 			{
+				base.PlaySelectSE();
 				this.actTouchLong();
 			}
 			base.isTouching = false;

@@ -10,32 +10,32 @@ public sealed class ChipBaseSelect : MonoBehaviour
 
 	private const string ChipOff = "Chip_Slot_OFF";
 
-	[SerializeField]
 	[Header("消すべきオブジェクト")]
+	[SerializeField]
 	private GameObject[] mustHideObjects;
 
-	[SerializeField]
 	[Header("PartsStatusChipのオブジェクト")]
+	[SerializeField]
 	private GameObject partsStatusChipGO;
 
-	[Header("チップの□スロット")]
 	[SerializeField]
+	[Header("チップの□スロット")]
 	private UISprite[] chipSlots;
 
-	[Header("チップのセル")]
 	[SerializeField]
+	[Header("チップのセル")]
 	private BaseSelectChipCell[] chipCells;
 
-	[Header("チップのラベル")]
 	[SerializeField]
+	[Header("チップのラベル")]
 	private UILabel chipLabel;
 
 	[SerializeField]
 	[Header("チップがないメッセージ")]
 	private UILabel noChipLabel;
 
-	[SerializeField]
 	[Header("分数ラベル(パーティ編成限定)")]
+	[SerializeField]
 	private UILabel fractionLabel;
 
 	private int myMaxChipSlot;

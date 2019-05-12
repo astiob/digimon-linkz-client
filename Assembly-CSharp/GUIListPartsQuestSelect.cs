@@ -10,12 +10,12 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[Header("NEW スプライト")]
 	[SerializeField]
+	[Header("NEW スプライト")]
 	private UISprite spNew;
 
 	private QuestData.WorldAreaData areaData;
@@ -72,7 +72,7 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	{
 		this.failedTextLabel.text = this.areaData.data.name;
 		this.failedTextLabel.gameObject.SetActive(true);
-		string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img/events/" + this.areaData.data.img;
+		string path = AssetDataMng.GetWebAssetImagePath() + "/events/" + this.areaData.data.img;
 		yield return TextureManager.instance.Load(path, delegate(Texture2D tex)
 		{
 			if (tex != null)

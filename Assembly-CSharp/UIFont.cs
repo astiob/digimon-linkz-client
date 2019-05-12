@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Font")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Font")]
 public class UIFont : MonoBehaviour
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material mMat;
 
 	[HideInInspector]
@@ -26,12 +26,12 @@ public class UIFont : MonoBehaviour
 	[SerializeField]
 	private UIFont mReplacement;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private List<BMSymbol> mSymbols = new List<BMSymbol>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Font mDynamicFont;
 
 	[SerializeField]

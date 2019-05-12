@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class HitIcon : MonoBehaviour
 {
-	[Header("アニメーション 通常 有利 不利 の順")]
 	[SerializeField]
+	[Header("アニメーション 通常 有利 不利 の順")]
 	private UITweener[] tween;
 
 	[SerializeField]
@@ -19,8 +19,8 @@ public class HitIcon : MonoBehaviour
 	[Header("ステージ効果用のUI")]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
-	[SerializeField]
 	[Header("耐性結果を表示するフォントテクスチャ")]
+	[SerializeField]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
 	[SerializeField]
@@ -33,19 +33,36 @@ public class HitIcon : MonoBehaviour
 
 	private MaterialPropertyBlock materialPropertyBlock;
 
-	private static Dictionary<string, string> dictionary = new Dictionary<string, string>();
+	private Dictionary<string, string> dictionary;
 
-	[Header("ステージ効果上昇UI")]
 	[SerializeField]
+	[Header("ステージ効果上昇UI")]
 	private UISprite upSprite;
 
 	[Header("ステージ効果減少UI")]
 	[SerializeField]
 	private UISprite downSprite;
 
+	[SerializeField]
+	[Header("国内用フォントデータ")]
+	private HitIcon.LanguageFont languageFont;
+
+	[Header("海外用フォントデータ")]
+	[SerializeField]
+	private HitIcon.LanguageFont usLanguageFont;
+
 	private void Awake()
 	{
+		this.dictionary = new Dictionary<string, string>();
 		this.materialPropertyBlock = new MaterialPropertyBlock();
+		this.standard.numMesh.font = this.languageFont.num.font;
+		this.standard.topMesh.font = this.languageFont.resistance.font;
+		this.standard.bottomMesh.font = this.languageFont.standard.font;
+		this.standard.middleMesh.font = this.languageFont.standard.font;
+		this.standard.numMesh.fontSharedMaterial = this.languageFont.num.material;
+		this.standard.topMesh.fontSharedMaterial = this.languageFont.resistance.material;
+		this.standard.bottomMesh.fontSharedMaterial = this.languageFont.standard.material;
+		this.standard.middleMesh.fontSharedMaterial = this.languageFont.standard.material;
 	}
 
 	public void HitIconReposition(Vector3 position)
@@ -55,7 +72,7 @@ public class HitIcon : MonoBehaviour
 		base.transform.position = new Vector3(vector.x, vector.y, 0f);
 	}
 
-	public void ApplyShowHitIcon(AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isRecoil, ExtraEffectType extraEffectType = ExtraEffectType.Non)
+	public void ApplyShowHitIcon(AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 	{
 		this.ApplyHitIconPlayAnimation(onWeak);
 		bool flag = false;
@@ -63,10 +80,10 @@ public class HitIcon : MonoBehaviour
 		this.standard.gameObject.SetActive(!flag);
 		this.gimmick.gameObject.SetActive(flag);
 		base.transform.localScale = Vector3.one;
-		data.numMesh.text = null;
-		data.topMesh.text = null;
-		data.middleMesh.text = null;
-		data.bottomMesh.text = null;
+		data.numMesh.text = string.Empty;
+		data.topMesh.text = string.Empty;
+		data.middleMesh.text = string.Empty;
+		data.bottomMesh.text = string.Empty;
 		this.upSprite.gameObject.SetActive(false);
 		this.downSprite.gameObject.SetActive(false);
 		if (onMiss)
@@ -83,7 +100,7 @@ public class HitIcon : MonoBehaviour
 			case AffectEffect.HpBorderlineSpDamage:
 			case AffectEffect.DefenseThroughDamage:
 			case AffectEffect.SpDefenseThroughDamage:
-				this.ShowDamage(data, onDamage, onWeak, onCrithical, isDrain, extraEffectType);
+				this.ShowDamage(data, onDamage, onWeak, onCrithical, isCounter, isReflection, extraEffectType);
 				return;
 			case AffectEffect.AttackUp:
 				this.ShowAttackUp(data);
@@ -122,13 +139,13 @@ public class HitIcon : MonoBehaviour
 				this.ShowCorrectionDownReset(data);
 				return;
 			case AffectEffect.HpRevival:
-				this.ShowHpRevival(data, onDamage);
+				this.ShowHpRevival(data, onDamage, isDrain);
 				return;
 			case AffectEffect.Counter:
-				this.ShowCounter(data, onDamage, isRecoil);
+				this.ShowCounter(data, onDamage);
 				return;
 			case AffectEffect.Reflection:
-				this.ShowReflection(data, onDamage, isRecoil);
+				this.ShowReflection(data, onDamage);
 				return;
 			case AffectEffect.Protect:
 				this.ShowProtect(data);
@@ -719,10 +736,18 @@ public class HitIcon : MonoBehaviour
 		}
 	}
 
-	private void ShowHpRevival(HitIcon.Data data, int value)
+	private void ShowHpRevival(HitIcon.Data data, int value, bool isDrain)
 	{
-		data.bottomMesh.text = this.GetString("HitIconHpRevival");
-		data.numMesh.text = value.ToString();
+		if (isDrain)
+		{
+			data.numMesh.text = value.ToString();
+			data.bottomMesh.text = this.GetString("HitIconDrain");
+		}
+		else
+		{
+			data.numMesh.text = value.ToString();
+			data.bottomMesh.text = this.GetString("HitIconHpRevival");
+		}
 		this.ChangeFontTexture(this.standardEffectFontTexture.pink, new TextMeshPro[]
 		{
 			data.numMesh,
@@ -730,41 +755,41 @@ public class HitIcon : MonoBehaviour
 		});
 	}
 
-	private void ShowCounter(HitIcon.Data data, int value, bool isRecoil)
+	private void ShowCounter(HitIcon.Data data, int value)
 	{
 		data.bottomMesh.text = this.GetString("HitIconCounter");
-		if (isRecoil)
-		{
-			data.numMesh.text = value.ToString();
-		}
 		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
 		{
-			data.numMesh,
 			data.bottomMesh
 		});
 	}
 
-	private void ShowReflection(HitIcon.Data data, int value, bool isRecoil)
+	private void ShowReflection(HitIcon.Data data, int value)
 	{
 		data.bottomMesh.text = this.GetString("HitIconReflection");
-		if (isRecoil)
-		{
-			data.numMesh.text = value.ToString();
-		}
 		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
 		{
-			data.numMesh,
 			data.bottomMesh
 		});
 	}
 
-	private void ShowDamage(HitIcon.Data data, int value, Strength strength, bool isCritical, bool isDrain, ExtraEffectType extraEffectType)
+	private void ShowDamage(HitIcon.Data data, int value, Strength strength, bool isCritical, bool isCounter, bool isReflection, ExtraEffectType extraEffectType)
 	{
-		if (isDrain)
+		if (isCounter)
 		{
+			data.bottomMesh.text = this.GetString("HitIconCounter");
 			data.numMesh.text = value.ToString();
-			data.bottomMesh.text = this.GetString("HitIconDrain");
-			this.ChangeFontTexture(this.standardEffectFontTexture.pink, new TextMeshPro[]
+			this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+			{
+				data.numMesh,
+				data.bottomMesh
+			});
+		}
+		if (isReflection)
+		{
+			data.bottomMesh.text = this.GetString("HitIconReflection");
+			data.numMesh.text = value.ToString();
+			this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
 			{
 				data.numMesh,
 				data.bottomMesh
@@ -808,11 +833,11 @@ public class HitIcon : MonoBehaviour
 	{
 		if (BattleStateManager.current.onServerConnect)
 		{
-			if (!HitIcon.dictionary.ContainsKey(key))
+			if (!this.dictionary.ContainsKey(key))
 			{
-				HitIcon.dictionary.Add(key, StringMaster.GetString(key));
+				this.dictionary.Add(key, StringMaster.GetString(key));
 			}
-			return HitIcon.dictionary[key];
+			return this.dictionary[key];
 		}
 		return string.Empty;
 	}
@@ -851,6 +876,26 @@ public class HitIcon : MonoBehaviour
 		public Texture up;
 
 		public Texture down;
+	}
+
+	[Serializable]
+	private class LanguageData
+	{
+		public TMP_FontAsset font;
+
+		public Material material;
+	}
+
+	[Serializable]
+	private class LanguageFont
+	{
+		public HitIcon.LanguageData resistance;
+
+		public HitIcon.LanguageData standard;
+
+		public HitIcon.LanguageData num;
+
+		public HitIcon.LanguageData stage;
 	}
 
 	[Serializable]

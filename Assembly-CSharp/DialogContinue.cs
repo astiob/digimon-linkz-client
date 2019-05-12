@@ -9,32 +9,28 @@ public sealed class DialogContinue : MonoBehaviour
 	[SerializeField]
 	private UIButton specificTradeButton;
 
-	[Header("リタイアボタン")]
 	[SerializeField]
+	[Header("リタイアボタン")]
 	private UIButton retireButton;
 
-	[SerializeField]
 	[Header("復活ボタン")]
+	[SerializeField]
 	private UIButton revivalButton;
 
 	[Header("所持デジストーンの数")]
 	[SerializeField]
 	private UILabel digistoneNumLabel;
 
-	[Header("バックグラウンドのスキナー")]
 	[SerializeField]
-	private UIComponentSkinner backgroundSkinner;
+	[Header("バックグラウンド")]
+	private GameObject background;
 
-	[Header("コンティニューかショップ切り替えスキナー")]
 	[SerializeField]
-	private UIComponentSkinner revivalOrShowShopButtonSwitch;
-
-	[Header("デジストーン説明Replacer")]
-	[SerializeField]
+	[Header("デジストーン説明のローカライズ")]
 	private UILabel digistoneDescription;
 
-	[SerializeField]
 	[Header("特定商取引ボタンのコライダー")]
+	[SerializeField]
 	private Collider specificTradeCollider;
 
 	[Header("リタイアボタンのコライダー")]
@@ -53,29 +49,29 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
-	[Header("諦めるローカライズ")]
 	[SerializeField]
+	[Header("諦めるローカライズ")]
 	private UILabel retireLocalize;
 
-	[Header("コンティニューのタイトルのローカライズ")]
 	[SerializeField]
+	[Header("コンティニューのタイトルのローカライズ")]
 	private UILabel continueTitleLocalize;
 
+	[SerializeField]
 	[Header("復活する/ショップへ移動ローカライズ")]
-	[SerializeField]
-	private UITextReplacer revivalOrShopLocalize;
-
-	[Header("復活する/ショップへ移動ローカライズ(マルチのみ)")]
-	[SerializeField]
-	private UITextReplacer multiRevivalOrShopLocalize;
+	private UILabel revivalOrShopLocalize;
 
 	[SerializeField]
 	[Header("所持デジストーンローカライズ")]
 	private UILabel haveDigistoneLocalize;
 
+	[SerializeField]
+	[Header("復活する/ショップへ移動ローカライズ(マルチバトル用)")]
+	private UILabel offRevivalOrShopLocalize;
+
 	public void ApplySpecificTrade(bool isShow)
 	{
-		this.backgroundSkinner.SetSkins(isShow ? 1 : 0);
+		this.background.SetActive(isShow);
 	}
 
 	public void AddEvent(Action specificTradecallback, Action revivalCallBack, Action retireCallback, bool isOwner = true)
@@ -104,7 +100,18 @@ public sealed class DialogContinue : MonoBehaviour
 			@string = StringMaster.GetString("BattleUI-08");
 		}
 		this.digistoneDescription.text = string.Format(@string, needDigiStone);
-		this.revivalOrShowShopButtonSwitch.SetSkins((currentDigistone < needDigiStone) ? 1 : 0);
+		if (currentDigistone >= needDigiStone)
+		{
+			this.revivalOrShopLocalize.text = StringMaster.GetString("BattleUI-14");
+		}
+		else
+		{
+			this.revivalOrShopLocalize.text = StringMaster.GetString("SystemButtonGoShop");
+		}
+		if (this.offRevivalOrShopLocalize != null)
+		{
+			this.offRevivalOrShopLocalize.text = this.revivalOrShopLocalize.text;
+		}
 	}
 
 	public void ApplyDigiStoneNumber(int digiStoneNumber)
@@ -129,15 +136,6 @@ public sealed class DialogContinue : MonoBehaviour
 		this.specificTradeLocalize.text = StringMaster.GetString("ShopRule-02");
 		this.retireLocalize.text = StringMaster.GetString("BattleUI-13");
 		this.continueTitleLocalize.text = StringMaster.GetString("BattleUI-07");
-		string @string = StringMaster.GetString("BattleUI-14");
-		string string2 = StringMaster.GetString("SystemButtonGoShop");
-		this.revivalOrShopLocalize.SetValue(0, new TextReplacerValue(@string));
-		this.revivalOrShopLocalize.SetValue(1, new TextReplacerValue(string2));
-		if (this.multiRevivalOrShopLocalize != null)
-		{
-			this.multiRevivalOrShopLocalize.SetValue(0, new TextReplacerValue(@string));
-			this.multiRevivalOrShopLocalize.SetValue(1, new TextReplacerValue(string2));
-		}
 		this.haveDigistoneLocalize.text = StringMaster.GetString("BattleUI-17");
 	}
 }

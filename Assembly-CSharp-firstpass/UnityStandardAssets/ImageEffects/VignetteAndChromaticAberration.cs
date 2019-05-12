@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[AddComponentMenu("Image Effects/Camera/Vignette and Chromatic Aberration")]
-	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
 	public class VignetteAndChromaticAberration : PostEffectsBase
 	{
 		public VignetteAndChromaticAberration.AberrationMode mode;

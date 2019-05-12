@@ -14,6 +14,9 @@ public class TakeoverMenu : MonoBehaviour
 	private GameObject googleBackupButtonObj;
 
 	[SerializeField]
+	private GameObject facebookBackupButtonObj;
+
+	[SerializeField]
 	private TakeoverInput input;
 
 	[SerializeField]
@@ -28,7 +31,20 @@ public class TakeoverMenu : MonoBehaviour
 	[SerializeField]
 	private UILabel iCloudLoginText;
 
+	[SerializeField]
+	private UILabel facebookLoginText;
+
+	[SerializeField]
+	private UILabel facebookUserId;
+
+	[SerializeField]
+	private UITable uiTable;
+
 	private TakeoverMenu.MODE currentMode;
+
+	private GameWebAPI.RespDataTL_UserSocialStatusInfo userSocialStatus;
+
+	private GameWebAPI.RespDataTL_UserSocialStatusCheckLogic userStatusCheck;
 
 	public void Initialize(TakeoverMenu.MODE MenuMode)
 	{
@@ -41,6 +57,14 @@ public class TakeoverMenu : MonoBehaviour
 		this.currentMode = MenuMode;
 		this.googleBackupButtonObj.SetActive(true);
 		this.iCloudbackupButtonObj.SetActive(false);
+		if (this.facebookBackupButtonObj != null)
+		{
+			this.facebookBackupButtonObj.SetActive(false);
+		}
+		if (this.uiTable != null && this.currentMode == TakeoverMenu.MODE.Issue)
+		{
+			this.uiTable.Reposition();
+		}
 		if (MenuMode == TakeoverMenu.MODE.Input)
 		{
 			this.takeoverButtonLabel.text = StringMaster.GetString("TakeOver-16");
@@ -91,6 +115,10 @@ public class TakeoverMenu : MonoBehaviour
 			cmd_BackupModal.Title = StringMaster.GetString("TakeOver-20");
 			cmd_BackupModal.Info = StringMaster.GetString("TakeOver-21");
 		}
+	}
+
+	private void OnClickedFacebook()
+	{
 	}
 
 	public enum MODE

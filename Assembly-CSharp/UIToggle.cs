@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Toggle")]
+[ExecuteInEditMode]
 public class UIToggle : UIWidgetContainer
 {
 	public static BetterList<UIToggle> list = new BetterList<UIToggle>();
@@ -31,8 +31,8 @@ public class UIToggle : UIWidgetContainer
 
 	public UIToggle.Validate validator;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UISprite checkSprite;
 
 	[HideInInspector]
@@ -43,8 +43,8 @@ public class UIToggle : UIWidgetContainer
 	[HideInInspector]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string functionName = "OnActivate";
 
 	[HideInInspector]

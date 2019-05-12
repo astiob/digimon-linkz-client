@@ -85,7 +85,7 @@ public class BattleServerControl : BattleFunctionBase
 		base.hierarchyData.useStageId = worldDungeonM.background;
 		base.hierarchyData.areaName = worldDungeonM.name;
 		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
-		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.optionRewardFlg);
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
 		{
@@ -161,7 +161,7 @@ public class BattleServerControl : BattleFunctionBase
 		base.hierarchyData.useStageId = worldDungeonM.background;
 		base.hierarchyData.areaName = worldDungeonM.name;
 		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
-		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.optionRewardFlg);
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
 		{
@@ -203,7 +203,7 @@ public class BattleServerControl : BattleFunctionBase
 		base.hierarchyData.useStageId = worldDungeonM.background;
 		base.hierarchyData.areaName = worldDungeonM.name;
 		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
-		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.optionRewardFlg);
 		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
 		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
 		{
@@ -637,7 +637,7 @@ public class BattleServerControl : BattleFunctionBase
 							{
 								tolerance = Tolerance.GetNutralTolerance();
 							}
-							leaderSkillStatus = new LeaderSkillStatus(name, description, leaderSkillType, hpFollowingPercent, upPercent, tolerance);
+							leaderSkillStatus = new LeaderSkillStatus(leaderSkillId, name, description, leaderSkillType, hpFollowingPercent, upPercent, tolerance);
 							break;
 						}
 					}
@@ -737,7 +737,7 @@ public class BattleServerControl : BattleFunctionBase
 				TechniqueType techniqueType = ServerToBattleUtility.GetTechniqueType(convertSkillDetailM[i].effectType);
 				global::Attribute attribute = ServerToBattleUtility.IntToAttribute(convertSkillDetailM[i].attribute);
 				bool isMissThrough = convertSkillDetailM[i].isMissTrough > 0;
-				AffectEffectProperty item = new AffectEffectProperty(type, skillId.ToInt32(), hitRate, target, effectNumbers, new int[]
+				AffectEffectProperty item = new AffectEffectProperty(type, skillId.ToInt32(), convertSkillDetailM[i].subId.ToInt32(), hitRate, target, effectNumbers, new int[]
 				{
 					effect,
 					effect2
@@ -813,7 +813,7 @@ public class BattleServerControl : BattleFunctionBase
 			{
 				obstacleBGTrans.SetLocalY(obstacleBGLocalY);
 			});
-			cs.virtualAddStoneNum = -base.battleStateData.turnUseDigiStoneCount;
+			cs.VirtualUsedStoneNum = base.battleStateData.turnUseDigiStoneCount;
 		}
 		else
 		{

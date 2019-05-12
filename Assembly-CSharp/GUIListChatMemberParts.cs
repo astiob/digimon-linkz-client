@@ -42,6 +42,9 @@ public class GUIListChatMemberParts : GUIListPartBS
 	private GameObject userTypeIcon;
 
 	[SerializeField]
+	private UILabel userTypeLabel;
+
+	[SerializeField]
 	private GameObject goMemberExpulsionBtn;
 
 	private UILabel ngTX_LOGIN;
@@ -133,12 +136,16 @@ public class GUIListChatMemberParts : GUIListPartBS
 			{
 				this.selectedListSprite.color = this.activeListColor;
 				this.userTypeIconSprite = this.userTypeIcon.GetComponent<UISprite>();
-				this.userTypeIconSprite.spriteName = "Text_you";
+				this.userTypeIconSprite.spriteName = "ListStatus_Waku_Green";
+				this.userTypeLabel.text = StringMaster.GetString("ListUsertype_You");
 				this.userTypeIcon.SetActive(true);
 			}
 			else if (BlockManager.instance().blockList != null && BlockManager.instance().CheckBlock(this.Data.userId))
 			{
 				this.selectedListSprite.color = this.blockListColor;
+				this.userTypeIconSprite = this.userTypeIcon.GetComponent<UISprite>();
+				this.userTypeIconSprite.spriteName = "ListStatus_Waku_Red";
+				this.userTypeLabel.text = StringMaster.GetString("ListUsertype_Blocked");
 				this.userTypeIcon.SetActive(true);
 				if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster && CMD_ChatMenu.instance.openMemberListType == 3 && this.goMemberExpulsionBtn != null)
 				{

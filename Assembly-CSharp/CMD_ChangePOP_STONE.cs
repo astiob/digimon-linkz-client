@@ -31,6 +31,9 @@ public class CMD_ChangePOP_STONE : CMD
 	[SerializeField]
 	private UILabel noButtonLabel;
 
+	[SerializeField]
+	private GameObject ruleButtonObject;
+
 	public Action OnPushedYesAction;
 
 	public Action OnPushedNoAction;
@@ -88,6 +91,10 @@ public class CMD_ChangePOP_STONE : CMD
 		this.possessionTitle.text = StringMaster.GetString("SystemPossession");
 		this.costTitle.text = StringMaster.GetString("SystemCost");
 		this.ruleButtonLabel.text = StringMaster.GetString("ShopRule-02");
+		if (this.ruleButtonObject != null)
+		{
+			this.ruleButtonObject.SetActive(true);
+		}
 	}
 
 	public void SetDigistone(int possession, int cost)

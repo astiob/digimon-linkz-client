@@ -43,7 +43,7 @@ public class GUISelectPanelS_DungeonR : GUISelectPanelBSPartsUD
 				{
 					component.SetOriginalPos(new Vector3(startX, num, -5f));
 					component.StageNum = (count - num2).ToString();
-					component.Data = worldDungeonData;
+					component.WorldDungeonData = worldDungeonData;
 					component.IsEventStage = ClassSingleton<QuestData>.Instance.ExistEvent(worldDungeonData.worldDungeonM.worldDungeonId);
 					component2.AreaId = worldDungeonData.worldDungeonM.worldStageId;
 					component.ShowGUI();

@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleFadeout : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[Header("Fadeoutのスキナー")]

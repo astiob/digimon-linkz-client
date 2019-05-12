@@ -415,9 +415,10 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	public static void SetTextureMonsterParts(UITexture iconTexture, string resourcePath, string assetBundlePath, bool isLoadASync)
 	{
+		bool flag = false;
 		Texture2D texture2D = Resources.Load(resourcePath) as Texture2D;
 		Texture2D texture2D2 = Resources.Load(resourcePath + "_alpha") as Texture2D;
-		if (texture2D != null && texture2D2 != null)
+		if (texture2D != null && texture2D2 != null && !flag)
 		{
 			if (iconTexture.material == null)
 			{

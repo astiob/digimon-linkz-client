@@ -561,7 +561,7 @@ public class CMD_ChatInvitation : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int index)
 		{
 			this.SetChangeOwnerType();
-			Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, StringMaster.GetString("ChatLog-02"), ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
+			Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, "ChatLog-02", ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
 			base.ClosePanel(true);
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
@@ -598,7 +598,7 @@ public class CMD_ChatInvitation : CMD
 			this.SetGroupRequestUserList(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId);
 			if (reply == 1)
 			{
-				Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, StringMaster.GetString("ChatLog-01"), ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
+				Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, "ChatLog-01", ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
 			}
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
@@ -664,16 +664,17 @@ public class CMD_ChatInvitation : CMD
 	{
 		base.StartCoroutine(Singleton<TCPUtil>.Instance.SendChatExpulsion(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, data.userId, delegate(int nop)
 		{
-			string mes = string.Format(StringMaster.GetString("ChatMemberKick"), data.userInfo.nickname);
+			string mes = "ChatMemberKick";
+			string nickname = data.userInfo.nickname;
 			string @string = StringMaster.GetString("ChatMemberKickTitle");
 			string string2 = StringMaster.GetString("ChatMemberKickText");
-			this.SendChatMemberKick(mes, @string, string2);
+			this.SendChatMemberKick(mes, nickname, @string, string2);
 		}));
 	}
 
-	private void SendChatMemberKick(string mes, string title, string info)
+	private void SendChatMemberKick(string mes, string uname, string title, string info)
 	{
-		Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, mes, DataMng.Instance().UserName, delegate(int nop)
+		Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, mes, uname, delegate(int nop)
 		{
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
 			{

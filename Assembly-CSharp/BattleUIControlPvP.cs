@@ -9,12 +9,6 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 
 	private MultiBattleDialog _battleDialog;
 
-	private BattleUIControlPvP.DialogType myType;
-
-	private bool isReOpenCountDown;
-
-	private Action reopenAction;
-
 	protected BattleInputPvP inputPvP
 	{
 		get
@@ -64,16 +58,6 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		}
 	}
 
-	public override void ApplySetBattleStateRegistration()
-	{
-		base.ApplySetBattleStateRegistration();
-	}
-
-	protected override void SetInitActive()
-	{
-		base.SetInitActive();
-	}
-
 	private void CreateBattleRoundEnd()
 	{
 		GameObject pvPPrefab = ResourcesPath.GetPvPPrefab("PvPBattle_RoundEnd");
@@ -89,7 +73,7 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 	{
 		this.CreateBattleRoundEnd();
 		NGUITools.SetActiveSelf(this.battleDialog.gameObject, true);
-		base.stateManager.uiControl.AfterInitializeUIBefore();
+		base.AfterInitializeUIBefore();
 		this.HideAlertDialog();
 		for (int i = 0; i < this.ui.skillSelectUi.monsterButton.Length; i++)
 		{
@@ -132,8 +116,20 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		}
 		this.ui.rootPanel.RebuildAllDrawCalls();
 		base.InstantiateGimmickStatusEffect();
+		base.stateManager.uiControl.ApplyHideHitIcon();
+		base.stateManager.uiControl.ApplyDroppedItemHide();
+		base.stateManager.uiControlPvP.ApplySetAlwaysUIObject(false);
+		this.ui.itemInfoField.ApplyDroppedItemIconHide();
 		this.SetupEmotion();
 		this.SetupTimer();
+		string playerName = base.stateManager.pvpFunction.GetPlayerName();
+		string enemyName = base.stateManager.pvpFunction.GetEnemyName();
+		this.ui.playerNameLabel.text = playerName;
+		this.ui.enemyNameLabel.text = enemyName;
+		string playerTitleId = base.stateManager.pvpFunction.GetPlayerTitleId();
+		string enemyTitleId = base.stateManager.pvpFunction.GetEnemyTitleId();
+		TitleDataMng.SetTitleIcon(playerTitleId, this.ui.playerTitleIcon);
+		TitleDataMng.SetTitleIcon(enemyTitleId, this.ui.enemyTitleIcon);
 		yield break;
 	}
 
@@ -142,22 +138,19 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		this.ui.emotionSenderMulti = this.ui.skillSelectUi.emotionSenderPvP;
 		this.alwaysUi.Initialize(this.ui, new Action<UIButton>(base.stateManager.pvpFunction.SendEmotion));
 		this.HideEmotionButton();
-		this.HideEmotion();
+		this.ui.emotionSenderMulti.HideAll();
 	}
 
 	private void SetupTimer()
 	{
-		this.attackTime.checkEnemyRecoverDialog = new Func<bool>(this.CheckEnemyRecoverDialog);
+		this.attackTime.gameObject.SetActive(true);
+		this.attackTime.callBackAction = new Action(base.stateManager.pvpFunction.RunAttackAutomatically);
+		this.attackTime.checkEnemyRecoverDialog = (() => this.battleDialog.IsAlreadyOpen());
 	}
 
-	private bool CheckEnemyRecoverDialog()
+	public void StopAttackTimer()
 	{
-		return this.myType == BattleUIControlPvP.DialogType.EnemyCount;
-	}
-
-	public void HideEmotion()
-	{
-		this.ui.emotionSenderMulti.HideAll();
+		this.attackTime.StopTimer();
 	}
 
 	public void ShowEmotionButton()
@@ -175,54 +168,9 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		this.ui.emotionSenderMulti.SetEmotion(index, spriteName, isOther);
 	}
 
-	public void StopAttackTimer()
-	{
-		this.attackTime.StopTimer();
-	}
-
 	public void ApplySetAlwaysUIObject(bool isEnable)
 	{
 		this.alwaysUi.ApplySetAlwaysUIObject(isEnable);
-	}
-
-	public void SetPlayerName(string playerName)
-	{
-		this.ui.playerNameLabel.text = playerName;
-	}
-
-	public void SetPlayerTitle(string playerTitleId)
-	{
-		TitleDataMng.SetTitleIcon(playerTitleId, this.ui.playerTitleIcon);
-	}
-
-	public void SetEnemyName(string enemyName)
-	{
-		this.ui.enemyNameLabel.text = enemyName;
-	}
-
-	public void SetEnemyTitle(string enemyTitleId)
-	{
-		TitleDataMng.SetTitleIcon(enemyTitleId, this.ui.enemyTitleIcon);
-	}
-
-	public void ShowAlwaysUI()
-	{
-		NGUITools.SetActiveSelf(this.alwaysUi.gameObject, true);
-	}
-
-	public void HideAlwaysUI()
-	{
-		NGUITools.SetActiveSelf(this.alwaysUi.gameObject, false);
-	}
-
-	public void ApplyAttackTimer(bool isActive)
-	{
-		this.attackTime.gameObject.SetActive(isActive);
-	}
-
-	public void RegisterAttackRed()
-	{
-		this.attackTime.callBackAction = new Action(base.stateManager.pvpFunction.RunAttackAutomatically);
 	}
 
 	public void ShowAlertDialog(BattleUIControlPvP.DialogType type, string message, string buttonText, Action action = null, bool isWithButton = false, int maxTime = -1)
@@ -231,26 +179,11 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		{
 			return;
 		}
-		if (this.myType == BattleUIControlPvP.DialogType.EnemyCount && type == BattleUIControlPvP.DialogType.MustRecover)
-		{
-			this.isReOpenCountDown = true;
-		}
-		this.myType = type;
 		this.battleDialog.SetMessage(message, buttonText);
 		this.battleDialog.callBackAction = action;
 		this.battleDialog.maxTime = maxTime;
 		int skin = (!isWithButton) ? 2 : 1;
 		this.battleDialog.SetSkin(skin);
-	}
-
-	public void BlockNewDialog()
-	{
-		this.battleDialog.IsBlockNewDialog = true;
-	}
-
-	public bool IsFailed()
-	{
-		return this.battleDialog.isFailed;
 	}
 
 	public void StartEnemyFailedTimer(Action action, BattleUIControlPvP.DialogType dialogType)
@@ -259,22 +192,16 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		{
 			return;
 		}
-		this.reopenAction = action;
-		if (this.myType == BattleUIControlPvP.DialogType.MyCount && dialogType == BattleUIControlPvP.DialogType.EnemyCount)
-		{
-			return;
-		}
-		this.myType = dialogType;
 		if (this.battleDialog.gameObject.activeSelf)
 		{
 			base.stateManager.uiControlPvP.StopAttackTimer();
 			string waitingConnectionFormat = string.Empty;
-			if (this.myType == BattleUIControlPvP.DialogType.EnemyCount)
+			if (dialogType == BattleUIControlPvP.DialogType.EnemyCount)
 			{
 				waitingConnectionFormat = StringMaster.GetString("BattleUI-22");
 				this.battleDialog.StartFailedTimer(waitingConnectionFormat, action, true);
 			}
-			else if (this.myType == BattleUIControlPvP.DialogType.MyCount)
+			else if (dialogType == BattleUIControlPvP.DialogType.MyCount)
 			{
 				waitingConnectionFormat = StringMaster.GetString("BattleUI-44");
 				this.battleDialog.StartFailedTimer(waitingConnectionFormat, action, false);
@@ -282,24 +209,11 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		}
 	}
 
-	public bool IsAlreadyOpen()
-	{
-		return this.battleDialog.IsAlreadyOpen();
-	}
-
 	public void HideAlertDialog()
 	{
+		global::Debug.LogError("HideAlertDialog");
 		this.battleDialog.SetSkin(0);
 		this.attackTime.RestartTimer();
-		if (this.isReOpenCountDown)
-		{
-			this.StartEnemyFailedTimer(this.reopenAction, BattleUIControlPvP.DialogType.EnemyCount);
-		}
-		else
-		{
-			this.myType = BattleUIControlPvP.DialogType.None;
-		}
-		this.isReOpenCountDown = false;
 	}
 
 	public void HideRetireWindow()
@@ -326,11 +240,6 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		this.battleRoundEnd.ShowLeftRoundUI(leftRound);
 	}
 
-	public void HideLeftRoundUI()
-	{
-		this.battleRoundEnd.HideLeftRoundUI();
-	}
-
 	public void HideSyncWait()
 	{
 		GameObject gameObject = (base.stateManager.battleUiComponents as BattleUIComponentsPvP).pvpBattleSyncWaitUi.gameObject;
@@ -342,16 +251,10 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		this.alwaysUi.ApplySetAlwaysUIColliders(isEnable);
 	}
 
-	public void ApplyDroppedItemIconHide()
-	{
-		this.ui.itemInfoField.ApplyDroppedItemIconHide();
-	}
-
 	public enum DialogType
 	{
 		None,
 		Lose,
-		MustRecover,
 		EnemyCount,
 		EnemyRetire,
 		MyCount

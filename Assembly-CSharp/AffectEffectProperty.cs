@@ -27,22 +27,23 @@ public class AffectEffectProperty
 	[SerializeField]
 	private TechniqueType _techniqueType;
 
-	[FormerlySerializedAs("intValue")]
 	[SerializeField]
+	[FormerlySerializedAs("intValue")]
 	private int[] _intValue = new int[2];
 
-	[SerializeField]
 	[FormerlySerializedAs("floatValue")]
+	[SerializeField]
 	private float[] _floatValue = new float[6];
 
 	public AffectEffectProperty()
 	{
 	}
 
-	public AffectEffectProperty(AffectEffect type, int skillId, float hitRate, EffectTarget target, EffectNumbers effectNumbers, int[] intValue, float[] floatValue, bool useDrain, PowerType powerType, TechniqueType techniqueType, global::Attribute attribute, bool isMissThrough)
+	public AffectEffectProperty(AffectEffect type, int skillId, int subSkillId, float hitRate, EffectTarget target, EffectNumbers effectNumbers, int[] intValue, float[] floatValue, bool useDrain, PowerType powerType, TechniqueType techniqueType, global::Attribute attribute, bool isMissThrough)
 	{
 		this._type = type;
 		this.skillId = skillId;
+		this.subSkillId = subSkillId;
 		this.hitRate = hitRate;
 		this._techniqueType = techniqueType;
 		this._attribute = attribute;
@@ -74,6 +75,8 @@ public class AffectEffectProperty
 	}
 
 	public int skillId { get; private set; }
+
+	public int subSkillId { get; private set; }
 
 	private int power
 	{
@@ -195,7 +198,7 @@ public class AffectEffectProperty
 	{
 		get
 		{
-			return this._floatValue[0];
+			return this._floatValue[1];
 		}
 	}
 
@@ -322,6 +325,14 @@ public class AffectEffectProperty
 				return float.MaxValue;
 			}
 			return this._floatValue[2];
+		}
+	}
+
+	public SufferStateProperty.SetType sufferSetType
+	{
+		get
+		{
+			return (SufferStateProperty.SetType)this._floatValue[3];
 		}
 	}
 
@@ -546,13 +557,15 @@ public class AffectEffectProperty
 		}
 		if (this.powerType != PowerType.Fixable)
 		{
-			if (attacker.currentSufferState.FindSufferState(SufferStateProperty.SufferType.HitRateUp))
+			SufferStateProperty sufferStateProperty = attacker.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.HitRateUp);
+			if (sufferStateProperty.isActive)
 			{
-				num += attacker.currentSufferState.onHitRateUp.upPercent;
+				num += sufferStateProperty.upPercent;
 			}
-			if (attacker.currentSufferState.FindSufferState(SufferStateProperty.SufferType.HitRateDown))
+			SufferStateProperty sufferStateProperty2 = attacker.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.HitRateDown);
+			if (sufferStateProperty2.isActive)
 			{
-				num -= attacker.currentSufferState.onHitRateDown.downPercent;
+				num -= sufferStateProperty2.downPercent;
 			}
 			num += attacker.leaderSkillResult.hitRateUpPercent;
 		}
@@ -565,11 +578,11 @@ public class AffectEffectProperty
 		{
 			return 20;
 		}
-		if (this.type == AffectEffect.Poison || this.type == AffectEffect.Paralysis || this.type == AffectEffect.Sleep || this.type == AffectEffect.SkillLock || this.type == AffectEffect.InstantDeath || this.type == AffectEffect.Confusion || this.type == AffectEffect.Stun)
+		if (Tolerance.OnInfluenceToleranceAffectEffect(this.type))
 		{
 			return 10;
 		}
-		if (this.type == AffectEffect.HpRevival)
+		if (this.type == AffectEffect.HpRevival || this.type == AffectEffect.Regenerate)
 		{
 			return 15;
 		}

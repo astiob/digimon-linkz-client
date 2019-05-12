@@ -8,12 +8,12 @@ public class IsWarning : MonoBehaviour
 	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("Allyのタイトルバーのスキナー")]
 	[SerializeField]
+	[Header("Allyのタイトルバーのスキナー")]
 	private UIComponentSkinner allyTitleBarSkinner;
 
-	[Header("メッセージ")]
 	[SerializeField]
+	[Header("メッセージ")]
 	private UILabel messageLocalize;
 
 	public void ApplyWarning(SufferStateProperty.SufferType sufferType, CharacterStateControl characterStateControl = null)

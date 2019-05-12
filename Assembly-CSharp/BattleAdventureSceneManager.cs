@@ -60,8 +60,7 @@ public class BattleAdventureSceneManager
 		{
 			yield break;
 		}
-		bool isShowLoading = false;
-		for (;;)
+		do
 		{
 			float time = 3f;
 			do
@@ -70,11 +69,6 @@ public class BattleAdventureSceneManager
 				yield return null;
 			}
 			while (time > 0f);
-			if (!this.isUpdate && !isShowLoading)
-			{
-				isShowLoading = true;
-				battleStateManager.uiControlMulti.ShowLoading(false);
-			}
 			if (battleStateManager.multiBasicFunction.IsOwner)
 			{
 				IEnumerator sendAdventureSceneData = battleStateManager.multiBasicFunction.SendAdventureSceneData();
@@ -88,10 +82,6 @@ public class BattleAdventureSceneManager
 					object obj = wait.Current;
 					yield return obj;
 				}
-				if (battleStateManager.multiBasicFunction.isAdventureSceneAllEnd)
-				{
-					break;
-				}
 			}
 			else
 			{
@@ -100,12 +90,9 @@ public class BattleAdventureSceneManager
 				{
 					yield return null;
 				}
-				if (battleStateManager.multiBasicFunction.isAdventureSceneAllEnd)
-				{
-					break;
-				}
 			}
 		}
+		while (!battleStateManager.multiBasicFunction.isAdventureSceneAllEnd);
 		battleStateManager.uiControlMulti.HideLoading();
 		yield break;
 	}
@@ -155,6 +142,10 @@ public class BattleAdventureSceneManager
 		this.isUpdate = false;
 		this.SetActive(true);
 		BattleStateManager.current.time.SetPlaySpeed(this.currentSpeed2x, false);
+		if (BattleStateManager.current.battleMode == BattleMode.Multi || BattleStateManager.current.battleMode == BattleMode.PvP)
+		{
+			BattleStateManager.current.uiControlMulti.ShowLoading(false);
+		}
 	}
 
 	private static bool CheckExecuteDigimonEntry(GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene data)

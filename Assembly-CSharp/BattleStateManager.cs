@@ -8,16 +8,16 @@ public sealed class BattleStateManager : MonoBehaviour
 {
 	public BattleAdventureSceneManager battleAdventureSceneManager;
 
-	[SerializeField]
 	[Header("シングルUI")]
+	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
 	[SerializeField]
 	[Header("マルチUI")]
 	private BattleUIComponentsMulti battleUIComponentsMulti;
 
-	[Header("PvPUI")]
 	[SerializeField]
+	[Header("PvPUI")]
 	private BattleUIComponentsPvP battleUIComponentsPvP;
 
 	private static BattleMode _battleMode;
@@ -319,7 +319,19 @@ public sealed class BattleStateManager : MonoBehaviour
 	{
 		get
 		{
-			return (!this.onServerConnect) ? "public_attack" : GameWebAPI.RespDataMA_GetSkillM.SkillM.ActionSkill;
+			return BattleStateManager.PublicAttackSkillId;
+		}
+	}
+
+	public static string PublicAttackSkillId
+	{
+		get
+		{
+			if (string.IsNullOrEmpty(GameWebAPI.RespDataMA_GetSkillM.SkillM.ActionSkill))
+			{
+				return "public_attack";
+			}
+			return GameWebAPI.RespDataMA_GetSkillM.SkillM.ActionSkill;
 		}
 	}
 

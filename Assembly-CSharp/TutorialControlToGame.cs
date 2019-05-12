@@ -71,7 +71,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void ChangeScene(int sceneType, Action completed, bool isSkipTutorial, Action skipBattle)
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int x)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			this.OpenNewScene(sceneType, completed, isSkipTutorial, skipBattle);
 		});
@@ -330,12 +330,16 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void StartManualBattle()
 	{
-		BattleTutorial tutorial = UnityEngine.Object.FindObjectOfType<BattleStateManager>().tutorial;
-		if (tutorial != null)
+		BattleStateManager battleStateManager = UnityEngine.Object.FindObjectOfType<BattleStateManager>();
+		if (null != battleStateManager)
 		{
-			tutorial.SetDeactiveTutorialInduction();
-			tutorial.isPossibleTargetSelect = true;
-			tutorial.SetEnableBackKey();
+			BattleTutorial tutorial = battleStateManager.tutorial;
+			if (tutorial != null)
+			{
+				tutorial.SetDeactiveTutorialInduction();
+				tutorial.isPossibleTargetSelect = true;
+				tutorial.SetEnableBackKey();
+			}
 		}
 	}
 
@@ -965,7 +969,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void CloseAllUI(Action onCompleted)
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int x)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			if (onCompleted != null)
 			{

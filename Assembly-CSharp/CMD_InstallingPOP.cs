@@ -6,12 +6,12 @@ public sealed class CMD_InstallingPOP : CMD
 {
 	private Action _successCallback;
 
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("チップテクスチャ")]
 	[SerializeField]
+	[Header("チップテクスチャ")]
 	private UITexture chipTexture;
 
 	[SerializeField]
@@ -26,12 +26,12 @@ public sealed class CMD_InstallingPOP : CMD
 	[Header("いいえラベル")]
 	private UILabel noLabel;
 
-	[SerializeField]
 	[Header("チップ名ラベル")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("チップ説明ラベル")]
+	[SerializeField]
 	private UILabel chipDescLabel;
 
 	[SerializeField]

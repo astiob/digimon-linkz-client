@@ -1,44 +1,57 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SubStatePlayHitAnimationAction : BattleStateBase
 {
-	private HitEffectParams[] currentHitEffect;
+	private SubStatePlayHitAnimationAction.Data data;
 
 	public SubStatePlayHitAnimationAction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
 
+	public void Init(SubStatePlayHitAnimationAction.Data data)
+	{
+		this.data = data;
+	}
+
 	protected override void EnabledThisState()
 	{
-		this.currentHitEffect = null;
 	}
 
 	protected override IEnumerator MainRoutine()
 	{
-		IEnumerator skillHitStart = this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillHitStart);
-		while (skillHitStart.MoveNext())
+		IEnumerator[] functions = new IEnumerator[]
 		{
-			yield return null;
-		}
-		CharacterStateControl currentCharacter = (CharacterStateControl)base.battleStateData.sendValues["currentCharacter"];
-		CharacterStateControl[] isTargetsStatus = base.battleStateData.sendValues["isTargetsStatus"] as CharacterStateControl[];
-		AffectEffect affectEffect = (AffectEffect)((int)base.battleStateData.sendValues["affectEffect"]);
-		float waitTime = (float)base.battleStateData.sendValues["waitTime"];
-		bool[] onMissHit = base.battleStateData.sendValues["onMissHit"] as bool[];
-		HitIcon[] hitIconList = base.battleStateData.sendValues["hitIconList"] as HitIcon[];
-		AffectEffectProperty status = base.battleStateData.sendValues["status"] as AffectEffectProperty;
-		bool useSlowMotion = (bool)base.battleStateData.sendValues["useSlowMotion"];
-		ExtraEffectType[] extraEffectTypes = base.battleStateData.sendValues["extraEffectType"] as ExtraEffectType[];
-		this.currentHitEffect = this.GetHitEffectParams(affectEffect, isTargetsStatus, onMissHit, status, extraEffectTypes);
-		while (base.battleStateData.StopHitAnimationCall())
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillHitStart),
+			this.PlayHitAnimation(),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillHitEnd)
+		};
+		foreach (IEnumerator function in functions)
 		{
-			yield return null;
+			while (function.MoveNext())
+			{
+				object obj = function.Current;
+				yield return obj;
+			}
 		}
+		yield break;
+	}
+
+	private IEnumerator PlayHitAnimation()
+	{
+		List<HitIcon> hitIconList = new List<HitIcon>();
+		foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon in this.data.hitIconList)
+		{
+			int index = hitIconList.Count;
+			HitIcon temp = base.stateManager.uiControl.ApplyShowHitIcon(index, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon.target), hitIcon.affectEffect, hitIcon.damage, hitIcon.strength, hitIcon.isMiss, hitIcon.isCritical, hitIcon.isDrain, hitIcon.isCounter, hitIcon.isReflection, hitIcon.extraEffectType);
+			hitIconList.Add(temp);
+		}
+		HitEffectParams[] currentHitEffect = this.GetHitEffectParams();
 		base.stateManager.uiControl.HideCharacterHUDFunction();
-		base.stateManager.threeDAction.ShowAllCharactersAction(isTargetsStatus);
+		base.stateManager.threeDAction.ShowAllCharactersAction(this.data.hitIconList.Select((SubStatePlayHitAnimationAction.Data.HitIcon item) => item.target).ToArray<CharacterStateControl>());
 		Action PlayDeadSE = delegate()
 		{
 			bool isPlayedDeathSE;
@@ -51,39 +64,37 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		bool isFindDeathCharacter = false;
 		bool isBigBossFindDeathCharacter = false;
 		bool isPlayedHitEffectSE = false;
-		for (int i = 0; i < isTargetsStatus.Length; i++)
+		for (int i = 0; i < this.data.hitIconList.Count; i++)
 		{
-			if (currentCharacter != null && currentCharacter == isTargetsStatus[i] && !isTargetsStatus[i].isDied)
+			if (this.data.hitIconList[i].target.isDiedJustBefore)
 			{
-				base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.idle, new CharacterStateControl[]
-				{
-					isTargetsStatus[i]
-				});
-			}
-			if (isTargetsStatus[i].isDiedJustBefore)
-			{
-				isTargetsStatus[i].CharacterParams.gameObject.SetActive(false);
+				this.data.hitIconList[i].target.CharacterParams.gameObject.SetActive(false);
 			}
 			else
 			{
-				base.stateManager.threeDAction.PlayHitEffectAction(this.currentHitEffect[i], isTargetsStatus[i]);
+				base.stateManager.threeDAction.PlayHitEffectAction(currentHitEffect[i], this.data.hitIconList[i].target);
 				if (!isPlayedHitEffectSE)
 				{
 					isPlayedHitEffectSE = true;
-					base.stateManager.soundPlayer.TryPlaySE(this.currentHitEffect[i]);
+					base.stateManager.soundPlayer.TryPlaySE(currentHitEffect[i]);
 				}
-				if (!isTargetsStatus[i].isDied)
+				bool isDamage = AffectEffectProperty.IsDamage(this.data.affectEffectProperty.type);
+				bool isTolerance = Tolerance.OnInfluenceToleranceAffectEffect(this.data.affectEffectProperty.type);
+				bool isBarrier = this.data.hitIconList[i].affectEffect == AffectEffect.TurnBarrier || this.data.hitIconList[i].affectEffect == AffectEffect.CountBarrier;
+				bool isEvasion = this.data.hitIconList[i].affectEffect == AffectEffect.TurnEvasion || this.data.hitIconList[i].affectEffect == AffectEffect.CountEvasion;
+				bool isInvalid = this.data.hitIconList[i].strength == Strength.Invalid;
+				if (!this.data.hitIconList[i].target.isDied)
 				{
-					if (this.CheckBarrier(isTargetsStatus[i], affectEffect) || this.CheckEvasion(isTargetsStatus[i], affectEffect) || this.CheckInvalid(isTargetsStatus[i], affectEffect, status))
+					if ((isDamage || isTolerance) && (isBarrier || isEvasion || isInvalid))
 					{
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.idle, new CharacterStateControl[]
 						{
-							isTargetsStatus[i]
+							this.data.hitIconList[i].target
 						});
 					}
-					else if (!onMissHit[i])
+					else if (!this.data.hitIconList[i].isMiss)
 					{
-						switch (affectEffect)
+						switch (this.data.hitIconList[i].affectEffect)
 						{
 						case AffectEffect.Damage:
 						case AffectEffect.ReferenceTargetHpRate:
@@ -91,31 +102,28 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.HpBorderlineSpDamage:
 						case AffectEffect.DefenseThroughDamage:
 						case AffectEffect.SpDefenseThroughDamage:
-						{
-							Strength strength = isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute);
-							if (strength == Strength.Weak)
+							if (this.data.hitIconList[i].strength == Strength.Weak)
 							{
 								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.strongHit, new CharacterStateControl[]
 								{
-									isTargetsStatus[i]
+									this.data.hitIconList[i].target
 								});
 							}
-							else if (strength == Strength.Drain)
+							else if (this.data.hitIconList[i].strength == Strength.Drain)
 							{
 								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 								{
-									isTargetsStatus[i]
+									this.data.hitIconList[i].target
 								});
 							}
 							else
 							{
 								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
 								{
-									isTargetsStatus[i]
+									this.data.hitIconList[i].target
 								});
 							}
 							break;
-						}
 						case AffectEffect.AttackUp:
 						case AffectEffect.DefenceUp:
 						case AffectEffect.SpAttackUp:
@@ -147,7 +155,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.TurnEvasion:
 						case AffectEffect.CountEvasion:
 						case AffectEffect.ApDrain:
-							goto IL_64F;
+							goto IL_7BC;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
 						case AffectEffect.SpAttackDown:
@@ -167,49 +175,66 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.ApConsumptionUp:
 							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
 							{
-								isTargetsStatus[i]
+								this.data.hitIconList[i].target
 							});
 							break;
+						case AffectEffect.HpSettingFixable:
+						case AffectEffect.HpSettingPercentage:
+							if (this.data.hitIconList[i].damage > 0)
+							{
+								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+								{
+									this.data.hitIconList[i].target
+								});
+							}
+							else
+							{
+								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
+								{
+									this.data.hitIconList[i].target
+								});
+							}
+							break;
 						default:
-							goto IL_64F;
+							goto IL_7BC;
 						}
-						goto IL_6B1;
-						IL_64F:
+						goto IL_844;
+						IL_7BC:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
-							isTargetsStatus[i]
+							this.data.hitIconList[i].target
 						});
 					}
 					else
 					{
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.guard, new CharacterStateControl[]
 						{
-							isTargetsStatus[i]
+							this.data.hitIconList[i].target
 						});
 					}
-					IL_6B1:;
+					IL_844:;
 				}
 				else
 				{
-					if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1 && isTargetsStatus[i].isEnemy)
+					if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1 && this.data.hitIconList[i].target.isEnemy)
 					{
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.strongHit, new CharacterStateControl[]
 						{
-							isTargetsStatus[i]
+							this.data.hitIconList[i].target
 						});
 						isBigBossFindDeathCharacter = true;
 					}
 					else
 					{
-						base.stateManager.threeDAction.PlayDeadAnimationCharacterAction(PlayDeadSE, isTargetsStatus[i]);
+						base.stateManager.threeDAction.PlayDeadAnimationCharacterAction(PlayDeadSE, this.data.hitIconList[i].target);
 					}
 					isFindDeathCharacter = true;
 				}
 			}
 		}
-		base.stateManager.uiControl.ShowCharacterHUDFunction(isTargetsStatus);
-		IEnumerator slowMotion;
-		if (useSlowMotion && base.stateManager.IsLastBattleAndAllDeath())
+		base.stateManager.uiControl.ShowCharacterHUDFunction(this.data.hitIconList.Select((SubStatePlayHitAnimationAction.Data.HitIcon item) => item.target).ToArray<CharacterStateControl>());
+		IEnumerator slowMotion = null;
+		if (base.stateManager.IsLastBattleAndAllDeath())
 		{
 			if (base.stateManager.battleMode == BattleMode.Multi)
 			{
@@ -217,205 +242,81 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 			}
 			slowMotion = base.stateManager.threeDAction.SlowMotionWaitAction();
 		}
-		Action hudReposition = delegate()
-		{
-			base.stateManager.uiControl.RepositionCharacterHUDPosition(isTargetsStatus);
-			if (slowMotion != null)
-			{
-				slowMotion.MoveNext();
-			}
-			for (int j = 0; j < isTargetsStatus.Length; j++)
-			{
-				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(isTargetsStatus[j]);
-				hitIconList[j].HitIconReposition(fixableCharacterCenterPosition2DFunction);
-			}
-		};
 		if (isBigBossFindDeathCharacter)
 		{
 			base.stateManager.uiControl.Fade(Color.white, 1f, 1f);
 		}
-		float waitSecond = waitTime;
+		float waitSecond = this.data.time;
 		if (isFindDeathCharacter)
 		{
 			waitSecond += 1f;
 		}
-		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(waitSecond, hudReposition, null);
-		while (wait.MoveNext())
+		while (waitSecond > 0f)
 		{
+			waitSecond -= Time.deltaTime;
+			CharacterStateControl[] targets = this.data.hitIconList.Select((SubStatePlayHitAnimationAction.Data.HitIcon item) => item.target).ToArray<CharacterStateControl>();
+			base.stateManager.uiControl.RepositionCharacterHUDPosition(targets);
+			if (slowMotion != null)
+			{
+				slowMotion.MoveNext();
+			}
+			for (int j = 0; j < this.data.hitIconList.Count; j++)
+			{
+				Vector3 position = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(this.data.hitIconList[j].target);
+				hitIconList[j].HitIconReposition(position);
+			}
 			yield return null;
 		}
-		base.battleStateData.stopHitAnimation = base.stateManager.threeDAction.StopHitAnimation(this.currentHitEffect);
-		IEnumerator skillHitEnd = this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillHitEnd);
-		while (skillHitEnd.MoveNext())
-		{
-			yield return null;
-		}
+		AppCoroutine.Start(this.StopHitAnimation(currentHitEffect), false);
 		yield break;
 	}
 
-	private HitEffectParams[] GetHitEffectParams(AffectEffect affectEffect, CharacterStateControl[] isTargetsStatus, bool[] onMissHit, AffectEffectProperty status, ExtraEffectType[] extraEffectTypes)
+	private IEnumerator StopHitAnimation(HitEffectParams[] hitEffectParams)
 	{
-		HitEffectParams[] result;
-		if (AffectEffectProperty.IsDamage(affectEffect))
+		if (hitEffectParams == null)
 		{
-			List<HitEffectParams> list = new List<HitEffectParams>();
-			for (int i = 0; i < isTargetsStatus.Length; i++)
+			yield break;
+		}
+		yield return new WaitForSeconds(1.5f);
+		yield return base.stateManager.threeDAction.StopHitAnimation(hitEffectParams);
+		yield break;
+	}
+
+	private HitEffectParams[] GetHitEffectParams()
+	{
+		List<HitEffectParams> list = new List<HitEffectParams>();
+		for (int i = 0; i < this.data.hitIconList.Count; i++)
+		{
+			if (AffectEffectProperty.IsDamage(this.data.hitIconList[i].affectEffect))
 			{
-				HitEffectParams item;
-				if (isTargetsStatus[i].currentSufferState.onTurnBarrier.isActive)
+				if (this.data.hitIconList[i].isMiss)
 				{
-					item = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnBarrier.ToString())[i];
+					HitEffectParams item = base.battleStateData.hitEffects.GetObject(AffectEffect.Damage.ToString(), Strength.None.ToString())[i];
+					list.Add(item);
 				}
-				else if (isTargetsStatus[i].currentSufferState.onCountBarrier.isActive)
+				else if (!base.stateManager.onEnableTutorial && this.data.hitIconList[i].extraEffectType == ExtraEffectType.Up)
 				{
-					item = base.battleStateData.hitEffects.GetObject(AffectEffect.CountBarrier.ToString())[i];
+					HitEffectParams item2 = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackUp.ToString())[i];
+					list.Add(item2);
 				}
-				else if (isTargetsStatus[i].currentSufferState.onTurnEvasion.isActive)
+				else if (!base.stateManager.onEnableTutorial && this.data.hitIconList[i].extraEffectType == ExtraEffectType.Down)
 				{
-					item = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnEvasion.ToString())[i];
-				}
-				else if (isTargetsStatus[i].currentSufferState.onCountEvasion.isActive)
-				{
-					item = base.battleStateData.hitEffects.GetObject(AffectEffect.CountEvasion.ToString())[i];
-				}
-				else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
-				{
-					if (onMissHit[i])
-					{
-						item = base.battleStateData.GetDamageEffect(Strength.None)[i];
-					}
-					else
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.ReferenceTargetHpRate.ToString())[i];
-					}
-				}
-				else if (status != null)
-				{
-					Strength attributeStrength = isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute);
-					if (attributeStrength == Strength.Invalid)
-					{
-						item = base.battleStateData.GetDamageEffect(attributeStrength)[i];
-					}
-					else if (attributeStrength == Strength.Drain)
-					{
-						if (onMissHit[i])
-						{
-							item = base.battleStateData.GetDamageEffect(Strength.None)[i];
-						}
-						else
-						{
-							item = base.battleStateData.GetDamageEffect(attributeStrength)[i];
-						}
-					}
-					else if (onMissHit[i])
-					{
-						item = base.battleStateData.GetDamageEffect(Strength.None)[i];
-					}
-					else if (!base.stateManager.onEnableTutorial && extraEffectTypes[i] == ExtraEffectType.Up)
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackUp.ToString())[i];
-					}
-					else if (!base.stateManager.onEnableTutorial && extraEffectTypes[i] == ExtraEffectType.Down)
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackDown.ToString())[i];
-					}
-					else
-					{
-						item = base.battleStateData.GetDamageEffect(attributeStrength)[i];
-					}
-				}
-				else if (onMissHit[i])
-				{
-					item = base.battleStateData.GetDamageEffect(Strength.None)[i];
+					HitEffectParams item3 = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackDown.ToString())[i];
+					list.Add(item3);
 				}
 				else
 				{
-					item = base.battleStateData.hitEffects.GetObject(affectEffect.ToString(), Strength.None.ToString())[i];
+					HitEffectParams item4 = base.battleStateData.hitEffects.GetObject(AffectEffect.Damage.ToString(), this.data.hitIconList[i].strength.ToString())[i];
+					list.Add(item4);
 				}
-				list.Add(item);
 			}
-			result = list.ToArray();
-		}
-		else if (Tolerance.OnInfluenceToleranceAffectEffect(affectEffect))
-		{
-			List<HitEffectParams> list2 = new List<HitEffectParams>();
-			for (int j = 0; j < isTargetsStatus.Length; j++)
+			else
 			{
-				HitEffectParams item2;
-				if (isTargetsStatus[j].currentSufferState.onTurnBarrier.isActive)
-				{
-					item2 = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnBarrier.ToString())[j];
-				}
-				else if (isTargetsStatus[j].currentSufferState.onCountBarrier.isActive)
-				{
-					item2 = base.battleStateData.hitEffects.GetObject(AffectEffect.CountBarrier.ToString())[j];
-				}
-				else if (isTargetsStatus[j].currentSufferState.onTurnEvasion.isActive)
-				{
-					item2 = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnEvasion.ToString())[j];
-				}
-				else if (isTargetsStatus[j].currentSufferState.onCountEvasion.isActive)
-				{
-					item2 = base.battleStateData.hitEffects.GetObject(AffectEffect.CountEvasion.ToString())[j];
-				}
-				else
-				{
-					item2 = base.battleStateData.hitEffects.GetObject(affectEffect.ToString())[j];
-				}
-				list2.Add(item2);
+				HitEffectParams item5 = base.battleStateData.hitEffects.GetObject(this.data.hitIconList[i].affectEffect.ToString())[i];
+				list.Add(item5);
 			}
-			result = list2.ToArray();
 		}
-		else if (affectEffect == AffectEffect.HpRevival && status != null && status.useDrain)
-		{
-			List<HitEffectParams> list3 = new List<HitEffectParams>();
-			for (int k = 0; k < isTargetsStatus.Length; k++)
-			{
-				list3.Add(base.battleStateData.drainEffect);
-			}
-			result = list3.ToArray();
-		}
-		else
-		{
-			result = base.battleStateData.hitEffects.GetObject(affectEffect.ToString());
-		}
-		return result;
-	}
-
-	private bool CheckBarrier(CharacterStateControl characterStateControl, AffectEffect affectEffect)
-	{
-		bool flag = AffectEffectProperty.IsDamage(affectEffect);
-		bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(affectEffect);
-		bool isActive = characterStateControl.currentSufferState.onTurnBarrier.isActive;
-		bool isActive2 = characterStateControl.currentSufferState.onCountBarrier.isActive;
-		return (flag || flag2) && (isActive || isActive2);
-	}
-
-	private bool CheckEvasion(CharacterStateControl characterStateControl, AffectEffect affectEffect)
-	{
-		bool flag = AffectEffectProperty.IsDamage(affectEffect);
-		bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(affectEffect);
-		bool isActive = characterStateControl.currentSufferState.onTurnEvasion.isActive;
-		bool isActive2 = characterStateControl.currentSufferState.onCountEvasion.isActive;
-		return (flag || flag2) && (isActive || isActive2);
-	}
-
-	private bool CheckInvalid(CharacterStateControl characterStateControl, AffectEffect affectEffect, AffectEffectProperty status)
-	{
-		bool flag = AffectEffectProperty.IsDamage(affectEffect);
-		bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(affectEffect);
-		Tolerance tolerance = characterStateControl.tolerance;
-		if (flag)
-		{
-			Strength attributeStrength = tolerance.GetAttributeStrength(status.attribute);
-			return attributeStrength == Strength.Invalid;
-		}
-		if (flag2)
-		{
-			Strength affectEffectStrength = tolerance.GetAffectEffectStrength(affectEffect);
-			return affectEffectStrength == Strength.Invalid;
-		}
-		return false;
+		return list.ToArray();
 	}
 
 	private IEnumerator PlayAdventureScene(BattleAdventureSceneManager.TriggerType triggerType)
@@ -431,24 +332,69 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	protected override void DisabledThisState()
 	{
-		CharacterStateControl[] array = base.battleStateData.sendValues["isTargetsStatus"] as CharacterStateControl[];
-		for (int i = 0; i < array.Length; i++)
+		foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon in this.data.hitIconList)
 		{
-			if (array[i].isDied)
+			if (hitIcon.target.isDied)
 			{
-				array[i].isDiedJustBefore = true;
+				hitIcon.target.isDiedJustBefore = true;
 			}
 		}
 	}
 
 	protected override void GetEventThisState(EventState eventState)
 	{
-		base.stateManager.threeDAction.StopHitAnimation(this.currentHitEffect);
-		base.stateManager.soundPlayer.StopHitEffectSE();
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		if (base.battleStateData.isSlowMotion)
 		{
 			base.stateManager.threeDAction.StopSlowMotionAction();
+		}
+	}
+
+	public class Data
+	{
+		public float time;
+
+		public AffectEffectProperty affectEffectProperty;
+
+		public List<SubStatePlayHitAnimationAction.Data.HitIcon> hitIconList = new List<SubStatePlayHitAnimationAction.Data.HitIcon>();
+
+		public void AddHitIcon(CharacterStateControl target, AffectEffect affectEffect, int damage, Strength strength, bool isMiss, bool isCritical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType)
+		{
+			SubStatePlayHitAnimationAction.Data.HitIcon hitIcon = new SubStatePlayHitAnimationAction.Data.HitIcon();
+			hitIcon.target = target;
+			hitIcon.affectEffect = affectEffect;
+			hitIcon.damage = damage;
+			hitIcon.strength = strength;
+			hitIcon.isMiss = isMiss;
+			hitIcon.isCritical = isCritical;
+			hitIcon.isDrain = isDrain;
+			hitIcon.isCounter = isCounter;
+			hitIcon.isReflection = isReflection;
+			hitIcon.extraEffectType = extraEffectType;
+			this.hitIconList.Add(hitIcon);
+		}
+
+		public class HitIcon
+		{
+			public CharacterStateControl target;
+
+			public AffectEffect affectEffect;
+
+			public int damage;
+
+			public Strength strength;
+
+			public bool isMiss = true;
+
+			public bool isCritical;
+
+			public bool isDrain;
+
+			public bool isCounter;
+
+			public bool isReflection;
+
+			public ExtraEffectType extraEffectType;
 		}
 	}
 }

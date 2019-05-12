@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 {
-	[SerializeField]
 	[Header("Menu/PanelのTransform")]
+	[SerializeField]
 	private Transform menuPanelTransform;
 
 	[Header("味方のPvP用上に出る文字")]
@@ -34,12 +34,12 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[NonSerialized]
 	public EmotionSenderMulti emotionSenderMulti;
 
-	[Header("Winの次のボタン")]
 	[SerializeField]
+	[Header("Winの次のボタン")]
 	public UIButton winNextButton;
 
-	[Header("Loseの次のボタン")]
 	[SerializeField]
+	[Header("Loseの次のボタン")]
 	public UIButton loseNextButton;
 
 	public override GameObject enemyStatusDescriptionGO

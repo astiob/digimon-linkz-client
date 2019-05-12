@@ -1,5 +1,7 @@
-﻿using Monster;
+﻿using Colosseum.Matching;
+using Monster;
 using MonsterList.ChangeMonster;
+using MultiBattle.Tools;
 using System;
 using UnityEngine;
 
@@ -70,7 +72,31 @@ namespace Colosseum.DeckUI
 
 		private void OpenPvPMatchingDialog()
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_PvPMatchingWait");
+			if (MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_MATCHING_TYPE == 1)
+			{
+				MatchingConfig matchingConfig = new MatchingConfig
+				{
+					mockBattleOppoentUserCode = ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode,
+					isMockBattle = ((!("0" == ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode)) ? 1 : 0)
+				};
+				if (null != CMD_PvPTop.Instance)
+				{
+					matchingConfig.isHighCostMainBattle = CMD_PvPTop.Instance.isExtraBattle;
+					if (!matchingConfig.IsMockBattle())
+					{
+						matchingConfig.staminaCost = CMD_PvPTop.Instance.NeedStamina;
+					}
+					else
+					{
+						matchingConfig.staminaCost = 0;
+					}
+				}
+				CMD_ColosseumMatching.Create(matchingConfig);
+			}
+			else
+			{
+				GUIMain.ShowCommonDialog(null, "CMD_PvPMatchingWait");
+			}
 		}
 
 		public void Initialize(ColosseumDeckData data)

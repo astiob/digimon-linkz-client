@@ -7,13 +7,16 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 {
 	private HitEffectParams[] hitEffectParams;
 
+	private SubStateEnemiesItemDroppingFunction subStateEnemiesItemDroppingFunction;
+
 	public SubStateOnHitPoisonDamageFunction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
 
 	protected override void AwakeThisState()
 	{
-		base.AddState(new SubStateEnemiesItemDroppingFunction(null, new Action<EventState>(base.SendEventState)));
+		this.subStateEnemiesItemDroppingFunction = new SubStateEnemiesItemDroppingFunction(null, new Action<EventState>(base.SendEventState));
+		base.AddState(this.subStateEnemiesItemDroppingFunction);
 	}
 
 	protected override void EnabledThisState()
@@ -42,14 +45,6 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		List<CharacterStateControl> list = new List<CharacterStateControl>();
 		foreach (CharacterStateControl characterStateControl in base.battleStateData.GetTotalCharacters())
 		{
-			base.stateManager.threeDAction.ShowAliveCharactersAction(new CharacterStateControl[]
-			{
-				characterStateControl
-			});
-			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(new CharacterStateControl[]
-			{
-				characterStateControl
-			});
 			if (!characterStateControl.isDied)
 			{
 				if (characterStateControl.currentSufferState.FindSufferState(sufferType))
@@ -68,6 +63,17 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		{
 			yield break;
 		}
+		foreach (CharacterStateControl character in characters)
+		{
+			base.stateManager.threeDAction.ShowAliveCharactersAction(new CharacterStateControl[]
+			{
+				character
+			});
+			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(new CharacterStateControl[]
+			{
+				character
+			});
+		}
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		base.stateManager.SetBattleScreen(BattleScreen.PoisonHit);
 		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
@@ -84,7 +90,8 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		List<bool> isMiss = new List<bool>();
 		for (int i = 0; i < characters.Count; i++)
 		{
-			int value = characters[i].currentSufferState.onRegenerate.GetRegenerate(characters[i]);
+			SufferStateProperty regenerateSuffer = characters[i].currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Regenerate);
+			int value = regenerateSuffer.GetRegenerate(characters[i]);
 			characters[i].hp += value;
 			damage.Add(value);
 			isMiss.Add(false);
@@ -98,7 +105,7 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		Vector3[] hitIconPositions = this.GetHitIconPositions(characters);
 		for (int j = 0; j < characters.Count; j++)
 		{
-			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, hitIconPositions[j], AffectEffect.Regenerate, damage[j], Strength.None, isMiss[j], false, false, false, ExtraEffectType.Non);
+			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, hitIconPositions[j], AffectEffect.Regenerate, damage[j], Strength.None, isMiss[j], false, false, false, false, ExtraEffectType.Non);
 			hitIconlist.Add(hitIcon);
 		}
 		base.stateManager.uiControl.ShowCharacterHUDFunction(characters.ToArray());
@@ -135,8 +142,22 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		{
 			yield break;
 		}
-		base.stateManager.uiControl.HideCharacterHUDFunction();
+		foreach (CharacterStateControl character in characters)
+		{
+			base.stateManager.threeDAction.ShowAliveCharactersAction(new CharacterStateControl[]
+			{
+				character
+			});
+			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(new CharacterStateControl[]
+			{
+				character
+			});
+		}
 		base.stateManager.SetBattleScreen(BattleScreen.PoisonHit);
+		foreach (CharacterStateControl character2 in this.GetTotalCharacters())
+		{
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.DamagePossibility);
+		}
 		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
 		{
 			base.stateManager.cameraControl.PlayCameraMotionAction("BigBoss/0002_command", base.battleStateData.stageSpawnPoint, true);
@@ -153,7 +174,8 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		CharacterStateControl currentDeathBigBoss = null;
 		for (int i = 0; i < characters.Count; i++)
 		{
-			int poisonDamage = characters[i].currentSufferState.onPoison.GetPoisonDamageFluctuation(characters[i]);
+			SufferStateProperty poisonSuffer = characters[i].currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Poison);
+			int poisonDamage = poisonSuffer.GetPoisonDamageFluctuation(characters[i]);
 			characters[i].hp -= poisonDamage;
 			damage.Add(poisonDamage);
 			isMiss.Add(false);
@@ -191,23 +213,20 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 			}
 			base.stateManager.threeDAction.PlayHitEffectAction(this.hitEffectParams[i], characters[i]);
 		}
-		base.stateManager.soundPlayer.TryPlaySE(this.hitEffectParams[0]);
-		if (base.battleMode != BattleMode.PvP)
+		foreach (CharacterStateControl character3 in this.GetTotalCharacters())
 		{
-			base.stateManager.deadOrAlive.AfterEnemyDeadFunction(currentDeathCharacters.ToArray());
+			character3.ClearGutsData();
 		}
 		List<HitIcon> hitIconlist = new List<HitIcon>();
 		Vector3[] hitIconPositions = this.GetHitIconPositions(characters);
 		for (int j = 0; j < characters.Count; j++)
 		{
-			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, hitIconPositions[j], AffectEffect.Poison, damage[j], Strength.None, isMiss[j], false, false, false, ExtraEffectType.Non);
+			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, hitIconPositions[j], AffectEffect.Poison, damage[j], Strength.None, isMiss[j], false, false, false, false, ExtraEffectType.Non);
 			hitIconlist.Add(hitIcon);
 		}
+		base.stateManager.uiControl.HideCharacterHUDFunction();
 		base.stateManager.uiControl.ShowCharacterHUDFunction(characters.ToArray());
-		foreach (CharacterStateControl c in currentDeathCharacters)
-		{
-			c.isDiedJustBefore = true;
-		}
+		base.stateManager.soundPlayer.TryPlaySE(this.hitEffectParams[0]);
 		Action hudReposition = delegate()
 		{
 			foreach (CharacterStateControl characterStateControl in characters)
@@ -217,10 +236,10 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 					characterStateControl
 				});
 			}
-			for (int k = 0; k < characters.Count; k++)
+			for (int m = 0; m < characters.Count; m++)
 			{
-				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[k]);
-				hitIconlist[k].HitIconReposition(fixableCharacterCenterPosition2DFunction);
+				Vector3 fixableCharacterCenterPosition2DFunction = base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(characters[m]);
+				hitIconlist[m].HitIconReposition(fixableCharacterCenterPosition2DFunction);
 			}
 		};
 		if (currentDeathBigBoss != null)
@@ -235,7 +254,10 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		}
 		base.stateManager.soundPlayer.TryStopSE(this.hitEffectParams[0]);
 		base.stateManager.soundPlayer.StopHitEffectSE();
-		base.battleStateData.currentDeadCharacters = currentDeathCharacters.ToArray();
+		foreach (CharacterStateControl c in currentDeathCharacters)
+		{
+			c.isDiedJustBefore = true;
+		}
 		if (base.battleMode != BattleMode.PvP)
 		{
 			if (currentDeathBigBoss != null)
@@ -247,7 +269,8 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 					yield return null;
 				}
 			}
-			base.SetState(typeof(SubStateEnemiesItemDroppingFunction));
+			this.subStateEnemiesItemDroppingFunction.Init(currentDeathCharacters.ToArray());
+			base.SetState(this.subStateEnemiesItemDroppingFunction.GetType());
 			while (base.isWaitState)
 			{
 				yield return null;
@@ -258,6 +281,27 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 			}
 		}
 		yield break;
+	}
+
+	private CharacterStateControl[] GetTotalCharacters()
+	{
+		CharacterStateControl[] result;
+		if (base.stateManager.battleMode == BattleMode.PvP)
+		{
+			if (base.stateManager.pvpFunction.IsOwner)
+			{
+				result = base.battleStateData.GetTotalCharacters();
+			}
+			else
+			{
+				result = base.battleStateData.GetTotalCharactersEnemyFirst();
+			}
+		}
+		else
+		{
+			result = base.battleStateData.GetTotalCharacters();
+		}
+		return result;
 	}
 
 	private Vector3[] GetHitIconPositions(List<CharacterStateControl> characters)
@@ -282,7 +326,6 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		}
 		base.stateManager.uiControl.ApplyHideHitIcon();
 		base.stateManager.uiControl.HideCharacterHUDFunction();
-		base.battleStateData.SEStopFunctionCall();
 	}
 
 	protected override void GetEventThisState(EventState eventState)

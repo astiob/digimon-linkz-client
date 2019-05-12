@@ -14,18 +14,10 @@ public class CMD_PvPTop : CMD
 {
 	private readonly float SWITCH_COMMENT_INTERVAL_TIME = 5f;
 
-	private readonly string ACTIVE_NATIONWIDE_TEXT = "TXT_NationalBattle";
-
-	private readonly string DEACTIVE_NATIONWIDE_TEXT = "TXT_NationalBattle_G";
-
-	private readonly string ACTIVE_MOCKBATTLE_TEXT = "TXT_MockBattle";
-
-	private readonly string DEACTIVE_MOCKBATTLE_TEXT = "TXT_MockBattle_G";
-
 	private static CMD_PvPTop instance;
 
-	[Header("以下,PvPTopに関する設定")]
 	[SerializeField]
+	[Header("以下,PvPTopに関する設定")]
 	private UILabel lastTimeLabel;
 
 	[SerializeField]
@@ -61,8 +53,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel aggregateLabel;
 
-	[SerializeField]
 	[Header("全国バトルボタン")]
+	[SerializeField]
 	private GUICollider nationwideCollider;
 
 	[SerializeField]
@@ -72,7 +64,10 @@ public class CMD_PvPTop : CMD
 	private UISprite nationwideFrameSprite;
 
 	[SerializeField]
-	private UISprite nationwideTextSprite;
+	private GameObject nationwideText;
+
+	[SerializeField]
+	private GameObject nationwideTextG;
 
 	[SerializeField]
 	[Header("拡張全国バトルボタン")]
@@ -85,7 +80,10 @@ public class CMD_PvPTop : CMD
 	private UISprite nationwideExtraFrameSprite;
 
 	[SerializeField]
-	private UISprite nationwideExtraTextSprite;
+	private GameObject nationwideExtraText;
+
+	[SerializeField]
+	private GameObject nationwideExtraTextG;
 
 	[SerializeField]
 	private UISprite rankSprite;
@@ -100,7 +98,10 @@ public class CMD_PvPTop : CMD
 	private UISprite mockBattleFrameSprite;
 
 	[SerializeField]
-	private UISprite mockBattleTextSprite;
+	private GameObject mockBattleText;
+
+	[SerializeField]
+	private GameObject mockBattleTextG;
 
 	[SerializeField]
 	private GameObject aggregateMarkObj;
@@ -129,36 +130,36 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel lbRewardPercentage;
 
-	[Header("スケジュール")]
 	[SerializeField]
+	[Header("スケジュール")]
 	private GameObject goTimeSchedule;
 
-	[SerializeField]
 	[Header("以下,○回目ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] spanTimeLabelArray = new UILabel[0];
 
-	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
 	private UILabel[] startTimeLabelArray = new UILabel[0];
 
 	[SerializeField]
 	[Header("以下,タイムスケジュールの'~'ラベル(昇順)")]
 	private UILabel[] fromMarkLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
 	[SerializeField]
 	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
-	[Header("以下,ヘルプの画像パス(表示順)")]
 	[SerializeField]
+	[Header("以下,ヘルプの画像パス(表示順)")]
 	private List<string> helpImagePathList = new List<string>();
 
-	[SerializeField]
 	[Header("以下,UIテキスト")]
+	[SerializeField]
 	private UILabel toColiseumExitText;
 
 	[SerializeField]
@@ -329,10 +330,7 @@ public class CMD_PvPTop : CMD
 			yield return null;
 		}
 		yield return new WaitForSeconds(0.5f);
-		base.StartCoroutine(screenHome.StartScreenFadeIn(delegate
-		{
-			RestrictionInput.EndLoad();
-		}));
+		base.StartCoroutine(screenHome.StartScreenFadeIn(new Action(RestrictionInput.EndLoad)));
 		yield break;
 	}
 
@@ -532,7 +530,7 @@ public class CMD_PvPTop : CMD
 		if (this.isAggregate)
 		{
 			this.colosseumUserStatus = new GameWebAPI.ColosseumUserStatus();
-			this.colosseumUserStatus.nickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
+			this.colosseumUserStatus.nickname = DataMng.Instance().UserName;
 			this.wartimeCareerLabel.text = StringMaster.GetString("PvpAggregate");
 		}
 		else
@@ -544,7 +542,7 @@ public class CMD_PvPTop : CMD
 		this.lbColosseumBattlePoint.text = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(2).ToString();
 		if (DataMng.Instance().RespData_ColosseumInfo.eventInfo != null && DataMng.Instance().RespData_ColosseumInfo.eventInfo.backgroundImg.Length > 0)
 		{
-			string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img/events/" + DataMng.Instance().RespData_ColosseumInfo.eventInfo.backgroundImg;
+			string path = AssetDataMng.GetWebAssetImagePath() + "/events/" + DataMng.Instance().RespData_ColosseumInfo.eventInfo.backgroundImg;
 			AppCoroutine.Start(this.DownloadBGTexture(path), false);
 			base.PartsTitle.SetTitle(StringMaster.GetString("ChatTabColosseum") + StringMaster.GetString("ColosseumTitleOnEvent"));
 		}
@@ -576,7 +574,8 @@ public class CMD_PvPTop : CMD
 		this.nationwideCollider.activeCollider = IsActive;
 		this.nationwideSprite.spriteName = ((!IsActive) ? "Common02_Btn_Gray" : "Common02_Btn_Blue");
 		this.nationwideFrameSprite.color = ((!IsActive) ? Color.gray : Color.white);
-		this.nationwideTextSprite.spriteName = ((!IsActive) ? this.DEACTIVE_NATIONWIDE_TEXT : this.ACTIVE_NATIONWIDE_TEXT);
+		this.nationwideText.SetActive(IsActive);
+		this.nationwideTextG.SetActive(!IsActive);
 	}
 
 	private void SetActiveNationwideExtraButton(bool IsActive)
@@ -584,7 +583,8 @@ public class CMD_PvPTop : CMD
 		this.nationwideExtraCollider.activeCollider = IsActive;
 		this.nationwideExtraSprite.spriteName = ((!IsActive) ? "Common02_Btn_Gray" : "Common02_Btn_Red");
 		this.nationwideExtraFrameSprite.color = ((!IsActive) ? Color.gray : Color.white);
-		this.nationwideExtraTextSprite.spriteName = ((!IsActive) ? this.DEACTIVE_NATIONWIDE_TEXT : this.ACTIVE_NATIONWIDE_TEXT);
+		this.nationwideExtraText.SetActive(IsActive);
+		this.nationwideExtraTextG.SetActive(!IsActive);
 	}
 
 	private void SetActiveMockBattleButton(bool IsActive)
@@ -592,7 +592,8 @@ public class CMD_PvPTop : CMD
 		this.mockBattleCollider.activeCollider = IsActive;
 		this.mockBattleSprite.spriteName = ((!IsActive) ? "Common02_Btn_Gray" : "Common02_Btn_Green");
 		this.mockBattleFrameSprite.color = ((!IsActive) ? Color.gray : Color.white);
-		this.mockBattleTextSprite.spriteName = ((!IsActive) ? this.DEACTIVE_MOCKBATTLE_TEXT : this.ACTIVE_MOCKBATTLE_TEXT);
+		this.mockBattleText.SetActive(IsActive);
+		this.mockBattleTextG.SetActive(!IsActive);
 	}
 
 	private void SetTimeSchedule()
@@ -651,8 +652,8 @@ public class CMD_PvPTop : CMD
 			}
 			this.startTimeLabelArray[num2].gameObject.SetActive(true);
 			this.startTimeLabelArray[num2].text = dateTime.ToString("H:mm");
-			this.endTimeLabelArray[num2].gameObject.SetActive(true);
 			this.endTimeLabelArray[num2].text = dateTime2.ToString("H:mm");
+			this.endTimeLabelArray[num2].gameObject.SetActive(true);
 			this.fromMarkLabelArray[num2].gameObject.SetActive(true);
 			DateTime? dateTime4 = this.nextDateTime;
 			if (dateTime4 == null)
@@ -991,15 +992,26 @@ public class CMD_PvPTop : CMD
 			GameWebAPI.RespDataMA_ColosseumM.Colosseum colosseum = MasterDataMng.Instance().RespDataMA_ColosseumMaster.colosseumM.SingleOrDefault((GameWebAPI.RespDataMA_ColosseumM.Colosseum x) => x.colosseumId == DataMng.Instance().RespData_ColosseumInfo.colosseumId.ToString());
 			if (colosseum != null)
 			{
-				CultureInfo provider = new CultureInfo("ja-JP");
+				CultureInfo cultureInfo = new CultureInfo(string.Empty);
+				DateTimeFormatInfo dateTimeFormat = cultureInfo.DateTimeFormat;
+				dateTimeFormat.AbbreviatedDayNames = new string[]
+				{
+					StringMaster.GetString("SundayShortName"),
+					StringMaster.GetString("MondayShortName"),
+					StringMaster.GetString("TuesdayShortName"),
+					StringMaster.GetString("WednesdayShortName"),
+					StringMaster.GetString("ThursdayShortName"),
+					StringMaster.GetString("FridayShortName"),
+					StringMaster.GetString("SaturdayShortName")
+				};
 				DateTime dateTime = DateTime.Parse(colosseum.openTime);
 				DateTime dateTime2 = DateTime.Parse(colosseum.closeTime);
 				this.periodLabel.text = string.Format(StringMaster.GetString("ColosseumTerm"), new object[]
 				{
-					dateTime.ToString("M/d(ddd) ", provider),
-					dateTime.ToString("H:mm"),
-					dateTime2.ToString("M/d(ddd) ", provider),
-					dateTime2.ToString("H:mm")
+					dateTime.ToString("M/d(ddd) H:mm", cultureInfo),
+					dateTime2.ToString("M/d(ddd) H:mm", cultureInfo),
+					string.Empty,
+					string.Empty
 				});
 			}
 			else
@@ -1018,8 +1030,8 @@ public class CMD_PvPTop : CMD
 		GameWebAPI.RespDataMA_ColosseumM.Colosseum colosseumM = MasterDataMng.Instance().RespDataMA_ColosseumMaster.colosseumM.Single((GameWebAPI.RespDataMA_ColosseumM.Colosseum x) => x.colosseumId == DataMng.Instance().RespData_ColosseumInfo.colosseumId.ToString());
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM.Single((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == colosseumM.worldDungeonId);
 		this.normalBattleStamina = int.Parse(worldDungeonM.needStamina);
-		this.staminaCostLabel.text = StringMaster.GetString("QuestDetailsCost") + "：" + worldDungeonM.needStamina;
-		this.staminaCostLabelExtra.text = StringMaster.GetString("QuestDetailsCost") + "：" + DataMng.Instance().RespData_ColosseumInfo.extraCost;
+		this.staminaCostLabel.text = string.Format(StringMaster.GetString("PvPTop_txt2"), StringMaster.GetString("QuestDetailsCost"), worldDungeonM.needStamina);
+		this.staminaCostLabelExtra.text = string.Format(StringMaster.GetString("PvPTop_txt2"), StringMaster.GetString("QuestDetailsCost"), DataMng.Instance().RespData_ColosseumInfo.extraCost);
 		if (this.freeCostBattleCount > 0)
 		{
 			this.staminaCostLabel.text = string.Format(StringMaster.GetString("ColosseumStamina"), this.freeCostBattleCount);
@@ -1144,16 +1156,19 @@ public class CMD_PvPTop : CMD
 		int num = colosseumReward.maxRewardListKey();
 		int num2 = colosseumReward.maxInterimRewardListKey();
 		CMD_ColosseumBonus cmd_ColosseumBonus = GUIMain.ShowCommonDialog(action, "CMD_ColosseumBonus") as CMD_ColosseumBonus;
+		string title = string.Empty;
+		GameWebAPI.ColosseumReward[] rewardList;
 		if (num >= num2)
 		{
-			cmd_ColosseumBonus.RewardList = colosseumReward.rewardList[num.ToString()];
-			cmd_ColosseumBonus.SetReward(StringMaster.GetString("ColosseumRankRewardTitle"));
+			rewardList = colosseumReward.rewardList[num.ToString()];
+			title = StringMaster.GetString("ColosseumRankRewardTitle");
 		}
 		else
 		{
-			cmd_ColosseumBonus.RewardList = colosseumReward.interimRewardList[num2.ToString()];
-			cmd_ColosseumBonus.SetReward(StringMaster.GetString("ColosseumInterimRankRewardName"));
+			rewardList = colosseumReward.interimRewardList[num2.ToString()];
+			title = StringMaster.GetString("ColosseumInterimRankRewardName");
 		}
+		cmd_ColosseumBonus.SetReward(title, rewardList);
 	}
 
 	private void ShowRankDownDialog()

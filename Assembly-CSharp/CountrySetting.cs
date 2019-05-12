@@ -71,7 +71,7 @@ public static class CountrySetting
 
 	public static bool IsReloadRequired(string countryCode)
 	{
-		return !countryCode.Equals(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+		return string.IsNullOrEmpty(PlayerPrefs.GetString("PlayerCountryCode")) || !countryCode.Equals(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
 	}
 
 	public static string GetSystemCountryCode(CountrySetting.CountryCode defaultCountryCode = CountrySetting.CountryCode.EN)
@@ -97,6 +97,10 @@ public static class CountrySetting
 			}
 		}
 		MasterDataMng.Instance().ClearCache();
+		MissionBannerCacheBuffer.ClearCacheBuffer();
+		MonsterIconCacheBuffer.ClearCacheBuffer();
+		PresentBoxItemIconCacheBuffer.ClearCacheBuffer();
+		TitleIconCacheBuffer.ClearCacheBuffer();
 		StringMaster.Reload();
 		AlertMaster.Reload();
 	}

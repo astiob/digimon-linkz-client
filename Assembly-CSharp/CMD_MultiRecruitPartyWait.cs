@@ -10,15 +10,15 @@ using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[SerializeField]
 	[Header("エリア名 ステージ名")]
+	[SerializeField]
 	private UILabel lbAreaName;
 
 	[SerializeField]
 	private UILabel lbStageName;
 
-	[Header("リーダースキル名")]
 	[SerializeField]
+	[Header("リーダースキル名")]
 	private UILabel lbTXT_LEADERSKILL;
 
 	[SerializeField]
@@ -34,8 +34,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_PASSWORD_EXP;
 
-	[SerializeField]
 	[Header("フレンドボタン")]
+	[SerializeField]
 	private GameObject goBTN_FRIEND;
 
 	[SerializeField]
@@ -46,8 +46,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[Header("ステータス変更ボタン")]
 	private UILabel lbTXT_ST_EXCHANGE;
 
-	[SerializeField]
 	[Header("準備完了ボタン")]
+	[SerializeField]
 	private UILabel lbTXT_BTN_READY;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private BoxCollider coBTN_READY;
 
-	[Header("決定ボタン")]
 	[SerializeField]
+	[Header("決定ボタン")]
 	private GameObject goBTN_DECIDE;
 
 	[SerializeField]
@@ -74,8 +74,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[Header("エモーション処理")]
 	[SerializeField]
+	[Header("エモーション処理")]
 	private EmotionSenderMulti emotionSenderMulti;
 
 	[Header("エモーションコンポーネント")]
@@ -171,6 +171,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		this.myUserId = DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 		this.myNickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
 		this.myTitleId = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.titleId;
+		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
 	}
 
 	protected override void Update()
@@ -318,8 +319,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		if (this.roomInfo.worldAreaId == "1")
 		{
-			this.lbAreaName.text = StringMaster.GetString("QuestArea") + " " + MultiTools.AddAreaNameZero(this.roomInfo.worldStageId) + this.roomInfo.stageName;
-			this.lbStageName.text = string.Format(StringMaster.GetString("MultiRecruitQuestStage"), this.roomInfo.priority.ToInt32(), this.roomInfo.dungeonName);
+			this.lbAreaName.text = string.Format(StringMaster.GetString("GUIListPartsA_txt"), int.Parse(this.roomInfo.worldStageId)) + " " + this.roomInfo.stageName;
+			this.lbStageName.text = string.Format(StringMaster.GetString("MultiRecruitQuestStage"), int.Parse(this.roomInfo.priority), this.roomInfo.dungeonName);
 		}
 		else
 		{
@@ -524,12 +525,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 			ClassSingleton<MultiBattleData>.Instance.PvPUserDatas[k] = pvPUserData;
 		}
 		TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.QuestToMultiBattle, false);
-		base.SetLastCallBack(new Action<int>(this.GoToBattleScene));
+		base.SetLastCallBack(new Action(this.GoToBattleScene));
 		this.CloseAllModal();
 		base.ClosePanel(true);
 	}
 
-	private void GoToBattleScene(int idx)
+	private void GoToBattleScene()
 	{
 		if (CMD_PartyEdit.instance != null)
 		{

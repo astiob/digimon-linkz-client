@@ -1,4 +1,6 @@
-﻿using Master;
+﻿using LitJson;
+using Master;
+using Neptune.Common;
 using Neptune.Purchase;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,24 @@ public class StoreUtil : MonoBehaviour
 	private List<string> reqList;
 
 	private Action<string> actCallBack_RequestProducts;
+
+	public StoreUtil.StoreProductData storeProductData { get; set; }
+
+	public StoreUtil.StoreProductInfo GetStoreProductInfo_ByProductId(string productId)
+	{
+		if (this.storeProductData != null)
+		{
+			for (int i = 0; i < this.storeProductData.storeProductInfoList.Length; i++)
+			{
+				if (this.storeProductData.storeProductInfoList[i].sku == productId)
+				{
+					return this.storeProductData.storeProductInfoList[i];
+				}
+			}
+			return null;
+		}
+		return null;
+	}
 
 	public static StoreUtil Instance()
 	{
@@ -58,6 +78,19 @@ public class StoreUtil : MonoBehaviour
 					stoneStoreData.num = int.Parse(productList[i].acquireList[0].assetNum);
 					stoneStoreData.price = int.Parse(productList[i].price);
 					stoneStoreData.productTitle = productList[i].productTitle;
+					stoneStoreData.storePrice = productList[i].price;
+					if (this.storeProductData != null && this.storeProductData.storeProductInfoList != null)
+					{
+						StoreUtil.StoreProductInfo[] storeProductInfoList = this.storeProductData.storeProductInfoList;
+						for (int j = 0; j < storeProductInfoList.Length; j++)
+						{
+							if (storeProductInfoList[j].sku == stoneStoreData.productId)
+							{
+								stoneStoreData.storePrice = storeProductInfoList[j].price;
+								stoneStoreData.storePriceNum = this.GetPriceNumberFromStorePrice(stoneStoreData.storePrice);
+							}
+						}
+					}
 					stoneStoreData.priority = int.Parse(productList[i].priority);
 					stoneStoreData.limitCount = int.Parse(productList[i].limitCount);
 					if (!string.IsNullOrEmpty(productList[i].purchasedCount))
@@ -96,15 +129,15 @@ public class StoreUtil : MonoBehaviour
 					}
 					stoneStoreData.itemList = new List<GameWebAPI.RespDataSH_Info.AcquireList>();
 					stoneStoreData.omakeList = new List<GameWebAPI.RespDataSH_Info.AcquireList>();
-					for (int j = 0; j < productList[i].acquireList.Length; j++)
+					for (int k = 0; k < productList[i].acquireList.Length; k++)
 					{
-						if (productList[i].acquireList[j].omakeFlg == "1")
+						if (productList[i].acquireList[k].omakeFlg == "1")
 						{
-							stoneStoreData.omakeList.Add(productList[i].acquireList[j]);
+							stoneStoreData.omakeList.Add(productList[i].acquireList[k]);
 						}
-						else if (productList[i].acquireList[j].omakeFlg == "0")
+						else if (productList[i].acquireList[k].omakeFlg == "0")
 						{
-							stoneStoreData.itemList.Add(productList[i].acquireList[j]);
+							stoneStoreData.itemList.Add(productList[i].acquireList[k]);
 						}
 					}
 					this.stoneStoreDataList.Add(stoneStoreData);
@@ -113,6 +146,30 @@ public class StoreUtil : MonoBehaviour
 			}
 		}
 		return this.stoneStoreDataList;
+	}
+
+	private string GetPriceNumberFromStorePrice(string storePrice)
+	{
+		if (string.IsNullOrEmpty(storePrice))
+		{
+			return string.Empty;
+		}
+		int length = storePrice.Length;
+		int i;
+		for (i = 0; i < length; i++)
+		{
+			string s = storePrice.Substring(i, 1);
+			int num = 0;
+			if (int.TryParse(s, out num))
+			{
+				break;
+			}
+		}
+		if (i < length)
+		{
+			return storePrice.Substring(i);
+		}
+		return string.Empty;
 	}
 
 	private int ComparePriority(StoreUtil.StoneStoreData A, StoreUtil.StoneStoreData B)
@@ -130,17 +187,28 @@ public class StoreUtil : MonoBehaviour
 		return 0;
 	}
 
-	public int GetPriceFromProductId(string productId)
+	public string GetPriceFromProductId(string productId)
 	{
 		List<StoreUtil.StoneStoreData> list = this.GetStoneStoreDataList();
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list[i].productId == productId)
 			{
-				return list[i].price;
+				return list[i].storePriceNum;
 			}
 		}
-		return 0;
+		return null;
+	}
+
+	public double GetStorePriceFromProductId(string productId)
+	{
+		StoreUtil.StoreProductInfo storeProductInfo_ByProductId = this.GetStoreProductInfo_ByProductId(productId);
+		if (storeProductInfo_ByProductId != null)
+		{
+			double num = double.Parse(storeProductInfo_ByProductId.priceAmountMicros);
+			return num / 1000000.0;
+		}
+		return 0.0;
 	}
 
 	public int GetNumFromProductId(string productId)
@@ -214,13 +282,23 @@ public class StoreUtil : MonoBehaviour
 	private void RequestPurchaseAndroid()
 	{
 		global::Debug.Log("================================================= STORE PP_CALLBACK --> TO SV VERIFY !!");
+		StoreUtil.StoreProductInfo spi = this.GetStoreProductInfo_ByProductId(this._productId);
 		GameWebAPI.RequestSH_PurchaseAndroid requestSH_PurchaseAndroid = new GameWebAPI.RequestSH_PurchaseAndroid();
 		requestSH_PurchaseAndroid.SetSendData = delegate(GameWebAPI.SH_Req_Verify_AND param)
 		{
 			param.productId = this._productId;
 			param.osVersion = DataMng.Instance().RespDataCM_Login.playerInfo.osType;
-			param.currencyCode = "JPY";
-			param.priceNumber = this.GetPriceFromProductId(this._productId).ToString();
+			if (spi != null)
+			{
+				param.currencyCode = spi.priceCurrencyCode;
+				param.countryCode = spi.countryCode;
+			}
+			else
+			{
+				param.currencyCode = "JPY";
+				param.countryCode = string.Empty;
+			}
+			param.priceNumber = this.GetPriceFromProductId(this._productId);
 			param.signature = this.reqList[0];
 			param.signedData = this.reqList[1];
 		};
@@ -334,7 +412,13 @@ public class StoreUtil : MonoBehaviour
 			}
 			GUIPlayerStatus.RefreshParams_S(false);
 		}
-		Partytrack.sendPayment(this._productId, 1, "JPY", (double)this.GetPriceFromProductId(this._productId));
+		StoreUtil.StoreProductInfo storeProductInfo_ByProductId = this.GetStoreProductInfo_ByProductId(this._productId);
+		string currency = "JPY";
+		if (storeProductInfo_ByProductId != null)
+		{
+			currency = storeProductInfo_ByProductId.currencyCode;
+		}
+		AdjustWrapper.Instance.TrackEvent(AdjustWrapper.EVENT_ID_SEND_PAYMENT, this.GetStorePriceFromProductId(this._productId), currency);
 		GUICollider.EnableAllCollider("StoreUtil");
 	}
 
@@ -389,12 +473,48 @@ public class StoreUtil : MonoBehaviour
 	public void RequestProducts(string[] productIDs, Action<string> actCallBack)
 	{
 		this.actCallBack_RequestProducts = actCallBack;
+		for (int i = 0; i < productIDs.Length; i++)
+		{
+			global::Debug.Log("========= PRODUCT LIST REQUESTED = [" + productIDs[i] + "]");
+		}
 		NpSingleton<NpPurchase>.Instance.RequestProducts(productIDs, new Action<string>(this.StoreInitCallBackSuccess), new Action<string>(this.StoreInitCallBackFailed));
 	}
 
 	private void StoreInitCallBackSuccess(string productInfo)
 	{
+		global::Debug.Log("========= PRODUCT LIST JSON = [" + productInfo + "] END");
+		string json = "{\"storeProductInfoList\":" + productInfo + "}";
+		this.storeProductData = JsonMapper.ToObject<StoreUtil.StoreProductData>(json);
+		string localeCountryCode = NpDeviceInfo.GetLocaleCountryCode();
+		for (int i = 0; i < this.storeProductData.storeProductInfoList.Length; i++)
+		{
+			global::Debug.Log("========= PRODUCT LIST SKU   = " + this.storeProductData.storeProductInfoList[i].sku);
+			global::Debug.Log("========= PRODUCT LIST PRICE = " + this.storeProductData.storeProductInfoList[i].price);
+			this.storeProductData.storeProductInfoList[i].countryCode = localeCountryCode;
+			this.storeProductData.storeProductInfoList[i].currencyCode = this.storeProductData.storeProductInfoList[i].priceCurrencyCode;
+		}
 		this.actCallBack_RequestProducts(string.Empty);
+	}
+
+	private string GetCurrencyCodeFromCountryCode(string code)
+	{
+		string result = "JPY";
+		switch (code)
+		{
+		case "US":
+			result = "USD";
+			break;
+		case "KR":
+			result = "KRW";
+			break;
+		case "CN":
+			result = "CNY";
+			break;
+		case "JP":
+			result = "JPY";
+			break;
+		}
+		return result;
 	}
 
 	private void StoreInitCallBackFailed(string err)
@@ -408,6 +528,36 @@ public class StoreUtil : MonoBehaviour
 		{
 			this.actCallBack_RequestProducts(err);
 		}
+	}
+
+	public class StoreProductInfo
+	{
+		public string sku;
+
+		public string type;
+
+		public string price;
+
+		public string title;
+
+		public string description;
+
+		public string priceNumber;
+
+		public string currencyCode;
+
+		public string currencySymbol;
+
+		public string priceAmountMicros;
+
+		public string priceCurrencyCode;
+
+		public string countryCode;
+	}
+
+	public class StoreProductData
+	{
+		public StoreUtil.StoreProductInfo[] storeProductInfoList;
 	}
 
 	public enum StoneSpriteType
@@ -430,6 +580,10 @@ public class StoreUtil : MonoBehaviour
 		public int num;
 
 		public int price;
+
+		public string storePrice;
+
+		public string storePriceNum;
 
 		public string productTitle;
 

@@ -13,8 +13,8 @@ public class UISlider : UIProgressBar
 	[SerializeField]
 	private float rawValue = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UISlider.Direction direction = UISlider.Direction.Upgraded;
 
 	[HideInInspector]

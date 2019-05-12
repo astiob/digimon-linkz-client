@@ -46,12 +46,12 @@ public class UIPanel : UIRect
 	[HideInInspector]
 	private Texture2D mClipTexture;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mAlpha = 1f;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIDrawCall.Clipping mClipping;
 
 	[HideInInspector]
@@ -62,12 +62,12 @@ public class UIPanel : UIRect
 	[SerializeField]
 	private Vector2 mClipSoftness = new Vector2(4f, 4f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mDepth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSortingOrder;
 
 	private bool mRebuild;

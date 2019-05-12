@@ -4,28 +4,28 @@ using UnityEngine;
 
 public sealed class GUIListPartsGashaMain : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWの スプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
-	[SerializeField]
 	[Header("回数表示")]
+	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[SerializeField]
 	[Header("選択してないときの外枠色")]
 	private Color normalFrameColor = Color.white;
 
-	[Header("選択時の外枠色")]
 	[SerializeField]
+	[Header("選択時の外枠色")]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -36,16 +36,16 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]
 	[SerializeField]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	private GameWebAPI.RespDataGA_GetGachaInfo.Result data;

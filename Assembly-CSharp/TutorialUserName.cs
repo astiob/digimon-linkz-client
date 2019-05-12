@@ -112,6 +112,7 @@ public sealed class TutorialUserName : MonoBehaviour
 
 	private void PushedSubmitButton()
 	{
+		GUIManager.ExtBackKeyReady = true;
 		this.myTransform.SetY(3000f);
 		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.PushedDialog), "CMD_Confirm") as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("TutorialNameConfirmTitle");
@@ -122,6 +123,7 @@ public sealed class TutorialUserName : MonoBehaviour
 
 	private void PushedDialog(int selectButtonIndex)
 	{
+		GUIManager.ExtBackKeyReady = false;
 		if (selectButtonIndex == 0)
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);

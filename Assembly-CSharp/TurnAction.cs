@@ -15,8 +15,8 @@ public class TurnAction : MonoBehaviour
 	[SerializeField]
 	private TweenTransform skinllNameTweenTransform;
 
-	[Header("スキル名のテキスト")]
 	[SerializeField]
+	[Header("スキル名のテキスト")]
 	private UILabel skillNameText;
 
 	public void ApplyTurnActionBarSwipeout(bool isReset)

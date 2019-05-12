@@ -57,6 +57,7 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 
 	private void SetSkillUI(string skillName, string skillInfo, string skillCost, int skillAttribute)
 	{
+		this.calcShortenNameLength(skillName);
 		if (this.shortenName && skillName.Length > this.shortenNameLength)
 		{
 			this.skillName.text = string.Format("{0} ...", skillName.Substring(0, this.shortenNameLength));
@@ -147,5 +148,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 		{
 			this.ClearSkill();
 		}
+	}
+
+	private void calcShortenNameLength(string text)
+	{
 	}
 }

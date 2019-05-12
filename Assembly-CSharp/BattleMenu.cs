@@ -7,16 +7,16 @@ public class BattleMenu : MonoBehaviour
 	[SerializeField]
 	private UIWidget helpBGWidget;
 
-	[SerializeField]
 	[Header("DialogMENUのBG")]
+	[SerializeField]
 	private UIWidget menuBGWidget;
 
-	[SerializeField]
 	[Header("MenuDialog")]
+	[SerializeField]
 	private MenuDialog menuDialog;
 
-	[SerializeField]
 	[Header("DialogHelpのGameObject")]
+	[SerializeField]
 	public GameObject helpDialogGO;
 
 	[SerializeField]

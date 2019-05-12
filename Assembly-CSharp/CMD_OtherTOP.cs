@@ -22,6 +22,12 @@ public class CMD_OtherTOP : CMD
 	[SerializeField]
 	private UILabel authorityText;
 
+	[SerializeField]
+	private GameObject[] buttonObjectList;
+
+	[SerializeField]
+	private GameObject[] multiLanguageButtonObjectList;
+
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		SoundMng.Instance().PlayGameBGM("bgm_102");
@@ -33,6 +39,20 @@ public class CMD_OtherTOP : CMD
 		this.inquiryText.text = StringMaster.GetString("InquiryTitle");
 		this.termsText.text = StringMaster.GetString("AgreementTitle");
 		this.authorityText.text = StringMaster.GetString("OtherRight");
+		if (this.buttonObjectList != null)
+		{
+			foreach (GameObject gameObject in this.buttonObjectList)
+			{
+				gameObject.SetActive(true);
+			}
+		}
+		if (this.multiLanguageButtonObjectList != null)
+		{
+			foreach (GameObject gameObject2 in this.multiLanguageButtonObjectList)
+			{
+				gameObject2.SetActive(false);
+			}
+		}
 	}
 
 	protected override void WindowOpened()
@@ -92,5 +112,9 @@ public class CMD_OtherTOP : CMD
 	private void OnClickedContact()
 	{
 		GUIMain.ShowCommonDialog(null, "CMD_inquiry");
+	}
+
+	private void OnClickedPrivacyOfUse()
+	{
 	}
 }

@@ -115,11 +115,6 @@ public class BattleCameraControl : IMono
 				this.m_cameraMotion.StopCameraAnimation();
 			}
 			this.m_cameraMotion = this.cameraParamsObject[cameraKey];
-			if (this.battleStateData.cameraMotionChangeFunction != null)
-			{
-				this.battleStateData.cameraMotionChangeFunction();
-			}
-			this.battleStateData.cameraMotionChangeFunction = null;
 			this.m_cameraMotion.PlayCameraAnimation(position, false, isClamp);
 		}
 	}
@@ -133,11 +128,6 @@ public class BattleCameraControl : IMono
 				this.m_cameraMotion.StopCameraAnimation();
 			}
 			this.m_cameraMotion = this.cameraParamsObject[cameraKey];
-			if (this.battleStateData.cameraMotionChangeFunction != null)
-			{
-				this.battleStateData.cameraMotionChangeFunction();
-			}
-			this.battleStateData.cameraMotionChangeFunction = null;
 			this.m_cameraMotion.PlayCameraAnimation(characters.CharacterParams, BoolExtension.Inverse(characters.isEnemy, this.hierarchyData.onInverseCamera), true);
 		}
 	}

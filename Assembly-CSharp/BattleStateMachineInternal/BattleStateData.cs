@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityExtension;
@@ -73,8 +72,6 @@ namespace BattleStateMachineInternal
 		private CharacterStateControl _leaderEnemyCharacter;
 
 		private List<CharacterStateControl> _sortedCharactersOriginal = new List<CharacterStateControl>();
-
-		private CharacterStateControl[] _currentDeadCharacters = new CharacterStateControl[0];
 
 		private CharacterStateControl autoCounterCharacter;
 
@@ -220,12 +217,6 @@ namespace BattleStateMachineInternal
 		public bool isTutorialInduction;
 
 		public int turnUseDigiStoneCount;
-
-		public IEnumerator stopHitAnimation;
-
-		public Action SEStopFunction;
-
-		public Action cameraMotionChangeFunction;
 
 		public Dictionary<string, object> sendValues = new Dictionary<string, object>();
 
@@ -434,18 +425,6 @@ namespace BattleStateMachineInternal
 					return null;
 				}
 				return this._sortedCharactersOriginal[this._currentActiveCharacter];
-			}
-		}
-
-		public CharacterStateControl[] currentDeadCharacters
-		{
-			get
-			{
-				return this._currentDeadCharacters;
-			}
-			set
-			{
-				this._currentDeadCharacters = value;
 			}
 		}
 
@@ -1597,41 +1576,6 @@ namespace BattleStateMachineInternal
 				return;
 			}
 			this.apRevival[num] = ((!isApRevival) ? 0 : 1);
-		}
-
-		public bool StopHitAnimationCall()
-		{
-			if (this.stopHitAnimation != null)
-			{
-				bool flag = this.stopHitAnimation.MoveNext();
-				if (!flag)
-				{
-					this.stopHitAnimation = null;
-				}
-				return flag;
-			}
-			return false;
-		}
-
-		public void SEStopFunctionCall()
-		{
-			if (this.SEStopFunction != null)
-			{
-				this.SEStopFunction();
-			}
-		}
-
-		public void SetPlayAnimationActionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, AffectEffect affectEffect, float waitTime, bool[] onMissHit, HitIcon[] hitIconList, ExtraEffectType[] extraEffectType, AffectEffectProperty status = null, bool useSlowMotion = false)
-		{
-			this.sendValues["currentCharacter"] = currentCharacter;
-			this.sendValues["isTargetsStatus"] = isTargetsStatus;
-			this.sendValues["affectEffect"] = affectEffect;
-			this.sendValues["waitTime"] = waitTime;
-			this.sendValues["onMissHit"] = onMissHit;
-			this.sendValues["hitIconList"] = hitIconList;
-			this.sendValues["status"] = status;
-			this.sendValues["useSlowMotion"] = useSlowMotion;
-			this.sendValues["extraEffectType"] = extraEffectType;
 		}
 
 		public void SetPlayPassiveEffectFunctionValues(CharacterStateControl[] isTargetsStatus, SkillStatus status, AffectEffectProperty currentSuffer)

@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class ScreenToWorld : MonoBehaviour
 {
-	[Header("固定する画面のスミの定義")]
 	[SerializeField]
+	[Header("固定する画面のスミの定義")]
 	private ScreenToWorld.CONSTRAINT_TYPE type;
 
-	[SerializeField]
 	[Header("オフセット(全て＋の値)")]
+	[SerializeField]
 	private Vector2 offset;
 
 	[SerializeField]

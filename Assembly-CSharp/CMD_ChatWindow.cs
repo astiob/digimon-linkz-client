@@ -1,7 +1,6 @@
 ﻿using DigiChat.Tools;
 using Master;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -69,6 +68,8 @@ public class CMD_ChatWindow : CMD
 
 	private int retryConnectCnt;
 
+	private Action prepareShowData;
+
 	private string updateChatWindowTitle = string.Empty;
 
 	public bool isGetChatLogListMax { get; set; }
@@ -89,62 +90,54 @@ public class CMD_ChatWindow : CMD
 		CMD_ChatWindow.instance = this;
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
-		base.StartCoroutine(this.InitializeConnect(delegate
+		this.InitializeConnect(delegate
 		{
 			this.ShowDLG();
 			this.SetGrayButton(true);
 			this.setInitLabel();
 			this.SetCommonUI();
 			this.Show(f, sizeX, sizeY, aT);
-		}));
+		});
 	}
 
-	private IEnumerator InitializeConnect(Action completed)
+	private void InitializeConnect(Action completed)
 	{
+		this.prepareShowData = completed;
 		Singleton<TCPUtil>.Instance.PrepareTCPServer(new Action<string>(this.AfterPrepareTCPServer), "chat");
-		if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster)
-		{
-			yield return base.StartCoroutine(this.SetGroupRequestUserList(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId));
-		}
-		if (completed != null)
-		{
-			completed();
-		}
-		yield break;
 	}
 
-	private void AfterPrepareTCPServer(string server)
+	private void AfterPrepareTCPServer(string noop)
 	{
 		Singleton<TCPUtil>.Instance.MakeTCPClient();
-	}
-
-	private IEnumerator SetGroupRequestUserList(int cgid)
-	{
-		GameWebAPI.RespData_ChatMemberRequestList memberRequestList = null;
-		GameWebAPI.ChatMemberRequestListLogic request = new GameWebAPI.ChatMemberRequestListLogic
+		if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster)
 		{
-			SetSendData = delegate(GameWebAPI.ReqData_ChatMemberRequestList param)
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			GameWebAPI.RespData_ChatMemberRequestList memberRequestList = null;
+			GameWebAPI.ChatMemberRequestListLogic chatMemberRequestListLogic = new GameWebAPI.ChatMemberRequestListLogic();
+			chatMemberRequestListLogic.SetSendData = delegate(GameWebAPI.ReqData_ChatMemberRequestList param)
 			{
-				param.chatGroupId = cgid;
-			},
-			OnReceived = delegate(GameWebAPI.RespData_ChatMemberRequestList response)
+				param.chatGroupId = ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId;
+			};
+			chatMemberRequestListLogic.OnReceived = delegate(GameWebAPI.RespData_ChatMemberRequestList response)
 			{
 				memberRequestList = response;
-			}
-		};
-		return request.Run(delegate()
+			};
+			GameWebAPI.ChatMemberRequestListLogic request = chatMemberRequestListLogic;
+			base.StartCoroutine(request.Run(delegate()
+			{
+				RestrictionInput.EndLoad();
+				this.prepareShowData();
+				this.AfterGetChatMemberRequestList(memberRequestList);
+			}, null, null));
+		}
+		else
 		{
-			this.AfterGetChatMemberRequestList(memberRequestList);
-		}, null, null);
+			this.prepareShowData();
+		}
 	}
 
 	private void AfterGetChatMemberRequestList(GameWebAPI.RespData_ChatMemberRequestList data)

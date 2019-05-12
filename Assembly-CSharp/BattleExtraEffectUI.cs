@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleExtraEffectUI : MonoBehaviour
 {
-	[Header("アニメーション")]
 	[SerializeField]
+	[Header("アニメーション")]
 	private Animation effectAnimation;
 
 	public bool isPlaying

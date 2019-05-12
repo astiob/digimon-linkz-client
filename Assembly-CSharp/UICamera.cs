@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
-[AddComponentMenu("NGUI/UI/NGUI Event System (UICamera)")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Event System (UICamera)")]
+[RequireComponent(typeof(Camera))]
 public class UICamera : MonoBehaviour
 {
 	public static BetterList<UICamera> list = new BetterList<UICamera>();

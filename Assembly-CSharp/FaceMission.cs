@@ -24,16 +24,10 @@ public class FaceMission : GUICollider
 	private UISprite buttonSprite;
 
 	[SerializeField]
-	private UILabel buttonLabel;
-
-	[SerializeField]
 	private BoxCollider myCollider;
 
 	[SerializeField]
-	private UISprite NewSprite;
-
-	[SerializeField]
-	private GameObject goEffectBeginner;
+	private GameObject effectBeginner;
 
 	protected override void Awake()
 	{
@@ -41,9 +35,8 @@ public class FaceMission : GUICollider
 		base.Awake();
 	}
 
-	public void SetBadge()
+	public void SetBadge(bool showParticle = true)
 	{
-		this.NewSprite.gameObject.SetActive(false);
 		GameWebAPI.RespDataMP_MyPage respDataMP_MyPage = DataMng.Instance().RespDataMP_MyPage;
 		if (respDataMP_MyPage == null || respDataMP_MyPage.userNewsCountList == null)
 		{
@@ -55,26 +48,31 @@ public class FaceMission : GUICollider
 		int beginnerMissionRewardCount = respDataMP_MyPage.userNewsCountList.beginnerMissionRewardCount;
 		num += beginnerMissionNewCount;
 		num2 += beginnerMissionRewardCount;
-		if (num > 0)
+		if (0 < num || this.dayChangeflg || 0 < num2)
 		{
-			this.SetActive(num);
+			this.SetActiveExclamationMark(true);
 		}
-		else if (this.dayChangeflg)
+		if (showParticle)
 		{
-			this.SetActive(1);
+			this.ShowParticleMissionIcon(beginnerMissionNewCount, beginnerMissionRewardCount);
 		}
-		else
+	}
+
+	public void SetParticleMissionIcon()
+	{
+		GameWebAPI.RespDataMP_MyPage respDataMP_MyPage = DataMng.Instance().RespDataMP_MyPage;
+		if (respDataMP_MyPage != null && respDataMP_MyPage.userNewsCountList != null)
 		{
-			this.SetActive(num2);
+			int beginnerMissionNewCount = respDataMP_MyPage.userNewsCountList.beginnerMissionNewCount;
+			int beginnerMissionRewardCount = respDataMP_MyPage.userNewsCountList.beginnerMissionRewardCount;
+			this.ShowParticleMissionIcon(beginnerMissionNewCount, beginnerMissionRewardCount);
 		}
-		if (beginnerMissionNewCount > 0 || beginnerMissionRewardCount > 0)
-		{
-			this.goEffectBeginner.SetActive(true);
-		}
-		else
-		{
-			this.goEffectBeginner.SetActive(false);
-		}
+	}
+
+	private void ShowParticleMissionIcon(int beginnerMissionNewCount, int beginnerMissionRewardCount)
+	{
+		bool active = beginnerMissionNewCount > 0 || beginnerMissionRewardCount > 0;
+		this.effectBeginner.SetActive(active);
 	}
 
 	public void ResetBadge()
@@ -82,7 +80,7 @@ public class FaceMission : GUICollider
 		APIRequestTask task = DataMng.Instance().RequestMyPageData(true);
 		base.StartCoroutine(task.Run(delegate
 		{
-			this.SetBadge();
+			this.SetBadge(true);
 		}, null, null));
 	}
 
@@ -91,11 +89,10 @@ public class FaceMission : GUICollider
 		this.myCollider.enabled = isEnable;
 	}
 
-	private void SetActive(int count)
+	private void SetActiveExclamationMark(bool active)
 	{
-		bool flag = count > 0;
-		this.buttonSprite.gameObject.SetActive(flag);
-		if (!flag)
+		this.buttonSprite.gameObject.SetActive(active);
+		if (!active)
 		{
 			this.floppy.transform.localRotation = Quaternion.identity;
 			this.RunITween("DoNothing", true);

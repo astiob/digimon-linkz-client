@@ -6,5 +6,5 @@ public sealed class PvPEnemyData : TCPData<PvPEnemyData>
 
 	public string hashValue;
 
-	public string[] indexId;
+	public int[] indexId;
 }

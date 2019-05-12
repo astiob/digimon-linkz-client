@@ -350,7 +350,10 @@ public class CMDWebWindow : CMD, INpWebViewListener
 			base.SetCloseAction(delegate(int i)
 			{
 				GUIMain.BarrierOFF();
-				GUIManager.CloseAllCommonDialog(new Action<int>(this.ShowQuestSelect));
+				GUIManager.CloseAllCommonDialog(delegate
+				{
+					GUIMain.ShowCommonDialog(null, "CMD_QuestSelect");
+				});
 				if (this.callbackAction != null)
 				{
 					this.callbackAction();
@@ -362,11 +365,6 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		{
 			RestrictionInput.EndLoad();
 		}
-	}
-
-	private void ShowQuestSelect(int i)
-	{
-		GUIMain.ShowCommonDialog(null, "CMD_QuestSelect");
 	}
 
 	public void alertOpenedAction()

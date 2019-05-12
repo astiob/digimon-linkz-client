@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class PartsMatchingWaitMonsInfo : MonoBehaviour
 {
-	[SerializeField]
 	[Header("RenderTarget用テクスチャ")]
+	[SerializeField]
 	private UITexture ngTargetTex;
 
 	private RenderTexture renderTex;

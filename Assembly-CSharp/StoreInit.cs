@@ -95,13 +95,13 @@ public class StoreInit : MonoBehaviour
 		yield break;
 	}
 
-	private IEnumerator GetProductsID(Action<string[]> onCompleted, bool stateChange = true)
+	private TaskBase GetProductsID(Action<string[]> onCompleted)
 	{
-		if (stateChange && this.init_status != StoreInit.STATUS.DONE_INIT)
+		if (this.init_status != StoreInit.STATUS.DONE_INIT)
 		{
-			yield break;
+			return new NormalTask();
 		}
-		string[] array = new string[]
+		string[] productIDS = new string[]
 		{
 			"digi_stone_006",
 			"digi_stone_024",
@@ -130,7 +130,7 @@ public class StoreInit : MonoBehaviour
 				GameWebAPI.RespDataSH_Info.ProductList[] productList = response.shopList[0].productList;
 				if (productList.Length > 0)
 				{
-					string[] productIDS = new string[productList.Length];
+					productIDS = new string[productList.Length];
 					for (int i = 0; i < productList.Length; i++)
 					{
 						productIDS[i] = productList[i].productId;
@@ -139,21 +139,15 @@ public class StoreInit : MonoBehaviour
 			}
 			else
 			{
-				string[] productIDS = null;
+				productIDS = null;
 			}
+			onCompleted(productIDS);
 		};
 		GameWebAPI.RequestSH_ShopList request = requestSH_ShopList;
-		yield return base.StartCoroutine(request.Run(delegate()
-		{
-			if (onCompleted != null)
-			{
-				onCompleted(productIDS);
-			}
-		}, null, null));
-		yield break;
+		return new APIRequestTask(request, true);
 	}
 
-	private IEnumerator GetProducts(string[] productIDS, bool stateChange = true)
+	private IEnumerator GetProducts(string[] productIDS, bool stateChange)
 	{
 		string err = "err";
 		bool isFinished = false;
@@ -261,11 +255,11 @@ public class StoreInit : MonoBehaviour
 	public IEnumerator InitRestoreOperation()
 	{
 		string[] productsID = null;
-		NormalTask normalTask = new NormalTask(StoreInit.Instance().GetProductsID(delegate(string[] IDs)
+		TaskBase productsID2 = StoreInit.Instance().GetProductsID(delegate(string[] IDs)
 		{
 			productsID = IDs;
-		}, true));
-		normalTask.Add(new NormalTask(delegate()
+		});
+		productsID2.Add(new NormalTask(delegate()
 		{
 			if (productsID != null)
 			{
@@ -273,7 +267,7 @@ public class StoreInit : MonoBehaviour
 			}
 			return null;
 		})).Add(new NormalTask(StoreInit.Instance().ReConsume()));
-		return normalTask.Run(null, null, null);
+		return productsID2.Run(null, null, null);
 	}
 
 	public bool GetProductsSucceed()
@@ -284,11 +278,11 @@ public class StoreInit : MonoBehaviour
 	public IEnumerator GetProductsOperation()
 	{
 		string[] productsID = null;
-		NormalTask normalTask = new NormalTask(StoreInit.Instance().GetProductsID(delegate(string[] IDs)
+		TaskBase productsID2 = StoreInit.Instance().GetProductsID(delegate(string[] IDs)
 		{
 			productsID = IDs;
-		}, false));
-		normalTask.Add(new NormalTask(delegate()
+		});
+		productsID2.Add(new NormalTask(delegate()
 		{
 			if (productsID != null)
 			{
@@ -296,7 +290,7 @@ public class StoreInit : MonoBehaviour
 			}
 			return null;
 		}));
-		return normalTask.Run(delegate
+		return productsID2.Run(delegate
 		{
 			this.getProductsSucceed = true;
 		}, delegate(Exception nop)

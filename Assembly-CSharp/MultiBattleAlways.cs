@@ -3,16 +3,16 @@ using UnityEngine;
 
 public sealed class MultiBattleAlways : BattleAlways
 {
-	[SerializeField]
 	[Header("EmotionボタンFrontのGameObject")]
+	[SerializeField]
 	private GameObject emotionButtonFrontGO;
 
 	[Header("EmotionIconのButton")]
 	[SerializeField]
 	private UIButton emotionIconButton;
 
-	[Header("右下のメッセージ")]
 	[SerializeField]
+	[Header("右下のメッセージ")]
 	public MultiConnetionMessage connectionMessage;
 
 	[SerializeField]
@@ -23,8 +23,8 @@ public sealed class MultiBattleAlways : BattleAlways
 	[Header("共有AP")]
 	public BattleUIMultiSharedAP sharedAP;
 
-	[Header("残りターン(右下)")]
 	[SerializeField]
+	[Header("残りターン(右下)")]
 	public RemainingTurn remainingTurn;
 
 	public void ShowWinnerUI()

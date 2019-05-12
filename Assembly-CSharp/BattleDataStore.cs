@@ -762,7 +762,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			myIndex = csc.myIndex,
 			isEnemy = csc.isEnemy,
 			chipIds = csc.chipIds,
-			currentSufferState = csc.currentSufferState.GetCurrentSufferState(),
+			currentSufferState = csc.currentSufferState.Get(),
 			chipEffectCount = csc.GetChipEffectCountToString(),
 			potencyChipIdList = csc.GetPotencyChipIdListToString()
 		};

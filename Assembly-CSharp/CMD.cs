@@ -33,6 +33,10 @@ public class CMD : CommonDialog
 
 	public GameObject goEFC_PARAM_LEFT;
 
+	protected float fadeInTime = 0.3f;
+
+	protected float fadeOutTime = 0.3f;
+
 	private EfcCont ecEFC_HEADER;
 
 	private EfcCont ecEFC_FOOTER;
@@ -336,13 +340,13 @@ public class CMD : CommonDialog
 				this.tempCol.a = this.ofCol.a;
 				ec.SetColor(this.tempCol);
 				this.tempCol.a = this.onCol.a;
-				ec.ColorTo(this.tempCol, 0.3f, new Action<int>(this.actEndEfc), iTween.EaseType.linear, 0f);
+				ec.ColorTo(this.tempCol, this.fadeInTime, new Action<int>(this.actEndEfc), iTween.EaseType.linear, 0f);
 			}
 			else
 			{
 				this.tempCol = ec.GetColor();
 				this.tempCol.a = this.ofCol.a;
-				ec.ColorTo(this.tempCol, 0.3f, new Action<int>(this.actEndEfc), iTween.EaseType.linear, 0f);
+				ec.ColorTo(this.tempCol, this.fadeOutTime, new Action<int>(this.actEndEfc), iTween.EaseType.linear, 0f);
 			}
 		}
 	}

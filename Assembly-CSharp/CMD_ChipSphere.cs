@@ -2,7 +2,6 @@
 using Master;
 using Monster;
 using System;
-using System.Collections;
 using UnityEngine;
 
 public sealed class CMD_ChipSphere : CMD
@@ -27,32 +26,32 @@ public sealed class CMD_ChipSphere : CMD
 
 	public const int arousal4ButtonNo = 5;
 
-	[Header("演出中に守るバリア")]
 	[SerializeField]
+	[Header("演出中に守るバリア")]
 	private GameObject barrierGO;
 
 	[Header("左下のベースを変更ボタンラベル")]
 	[SerializeField]
 	private UILabel changeBaseButtonLabel;
 
-	[SerializeField]
 	[Header("取外パッチの残り個数")]
+	[SerializeField]
 	private UILabel ejectCountLabel;
 
-	[SerializeField]
 	[Header("拡張パッチの残り個数")]
+	[SerializeField]
 	private UILabel extraCountLabel;
 
-	[SerializeField]
 	[Header("右下の切り替わるメニューのオブジェクト")]
+	[SerializeField]
 	private ChipSphereStatus[] chipSphereStatus;
 
-	[Header("チップボタン達の親")]
 	[SerializeField]
+	[Header("チップボタン達の親")]
 	private Transform sphereRoot;
 
-	[SerializeField]
 	[Header("左に出る3Dキャラの表示")]
+	[SerializeField]
 	private UITexture character3DTexture;
 
 	[SerializeField]
@@ -71,8 +70,8 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private GameObject ejectItemCutinGO;
 
-	[SerializeField]
 	[Header("拡張/チップ取外アニメーションのテクスチャ")]
+	[SerializeField]
 	private UITexture[] ejectItemCutinTextures;
 
 	private CharacterCameraView characterCameraView;
@@ -121,10 +120,8 @@ public sealed class CMD_ChipSphere : CMD
 
 	private AnimationFinishEventTrigger ejectAnimationTrigger;
 
-	private Action fusionSuccessCallback;
-
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private ChipSphereLines chipSphereLines;
 
 	public static MonsterData DataChg { get; set; }
@@ -170,8 +167,8 @@ public sealed class CMD_ChipSphere : CMD
 	{
 		this.attachAnimationTrigger = this.partsUpperCutinGO.GetComponent<AnimationFinishEventTrigger>();
 		this.ejectAnimationTrigger = this.ejectItemCutinGO.GetComponent<AnimationFinishEventTrigger>();
-		NGUITools.SetActiveSelf(this.partsUpperCutinGO, false);
-		NGUITools.SetActiveSelf(this.ejectItemCutinGO, false);
+		this.partsUpperCutinGO.SetActive(false);
+		this.ejectItemCutinGO.SetActive(false);
 		this.SetBarrier(false);
 		this.SetupLocalize();
 		this.ShowCharacter();
@@ -182,7 +179,7 @@ public sealed class CMD_ChipSphere : CMD
 
 	private void SetBarrier(bool isEnable)
 	{
-		NGUITools.SetActiveSelf(this.barrierGO, isEnable);
+		this.barrierGO.SetActive(isEnable);
 	}
 
 	private void SetDegign()
@@ -511,8 +508,8 @@ public sealed class CMD_ChipSphere : CMD
 	{
 		if (this.isLoopOff)
 		{
-			NGUITools.SetActiveSelf(this.partsUpperCutinGO, false);
-			NGUITools.SetActiveSelf(this.ejectItemCutinGO, false);
+			this.partsUpperCutinGO.SetActive(false);
+			this.ejectItemCutinGO.SetActive(false);
 			this.isLoopOff = false;
 		}
 	}
@@ -567,25 +564,25 @@ public sealed class CMD_ChipSphere : CMD
 	{
 		for (int i = 0; i < this.chipSphereStatus.Length; i++)
 		{
-			NGUITools.SetActiveSelf(this.chipSphereStatus[i].gameObject, false);
+			this.chipSphereStatus[i].gameObject.SetActive(false);
 		}
 		switch (parameter.menuType)
 		{
 		case CMD_ChipSphere.MenuType.Empty:
-			NGUITools.SetActiveSelf(this.chipSphereStatus[0].gameObject, true);
+			this.chipSphereStatus[0].gameObject.SetActive(true);
 			this.chipSphereStatus[0].SetupDetail(parameter);
 			break;
 		case CMD_ChipSphere.MenuType.Extendable:
-			NGUITools.SetActiveSelf(this.chipSphereStatus[0].gameObject, true);
+			this.chipSphereStatus[0].gameObject.SetActive(true);
 			this.chipSphereStatus[0].SetupDetail(parameter);
 			this.consumeItemCount = parameter.itemCount;
 			break;
 		case CMD_ChipSphere.MenuType.NotYet:
-			NGUITools.SetActiveSelf(this.chipSphereStatus[1].gameObject, true);
+			this.chipSphereStatus[1].gameObject.SetActive(true);
 			this.chipSphereStatus[1].SetupDetail(parameter);
 			break;
 		case CMD_ChipSphere.MenuType.Detail:
-			NGUITools.SetActiveSelf(this.chipSphereStatus[2].gameObject, true);
+			this.chipSphereStatus[2].gameObject.SetActive(true);
 			this.chipSphereStatus[2].SetupDetail(parameter);
 			break;
 		default:
@@ -601,20 +598,15 @@ public sealed class CMD_ChipSphere : CMD
 		{
 		case CMD_ChipSphere.MenuType.Empty:
 			this.ShowAttachPage();
-			break;
+			return;
 		case CMD_ChipSphere.MenuType.Extendable:
 			this.ShowExtendChipDialog();
-			break;
-		case CMD_ChipSphere.MenuType.NotYet:
-			global::Debug.LogError("ありえない.");
-			break;
+			return;
 		case CMD_ChipSphere.MenuType.Detail:
 			this.ShowEjectItemDialog();
-			break;
-		default:
-			global::Debug.LogError("ありえない.");
-			break;
+			return;
 		}
+		global::Debug.LogError("ありえない.");
 	}
 
 	private void OnTouchReinforce()
@@ -624,31 +616,31 @@ public sealed class CMD_ChipSphere : CMD
 		{
 			if (result > 0)
 			{
-				AppCoroutine.Start(this.Send(this.currentUserChipList), false);
+				this.Send(this.currentUserChipList);
 			}
 		};
 		CMD_ChipReinforcementModal.Create(this.currentUserChipList, callback);
 	}
 
-	private IEnumerator Send(GameWebAPI.RespDataCS_ChipListLogic.UserChipList baseChip)
+	private void Send(GameWebAPI.RespDataCS_ChipListLogic.UserChipList baseChip)
 	{
 		this.SetBarrier(true);
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
 		int baseChipId = baseChip.userChipId;
 		GameWebAPI.RespDataMA_ChipM.Chip baseMaterChip = ChipDataMng.GetChipMainData(baseChip);
-		int needCount = baseMaterChip.needChip.ToInt32();
-		int[] needChips = null;
-		if (needCount > 0)
+		int num = baseMaterChip.needChip.ToInt32();
+		int[] array = null;
+		if (num > 0)
 		{
-			needChips = new int[needCount];
-			int i = 0;
-			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip in ChipDataMng.userChipData.userChipList)
+			array = new int[num];
+			int num2 = 0;
+			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList2 in ChipDataMng.userChipData.userChipList)
 			{
-				if (baseChipId != userChip.userChipId && userChip.chipId == baseChip.chipId && userChip.userMonsterId == 0)
+				if (baseChipId != userChipList2.userChipId && userChipList2.chipId == baseChip.chipId && userChipList2.userMonsterId == 0)
 				{
-					needChips[i] = userChip.userChipId;
-					i++;
-					if (i >= needChips.Length)
+					array[num2] = userChipList2.userChipId;
+					num2++;
+					if (num2 >= array.Length)
 					{
 						break;
 					}
@@ -657,65 +649,46 @@ public sealed class CMD_ChipSphere : CMD
 		}
 		Action callback = delegate()
 		{
-			RestrictionInput.EndLoad();
-			int num = this.selectedChipParameter.ConvertButtonIndex();
-			ChipSphereIconButton chipSphereIconButton = this.chipSphereIconButtons[num];
+			int num3 = this.selectedChipParameter.ConvertButtonIndex();
+			ChipSphereIconButton chipSphereIconButton = this.chipSphereIconButtons[num3];
 			GameWebAPI.RespDataMA_ChipM.Chip chipEnhancedData = ChipDataMng.GetChipEnhancedData(baseMaterChip.chipId);
 			chipSphereIconButton.SetupDetail(this.selectedChipParameter.userChipId, chipEnhancedData);
 			chipSphereIconButton.SetupOnlyDetailParams(baseChipId, chipEnhancedData);
-			this.chipSphereIconButtons[num].OnTouch();
+			this.chipSphereIconButtons[num3].OnTouch();
 			this.RefreshItemCountColor();
 			this.RefreshStatus();
 			this.RefreshItemNumbers();
 			this.RefreshYellowLines();
-			CMD_ChipReinforcementAnimation cmd_ChipReinforcementAnimation = CMD_ChipReinforcementAnimation.Create(base.gameObject, chipEnhancedData, delegate(int i)
+			CMD_ChipReinforcementAnimation cmd_ChipReinforcementAnimation = CMD_ChipReinforcementAnimation.Create(this.gameObject, chipEnhancedData, delegate(int i)
 			{
 				this.SetBarrier(false);
 			});
 			cmd_ChipReinforcementAnimation.transform.FindChild("ChipLv/Chip").gameObject.AddComponent<AnimationFinishEventTrigger>();
 		};
-		this.fusionSuccessCallback = callback;
-		GameWebAPI.ChipFusionLogic logic = ChipDataMng.RequestAPIChipFusion(baseChip.userChipId, needChips, new Action<int, GameWebAPI.RequestMonsterList>(this.EndChipFusion));
-		IEnumerator run = logic.Run(null, null, null);
-		while (run.MoveNext())
+		int resultCode = 0;
+		APIRequestTask task = ChipDataMng.RequestAPIChipFusion(baseChip.userChipId, array, delegate(int res)
 		{
-			object obj = run.Current;
-			yield return obj;
-		}
-		yield break;
-	}
-
-	private void EndChipFusion(int resultCode, GameWebAPI.RequestMonsterList subRequest)
-	{
-		if (resultCode == 1)
+			resultCode = res;
+		});
+		AppCoroutine.Start(task.Run(delegate
 		{
-			if (subRequest != null)
+			if (resultCode == 1)
 			{
-				base.StartCoroutine(subRequest.Run(delegate()
-				{
-					this.fusionSuccessCallback();
-				}, delegate(Exception noop)
-				{
-					RestrictionInput.EndLoad();
-					GUIMain.BarrierOFF();
-				}, null));
+				callback();
 			}
 			else
 			{
-				this.fusionSuccessCallback();
+				this.SetBarrier(false);
+				this.DispErrorModal(resultCode);
 			}
-		}
-		else
-		{
-			this.SetBarrier(false);
-			this.DispErrorModal(resultCode);
-		}
+			RestrictionInput.EndLoad();
+		}, null, null), false);
 	}
 
 	private void ShowAttachPage()
 	{
-		NGUITools.SetActiveSelf(this.partsUpperCutinGO, false);
-		NGUITools.SetActiveSelf(this.ejectItemCutinGO, false);
+		this.partsUpperCutinGO.SetActive(false);
+		this.ejectItemCutinGO.SetActive(false);
 		GameWebAPI.ReqDataCS_ChipEquipLogic equip = new GameWebAPI.ReqDataCS_ChipEquipLogic
 		{
 			dispNum = this.selectedChipParameter.ConvertDispNum(),
@@ -733,14 +706,14 @@ public sealed class CMD_ChipSphere : CMD
 			this.RefreshItemNumbers();
 			this.RefreshYellowLines();
 			this.partsUpperCutinGO.transform.localPosition = this.chipButtonsPositions[index];
-			NGUITools.SetActiveSelf(this.partsUpperCutinGO, false);
+			this.partsUpperCutinGO.SetActive(false);
 			int loadCount = 0;
 			Action<ChipIcon> callback = delegate(ChipIcon chipIcon)
 			{
 				loadCount++;
 				if (loadCount < this.partsUpperCutinTextures.Length)
 				{
-					NGUITools.SetActiveSelf(this.partsUpperCutinGO, true);
+					this.partsUpperCutinGO.SetActive(true);
 					this.attachAnimationTrigger.OnFinishAnimation = delegate(string str)
 					{
 						SoundMng.Instance().TryPlaySE("SEInternal/Common/se_110", 0f, false, true, null, -1);
@@ -796,8 +769,8 @@ public sealed class CMD_ChipSphere : CMD
 				NGUIUtil.ChangeUITextureFromFileASync(uiTex, texname, false, null);
 			}
 			this.ejectItemCutinGO.transform.localPosition = this.chipButtonsPositions[num];
-			NGUITools.SetActiveSelf(this.ejectItemCutinGO, false);
-			NGUITools.SetActiveSelf(this.ejectItemCutinGO, true);
+			this.ejectItemCutinGO.SetActive(false);
+			this.ejectItemCutinGO.SetActive(true);
 			this.ejectAnimationTrigger.OnFinishAnimation = delegate(string str)
 			{
 				this.SetBarrier(false);
@@ -871,8 +844,8 @@ public sealed class CMD_ChipSphere : CMD
 				NGUIUtil.ChangeUITextureFromFileASync(uiTex, texname, false, null);
 			}
 			this.ejectItemCutinGO.transform.localPosition = this.chipButtonsPositions[num];
-			NGUITools.SetActiveSelf(this.ejectItemCutinGO, false);
-			NGUITools.SetActiveSelf(this.ejectItemCutinGO, true);
+			this.ejectItemCutinGO.SetActive(false);
+			this.ejectItemCutinGO.SetActive(true);
 			this.ejectAnimationTrigger.OnFinishAnimation = delegate(string str)
 			{
 				this.SetBarrier(false);

@@ -89,8 +89,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance1;
 
-	[Header("継承技2")]
 	[SerializeField]
+	[Header("継承技2")]
 	private BattleDigimonStatus.Skill inheritance2;
 
 	[SerializeField]
@@ -100,24 +100,24 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("各才能メダルの表示切り替え")]
 	private MonsterMedalList MonsterMedalList;
 
-	[SerializeField]
 	[Header("Lvローカライズ")]
+	[SerializeField]
 	private UILabel lvLocalize;
 
 	[SerializeField]
 	[Header("HPローカライズ")]
 	private UILabel hpLocalize;
 
-	[Header("友情度ローカライズ")]
 	[SerializeField]
+	[Header("友情度ローカライズ")]
 	private UILabel friendLocalize;
 
-	[SerializeField]
 	[Header("ATKローカライズ")]
+	[SerializeField]
 	private UILabel atkLocalize;
 
-	[SerializeField]
 	[Header("DEFローカライズ")]
+	[SerializeField]
 	private UILabel defLocalize;
 
 	[SerializeField]
@@ -128,8 +128,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel sdefLocalize;
 
-	[SerializeField]
 	[Header("SPDローカライズ")]
+	[SerializeField]
 	private UILabel spdLocalize;
 
 	[Header("Luckローカライズ")]
@@ -151,6 +151,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 
 	protected override void SetupLocalize()
 	{
+		base.SetupLocalize();
 		this.lvLocalize.text = StringMaster.GetString("CharaStatus-11");
 		this.hpLocalize.text = StringMaster.GetString("CharaStatus-10");
 		this.friendLocalize.text = StringMaster.GetString("CharaStatus-17");
@@ -264,7 +265,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			this.inheritance2.description.text = "-";
 			this.ApplyValue(0, 0, null, this.inheritance2.upObject, this.inheritance2.downObject);
 		}
-		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipDropRateUp || characterStatus.isChipDropCountUp || characterStatus.isChipExtaraStageRateUp || characterStatus.IsPoint());
+		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipServerAddValue || characterStatus.IsPoint());
 		this.SetArousal(characterStatus.arousal);
 		base.SetupTolerance(characterStatus);
 		this.MonsterMedalList.SetValues(characterStatus.talent);

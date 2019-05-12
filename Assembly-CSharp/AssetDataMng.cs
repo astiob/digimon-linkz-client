@@ -244,9 +244,8 @@ public class AssetDataMng : MonoBehaviour
 
 	private void LoadABInfo_FromWWW()
 	{
-		string version = DataMng.Instance().RespDataCM_ABVersion.assetBundleVersionList[0].version;
-		string url = AssetBundleMng.Instance().GetAB_ROOT_PATH() + "AB_info.txt?" + version;
-		WWWHelper wwwhelper = new WWWHelper(url, null, null, 40f);
+		string accessPath = DataMng.Instance().RespDataCM_ABVersion.assetBundleVersionList[0].accessPath;
+		WWWHelper wwwhelper = new WWWHelper(accessPath, null, null, 40f);
 		base.StartCoroutine(wwwhelper.StartRequest(new Action<string, string, WWWHelper.TimeOut>(this.OnReceivedAssetBundleInfo)));
 	}
 
@@ -277,9 +276,9 @@ public class AssetDataMng : MonoBehaviour
 		}
 		if (flag)
 		{
-			global::Debug.LogWarningFormat("ERROR : =========== AB_Init => {0}AB_info.txt = {1}", new object[]
+			global::Debug.LogWarningFormat("ERROR : =========== AB_Init => {0} = {1}", new object[]
 			{
-				AssetBundleMng.Instance().GetAB_ROOT_PATH(),
+				DataMng.Instance().RespDataCM_ABVersion.assetBundleVersionList[0].accessPath,
 				errorText
 			});
 			this.OpenAlert(new Action(this.LoadABInfo_FromWWW));
@@ -537,5 +536,10 @@ public class AssetDataMng : MonoBehaviour
 				this.curInfoIDX = -1;
 			}
 		}
+	}
+
+	public static string GetWebAssetImagePath()
+	{
+		return ConstValue.APP_ASSET_DOMAIN + "/asset/img";
 	}
 }

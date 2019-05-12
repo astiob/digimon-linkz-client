@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
@@ -306,6 +308,7 @@
     <Compile Include="CampaignLabelArea.cs" />
     <Compile Include="CampaignLabelQuest.cs" />
     <Compile Include="CampaignUtil.cs" />
+    <Compile Include="CaptureBonusItem.cs" />
     <Compile Include="CharacterAnimationClip.cs" />
     <Compile Include="CharacterAnimationType.cs" />
     <Compile Include="CharacterDatas.cs" />
@@ -417,6 +420,7 @@
     <Compile Include="CMD_DigiGarden.cs" />
     <Compile Include="CMD_Evolution.cs" />
     <Compile Include="CMD_EvolutionItemList.cs" />
+    <Compile Include="CMD_FacebookConfirm.cs" />
     <Compile Include="CMD_FacilityInfo.cs" />
     <Compile Include="CMD_FacilityInfoNoneEffect.cs" />
     <Compile Include="CMD_FacilityShop.cs" />
@@ -454,7 +458,7 @@
     <Compile Include="CMD_ModalSort.cs" />
     <Compile Include="CMD_MonsterParamPop.cs" />
     <Compile Include="CMD_MultiBattleParticipateMenu.cs" />
-    <Compile Include="CMD_MultiLangSetting_TEST.cs" />
+    <Compile Include="CMD_MultiLangSetting.cs" />
     <Compile Include="CMD_MultiRecruitChatList.cs" />
     <Compile Include="CMD_MultiRecruitFriend.cs" />
     <Compile Include="CMD_MultiRecruitPartyWait.cs" />
@@ -521,6 +525,19 @@
     <Compile Include="Colosseum\DeckUI\GUI_ColosseumDeckListItem.cs" />
     <Compile Include="Colosseum\DeckUI\UI_ColosseumDeckButton.cs" />
     <Compile Include="Colosseum\DeckUI\UI_ColosseumDeckList.cs" />
+    <Compile Include="Colosseum\Matching\CMD_ColosseumMatching.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingAnimation.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingEventListener.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingInfoMainBattle.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingInfoMockBattle.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetwork.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetworkHTTP.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetworkSocket.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetworkSynchronize.cs" />
+    <Compile Include="Colosseum\Matching\IColosseumMatchingInfo.cs" />
+    <Compile Include="Colosseum\Matching\MatchingConfig.cs" />
+    <Compile Include="Colosseum\Matching\MatchingResult.cs" />
+    <Compile Include="Colosseum\Matching\SocketRequestMatchingFinish.cs" />
     <Compile Include="CommonDialog.cs" />
     <Compile Include="CommonRender2D.cs" />
     <Compile Include="CommonRender3D.cs" />
@@ -1298,6 +1315,25 @@
     <Compile Include="Neptune\WebView\NpWebViewAccessType.cs" />
     <Compile Include="Neptune\WebView\NpWebViewAndroid.cs" />
     <Compile Include="Neptune\WebView\NpWebViewIOS.cs" />
+    <Compile Include="Network\Socket\API\ISocketMessage.cs" />
+    <Compile Include="Network\Socket\ISocketConnectionAsyncListener.cs" />
+    <Compile Include="Network\Socket\ISocketConnectionSyncListener.cs" />
+    <Compile Include="Network\Socket\ISocketReceiveCallback.cs" />
+    <Compile Include="Network\Socket\SocketConnection.cs" />
+    <Compile Include="Network\Socket\SocketConnectionAsync.cs" />
+    <Compile Include="Network\Socket\SocketConnectionSync.cs" />
+    <Compile Include="Network\Socket\SocketController.cs" />
+    <Compile Include="Network\Socket\SocketNpCloudListener.cs" />
+    <Compile Include="Network\Socket\SocketNpCloudListenerLostPacketSimulation.cs" />
+    <Compile Include="Network\Socket\SocketPongInfo.cs" />
+    <Compile Include="Network\Socket\SocketRequestSend.cs" />
+    <Compile Include="Network\Socket\SocketResponseReceive.cs" />
+    <Compile Include="Network\Socket\SocketSynchronize.cs" />
+    <Compile Include="Network\Socket\SocketSynchronizeListener.cs" />
+    <Compile Include="Network\Socket\SocketSynchronizeMonitor.cs" />
+    <Compile Include="Network\Socket\SocketSynchronizeSend.cs" />
+    <Compile Include="Network\Socket\SynchronizeInfo.cs" />
+    <Compile Include="Network\Socket\Test\SocketTestScene.cs" />
     <Compile Include="NextChoice\NextChoiceReplay.cs" />
     <Compile Include="NGUIDebug.cs" />
     <Compile Include="NGUIDepth.cs" />
@@ -1341,6 +1377,7 @@
     <Compile Include="PartsMenuNotfIcon.cs" />
     <Compile Include="PartsMultiRecruitMonsInfo.cs" />
     <Compile Include="PartsPartyMonsInfo.cs" />
+    <Compile Include="PartsQuestDetails.cs" />
     <Compile Include="PartsQuestPoint.cs" />
     <Compile Include="PartsTitleBase.cs" />
     <Compile Include="PartsUpperCutinController.cs" />
@@ -1385,12 +1422,15 @@
     <Compile Include="PvPBattleSimulator.cs" />
     <Compile Include="PvPBattleStart.cs" />
     <Compile Include="PvPBattleState.cs" />
+    <Compile Include="PvPConnectionNoticeCheck.cs" />
     <Compile Include="PvPEnemyData.cs" />
     <Compile Include="PvPEnemyDataReceive.cs" />
+    <Compile Include="PvPJudgmentCheck.cs" />
     <Compile Include="PvPMatching.cs" />
     <Compile Include="PvPMatchingFinishAnimation.cs" />
     <Compile Include="PvPOnlineCheck.cs" />
     <Compile Include="PVPPartySelect3.cs" />
+    <Compile Include="PvPRegist.cs" />
     <Compile Include="PvPVersusInfo.cs" />
     <Compile Include="PvPVersusInfo6Icon.cs" />
     <Compile Include="PvP\PvPUtility.cs" />
@@ -1445,6 +1485,7 @@
     <Compile Include="ShopStoneIconList.cs" />
     <Compile Include="SignalColosseumEvent.cs" />
     <Compile Include="SignalMeatHarvest.cs" />
+    <Compile Include="SimpleDiskUtils\DiskUtils.cs" />
     <Compile Include="SingleBattleState.cs" />
     <Compile Include="Singleton.cs" />
     <Compile Include="SkillConverter.cs" />
@@ -1518,6 +1559,7 @@
     <Compile Include="SubStateWaitForCertainPeriodTimeAction.cs" />
     <Compile Include="SubStateWaitRandomSeedSync.cs" />
     <Compile Include="SufferStateProperty.cs" />
+    <Compile Include="SufferStatePropertyCounter.cs" />
     <Compile Include="SufferStatePropertyStore.cs" />
     <Compile Include="SwipeControllerLR.cs" />
     <Compile Include="TakeoverInput.cs" />
@@ -1712,6 +1754,7 @@
     <Compile Include="UISprite.cs" />
     <Compile Include="UISpriteAnimation.cs" />
     <Compile Include="UISpriteData.cs" />
+    <Compile Include="UISpriteEx.cs" />
     <Compile Include="UISpriteSkinner.cs" />
     <Compile Include="UISpriteSkinnerBase.cs" />
     <Compile Include="UIStartupCaution.cs" />
@@ -1803,43 +1846,43 @@
       <Name>Chopin</Name>
     </ProjectReference>
     <ProjectReference Include="..\JsonFx.Json\JsonFx.Json.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857967}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
       <Name>JsonFx.Json</Name>
     </ProjectReference>
     <ProjectReference Include="..\mscorlib\mscorlib.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
       <Name>mscorlib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Secure\Secure.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
       <Name>Secure</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml\System.Xml.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>System.Xml</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\TextMeshPro\TextMeshPro.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
       <Name>TextMeshPro</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>UnityEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\websocket-sharp\websocket-sharp.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857973}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
       <Name>websocket-sharp</Name>
     </ProjectReference>
   </ItemGroup>

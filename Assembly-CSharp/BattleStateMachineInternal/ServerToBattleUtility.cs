@@ -277,39 +277,14 @@ namespace BattleStateMachineInternal
 				return AffectEffect.DefenseThroughDamage;
 			case 66:
 				return AffectEffect.DefenseThroughDamage;
+			case 67:
+				return AffectEffect.HpSettingFixable;
+			case 68:
+				return AffectEffect.HpSettingPercentage;
 			default:
 				global::Debug.LogError("AffectEffectの値が不正です. (" + value + ")");
 				return AffectEffect.Damage;
 			}
-		}
-
-		public static LeaderSkillType IntToLeaderSkillType(int value)
-		{
-			if (Enum.IsDefined(typeof(LeaderSkillType), value))
-			{
-				return (LeaderSkillType)value;
-			}
-			global::Debug.LogError("LeaderSkillTypeの値が不正です. (" + value + ")");
-			return LeaderSkillType.HpFollowingDamageUp;
-		}
-
-		public static Strength IntToStrength(string value)
-		{
-			switch (value)
-			{
-			case "-1":
-				return Strength.Weak;
-			case "0":
-				return Strength.None;
-			case "1":
-				return Strength.Strong;
-			case "2":
-				return Strength.Drain;
-			case "99":
-				return Strength.Invalid;
-			}
-			global::Debug.LogError("Strengthの値が不正です. (" + value + ")");
-			return Strength.None;
 		}
 
 		public static bool GetUseDrainAffectEffect(int value)
@@ -332,7 +307,11 @@ namespace BattleStateMachineInternal
 				{
 					return PowerType.Fixable;
 				}
-				if (value != 58)
+				if (value == 58)
+				{
+					return PowerType.Fixable;
+				}
+				if (value != 67)
 				{
 					return PowerType.Percentage;
 				}
@@ -391,6 +370,35 @@ namespace BattleStateMachineInternal
 			case 37:
 				return TechniqueType.Special;
 			}
+		}
+
+		public static Strength IntToStrength(string value)
+		{
+			switch (value)
+			{
+			case "-1":
+				return Strength.Weak;
+			case "0":
+				return Strength.None;
+			case "1":
+				return Strength.Strong;
+			case "2":
+				return Strength.Drain;
+			case "99":
+				return Strength.Invalid;
+			}
+			global::Debug.LogError("Strengthの値が不正です. (" + value + ")");
+			return Strength.None;
+		}
+
+		public static LeaderSkillType IntToLeaderSkillType(int value)
+		{
+			if (Enum.IsDefined(typeof(LeaderSkillType), value))
+			{
+				return (LeaderSkillType)value;
+			}
+			global::Debug.LogError("LeaderSkillTypeの値が不正です. (" + value + ")");
+			return LeaderSkillType.HpFollowingDamageUp;
 		}
 
 		public static bool GetOnHpFollowingLeaderSkill(LeaderSkillType value)

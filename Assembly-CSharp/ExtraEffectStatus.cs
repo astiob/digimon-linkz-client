@@ -272,16 +272,7 @@ public class ExtraEffectStatus : EffectStatusBase
 		{
 			return skillPropety.GetPower(character);
 		}
-		EffectStatusBase.ExtraEffectType effectType;
-		if (skillPropety.skillId.ToString() == BattleStateManager.current.publicAttackSkillId)
-		{
-			effectType = EffectStatusBase.ExtraEffectType.DefaultAttackDamage;
-		}
-		else
-		{
-			effectType = EffectStatusBase.ExtraEffectType.SkillDamage;
-		}
-		return (int)ExtraEffectStatus.GetExtraEffectCorrectionValue(list, (float)skillPropety.GetPower(character), character.characterStatus.monsterIntegrationIds, character.groupId, character.tolerance, character.characterDatas.tribe, character.characterDatas.growStep, skillPropety, character.currentSufferState, ExtraEffectStatus.GetExtraTargetType(character), effectType);
+		return (int)ExtraEffectStatus.GetExtraEffectCorrectionValue(list, (float)skillPropety.GetPower(character), character.characterStatus.monsterIntegrationIds, character.groupId, character.tolerance, character.characterDatas.tribe, character.characterDatas.growStep, skillPropety, character.currentSufferState, ExtraEffectStatus.GetExtraTargetType(character), EffectStatusBase.ExtraEffectType.SkillPower);
 	}
 
 	public static float GetSkillHitRateCorrectionValue(List<ExtraEffectStatus> extraEffectStatusList, AffectEffectProperty skillPropety, CharacterStateControl character)
@@ -291,17 +282,8 @@ public class ExtraEffectStatus : EffectStatusBase
 		{
 			return skillPropety.hitRate;
 		}
-		EffectStatusBase.ExtraEffectType effectType;
-		if (skillPropety.skillId.ToString() == BattleStateManager.current.publicAttackSkillId)
-		{
-			effectType = EffectStatusBase.ExtraEffectType.DefaultAttackHit;
-		}
-		else
-		{
-			effectType = EffectStatusBase.ExtraEffectType.SkillHit;
-		}
 		int num = ServerToBattleUtility.PercentageToPermillion(skillPropety.hitRate);
-		float extraEffectCorrectionValue = ExtraEffectStatus.GetExtraEffectCorrectionValue(list, (float)num, character.characterStatus.monsterIntegrationIds, character.groupId, character.tolerance, character.characterDatas.tribe, character.characterDatas.growStep, skillPropety, character.currentSufferState, ExtraEffectStatus.GetExtraTargetType(character), effectType);
+		float extraEffectCorrectionValue = ExtraEffectStatus.GetExtraEffectCorrectionValue(list, (float)num, character.characterStatus.monsterIntegrationIds, character.groupId, character.tolerance, character.characterDatas.tribe, character.characterDatas.growStep, skillPropety, character.currentSufferState, ExtraEffectStatus.GetExtraTargetType(character), EffectStatusBase.ExtraEffectType.SkillHit);
 		return ServerToBattleUtility.PermillionToPercentage((int)extraEffectCorrectionValue);
 	}
 
@@ -360,29 +342,47 @@ public class ExtraEffectStatus : EffectStatusBase
 		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
 		if (skillPropety != null)
 		{
-			ConstValue.ResistanceType skillResistanceType = EffectStatusBase.GetSkillResistanceType(skillPropety);
-			if (skillResistanceType != ConstValue.ResistanceType.NONE)
+			bool flag = skillPropety.skillId.ToString() == BattleStateManager.PublicAttackSkillId;
+			List<ExtraEffectStatus> list2 = new List<ExtraEffectStatus>();
+			foreach (ExtraEffectStatus extraEffectStatus in extraEffectStatusList)
 			{
-				list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Skill, 0, skillResistanceType, effectType));
+				if (extraEffectStatus.TargetValue2 == "0")
+				{
+					list2.Add(extraEffectStatus);
+				}
+				else if (extraEffectStatus.TargetValue2 == "1")
+				{
+					if (flag)
+					{
+						list2.Add(extraEffectStatus);
+					}
+				}
+				else if (extraEffectStatus.TargetValue2 == "2" && !flag)
+				{
+					list2.Add(extraEffectStatus);
+				}
 			}
-			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Skill, skillPropety.skillId, ConstValue.ResistanceType.NONE, effectType));
+			ConstValue.ResistanceType skillResistanceType = EffectStatusBase.GetSkillResistanceType(skillPropety);
+			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(list2, targetType, EffectStatusBase.ExtraTargetSubType.SkillAttribute, 0, effectType));
+			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(list2, targetType, EffectStatusBase.ExtraTargetSubType.SkillAttribute, (int)skillResistanceType, effectType));
+			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(list2, targetType, EffectStatusBase.ExtraTargetSubType.SkillId, 0, effectType));
+			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(list2, targetType, EffectStatusBase.ExtraTargetSubType.SkillId, skillPropety.skillId, effectType));
 		}
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterResistance, 0, effectType));
 		List<ConstValue.ResistanceType> attributeStrengthList = tolerance.GetAttributeStrengthList();
-		foreach (ConstValue.ResistanceType resistanceType in attributeStrengthList)
+		foreach (ConstValue.ResistanceType targetValue in attributeStrengthList)
 		{
-			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterResistance, 0, resistanceType, effectType));
-			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterResistance, (int)resistanceType, ConstValue.ResistanceType.NONE, effectType));
-			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterResistance, (int)resistanceType, resistanceType, effectType));
+			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterResistance, (int)targetValue, effectType));
 		}
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterTribe, 0, ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterTribe, tribe.ToInt32(), ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterGroup, 0, ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterGroup, groupId.ToInt32(), ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.GrowStep, 0, ConstValue.ResistanceType.NONE, effectType));
-		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.GrowStep, (int)growStep, ConstValue.ResistanceType.NONE, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterTribe, 0, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterTribe, tribe.ToInt32(), effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterGroup, 0, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.MonsterGroup, groupId.ToInt32(), effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.GrowStep, 0, effectType));
+		list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.GrowStep, (int)growStep, effectType));
 		if (currentSufferState != null)
 		{
-			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, 0, ConstValue.ResistanceType.NONE, effectType));
+			list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, 0, effectType));
 			foreach (object obj in Enum.GetValues(typeof(SufferStateProperty.SufferType)))
 			{
 				SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)((int)obj);
@@ -390,7 +390,7 @@ public class ExtraEffectStatus : EffectStatusBase
 				{
 					if (currentSufferState.FindSufferState(sufferType))
 					{
-						list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, (int)sufferType, ConstValue.ResistanceType.NONE, effectType));
+						list.AddRange(ExtraEffectStatus.GetExtraEffectStatusList(extraEffectStatusList, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, (int)sufferType, effectType));
 					}
 				}
 			}
@@ -399,37 +399,19 @@ public class ExtraEffectStatus : EffectStatusBase
 		return list;
 	}
 
-	private static List<ExtraEffectStatus> GetExtraEffectStatusList(List<ExtraEffectStatus> extraEffectStatusList, ExtraEffectStatus.ExtraTargetType targetType, EffectStatusBase.ExtraTargetSubType targetSubType, int targetValue, ConstValue.ResistanceType resistanceType, EffectStatusBase.ExtraEffectType effectType)
+	private static List<ExtraEffectStatus> GetExtraEffectStatusList(List<ExtraEffectStatus> extraEffectStatusList, ExtraEffectStatus.ExtraTargetType targetType, EffectStatusBase.ExtraTargetSubType targetSubType, int targetValue, EffectStatusBase.ExtraEffectType effectType)
 	{
-		ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E8 <GetExtraEffectStatusList>c__AnonStorey2E = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E8();
-		<GetExtraEffectStatusList>c__AnonStorey2E.effectType = effectType;
-		<GetExtraEffectStatusList>c__AnonStorey2E.targetType = targetType;
-		<GetExtraEffectStatusList>c__AnonStorey2E.targetSubType = targetSubType;
-		<GetExtraEffectStatusList>c__AnonStorey2E.targetValue = targetValue;
 		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
 		if (extraEffectStatusList.Count == 0)
 		{
 			return list;
 		}
-		<GetExtraEffectStatusList>c__AnonStorey2E.searchEffectType = ((int x) => x == (int)<GetExtraEffectStatusList>c__AnonStorey2E.effectType);
-		if (EffectStatusBase.ExtraEffectType.Atk <= <GetExtraEffectStatusList>c__AnonStorey2E.effectType && <GetExtraEffectStatusList>c__AnonStorey2E.effectType < EffectStatusBase.ExtraEffectType.AllStatus)
+		Func<int, bool> searchEffectType = (int x) => x == (int)effectType;
+		if (EffectStatusBase.ExtraEffectType.Atk <= effectType && effectType < EffectStatusBase.ExtraEffectType.AllStatus)
 		{
-			<GetExtraEffectStatusList>c__AnonStorey2E.searchEffectType = ((int x) => x == (int)<GetExtraEffectStatusList>c__AnonStorey2E.effectType || x == 27);
+			searchEffectType = ((int x) => x == (int)effectType || x == 27);
 		}
-		IEnumerable<ExtraEffectStatus> enumerable;
-		if (resistanceType == ConstValue.ResistanceType.NONE)
-		{
-			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2E.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2E.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2E.targetValue && <GetExtraEffectStatusList>c__AnonStorey2E.searchEffectType(x.EffectType));
-		}
-		else
-		{
-			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9 <GetExtraEffectStatusList>c__AnonStorey2E2 = new ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9();
-			<GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744 = <GetExtraEffectStatusList>c__AnonStorey2E;
-			ExtraEffectStatus.<GetExtraEffectStatusList>c__AnonStorey2E9 <GetExtraEffectStatusList>c__AnonStorey2E3 = <GetExtraEffectStatusList>c__AnonStorey2E2;
-			int num = (int)resistanceType;
-			<GetExtraEffectStatusList>c__AnonStorey2E3.resistance = num.ToString();
-			enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)<GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.targetType || x.TargetType == 0) && x.TargetSubType == (int)<GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.targetSubType && x.TargetValue == <GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.targetValue && x.TargetValue2.Contains(<GetExtraEffectStatusList>c__AnonStorey2E2.resistance) && <GetExtraEffectStatusList>c__AnonStorey2E2.<>f__ref$744.searchEffectType(x.EffectType));
-		}
+		IEnumerable<ExtraEffectStatus> enumerable = extraEffectStatusList.Where((ExtraEffectStatus x) => (x.TargetType == (int)targetType || x.TargetType == 0) && x.TargetSubType == (int)targetSubType && x.TargetValue == targetValue && searchEffectType(x.EffectType));
 		foreach (ExtraEffectStatus item in enumerable)
 		{
 			list.Add(item);
@@ -469,7 +451,7 @@ public class ExtraEffectStatus : EffectStatusBase
 			bool flag = monsterIntegrationIds.Where((string item) => item == id).Any<string>();
 			if (flag)
 			{
-				List<ExtraEffectStatus> extraEffectStatusList2 = ExtraEffectStatus.GetExtraEffectStatusList(list3, targetType, EffectStatusBase.ExtraTargetSubType.MonsterIntegrationGroup, extraEffectStatus2.TargetValue, ConstValue.ResistanceType.NONE, effectType);
+				List<ExtraEffectStatus> extraEffectStatusList2 = ExtraEffectStatus.GetExtraEffectStatusList(list3, targetType, EffectStatusBase.ExtraTargetSubType.MonsterIntegrationGroup, extraEffectStatus2.TargetValue, effectType);
 				if (extraEffectStatusList2.Count > 0)
 				{
 					list.AddRange(extraEffectStatusList2);

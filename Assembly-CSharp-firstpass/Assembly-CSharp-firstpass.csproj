@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,13 +32,37 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="com\adjust\sdk\Adjust.cs" />
+    <Compile Include="com\adjust\sdk\AdjustAndroid.cs" />
+    <Compile Include="com\adjust\sdk\AdjustAttribution.cs" />
+    <Compile Include="com\adjust\sdk\AdjustConfig.cs" />
+    <Compile Include="com\adjust\sdk\AdjustEnvironment.cs" />
+    <Compile Include="com\adjust\sdk\AdjustEnvironmentExtension.cs" />
+    <Compile Include="com\adjust\sdk\AdjustEvent.cs" />
+    <Compile Include="com\adjust\sdk\AdjustEventFailure.cs" />
+    <Compile Include="com\adjust\sdk\AdjustEventSuccess.cs" />
+    <Compile Include="com\adjust\sdk\AdjustLogLevel.cs" />
+    <Compile Include="com\adjust\sdk\AdjustLogLevelExtension.cs" />
+    <Compile Include="com\adjust\sdk\AdjustSessionFailure.cs" />
+    <Compile Include="com\adjust\sdk\AdjustSessionSuccess.cs" />
+    <Compile Include="com\adjust\sdk\AdjustUtils.cs" />
+    <Compile Include="com\adjust\sdk\IAdjust.cs" />
+    <Compile Include="com\adjust\sdk\JSON.cs" />
+    <Compile Include="com\adjust\sdk\JSONArray.cs" />
+    <Compile Include="com\adjust\sdk\JSONBinaryTag.cs" />
+    <Compile Include="com\adjust\sdk\JSONClass.cs" />
+    <Compile Include="com\adjust\sdk\JSONData.cs" />
+    <Compile Include="com\adjust\sdk\JSONLazyCreator.cs" />
+    <Compile Include="com\adjust\sdk\JSONNode.cs" />
     <Compile Include="Debug.cs" />
+    <Compile Include="ExampleGUI.cs" />
     <Compile Include="LitJson\ArrayMetadata.cs" />
     <Compile Include="LitJson\Condition.cs" />
     <Compile Include="LitJson\ExporterFunc.2.cs" />
@@ -62,8 +87,6 @@
     <Compile Include="LitJson\WriterContext.cs" />
     <Compile Include="Network\HttpResponseMessage.cs" />
     <Compile Include="Network\WebRequestSSL.cs" />
-    <Compile Include="Partytrack.cs" />
-    <Compile Include="PartytrackUnityPlugin\Item.cs" />
     <Compile Include="PinchInOut.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Save\PersistentFile.cs" />
@@ -72,6 +95,7 @@
     <Compile Include="SmartBeat\SmartBeatBehaviour.cs" />
     <Compile Include="SmartBeat\SmartBeatIOSBinding.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="TimeZone.cs" />
     <Compile Include="TypeSerialize\TypeSerializeHelper.cs" />
     <Compile Include="UIDontDestroy.cs" />
     <Compile Include="UnityStandardAssets\ImageEffects\AAMode.cs" />
@@ -121,23 +145,23 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mscorlib\mscorlib.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
       <Name>mscorlib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>UnityEngine</Name>
     </ProjectReference>
   </ItemGroup>

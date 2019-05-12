@@ -1189,12 +1189,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestUS_UserStatus : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataUS_GetPlayerInfo>
+	public sealed class RequestUS_UserStatus : RequestTypeBase<GameWebAPI.PlayerInfoSendData, GameWebAPI.RespDataUS_GetPlayerInfo>
 	{
 		public RequestUS_UserStatus()
 		{
 			this.apiId = "020001";
 		}
+	}
+
+	public sealed class PlayerInfoSendData : WebAPI.SendBaseData
+	{
+		public string keys;
 	}
 
 	public sealed class RespDataUS_GetPlayerInfo : WebAPI.ResponseData
@@ -2034,7 +2039,7 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster[] userMonsterList;
 
-		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] rewards;
 
 		public sealed class GachaResultMonster : GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList
 		{
@@ -2078,7 +2083,7 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecChip.UserAssetList[] userAssetList;
 
-		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] rewards;
 
 		public sealed class UserAssetList
 		{
@@ -2117,7 +2122,7 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList[] userDungeonTicketList;
 
-		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] rewards;
 
 		public sealed class UserDungeonTicketList
 		{
@@ -2238,6 +2243,8 @@ public class GameWebAPI : WebAPI
 
 		public string currencyCode;
 
+		public string countryCode;
+
 		public string priceNumber;
 
 		public string receiptData;
@@ -2258,6 +2265,8 @@ public class GameWebAPI : WebAPI
 		public string osVersion;
 
 		public string currencyCode;
+
+		public string countryCode;
 
 		public string priceNumber;
 
@@ -3083,7 +3092,7 @@ public class GameWebAPI : WebAPI
 
 			public sealed class BonusPoint
 			{
-				public string eventPointBonusId;
+				public string eventPointBonusMessage;
 
 				public int point;
 			}
@@ -3944,6 +3953,120 @@ public class GameWebAPI : WebAPI
 	public sealed class RespDataTL_EditUserTitle : WebAPI.ResponseData
 	{
 		public int resultStatus;
+	}
+
+	public sealed class RequestTL_ModelChangeRequest : RequestTypeBase<GameWebAPI.SendDataTL_ModelChangeRequest, GameWebAPI.RespDataTL_ModelChangeRequest>
+	{
+		public RequestTL_ModelChangeRequest()
+		{
+			this.apiId = "210001";
+		}
+	}
+
+	public sealed class SendDataTL_ModelChangeRequest : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_ModelChangeRequest : WebAPI.ResponseData
+	{
+		public int appliId;
+
+		public string userCode;
+
+		public string transferCode;
+
+		public string expireTime;
+	}
+
+	public sealed class RequestTL_UserSocialStatusInfo : RequestTypeBase<GameWebAPI.SendDataTL_UserSocialStatusInfo, GameWebAPI.RespDataTL_UserSocialStatusInfo>
+	{
+		public RequestTL_UserSocialStatusInfo()
+		{
+			this.apiId = "210002";
+		}
+	}
+
+	public sealed class SendDataTL_UserSocialStatusInfo : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_UserSocialStatusInfo : WebAPI.ResponseData
+	{
+		public string userCode;
+
+		public string nickname;
+
+		public string transferCode;
+	}
+
+	public sealed class RequestTL_DeleteUserSocialStatus : RequestTypeBase<GameWebAPI.SendDataTL_DeleteUserSocialStatus, GameWebAPI.RespDataTL_DeleteUserSocialStatus>
+	{
+		public RequestTL_DeleteUserSocialStatus()
+		{
+			this.apiId = "210003";
+		}
+	}
+
+	public sealed class SendDataTL_DeleteUserSocialStatus : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_DeleteUserSocialStatus : WebAPI.ResponseData
+	{
+		public int resultCode;
+
+		public bool IsSuccess()
+		{
+			return 1 == this.resultCode;
+		}
+	}
+
+	public sealed class RequestTL_ModelChangeAuthLogic : RequestTypeBase<GameWebAPI.SendDataTL_ModelChangeAuthLogic, GameWebAPI.RespDataTL_ModelChangeAuthLogic>
+	{
+		public RequestTL_ModelChangeAuthLogic()
+		{
+			this.apiId = "210004";
+		}
+	}
+
+	public sealed class SendDataTL_ModelChangeAuthLogic : WebAPI.SendBaseData
+	{
+		public string accessToken;
+
+		public int transferUserCode;
+
+		public string transferCode;
+	}
+
+	public sealed class RespDataTL_ModelChangeAuthLogic : WebAPI.ResponseData
+	{
+		public int transferStatus;
+	}
+
+	public sealed class RequestTL_UserSocialStatusCheckLogic : RequestTypeBase<GameWebAPI.SendDataTL_UserSocialStatusCheckLogic, GameWebAPI.RespDataTL_UserSocialStatusCheckLogic>
+	{
+		public RequestTL_UserSocialStatusCheckLogic()
+		{
+			this.apiId = "210005";
+		}
+	}
+
+	public sealed class SendDataTL_UserSocialStatusCheckLogic : WebAPI.SendBaseData
+	{
+		public string accessToken;
+	}
+
+	public sealed class RespDataTL_UserSocialStatusCheckLogic : WebAPI.ResponseData
+	{
+		public int resultCode;
+
+		public bool Authenticated()
+		{
+			return 1 == this.resultCode;
+		}
 	}
 
 	public sealed class RequestIN_InfoList : RequestTypeBase<GameWebAPI.SendDataIN_InfoList, GameWebAPI.RespDataIN_InfoList>
@@ -5522,6 +5645,8 @@ public class GameWebAPI : WebAPI
 
 			private int[] _modeChangeCoefficientRare = new int[6];
 
+			private int useNewPvPMatchingType = 1;
+
 			private int[] _chipExtendSlotNeeds = new int[]
 			{
 				1,
@@ -6268,6 +6393,14 @@ public class GameWebAPI : WebAPI
 				}
 			}
 
+			public string pvpMatchingType
+			{
+				set
+				{
+					this.PVP_MATCHING_TYPE = int.Parse(value);
+				}
+			}
+
 			public string multiMaxAttackTime
 			{
 				set
@@ -6618,6 +6751,18 @@ public class GameWebAPI : WebAPI
 
 			public int PVP_PARTY_SELECT_TIME { get; private set; }
 
+			public int PVP_MATCHING_TYPE
+			{
+				get
+				{
+					return this.useNewPvPMatchingType;
+				}
+				private set
+				{
+					this.useNewPvPMatchingType = value;
+				}
+			}
+
 			public int MULTI_MAX_ATTACK_TIME { get; private set; }
 
 			public int MULTI_HURRYUP_ATTACK_TIME { get; private set; }
@@ -6888,7 +7033,7 @@ public class GameWebAPI : WebAPI
 
 			public string limitRound;
 
-			public string speedClearRound;
+			public string optionRewardFlg;
 
 			public bool IsSoloMulti()
 			{
@@ -7067,6 +7212,10 @@ public class GameWebAPI : WebAPI
 
 			public string subType;
 
+			public string clearType;
+
+			public string clearValue;
+
 			public string assetCategoryId;
 
 			public string assetValue;
@@ -7074,6 +7223,8 @@ public class GameWebAPI : WebAPI
 			public string assetNum;
 
 			public string exValue;
+
+			public string joinType;
 		}
 	}
 

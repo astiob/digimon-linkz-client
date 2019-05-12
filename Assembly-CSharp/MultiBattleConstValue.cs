@@ -26,9 +26,15 @@ public static class MultiBattleConstValue
 
 	public const string TCP_KEY_PVP_ONLINE_CHECK = "080110";
 
+	public const string TCP_KEY_PVP_JUDGMENT_CHECK = "080120";
+
 	public const string TCP_KEY_PVP_RECOVER_COMMUNICATE = "080112";
 
+	public const string TCP_KEY_PVP_CONNECTOIN_NOTICE = "800013";
+
 	public const string TCP_KEY_PVP_BATTLE_ACTION_LOG = "080114";
+
+	public const string TCP_KEY_PVP_REGIST = "080119";
 
 	public enum PVP_BATTLE_START_RESULT_CODE
 	{

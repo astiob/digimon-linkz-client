@@ -43,9 +43,10 @@ namespace EvolutionDiagram
 			FarmCameraControlForCMD.Off();
 		}
 
-		protected override void OnCloseStartDialog()
+		protected override bool OnCloseStartDialog()
 		{
 			FarmCameraControlForCMD.On();
+			return true;
 		}
 
 		protected override void OnClosedDialog()

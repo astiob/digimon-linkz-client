@@ -329,7 +329,6 @@ public class BattleStateInitialize : BattleStateController
 		for (int i2 = 0; i2 < base.battleStateData.preloadEnemies.Length; i2++)
 		{
 			base.battleStateData.preloadEnemies[i2] = new CharacterStateControl[base.hierarchyData.batteWaves[i2].useEnemiesId.Length];
-			Dictionary<string, int> characterParamsIdListBattleWaveCurrent = new Dictionary<string, int>();
 			for (int j = 0; j < base.battleStateData.preloadEnemies[i2].Length; j++)
 			{
 				CharacterStatus status = base.hierarchyData.batteWaves[i2].enemyStatuses[j];
@@ -345,41 +344,30 @@ public class BattleStateInitialize : BattleStateController
 					base.battleStateData.preloadEnemies[i2][j].isLeader = true;
 				}
 				string prefabId = status.prefabId;
-				if (!characterParamsIdListBattleWaveCurrent.ContainsKey(prefabId))
+				if (!characterParamsIdListBattleWave.ContainsKey(prefabId))
 				{
-					characterParamsIdListBattleWaveCurrent.Add(prefabId, 1);
+					characterParamsIdListBattleWave.Add(prefabId, 1);
 				}
-				else
+				else if (characterParamsIdListBattleWave[prefabId] < maxEnemiesLength)
 				{
 					Dictionary<string, int> dictionary2;
-					Dictionary<string, int> dictionary = dictionary2 = characterParamsIdListBattleWaveCurrent;
+					Dictionary<string, int> dictionary = dictionary2 = characterParamsIdListBattleWave;
 					string key4;
 					string key3 = key4 = prefabId;
 					int num2 = dictionary2[key4];
 					dictionary[key3] = num2 + 1;
 				}
 			}
-			foreach (KeyValuePair<string, int> d in characterParamsIdListBattleWaveCurrent)
-			{
-				if (!characterParamsIdListBattleWave.ContainsKey(d.Key))
-				{
-					characterParamsIdListBattleWave.Add(d.Key, d.Value);
-				}
-				if (characterParamsIdListBattleWave[d.Key] < d.Value)
-				{
-					characterParamsIdListBattleWave[d.Key] = d.Value;
-				}
-			}
 		}
-		foreach (KeyValuePair<string, int> d2 in characterParamsIdListBattleWave)
+		foreach (KeyValuePair<string, int> d in characterParamsIdListBattleWave)
 		{
-			for (int k = 0; k < d2.Value; k++)
+			for (int k = 0; k < d.Value; k++)
 			{
 				Action<CharacterParams, int, string> callback = delegate(CharacterParams c, int index, string id)
 				{
 					base.battleStateData.preloadEnemiesParams.Add(id, index.ToString(), c);
 				};
-				IEnumerator characterParam = base.stateManager.initialize.LoadCharacterParam(d2.Key, k, callback);
+				IEnumerator characterParam = base.stateManager.initialize.LoadCharacterParam(d.Key, k, callback);
 				list.Add(characterParam);
 			}
 		}

@@ -40,7 +40,7 @@ public class GUIListPartsGashaBanner : GUIListPartBS
 			this.uiTex.mainTexture = this.bannerTex;
 			yield break;
 		}
-		string downloadURL = ConstValue.APP_ASSET_DOMAIN + "/asset/img/gasha/" + this.nameId;
+		string downloadURL = AssetDataMng.GetWebAssetImagePath() + "/gasha/" + this.nameId;
 		yield return TextureManager.instance.Load(downloadURL, new Action<Texture2D>(this.OnLoad), DownloadGashaTopTex.Instance.TimeoutSeconds, true);
 		yield break;
 	}

@@ -13,12 +13,12 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 	[SerializeField]
 	public UISprite spSelectIcon;
 
-	[Header("個数プレート")]
 	[SerializeField]
+	[Header("個数プレート")]
 	public UISprite spNumPlate;
 
-	[Header("個数表示")]
 	[SerializeField]
+	[Header("個数表示")]
 	public UILabel lbNum;
 
 	private Vector2 beganPosition;

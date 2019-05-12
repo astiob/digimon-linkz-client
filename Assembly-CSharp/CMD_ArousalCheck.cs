@@ -20,24 +20,24 @@ public sealed class CMD_ArousalCheck : CMD
 	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[SerializeField]
 	[Header("警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("Yesボタンのラベル")]
+	[SerializeField]
 	private UILabel buttonYesLabel;
 
 	[Header("Noボタンのラベル")]
 	[SerializeField]
 	private UILabel buttonNoLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	protected override void Awake()

@@ -29,8 +29,8 @@ public class MultiBattleDialog : MonoBehaviour
 	[Header("スキン")]
 	private UIComponentSkinner uiCompornentSkinner;
 
-	[SerializeField]
 	[Header("背景オブジェクト")]
+	[SerializeField]
 	private GameObject[] bg;
 
 	[Header("閉じるローカライズ")]

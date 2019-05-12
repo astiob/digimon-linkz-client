@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/Stretch")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/Stretch")]
 public class UIStretch : MonoBehaviour
 {
 	public Camera uiCamera;
@@ -19,8 +19,8 @@ public class UIStretch : MonoBehaviour
 
 	public Vector2 borderPadding = Vector2.zero;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIWidget widgetContainer;
 
 	private Transform mTrans;

@@ -168,6 +168,20 @@ public class CMD_ColosseumRanking : CMD
 				this.lbColosseumRankingListEmpty.gameObject.SetActive(true);
 			}
 		}
+		else if (this.colosseumRankingList.resultCode == 2)
+		{
+			this.myData = this.GetMyData();
+			this.csParts.SetData();
+			this.csParts.ShowGUI();
+			this.csSelectPanel.DisableList();
+			this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null);
+			this.csSelectPanel.SetLocationByIDX(this.listIdx, 0f);
+			this.csRankingPanel.DisableList();
+			this.csRankingPanel.SetData(this.colosseumRankingList);
+			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), true, 1f, 1f, null, null);
+			this.csRankingPanel.SetBeforeMaxLocate();
+			this.lbColosseumRankingListEmpty.gameObject.SetActive(true);
+		}
 	}
 
 	public bool GetIsMine(int idx)
@@ -223,6 +237,17 @@ public class CMD_ColosseumRanking : CMD
 		if (this.dispRankingType == CMD_ColosseumRanking.ColosseumRankingType.THIS_TIME)
 		{
 			respDataCL_Ranking.pointRankingList["-1"] = 0;
+		}
+		if (respDataCL_Ranking.pointRankingList == null)
+		{
+			this.keysList = new List<string>();
+			this.valsList = new List<int>();
+			this.keysListStartValue = new List<string>();
+			this.listIdx = this.keysList.Count - 1;
+			this.amIOutRange = true;
+			this.limitRank = 0;
+			respDataCL_Ranking.pointToNextRank = 0;
+			return;
 		}
 		this.keysList = new List<string>(respDataCL_Ranking.pointRankingList.Keys);
 		this.valsList = new List<int>(respDataCL_Ranking.pointRankingList.Values);

@@ -8,8 +8,8 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[SerializeField]
 	private GUICollider colSoul;
 
-	[SerializeField]
 	[Header("素材用アイコンのUITexture")]
+	[SerializeField]
 	private UITexture texSoul;
 
 	[Header("所持数のGameObject")]
@@ -20,12 +20,12 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[Header("所持数のUIlabel")]
 	private UILabel lbNum;
 
-	[SerializeField]
 	[Header("所持数背景のGameObject")]
+	[SerializeField]
 	private GameObject goNumBG;
 
-	[SerializeField]
 	[Header("親のパネル")]
+	[SerializeField]
 	private GUISelectPanelEvolutionItemList parentPanel;
 
 	private string soulId;

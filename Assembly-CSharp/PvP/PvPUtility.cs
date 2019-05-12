@@ -54,7 +54,7 @@ namespace PvP
 			if (src != null && src.userStatus != null)
 			{
 				dst.userStatus = src.userStatus;
-				dst.userStatus.nickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
+				dst.userStatus.nickname = DataMng.Instance().UserName;
 				dst.freeCostBattleCount = src.freeCostBattleCount;
 			}
 			else

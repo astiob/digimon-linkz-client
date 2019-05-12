@@ -263,51 +263,53 @@ public static class ChipDataMng
 		};
 	}
 
-	public static GameWebAPI.ChipFusionLogic RequestAPIChipFusion(int baseChipId, int[] materialChipIds, Action<int, GameWebAPI.RequestMonsterList> callBack = null)
+	public static APIRequestTask RequestAPIChipFusion(int baseUserChipId, int[] materialChipIds, Action<int> onCompleted)
 	{
-		return new GameWebAPI.ChipFusionLogic
+		GameWebAPI.ChipFusionLogic chipFusionLogic = new GameWebAPI.ChipFusionLogic
 		{
 			SetSendData = delegate(GameWebAPI.ReqDataCS_ChipFusionLogic param)
 			{
-				param.baseChip = baseChipId;
+				param.baseChip = baseUserChipId;
 				param.materialChip = materialChipIds;
-			},
-			OnReceived = delegate(GameWebAPI.RespDataCS_ChipFusionLogic resData)
-			{
-				GameWebAPI.RequestMonsterList arg = null;
-				if (resData.resultCode == 1)
-				{
-					GameWebAPI.RespDataCS_ChipListLogic.UserChipList afterChip = ChipDataMng.GetUserChip(baseChipId);
-					afterChip.chipId = resData.userChip.chipId;
-					List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = ChipDataMng.userChipData.userChipList.ToList<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>();
-					foreach (int materialChip in materialChipIds)
-					{
-						list.RemoveAll((GameWebAPI.RespDataCS_ChipListLogic.UserChipList c) => c.userChipId == materialChip);
-					}
-					ChipDataMng.userChipData.userChipList = list.ToArray();
-					if (afterChip.IsUse())
-					{
-						GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
-						requestMonsterList.SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
-						{
-							param.userMonsterIds = new int[]
-							{
-								afterChip.userMonsterId
-							};
-						};
-						requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
-						{
-							ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonsterList);
-						};
-						arg = requestMonsterList;
-					}
-				}
-				if (callBack != null)
-				{
-					callBack(resData.resultCode, arg);
-				}
 			}
 		};
+		APIRequestTask task = new APIRequestTask(chipFusionLogic, true);
+		chipFusionLogic.OnReceived = delegate(GameWebAPI.RespDataCS_ChipFusionLogic resData)
+		{
+			if (resData.resultCode == 1)
+			{
+				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = ChipDataMng.userChipData.userChipList.ToList<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>();
+				foreach (int materialChip in materialChipIds)
+				{
+					list.RemoveAll((GameWebAPI.RespDataCS_ChipListLogic.UserChipList c) => c.userChipId == materialChip);
+				}
+				ChipDataMng.userChipData.userChipList = list.ToArray();
+				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipInfo = ChipDataMng.GetUserChip(baseUserChipId);
+				userChipInfo.chipId = resData.userChip.chipId;
+				if (userChipInfo.userMonsterId != 0)
+				{
+					ChipClientSlotInfo slotInfo = ChipDataMng.userChipSlotData.GetSlotInfo(userChipInfo.userMonsterId.ToString());
+					ChipClientEquip chipClientEquip = slotInfo.FindChipEquip(baseUserChipId);
+					chipClientEquip.chipId = resData.userChip.chipId;
+					TaskBase task = task;
+					GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
+					requestMonsterList.SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
+					{
+						param.userMonsterIds = new int[]
+						{
+							userChipInfo.userMonsterId
+						};
+					};
+					requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
+					{
+						ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonsterList);
+					};
+					task.Add(new APIRequestTask(requestMonsterList, true));
+				}
+			}
+			onCompleted(resData.resultCode);
+		};
+		return task;
 	}
 
 	public static GameWebAPI.ChipUnlockExtraSlotLogic RequestAPIChipUnlockExtraSlot(MonsterData md, int dispNum, int useEjectItemCnt, Action<int> callBack = null)

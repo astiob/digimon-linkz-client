@@ -7,64 +7,64 @@ using UnityEngine;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[Header("NEWのGameObject")]
 	[SerializeField]
+	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
 	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[Header("選択してないときの外枠色")]
 	[SerializeField]
+	[Header("選択してないときの外枠色")]
 	private Color normalFrameColor = Color.white;
 
 	[Header("選択時の外枠色")]
 	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[Header("残り時間のラベル")]
 	[SerializeField]
+	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[Header("背景のスプライト")]
 	[SerializeField]
 	private UISprite bgSprite;
 
-	[Header("外枠のスプライト")]
 	[SerializeField]
+	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[SerializeField]
 	[Header("オープンの時の色")]
 	private Color openBannerCol;
 
-	[Header("クローズの時の色")]
 	[SerializeField]
+	[Header("クローズの時の色")]
 	private Color closeBannerCol;
 
-	[SerializeField]
 	[Header("オープンしてないを示す鍵")]
+	[SerializeField]
 	private GameObject goCloseKey;
 
 	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("クリアのマークの画像")]
+	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
 	[Header("ステージギミック表記Obj")]

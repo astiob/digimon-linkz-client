@@ -13,22 +13,22 @@ public sealed class AttackTime : MonoBehaviour
 	[Header("MAX時間(MultiBattleDataから自動セット)")]
 	private int maxAttackTime = 30;
 
-	[SerializeField]
 	[Header("急かす時間(MultiBattleDataから自動セット)")]
+	[SerializeField]
 	private int hurryUpAttackTime = 10;
 
-	[SerializeField]
 	[Header("攻撃のカウントダウンの急かす色")]
+	[SerializeField]
 	private Color hurryUpColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	private int nowTime = 10;
 
-	[Header("'あと'ラベル")]
 	[SerializeField]
+	[Header("'あと'ラベル")]
 	private UILabel afterLabel;
 
-	[SerializeField]
 	[Header("時間ラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
 	private IEnumerator cor;

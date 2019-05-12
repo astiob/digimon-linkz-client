@@ -100,4 +100,12 @@ public class ChipList
 	{
 		this.guiSelectPanelChipList.SetAllSelectMessage(value);
 	}
+
+	public void SetTouchAreaWidth(float w)
+	{
+		BoxCollider component = this.guiSelectPanelChipList.GetComponent<BoxCollider>();
+		Vector3 size = component.size;
+		size.x = w;
+		component.size = size;
+	}
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UIToggle))]
 [AddComponentMenu("NGUI/Interaction/Toggled Components")]
+[ExecuteInEditMode]
 public class UIToggledComponents : MonoBehaviour
 {
 	public List<MonoBehaviour> activate;
@@ -15,8 +15,8 @@ public class UIToggledComponents : MonoBehaviour
 	[HideInInspector]
 	private MonoBehaviour target;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool inverse;
 
 	private void Awake()

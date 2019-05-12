@@ -4,8 +4,8 @@ using UnityEngine;
 [AddComponentMenu("GUI/BillBoardController")]
 public class BillBoardController : MonoBehaviour
 {
-	[Header("必要ならカメラ設定")]
 	[SerializeField]
+	[Header("必要ならカメラ設定")]
 	private Camera cam;
 
 	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]

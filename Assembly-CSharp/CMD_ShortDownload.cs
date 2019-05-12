@@ -83,6 +83,7 @@ public class CMD_ShortDownload : CMD
 		{
 			this.partsGaugePoint.SetGaugeValue(this.progressBar.value);
 		}
-		this.downloadProgressValue.text = this.progressBar.value.ToString("P0");
+		int num = Mathf.FloorToInt(this.progressBar.value * 100f);
+		this.downloadProgressValue.text = string.Format(StringMaster.GetString("SystemPercent"), num);
 	}
 }

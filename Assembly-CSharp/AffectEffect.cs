@@ -56,6 +56,8 @@ public enum AffectEffect
 	HpBorderlineSpDamage,
 	DefenseThroughDamage,
 	SpDefenseThroughDamage,
+	HpSettingFixable,
+	HpSettingPercentage,
 	gimmickSpecialAttackUp,
 	gimmickSpecialAttackDown
 }

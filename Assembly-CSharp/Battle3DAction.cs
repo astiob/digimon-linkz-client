@@ -77,7 +77,7 @@ public class Battle3DAction : BattleFunctionBase
 		insertCharacterEffect.SetPosition(cState.CharacterParams.transform, null);
 		this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.In);
 		base.stateManager.soundPlayer.TryPlaySE("bt_541", 0f, false);
-		for (;;)
+		while (!isAttackPlayed)
 		{
 			if (insertCharacterEffect.currentState == AlwaysEffectState.Always && !isPlayerd)
 			{
@@ -96,6 +96,10 @@ public class Battle3DAction : BattleFunctionBase
 			}
 			yield return isAttackPlayed;
 		}
+		this.StopAlwaysEffectAction(new AlwaysEffectParams[]
+		{
+			insertCharacterEffect
+		});
 		yield break;
 	}
 

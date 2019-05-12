@@ -12,7 +12,7 @@ public class AssetBundleMng : MonoBehaviour
 
 	public static int AB_CACHE_LIFE = 12960000;
 
-	public static long AB_CACHE_MAX = (long)((ulong)-294967296);
+	public static long AB_CACHE_MAX = 4294967296L;
 
 	private bool isWaitDiskSpaceCheck;
 

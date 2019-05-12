@@ -4,8 +4,8 @@ using UnityEngine;
 
 public sealed class CMD_ModalGroup : CMD
 {
-	[SerializeField]
 	[Header("メインタイトルラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
 	[SerializeField]

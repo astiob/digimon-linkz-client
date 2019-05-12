@@ -65,6 +65,10 @@ public class WebAPIJsonParse : MonoBehaviour
 		{
 			throw ex;
 		}
+		catch (Exception ex2)
+		{
+			throw new JsonException(ex2.ToString());
+		}
 	}
 
 	public static Dictionary<string, string> GetResponseList(List<RequestBase> requestList, string json)

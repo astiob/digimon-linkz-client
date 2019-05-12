@@ -86,21 +86,7 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		}
 		BattleDebug.Log("ロード完了後UI初期化: 完了");
 		base.hierarchyData.on2xSpeedPlay = true;
-		base.stateManager.uiControl.ApplyHideHitIcon();
-		base.stateManager.uiControl.ApplyDroppedItemHide();
-		base.stateManager.uiControlPvP.ApplyDroppedItemIconHide();
-		base.stateManager.uiControlPvP.ApplySetAlwaysUIObject(false);
-		base.stateManager.uiControlPvP.ApplyAttackTimer(true);
-		base.stateManager.uiControlPvP.RegisterAttackRed();
 		base.stateManager.pvpFunction.InitializeTCPClient(false);
-		string playerName = base.stateManager.pvpFunction.GetPlayerName();
-		string enemyName = base.stateManager.pvpFunction.GetEnemyName();
-		base.stateManager.uiControlPvP.SetPlayerName(playerName);
-		base.stateManager.uiControlPvP.SetEnemyName(enemyName);
-		string playerTitleId = base.stateManager.pvpFunction.GetPlayerTitleId();
-		string enemyTitleId = base.stateManager.pvpFunction.GetEnemyTitleId();
-		base.stateManager.uiControlPvP.SetPlayerTitle(playerTitleId);
-		base.stateManager.uiControlPvP.SetEnemyTitle(enemyTitleId);
 		yield break;
 	}
 
