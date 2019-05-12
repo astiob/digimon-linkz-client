@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Core</RootNamespace>
+    <AssemblyName>System.Core</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Consts.cs" />
+    <Compile Include="Locale.cs" />
+    <Compile Include="Mono\Security\Cryptography\BlockProcessor.cs" />
+    <Compile Include="Mono\Security\Cryptography\KeyBuilder.cs" />
+    <Compile Include="Mono\Security\Cryptography\SymmetricTransform.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Action.2.cs" />
+    <Compile Include="System\Action.3.cs" />
+    <Compile Include="System\Action.4.cs" />
+    <Compile Include="System\Action.cs" />
+    <Compile Include="System\Collections\Generic\HashSet.cs" />
+    <Compile Include="System\Func.2.cs" />
+    <Compile Include="System\Func.3.cs" />
+    <Compile Include="System\Func.4.cs" />
+    <Compile Include="System\Func.5.cs" />
+    <Compile Include="System\Func.cs" />
+    <Compile Include="System\InvalidTimeZoneException.cs" />
+    <Compile Include="System\Linq\Check.cs" />
+    <Compile Include="System\Linq\Enumerable.cs" />
+    <Compile Include="System\Linq\Expressions\BinaryExpression.cs" />
+    <Compile Include="System\Linq\Expressions\CompilationContext.cs" />
+    <Compile Include="System\Linq\Expressions\ConditionalExpression.cs" />
+    <Compile Include="System\Linq\Expressions\ConstantExpression.cs" />
+    <Compile Include="System\Linq\Expressions\ElementInit.cs" />
+    <Compile Include="System\Linq\Expressions\EmitContext.cs" />
+    <Compile Include="System\Linq\Expressions\Expression.2.cs" />
+    <Compile Include="System\Linq\Expressions\Expression.cs" />
+    <Compile Include="System\Linq\Expressions\ExpressionPrinter.cs" />
+    <Compile Include="System\Linq\Expressions\ExpressionTransformer.cs" />
+    <Compile Include="System\Linq\Expressions\ExpressionType.cs" />
+    <Compile Include="System\Linq\Expressions\ExpressionVisitor.cs" />
+    <Compile Include="System\Linq\Expressions\Extensions.cs" />
+    <Compile Include="System\Linq\Expressions\InvocationExpression.cs" />
+    <Compile Include="System\Linq\Expressions\LambdaExpression.cs" />
+    <Compile Include="System\Linq\Expressions\ListInitExpression.cs" />
+    <Compile Include="System\Linq\Expressions\MemberAssignment.cs" />
+    <Compile Include="System\Linq\Expressions\MemberBinding.cs" />
+    <Compile Include="System\Linq\Expressions\MemberBindingType.cs" />
+    <Compile Include="System\Linq\Expressions\MemberExpression.cs" />
+    <Compile Include="System\Linq\Expressions\MemberInitExpression.cs" />
+    <Compile Include="System\Linq\Expressions\MemberListBinding.cs" />
+    <Compile Include="System\Linq\Expressions\MemberMemberBinding.cs" />
+    <Compile Include="System\Linq\Expressions\MethodCallExpression.cs" />
+    <Compile Include="System\Linq\Expressions\NewArrayExpression.cs" />
+    <Compile Include="System\Linq\Expressions\NewExpression.cs" />
+    <Compile Include="System\Linq\Expressions\ParameterExpression.cs" />
+    <Compile Include="System\Linq\Expressions\TypeBinaryExpression.cs" />
+    <Compile Include="System\Linq\Expressions\UnaryExpression.cs" />
+    <Compile Include="System\Linq\Grouping.cs" />
+    <Compile Include="System\Linq\IGrouping.cs" />
+    <Compile Include="System\Linq\ILookup.cs" />
+    <Compile Include="System\Linq\IOrderedEnumerable.cs" />
+    <Compile Include="System\Linq\IOrderedQueryable.2.cs" />
+    <Compile Include="System\Linq\IOrderedQueryable.cs" />
+    <Compile Include="System\Linq\IQueryable.2.cs" />
+    <Compile Include="System\Linq\IQueryable.cs" />
+    <Compile Include="System\Linq\IQueryableEnumerable.2.cs" />
+    <Compile Include="System\Linq\IQueryableEnumerable.cs" />
+    <Compile Include="System\Linq\IQueryProvider.cs" />
+    <Compile Include="System\Linq\Lookup.cs" />
+    <Compile Include="System\Linq\OrderedEnumerable.cs" />
+    <Compile Include="System\Linq\OrderedSequence.cs" />
+    <Compile Include="System\Linq\Queryable.cs" />
+    <Compile Include="System\Linq\QueryableEnumerable.cs" />
+    <Compile Include="System\Linq\QueryableTransformer.cs" />
+    <Compile Include="System\Linq\QuickSort.cs" />
+    <Compile Include="System\Linq\SortContext.cs" />
+    <Compile Include="System\Linq\SortDirection.cs" />
+    <Compile Include="System\Linq\SortSequenceContext.cs" />
+    <Compile Include="System\MonoDocumentationNoteAttribute.cs" />
+    <Compile Include="System\MonoExtensionAttribute.cs" />
+    <Compile Include="System\MonoInternalNoteAttribute.cs" />
+    <Compile Include="System\MonoLimitationAttribute.cs" />
+    <Compile Include="System\MonoNotSupportedAttribute.cs" />
+    <Compile Include="System\MonoTODOAttribute.cs" />
+    <Compile Include="System\Runtime\CompilerServices\ExecutionScope.cs" />
+    <Compile Include="System\Runtime\CompilerServices\ExtensionAttribute.cs" />
+    <Compile Include="System\Runtime\CompilerServices\IStrongBox.cs" />
+    <Compile Include="System\Runtime\CompilerServices\StrongBox.cs" />
+    <Compile Include="System\Security\Cryptography\Aes.cs" />
+    <Compile Include="System\Security\Cryptography\AesManaged.cs" />
+    <Compile Include="System\Security\Cryptography\AesTransform.cs" />
+    <Compile Include="System\Threading\LockRecursionException.cs" />
+    <Compile Include="System\Threading\LockRecursionPolicy.cs" />
+    <Compile Include="System\Threading\ReaderWriterLockSlim.cs" />
+    <Compile Include="System\TimeZoneInfo.cs" />
+    <Compile Include="System\TimeZoneNotFoundException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mscorlib\mscorlib.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Name>mscorlib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

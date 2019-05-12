@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857965}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Assembly-CSharp-firstpass</RootNamespace>
+    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Debug.cs" />
+    <Compile Include="LitJson\ArrayMetadata.cs" />
+    <Compile Include="LitJson\Condition.cs" />
+    <Compile Include="LitJson\ExporterFunc.2.cs" />
+    <Compile Include="LitJson\ExporterFunc.cs" />
+    <Compile Include="LitJson\FsmContext.cs" />
+    <Compile Include="LitJson\IJsonWrapper.cs" />
+    <Compile Include="LitJson\ImporterFunc.2.cs" />
+    <Compile Include="LitJson\ImporterFunc.cs" />
+    <Compile Include="LitJson\JsonData.cs" />
+    <Compile Include="LitJson\JsonException.cs" />
+    <Compile Include="LitJson\JsonMapper.cs" />
+    <Compile Include="LitJson\JsonReader.cs" />
+    <Compile Include="LitJson\JsonToken.cs" />
+    <Compile Include="LitJson\JsonType.cs" />
+    <Compile Include="LitJson\JsonWriter.cs" />
+    <Compile Include="LitJson\Lexer.cs" />
+    <Compile Include="LitJson\ObjectMetadata.cs" />
+    <Compile Include="LitJson\OrderedDictionaryEnumerator.cs" />
+    <Compile Include="LitJson\ParserToken.cs" />
+    <Compile Include="LitJson\PropertyMetadata.cs" />
+    <Compile Include="LitJson\WrapperFactory.cs" />
+    <Compile Include="LitJson\WriterContext.cs" />
+    <Compile Include="Network\HttpResponseMessage.cs" />
+    <Compile Include="Network\WebRequestSSL.cs" />
+    <Compile Include="Partytrack.cs" />
+    <Compile Include="PartytrackUnityPlugin\Item.cs" />
+    <Compile Include="PinchInOut.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Save\PersistentFile.cs" />
+    <Compile Include="SmartBeat\SmartBeat.cs" />
+    <Compile Include="SmartBeat\SmartBeatBehaviour.cs" />
+    <Compile Include="SmartBeat\SmartBeatIOSBinding.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="TypeSerialize\TypeSerializeHelper.cs" />
+    <Compile Include="UIDontDestroy.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\AAMode.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Antialiasing.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Bloom.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\BloomAndFlares.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\BloomOptimized.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\BloomScreenBlendMode.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Blur.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\BlurOptimized.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\CameraMotionBlur.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ColorCorrectionCurves.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ColorCorrectionLookup.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ColorCorrectionRamp.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ContrastEnhance.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ContrastStretch.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\CreaseShading.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\DepthOfField.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\DepthOfFieldDeprecated.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\EdgeDetection.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Fisheye.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\GlitchEffect.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\GlobalFog.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Grayscale.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\HDRBloomMode.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ImageEffectBase.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ImageEffects.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\LensflareStyle34.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\MotionBlur.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\NoiseAndGrain.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\NoiseAndScratches.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\PostEffectsBase.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\PostEffectsHelper.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Quads.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ScreenOverlay.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ScreenSpaceAmbientObscurance.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\ScreenSpaceAmbientOcclusion.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\SepiaTone.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\SunShafts.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\TiltShift.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Tonemapping.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Triangles.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\TweakMode34.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Twirl.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\VignetteAndChromaticAberration.cs" />
+    <Compile Include="UnityStandardAssets\ImageEffects\Vortex.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mscorlib\mscorlib.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Name>mscorlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersistentData\PersistentData.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796A}</Project>
+      <Name>PersistentData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Name>System.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Name>System</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Name>UnityEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

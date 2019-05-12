@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Enemy.AI
+{
+	[Serializable]
+	public class AIActionPattern
+	{
+		[SerializeField]
+		private float _minRange;
+
+		[SerializeField]
+		private float _maxRange;
+
+		[SerializeField]
+		private List<AIActionClip> _aiActionClip = new List<AIActionClip>();
+
+		public AIActionPattern()
+		{
+			this._minRange = 0f;
+			this._maxRange = 1f;
+			this._aiActionClip = new List<AIActionClip>();
+		}
+
+		public AIActionPattern(float minRange, float maxRange, params AIActionClip[] aiActionClip)
+		{
+			this._minRange = minRange;
+			this._maxRange = maxRange;
+			this._aiActionClip = new List<AIActionClip>(aiActionClip);
+			this.NormalizeActionPattern();
+		}
+
+		public float minRange
+		{
+			get
+			{
+				return this._minRange;
+			}
+			private set
+			{
+				this._minRange = Mathf.Clamp(value, 0f, this.maxRange);
+			}
+		}
+
+		public float maxRange
+		{
+			get
+			{
+				return this._maxRange;
+			}
+			private set
+			{
+				this._minRange = Mathf.Clamp(value, this.minRange, 1f);
+			}
+		}
+
+		public List<AIActionClip> aiActionClip
+		{
+			get
+			{
+				return this._aiActionClip;
+			}
+			private set
+			{
+				this._aiActionClip = value;
+			}
+		}
+
+		public string[] GetAllSkillID()
+		{
+			List<string> list = new List<string>();
+			foreach (AIActionClip aiactionClip in this._aiActionClip)
+			{
+				if (!list.Contains(aiactionClip.useSkillId))
+				{
+					list.Add(aiactionClip.useSkillId);
+				}
+			}
+			return list.ToArray();
+		}
+
+		public AIActionClip GetRandomActionClip()
+		{
+			float num = UnityEngine.Random.Range(0f, 1f);
+			for (int i = 0; i < this.aiActionClip.Count; i++)
+			{
+				if (!this.aiActionClip[i].isZeroRate)
+				{
+					if (this.aiActionClip[i].minRange <= num && this.aiActionClip[i].maxRange > num)
+					{
+						return this.aiActionClip[i];
+					}
+				}
+			}
+			return this.aiActionClip[this.aiActionClip.Count - 1];
+		}
+
+		private void NormalizeActionPattern()
+		{
+			float value = 0f;
+			for (int i = 0; i < this._aiActionClip.Count; i++)
+			{
+				this._aiActionClip[i] = new AIActionClip(this._aiActionClip[i].targetSelectRerefence, this._aiActionClip[i].selectingOrder, this._aiActionClip[i].minValue, this._aiActionClip[i].maxValue, Mathf.Clamp01(value), Mathf.Clamp01(this._aiActionClip[i].maxRange), this._aiActionClip[i].useSkillId);
+				value = this._aiActionClip[i].maxRange;
+			}
+		}
+
+		public override string ToString()
+		{
+			string text = string.Format("[AIActionPattern: minRange={0}, maxRange={1}]", this.minRange, this.maxRange) + "\n";
+			for (int i = 0; i < this._aiActionClip.Count; i++)
+			{
+				string text2 = text;
+				text = string.Concat(new string[]
+				{
+					text2,
+					"+++",
+					i.ToString(),
+					" : ",
+					this._aiActionClip[i].ToString(),
+					"\n"
+				});
+			}
+			return text;
+		}
+	}
+}

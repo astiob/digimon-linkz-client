@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UnityEngine.Networking</RootNamespace>
+    <AssemblyName>UnityEngine.Networking</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ChannelBuffer.cs" />
+    <Compile Include="ChannelOption.cs" />
+    <Compile Include="ChannelPacket.cs" />
+    <Compile Include="Channels.cs" />
+    <Compile Include="ClientAttribute.cs" />
+    <Compile Include="ClientCallbackAttribute.cs" />
+    <Compile Include="ClientRpcAttribute.cs" />
+    <Compile Include="ClientScene.cs" />
+    <Compile Include="CommandAttribute.cs" />
+    <Compile Include="ConnectionArray.cs" />
+    <Compile Include="FloatConversion.cs" />
+    <Compile Include="LocalClient.cs" />
+    <Compile Include="LogFilter.cs" />
+    <Compile Include="MessageBase.cs" />
+    <Compile Include="MsgType.cs" />
+    <Compile Include="NetBuffer.cs" />
+    <Compile Include="NetworkAnimator.cs" />
+    <Compile Include="NetworkBehaviour.cs" />
+    <Compile Include="NetworkBroadcastResult.cs" />
+    <Compile Include="NetworkClient.cs" />
+    <Compile Include="NetworkConnection.cs" />
+    <Compile Include="NetworkCRC.cs" />
+    <Compile Include="NetworkDiscovery.cs" />
+    <Compile Include="NetworkHash128.cs" />
+    <Compile Include="NetworkIdentity.cs" />
+    <Compile Include="NetworkInstanceId.cs" />
+    <Compile Include="NetworkLobbyManager.cs" />
+    <Compile Include="NetworkLobbyPlayer.cs" />
+    <Compile Include="NetworkManager.cs" />
+    <Compile Include="NetworkManagerHUD.cs" />
+    <Compile Include="NetworkMessage.cs" />
+    <Compile Include="NetworkMessageDelegate.cs" />
+    <Compile Include="NetworkMessageHandlers.cs" />
+    <Compile Include="NetworkProximityChecker.cs" />
+    <Compile Include="NetworkReader.cs" />
+    <Compile Include="NetworkScene.cs" />
+    <Compile Include="NetworkSceneId.cs" />
+    <Compile Include="NetworkServer.cs" />
+    <Compile Include="NetworkSettingsAttribute.cs" />
+    <Compile Include="NetworkStartPosition.cs" />
+    <Compile Include="NetworkSystem\AddPlayerMessage.cs" />
+    <Compile Include="NetworkSystem\AnimationMessage.cs" />
+    <Compile Include="NetworkSystem\AnimationParametersMessage.cs" />
+    <Compile Include="NetworkSystem\AnimationTriggerMessage.cs" />
+    <Compile Include="NetworkSystem\ClientAuthorityMessage.cs" />
+    <Compile Include="NetworkSystem\CRCMessage.cs" />
+    <Compile Include="NetworkSystem\CRCMessageEntry.cs" />
+    <Compile Include="NetworkSystem\EmptyMessage.cs" />
+    <Compile Include="NetworkSystem\ErrorMessage.cs" />
+    <Compile Include="NetworkSystem\IntegerMessage.cs" />
+    <Compile Include="NetworkSystem\LobbyReadyToBeginMessage.cs" />
+    <Compile Include="NetworkSystem\NotReadyMessage.cs" />
+    <Compile Include="NetworkSystem\ObjectDestroyMessage.cs" />
+    <Compile Include="NetworkSystem\ObjectSpawnFinishedMessage.cs" />
+    <Compile Include="NetworkSystem\ObjectSpawnMessage.cs" />
+    <Compile Include="NetworkSystem\ObjectSpawnSceneMessage.cs" />
+    <Compile Include="NetworkSystem\OverrideTransformMessage.cs" />
+    <Compile Include="NetworkSystem\OwnerMessage.cs" />
+    <Compile Include="NetworkSystem\PeerInfoMessage.cs" />
+    <Compile Include="NetworkSystem\PeerListMessage.cs" />
+    <Compile Include="NetworkSystem\ReadyMessage.cs" />
+    <Compile Include="NetworkSystem\RemovePlayerMessage.cs" />
+    <Compile Include="NetworkSystem\StringMessage.cs" />
+    <Compile Include="NetworkTransform.cs" />
+    <Compile Include="NetworkTransformChild.cs" />
+    <Compile Include="NetworkTransformVisualizer.cs" />
+    <Compile Include="NetworkWriter.cs" />
+    <Compile Include="PlayerController.cs" />
+    <Compile Include="PlayerSpawnMethod.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerAttribute.cs" />
+    <Compile Include="ServerCallbackAttribute.cs" />
+    <Compile Include="SpawnDelegate.cs" />
+    <Compile Include="SyncEventAttribute.cs" />
+    <Compile Include="SyncList.cs" />
+    <Compile Include="SyncListBool.cs" />
+    <Compile Include="SyncListFloat.cs" />
+    <Compile Include="SyncListInt.cs" />
+    <Compile Include="SyncListString.cs" />
+    <Compile Include="SyncListStruct.cs" />
+    <Compile Include="SyncListUInt.cs" />
+    <Compile Include="SyncVarAttribute.cs" />
+    <Compile Include="UIntFloat.cs" />
+    <Compile Include="ULocalConnectionToClient.cs" />
+    <Compile Include="ULocalConnectionToServer.cs" />
+    <Compile Include="UnSpawnDelegate.cs" />
+    <Compile Include="Version.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Core\System.Core.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Name>System.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Name>System</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Name>UnityEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857968}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mono</RootNamespace>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Consts.cs" />
+    <Compile Include="Locale.cs" />
+    <Compile Include="Math\BigInteger.cs" />
+    <Compile Include="Math\Prime\ConfidenceFactor.cs" />
+    <Compile Include="Math\Prime\Generator\NextPrimeFinder.cs" />
+    <Compile Include="Math\Prime\Generator\PrimeGeneratorBase.cs" />
+    <Compile Include="Math\Prime\Generator\SequentialSearchPrimeGeneratorBase.cs" />
+    <Compile Include="Math\Prime\PrimalityTest.cs" />
+    <Compile Include="Math\Prime\PrimalityTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\ASN1.cs" />
+    <Compile Include="Security\ASN1Convert.cs" />
+    <Compile Include="Security\Authenticode\AuthenticodeBase.cs" />
+    <Compile Include="Security\Authenticode\AuthenticodeDeformatter.cs" />
+    <Compile Include="Security\Authenticode\AuthenticodeFormatter.cs" />
+    <Compile Include="Security\Authenticode\Authority.cs" />
+    <Compile Include="Security\Authenticode\PrivateKey.cs" />
+    <Compile Include="Security\Authenticode\SoftwarePublisherCertificate.cs" />
+    <Compile Include="Security\BitConverterLE.cs" />
+    <Compile Include="Security\Cryptography\ARC4Managed.cs" />
+    <Compile Include="Security\Cryptography\BlockProcessor.cs" />
+    <Compile Include="Security\Cryptography\CryptoConvert.cs" />
+    <Compile Include="Security\Cryptography\DHKeyGeneration.cs" />
+    <Compile Include="Security\Cryptography\DHParameters.cs" />
+    <Compile Include="Security\Cryptography\DiffieHellman.cs" />
+    <Compile Include="Security\Cryptography\DiffieHellmanManaged.cs" />
+    <Compile Include="Security\Cryptography\HMAC.cs" />
+    <Compile Include="Security\Cryptography\KeyBuilder.cs" />
+    <Compile Include="Security\Cryptography\KeyPairPersistence.cs" />
+    <Compile Include="Security\Cryptography\MD2.cs" />
+    <Compile Include="Security\Cryptography\MD2Managed.cs" />
+    <Compile Include="Security\Cryptography\MD4.cs" />
+    <Compile Include="Security\Cryptography\MD4Managed.cs" />
+    <Compile Include="Security\Cryptography\MD5SHA1.cs" />
+    <Compile Include="Security\Cryptography\PKCS1.cs" />
+    <Compile Include="Security\Cryptography\PKCS8.cs" />
+    <Compile Include="Security\Cryptography\RC4.cs" />
+    <Compile Include="Security\Cryptography\RSAManaged.cs" />
+    <Compile Include="Security\Cryptography\SHA224.cs" />
+    <Compile Include="Security\Cryptography\SHA224Managed.cs" />
+    <Compile Include="Security\Cryptography\SHAConstants.cs" />
+    <Compile Include="Security\Cryptography\SymmetricTransform.cs" />
+    <Compile Include="Security\PKCS7.cs" />
+    <Compile Include="Security\Protocol\Ntlm\ChallengeResponse.cs" />
+    <Compile Include="Security\Protocol\Ntlm\MessageBase.cs" />
+    <Compile Include="Security\Protocol\Ntlm\NtlmFlags.cs" />
+    <Compile Include="Security\Protocol\Ntlm\Type1Message.cs" />
+    <Compile Include="Security\Protocol\Ntlm\Type2Message.cs" />
+    <Compile Include="Security\Protocol\Ntlm\Type3Message.cs" />
+    <Compile Include="Security\Protocol\Tls\Alert.cs" />
+    <Compile Include="Security\Protocol\Tls\AlertDescription.cs" />
+    <Compile Include="Security\Protocol\Tls\AlertLevel.cs" />
+    <Compile Include="Security\Protocol\Tls\CertificateSelectionCallback.cs" />
+    <Compile Include="Security\Protocol\Tls\CertificateValidationCallback.cs" />
+    <Compile Include="Security\Protocol\Tls\CertificateValidationCallback2.cs" />
+    <Compile Include="Security\Protocol\Tls\CipherAlgorithmType.cs" />
+    <Compile Include="Security\Protocol\Tls\CipherSuite.cs" />
+    <Compile Include="Security\Protocol\Tls\CipherSuiteCollection.cs" />
+    <Compile Include="Security\Protocol\Tls\CipherSuiteFactory.cs" />
+    <Compile Include="Security\Protocol\Tls\ClientContext.cs" />
+    <Compile Include="Security\Protocol\Tls\ClientRecordProtocol.cs" />
+    <Compile Include="Security\Protocol\Tls\ClientSessionCache.cs" />
+    <Compile Include="Security\Protocol\Tls\ClientSessionInfo.cs" />
+    <Compile Include="Security\Protocol\Tls\ContentType.cs" />
+    <Compile Include="Security\Protocol\Tls\Context.cs" />
+    <Compile Include="Security\Protocol\Tls\DebugHelper.cs" />
+    <Compile Include="Security\Protocol\Tls\ExchangeAlgorithmType.cs" />
+    <Compile Include="Security\Protocol\Tls\HandshakeState.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\ClientCertificateType.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsClientCertificate.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsClientCertificateVerify.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsClientFinished.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsClientHello.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsClientKeyExchange.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsServerCertificate.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsServerCertificateRequest.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsServerFinished.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsServerHello.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsServerHelloDone.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Client\TlsServerKeyExchange.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\HandshakeMessage.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\HandshakeType.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsClientCertificate.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsClientCertificateVerify.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsClientFinished.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsClientHello.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsClientKeyExchange.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsServerCertificate.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsServerCertificateRequest.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsServerFinished.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsServerHello.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsServerHelloDone.cs" />
+    <Compile Include="Security\Protocol\Tls\Handshake\Server\TlsServerKeyExchange.cs" />
+    <Compile Include="Security\Protocol\Tls\HashAlgorithmType.cs" />
+    <Compile Include="Security\Protocol\Tls\HttpsClientStream.cs" />
+    <Compile Include="Security\Protocol\Tls\PrivateKeySelectionCallback.cs" />
+    <Compile Include="Security\Protocol\Tls\RecordProtocol.cs" />
+    <Compile Include="Security\Protocol\Tls\RSASslSignatureDeformatter.cs" />
+    <Compile Include="Security\Protocol\Tls\RSASslSignatureFormatter.cs" />
+    <Compile Include="Security\Protocol\Tls\SecurityCompressionType.cs" />
+    <Compile Include="Security\Protocol\Tls\SecurityParameters.cs" />
+    <Compile Include="Security\Protocol\Tls\SecurityProtocolType.cs" />
+    <Compile Include="Security\Protocol\Tls\ServerContext.cs" />
+    <Compile Include="Security\Protocol\Tls\ServerRecordProtocol.cs" />
+    <Compile Include="Security\Protocol\Tls\SslCipherSuite.cs" />
+    <Compile Include="Security\Protocol\Tls\SslClientStream.cs" />
+    <Compile Include="Security\Protocol\Tls\SslHandshakeHash.cs" />
+    <Compile Include="Security\Protocol\Tls\SslServerStream.cs" />
+    <Compile Include="Security\Protocol\Tls\SslStreamBase.cs" />
+    <Compile Include="Security\Protocol\Tls\TlsCipherSuite.cs" />
+    <Compile Include="Security\Protocol\Tls\TlsClientSettings.cs" />
+    <Compile Include="Security\Protocol\Tls\TlsException.cs" />
+    <Compile Include="Security\Protocol\Tls\TlsServerSettings.cs" />
+    <Compile Include="Security\Protocol\Tls\TlsStream.cs" />
+    <Compile Include="Security\Protocol\Tls\ValidationResult.cs" />
+    <Compile Include="Security\StrongName.cs" />
+    <Compile Include="Security\X509\Extensions\AuthorityKeyIdentifierExtension.cs" />
+    <Compile Include="Security\X509\Extensions\BasicConstraintsExtension.cs" />
+    <Compile Include="Security\X509\Extensions\CertificatePoliciesExtension.cs" />
+    <Compile Include="Security\X509\Extensions\CRLDistributionPointsExtension.cs" />
+    <Compile Include="Security\X509\Extensions\ExtendedKeyUsageExtension.cs" />
+    <Compile Include="Security\X509\Extensions\GeneralNames.cs" />
+    <Compile Include="Security\X509\Extensions\KeyAttributesExtension.cs" />
+    <Compile Include="Security\X509\Extensions\KeyUsageExtension.cs" />
+    <Compile Include="Security\X509\Extensions\KeyUsages.cs" />
+    <Compile Include="Security\X509\Extensions\NetscapeCertTypeExtension.cs" />
+    <Compile Include="Security\X509\Extensions\PrivateKeyUsagePeriodExtension.cs" />
+    <Compile Include="Security\X509\Extensions\SubjectAltNameExtension.cs" />
+    <Compile Include="Security\X509\Extensions\SubjectKeyIdentifierExtension.cs" />
+    <Compile Include="Security\X509\PKCS12.cs" />
+    <Compile Include="Security\X509\PKCS5.cs" />
+    <Compile Include="Security\X509\PKCS9.cs" />
+    <Compile Include="Security\X509\SafeBag.cs" />
+    <Compile Include="Security\X509\X501.cs" />
+    <Compile Include="Security\X509\X509Builder.cs" />
+    <Compile Include="Security\X509\X509Certificate.cs" />
+    <Compile Include="Security\X509\X509CertificateBuilder.cs" />
+    <Compile Include="Security\X509\X509CertificateCollection.cs" />
+    <Compile Include="Security\X509\X509Chain.cs" />
+    <Compile Include="Security\X509\X509ChainStatusFlags.cs" />
+    <Compile Include="Security\X509\X509Crl.cs" />
+    <Compile Include="Security\X509\X509Extension.cs" />
+    <Compile Include="Security\X509\X509ExtensionCollection.cs" />
+    <Compile Include="Security\X509\X509Store.cs" />
+    <Compile Include="Security\X509\X509StoreManager.cs" />
+    <Compile Include="Security\X509\X509Stores.cs" />
+    <Compile Include="Security\X509\X520.cs" />
+    <Compile Include="Xml\MiniParser.cs" />
+    <Compile Include="Xml\SecurityParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mscorlib\mscorlib.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Name>mscorlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Name>System</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

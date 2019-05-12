@@ -1,0 +1,58 @@
+﻿using System;
+using UnityEngine;
+
+namespace AdventureScene
+{
+	public sealed class CharaPositionCommand : AdventureBaseCommand
+	{
+		public const string COMMAND_NAME = "#adv_chara_pos";
+
+		private int charaId;
+
+		private Vector3 stageLocalPosition;
+
+		public CharaPositionCommand()
+		{
+			this.stageLocalPosition = Vector3.zero;
+			this.continueAnalyze = true;
+		}
+
+		public override string GetCommandName()
+		{
+			return "#adv_chara_pos";
+		}
+
+		public override bool GetParameter(string[] commandParams)
+		{
+			bool result = false;
+			try
+			{
+				this.charaId = int.Parse(commandParams[1]);
+				float new_x = float.Parse(commandParams[2]);
+				float new_y = float.Parse(commandParams[3]);
+				float new_z = float.Parse(commandParams[4]);
+				this.stageLocalPosition.Set(new_x, new_y, new_z);
+				base.SetWaitScriptEngine(true);
+				result = true;
+			}
+			catch
+			{
+				base.OnErrorGetParameter();
+			}
+			return result;
+		}
+
+		public override bool RunScriptCommand()
+		{
+			bool result = false;
+			AdventureDigimonInfo digimonInfo = ClassSingleton<AdventureSceneData>.Instance.GetDigimonInfo(this.charaId);
+			if (digimonInfo != null)
+			{
+				digimonInfo.model.transform.localPosition = this.stageLocalPosition;
+				result = true;
+				base.ResumeScriptEngine();
+			}
+			return result;
+		}
+	}
+}
