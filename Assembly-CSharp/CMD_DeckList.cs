@@ -166,8 +166,8 @@ public class CMD_DeckList : CMD
 
 	private static CMD_DeckList instance;
 
-	[Header("キャラクターのステータスPanel")]
 	[SerializeField]
+	[Header("キャラクターのステータスPanel")]
 	private StatusPanel statusPanel;
 
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
@@ -266,11 +266,7 @@ public class CMD_DeckList : CMD
 	protected override void WindowClosed()
 	{
 		CMD_DeckList.SelectMonsterData = null;
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		if (monsterDataMng != null)
-		{
-			monsterDataMng.PushBackAllMonsterPrefab();
-		}
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.WindowClosed();
 	}
 
@@ -309,7 +305,7 @@ public class CMD_DeckList : CMD
 			this.detailedNowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.SelectMonsterData);
 			if (MonsterStatusData.IsVersionUp(CMD_DeckList.SelectMonsterData.GetMonsterMaster().Simple.rare))
 			{
-				if (CMD_DeckList.SelectMonsterData.commonSkillM2 == null)
+				if (CMD_DeckList.SelectMonsterData.GetExtraCommonSkill() == null)
 				{
 					this.nowMonsterSuccessionSkillGrayReady.SetActive(true);
 					this.detailedNowMonsterSuccessionSkillGrayReady.SetActive(true);
@@ -358,7 +354,7 @@ public class CMD_DeckList : CMD
 			this.detailedChangeMonsterSuccessionSkill2.SetSkill(this.DataChg);
 			if (MonsterStatusData.IsVersionUp(this.DataChg.GetMonsterMaster().Simple.rare))
 			{
-				if (this.DataChg.commonSkillM2 == null)
+				if (this.DataChg.GetExtraCommonSkill() == null)
 				{
 					this.changeMonsterSuccessionSkillGrayReady.SetActive(true);
 					this.detailedChangeMonsterSuccessionSkillGrayReady.SetActive(true);
@@ -444,17 +440,13 @@ public class CMD_DeckList : CMD
 
 	private void InitMonsterList()
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.ClearSortMessAll();
-		monsterDataMng.ClearLevelMessAll();
-		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		ClassSingleton<GUIMonsterIconList>.Instance.ResetIconState();
+		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
+		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 		MonsterDataMng.Instance().SortMDList(list);
+		MonsterDataMng.Instance().SetSortLSMessage();
 		this.csSelectPanelMonsterIcon.initLocation = true;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
-		monsterDataMng.SetSelectOffAll();
-		monsterDataMng.ClearDimmMessAll();
 		if (CMD_MultiRecruitPartyWait.Instance != null)
 		{
 			this.SetDimmByMonsterDataList(list, CMD_DeckList.SelectMonsterData);

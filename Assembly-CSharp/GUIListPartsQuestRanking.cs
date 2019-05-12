@@ -33,8 +33,8 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
-	[Header("ランキングアイコン")]
 	[SerializeField]
+	[Header("ランキングアイコン")]
 	private UISprite spRankingIcon;
 
 	private MonsterData digimonData;

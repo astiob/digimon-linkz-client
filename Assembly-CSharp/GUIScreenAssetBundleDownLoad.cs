@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -112,9 +113,9 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 	private IEnumerator PreloadSpawnMonsters()
 	{
 		AssetBundleMng.Instance().SetLevel(string.Empty);
-		string p17 = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId("17");
-		string p18 = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId("74");
-		string p19 = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId("152");
+		string p17 = MonsterObject.GetFilePath("17");
+		string p18 = MonsterObject.GetFilePath("74");
+		string p19 = MonsterObject.GetFilePath("152");
 		bool finish = false;
 		AssetDataMng.Instance().LoadObjectASync(p17, delegate(UnityEngine.Object _obj)
 		{
@@ -157,9 +158,9 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 	private void SetDetails()
 	{
 		string groupId = this.monsterInfos[this.selectedIndex].groupId;
-		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(groupId);
-		this.nameLabel.text = monsterGroupMasterByMonsterGroupId.monsterName;
-		this.detailLabel.text = monsterGroupMasterByMonsterGroupId.description;
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(groupId).Group;
+		this.nameLabel.text = group.monsterName;
+		this.detailLabel.text = group.description;
 		this.line.SetActive(true);
 		this.GetLeftDigimonTransform().localPosition = this.circleTrans.localPosition - Vector3.right * 5f;
 		this.monsterTransforms[this.selectedIndex].localPosition = this.circleTrans.localPosition;
@@ -214,8 +215,23 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 			TutorialFirstFinishRequest request = new TutorialFirstFinishRequest();
 			yield return base.StartCoroutine(request.RequestFirstTutorialFinish());
 		}
-		ScreenController.ChangeHomeScreen(CMD_Tips.DISPLAY_PLACE.TitleToFarm);
+		float time = Time.realtimeSinceStartup;
+		int count = AssetDataMng.Instance().GetDownloadAssetBundleCount(string.Empty);
+		global::Debug.Log("======================================= GetDownloadAssetBundleCount() USED TIME = " + (Time.realtimeSinceStartup - time).ToString() + " Sec.");
+		if (count > 0)
+		{
+			AlertManager.ShowAlertDialog(new Action<int>(this.BackToTOP), "LOCAL_ERROR_SAVE_DATA_IO");
+		}
+		else
+		{
+			ScreenController.ChangeHomeScreen(CMD_Tips.DISPLAY_PLACE.TitleToFarm);
+		}
 		yield break;
+	}
+
+	private void BackToTOP(int i)
+	{
+		GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 	}
 
 	private void SpawnEvolveCircle()
@@ -242,16 +258,16 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 		int num2 = 0;
 		foreach (GUIScreenAssetBundleDownLoad.DigimonInfo digimonInfo in this.monsterInfos)
 		{
-			this.SpawnMonster(digimonInfo.groupId, digimonInfo.scale, num2);
+			this.SpawnMonster(digimonInfo.modelId, digimonInfo.scale, num2);
 			num2++;
 		}
 	}
 
-	private void SpawnMonster(string monsterGroupId, float scale, int index)
+	private void SpawnMonster(string modelId, float scale, int index)
 	{
-		string path = "Characters/" + monsterGroupId + "/prefab";
-		GameObject gameObject = UnityEngine.Object.Instantiate(AssetDataMng.Instance().LoadObject(path, null, true)) as GameObject;
-		gameObject.name = "DIGIMON_" + monsterGroupId;
+		string filePath = MonsterObject.GetFilePath(modelId);
+		GameObject gameObject = UnityEngine.Object.Instantiate(AssetDataMng.Instance().LoadObject(filePath, null, true)) as GameObject;
+		gameObject.name = "DIGIMON_" + index;
 		int mask = LayerMask.NameToLayer("UI3D");
 		Util.SetLayer(gameObject, mask);
 		Transform transform = gameObject.transform;
@@ -381,6 +397,8 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 	{
 		[SerializeField]
 		public string groupId;
+
+		public string modelId;
 
 		[SerializeField]
 		public float scale;

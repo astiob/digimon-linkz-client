@@ -426,6 +426,25 @@ public class GUISelectPanelBSPartsUD : GUISelectPanelBSUD
 		return gameObject;
 	}
 
+	protected GameObject AddBuildPart(GameObject tgt)
+	{
+		base.AddBuildPart();
+		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(tgt);
+		Vector3 localScale = gameObject.transform.localScale;
+		gameObject.transform.parent = base.transform;
+		gameObject.transform.localScale = localScale;
+		if (this.partObjs != null)
+		{
+			GUIListPartBS component = gameObject.GetComponent<GUIListPartBS>();
+			if (component != null)
+			{
+				component.IDX = this.partObjs.Count;
+				this.partObjs.Add(component);
+			}
+		}
+		return gameObject;
+	}
+
 	protected GameObject InsertBuildPart(int loc)
 	{
 		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.selectParts);

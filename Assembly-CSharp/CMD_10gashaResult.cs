@@ -28,8 +28,8 @@ public class CMD_10gashaResult : CMD
 	[SerializeField]
 	private UILabel ngTX_EXP_TEN;
 
-	[Header("シングルキャプチャボタンSprite")]
 	[SerializeField]
+	[Header("シングルキャプチャボタンSprite")]
 	private UISprite buttonSpriteSingle;
 
 	[SerializeField]
@@ -40,8 +40,8 @@ public class CMD_10gashaResult : CMD
 	[SerializeField]
 	private GUICollider buttonColliderSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンGUICollider")]
+	[SerializeField]
 	private GUICollider buttonColliderTen;
 
 	[SerializeField]
@@ -69,6 +69,8 @@ public class CMD_10gashaResult : CMD
 	public static int GashaType { get; set; }
 
 	public static List<MonsterData> DataList { get; set; }
+
+	public static List<bool> IconNewFlagList { get; set; }
 
 	public static GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData RewardsData { get; set; }
 
@@ -263,6 +265,7 @@ public class CMD_10gashaResult : CMD
 			{
 				Transform transform = this.goMN_ICON_LIST[i].transform;
 				GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(CMD_10gashaResult.DataList[i], transform.localScale, transform.localPosition, transform.parent, true, false);
+				guimonsterIcon.New = CMD_10gashaResult.IconNewFlagList[i];
 				this.monsterIconList.Add(guimonsterIcon);
 				guimonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconLong));
 				guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
@@ -303,7 +306,6 @@ public class CMD_10gashaResult : CMD
 				this.goMN_ICON_LIST[i].SetActive(false);
 			}
 		}
-		MonsterDataMng.Instance().UnnewMonserDataList();
 	}
 
 	private void ActMIconLong(MonsterData md)

@@ -12,6 +12,10 @@ public class CMD_Tips : CMD
 	[SerializeField]
 	private UITexture thumbnail;
 
+	[Header("このダイアログのZ値(dont manage zpos が起っていること)")]
+	[SerializeField]
+	private float zPos;
+
 	private static CMD_Tips.DISPLAY_PLACE displayPlace = CMD_Tips.DISPLAY_PLACE.TitleToFarm;
 
 	private List<CMD_Tips.TipsM.Tips> displayTipsDataList = new List<CMD_Tips.TipsM.Tips>();
@@ -34,6 +38,12 @@ public class CMD_Tips : CMD
 		{
 			this.Show(f, sizeX, sizeY, aT);
 		});
+	}
+
+	protected override void Awake()
+	{
+		base.Awake();
+		base.SetOriginalPos(new Vector3(0f, 0f, this.zPos));
 	}
 
 	protected override void MakeAnimation(bool open, float atime, iTween.EaseType type = iTween.EaseType.linear)

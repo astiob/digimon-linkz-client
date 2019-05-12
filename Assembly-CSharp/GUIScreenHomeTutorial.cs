@@ -44,7 +44,6 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		MonsterDataMng.Instance().InitMonsterGO();
 		yield return base.StartCoroutine(base.CreateFarm());
 		FarmRoot farm = FarmRoot.Instance;
 		if (null != farm)

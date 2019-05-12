@@ -227,8 +227,8 @@ public static class NGUIText
 		return null;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static float ParseAlpha(string text, int index)
 	{
 		int num = NGUIMath.HexToDecimal(text[index + 1]) << 4 | NGUIMath.HexToDecimal(text[index + 2]);
@@ -265,8 +265,8 @@ public static class NGUIText
 		return new Color(num5 * (float)num, num5 * (float)num2, num5 * (float)num3, num5 * (float)num4);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeColor(Color c)
 	{
 		return NGUIText.EncodeColor24(c);
@@ -286,24 +286,24 @@ public static class NGUIText
 		});
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeAlpha(float a)
 	{
 		int num = Mathf.Clamp(Mathf.RoundToInt(a * 255f), 0, 255);
 		return NGUIMath.DecimalToHex8(num);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeColor24(Color c)
 	{
 		int num = 16777215 & NGUIMath.ColorToInt(c) >> 8;
 		return NGUIMath.DecimalToHex24(num);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeColor32(Color c)
 	{
 		int num = NGUIMath.ColorToInt(c);
@@ -321,8 +321,8 @@ public static class NGUIText
 		return NGUIText.ParseSymbol(text, ref index, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static bool IsHex(char ch)
 	{
 		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
@@ -727,15 +727,15 @@ public static class NGUIText
 		return indices[i];
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private static bool IsSpace(int ch)
 	{
 		return ch == 32 || ch == 8202 || ch == 8203 || ch == 8201;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static void EndLine(ref StringBuilder s)
 	{
 		int num = s.Length - 1;
@@ -749,8 +749,8 @@ public static class NGUIText
 		}
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private static void ReplaceSpaceWithNewline(ref StringBuilder s)
 	{
 		int num = s.Length - 1;

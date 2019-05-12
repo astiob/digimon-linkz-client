@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,7 +73,7 @@ public sealed class CMD_ResearchModal : CMD_ModalMessageBtn2
 
 	public void SetChipParams(MonsterData baseMonsterData, MonsterData partnerMonsterData)
 	{
-		bool flag = MonsterDataMng.Instance().HasChip(new List<MonsterData>
+		bool flag = MonsterUserDataMng.AnyChipEquipMonster(new List<MonsterData>
 		{
 			baseMonsterData,
 			partnerMonsterData

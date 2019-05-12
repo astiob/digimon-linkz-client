@@ -31,8 +31,8 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		HitIcon[] hitIconList = base.battleStateData.sendValues["hitIconList"] as HitIcon[];
 		AffectEffectProperty status = base.battleStateData.sendValues["status"] as AffectEffectProperty;
 		bool useSlowMotion = (bool)base.battleStateData.sendValues["useSlowMotion"];
-		ExtraEffectType extraEffectType = (ExtraEffectType)((int)base.battleStateData.sendValues["extraEffectType"]);
-		this.currentHitEffect = this.GetHitEffectParams(affectEffect, isTargetsStatus, status, extraEffectType);
+		ExtraEffectType[] extraEffectTypes = base.battleStateData.sendValues["extraEffectType"] as ExtraEffectType[];
+		this.currentHitEffect = this.GetHitEffectParams(affectEffect, isTargetsStatus, onMissHit, status, extraEffectTypes);
 		while (base.battleStateData.StopHitAnimationCall())
 		{
 			yield return null;
@@ -53,10 +53,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		bool isPlayedHitEffectSE = false;
 		for (int i = 0; i < isTargetsStatus.Length; i++)
 		{
-			if (currentCharacter != null && currentCharacter.Contains(new CharacterStateControl[]
-			{
-				isTargetsStatus[i]
-			}) && !isTargetsStatus[i].isDied)
+			if (currentCharacter != null && currentCharacter == isTargetsStatus[i] && !isTargetsStatus[i].isDied)
 			{
 				base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.idle, new CharacterStateControl[]
 				{
@@ -150,7 +147,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.TurnEvasion:
 						case AffectEffect.CountEvasion:
 						case AffectEffect.ApDrain:
-							goto IL_652;
+							goto IL_64F;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
 						case AffectEffect.SpAttackDown:
@@ -174,10 +171,10 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							});
 							break;
 						default:
-							goto IL_652;
+							goto IL_64F;
 						}
-						goto IL_6B4;
-						IL_652:
+						goto IL_6B1;
+						IL_64F:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							isTargetsStatus[i]
@@ -190,7 +187,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							isTargetsStatus[i]
 						});
 					}
-					IL_6B4:;
+					IL_6B1:;
 				}
 				else
 				{
@@ -256,58 +253,88 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		yield break;
 	}
 
-	private HitEffectParams[] GetHitEffectParams(AffectEffect affectEffect, CharacterStateControl[] isTargetsStatus, AffectEffectProperty status, ExtraEffectType extraEffectType)
+	private HitEffectParams[] GetHitEffectParams(AffectEffect affectEffect, CharacterStateControl[] isTargetsStatus, bool[] onMissHit, AffectEffectProperty status, ExtraEffectType[] extraEffectTypes)
 	{
 		HitEffectParams[] result;
 		if (AffectEffectProperty.IsDamage(affectEffect))
 		{
-			if (!base.stateManager.onEnableTutorial && extraEffectType == ExtraEffectType.Up)
+			List<HitEffectParams> list = new List<HitEffectParams>();
+			for (int i = 0; i < isTargetsStatus.Length; i++)
 			{
-				result = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackUp.ToString());
-			}
-			else if (!base.stateManager.onEnableTutorial && extraEffectType == ExtraEffectType.Down)
-			{
-				result = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackDown.ToString());
-			}
-			else if (status != null)
-			{
-				List<HitEffectParams> list = new List<HitEffectParams>();
-				for (int i = 0; i < isTargetsStatus.Length; i++)
+				HitEffectParams item;
+				if (isTargetsStatus[i].currentSufferState.onTurnBarrier.isActive)
 				{
-					HitEffectParams item;
-					if (isTargetsStatus[i].currentSufferState.onTurnBarrier.isActive)
+					item = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnBarrier.ToString())[i];
+				}
+				else if (isTargetsStatus[i].currentSufferState.onCountBarrier.isActive)
+				{
+					item = base.battleStateData.hitEffects.GetObject(AffectEffect.CountBarrier.ToString())[i];
+				}
+				else if (isTargetsStatus[i].currentSufferState.onTurnEvasion.isActive)
+				{
+					item = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnEvasion.ToString())[i];
+				}
+				else if (isTargetsStatus[i].currentSufferState.onCountEvasion.isActive)
+				{
+					item = base.battleStateData.hitEffects.GetObject(AffectEffect.CountEvasion.ToString())[i];
+				}
+				else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
+				{
+					if (onMissHit[i])
 					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnBarrier.ToString())[i];
-					}
-					else if (isTargetsStatus[i].currentSufferState.onCountBarrier.isActive)
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.CountBarrier.ToString())[i];
-					}
-					else if (isTargetsStatus[i].currentSufferState.onTurnEvasion.isActive)
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.TurnEvasion.ToString())[i];
-					}
-					else if (isTargetsStatus[i].currentSufferState.onCountEvasion.isActive)
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.CountEvasion.ToString())[i];
-					}
-					else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
-					{
-						item = base.battleStateData.hitEffects.GetObject(AffectEffect.ReferenceTargetHpRate.ToString())[i];
+						item = base.battleStateData.GetDamageEffect(Strength.None)[i];
 					}
 					else
 					{
-						Strength attributeStrength = isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute);
+						item = base.battleStateData.hitEffects.GetObject(AffectEffect.ReferenceTargetHpRate.ToString())[i];
+					}
+				}
+				else if (status != null)
+				{
+					Strength attributeStrength = isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute);
+					if (attributeStrength == Strength.Invalid)
+					{
 						item = base.battleStateData.GetDamageEffect(attributeStrength)[i];
 					}
-					list.Add(item);
+					else if (attributeStrength == Strength.Drain)
+					{
+						if (onMissHit[i])
+						{
+							item = base.battleStateData.GetDamageEffect(Strength.None)[i];
+						}
+						else
+						{
+							item = base.battleStateData.GetDamageEffect(attributeStrength)[i];
+						}
+					}
+					else if (onMissHit[i])
+					{
+						item = base.battleStateData.GetDamageEffect(Strength.None)[i];
+					}
+					else if (!base.stateManager.onEnableTutorial && extraEffectTypes[i] == ExtraEffectType.Up)
+					{
+						item = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackUp.ToString())[i];
+					}
+					else if (!base.stateManager.onEnableTutorial && extraEffectTypes[i] == ExtraEffectType.Down)
+					{
+						item = base.battleStateData.hitEffects.GetObject(AffectEffect.gimmickSpecialAttackDown.ToString())[i];
+					}
+					else
+					{
+						item = base.battleStateData.GetDamageEffect(attributeStrength)[i];
+					}
 				}
-				result = list.ToArray();
+				else if (onMissHit[i])
+				{
+					item = base.battleStateData.GetDamageEffect(Strength.None)[i];
+				}
+				else
+				{
+					item = base.battleStateData.hitEffects.GetObject(affectEffect.ToString(), Strength.None.ToString())[i];
+				}
+				list.Add(item);
 			}
-			else
-			{
-				result = base.battleStateData.hitEffects.GetObject(affectEffect.ToString(), Strength.None.ToString());
-			}
+			result = list.ToArray();
 		}
 		else if (Tolerance.OnInfluenceToleranceAffectEffect(affectEffect))
 		{

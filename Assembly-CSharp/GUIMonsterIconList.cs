@@ -62,52 +62,17 @@ public sealed class GUIMonsterIconList : ClassSingleton<GUIMonsterIconList>
 		this.monsterIconList.Clear();
 	}
 
-	public void SetDimmAll(GUIMonsterIcon.DIMM_LEVEL level)
-	{
-		for (int i = 0; i < this.monsterIconList.Count; i++)
-		{
-			this.monsterIconList[i].SetGrayout(level);
-		}
-	}
-
-	public void SetSelectOffAll()
-	{
-		for (int i = 0; i < this.monsterIconList.Count; i++)
-		{
-			this.monsterIconList[i].SelectNum = -1;
-		}
-	}
-
-	public void ClearAction()
+	public void ResetIconState()
 	{
 		for (int i = 0; i < this.monsterIconList.Count; i++)
 		{
 			this.monsterIconList[i].SetTouchAct_S(null);
 			this.monsterIconList[i].SetTouchAct_L(null);
-		}
-	}
-
-	public void ClearDimmMessAll()
-	{
-		for (int i = 0; i < this.monsterIconList.Count; i++)
-		{
-			this.monsterIconList[i].DimmMess = string.Empty;
-		}
-	}
-
-	public void ClearSortMessAll()
-	{
-		for (int i = 0; i < this.monsterIconList.Count; i++)
-		{
 			this.monsterIconList[i].SortMess = string.Empty;
-		}
-	}
-
-	public void ClearLevelMessAll()
-	{
-		for (int i = 0; i < this.monsterIconList.Count; i++)
-		{
 			this.monsterIconList[i].LevelMess = string.Empty;
+			this.monsterIconList[i].SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
+			this.monsterIconList[i].SelectNum = -1;
+			this.monsterIconList[i].DimmMess = string.Empty;
 		}
 	}
 
@@ -248,18 +213,6 @@ public sealed class GUIMonsterIconList : ClassSingleton<GUIMonsterIconList>
 		if (0 < list2.Count)
 		{
 			this.monsterIconList.AddRange(list2);
-		}
-	}
-
-	public void InitMonsterGO(Transform parentTransform, List<MonsterData> monsterDataList)
-	{
-		for (int i = 0; i < monsterDataList.Count; i++)
-		{
-			float num = 200f * (float)(i % 5);
-			float num2 = 200f * (float)(i / 5);
-			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterDataList[i], Vector3.one, new Vector3(200f + num, -200f - num2, -10f), null, true, false);
-			guimonsterIcon.gameObject.SetActive(false);
-			this.monsterIconList.Add(guimonsterIcon);
 		}
 	}
 

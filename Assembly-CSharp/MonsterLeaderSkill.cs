@@ -26,10 +26,10 @@ public sealed class MonsterLeaderSkill : MonoBehaviour
 
 	public void SetSkill(MonsterData monsterData)
 	{
-		if (monsterData.leaderSkillM != null)
+		if (monsterData.GetLeaderSkill() != null)
 		{
-			this.skillName.text = monsterData.leaderSkillM.name;
-			this.skillInfo.text = monsterData.leaderSkillM.description;
+			this.skillName.text = monsterData.GetLeaderSkill().name;
+			this.skillInfo.text = monsterData.GetLeaderSkill().description;
 		}
 		else
 		{

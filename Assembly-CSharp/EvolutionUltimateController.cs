@@ -1,178 +1,99 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cutscene;
+using Cutscene.UI;
+using System;
 using UnityEngine;
 
-public class EvolutionUltimateController : CutsceneControllerBase
+public sealed class EvolutionUltimateController : CutsceneControllerBase
 {
-	[Header("キャラクターのスタンド")]
 	[SerializeField]
-	private GameObject[] charaStand;
-
-	[SerializeField]
-	[Header("スタンドの回転速度")]
-	private float[] standRollSpeed;
+	private Camera mainCamera;
 
 	[SerializeField]
-	[Header("UIカメラ")]
-	private GameObject camera2D;
-
-	[Header("3Dカメラ")]
-	[SerializeField]
-	private GameObject camera3D_1;
-
-	[Header("黄色いデジタルなマテリアル")]
-	[SerializeField]
-	private Material afterConversionMaterialB;
-
-	[Header("ライン時のマテリアル")]
-	[SerializeField]
-	private Material afterConversionMaterialC;
+	private Camera subCamera;
 
 	[SerializeField]
-	[Header("デジ文字螺旋")]
-	private GameObject spiral;
+	private Transform beforeMonsterParent;
 
-	[Header("最後のカメラ")]
 	[SerializeField]
-	private GameObject lastCamera;
+	private Transform afterMonsterParent;
 
-	public float rollSpeed = 1f;
+	[SerializeField]
+	private Transform[] circleList;
 
-	private Transform TargetPos;
+	[SerializeField]
+	private float[] circleRotateSpeedList;
 
-	private bool spiralBRotatoFlag;
+	[SerializeField]
+	private Transform digimojiSpiral;
 
-	private List<Material[]> materialsListA;
+	[SerializeField]
+	private AllSkipButton allSkipButton;
 
-	private List<Material[]> materialsListB;
+	[SerializeField]
+	private TouchScreenButton touchScreenButton;
 
-	private void Start()
+	[SerializeField]
+	private EvolutionUltimateAnimationEvent animeEvent;
+
+	private Action endCallback;
+
+	private void EndCutscene()
 	{
-		this.copyMaterial = UnityEngine.Object.Instantiate<Material>(this.afterConversionMaterialB);
-		this.monsA_instance = base.monsterInstantiater(this.monsA_instance, this.character1Parent, this.character1Params, 0);
-		this.monsB_instance = base.monsterInstantiater(this.monsB_instance, this.character2Parent, this.character2Params, 1);
-		Camera component = this.camera3D_1.GetComponent<Camera>();
-		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
-		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
-		this.materialAlpha = this.copyMaterial.color;
+		this.fade.StartFadeOut(new Action(this.Finish));
+		this.allSkipButton.Hide();
+		this.touchScreenButton.Hide();
 	}
 
-	protected override void UpdateChild()
+	private void Finish()
 	{
-		if (this.spiralBRotatoFlag)
+		this.cutsceneSound.StopAllSE();
+		this.animeEvent.ResetMonsterMaterial();
+		if (this.endCallback != null)
 		{
-			this.spiral.transform.Rotate(new Vector3(0f, 0f, -1f));
+			this.endCallback();
+			this.endCallback = null;
 		}
-		for (int i = 0; i <= this.charaStand.Length - 1; i++)
+		UnityEngine.Object.Destroy(base.gameObject);
+		Resources.UnloadUnusedAssets();
+	}
+
+	protected override void OnStartCutscene()
+	{
+		if (!this.animeEvent.IsPlaying())
 		{
-			this.charaStand[i].transform.Rotate(new Vector3(0f, 0f, this.standRollSpeed[i]));
+			this.animeEvent.StartAnimation();
 		}
 	}
 
-	private void spriralRotater()
+	protected override void OnUpdate()
 	{
-		this.spiralBRotatoFlag = true;
-	}
-
-	public void CharacterA_LineOn()
-	{
-		this.materialsListA = base.OnWireFrameRenderer(this.monsA_instance, this.afterConversionMaterialC);
-	}
-
-	public void CharacterB_LineOn()
-	{
-		this.materialsListB = base.OnWireFrameRenderer(this.monsB_instance, this.afterConversionMaterialC);
-	}
-
-	public void CharacterA_LineOff()
-	{
-		base.OffWireFrameRenderer(this.monsA_instance, this.materialsListA);
-	}
-
-	public void CharacterB_LineOff()
-	{
-		base.OffWireFrameRenderer(this.monsB_instance, null);
-	}
-
-	private void MaterialConverterB()
-	{
-		base.OnMaterialChanger(this.copyMaterial, this.monsB_instance);
-	}
-
-	private void MaterialResetB()
-	{
-		base.ResetMaterialRenderer(this.monsB_instance, this.materialsListB);
-	}
-
-	private void AttackAnimation()
-	{
-		this.monsB_instance.GetComponent<CharacterParams>().PlayAnimation(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
-	}
-
-	private void FadeOuter()
-	{
-		base.StartCoroutine(base.FadeoutCorutine(0.0392156877f));
-	}
-
-	private void monsterBpositionAdjustment()
-	{
-		this.monsB_instance.transform.localPosition = Vector3.zero;
-	}
-
-	private void ChaseFlagStarter()
-	{
-		this.TargetPos = this.character2Params.characterFaceCenterTarget.gameObject.transform;
-		this.camera3D_1.transform.LookAt(this.TargetPos);
-	}
-
-	private void cameraPositionAdjustment()
-	{
-		float num = this.monsB_instance.GetComponent<CharacterParams>().RootToCenterDistance();
-		Vector3 vector = this.lastCamera.transform.position;
-		num /= 2f;
-		vector = vector.normalized;
-		this.lastCamera.transform.localPosition = new Vector3(0f, 0f, num + 1.5f);
-	}
-
-	public void SoudPlayer1()
-	{
-		base.PlaySE("bt_504", false);
-	}
-
-	public void SoudPlayer2()
-	{
-		base.PlaySE("bt_115", false);
-	}
-
-	public void SoudPlayer3()
-	{
-		base.PlaySE("ev_127", false);
-	}
-
-	public void SoudPlayer4()
-	{
-		base.PlaySE("bt_519", false);
-	}
-
-	protected override IEnumerator NextPageBefore()
-	{
-		this.camera2D.SendMessage("fadeOut");
-		yield break;
-	}
-
-	protected override IEnumerator NextPageAfter()
-	{
-		this.CharacterA_LineOff();
-		this.CharacterB_LineOff();
-		yield break;
-	}
-
-	protected override float fadeWaitTime
-	{
-		get
+		if (this.animeEvent.IsRotateDigimoji())
 		{
-			return 1f;
+			this.digimojiSpiral.Rotate(0f, 0f, -1f);
+		}
+		for (int i = 0; i < this.circleList.Length; i++)
+		{
+			this.circleList[i].transform.Rotate(0f, 0f, this.circleRotateSpeedList[i]);
+		}
+	}
+
+	public override void SetData(CutsceneDataBase data)
+	{
+		CutsceneDataEvolutionUltimate cutsceneDataEvolutionUltimate = data as CutsceneDataEvolutionUltimate;
+		if (cutsceneDataEvolutionUltimate != null)
+		{
+			this.endCallback = cutsceneDataEvolutionUltimate.endCallback;
+			this.allSkipButton.Initialize();
+			this.allSkipButton.AddAction(new Action(this.EndCutscene));
+			this.touchScreenButton.Initialize();
+			this.touchScreenButton.AddAction(new Action(this.EndCutscene));
+			GameObject gameObject = CutsceneCommon.LoadMonsterModel(this.beforeMonsterParent, cutsceneDataEvolutionUltimate.beforeModelId);
+			gameObject.transform.localPosition = Vector3.zero;
+			GameObject gameObject2 = CutsceneCommon.LoadMonsterModel(this.afterMonsterParent, cutsceneDataEvolutionUltimate.afterModelId);
+			gameObject2.transform.localPosition = Vector3.zero;
+			CutsceneCommon.SetBillBoardCamera(gameObject, this.mainCamera);
+			CutsceneCommon.SetBillBoardCamera(gameObject2, this.subCamera);
+			this.animeEvent.Initialize(this.cutsceneSound, gameObject, gameObject2);
 		}
 	}
 }

@@ -6,15 +6,15 @@ using UnityEngine;
 
 public class CMD_MultiRecruitChatList : CMD
 {
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partChatListParent;
 
 	[SerializeField]
 	private GameObject partChatList;
 
-	[Header("デフォルトメッセージ")]
 	[SerializeField]
+	[Header("デフォルトメッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]

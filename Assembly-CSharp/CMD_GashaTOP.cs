@@ -1,6 +1,8 @@
-﻿using FarmData;
+﻿using Cutscene;
+using FarmData;
 using Master;
 using Monster;
+using Picturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -864,10 +866,6 @@ public class CMD_GashaTOP : CMD
 				num = int.Parse(result.priceDiscount10);
 			}
 		}
-		else
-		{
-			global::Debug.LogError("単発でも10連でもないエラーです。");
-		}
 		if (result.IsRare() || result.IsRareChip() || result.IsRareTicket())
 		{
 			int num2 = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
@@ -1254,13 +1252,22 @@ public class CMD_GashaTOP : CMD
 		{
 			this.ResetStatus(10);
 		}
-		CutSceneMain.UserAssetList = this.chipResult.userAssetList;
-		CutSceneMain.FadeReqCutScene("Cutscenes/AssetBundle/ChipGasha/chip_gacha", new Action<int>(this.StartChipCutSceneCallBack), delegate(int index)
+		CutsceneDataChipGasha cutsceneDataChipGasha = new CutsceneDataChipGasha
 		{
+			path = "Cutscenes/AssetBundle/ChipGasha/chip_gacha",
+			gashaResult = this.chipResult.userAssetList
+		};
+		cutsceneDataChipGasha.endCallback = delegate(RenderTexture renderTexture)
+		{
+			UITexture txBG = CMD_ChipGashaResult.instance.txBG;
+			txBG.mainTexture = renderTexture;
+			txBG.width = renderTexture.width;
+			txBG.height = renderTexture.height;
 			this.ShowUI(true);
 			CutSceneMain.FadeReqCutSceneEnd();
 			SoundMng.Instance().PlayGameBGM("bgm_202");
-		}, delegate(int index)
+		};
+		CutSceneMain.FadeReqCutScene(cutsceneDataChipGasha, new Action(this.StartChipCutSceneCallBack), null, delegate(int index)
 		{
 			RestrictionInput.EndLoad();
 			if (this.finishedActionCutScene != null)
@@ -1273,10 +1280,10 @@ public class CMD_GashaTOP : CMD
 				this.finishedActionCutScene_2();
 				this.finishedActionCutScene_2 = null;
 			}
-		}, null, null, 2, 1, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
-	private void StartChipCutSceneCallBack(int i)
+	private void StartChipCutSceneCallBack()
 	{
 		if (this.req_exec_bk.playCount < 2)
 		{
@@ -1307,6 +1314,7 @@ public class CMD_GashaTOP : CMD
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_ChipGashaResult");
 		}
+		CMD_ChipGashaResult.RewardsData = this.chipResult.rewards;
 		GUICollider.EnableAllCollider("=================================== CMD_ExecChipGasha::StartChipCutSceneCallBack");
 		CutSceneMain.SetChipGashaTex(CMD_ChipGashaResult.instance.txBG);
 		this.ShowUI(false);
@@ -1367,27 +1375,32 @@ public class CMD_GashaTOP : CMD
 			this.ResetStatus(10);
 		}
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
+		string[] array = new string[userMonsterList.Length];
+		string[] array2 = new string[userMonsterList.Length];
 		for (int i = 0; i < userMonsterList.Length; i++)
 		{
-			MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterList[i].userMonsterId, false);
-			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterDataByUserMonsterID);
-			icon.New = Convert.ToBoolean(userMonsterList[i].isNew);
+			MonsterUserData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterList[i].userMonsterId);
+			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = userMonster.GetMonsterMaster().Group;
+			array[i] = group.modelId;
+			array2[i] = group.growStep;
+			if (Convert.ToBoolean(userMonsterList[i].isNew) && !MonsterPicturebookData.ExistPicturebook(group.monsterCollectionId))
+			{
+				MonsterPicturebookData.AddPictureBook(group.monsterCollectionId);
+			}
 		}
-		List<int> list = new List<int>();
-		List<int> list2 = new List<int>();
-		for (int j = 0; j < userMonsterList.Length; j++)
+		CutsceneDataGasha cutsceneData = new CutsceneDataGasha
 		{
-			MonsterData monsterDataByUserMonsterID2 = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterList[j].userMonsterId, false);
-			int item = int.Parse(monsterDataByUserMonsterID2.monsterM.monsterGroupId);
-			list.Add(item);
-			list2.Add(int.Parse(monsterDataByUserMonsterID2.monsterMG.growStep));
-		}
+			path = "Cutscenes/Gasha",
+			modelIdList = array,
+			growStepList = array2,
+			endCallback = delegate()
+			{
+				this.ShowUI(true);
+				CutSceneMain.FadeReqCutSceneEnd();
+			}
+		};
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene("Cutscenes/Gasha", new Action<int>(this.StartCutSceneCallBack), delegate(int index)
-		{
-			this.ShowUI(true);
-			CutSceneMain.FadeReqCutSceneEnd();
-		}, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
 		{
 			RestrictionInput.EndLoad();
 			if (this.finishedActionCutScene != null)
@@ -1400,7 +1413,7 @@ public class CMD_GashaTOP : CMD
 				this.finishedActionCutScene_2();
 				this.finishedActionCutScene_2 = null;
 			}
-		}, list, list2, 2, 1, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
 	public void SetFinishedActionCutScene(Action action)
@@ -1413,19 +1426,25 @@ public class CMD_GashaTOP : CMD
 		this.finishedActionCutScene_2 = action;
 	}
 
-	private void StartCutSceneCallBack(int i)
+	private void StartCutSceneCallBack()
 	{
 		this.csSelectPanelGashaMain.RefreshAbleCount();
 		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsterList = this.gachaResult.userMonsterList;
+		GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster[] userMonsterList = this.gachaResult.userMonsterList;
 		CMD_10gashaResult.RewardsData = this.gachaResult.rewards;
 		List<string> list = new List<string>();
+		for (int i = 0; i < userMonsterList.Length; i++)
+		{
+			list.Add(userMonsterList[i].userMonsterId);
+		}
+		List<bool> list2 = new List<bool>();
 		for (int j = 0; j < userMonsterList.Length; j++)
 		{
-			list.Add(userMonsterList[j].userMonsterId);
+			list2.Add(Convert.ToBoolean(userMonsterList[j].isNew));
 		}
 		List<MonsterData> monsterDataListByUserMonsterIDList = this.GetMonsterDataListByUserMonsterIDList(list);
 		CMD_10gashaResult.DataList = monsterDataListByUserMonsterIDList;
+		CMD_10gashaResult.IconNewFlagList = list2;
 		if (result.IsRare())
 		{
 			CMD_10gashaResult.GashaType = ConstValue.RARE_GASHA_TYPE;
@@ -1499,13 +1518,22 @@ public class CMD_GashaTOP : CMD
 		{
 			this.ResetStatus(10);
 		}
-		CutSceneMain.UserTicketList = this.ticketResult.userDungeonTicketList;
-		CutSceneMain.FadeReqCutScene("Cutscenes/ticketGacha", new Action<int>(this.StartTicketCutSceneCallBack), delegate(int index)
+		CutsceneDataTicketGasha cutsceneDataTicketGasha = new CutsceneDataTicketGasha
 		{
+			path = "Cutscenes/ticketGacha",
+			gashaResult = this.ticketResult.userDungeonTicketList
+		};
+		cutsceneDataTicketGasha.endCallback = delegate(RenderTexture renderTexture)
+		{
+			UITexture txBG = CMD_TicketGashaResult.instance.txBG;
+			txBG.mainTexture = renderTexture;
+			txBG.width = renderTexture.width;
+			txBG.height = renderTexture.height;
 			this.ShowUI(true);
 			CutSceneMain.FadeReqCutSceneEnd();
 			SoundMng.Instance().PlayGameBGM("bgm_202");
-		}, delegate(int index)
+		};
+		CutSceneMain.FadeReqCutScene(cutsceneDataTicketGasha, new Action(this.StartTicketCutSceneCallBack), null, delegate(int index)
 		{
 			RestrictionInput.EndLoad();
 			if (this.finishedActionCutScene != null)
@@ -1518,10 +1546,10 @@ public class CMD_GashaTOP : CMD
 				this.finishedActionCutScene_2();
 				this.finishedActionCutScene_2 = null;
 			}
-		}, null, null, 2, 1, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
-	private void StartTicketCutSceneCallBack(int i)
+	private void StartTicketCutSceneCallBack()
 	{
 		if (this.req_exec_bk.playCount < 2)
 		{
@@ -1550,6 +1578,7 @@ public class CMD_GashaTOP : CMD
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_TicketGashaResult");
 		}
+		CMD_TicketGashaResult.RewardsData = this.ticketResult.rewards;
 		GUICollider.EnableAllCollider("=================================== CMD_ExecTicketGasha::StartTicketCutSceneCallBack");
 		CutSceneMain.SetTicketGashaTex(CMD_TicketGashaResult.instance.txBG);
 		this.ShowUI(false);

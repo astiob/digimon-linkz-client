@@ -72,7 +72,7 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 				this.monsterBasicInfo.SetMonsterData(monsterData);
 			}
 			this.statusList.SetValues(monsterData, false);
-			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(monsterData.monsterM.resistanceId);
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(monsterData.monsterM.resistanceId);
 			List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
 			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
 			this.resistanceList.SetValues(values);
@@ -91,6 +91,7 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			this.eggMedalList.SetActive(false);
 		}
 		this.charaIcon.spriteName = "Common02_Thumbnail_none";
+		this.ClearArousalValue();
 	}
 
 	public void SetDigitamaStatus(MonsterEggStatusInfo eggStatus)
@@ -148,5 +149,10 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			this.eggArousalIcon.spriteName = arousalSpriteName;
 			this.eggArousalIcon.gameObject.SetActive(true);
 		}
+	}
+
+	private void ClearArousalValue()
+	{
+		this.eggArousalIcon.gameObject.SetActive(false);
 	}
 }

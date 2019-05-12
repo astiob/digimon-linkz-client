@@ -40,6 +40,7 @@ public class GUIExchangeMenu : MonoBehaviour
 		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoLogicData = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData;
 		bool flag = eventExchangeInfoLogicData != null && eventExchangeInfoLogicData.Length > 0 && eventExchangeInfoLogicData[0] != null;
 		this.exchangeResultInfoList = ((!flag) ? null : new List<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>(eventExchangeInfoLogicData));
+		this.exchangeUpdateDict = new Dictionary<string, bool>();
 		if (flag)
 		{
 			this.CheckExchangeUpdate();

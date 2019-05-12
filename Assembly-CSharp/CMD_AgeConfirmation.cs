@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public class CMD_AgeConfirmation : CMD_ex
+public class CMD_AgeConfirmation : CMD
 {
 	[SerializeField]
 	private UILabel ageConfirmTitleLabel;

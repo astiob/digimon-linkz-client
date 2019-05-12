@@ -34,6 +34,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showTime)
 	{
+		base.SetTutorialAnyTime("anytime_second_tutorial_facility_shop");
 		GUICollider.DisableAllCollider("CMD_FacilityShop");
 		if (this.ExistNewFacility() || this.ExistNewDecoration())
 		{
@@ -215,7 +216,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetFacilityDetail(GUISelectPanelFacility listUI, FacilityM[] facilityData)
 	{
-		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey378 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey378();
+		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey370 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey370();
 		<SetFacilityDetail>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>();
 		if (<SetFacilityDetail>c__AnonStorey.items == null)
 		{
@@ -249,21 +250,21 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetNewIcon(GUISelectPanelFacility listUI)
 	{
-		CMD_FacilityShop.<SetNewIcon>c__AnonStorey37A <SetNewIcon>c__AnonStorey37A = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey37A();
-		<SetNewIcon>c__AnonStorey37A.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
-		if (<SetNewIcon>c__AnonStorey37A.items == null)
+		CMD_FacilityShop.<SetNewIcon>c__AnonStorey372 <SetNewIcon>c__AnonStorey = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey372();
+		<SetNewIcon>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
+		if (<SetNewIcon>c__AnonStorey.items == null)
 		{
 			return;
 		}
 		int i;
-		for (i = 0; i < <SetNewIcon>c__AnonStorey37A.items.Length; i++)
+		for (i = 0; i < <SetNewIcon>c__AnonStorey.items.Length; i++)
 		{
 			bool newIcon = false;
 			if (this.newFacilityItemList != null)
 			{
-				newIcon = this.newFacilityItemList.Any((int id) => id == <SetNewIcon>c__AnonStorey37A.items[i].facilityID);
+				newIcon = this.newFacilityItemList.Any((int id) => id == <SetNewIcon>c__AnonStorey.items[i].facilityID);
 			}
-			<SetNewIcon>c__AnonStorey37A.items[i].SetNewIcon(newIcon);
+			<SetNewIcon>c__AnonStorey.items[i].SetNewIcon(newIcon);
 		}
 		this.newFacilityItemList = null;
 	}

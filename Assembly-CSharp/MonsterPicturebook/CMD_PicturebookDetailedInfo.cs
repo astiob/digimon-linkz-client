@@ -23,7 +23,7 @@ namespace MonsterPicturebook
 			ui_PictureDetailedInfo.SetMonsterData(this.viewInfo);
 			UIWidget component = base.GetComponent<UIWidget>();
 			this.modelViewTransition.Initialize(component.depth);
-			this.modelViewTransition.LoadModel(this.viewInfo.monster.monsterMaster.Simple.monsterGroupId);
+			this.modelViewTransition.LoadModel(this.viewInfo.monster.monsterMaster.Group.modelId);
 		}
 
 		protected override void OnOpenedDialog()

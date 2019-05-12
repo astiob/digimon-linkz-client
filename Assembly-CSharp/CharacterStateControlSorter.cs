@@ -29,11 +29,11 @@ public static class CharacterStateControlSorter
 		{
 			return 0;
 		}
-		if (!x.GetHpRemingAmoutRange(minRange, maxRange))
+		if (!x.GetHpRemainingAmoutRange(minRange, maxRange))
 		{
 			return 1;
 		}
-		if (!y.GetHpRemingAmoutRange(minRange, maxRange))
+		if (!y.GetHpRemainingAmoutRange(minRange, maxRange))
 		{
 			return -1;
 		}
@@ -46,10 +46,10 @@ public static class CharacterStateControlSorter
 		{
 			return 0;
 		}
-		float num = (float)x.attackPower;
-		float num2 = (float)y.attackPower;
-		num += (float)x.attackPower * x.leaderSkillResult.attackUpPercent;
-		num2 += (float)y.attackPower * y.leaderSkillResult.attackUpPercent;
+		float num = (float)x.extraAttackPower;
+		float num2 = (float)y.extraAttackPower;
+		num += (float)x.extraAttackPower * x.leaderSkillResult.attackUpPercent;
+		num2 += (float)y.extraAttackPower * y.leaderSkillResult.attackUpPercent;
 		if (num > num2)
 		{
 			return -1;
@@ -67,10 +67,10 @@ public static class CharacterStateControlSorter
 		{
 			return 0;
 		}
-		float num = (float)x.defencePower;
-		float num2 = (float)y.defencePower;
-		num += (float)x.defencePower * x.leaderSkillResult.defenceUpPercent;
-		num2 += (float)y.defencePower * y.leaderSkillResult.defenceUpPercent;
+		float num = (float)x.extraDefencePower;
+		float num2 = (float)y.extraDefencePower;
+		num += (float)x.extraDefencePower * x.leaderSkillResult.defenceUpPercent;
+		num2 += (float)y.extraDefencePower * y.leaderSkillResult.defenceUpPercent;
 		if (num > num2)
 		{
 			return -1;
@@ -88,10 +88,10 @@ public static class CharacterStateControlSorter
 		{
 			return 0;
 		}
-		float num = (float)x.specialAttackPower;
-		float num2 = (float)y.specialAttackPower;
-		num += (float)x.specialAttackPower * x.leaderSkillResult.specialAttackUpPercent;
-		num2 += (float)y.specialAttackPower * y.leaderSkillResult.specialAttackUpPercent;
+		float num = (float)x.extraSpecialAttackPower;
+		float num2 = (float)y.extraSpecialAttackPower;
+		num += (float)x.extraSpecialAttackPower * x.leaderSkillResult.specialAttackUpPercent;
+		num2 += (float)y.extraSpecialAttackPower * y.leaderSkillResult.specialAttackUpPercent;
 		if (num > num2)
 		{
 			return -1;
@@ -109,10 +109,10 @@ public static class CharacterStateControlSorter
 		{
 			return 0;
 		}
-		float num = (float)x.specialDefencePower;
-		float num2 = (float)y.specialDefencePower;
-		num += (float)x.specialDefencePower * x.leaderSkillResult.specialDefenceUpPercent;
-		num2 += (float)y.specialDefencePower * y.leaderSkillResult.specialDefenceUpPercent;
+		float num = (float)x.extraSpecialDefencePower;
+		float num2 = (float)y.extraSpecialDefencePower;
+		num += (float)x.extraSpecialDefencePower * x.leaderSkillResult.specialDefenceUpPercent;
+		num2 += (float)y.extraSpecialDefencePower * y.leaderSkillResult.specialDefenceUpPercent;
 		if (num > num2)
 		{
 			return -1;
@@ -130,8 +130,8 @@ public static class CharacterStateControlSorter
 		{
 			return 0;
 		}
-		float num = (float)x.speed;
-		float num2 = (float)y.speed;
+		float num = (float)x.extraSpeed;
+		float num2 = (float)y.extraSpeed;
 		if (checkRandom)
 		{
 			num = x.randomedSpeed;
@@ -139,26 +139,26 @@ public static class CharacterStateControlSorter
 		}
 		else
 		{
-			num += (float)x.speed * x.leaderSkillResult.speedUpPercent;
-			num2 += (float)y.speed * y.leaderSkillResult.speedUpPercent;
+			num += (float)x.extraSpeed * x.leaderSkillResult.speedUpPercent;
+			num2 += (float)y.extraSpeed * y.leaderSkillResult.speedUpPercent;
 		}
 		if (checkBath)
 		{
 			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
 			{
-				num += (float)x.speed * x.currentSufferState.onSpeedUp.upPercent;
+				num += (float)x.extraSpeed * x.currentSufferState.onSpeedUp.upPercent;
 			}
 			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
 			{
-				num -= (float)x.speed * x.currentSufferState.onSpeedDown.downPercent;
+				num -= (float)x.extraSpeed * x.currentSufferState.onSpeedDown.downPercent;
 			}
 			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
 			{
-				num2 += (float)y.speed * y.currentSufferState.onSpeedUp.upPercent;
+				num2 += (float)y.extraSpeed * y.currentSufferState.onSpeedUp.upPercent;
 			}
 			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
 			{
-				num2 -= (float)y.speed * y.currentSufferState.onSpeedDown.downPercent;
+				num2 -= (float)y.extraSpeed * y.currentSufferState.onSpeedDown.downPercent;
 			}
 		}
 		if (num > num2)
@@ -498,7 +498,7 @@ public static class CharacterStateControlSorter
 		{
 			return targetSelectRerefence != TargetSelectReference.Ap || CharacterStateControlSorter.GetApRemingAmoutRange(x, aiActionClip.minValue, aiActionClip.maxValue);
 		}
-		return x.GetHpRemingAmoutRange(aiActionClip.minValue, aiActionClip.maxValue);
+		return x.GetHpRemainingAmoutRange(aiActionClip.minValue, aiActionClip.maxValue);
 	}
 
 	private static int CompareTargetSelect(CharacterStateControl x, CharacterStateControl y, AIActionClip aiActionClip)

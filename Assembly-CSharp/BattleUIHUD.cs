@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleUIHUD : UITweener
 {
-	[SerializeField]
 	[Header("[マルチバトル用]AP UP用オブジェクト")]
+	[SerializeField]
 	public GameObject apUpObject;
 
 	[Header("[マルチバトル用]HP UP用オブジェクト")]
@@ -16,20 +16,20 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UILabel turnNumber;
 
-	[Header("[マルチバトル用]AP数")]
 	[SerializeField]
+	[Header("[マルチバトル用]AP数")]
 	public UILabel multiAPNumber;
 
 	[SerializeField]
 	[Header("HPゲージ")]
 	private UIGaugeManager hpGauge;
 
-	[SerializeField]
 	[Header("APゲージ")]
+	[SerializeField]
 	private UIGaugeManager apGauge;
 
-	[SerializeField]
 	[Header("押しっぱなしのボタン")]
+	[SerializeField]
 	private HoldPressButton holdPressButton;
 
 	[Header("アイコン画像(Group01)")]
@@ -52,8 +52,8 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	public UIComponentSkinner apUpRootComponentSkinner;
 
-	[SerializeField]
 	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
+	[SerializeField]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
 	[SerializeField]
@@ -64,12 +64,12 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UITweener hudTween;
 
-	[SerializeField]
 	[Header("デジモンの名前")]
+	[SerializeField]
 	private UITextReplacer digimonName;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float from = 1f;
 
 	[SerializeField]
@@ -125,7 +125,7 @@ public class BattleUIHUD : UITweener
 
 	public void ApplyCharacterHudContent(CharacterStateControl characterStatus = null)
 	{
-		this.hpGauge.SetMax(characterStatus.maxHp);
+		this.hpGauge.SetMax(characterStatus.extraMaxHp);
 		this.hpGauge.SetValue(characterStatus.hp);
 		if (this.apGauge != null)
 		{

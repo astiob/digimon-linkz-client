@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMonsterArousalMaster
+			GameWebAPI.RequestMonsterArousalMaster requestMonsterArousalMaster = new GameWebAPI.RequestMonsterArousalMaster();
+			requestMonsterArousalMaster.SetSendData = delegate(GameWebAPI.RequestMonsterArousalM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_MonsterArousalMaster>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestMonsterArousalMaster.OnReceived = new Action<GameWebAPI.RespDataMA_MonsterArousalMaster>(base.SetResponse);
+			return requestMonsterArousalMaster;
 		}
 	}
 }

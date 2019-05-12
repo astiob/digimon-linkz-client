@@ -7,12 +7,12 @@ using UnityEngine;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[Header("NEWのGameObject")]
 	[SerializeField]
+	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
@@ -23,16 +23,16 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[Header("選択時の外枠色")]
 	[SerializeField]
+	[Header("選択時の外枠色")]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[Header("残り時間のラベル")]
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[Header("背景のスプライト")]
@@ -43,28 +43,28 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[Header("オープンの時の色")]
 	[SerializeField]
 	private Color openBannerCol;
 
-	[Header("クローズの時の色")]
 	[SerializeField]
+	[Header("クローズの時の色")]
 	private Color closeBannerCol;
 
 	[Header("オープンしてないを示す鍵")]
 	[SerializeField]
 	private GameObject goCloseKey;
 
-	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
+	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[Header("ステージギミック表記Obj")]
@@ -256,7 +256,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 					this.totalSeconds = 0;
 				}
 			}
-			GUIBannerParts.SetTimeTextForDayOfWeek(this.timeLabel, this.totalSeconds, this.restTimeDate);
+			GUIBannerParts.SetTimeTextForDayOfWeek(this.timeLabel, this.totalSeconds, this.restTimeDate, true);
 		}
 		else if (this.totalSeconds < 99999999)
 		{
@@ -436,7 +436,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 					this.totalSeconds = 0;
 				}
 			}
-			GUIBannerParts.SetTimeTextForDayOfWeek(this.timeLabel, this.totalSeconds, this.restTimeDate);
+			GUIBannerParts.SetTimeTextForDayOfWeek(this.timeLabel, this.totalSeconds, this.restTimeDate, true);
 		}
 		else if (this.totalSeconds < 99999999)
 		{

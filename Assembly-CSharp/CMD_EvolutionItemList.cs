@@ -17,40 +17,40 @@ public sealed class CMD_EvolutionItemList : CMD
 	[Header("ソウルリストの親")]
 	private GameObject soulPartsParent;
 
-	[SerializeField]
 	[Header("バージョンアップの親")]
+	[SerializeField]
 	private GameObject verupPartsParent;
 
-	[SerializeField]
 	[Header("コアプラグインの親")]
+	[SerializeField]
 	private GameObject corePluginPartsParent;
 
-	[SerializeField]
 	[Header("バージョンアップ耐性変化の親")]
+	[SerializeField]
 	private GameObject verupAttrChangePartsParent;
 
 	[Header("プラグインリストのwraper")]
 	[SerializeField]
 	private GameObject goWrapPlugin;
 
-	[Header("ソウルリストのwraper")]
 	[SerializeField]
+	[Header("ソウルリストのwraper")]
 	private GameObject goWrapSoul;
 
 	[SerializeField]
 	[Header("バージョンアップリストのwraper")]
 	private GameObject goWrapVerup;
 
-	[Header("コアプラグインリストのwraper")]
 	[SerializeField]
+	[Header("コアプラグインリストのwraper")]
 	private GameObject goWrapCorePlugin;
 
-	[Header("バージョンアップ耐性変化リストのwraper")]
 	[SerializeField]
+	[Header("バージョンアップ耐性変化リストのwraper")]
 	private GameObject goWrapVerupAttrChange;
 
-	[Header("ソウル用パーツ")]
 	[SerializeField]
+	[Header("ソウル用パーツ")]
 	private GameObject soulListParts;
 
 	[SerializeField]

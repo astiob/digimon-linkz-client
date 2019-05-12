@@ -15,10 +15,42 @@ public class BattleStatePvPPlayerFailed : BattleStateController
 	protected override void EnabledThisState()
 	{
 		base.stateManager.SetBattleScreen(BattleScreen.PlayerFailed);
+	}
+
+	protected override void DisabledThisState()
+	{
 		ClassSingleton<BattleDataStore>.Instance.DeleteForSystem();
 	}
 
 	protected override IEnumerator MainRoutine()
+	{
+		base.stateManager.battleAdventureSceneManager.OnTrigger(BattleAdventureSceneManager.TriggerType.LoseStart);
+		if (base.stateManager.battleAdventureSceneManager.isUpdate)
+		{
+			IEnumerator loseStart = base.stateManager.battleAdventureSceneManager.Update();
+			while (loseStart.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		else
+		{
+			IEnumerator playerFailedAction = this.PlayerFailedAction();
+			while (playerFailedAction.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		base.stateManager.battleAdventureSceneManager.OnTrigger(BattleAdventureSceneManager.TriggerType.LoseEnd);
+		IEnumerator loseEnd = base.stateManager.battleAdventureSceneManager.Update();
+		while (loseEnd.MoveNext())
+		{
+			yield return null;
+		}
+		yield break;
+	}
+
+	private IEnumerator PlayerFailedAction()
 	{
 		bool isRevivalFail = true;
 		for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
@@ -33,16 +65,6 @@ public class BattleStatePvPPlayerFailed : BattleStateController
 				isRevivalFail = false;
 			}
 		}
-		IEnumerator wait = this.PlayerFailedAction();
-		while (wait.MoveNext())
-		{
-			yield return null;
-		}
-		yield break;
-	}
-
-	private IEnumerator PlayerFailedAction()
-	{
 		base.stateManager.soundPlayer.TryStopBGM();
 		base.stateManager.time.SetPlaySpeed(false, false);
 		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();

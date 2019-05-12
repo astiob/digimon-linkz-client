@@ -85,6 +85,18 @@ public class AssetBundleInfo
 		return this.realCT == abi.realCT && this.crc == abi.crc;
 	}
 
+	public bool ContainsPath(string path)
+	{
+		for (int i = 0; i < this.objNameList.Count; i++)
+		{
+			if (this.objNameList[i].Equals(path))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public enum AB_TYPE
 	{
 		TYPE_PREFAB,

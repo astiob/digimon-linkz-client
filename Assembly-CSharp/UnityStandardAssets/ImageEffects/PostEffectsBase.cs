@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
 	public class PostEffectsBase : MonoBehaviour
 	{
 		protected bool supportHDRTextures = true;

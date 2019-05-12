@@ -10,12 +10,12 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("サムネイルのアイコン達")]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[Header("タイトルのラベル")]
 	[SerializeField]
+	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
-	[Header("取得クラスタのタイトルラベル")]
 	[SerializeField]
+	[Header("取得クラスタのタイトルラベル")]
 	private UILabel getClusterTitleLabel;
 
 	[SerializeField]
@@ -34,8 +34,8 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)
@@ -48,8 +48,8 @@ public sealed class CMD_SaleCheck : CMD
 		this.titleLabel.text = StringMaster.GetString("SaleConfirmTitle");
 		this.getClusterTitleLabel.text = StringMaster.GetString("SaleConfirmGain");
 		this.normalMessageLabel.text = StringMaster.GetString("SaleConfirmInfo");
-		bool flag = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
-		bool flag2 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
+		bool flag = MonsterUserDataMng.AnyChipEquipMonster(selectedMonsterDataList);
+		bool flag2 = MonsterUserDataMng.AnyHighGrowStepMonster(selectedMonsterDataList);
 		List<string> list = new List<string>();
 		bool flag3 = false;
 		bool flag4 = false;

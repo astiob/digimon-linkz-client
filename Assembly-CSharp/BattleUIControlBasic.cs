@@ -587,7 +587,7 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		foreach (UITouchChecker uitouchChecker in base.ui.skillSelectUi.touchChecker)
 		{
-			if (uitouchChecker.isClicked)
+			if (uitouchChecker.gameObject.activeInHierarchy && uitouchChecker.isClicked)
 			{
 				return true;
 			}
@@ -597,10 +597,6 @@ public class BattleUIControlBasic : BattleUIControl
 
 	public void ApplyMonsterDescription(bool isShow, CharacterStateControl characterStatus = null, int currentSelectCharacter = 0)
 	{
-		if (characterStatus != null && !characterStatus.isInitSpecialCorrectionStatus)
-		{
-			return;
-		}
 		NGUITools.SetActiveSelf(base.ui.characterStatusDescription.gameObject, isShow);
 		if (!isShow)
 		{
@@ -1096,34 +1092,20 @@ public class BattleUIControlBasic : BattleUIControl
 		yield break;
 	}
 
-	public void ShowBattleStageEffect()
+	public void ShowBattleExtraEffect(BattleExtraEffectUI.AnimationType animationType)
 	{
-		if (base.ui.battleStageEffectObject != null)
-		{
-			base.ui.battleStageEffectObject.SetActive(true);
-		}
+		base.ui.battleExtraEffectUI.gameObject.SetActive(true);
+		base.ui.battleExtraEffectUI.Play(animationType);
 	}
 
-	public void HideBattleStageEffect()
+	public void HideBattleExtraEffect()
 	{
-		if (base.ui.battleStageEffectObject != null)
-		{
-			base.ui.battleStageEffectObject.SetActive(false);
-		}
+		base.ui.battleExtraEffectUI.gameObject.SetActive(false);
 	}
 
-	public bool IsBattleStageEffect()
+	public bool IsBattleExtraEffect()
 	{
-		bool result = false;
-		if (base.ui.battleStageEffectObject != null)
-		{
-			Animation componentInChildren = base.ui.battleStageEffectObject.GetComponentInChildren<Animation>();
-			if (componentInChildren != null)
-			{
-				result = componentInChildren.isPlaying;
-			}
-		}
-		return result;
+		return base.ui.battleExtraEffectUI.isPlaying;
 	}
 
 	public void ShowBattleChipEffect(float waitTime, Action endAction)

@@ -78,7 +78,7 @@ namespace Enemy.AI
 			{
 				return this.aiActionPattern[currentRound % this.aiActionPattern.Count];
 			}
-			float num = (float)(characterState.hp / characterState.maxHp);
+			float num = (float)(characterState.hp / characterState.extraMaxHp);
 			for (int i = 0; i < this.aiActionPattern.Count; i++)
 			{
 				if (num >= this.aiActionPattern[i].minRange && num < this.aiActionPattern[i].maxRange)

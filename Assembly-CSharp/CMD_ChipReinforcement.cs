@@ -80,6 +80,7 @@ public sealed class CMD_ChipReinforcement : CMD
 		}
 		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), currentListNum, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
 		base.ShowDLG();
+		base.SetTutorialAnyTime("anytime_second_tutorial_chip_reinforcement");
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
 		yield return null;

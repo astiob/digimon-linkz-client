@@ -33,8 +33,8 @@ public class CMD_PairSelectBase : CMD
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
 
-	[SerializeField]
 	[Header("ベースデジモンラベル")]
+	[SerializeField]
 	private UILabel baseDigimonLabel;
 
 	[SerializeField]
@@ -265,7 +265,7 @@ public class CMD_PairSelectBase : CMD
 		}
 	}
 
-	protected void StartCutSceneCallBack(int i)
+	protected void StartCutSceneCallBack()
 	{
 		this.RemoveBaseDigimon();
 		this.RemovePartnerDigimon();

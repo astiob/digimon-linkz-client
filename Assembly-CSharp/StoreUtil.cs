@@ -58,12 +58,76 @@ public class StoreUtil : MonoBehaviour
 					stoneStoreData.num = int.Parse(productList[i].acquireList[0].assetNum);
 					stoneStoreData.price = int.Parse(productList[i].price);
 					stoneStoreData.productTitle = productList[i].productTitle;
-					stoneStoreData.spriteType = (StoreUtil.StoneSpriteType)int.Parse(productList[i].img);
+					stoneStoreData.priority = int.Parse(productList[i].priority);
+					stoneStoreData.limitCount = int.Parse(productList[i].limitCount);
+					if (!string.IsNullOrEmpty(productList[i].purchasedCount))
+					{
+						stoneStoreData.purchasedCount = int.Parse(productList[i].purchasedCount);
+					}
+					else
+					{
+						stoneStoreData.purchasedCount = 0;
+					}
+					if (productList[i].countDownDispFlg == "1")
+					{
+						stoneStoreData.countDownDispFlg = true;
+					}
+					else
+					{
+						stoneStoreData.countDownDispFlg = false;
+					}
+					if (productList[i].packFlg == "1")
+					{
+						stoneStoreData.packFlg = true;
+					}
+					else
+					{
+						stoneStoreData.packFlg = false;
+					}
+					stoneStoreData.closeTime = productList[i].closeTime;
+					if (stoneStoreData.packFlg)
+					{
+						stoneStoreData.imgPath = productList[i].img;
+						stoneStoreData.spriteType = StoreUtil.StoneSpriteType.STONE_SHOPLIST_1;
+					}
+					else
+					{
+						stoneStoreData.spriteType = (StoreUtil.StoneSpriteType)int.Parse(productList[i].img);
+					}
+					stoneStoreData.itemList = new List<GameWebAPI.RespDataSH_Info.AcquireList>();
+					stoneStoreData.omakeList = new List<GameWebAPI.RespDataSH_Info.AcquireList>();
+					for (int j = 0; j < productList[i].acquireList.Length; j++)
+					{
+						if (productList[i].acquireList[j].omakeFlg == "1")
+						{
+							stoneStoreData.omakeList.Add(productList[i].acquireList[j]);
+						}
+						else if (productList[i].acquireList[j].omakeFlg == "0")
+						{
+							stoneStoreData.itemList.Add(productList[i].acquireList[j]);
+						}
+					}
 					this.stoneStoreDataList.Add(stoneStoreData);
 				}
+				this.stoneStoreDataList.Sort(new Comparison<StoreUtil.StoneStoreData>(this.ComparePriority));
 			}
 		}
 		return this.stoneStoreDataList;
+	}
+
+	private int ComparePriority(StoreUtil.StoneStoreData A, StoreUtil.StoneStoreData B)
+	{
+		int priority = A.priority;
+		int priority2 = B.priority;
+		if (priority < priority2)
+		{
+			return -1;
+		}
+		if (priority > priority2)
+		{
+			return 1;
+		}
+		return 0;
 	}
 
 	public int GetPriceFromProductId(string productId)
@@ -90,6 +154,19 @@ public class StoreUtil : MonoBehaviour
 			}
 		}
 		return 0;
+	}
+
+	public StoreUtil.StoneStoreData GetStoneStoreDataFromProductId(string productId)
+	{
+		List<StoreUtil.StoneStoreData> list = this.GetStoneStoreDataList();
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list[i].productId == productId)
+			{
+				return list[i];
+			}
+		}
+		return null;
 	}
 
 	public void ReConsumeNonConsumedItems(Action<bool> act = null)
@@ -205,7 +282,7 @@ public class StoreUtil : MonoBehaviour
 		int numFromProductId = this.GetNumFromProductId(this._productId);
 		if (Loading.IsShow())
 		{
-			Loading.Invisible();
+			RestrictionInput.EndLoad();
 		}
 		if (GUIMain.IsBarrierON())
 		{
@@ -226,6 +303,7 @@ public class StoreUtil : MonoBehaviour
 				GUIMain.BarrierON(null);
 			}
 		}, "CMD_ModalMessage");
+		StoreUtil.StoneStoreData stoneStoreDataFromProductId = this.GetStoneStoreDataFromProductId(this._productId);
 		if (!this.isFromStart)
 		{
 			cmd_ModalMessage.Title = StringMaster.GetString("ShopRestoreTitle");
@@ -233,7 +311,14 @@ public class StoreUtil : MonoBehaviour
 		}
 		else
 		{
-			cmd_ModalMessage.Title = StringMaster.GetString("ShopConfirmTitle");
+			if (!stoneStoreDataFromProductId.packFlg)
+			{
+				cmd_ModalMessage.Title = StringMaster.GetString("ShopConfirmTitle");
+			}
+			else
+			{
+				cmd_ModalMessage.Title = stoneStoreDataFromProductId.productTitle;
+			}
 			cmd_ModalMessage.Info = string.Format(StringMaster.GetString("ShopCompleted"), numFromProductId.ToString());
 		}
 		if (this.isFromStart)
@@ -349,5 +434,23 @@ public class StoreUtil : MonoBehaviour
 		public string productTitle;
 
 		public StoreUtil.StoneSpriteType spriteType;
+
+		public string imgPath;
+
+		public int priority;
+
+		public int limitCount;
+
+		public int purchasedCount;
+
+		public bool countDownDispFlg;
+
+		public bool packFlg;
+
+		public string closeTime;
+
+		public List<GameWebAPI.RespDataSH_Info.AcquireList> itemList;
+
+		public List<GameWebAPI.RespDataSH_Info.AcquireList> omakeList;
 	}
 }

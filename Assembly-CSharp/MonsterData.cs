@@ -1,6 +1,5 @@
 ﻿using Monster;
 using System;
-using System.Collections.Generic;
 
 public sealed class MonsterData : MonsterUserData
 {
@@ -41,95 +40,9 @@ public sealed class MonsterData : MonsterUserData
 		base.SetLeaderSkill(monster.leaderSkillId);
 	}
 
-	public bool IsAttachedChip()
-	{
-		return base.GetChipEquip().IsAttachedChip();
-	}
-
-	public void SetChipIdList(int[] chipIdList)
-	{
-		base.GetChipEquip().SetChipIdList(chipIdList);
-	}
-
-	public int[] GetChipIdList()
-	{
-		return base.GetChipEquip().GetChipIdList();
-	}
-
-	public List<string> GetChipGroupList()
-	{
-		return base.GetChipEquip().GetChipGroupList();
-	}
-
 	public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip[] GetSlotEquip()
 	{
 		return base.GetChipEquip().GetEquip().ToArray();
-	}
-
-	public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage GetSlotStatus()
-	{
-		return base.GetChipEquip().GetSlotStatus();
-	}
-
-	public bool CheckHaveMedal()
-	{
-		return base.ExistMedal();
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillM.SkillM actionSkillM
-	{
-		get
-		{
-			return base.GetUniqueSkill();
-		}
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM actionSkillDetailM
-	{
-		get
-		{
-			return base.GetUniqueSkillDetail();
-		}
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillM.SkillM commonSkillM
-	{
-		get
-		{
-			return base.GetCommonSkill();
-		}
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM commonSkillDetailM
-	{
-		get
-		{
-			return base.GetCommonSkillDetail();
-		}
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillM.SkillM commonSkillM2
-	{
-		get
-		{
-			return base.GetExtraCommonSkill();
-		}
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM commonSkillDetailM2
-	{
-		get
-		{
-			return base.GetExtraCommonSkillDetail();
-		}
-	}
-
-	public GameWebAPI.RespDataMA_GetSkillM.SkillM leaderSkillM
-	{
-		get
-		{
-			return base.GetLeaderSkill();
-		}
 	}
 
 	public GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterM
@@ -154,15 +67,5 @@ public sealed class MonsterData : MonsterUserData
 		{
 			return base.GetMonster();
 		}
-	}
-
-	public static GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM SerchResistanceById(string resistanceId)
-	{
-		return MonsterResistanceData.GetResistanceMaster(resistanceId);
-	}
-
-	public int GetPriceValue()
-	{
-		return base.GetPrice();
 	}
 }

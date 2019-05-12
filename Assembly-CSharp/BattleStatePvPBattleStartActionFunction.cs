@@ -9,7 +9,7 @@ public class BattleStatePvPBattleStartActionFunction : BattleStateController
 
 	protected override void AwakeThisState()
 	{
-		base.AddState(new BattleStateBattleStartAction(null, null));
+		base.AddState(new BattleStateBattleStartAction(null, new Action<EventState>(base.SendEventState)));
 	}
 
 	protected override IEnumerator MainRoutine()

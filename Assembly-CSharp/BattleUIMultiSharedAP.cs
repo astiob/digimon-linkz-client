@@ -6,16 +6,16 @@ public class BattleUIMultiSharedAP : MonoBehaviour
 {
 	private const int MAX_AP = 16;
 
-	[SerializeField]
 	[Header("APアイコン")]
+	[SerializeField]
 	private SharedApNotes[] apNotes = new SharedApNotes[16];
 
 	[Header("AP値ラベル")]
 	[SerializeField]
 	private UILabel apLabel;
 
-	[Header("AP Maxエフェクト")]
 	[SerializeField]
+	[Header("AP Maxエフェクト")]
 	private GameObject apMaxEffect;
 
 	private int currentAp;
@@ -55,6 +55,7 @@ public class BattleUIMultiSharedAP : MonoBehaviour
 					{
 						apNote.icon.gameObject.SetActive(true);
 						apNote.PlayUpAnimation();
+						SoundPlayer.PlayBattleRecoverAPSE();
 					};
 					animationData.check = (() => apNote.isAnimation);
 					this.animationDataList.Add(animationData);

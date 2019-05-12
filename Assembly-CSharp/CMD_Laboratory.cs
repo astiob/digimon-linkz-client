@@ -1,4 +1,5 @@
-﻿using Evolution;
+﻿using Cutscene;
+using Evolution;
 using Master;
 using Monster;
 using System;
@@ -25,6 +26,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		{
 			GUICollider.EnableAllCollider("CMD_Laboratory");
 		}
+		base.SetTutorialAnyTime("anytime_second_tutorial_laboratory");
 	}
 
 	protected override void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
@@ -86,8 +88,8 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		GameWebAPI.RequestMN_MonsterCombination requestMN_MonsterCombination = new GameWebAPI.RequestMN_MonsterCombination();
 		requestMN_MonsterCombination.SetSendData = delegate(GameWebAPI.MN_Req_Labo param)
 		{
-			param.baseUserMonsterId = int.Parse(this.baseDigimon.userMonster.userMonsterId);
-			param.materialUserMonsterId = int.Parse(this.partnerDigimon.userMonster.userMonsterId);
+			param.baseUserMonsterId = this.baseDigimon.userMonster.userMonsterId;
+			param.materialUserMonsterId = this.partnerDigimon.userMonster.userMonsterId;
 		};
 		requestMN_MonsterCombination.OnReceived = delegate(GameWebAPI.RespDataMN_LaboExec response)
 		{
@@ -112,7 +114,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	{
 		int num = int.Parse(this.baseDigimon.userMonster.friendship);
 		int friendshipMaxValue = MonsterFriendshipData.GetFriendshipMaxValue(this.baseDigimon.monsterMG.growStep);
-		bool flag = num >= friendshipMaxValue;
+		bool upArousal = num >= friendshipMaxValue;
 		bool isAwakening = num == friendshipMaxValue;
 		bool hasChip = this.ResetChipAfterExec();
 		string[] userMonsterIdList = new string[]
@@ -124,38 +126,30 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		GooglePlayGamesTool.Instance.Laboratory();
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterData = this.GetUserMonsterData();
-		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterData.userMonsterId, false);
-		string eggType = ClassSingleton<EvolutionData>.Instance.GetEggType(monsterDataByUserMonsterID.userMonster.monsterEvolutionRouteId);
-		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
-		int item2 = int.Parse(this.partnerDigimon.monsterM.monsterGroupId);
-		List<int> umidList = new List<int>
+		MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterData.userMonsterId);
+		CutsceneDataFusion cutsceneData = new CutsceneDataFusion
 		{
-			item
+			path = "Cutscenes/Fusion",
+			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
+			materialModelId = this.partnerDigimon.GetMonsterMaster().Group.modelId,
+			eggModelId = ClassSingleton<EvolutionData>.Instance.GetEggType(userMonster.userMonster.monsterEvolutionRouteId),
+			upArousal = upArousal,
+			endCallback = delegate()
+			{
+				CutSceneMain.FadeReqCutSceneEnd();
+				if (null != this.characterDetailed)
+				{
+					this.DisableCutinButton(this.characterDetailed.transform);
+				}
+				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
+				if (null != partsMenu)
+				{
+					partsMenu.SetEnableMenuButton(false);
+				}
+			}
 		};
-		List<int> list = new List<int>
-		{
-			item2
-		};
-		list.Add(int.Parse(eggType));
-		int rareNum = 0;
-		if (flag)
-		{
-			rareNum = int.Parse(monsterDataByUserMonsterID.monsterM.rare);
-		}
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene("Cutscenes/Fusion", new Action<int>(base.StartCutSceneCallBack), delegate(int index)
-		{
-			CutSceneMain.FadeReqCutSceneEnd();
-			if (null != this.characterDetailed)
-			{
-				this.DisableCutinButton(this.characterDetailed.transform);
-			}
-			PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-			if (null != partsMenu)
-			{
-				partsMenu.SetEnableMenuButton(false);
-			}
-		}, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(base.StartCutSceneCallBack), null, delegate(int index)
 		{
 			if (PartsUpperCutinController.Instance != null)
 			{
@@ -187,12 +181,12 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 					partsMenu.SetEnableMenuButton(true);
 				}
 			}
-		}, umidList, list, 2, rareNum, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
 	private bool ResetChipAfterExec()
 	{
-		bool result = this.baseDigimon.IsAttachedChip() || this.partnerDigimon.IsAttachedChip();
+		bool result = this.baseDigimon.GetChipEquip().IsAttachedChip() || this.partnerDigimon.GetChipEquip().IsAttachedChip();
 		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(this.baseDigimon.userMonster.userMonsterId);
 		if (monsterChipList != null)
 		{
@@ -245,7 +239,18 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override int CalcCluster()
 	{
-		return CalculatorUtil.CalcClusterForLaboratory(this.baseDigimon, this.partnerDigimon);
+		int num = 0;
+		if (this.baseDigimon != null)
+		{
+			int num2 = this.baseDigimon.monsterM.GetArousal() + ConstValue.LABORATORY_BASE_PLUS_COEFFICIENT;
+			num += num2 * ConstValue.LABORATORY_BASE_COEFFICIENT;
+		}
+		if (this.partnerDigimon != null)
+		{
+			int num3 = this.partnerDigimon.monsterM.GetArousal() + ConstValue.LABORATORY_PARTNER_PLUS_COEFFICIENT;
+			num += num3 * ConstValue.LABORATORY_PARTNER_COEFFICIENT;
+		}
+		return num;
 	}
 
 	protected override void SetTargetStatus()
@@ -257,7 +262,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	protected override bool CanEnter()
 	{
 		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.GROWING_IN_GARDEN);
+		list = MonsterFilter.Filter(list, MonsterFilterType.GROWING_IN_GARDEN);
 		return list.Count < ConstValue.MAX_CHILD_MONSTER;
 	}
 
@@ -270,7 +275,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	{
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
-		list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.RESEARCH_TARGET);
+		list = MonsterFilter.Filter(list, MonsterFilterType.RESEARCH_TARGET);
 		monsterDataMng.SortMDList(list);
 		return list.Count > 1;
 	}

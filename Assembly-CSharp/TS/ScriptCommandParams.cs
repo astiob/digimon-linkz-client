@@ -84,6 +84,8 @@ namespace TS
 			public float fadeTime;
 
 			public bool isWindowText;
+
+			public float autoFeedTime;
 		}
 
 		public struct SelectInfo

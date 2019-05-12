@@ -102,6 +102,7 @@ public class CMD_FriendTop : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		base.SetTutorialAnyTime("anytime_second_tutorial_friend");
 		base.HideDLG();
 		this.listCreateAfterWaitTime = aT;
 		AppCoroutine.Start(this.InitFriendUI(f, sizeX, sizeY, aT), false);

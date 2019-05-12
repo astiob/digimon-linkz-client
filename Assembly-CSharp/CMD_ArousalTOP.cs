@@ -1,10 +1,10 @@
-﻿using Evolution;
+﻿using Cutscene;
+using Evolution;
 using Master;
 using Monster;
 using MonsterList.TranceResistance;
 using ResistanceTrance;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -69,8 +69,8 @@ public sealed class CMD_ArousalTOP : CMD
 	[SerializeField]
 	private ChipBaseSelect chipBaseSelect;
 
-	[SerializeField]
 	[Header("パートナーデジモンのラベル")]
+	[SerializeField]
 	private UILabel partnerTitleLabel;
 
 	[Header("決定ボタンのラベル")]
@@ -97,8 +97,6 @@ public sealed class CMD_ArousalTOP : CMD
 
 	[SerializeField]
 	private BtnSort sortButton;
-
-	private string materialUserMonsterId;
 
 	private GUIMonsterIcon leftLargeMonsterIcon;
 
@@ -177,6 +175,7 @@ public sealed class CMD_ArousalTOP : CMD
 		{
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
+			this.SetTutorialAnyTime("anytime_second_tutorial_arousal");
 			this.Show(f, sizeX, sizeY, aT);
 		}, delegate(Exception nop)
 		{
@@ -229,11 +228,10 @@ public sealed class CMD_ArousalTOP : CMD
 
 	public void InitMonsterList(bool initLoc = true, bool var2 = false)
 	{
+		ClassSingleton<GUIMonsterIconList>.Instance.ResetIconState();
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.ClearSortMessAll();
-		monsterDataMng.ClearLevelMessAll();
 		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
-		list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 		this.userVarUpPossession = false;
 		for (int i = 0; i < list.Count; i++)
 		{
@@ -244,18 +242,15 @@ public sealed class CMD_ArousalTOP : CMD
 		}
 		if (var2)
 		{
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_VERSION_UP);
+			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_VERSION_UP);
 		}
 		else
 		{
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 		}
 		monsterDataMng.SortMDList(list);
 		monsterDataMng.SetSortLSMessage();
-		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
-		monsterDataMng.SetSelectOffAll();
-		monsterDataMng.ClearDimmMessAll();
-		monsterDataMng.SetLockIcon();
+		ClassSingleton<GUIMonsterIconList>.Instance.SetLockIcon();
 		this._csSelectPanelMonsterIcon.SetCheckEnablePushAction(null);
 		this._csSelectPanelMonsterIcon.useLocationRecord = true;
 		this.targetMonsterList = list;
@@ -287,15 +282,7 @@ public sealed class CMD_ArousalTOP : CMD
 	private CMD_CharacterDetailed ShowDetail(MonsterData tappedMonsterData)
 	{
 		CMD_CharacterDetailed.DataChg = tappedMonsterData;
-		bool flag = false;
-		for (int j = 0; j < this.partnerMonsterList.Count; j++)
-		{
-			if (this.partnerMonsterList[j] == tappedMonsterData)
-			{
-				flag = true;
-				break;
-			}
-		}
+		bool flag = this.CheckPartnerMonster(tappedMonsterData);
 		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
 		{
 			if (tappedMonsterData == this.baseDigimon)
@@ -305,7 +292,11 @@ public sealed class CMD_ArousalTOP : CMD
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
 			if (null != icon)
 			{
-				this.iconGrayOut.LockIconReturnDetailed(icon, tappedMonsterData.userMonster.IsLocked, this.IsPartnerCandidateMonster(tappedMonsterData));
+				icon.Lock = tappedMonsterData.userMonster.IsLocked;
+				if (this.GetTargetMonsterGroupId(tappedMonsterData.GetMonsterMaster().Group.monsterGroupId) && !MonsterGrowStepData.IsUltimateScope(tappedMonsterData.GetMonsterMaster().Group.growStep) && !MonsterStatusData.IsSpecialTrainingType(tappedMonsterData.GetMonsterMaster().Group.monsterType) && this.IsPartnerCandidateMonster(tappedMonsterData))
+				{
+					this.iconGrayOut.LockIconReturnDetailed(icon, tappedMonsterData.userMonster.IsLocked);
+				}
 			}
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		if (flag)
@@ -317,10 +308,42 @@ public sealed class CMD_ArousalTOP : CMD
 
 	private bool IsDeckMonster(string userMonsterId)
 	{
-		bool result = false;
+		bool flag = false;
 		for (int i = 0; i < this.deckMDList.Count; i++)
 		{
 			if (userMonsterId == this.deckMDList[i].userMonster.userMonsterId)
+			{
+				flag = true;
+				break;
+			}
+		}
+		if (!flag)
+		{
+			flag = ClassSingleton<MonsterUserDataMng>.Instance.FindMonsterColosseumDeck(userMonsterId);
+		}
+		return flag;
+	}
+
+	private bool GetTargetMonsterGroupId(string monsterGroupId)
+	{
+		string a = string.Empty;
+		if (this.baseDigimon != null)
+		{
+			a = this.baseDigimon.monsterMG.monsterGroupId;
+		}
+		else if (0 < this.partnerMonsterList.Count)
+		{
+			a = this.partnerMonsterList[0].monsterMG.monsterGroupId;
+		}
+		return a == monsterGroupId;
+	}
+
+	private bool CheckPartnerMonster(MonsterData targetMonster)
+	{
+		bool result = false;
+		for (int i = 0; i < this.partnerMonsterList.Count; i++)
+		{
+			if (this.partnerMonsterList[i] == targetMonster)
 			{
 				result = true;
 				break;
@@ -329,38 +352,12 @@ public sealed class CMD_ArousalTOP : CMD
 		return result;
 	}
 
-	private string GetTargetMonsterGroupId()
-	{
-		string result = string.Empty;
-		if (this.baseDigimon != null)
-		{
-			result = this.baseDigimon.monsterMG.monsterGroupId;
-		}
-		else if (0 < this.partnerMonsterList.Count)
-		{
-			result = this.partnerMonsterList[0].monsterMG.monsterGroupId;
-		}
-		return result;
-	}
-
 	private bool IsPartnerCandidateMonster(MonsterData targetMonster)
 	{
 		bool result = false;
-		if (!MonsterGrowStepData.IsUltimateScope(targetMonster.monsterMG.growStep) && targetMonster.monsterMG.monsterGroupId == this.GetTargetMonsterGroupId() && !MonsterStatusData.IsSpecialTrainingType(targetMonster.GetMonsterMaster().Group.monsterType) && this.baseDigimon != null && this.baseDigimon != targetMonster && 1 > this.partnerMonsterList.Count)
+		if (this.baseDigimon != null && this.baseDigimon != targetMonster && !this.CheckPartnerMonster(targetMonster) && !this.IsDeckMonster(targetMonster.userMonster.userMonsterId))
 		{
-			bool flag = false;
-			for (int i = 0; i < this.partnerMonsterList.Count; i++)
-			{
-				if (this.partnerMonsterList[i] == targetMonster)
-				{
-					flag = true;
-					break;
-				}
-			}
-			if (!flag)
-			{
-				result = this.IsDeckMonster(targetMonster.userMonster.userMonsterId);
-			}
+			result = true;
 		}
 		return result;
 	}
@@ -722,11 +719,7 @@ public sealed class CMD_ArousalTOP : CMD
 
 	protected override void WindowClosed()
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		if (monsterDataMng != null)
-		{
-			monsterDataMng.PushBackAllMonsterPrefab();
-		}
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.WindowClosed();
 	}
 
@@ -935,16 +928,17 @@ public sealed class CMD_ArousalTOP : CMD
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 			this.oldResistanceIds = this.baseDigimon.userMonster.tranceResistance;
 			string baseUserMonsterId = this.baseDigimon.userMonster.userMonsterId;
+			string materialUserMonsterId = string.Empty;
 			if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE)
 			{
 				List<GameWebAPI.RespDataMA_GetMonsterTranceM.MonsterTranceM> list;
 				if (AttributeResistance.GetResistanceTrance(this.baseDigimon.userMonster.monsterId, out list))
 				{
-					this.materialUserMonsterId = baseUserMonsterId;
+					materialUserMonsterId = baseUserMonsterId;
 				}
 				else
 				{
-					this.materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
+					materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
 				}
 			}
 			else
@@ -952,18 +946,18 @@ public sealed class CMD_ArousalTOP : CMD
 				this.oldResistanceIds = this.baseDigimon.userMonster.tranceStatusAilment;
 				if (this.IsGrowStepMax(this.baseDigimon))
 				{
-					this.materialUserMonsterId = baseUserMonsterId;
+					materialUserMonsterId = baseUserMonsterId;
 				}
 				else
 				{
-					this.materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
+					materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
 				}
 			}
 			GameWebAPI.RequestMN_MonsterTrance requestMN_MonsterTrance = new GameWebAPI.RequestMN_MonsterTrance();
 			requestMN_MonsterTrance.SetSendData = delegate(GameWebAPI.MN_Req_Trunce param)
 			{
 				param.baseUserMonsterId = int.Parse(baseUserMonsterId);
-				param.materialUserMonsterId = int.Parse(this.materialUserMonsterId);
+				param.materialUserMonsterId = int.Parse(materialUserMonsterId);
 				param.type = (int)this.arousalSelectState;
 			};
 			requestMN_MonsterTrance.OnReceived = delegate(GameWebAPI.RespDataMN_TrunceExec response)
@@ -971,7 +965,10 @@ public sealed class CMD_ArousalTOP : CMD
 				ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 			};
 			GameWebAPI.RequestMN_MonsterTrance request = requestMN_MonsterTrance;
-			base.StartCoroutine(request.Run(new Action(this.EndTrunce), delegate(Exception noop)
+			base.StartCoroutine(request.Run(delegate()
+			{
+				this.EndTrunce(materialUserMonsterId);
+			}, delegate(Exception noop)
 			{
 				RestrictionInput.EndLoad();
 			}, null));
@@ -994,21 +991,22 @@ public sealed class CMD_ArousalTOP : CMD
 		return MonsterGrowStepData.IsUltimateScope(growStep2);
 	}
 
-	private void EndTrunce()
+	private void EndTrunce(string materialUserMonsterId)
 	{
 		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE)
 		{
 			List<GameWebAPI.RespDataMA_GetMonsterTranceM.MonsterTranceM> list;
 			if (!AttributeResistance.GetResistanceTrance(this.baseDigimon.userMonster.monsterId, out list))
 			{
-				this.DeleteMaterialMonster(this.materialUserMonsterId);
+				this.DeleteMaterialMonster(materialUserMonsterId);
 			}
 		}
 		else if (!this.IsGrowStepMax(this.baseDigimon))
 		{
-			this.DeleteMaterialMonster(this.materialUserMonsterId);
+			this.DeleteMaterialMonster(materialUserMonsterId);
 		}
-		base.StartCoroutine(this.GetSoulDataAPI());
+		APIRequestTask task = Singleton<UserDataMng>.Instance.RequestUserSoulData(true);
+		base.StartCoroutine(task.Run(new Action(this.StartCutScene), null, null));
 	}
 
 	private void DeleteMaterialMonster(string userMonsterId)
@@ -1022,37 +1020,30 @@ public sealed class CMD_ArousalTOP : CMD
 		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlot(userMonsterId);
 	}
 
-	private IEnumerator GetSoulDataAPI()
-	{
-		APIRequestTask task = Singleton<UserDataMng>.Instance.RequestUserSoulData(true);
-		yield return base.StartCoroutine(task.Run(null, null, null));
-		this.StartCutScene();
-		yield break;
-	}
-
 	private void StartCutScene()
 	{
-		List<int> list = new List<int>();
-		list.Add(int.Parse(this.baseDigimon.monsterM.monsterGroupId));
-		Loading.Invisible();
 		string newResistance = this.baseDigimon.userMonster.tranceResistance;
 		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.RESISTANCE)
 		{
 			newResistance = this.baseDigimon.userMonster.tranceStatusAilment;
 		}
-		CutSceneMain.FadeReqCutScene("Cutscenes/Awakening", new Action<int>(this.StartCutSceneCallBack), delegate(int index)
+		CutsceneDataAwakening cutsceneData = new CutsceneDataAwakening
 		{
-			CutSceneMain.FadeReqCutSceneEnd();
-		}, delegate(int index)
+			path = "Cutscenes/Awakening",
+			modelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
+			endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
+		};
+		Loading.Invisible();
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
 		{
 			this.detailWindow.ShowByArousal(this.baseDigimon.monsterM.resistanceId, this.oldResistanceIds, newResistance);
 			this.baseDigimon = null;
 			this.BtnCont();
 			RestrictionInput.EndLoad();
-		}, list, null, 2, 1, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
-	private void StartCutSceneCallBack(int noop)
+	private void StartCutSceneCallBack()
 	{
 		UnityEngine.Object.Destroy(this.leftLargeMonsterIcon.gameObject);
 		this.leftLargeMonsterIcon = null;

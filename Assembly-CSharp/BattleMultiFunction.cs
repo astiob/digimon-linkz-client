@@ -393,6 +393,9 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		case TCPMessageType.LeaderChange:
 			base.RecieveLeaderChange(tcpMessageType, messageObj);
 			break;
+		case TCPMessageType.AdventureScene:
+			base.RecieveAdventureSceneData(tcpMessageType, messageObj);
+			break;
 		}
 	}
 

@@ -211,7 +211,7 @@ public class BattleStateInitialize : BattleStateController
 		yield break;
 	}
 
-	private IEnumerator LoadPlayer()
+	protected virtual IEnumerator LoadPlayer()
 	{
 		int playerLength = base.hierarchyData.usePlayerCharacters.Length;
 		List<IEnumerator> list = new List<IEnumerator>();
@@ -277,7 +277,6 @@ public class BattleStateInitialize : BattleStateController
 		}
 		base.battleStateData.leaderCharacter = base.battleStateData.playerCharacters[base.hierarchyData.leaderCharacter];
 		base.battleStateData.leaderCharacter.isLeader = true;
-		base.battleStateData.leaderCharacter.LeaderInitialize();
 		base.battleStateData.insertCharacterEffect = new AlwaysEffectParams[playerLength];
 		for (int j = 0; j < playerLength; j++)
 		{
@@ -300,7 +299,7 @@ public class BattleStateInitialize : BattleStateController
 		yield break;
 	}
 
-	private IEnumerator LoadEnemy()
+	protected virtual IEnumerator LoadEnemy()
 	{
 		int maxEnemiesLength = 0;
 		int maxBossLength = 0;
@@ -453,6 +452,23 @@ public class BattleStateInitialize : BattleStateController
 		}
 		base.stateManager.system.IfFullMemoryCallGC();
 		BattleDebug.Log("敵キャラクタ / 関連エフェクトのロード: 完了");
+		yield break;
+	}
+
+	private IEnumerator LoadCharacterAfter()
+	{
+		CharacterStateControl[] playerCharacters = base.stateManager.battleStateData.playerCharacters;
+		foreach (CharacterStateControl playerCharacter in playerCharacters)
+		{
+			playerCharacter.InitializeSpecialCorrectionStatus();
+		}
+		for (int i = 0; i < base.stateManager.battleStateData.preloadEnemies.Length; i++)
+		{
+			for (int j = 0; j < base.stateManager.battleStateData.preloadEnemies[i].Length; j++)
+			{
+				base.stateManager.battleStateData.preloadEnemies[i][j].InitializeSpecialCorrectionStatus();
+			}
+		}
 		yield break;
 	}
 
@@ -647,6 +663,7 @@ public class BattleStateInitialize : BattleStateController
 		functionList.Add(this.LoadResources());
 		functionList.Add(this.LoadPlayer());
 		functionList.Add(this.LoadEnemy());
+		functionList.Add(this.LoadCharacterAfter());
 		functionList.Add(this.LoadCommonEffect());
 		functionList.Add(this.LoadSkill());
 		functionList.Add(this.LoadAfterInitializeUI());

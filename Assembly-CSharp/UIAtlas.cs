@@ -5,16 +5,16 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/Atlas")]
 public class UIAtlas : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material material;
 
 	[HideInInspector]
 	[SerializeField]
 	private List<UISpriteData> mSprites = new List<UISpriteData>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mPixelSize = 1f;
 
 	[HideInInspector]

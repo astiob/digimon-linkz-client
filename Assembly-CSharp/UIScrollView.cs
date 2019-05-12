@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Scroll View")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Scroll View")]
 [RequireComponent(typeof(UIPanel))]
 public class UIScrollView : MonoBehaviour
 {

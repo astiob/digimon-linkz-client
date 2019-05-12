@@ -17,23 +17,23 @@ public class BattleWaveControl : BattleFunctionBase
 		Dictionary<string, int> dictionary = new Dictionary<string, int>();
 		for (int i = 0; i < base.battleStateData.enemies.Length; i++)
 		{
-			string groupId = base.battleStateData.enemies[i].characterStatus.groupId;
+			string prefabId = base.battleStateData.enemies[i].characterStatus.prefabId;
 			int num = 0;
-			if (dictionary.ContainsKey(groupId))
+			if (dictionary.ContainsKey(prefabId))
 			{
 				Dictionary<string, int> dictionary3;
 				Dictionary<string, int> dictionary2 = dictionary3 = dictionary;
 				string key2;
-				string key = key2 = groupId;
+				string key = key2 = prefabId;
 				int num2 = dictionary3[key2];
 				dictionary2[key] = num2 + 1;
-				num = dictionary[groupId];
+				num = dictionary[prefabId];
 			}
 			else
 			{
-				dictionary.Add(groupId, 0);
+				dictionary.Add(prefabId, 0);
 			}
-			this.WaveResetEnemyResetupFunction(groupId, num, i, isRecover);
+			this.WaveResetEnemyResetupFunction(prefabId, num, i, isRecover);
 			int index = base.battleStateData.playerCharacters.Length + i;
 			base.stateManager.uiControl.ApplyCharacterHudBoss(index, base.hierarchyData.batteWaves[waveNumber].enemiesBossFlag[i]);
 			base.stateManager.uiControl.ApplyCharacterHudContent(index, base.battleStateData.enemies[i]);

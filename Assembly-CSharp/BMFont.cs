@@ -9,20 +9,20 @@ public class BMFont
 	[SerializeField]
 	private int mSize = 16;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mBase;
 
 	[SerializeField]
 	[HideInInspector]
 	private int mWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mHeight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string mSpriteName;
 
 	[SerializeField]

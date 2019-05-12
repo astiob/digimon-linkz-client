@@ -25,8 +25,8 @@ public sealed class RecruitmentBoardButton : FacilityButtonSet
 		}
 	}
 
-	private void OpenCMD(int i)
+	private void OpenCMD(int noop)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop");
+		CMD_MultiRecruitTop.Create();
 	}
 }

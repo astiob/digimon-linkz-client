@@ -125,7 +125,7 @@ namespace Evolution
 				{
 					if (isMaxLevel && this.CheckMaterialNum(masterList[i].monsterEvolutionMaterialId))
 					{
-						int num2 = CalculatorUtil.CalcClusterForEvolve(nextMonsterId);
+						int num2 = EvolutionData.CalcClusterForEvolve(nextMonsterId);
 						if (num2 <= num)
 						{
 							result = true;
@@ -135,7 +135,7 @@ namespace Evolution
 				}
 				else if (this.CheckMaterialNum(masterList[i].monsterEvolutionMaterialId))
 				{
-					int num3 = CalculatorUtil.CalcClusterForModeChange(nextMonsterId);
+					int num3 = EvolutionData.CalcClusterForModeChange(nextMonsterId);
 					if (num3 <= num)
 					{
 						result = true;
@@ -279,27 +279,16 @@ namespace Evolution
 			return result;
 		}
 
-		public List<int> EvolvePostProcess(EvolutionData.MonsterEvolveData med)
+		public void EvolvePostProcess(List<EvolutionData.MonsterEvolveItem> meiL)
 		{
-			List<int> list = new List<int>();
-			List<EvolutionData.MonsterEvolveItem> itemList = med.itemList;
-			for (int i = 0; i < itemList.Count; i++)
+			for (int i = 0; i < meiL.Count; i++)
 			{
-				if (itemList[i].catId == ConstValue.EVOLVE_ITEM_SOUL)
+				if (meiL[i].catId == ConstValue.EVOLVE_ITEM_SOUL)
 				{
-					int num = int.Parse(itemList[i].sd_item.num) - itemList[i].need_num;
-					itemList[i].sd_item.num = num.ToString();
+					int num = int.Parse(meiL[i].sd_item.num) - meiL[i].need_num;
+					meiL[i].sd_item.num = num.ToString();
 				}
 			}
-			string text = med.mem.effectMonsterId;
-			if (text == "0")
-			{
-				text = "1";
-			}
-			string monsterGroupId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(text).monsterGroupId;
-			int item = int.Parse(monsterGroupId);
-			list.Add(item);
-			return list;
 		}
 
 		private bool CanEvolve(MonsterData monsterData)
@@ -362,8 +351,8 @@ namespace Evolution
 					{
 						monsterEvolveItem.catId = ConstValue.EVOLVE_ITEM_MONS;
 						monsterEvolveItem.need_num = int.Parse(assetNum);
-						List<MonsterData> monsterDataListByMID = MonsterDataMng.Instance().GetMonsterDataListByMID(assetValue);
-						monsterEvolveItem.haveNum = monsterDataListByMID.Count;
+						List<MonsterData> monsterList = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterList(assetValue);
+						monsterEvolveItem.haveNum = monsterList.Count;
 						monsterEvolveData.itemList.Add(monsterEvolveItem);
 					}
 					else if (assetCategoryId == ConstValue.EVOLVE_ITEM_SOUL.ToString())
@@ -433,6 +422,75 @@ namespace Evolution
 				}
 			}
 			return result;
+		}
+
+		public static int CalcClusterForEvolve(string monsterId)
+		{
+			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterId(monsterId).Group;
+			int growStep = group.growStep.ToInt32();
+			int num = 0;
+			int num2 = 0;
+			if (MonsterGrowStepData.IsRipeScope(growStep))
+			{
+				num = ConstValue.EVOLVE_COEFFICIENT_FOR_5;
+			}
+			else if (MonsterGrowStepData.IsPerfectScope(growStep))
+			{
+				num = ConstValue.EVOLVE_COEFFICIENT_FOR_6;
+			}
+			else if (MonsterGrowStepData.IsUltimateScope(growStep))
+			{
+				num = ConstValue.EVOLVE_COEFFICIENT_FOR_7;
+			}
+			else
+			{
+				Debug.LogError("growStepの値が不正です");
+			}
+			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(monsterId).Simple;
+			int arousal = simple.GetArousal();
+			if (arousal >= 0 && arousal < ConstValue.EVOLVE_COEFFICIENT_RARE.Length)
+			{
+				num2 = ConstValue.EVOLVE_COEFFICIENT_RARE[arousal];
+			}
+			return num2 * num;
+		}
+
+		public static int CalcClusterForModeChange(string monsterId)
+		{
+			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterId(monsterId).Group;
+			int num = 0;
+			int num2 = 0;
+			int growStep = group.growStep.ToInt32();
+			if (MonsterGrowStepData.IsRipeScope(growStep))
+			{
+				num = ConstValue.MODE_CHANGE_COEFFICIENT_FOR_5;
+			}
+			else if (MonsterGrowStepData.IsPerfectScope(growStep))
+			{
+				num = ConstValue.MODE_CHANGE_COEFFICIENT_FOR_6;
+			}
+			else if (MonsterGrowStepData.IsUltimateScope(growStep))
+			{
+				num = ConstValue.MODE_CHANGE_COEFFICIENT_FOR_7;
+			}
+			else
+			{
+				Debug.Log("growStepの値が不正です");
+			}
+			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(monsterId).Simple;
+			int arousal = simple.GetArousal();
+			if (arousal >= 0 && arousal < ConstValue.MODE_CHANGE_COEFFICIENT_RARE.Length)
+			{
+				num2 = ConstValue.MODE_CHANGE_COEFFICIENT_RARE[arousal];
+			}
+			return num2 * num;
+		}
+
+		public static int CalcClusterForVersionUp(string baseMonsterId)
+		{
+			int num = 300;
+			int num2 = 450;
+			return num * num2;
 		}
 
 		public class MonsterEvolveItem

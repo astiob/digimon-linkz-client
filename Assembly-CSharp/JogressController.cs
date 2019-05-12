@@ -1,183 +1,107 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cutscene;
+using Cutscene.UI;
+using System;
 using UnityEngine;
 
-public class JogressController : CutsceneControllerBase
+public sealed class JogressController : CutsceneControllerBase
 {
-	public int[] target2 = new int[0];
-
-	private GameObject monsC_instance;
+	[SerializeField]
+	private Camera mainCamera;
 
 	[SerializeField]
-	[Header("進化後デジモンの親")]
-	private GameObject character3Parent;
+	private Transform[] circleList;
 
 	[SerializeField]
-	[Header("キャラクターのスタンド")]
-	private GameObject[] charaStand;
-
-	[Header("スタンドの回転速度")]
-	[SerializeField]
-	private float[] standRollSpeed;
-
-	[Header("デジ文字リング")]
-	[SerializeField]
-	private GameObject ringSet;
+	private float[] circleRotateSpeedList;
 
 	[SerializeField]
-	[Header("UIカメラ")]
-	private GameObject camera2D;
+	private Transform beforeMonsterParentTransform;
 
 	[SerializeField]
-	[Header("3Dカメラ")]
-	private GameObject camera3D_1;
+	private Transform partnerMonsterParentTransform;
 
 	[SerializeField]
-	private GameObject camera3D_2;
+	private Transform afterMonsterParentTransform;
 
-	private bool chaseFlag;
+	[SerializeField]
+	private AllSkipButton allSkipButton;
 
-	public float rollSpeed = 1f;
+	[SerializeField]
+	private TouchScreenButton touchScreenButton;
 
-	private CharacterParams character3Params;
+	[SerializeField]
+	private JogressAnimationEvent animeEvent;
 
-	private Transform TargetPos;
+	private Action endCallback;
 
-	private Material wireMaterial;
+	private CharacterParams afterMonsterCharaParam;
 
-	private List<Material[]> materialsListC;
-
-	private void Start()
+	private void EndCutscene()
 	{
-		this.monsA_instance = this.monsterBirth(this.monsA_instance, base.target[0]);
-		this.monsA_instance = this.monsterBehavior(this.monsA_instance, this.character1Params, this.character1Parent);
-		this.monsB_instance = this.monsterBirth(this.monsB_instance, this.target2[0]);
-		this.monsB_instance = this.monsterBehavior(this.monsB_instance, this.character2Params, this.character2Parent);
-		this.monsC_instance = this.monsterBirth(this.monsC_instance, base.target[1]);
-		this.character3Params = this.monsC_instance.GetComponent<CharacterParams>();
-		this.character3Params.PlayIdleAnimation();
-		this.monsC_instance.transform.parent = this.character3Parent.transform;
-		this.monsC_instance.transform.localPosition = new Vector3(0f, 0f, 0f);
-		Camera component = this.camera3D_1.GetComponent<Camera>();
-		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
-		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
-		component = this.camera3D_2.GetComponent<Camera>();
-		CutsceneControllerBase.SetBillBoardCamera(this.monsC_instance, component);
-		this.wireMaterial = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
+		this.fade.StartFadeOut(new Action(this.Finish));
+		this.allSkipButton.Hide();
+		this.touchScreenButton.Hide();
 	}
 
-	private GameObject monsterBirth(GameObject mons, int i)
+	private void Finish()
 	{
-		if (!this.debugMode)
+		this.cutsceneSound.StopAllSE();
+		this.animeEvent.ResetMonsterMaterial();
+		if (this.endCallback != null)
 		{
-			mons = (GameObject)UnityEngine.Object.Instantiate(AssetDataMng.Instance().LoadObject("Characters/" + i + "/prefab", null, true));
+			this.endCallback();
+			this.endCallback = null;
 		}
-		else
-		{
-			mons = (GameObject)UnityEngine.Object.Instantiate(Resources.Load("Characters/" + i + "/prefab"));
-		}
-		return mons;
+		UnityEngine.Object.Destroy(base.gameObject);
+		Resources.UnloadUnusedAssets();
 	}
 
-	private GameObject monsterBehavior(GameObject mon, CharacterParams cp, GameObject cparent)
+	protected override void OnStartCutscene()
 	{
-		cp = mon.GetComponent<CharacterParams>();
-		Camera component = this.camera3D_1.GetComponent<Camera>();
-		cp.Initialize(component);
-		cp.PlayAnimation(CharacterAnimationType.move, SkillType.Attack, 0, null, null);
-		mon.transform.parent = cparent.transform;
-		mon.transform.localPosition = new Vector3(0f, 0f, 0f);
-		return mon;
-	}
-
-	protected override void UpdateChild()
-	{
-		for (int i = 0; i <= this.charaStand.Length - 1; i++)
+		if (!this.animeEvent.IsPlaying())
 		{
-			this.charaStand[i].transform.Rotate(new Vector3(0f, 0f, this.standRollSpeed[i]));
+			this.animeEvent.StartAnimation();
 		}
 	}
 
-	private void LateUpdate()
+	protected override void OnUpdate()
 	{
-		this.TargetPos = this.character3Params.characterCenterTarget.gameObject.transform;
-		if (this.chaseFlag)
+		for (int i = 0; i < this.circleList.Length; i++)
 		{
-			this.CameraLookAtTarget();
+			this.circleList[i].Rotate(0f, 0f, this.circleRotateSpeedList[i]);
 		}
 	}
 
-	private void ChaseFlagStarter()
+	protected override void OnLateUpdate()
 	{
-		this.chaseFlag = true;
+		if (this.animeEvent.IsCameraChase() && this.mainCamera.gameObject.activeSelf)
+		{
+			this.mainCamera.transform.LookAt(this.afterMonsterCharaParam.characterCenterTarget);
+		}
 	}
 
-	private void ChaseFlagStopper()
+	public override void SetData(CutsceneDataBase data)
 	{
-		this.chaseFlag = false;
-	}
-
-	private void CameraLookAtTarget()
-	{
-		this.camera3D_1.transform.LookAt(this.TargetPos);
-		this.camera3D_2.transform.LookAt(this.TargetPos);
-	}
-
-	private void GetBaseMaterials()
-	{
-	}
-
-	public void Character3_LineOn()
-	{
-		this.materialsListC = base.OnWireFrameRenderer(this.monsC_instance, this.wireMaterial);
-	}
-
-	public void Character3_LineOff()
-	{
-		base.OffWireFrameRenderer(this.monsC_instance, this.materialsListC);
-	}
-
-	private void Character3MotionTrigger()
-	{
-		this.character3Params.PlayAnimation(CharacterAnimationType.win, SkillType.Attack, 0, null, null);
-	}
-
-	private void RingSetPositionSetter()
-	{
-		this.ringSet.transform.position = this.character3Params.characterCenterTarget.gameObject.transform.position;
-	}
-
-	public void SoudPlayer1()
-	{
-		base.PlaySE("bt_643", false);
-	}
-
-	public void SoudPlayer2()
-	{
-		base.PlaySE("bt_507", false);
-	}
-
-	public void SoudPlayer3()
-	{
-		base.PlaySE("bt_115", false);
-	}
-
-	public void SoudPlayer4()
-	{
-		base.PlaySE("bt_549", false);
-	}
-
-	protected override IEnumerator NextPageBefore()
-	{
-		this.camera2D.SendMessage("fadeOut");
-		yield break;
-	}
-
-	protected override IEnumerator NextPageAfter()
-	{
-		this.Character3_LineOff();
-		this.chaseFlag = false;
-		yield break;
+		CutsceneDataJogress cutsceneDataJogress = data as CutsceneDataJogress;
+		if (cutsceneDataJogress != null)
+		{
+			this.endCallback = cutsceneDataJogress.endCallback;
+			this.allSkipButton.Initialize();
+			this.allSkipButton.AddAction(new Action(this.EndCutscene));
+			this.touchScreenButton.Initialize();
+			this.touchScreenButton.AddAction(new Action(this.EndCutscene));
+			GameObject gameObject = CutsceneCommon.LoadMonsterModel(this.beforeMonsterParentTransform, cutsceneDataJogress.beforeModelId);
+			gameObject.transform.localPosition = Vector3.zero;
+			GameObject gameObject2 = CutsceneCommon.LoadMonsterModel(this.partnerMonsterParentTransform, cutsceneDataJogress.partnerModelId);
+			gameObject2.transform.localPosition = Vector3.zero;
+			GameObject gameObject3 = CutsceneCommon.LoadMonsterModel(this.afterMonsterParentTransform, cutsceneDataJogress.afterModelId);
+			gameObject3.transform.localPosition = Vector3.zero;
+			gameObject3.SetActive(false);
+			this.afterMonsterCharaParam = gameObject3.GetComponent<CharacterParams>();
+			CutsceneCommon.SetBillBoardCamera(gameObject, this.mainCamera);
+			CutsceneCommon.SetBillBoardCamera(gameObject2, this.mainCamera);
+			CutsceneCommon.SetBillBoardCamera(gameObject3, this.mainCamera);
+			this.animeEvent.Initialize(this.cutsceneSound, gameObject, gameObject2, gameObject3);
+		}
 	}
 }

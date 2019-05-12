@@ -27,8 +27,8 @@ public class AffectEffectProperty
 	[SerializeField]
 	private TechniqueType _techniqueType;
 
-	[FormerlySerializedAs("intValue")]
 	[SerializeField]
+	[FormerlySerializedAs("intValue")]
 	private int[] _intValue = new int[2];
 
 	[FormerlySerializedAs("floatValue")]
@@ -92,7 +92,7 @@ public class AffectEffectProperty
 		}
 		if (this.type == AffectEffect.HpBorderlineDamage || this.type == AffectEffect.HpBorderlineSpDamage)
 		{
-			float num = (float)characterStateControl.hp / (float)characterStateControl.maxHp;
+			float num = (float)characterStateControl.hp / (float)characterStateControl.extraMaxHp;
 			if (num >= this.borderlineRange1)
 			{
 				result = (int)this.borderlineDamage1;
@@ -353,7 +353,7 @@ public class AffectEffectProperty
 	{
 		get
 		{
-			return this._intValue[0] > 0;
+			return this._intValue[1] > 0;
 		}
 	}
 
@@ -508,7 +508,7 @@ public class AffectEffectProperty
 		{
 			num += this.GetSkillHitRateCorrectionValue(attacker);
 		}
-		if (this.powerType != PowerType.Fixable && Tolerance.OnInfluenceToleranceAffectEffect(this.type))
+		if (Tolerance.OnInfluenceToleranceAffectEffect(this.type))
 		{
 			Tolerance tolerance = target.tolerance;
 			Strength affectEffectStrength = tolerance.GetAffectEffectStrength(this.type);

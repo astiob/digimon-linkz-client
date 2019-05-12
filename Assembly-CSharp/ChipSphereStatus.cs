@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class ChipSphereStatus : MonoBehaviour
 {
-	[SerializeField]
 	[Header("MenuType")]
+	[SerializeField]
 	private CMD_ChipSphere.MenuType myMenuType;
 
-	[SerializeField]
 	[Header("Lookのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject lookGO;
 
 	[SerializeField]
 	[Header("アイコン右下のレア度")]
 	private UISprite rareSprite;
 
-	[SerializeField]
 	[Header("アイコンのlookテクスチャ")]
+	[SerializeField]
 	private UITexture chipLookTexture;
 
 	[Header("アイコンのテクスチャ")]
@@ -36,24 +36,24 @@ public class ChipSphereStatus : MonoBehaviour
 	[Header("ボタンのラベル")]
 	private UILabel buttonLabel;
 
-	[Header("強化ボタンのラベル")]
 	[SerializeField]
+	[Header("強化ボタンのラベル")]
 	private UILabel reinforcementButtonLabel;
 
-	[SerializeField]
 	[Header("ボタンのスプライト")]
+	[SerializeField]
 	private UISprite buttonSprite;
 
 	[SerializeField]
 	[Header("強化ボタンのスプライト")]
 	private UISprite reinforcementButtonSprite;
 
-	[Header("ボタンのコライダー")]
 	[SerializeField]
+	[Header("ボタンのコライダー")]
 	private BoxCollider buttonCollider;
 
-	[Header("強化ボタンのコライダー")]
 	[SerializeField]
+	[Header("強化ボタンのコライダー")]
 	private BoxCollider reinforcementButtonCollider;
 
 	private Color defaultButtonLabelEffectColor;

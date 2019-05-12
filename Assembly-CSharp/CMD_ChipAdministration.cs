@@ -130,6 +130,7 @@ public sealed class CMD_ChipAdministration : CMD
 		this.sortButton.MethodToInvoke = "OnSortButton";
 		this.ChangeViewMode(CMD_ChipAdministration.ViewModeType.List);
 		base.ShowDLG();
+		base.SetTutorialAnyTime("anytime_second_tutorial_chip_list");
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
 		yield return null;

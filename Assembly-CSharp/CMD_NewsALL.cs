@@ -20,7 +20,7 @@ public sealed class CMD_NewsALL : CMD
 
 	protected override void Awake()
 	{
-		this.noneDiscription.text = "現在お知らせはありません。";
+		this.noneDiscription.text = StringMaster.GetString("NewsListEmpty");
 		base.Awake();
 		CMD_NewsALL.instance = this;
 	}

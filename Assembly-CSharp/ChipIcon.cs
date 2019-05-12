@@ -14,12 +14,12 @@ public class ChipIcon : MonoBehaviour
 	[Header("選択中のメッセージラベル")]
 	private UILabel dimMessage;
 
-	[Header("チップアイコン")]
 	[SerializeField]
+	[Header("チップアイコン")]
 	private UITexture iconTexture;
 
-	[Header("ランクアイコン")]
 	[SerializeField]
+	[Header("ランクアイコン")]
 	private UISprite rankSprite;
 
 	[Header("複数選択時のメッセージラベル")]
@@ -29,6 +29,10 @@ public class ChipIcon : MonoBehaviour
 	private int defaultTexSizeWidth;
 
 	private int defaultTexSizeHeight;
+
+	private bool isLoad;
+
+	private List<Action> loadList = new List<Action>();
 
 	private void Awake()
 	{
@@ -47,19 +51,10 @@ public class ChipIcon : MonoBehaviour
 		{
 			this.rankSprite.spriteName = text;
 		}
-		string texname = (data == null) ? "ChipThumbnail/Chip_Empty" : data.GetIconPath();
-		NGUIUtil.LoadTextureAsync(this.iconTexture, texname, delegate
+		base.transform.localScale = Vector3.one;
+		this.loadList.Add(delegate
 		{
-			if (this != null)
-			{
-				this.transform.localScale = Vector3.one;
-				if (texSizeWidth > 0 && texSizeHeight > 0)
-				{
-					float x = (float)texSizeWidth / (float)this.defaultTexSizeWidth;
-					float y = (float)texSizeHeight / (float)this.defaultTexSizeHeight;
-					this.transform.localScale = new Vector3(x, y, 1f);
-				}
-			}
+			this.LoadIcon(data, texSizeWidth, texSizeHeight);
 		});
 		if (this.dimMessage != null)
 		{
@@ -67,6 +62,31 @@ public class ChipIcon : MonoBehaviour
 		}
 		this.SetEquipmentIcon(false);
 		this.SetSelectMessage(string.Empty);
+	}
+
+	private void Update()
+	{
+		if (0 < this.loadList.Count && !this.isLoad && this.loadList[0] != null)
+		{
+			this.loadList[0]();
+			this.loadList.RemoveAt(0);
+		}
+	}
+
+	private void LoadIcon(GameWebAPI.RespDataMA_ChipM.Chip data = null, int texSizeWidth = -1, int texSizeHeight = -1)
+	{
+		this.isLoad = true;
+		string texname = (data == null) ? "ChipThumbnail/Chip_Empty" : data.GetIconPath();
+		NGUIUtil.LoadTextureAsync(this.iconTexture, texname, delegate
+		{
+			this.isLoad = false;
+			if (this != null && texSizeWidth > 0 && texSizeHeight > 0)
+			{
+				float x = (float)texSizeWidth / (float)this.defaultTexSizeWidth;
+				float y = (float)texSizeHeight / (float)this.defaultTexSizeHeight;
+				this.transform.localScale = new Vector3(x, y, 1f);
+			}
+		});
 	}
 
 	public void SetSelectColor(bool isSelect)

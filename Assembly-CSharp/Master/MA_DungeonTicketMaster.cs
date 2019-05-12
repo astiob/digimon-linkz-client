@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestDataMA_DungeonTicketMaster
+			GameWebAPI.RequestDataMA_DungeonTicketMaster requestDataMA_DungeonTicketMaster = new GameWebAPI.RequestDataMA_DungeonTicketMaster();
+			requestDataMA_DungeonTicketMaster.SetSendData = delegate(GameWebAPI.RequestDataMA_DungeonTicketM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_DungeonTicketMaster>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestDataMA_DungeonTicketMaster.OnReceived = new Action<GameWebAPI.RespDataMA_DungeonTicketMaster>(base.SetResponse);
+			return requestDataMA_DungeonTicketMaster;
 		}
 	}
 }

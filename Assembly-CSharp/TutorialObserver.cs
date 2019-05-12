@@ -71,6 +71,18 @@ public sealed class TutorialObserver : Singleton<TutorialObserver>
 		}
 	}
 
+	public void StartHelp(string tutorialName, Action completed)
+	{
+		GUIManager.ExtBackKeyReady = false;
+		RestrictionInput.isDisableBackKeySetting = true;
+		HelpPart helpPart = new HelpPart();
+		Action initialized = delegate()
+		{
+			this.tutorial = helpPart;
+		};
+		base.StartCoroutine(helpPart.StartHelp(base.gameObject, tutorialName, completed, initialized));
+	}
+
 	public IEnumerator StartGuidance(Action<bool> onStarted)
 	{
 		GuidancePart guidance = new GuidancePart();

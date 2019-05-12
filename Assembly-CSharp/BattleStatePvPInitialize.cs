@@ -58,6 +58,24 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		yield break;
 	}
 
+	protected override IEnumerator LoadPlayer()
+	{
+		if (base.stateManager.pvpFunction.IsOwner)
+		{
+			return base.LoadPlayer();
+		}
+		return base.LoadEnemy();
+	}
+
+	protected override IEnumerator LoadEnemy()
+	{
+		if (base.stateManager.pvpFunction.IsOwner)
+		{
+			return base.LoadEnemy();
+		}
+		return base.LoadPlayer();
+	}
+
 	protected override IEnumerator LoadAfterInitializeUI()
 	{
 		BattleDebug.Log("ロード完了後UI初期化: 開始");

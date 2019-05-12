@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
+	[AddComponentMenu("Image Effects/Noise/Noise And Grain (Filmic)")]
 	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
-	[AddComponentMenu("Image Effects/Noise/Noise And Grain (Filmic)")]
 	public class NoiseAndGrain : PostEffectsBase
 	{
 		public float intensityMultiplier = 0.25f;

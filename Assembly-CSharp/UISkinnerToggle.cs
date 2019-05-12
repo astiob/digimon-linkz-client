@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UISpriteSkinnerBase))]
+[ExecuteInEditMode]
 public class UISkinnerToggle : MonoBehaviour
 {
 	[SerializeField]

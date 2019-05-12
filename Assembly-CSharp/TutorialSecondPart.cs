@@ -9,6 +9,11 @@ public sealed class TutorialSecondPart : TutorialBasePart
 
 	private string tutorialName;
 
+	protected override string GetFilePath(string fileName)
+	{
+		return "AdventureScene/Text/Tutorial/" + fileName;
+	}
+
 	public IEnumerator StartTutorial(GameObject observer, string tutorialName, Action tutorialCompleted, Action initialized)
 	{
 		this.actionWindowClose = tutorialCompleted;

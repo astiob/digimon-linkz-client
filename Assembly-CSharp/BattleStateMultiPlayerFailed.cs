@@ -16,6 +16,10 @@ public class BattleStateMultiPlayerFailed : BattleStateController
 	{
 		base.stateManager.soundPlayer.TryStopBGM();
 		base.stateManager.time.SetPlaySpeed(false, false);
+	}
+
+	protected override void DisabledThisState()
+	{
 		ClassSingleton<BattleDataStore>.Instance.DeleteForSystem();
 	}
 

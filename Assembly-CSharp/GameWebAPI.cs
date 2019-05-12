@@ -29,7 +29,7 @@ public class GameWebAPI : WebAPI
 
 	private void InitDisableVCList()
 	{
-		this.disableVCList = new string[]
+		this.disableVC_StaticList = new string[]
 		{
 			"000005",
 			"000004",
@@ -50,81 +50,21 @@ public class GameWebAPI : WebAPI
 			"020301",
 			"120110",
 			"120202",
-			"150024",
-			"990003",
-			"990101",
-			"990102",
-			"990103",
-			"990104",
-			"990106",
-			"990107",
-			"990108",
-			"990109",
-			"990110",
-			"990111",
-			"990112",
-			"990113",
-			"990114",
-			"990115",
-			"990116",
-			"990117",
-			"990118",
-			"990119",
-			"990120",
-			"990121",
-			"990201",
-			"990301",
-			"990302",
-			"990303",
-			"990304",
-			"990305",
-			"990306",
-			"990307",
-			"990308",
-			"990309",
-			"990310",
-			"990311",
-			"990312",
-			"990501",
-			"990601",
-			"990701",
-			"990801",
-			"990802",
-			"990901",
-			"990902",
-			"990903",
-			"990904",
-			"990905",
-			"990906",
-			"990907",
-			"990909",
-			"990910",
-			"990911",
-			"991001",
-			"991002",
-			"991101",
-			"991201",
-			"991202",
-			"991301",
-			"991302",
-			"991205",
-			"991401",
-			"991402",
-			"991403",
-			"991404",
-			"991501",
-			"999101",
-			"999102",
-			"999103"
+			"150024"
 		};
+		this.disableVC_DynamicList = new List<string>();
 	}
 
-	public void SetMasterDataVersion()
+	public void AddDisableVersionCheckApiId(string apiId)
 	{
-		if (null != MasterDataMng.Instance() && MasterDataMng.Instance().MasterDataVersion != null && MasterDataMng.Instance().MasterDataVersion.versionManagerMaster != null)
-		{
-			base.SetMasterDataVersion(MasterDataMng.Instance().MasterDataVersion.versionManagerMaster.version);
-		}
+		global::Debug.Assert(!this.disableVC_DynamicList.Contains(apiId), "disableVC リストに登録済みのAPIです (" + apiId + ")");
+		this.disableVC_DynamicList.Add(apiId);
+	}
+
+	public void RemoveDisableVersionCheckApiId(string apiId)
+	{
+		global::Debug.Assert(this.disableVC_DynamicList.Contains(apiId), "disableVC リストに未登録のAPIです (" + apiId + ")");
+		this.disableVC_DynamicList.Remove(apiId);
 	}
 
 	public IEnumerator SendActivityCheatLog(string errorType, string errorMessage, string errorApiId = null)
@@ -644,7 +584,7 @@ public class GameWebAPI : WebAPI
 
 		public sealed class SaleMonsterDataList
 		{
-			public int userMonsterId;
+			public string userMonsterId;
 		}
 	}
 
@@ -665,7 +605,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Picturebook : WebAPI.SendBaseData
 	{
-		public int targetUserId;
+		public string targetUserId;
 	}
 
 	public sealed class RespDataMN_Picturebook : WebAPI.ResponseData
@@ -696,9 +636,9 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Fusion : WebAPI.SendBaseData
 	{
-		public int baseMonster;
+		public string baseMonster;
 
-		public int[] materialMonster;
+		public string[] materialMonster;
 	}
 
 	public sealed class RespDataMN_FusionExec : WebAPI.ResponseData
@@ -718,7 +658,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Meal : WebAPI.SendBaseData
 	{
-		public int mealMonster;
+		public string mealMonster;
 
 		public int meatNum;
 	}
@@ -740,7 +680,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_HQMeal : WebAPI.SendBaseData
 	{
-		public int baseMonster;
+		public string baseMonster;
 
 		public int fusionType;
 
@@ -768,7 +708,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Evolution : WebAPI.SendBaseData
 	{
-		public int userMonsterId;
+		public string userMonsterId;
 
 		public int monsterId;
 	}
@@ -802,7 +742,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Grow : WebAPI.SendBaseData
 	{
-		public int userMonsterId;
+		public string userMonsterId;
 
 		public int shorteningFlg;
 
@@ -818,30 +758,6 @@ public class GameWebAPI : WebAPI
 		public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster;
 	}
 
-	public sealed class RequestMN_VersionUP : RequestTypeBase<GameWebAPI.MN_Req_VersionUP, GameWebAPI.RespDataMN_VersionUP>
-	{
-		public RequestMN_VersionUP()
-		{
-			this.apiId = "010802";
-		}
-	}
-
-	public sealed class MN_Req_VersionUP : WebAPI.SendBaseData
-	{
-		public int baseUserMonsterId;
-
-		public int target;
-
-		public int[] material;
-	}
-
-	public sealed class RespDataMN_VersionUP : WebAPI.ResponseData
-	{
-		public int result;
-
-		public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster;
-	}
-
 	public sealed class RequestMN_MonsterHatching : RequestTypeBase<GameWebAPI.MN_Req_Born, GameWebAPI.RespDataMN_BornExec>
 	{
 		public RequestMN_MonsterHatching()
@@ -852,7 +768,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Born : WebAPI.SendBaseData
 	{
-		public int userMonsterId;
+		public string userMonsterId;
 	}
 
 	public sealed class RespDataMN_BornExec : WebAPI.ResponseData
@@ -931,9 +847,9 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Labo : WebAPI.SendBaseData
 	{
-		public int baseUserMonsterId;
+		public string baseUserMonsterId;
 
-		public int materialUserMonsterId;
+		public string materialUserMonsterId;
 	}
 
 	public sealed class RespDataMN_LaboExec : WebAPI.ResponseData
@@ -955,9 +871,9 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_MedalInherit : WebAPI.SendBaseData
 	{
-		public int baseUserMonsterId;
+		public string baseUserMonsterId;
 
-		public int materialUserMonsterId;
+		public string materialUserMonsterId;
 	}
 
 	public sealed class RespDataMN_MedalInherit : WebAPI.ResponseData
@@ -975,9 +891,9 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_Success : WebAPI.SendBaseData
 	{
-		public int baseUserMonsterId;
+		public string baseUserMonsterId;
 
-		public int materialUserMonsterId;
+		public string materialUserMonsterId;
 
 		public int baseCommonSkillNumber;
 
@@ -1001,7 +917,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_FriendshipStatus : WebAPI.SendBaseData
 	{
-		public int userMonsterId;
+		public string userMonsterId;
 	}
 
 	public sealed class RespDataMN_Friendship : WebAPI.ResponseData
@@ -1040,7 +956,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class MN_Req_FriendTimeCheck : WebAPI.SendBaseData
 	{
-		public int[] userMonsterIds;
+		public string[] userMonsterIds;
 	}
 
 	public sealed class RespDataMN_FriendTimeCheck : WebAPI.ResponseData
@@ -1074,6 +990,30 @@ public class GameWebAPI : WebAPI
 
 	public sealed class RespDataMN_TrunceExec : WebAPI.ResponseData
 	{
+		public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster;
+	}
+
+	public sealed class RequestMN_VersionUP : RequestTypeBase<GameWebAPI.MN_Req_VersionUP, GameWebAPI.RespDataMN_VersionUP>
+	{
+		public RequestMN_VersionUP()
+		{
+			this.apiId = "010802";
+		}
+	}
+
+	public sealed class MN_Req_VersionUP : WebAPI.SendBaseData
+	{
+		public int baseUserMonsterId;
+
+		public int target;
+
+		public int[] material;
+	}
+
+	public sealed class RespDataMN_VersionUP : WebAPI.ResponseData
+	{
+		public int result;
+
 		public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster;
 	}
 
@@ -1304,6 +1244,8 @@ public class GameWebAPI : WebAPI
 			public string birthday;
 
 			public string titleId;
+
+			public string countryCode;
 		}
 
 		public sealed class LeaderMonster
@@ -1708,6 +1650,19 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
+	public sealed class RequestUS_RegisterLanguageInfo : RequestTypeBase<GameWebAPI.US_Req_RegisterLanguageInfo, WebAPI.ResponseData>
+	{
+		public RequestUS_RegisterLanguageInfo()
+		{
+			this.apiId = "020305";
+		}
+	}
+
+	public sealed class US_Req_RegisterLanguageInfo : WebAPI.SendBaseData
+	{
+		public int countryCode;
+	}
+
 	public sealed class RequestFR_FriendList : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataFR_FriendList>
 	{
 		public RequestFR_FriendList()
@@ -1931,6 +1886,8 @@ public class GameWebAPI : WebAPI
 	{
 		public int isTutorial;
 
+		public int countryCode;
+
 		public enum Type
 		{
 			NORMAL,
@@ -2121,6 +2078,8 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecChip.UserAssetList[] userAssetList;
 
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+
 		public sealed class UserAssetList
 		{
 			public string assetCategoryId;
@@ -2158,6 +2117,8 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList[] userDungeonTicketList;
 
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+
 		public sealed class UserDungeonTicketList
 		{
 			public string dungeonTicketId;
@@ -2170,12 +2131,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestSH_ShopList : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataSH_Info>
+	public sealed class RequestSH_ShopList : RequestTypeBase<GameWebAPI.SendDataSH_ShopList, GameWebAPI.RespDataSH_Info>
 	{
 		public RequestSH_ShopList()
 		{
 			this.apiId = "060001";
 		}
+	}
+
+	public sealed class SendDataSH_ShopList : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	public sealed class RespDataSH_Info : WebAPI.ResponseData
@@ -2197,6 +2163,8 @@ public class GameWebAPI : WebAPI
 			public string assetValue;
 
 			public string assetNum;
+
+			public string omakeFlg;
 		}
 
 		public sealed class ProductList
@@ -2215,15 +2183,25 @@ public class GameWebAPI : WebAPI
 
 			public string tier;
 
+			public string priority;
+
 			public string displayType;
 
 			public string limitCount;
+
+			public string purchasedCount;
 
 			public string osType;
 
 			public string img;
 
 			public string price;
+
+			public string countDownDispFlg;
+
+			public string packFlg;
+
+			public string closeTime;
 
 			public GameWebAPI.RespDataSH_Info.AcquireList[] acquireList;
 		}
@@ -3129,12 +3107,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class MissionInfoLogic : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMS_MissionInfoLogic>
+	public sealed class MissionInfoLogic : RequestTypeBase<GameWebAPI.SendDataMS_MissionInfoLogic, GameWebAPI.RespDataMS_MissionInfoLogic>
 	{
 		public MissionInfoLogic()
 		{
 			this.apiId = "110101";
 		}
+	}
+
+	public sealed class SendDataMS_MissionInfoLogic : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	public sealed class RespDataMS_MissionInfoLogic : WebAPI.ResponseData
@@ -3598,6 +3581,8 @@ public class GameWebAPI : WebAPI
 	public sealed class ReqDataUS_EventExchangeInfoLogic : WebAPI.SendBaseData
 	{
 		public int type;
+
+		public int countryCode;
 	}
 
 	public sealed class RespDataMS_EventExchangeInfoLogic : WebAPI.ResponseData
@@ -3961,12 +3946,17 @@ public class GameWebAPI : WebAPI
 		public int resultStatus;
 	}
 
-	public sealed class RequestIN_InfoList : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataIN_InfoList>
+	public sealed class RequestIN_InfoList : RequestTypeBase<GameWebAPI.SendDataIN_InfoList, GameWebAPI.RespDataIN_InfoList>
 	{
 		public RequestIN_InfoList()
 		{
 			this.apiId = "900001";
 		}
+	}
+
+	public sealed class SendDataIN_InfoList : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	public sealed class RespDataIN_InfoList : WebAPI.ResponseData
@@ -3987,12 +3977,27 @@ public class GameWebAPI : WebAPI
 
 			public int confirmationFlg;
 
+			public string startDateTime;
+
 			public int prizeStatus;
 
-			public string infoViewPath;
+			public int popupFlg;
 
-			public string startDateTime;
+			public int viewPriority;
 		}
+	}
+
+	public sealed class RequestIN_disablePopup : RequestTypeBase<GameWebAPI.SendDataIN_disablePopup, WebAPI.ResponseData>
+	{
+		public RequestIN_disablePopup()
+		{
+			this.apiId = "900002";
+		}
+	}
+
+	public sealed class SendDataIN_disablePopup : WebAPI.SendBaseData
+	{
+		public int userInfoId;
 	}
 
 	public sealed class RequestBL_BlockSet : RequestTypeBase<GameWebAPI.BL_Req_BlockSet, GameWebAPI.RespDataBL_BlockSet>
@@ -4126,12 +4131,17 @@ public class GameWebAPI : WebAPI
 		public int result;
 	}
 
-	public sealed class RequestMA_AssetCategoryMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetAssetCategoryM>
+	public sealed class RequestMA_AssetCategoryMaster : RequestTypeBase<GameWebAPI.RequestMA_AssetCategoryM, GameWebAPI.RespDataMA_GetAssetCategoryM>
 	{
 		public RequestMA_AssetCategoryMaster()
 		{
 			this.apiId = "990003";
 		}
+	}
+
+	public sealed class RequestMA_AssetCategoryM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4231,12 +4241,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_MonsterMasterOnlyGroupData : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetMonsterMG>
+	public sealed class RequestMA_MonsterMasterOnlyGroupData : RequestTypeBase<GameWebAPI.RequestMA_MonsterM, GameWebAPI.RespDataMA_GetMonsterMG>
 	{
 		public RequestMA_MonsterMasterOnlyGroupData()
 		{
 			this.apiId = "990103";
 		}
+	}
+
+	public sealed class RequestMA_MonsterM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4375,12 +4390,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_MonsterResistanceMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetMonsterResistanceM>
+	public sealed class RequestMA_MonsterResistanceMaster : RequestTypeBase<GameWebAPI.RequestMA_MonsterResistanceM, GameWebAPI.RespDataMA_GetMonsterResistanceM>
 	{
 		public RequestMA_MonsterResistanceMaster()
 		{
 			this.apiId = "990107";
 		}
+	}
+
+	public sealed class RequestMA_MonsterResistanceM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4425,12 +4445,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_SkillMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetSkillM>
+	public sealed class RequestMA_SkillMaster : RequestTypeBase<GameWebAPI.RequestMA_SkillM, GameWebAPI.RespDataMA_GetSkillM>
 	{
 		public RequestMA_SkillMaster()
 		{
 			this.apiId = "990108";
 		}
+	}
+
+	public sealed class RequestMA_SkillM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4634,12 +4659,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_MonsterTribeMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetMonsterTribeM>
+	public sealed class RequestMA_MonsterTribeMaster : RequestTypeBase<GameWebAPI.RequestMA_MonsterTribeM, GameWebAPI.RespDataMA_GetMonsterTribeM>
 	{
 		public RequestMA_MonsterTribeMaster()
 		{
 			this.apiId = "990111";
 		}
+	}
+
+	public sealed class RequestMA_MonsterTribeM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4656,12 +4686,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_MonsterGrowStepMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetMonsterGrowStepM>
+	public sealed class RequestMA_MonsterGrowStepMaster : RequestTypeBase<GameWebAPI.RequestMA_MonsterGrowStepM, GameWebAPI.RespDataMA_GetMonsterGrowStepM>
 	{
 		public RequestMA_MonsterGrowStepMaster()
 		{
 			this.apiId = "990112";
 		}
+	}
+
+	public sealed class RequestMA_MonsterGrowStepM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4937,12 +4972,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMonsterArousalMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_MonsterArousalMaster>
+	public sealed class RequestMonsterArousalMaster : RequestTypeBase<GameWebAPI.RequestMonsterArousalM, GameWebAPI.RespDataMA_MonsterArousalMaster>
 	{
 		public RequestMonsterArousalMaster()
 		{
 			this.apiId = "990118";
 		}
+	}
+
+	public sealed class RequestMonsterArousalM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -4963,12 +5003,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMonsterSpecificTypeMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_MonsterSpecificTypeMaster>
+	public sealed class RequestMonsterSpecificTypeMaster : RequestTypeBase<GameWebAPI.RequestMonsterSpecificTypeM, GameWebAPI.RespDataMA_MonsterSpecificTypeMaster>
 	{
 		public RequestMonsterSpecificTypeMaster()
 		{
 			this.apiId = "990119";
 		}
+	}
+
+	public sealed class RequestMonsterSpecificTypeM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -5123,12 +5168,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_SoulMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetSoulM>
+	public sealed class RequestMA_SoulMaster : RequestTypeBase<GameWebAPI.RequestMA_SoulM, GameWebAPI.RespDataMA_GetSoulM>
 	{
 		public RequestMA_SoulMaster()
 		{
 			this.apiId = "990201";
 		}
+	}
+
+	public sealed class RequestMA_SoulM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -5175,12 +5225,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_FacilityMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetFacilityM>
+	public sealed class RequestMA_FacilityMaster : RequestTypeBase<GameWebAPI.RequestMA_FacilityM, GameWebAPI.RespDataMA_GetFacilityM>
 	{
 		public RequestMA_FacilityMaster()
 		{
 			this.apiId = "990301";
 		}
+	}
+
+	public sealed class RequestMA_FacilityM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -5273,12 +5328,17 @@ public class GameWebAPI : WebAPI
 		public FacilityHouseM[] facilityHouseM;
 	}
 
-	public sealed class RequestMA_FacilityConditionM : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_FacilityConditionM>
+	public sealed class RequestMA_FacilityConditionMaster : RequestTypeBase<GameWebAPI.RequestMA_FacilityConditionM, GameWebAPI.RespDataMA_FacilityConditionM>
 	{
-		public RequestMA_FacilityConditionM()
+		public RequestMA_FacilityConditionMaster()
 		{
 			this.apiId = "990308";
 		}
+	}
+
+	public sealed class RequestMA_FacilityConditionM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -5287,9 +5347,9 @@ public class GameWebAPI : WebAPI
 		public FacilityConditionM[] facilityConditionM;
 	}
 
-	public sealed class RequestMA_FacilityExtraEffectM : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_FacilityExtraEffectM>
+	public sealed class RequestMA_FacilityExtraEffectMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_FacilityExtraEffectM>
 	{
-		public RequestMA_FacilityExtraEffectM()
+		public RequestMA_FacilityExtraEffectMaster()
 		{
 			this.apiId = "990309";
 		}
@@ -5329,12 +5389,17 @@ public class GameWebAPI : WebAPI
 		public FacilityChipM[] facilityChipM;
 	}
 
-	public sealed class RequestMA_FacilityKeyMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetFacilityKeyM>
+	public sealed class RequestMA_FacilityKeyMaster : RequestTypeBase<GameWebAPI.RequestMA_FacilityKeyM, GameWebAPI.RespDataMA_GetFacilityKeyM>
 	{
 		public RequestMA_FacilityKeyMaster()
 		{
 			this.apiId = "990312";
 		}
+	}
+
+	public sealed class RequestMA_FacilityKeyM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -5343,12 +5408,17 @@ public class GameWebAPI : WebAPI
 		public FacilityKeyM[] facilityKeyM;
 	}
 
-	public sealed class RequestMA_TipsMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetTipsM>
+	public sealed class RequestMA_TipsMaster : RequestTypeBase<GameWebAPI.RequestMA_TipsM, GameWebAPI.RespDataMA_GetTipsM>
 	{
 		public RequestMA_TipsMaster()
 		{
 			this.apiId = "990501";
 		}
+	}
+
+	public sealed class RequestMA_TipsM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -5393,12 +5463,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_BannerMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_BannerM>
+	public sealed class RequestMA_BannerMaster : RequestTypeBase<GameWebAPI.RequestMA_BannerM, GameWebAPI.RespDataMA_BannerM>
 	{
 		public RequestMA_BannerMaster()
 		{
 			this.apiId = "990601";
 		}
+	}
+
+	public sealed class RequestMA_BannerM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	public sealed class RespDataMA_BannerM : WebAPI.ResponseData
@@ -6589,12 +6664,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_MessageMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_MessageM>
+	public sealed class RequestMA_MessageMaster : RequestTypeBase<GameWebAPI.RequestMA_MessageM, GameWebAPI.RespDataMA_MessageM>
 	{
 		public RequestMA_MessageMaster()
 		{
 			this.apiId = "990801";
 		}
+	}
+
+	public sealed class RequestMA_MessageM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -6619,12 +6699,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_WorldAreaMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetWorldAreaM>
+	public sealed class RequestMA_WorldAreaMaster : RequestTypeBase<GameWebAPI.RequestMA_WorldAreaM, GameWebAPI.RespDataMA_GetWorldAreaM>
 	{
 		public RequestMA_WorldAreaMaster()
 		{
 			this.apiId = "990903";
 		}
+	}
+
+	public sealed class RequestMA_WorldAreaM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -6659,12 +6744,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_WorldStageMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetWorldStageM>
+	public sealed class RequestMA_WorldStageMaster : RequestTypeBase<GameWebAPI.RequestMA_WorldStageM, GameWebAPI.RespDataMA_GetWorldStageM>
 	{
 		public RequestMA_WorldStageMaster()
 		{
 			this.apiId = "990904";
 		}
+	}
+
+	public sealed class RequestMA_WorldStageM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -6701,12 +6791,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_WorldDungeonMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetWorldDungeonM>
+	public sealed class RequestMA_WorldDungeonMaster : RequestTypeBase<GameWebAPI.RequestMA_WorldDungeonM, GameWebAPI.RespDataMA_GetWorldDungeonM>
 	{
 		public RequestMA_WorldDungeonMaster()
 		{
 			this.apiId = "990905";
 		}
+	}
+
+	public sealed class RequestMA_WorldDungeonM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -6887,6 +6982,8 @@ public class GameWebAPI : WebAPI
 			public string effectTurn;
 
 			public string effectCount;
+
+			public string detail;
 		}
 	}
 
@@ -7008,12 +7105,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_HelpCategoryMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetHelpCategoryM>
+	public sealed class RequestMA_HelpCategoryMaster : RequestTypeBase<GameWebAPI.RequestMA_HelpCategoryM, GameWebAPI.RespDataMA_GetHelpCategoryM>
 	{
 		public RequestMA_HelpCategoryMaster()
 		{
 			this.apiId = "991001";
 		}
+	}
+
+	public sealed class RequestMA_HelpCategoryM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7032,12 +7134,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_HelpMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetHelpM>
+	public sealed class RequestMA_HelpMaster : RequestTypeBase<GameWebAPI.RequestMA_HelpM, GameWebAPI.RespDataMA_GetHelpM>
 	{
 		public RequestMA_HelpMaster()
 		{
 			this.apiId = "991002";
 		}
+	}
+
+	public sealed class RequestMA_HelpM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7064,12 +7171,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_ItemMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_GetItemM>
+	public sealed class RequestMA_ItemMaster : RequestTypeBase<GameWebAPI.RequestMA_ItemM, GameWebAPI.RespDataMA_GetItemM>
 	{
 		public RequestMA_ItemMaster()
 		{
 			this.apiId = "991101";
 		}
+	}
+
+	public sealed class RequestMA_ItemM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7138,12 +7250,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_ColosseumMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_ColosseumM>
+	public sealed class RequestMA_ColosseumMaster : RequestTypeBase<GameWebAPI.RequestMA_ColosseumM, GameWebAPI.RespDataMA_ColosseumM>
 	{
 		public RequestMA_ColosseumMaster()
 		{
 			this.apiId = "991201";
 		}
+	}
+
+	public sealed class RequestMA_ColosseumM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7206,12 +7323,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_ColosseumRankMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_ColosseumRankM>
+	public sealed class RequestMA_ColosseumRankMaster : RequestTypeBase<GameWebAPI.RequestMA_ColosseumRankM, GameWebAPI.RespDataMA_ColosseumRankM>
 	{
 		public RequestMA_ColosseumRankMaster()
 		{
 			this.apiId = "991205";
 		}
+	}
+
+	public sealed class RequestMA_ColosseumRankM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7238,12 +7360,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMA_ChipMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_ChipM>
+	public sealed class RequestMA_ChipMaster : RequestTypeBase<GameWebAPI.RequestMA_ChipM, GameWebAPI.RespDataMA_ChipM>
 	{
 		public RequestMA_ChipMaster()
 		{
 			this.apiId = "991301";
 		}
+	}
+
+	public sealed class RequestMA_ChipM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7326,8 +7453,6 @@ public class GameWebAPI : WebAPI
 
 			public string targetValue2;
 
-			public string monsterGroupId;
-
 			public string effectType;
 
 			public string effectSubType;
@@ -7336,11 +7461,13 @@ public class GameWebAPI : WebAPI
 
 			public string effectTriggerValue;
 
+			public string effectTrigger2;
+
+			public string effectTriggerValue2;
+
 			public string effectTurnType;
 
 			public string effectTurn;
-
-			public string effectCount;
 
 			public string effectValue;
 
@@ -7409,12 +7536,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestDataMA_EventPointBonusM : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_EventPointBonusM>
+	public sealed class RequestDataMA_EventPointBonusMaster : RequestTypeBase<GameWebAPI.RequestDataMA_EventPointBonusM, GameWebAPI.RespDataMA_EventPointBonusM>
 	{
-		public RequestDataMA_EventPointBonusM()
+		public RequestDataMA_EventPointBonusMaster()
 		{
 			this.apiId = "991402";
 		}
+	}
+
+	public sealed class RequestDataMA_EventPointBonusM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7509,12 +7641,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestDataMA_DungeonTicketMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_DungeonTicketMaster>
+	public sealed class RequestDataMA_DungeonTicketMaster : RequestTypeBase<GameWebAPI.RequestDataMA_DungeonTicketM, GameWebAPI.RespDataMA_DungeonTicketMaster>
 	{
 		public RequestDataMA_DungeonTicketMaster()
 		{
 			this.apiId = "991501";
 		}
+	}
+
+	public sealed class RequestDataMA_DungeonTicketM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7563,12 +7700,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestDataMA_TitleMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_TitleMaster>
+	public sealed class RequestDataMA_TitleMaster : RequestTypeBase<GameWebAPI.RequestDataMA_TitleM, GameWebAPI.RespDataMA_TitleMaster>
 	{
 		public RequestDataMA_TitleMaster()
 		{
 			this.apiId = "999103";
 		}
+	}
+
+	public sealed class RequestDataMA_TitleM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -7591,12 +7733,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestDataMA_WorldDungeonAdventureSceneMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster>
+	public sealed class RequestDataMA_WorldDungeonAdventureSceneMaster : RequestTypeBase<GameWebAPI.RequestDataMA_WorldDungeonAdventureSceneM, GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster>
 	{
 		public RequestDataMA_WorldDungeonAdventureSceneMaster()
 		{
 			this.apiId = "990912";
 		}
+	}
+
+	public sealed class RequestDataMA_WorldDungeonAdventureSceneM : WebAPI.SendBaseData
+	{
+		public int countryCode;
 	}
 
 	[Serializable]
@@ -8015,7 +8162,7 @@ public class GameWebAPI : WebAPI
 			}
 			if (this.chipIdList != null && 0 < this.chipIdList.Length)
 			{
-				monsterData.SetChipIdList(this.chipIdList);
+				monsterData.GetChipEquip().SetChipIdList(this.chipIdList);
 			}
 			return monsterData;
 		}
@@ -8024,6 +8171,8 @@ public class GameWebAPI : WebAPI
 	public class ResponseData_Common_MultiRoomList : WebAPI.ResponseData
 	{
 		public GameWebAPI.ResponseData_Common_MultiRoomList.room[] multiRoomList;
+
+		public int friendRequestFlag;
 
 		public class room
 		{

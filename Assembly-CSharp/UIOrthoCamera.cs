@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Orthographic Camera")]
+[ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
 public class UIOrthoCamera : MonoBehaviour
 {

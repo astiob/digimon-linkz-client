@@ -104,7 +104,7 @@ public sealed class MonsterResistanceList : MonoBehaviour
 
 	public void SetValues(MonsterData monsterData)
 	{
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(monsterData.monsterM.resistanceId);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(monsterData.monsterM.resistanceId);
 		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
 		this.SetValues(values);

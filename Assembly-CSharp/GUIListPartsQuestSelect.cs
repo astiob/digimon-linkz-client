@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class GUIListPartsQuestSelect : GUIListPartBS
 {
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[Header("バナー読み込み失敗時のテキスト")]

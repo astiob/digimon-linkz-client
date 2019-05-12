@@ -1,4 +1,6 @@
 ﻿using CharacterMiniStatusUI;
+using Chip;
+using Cutscene;
 using Evolution;
 using EvolutionRouteMap;
 using Master;
@@ -7,6 +9,7 @@ using Picturebook;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WebAPIRequest;
 
 public sealed class CMD_Evolution : CMD
 {
@@ -29,8 +32,8 @@ public sealed class CMD_Evolution : CMD
 	[SerializeField]
 	private UILabel ngTXT_CHIP;
 
-	[Header("各進化先のリンク")]
 	[SerializeField]
+	[Header("各進化先のリンク")]
 	private GameObject goListParts;
 
 	private GUISelectPanelEvolution csSelectPanelEvolution;
@@ -42,10 +45,6 @@ public sealed class CMD_Evolution : CMD
 	private List<EvolutionData.MonsterEvolveData> monsterEvolveDataList;
 
 	private EvolutionData.MonsterEvolveData evolveDataBK;
-
-	private int beforeMonsterGroupId;
-
-	private int afterMonsterGroupId;
 
 	private int execClusterNum;
 
@@ -64,6 +63,7 @@ public sealed class CMD_Evolution : CMD
 		this.SetCommonUI_Evolution();
 		this.InitEvolution();
 		base.Show(f, sizeX, sizeY, aT);
+		base.SetTutorialAnyTime("anytime_second_tutorial_evolution");
 	}
 
 	public override void ClosePanel(bool animation = true)
@@ -179,15 +179,14 @@ public sealed class CMD_Evolution : CMD
 		this.EndCloseEvolveDo();
 	}
 
-	private void EndCloseEvolveDo()
+	private RequestList CreateRequest()
 	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		this.beforeMonsterGroupId = int.Parse(this.evolveDataBK.md.monsterM.monsterGroupId);
-		GameWebAPI.RequestMN_MonsterEvolution request = new GameWebAPI.RequestMN_MonsterEvolution
+		RequestList requestList = new RequestList();
+		GameWebAPI.RequestMN_MonsterEvolution addRequest = new GameWebAPI.RequestMN_MonsterEvolution
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_Evolution param)
 			{
-				param.userMonsterId = int.Parse(this.evolveDataBK.md.userMonster.userMonsterId);
+				param.userMonsterId = this.evolveDataBK.md.userMonster.userMonsterId;
 				param.monsterId = int.Parse(this.evolveDataBK.md_next.monsterM.monsterId);
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_EvolutionExec response)
@@ -201,21 +200,33 @@ public sealed class CMD_Evolution : CMD
 				{
 					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW;
 				}
-				GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] addMonsterList = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[]
-				{
-					response.userMonster
-				};
-				GameWebAPI.MonsterSlotInfoListLogic request2 = ChipDataMng.RequestAPIMonsterSlotInfo(addMonsterList);
-				AppCoroutine.Start(request2.Run(new Action(this.EndEvolveDo), delegate(Exception noop)
-				{
-					RestrictionInput.EndLoad();
-				}, null), false);
 			}
 		};
-		AppCoroutine.Start(request.Run(null, null, null), false);
+		requestList.AddRequest(addRequest);
+		GameWebAPI.MonsterSlotInfoListLogic addRequest2 = ChipAPIRequest.RequestAPIMonsterSlotInfo(new int[]
+		{
+			int.Parse(this.evolveDataBK.md.userMonster.userMonsterId)
+		});
+		requestList.AddRequest(addRequest2);
+		return requestList;
 	}
 
-	private void EndEvolveDo()
+	private void EndCloseEvolveDo()
+	{
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		string beforeModelId = this.evolveDataBK.md.GetMonsterMaster().Group.modelId;
+		string beforeGrowStep = this.evolveDataBK.md.GetMonsterMaster().Group.growStep;
+		RequestList requestList = this.CreateRequest();
+		AppCoroutine.Start(requestList.Run(delegate()
+		{
+			this.EndEvolveDo(beforeModelId, beforeGrowStep);
+		}, delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null), false);
+	}
+
+	private void EndEvolveDo(string monsterModelId, string monsterGrowStep)
 	{
 		if (this.evolveDataBK.mem.effectType != "2")
 		{
@@ -225,58 +236,78 @@ public sealed class CMD_Evolution : CMD
 		DataMng.Instance().US_PlayerInfoSubChipNum(this.execClusterNum);
 		this.UpdateClusterNum();
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		List<int> umidList = ClassSingleton<EvolutionData>.Instance.EvolvePostProcess(this.evolveDataBK);
-		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.evolveDataBK.md.userMonster.userMonsterId, true);
-		string path = string.Empty;
-		bool flag = false;
-		int growStep = int.Parse(monsterDataByUserMonsterID.monsterMG.growStep);
-		if (MonsterGrowStepData.IsUltimateScope(growStep))
+		ClassSingleton<EvolutionData>.Instance.EvolvePostProcess(this.evolveDataBK.itemList);
+		string partnerModelId = string.Empty;
+		if ("0" != this.evolveDataBK.mem.effectMonsterId)
 		{
-			flag = true;
+			MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(this.evolveDataBK.mem.effectMonsterId);
+			if (monsterMasterByMonsterId != null)
+			{
+				partnerModelId = monsterMasterByMonsterId.Group.modelId;
+			}
 		}
+		MonsterUserData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(this.evolveDataBK.md.GetMonster().userMonsterId);
+		if (!MonsterPicturebookData.ExistPicturebook(userMonster.GetMonsterMaster().Group.monsterCollectionId))
+		{
+			MonsterPicturebookData.AddPictureBook(userMonster.GetMonsterMaster().Group.monsterCollectionId);
+		}
+		CutsceneDataBase cutsceneData = null;
 		string effectType = this.evolveDataBK.mem.effectType;
 		switch (effectType)
 		{
 		case "1":
-		case "5":
-			if (flag)
+			if (MonsterGrowStepData.IsUltimateScope(userMonster.GetMonsterMaster().Group.growStep))
 			{
-				path = "Cutscenes/EvolutionUltimate";
+				cutsceneData = new CutsceneDataEvolutionUltimate
+				{
+					path = "Cutscenes/EvolutionUltimate",
+					beforeModelId = monsterModelId,
+					afterModelId = userMonster.GetMonsterMaster().Group.modelId,
+					endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
+				};
 			}
 			else
 			{
-				path = "Cutscenes/Evolution";
+				cutsceneData = new CutsceneDataEvolution
+				{
+					path = "Cutscenes/Evolution",
+					beforeModelId = monsterModelId,
+					beforeGrowStep = monsterGrowStep,
+					afterModelId = userMonster.GetMonsterMaster().Group.modelId,
+					afterGrowStep = userMonster.GetMonsterMaster().Group.growStep,
+					endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
+				};
 			}
 			break;
 		case "2":
-			path = "Cutscenes/ModeChange";
+			cutsceneData = new CutsceneDataModeChange
+			{
+				path = "Cutscenes/ModeChange",
+				beforeModelId = monsterModelId,
+				afterModelId = userMonster.GetMonsterMaster().Group.modelId,
+				endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
+			};
 			break;
 		case "3":
 		case "4":
-			path = "Cutscenes/Jogress";
+			cutsceneData = new CutsceneDataJogress
+			{
+				path = "Cutscenes/Jogress",
+				beforeModelId = monsterModelId,
+				afterModelId = userMonster.GetMonsterMaster().Group.modelId,
+				partnerModelId = partnerModelId,
+				endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
+			};
 			break;
 		}
-		this.afterMonsterGroupId = int.Parse(monsterDataByUserMonsterID.monsterM.monsterGroupId);
-		List<int> umidList2 = new List<int>
-		{
-			this.beforeMonsterGroupId,
-			this.afterMonsterGroupId
-		};
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(path, new Action<int>(this.StartCutSceneCallBack), delegate(int index)
-		{
-			CutSceneMain.FadeReqCutSceneEnd();
-		}, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
 		{
 			this.ShowCompletedCutin(evolutionType);
-		}, umidList2, umidList, 2, 1, 0.5f, 0.5f);
-		if (!MonsterPicturebookData.ExistPicturebook(monsterDataByUserMonsterID.GetMonsterMaster().Group.monsterCollectionId))
-		{
-			MonsterPicturebookData.AddPictureBook(monsterDataByUserMonsterID.GetMonsterMaster().Group.monsterCollectionId);
-		}
+		}, 0.5f, 0.5f);
 	}
 
-	private void StartCutSceneCallBack(int i)
+	private void StartCutSceneCallBack()
 	{
 		if (CMD_BaseSelect.instance != null)
 		{

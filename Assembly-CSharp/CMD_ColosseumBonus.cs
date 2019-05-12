@@ -63,6 +63,7 @@ public sealed class CMD_ColosseumBonus : CMD
 		rewardIconRoot.SetRewardList(this.rewardList);
 		this.messageLabel.text = rewardIconRoot.itemName;
 		this.titleTextMeshPro.text = title;
+		CountrySetting.ConvertTMProText(ref this.titleTextMeshPro);
 		this.isInitialized = true;
 	}
 }

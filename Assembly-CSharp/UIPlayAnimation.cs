@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Play Animation")]
+[ExecuteInEditMode]
 public class UIPlayAnimation : MonoBehaviour
 {
 	public static UIPlayAnimation current;

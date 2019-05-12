@@ -28,6 +28,7 @@ namespace EvolutionDiagram
 
 		protected override void OnShowDialog()
 		{
+			base.SetTutorialAnyTime("anytime_second_tutorial_evolution_rootmap");
 			base.PartsTitle.SetTitle(StringMaster.GetString("EvolutionDiagramTitle"));
 			this.buttonList.Initialize();
 			GrowStep defaultSelectGrowStep = this.buttonList.GetDefaultSelectGrowStep();

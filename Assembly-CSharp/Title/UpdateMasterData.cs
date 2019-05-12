@@ -58,7 +58,10 @@ namespace Title
 			yield return AppCoroutine.Start(MasterDataMng.Instance().GetMasterDataUpdateInfo(updateInfoList), false);
 			yield return AppCoroutine.Start(this.UpgradeMasterData(updateInfoList), false);
 			MasterDataMng.Instance().ReleaseFileIO();
-			GameWebAPI.Instance().SetMasterDataVersion();
+			if (MasterDataMng.Instance().MasterDataVersion.versionManagerMaster != null)
+			{
+				GameWebAPI.Instance().SetMasterDataVersion(MasterDataMng.Instance().MasterDataVersion.versionManagerMaster.version);
+			}
 			this.CreateMasterDataCache();
 			yield break;
 		}

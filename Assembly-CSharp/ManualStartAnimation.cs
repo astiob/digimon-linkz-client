@@ -12,8 +12,8 @@ public class ManualStartAnimation : MonoBehaviour
 	[SerializeField]
 	private ManualStartAnimation.AnimateSign _animateSign;
 
-	[Range(0f, 10f)]
 	[SerializeField]
+	[Range(0f, 10f)]
 	private float _speed = 1f;
 
 	private void Start()

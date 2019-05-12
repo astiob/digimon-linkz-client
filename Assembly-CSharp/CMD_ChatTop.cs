@@ -171,6 +171,7 @@ public class CMD_ChatTop : CMD
 			this.CheckColosseumOpenStatus();
 			ClassSingleton<ChatData>.Instance.UpdateMaxJoinState();
 			this.ShowDLG();
+			this.SetTutorialAnyTime("anytime_second_tutorial_digichat");
 			this.SetCommonUI();
 			this.Show(f, sizeX, sizeY, aT);
 			this.setTabView();
@@ -341,7 +342,7 @@ public class CMD_ChatTop : CMD
 		this.partMultiParent.SetActive(true);
 		this.partMultiList.SetActive(true);
 		this.csPartMultiParent.initLocation = true;
-		this.csPartMultiParent.AllBuild(data);
+		this.csPartMultiParent.AllBuild(data, null);
 		this.partMultiList.SetActive(false);
 		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.chatTabAlertList[0] = false;
 		this.DispAlertIcon(ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.chatTabAlertList);

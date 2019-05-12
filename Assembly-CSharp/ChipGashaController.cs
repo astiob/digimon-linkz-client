@@ -1,264 +1,208 @@
-﻿using System;
+﻿using Cutscene;
+using Cutscene.UI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChipGashaController : MonoBehaviour
+public sealed class ChipGashaController : CutsceneBase
 {
-	private Action<int> endCallBack;
-
-	[Header("動作ロケーターのゲームオブジェクト、のリスト")]
 	[SerializeField]
-	[Header("MAX １０個")]
+	private GameObject lightLocatorRoot;
+
+	[Header("動作ロケーターのゲームオブジェクト一覧")]
+	[SerializeField]
 	private List<GameObject> goLocatorList;
 
-	[Header("MAX １０個")]
 	[SerializeField]
-	[Header("動作ロケーターライト用のゲームオブジェクト、のリスト")]
+	[Header("動作ロケーター光弾用のゲームオブジェクト一覧")]
 	private List<GameObject> goLightLocatorList;
 
-	[Header("素材のゲームオブジェクト、のリスト、順番は以下")]
 	[SerializeField]
-	[Header("ライト")]
+	[Header("光弾エフェクト")]
 	private GameObject goPartsLight;
 
-	[Header("青→青")]
 	[SerializeField]
+	[Header("青色→青色")]
 	private GameObject goPartsBlue;
 
-	[Header("青→黄")]
 	[SerializeField]
+	[Header("青色→黄色")]
 	private GameObject goPartsYellow;
 
+	[Header("青色→虹色")]
 	[SerializeField]
-	[Header("青→虹")]
 	private GameObject goPartsRainbow;
 
-	[SerializeField]
 	[Header("フェードアウト開始フレーム")]
+	[SerializeField]
 	private int startFadeOutFrame;
 
 	[SerializeField]
 	[Header("メインカメラ")]
-	public Camera mainCam;
+	private Camera mainCam;
 
 	[SerializeField]
-	[Header("2Dカメラ")]
-	public Camera camUI;
+	private AllSkipButtonForGUI allSkipButton;
 
 	[SerializeField]
-	[Header("白フェード板")]
-	private GUISprite spFade;
+	private GameObject animationRoot;
 
-	[Header("白フェード速度")]
-	[SerializeField]
-	private float fadeSpeed = 0.05f;
-
-	[SerializeField]
-	[Header("スキップ・コリダー")]
-	private BoxCollider skipCollider;
+	private Action<RenderTexture> endCallback;
 
 	private int frameCT;
 
-	private int frameLast = 80000;
+	private ChipGashaController.EndState endState;
 
-	private bool fadeON;
-
-	private UITexture chipGashaTex;
-
-	private RenderTexture renderTex;
-
-	public Action<int> EndCallBack
+	private void SetEffectLocator(GameObject locator, GameObject effect)
 	{
-		set
-		{
-			this.endCallBack = value;
-		}
+		Transform transform = effect.transform;
+		Vector3 localScale = transform.localScale;
+		transform.parent = locator.transform;
+		transform.localPosition = Vector3.zero;
+		transform.localRotation = Quaternion.identity;
+		transform.localScale = localScale;
+		effect.SetActive(true);
 	}
 
-	public GameWebAPI.RespDataGA_ExecChip.UserAssetList[] UserAssetList { get; set; }
-
-	private void Awake()
+	private void StartFadeOut()
 	{
-		base.name = "Cutscene";
+		this.endState = ChipGashaController.EndState.FADE_OUT;
+		this.allSkipButton.Hide();
+		this.fade.StartFadeOut(new Action(this.EndCutscene));
 	}
 
-	private void Start()
+	private void EndCutscene()
 	{
-		this.ApplyParts();
+		RenderTexture renderTexture = new RenderTexture(1200, 1200, 16);
+		renderTexture.antiAliasing = 2;
+		this.mainCam.targetTexture = renderTexture;
+		this.lightLocatorRoot.SetActive(false);
+		this.endState = ChipGashaController.EndState.FINISH_RENDER_TEXTURE;
 	}
 
-	public void SetChipGashaTex(UITexture tex)
+	private void Finish()
 	{
-		this.renderTex = new RenderTexture(1200, 1200, 16);
-		this.renderTex.antiAliasing = 2;
-		this.chipGashaTex = tex;
-		this.chipGashaTex.mainTexture = this.renderTex;
-		this.chipGashaTex.width = this.renderTex.width;
-		this.chipGashaTex.height = this.renderTex.height;
-	}
-
-	private void Update()
-	{
-		this.UpdateSkip();
-		if (this.frameCT == this.startFadeOutFrame)
+		if (this.endCallback != null)
 		{
-			this.fadeON = true;
+			this.endCallback(this.mainCam.targetTexture);
 		}
-		if (this.fadeON)
-		{
-			Color color = this.spFade.color;
-			color.a += this.fadeSpeed;
-			if (color.a >= 1f)
-			{
-				color.a = 1f;
-				this.fadeON = false;
-				this.frameLast = this.frameCT;
-				this.mainCam.targetTexture = this.renderTex;
-				if (this.endCallBack != null)
-				{
-					this.endCallBack(0);
-				}
-			}
-			this.spFade.color = color;
-		}
-		if (this.frameCT == this.frameLast + 2)
-		{
-			this.mainCam.targetTexture = null;
-			UnityEngine.Object.Destroy(base.gameObject);
-			GC.Collect();
-			Resources.UnloadUnusedAssets();
-		}
-		this.frameCT++;
-	}
-
-	private void DoSkip()
-	{
-		if (this.frameCT < this.startFadeOutFrame)
-		{
-			this.frameCT = this.startFadeOutFrame;
-			this.fadeSpeed *= 4f;
-			this.InActiveAllParts();
-		}
-	}
-
-	private void UpdateSkip()
-	{
-		List<Touch> touch = this.GetTouch();
-		if (touch.Count > 0)
-		{
-			Ray ray = this.camUI.ScreenPointToRay(new Vector3(touch[0].position.x, touch[0].position.y, 0f));
-			RaycastHit[] array = Physics.RaycastAll(ray);
-			if (array.Length > 0)
-			{
-				for (int i = 0; i < array.Length; i++)
-				{
-					if (array[i].collider == this.skipCollider)
-					{
-						this.DoSkip();
-						global::Debug.Log("======================================== CUT SCENE SKIP !! ");
-					}
-				}
-			}
-		}
-	}
-
-	private List<Touch> GetTouch()
-	{
-		List<Touch> list = new List<Touch>();
-		if (Input.touchCount > 0)
-		{
-			for (int i = 0; i < Input.touchCount; i++)
-			{
-				Touch touch = Input.GetTouch(i);
-				list.Add(touch);
-			}
-		}
-		return list;
-	}
-
-	private void ApplyParts()
-	{
-		List<GameObject> list = new List<GameObject>();
-		List<GameObject> list2 = new List<GameObject>();
-		if (this.UserAssetList == null)
-		{
-			System.Random random = new System.Random();
-			this.UserAssetList = new GameWebAPI.RespDataGA_ExecChip.UserAssetList[10];
-			for (int i = 0; i < this.UserAssetList.Length; i++)
-			{
-				this.UserAssetList[i] = new GameWebAPI.RespDataGA_ExecChip.UserAssetList();
-				int num = random.Next(1, 4);
-				this.UserAssetList[i].effectType = num.ToString();
-			}
-		}
-		for (int i = 0; i < this.UserAssetList.Length; i++)
-		{
-			string effectType = this.UserAssetList[i].effectType;
-			GameObject item = null;
-			string text = effectType;
-			switch (text)
-			{
-			case "1":
-				item = UnityEngine.Object.Instantiate<GameObject>(this.goPartsBlue);
-				break;
-			case "2":
-				item = UnityEngine.Object.Instantiate<GameObject>(this.goPartsYellow);
-				break;
-			case "3":
-				item = UnityEngine.Object.Instantiate<GameObject>(this.goPartsRainbow);
-				break;
-			}
-			list.Add(item);
-			item = UnityEngine.Object.Instantiate<GameObject>(this.goPartsLight);
-			list2.Add(item);
-		}
-		Quaternion localRotation = Quaternion.Euler(0f, 0f, 0f);
-		Vector3 localScale = Vector3.one;
-		for (int i = 0; i < this.goLocatorList.Count; i++)
-		{
-			if (i < list.Count)
-			{
-				this.goLocatorList[i].SetActive(true);
-				localScale = list[i].transform.localScale;
-				list[i].transform.parent = this.goLocatorList[i].transform;
-				list[i].transform.localPosition = Vector3.zero;
-				list[i].transform.localRotation = localRotation;
-				list[i].transform.localScale = localScale;
-				list[i].SetActive(true);
-			}
-			else
-			{
-				this.goLocatorList[i].SetActive(false);
-			}
-		}
-		for (int i = 0; i < this.goLightLocatorList.Count; i++)
-		{
-			if (i < list2.Count)
-			{
-				this.goLightLocatorList[i].SetActive(true);
-				localScale = list2[i].transform.localScale;
-				list2[i].transform.parent = this.goLightLocatorList[i].transform;
-				list2[i].transform.localPosition = Vector3.zero;
-				list2[i].transform.localRotation = localRotation;
-				list2[i].transform.localScale = localScale;
-				list2[i].SetActive(true);
-			}
-			else
-			{
-				this.goLightLocatorList[i].SetActive(false);
-			}
-		}
-	}
-
-	private void InActiveAllParts()
-	{
 		for (int i = 0; i < this.goLocatorList.Count; i++)
 		{
 			this.goLocatorList[i].SetActive(false);
 		}
-		for (int i = 0; i < this.goLightLocatorList.Count; i++)
+		for (int j = 0; j < this.goLocatorList.Count; j++)
 		{
-			this.goLightLocatorList[i].SetActive(false);
+			this.goLightLocatorList[j].SetActive(false);
 		}
+		this.mainCam.targetTexture = null;
+		UnityEngine.Object.Destroy(base.gameObject);
+		GC.Collect();
+		Resources.UnloadUnusedAssets();
+	}
+
+	protected override void OnStartCutscene()
+	{
+		if (!this.animationRoot.gameObject.activeSelf)
+		{
+			this.animationRoot.gameObject.SetActive(true);
+		}
+	}
+
+	protected override void OnUpdate()
+	{
+		if (this.startFadeOutFrame < this.frameCT)
+		{
+			if (this.endState == ChipGashaController.EndState.FINISH_ANIMATION)
+			{
+				this.StartFadeOut();
+			}
+			else if (this.endState == ChipGashaController.EndState.FINISH_RENDER_TEXTURE)
+			{
+				this.Finish();
+			}
+		}
+		this.frameCT++;
+	}
+
+	public override void SetData(CutsceneDataBase data)
+	{
+		CutsceneDataChipGasha cutsceneDataChipGasha = data as CutsceneDataChipGasha;
+		if (cutsceneDataChipGasha != null)
+		{
+			this.endCallback = cutsceneDataChipGasha.endCallback;
+			this.allSkipButton.Initialize();
+			this.allSkipButton.AddAction(delegate
+			{
+				this.frameCT = this.startFadeOutFrame;
+				this.StartFadeOut();
+			});
+			GameWebAPI.RespDataGA_ExecChip.UserAssetList[] gashaResult = cutsceneDataChipGasha.gashaResult;
+			int i = 0;
+			while (i < gashaResult.Length)
+			{
+				string effectType = gashaResult[i].effectType;
+				string text = effectType;
+				if (text == null)
+				{
+					goto IL_CB;
+				}
+				if (ChipGashaController.<>f__switch$map9 == null)
+				{
+					ChipGashaController.<>f__switch$map9 = new Dictionary<string, int>(3)
+					{
+						{
+							"1",
+							0
+						},
+						{
+							"2",
+							1
+						},
+						{
+							"3",
+							2
+						}
+					};
+				}
+				int num;
+				if (!ChipGashaController.<>f__switch$map9.TryGetValue(text, out num))
+				{
+					goto IL_CB;
+				}
+				GameObject effect;
+				switch (num)
+				{
+				default:
+					goto IL_CB;
+				case 1:
+					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsYellow);
+					break;
+				case 2:
+					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsRainbow);
+					break;
+				}
+				IL_FE:
+				this.SetEffectLocator(this.goLocatorList[i], effect);
+				effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsLight);
+				this.SetEffectLocator(this.goLightLocatorList[i], effect);
+				i++;
+				continue;
+				IL_CB:
+				effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsBlue);
+				goto IL_FE;
+			}
+			for (int j = gashaResult.Length; j < this.goLocatorList.Count; j++)
+			{
+				this.goLocatorList[j].SetActive(false);
+				this.goLightLocatorList[j].SetActive(false);
+			}
+		}
+	}
+
+	private enum EndState
+	{
+		FINISH_ANIMATION,
+		FADE_OUT,
+		FINISH_RENDER_TEXTURE
 	}
 }

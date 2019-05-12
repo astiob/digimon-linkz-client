@@ -2,39 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Label")]
+[ExecuteInEditMode]
 public class UILabel : UIWidget
 {
 	public UILabel.Crispness keepCrispWhenShrunk = UILabel.Crispness.OnDesktop;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Font mTrueTypeFont;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIFont mFont;
 
-	[HideInInspector]
 	[SerializeField]
 	[Multiline(6)]
+	[HideInInspector]
 	private string mText = string.Empty;
 
 	[SerializeField]
 	[HideInInspector]
 	private int mFontSize = 16;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private FontStyle mFontStyle;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private NGUIText.Alignment mAlignment;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mEncoding = true;
 
 	[SerializeField]
@@ -53,8 +53,8 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private NGUIText.SymbolStyle mSymbols = NGUIText.SymbolStyle.Normal;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector2 mEffectDistance = Vector2.one;
 
 	[SerializeField]
@@ -73,16 +73,16 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private Color mGradientTop = Color.white;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingX;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingY;
 
 	[SerializeField]
@@ -97,24 +97,24 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private float mFloatSpacingY;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mOverflowEllipsis;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mShrinkToFit;
 
 	[SerializeField]
 	[HideInInspector]
 	private int mMaxLineWidth;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mMaxLineHeight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mLineWidth;
 
 	[HideInInspector]

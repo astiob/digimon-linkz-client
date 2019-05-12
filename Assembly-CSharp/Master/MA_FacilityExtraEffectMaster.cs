@@ -17,7 +17,7 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMA_FacilityExtraEffectM
+			return new GameWebAPI.RequestMA_FacilityExtraEffectMaster
 			{
 				OnReceived = new Action<GameWebAPI.RespDataMA_FacilityExtraEffectM>(base.SetResponse)
 			};

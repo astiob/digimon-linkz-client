@@ -129,8 +129,6 @@ public static class ChatConstValue
 
 	public const string PF_PROFILE_FRIEND = "CMD_ProfileFriend";
 
-	public const string PF_MULTI_RECRUIT_PARTY_WAIT = "CMD_MultiRecruitPartyWait";
-
 	public static readonly string[] SPRITE_GROUP_CATEGORY = new string[]
 	{
 		string.Empty,

@@ -9,16 +9,16 @@ public class UITexture : UIBasicSprite
 	[SerializeField]
 	private Rect mRect = new Rect(0f, 0f, 1f, 1f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Texture mTexture;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material mMat;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Shader mShader;
 
 	[SerializeField]

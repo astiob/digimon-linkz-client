@@ -108,7 +108,7 @@ namespace MonsterList.TranceResistance
 						GUIMonsterIcon icon2 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterDataList[i]);
 						this.iconGrayOut.SetPartnerIcon(icon2);
 					}
-					else if (baseDigimon != null && (monsterDataList[i].userMonster.IsLocked || 0 < partnerMonsterList.Count))
+					else if (baseDigimon != null && (monsterDataList[i].userMonster.IsLocked || MonsterStatusData.IsSpecialTrainingType(monsterDataList[i].GetMonsterMaster().Group.monsterType) || 0 < partnerMonsterList.Count))
 					{
 						GUIMonsterIcon icon3 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterDataList[i]);
 						this.iconGrayOut.BlockLockIcon(icon3);

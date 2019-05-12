@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Edge Detection/Edge Detection")]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Edge Detection/Edge Detection")]
 	[ExecuteInEditMode]
 	public class EdgeDetection : PostEffectsBase
 	{

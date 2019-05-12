@@ -4,18 +4,18 @@ using UnityEngine.Serialization;
 
 public sealed class SharedApNotes : MonoBehaviour
 {
+	[SerializeField]
 	[FormerlySerializedAs("iconActive")]
 	[Header("APアイコン (有効)")]
-	[SerializeField]
 	private UIBasicSprite _iconActive;
 
-	[FormerlySerializedAs("iconDeactive")]
 	[Header("APアイコン (無効)")]
 	[SerializeField]
+	[FormerlySerializedAs("iconDeactive")]
 	private UIBasicSprite _iconDeactive;
 
-	[SerializeField]
 	[Header("AP UITweenerActivePlay")]
+	[SerializeField]
 	[FormerlySerializedAs("tweenerActivePlays")]
 	private UITweenerActivePlay _tweenerActivePlays;
 
@@ -24,8 +24,8 @@ public sealed class SharedApNotes : MonoBehaviour
 	[FormerlySerializedAs("multiAPUpEffects")]
 	private GameObject _multiAPUpEffect;
 
-	[Header("AP Activeエフェクト")]
 	[FormerlySerializedAs("multiAPActiveEffects")]
+	[Header("AP Activeエフェクト")]
 	[SerializeField]
 	private GameObject _multiAPActiveEffect;
 

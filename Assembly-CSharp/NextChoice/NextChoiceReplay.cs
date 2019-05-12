@@ -8,15 +8,15 @@ namespace NextChoice
 {
 	public sealed class NextChoiceReplay
 	{
-		private CMD_BattleNextChoice nextChoiceWindow;
+		private Action restartCallBack;
 
 		private CMD_ChangePOP_STONE confirmDialogRecoverStamina;
 
 		private int shopBeforeStoneNum;
 
-		public NextChoiceReplay(CMD_BattleNextChoice cmdNextChoice)
+		public NextChoiceReplay(Action cb)
 		{
-			this.nextChoiceWindow = cmdNextChoice;
+			this.restartCallBack = cb;
 		}
 
 		private bool CheckStamina()
@@ -47,8 +47,7 @@ namespace NextChoice
 			GameWebAPI.WD_Req_DngStart last_dng_req = DataMng.Instance().GetResultUtilData().last_dng_req;
 			if (!ClassSingleton<QuestData>.Instance.ExistEvent(last_dng_req.dungeonId))
 			{
-				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-				this.nextChoiceWindow.RequestDungeonStart();
+				this.restartCallBack();
 			}
 			else
 			{

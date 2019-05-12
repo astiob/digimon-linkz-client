@@ -23,7 +23,7 @@ public class CMD_Picturebook : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		int userId = DataMng.Instance().RespDataCM_Login.playerInfo.UserId;
+		string userId = DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 		this.SetCommonUI();
 		base.HideDLG();
 		APIRequestTask apirequestTask = this.LoadPicturebookData(userId);
@@ -63,10 +63,7 @@ public class CMD_Picturebook : CMD
 
 	protected override void WindowClosed()
 	{
-		if (MonsterDataMng.Instance() != null)
-		{
-			MonsterDataMng.Instance().PushBackAllMonsterPrefab();
-		}
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.WindowClosed();
 	}
 
@@ -96,13 +93,13 @@ public class CMD_Picturebook : CMD
 		this.selectPanelPicturebookIcon.selectParts.transform.SetParent(this.thumbnail.transform);
 	}
 
-	private APIRequestTask LoadPicturebookData(int TargetUserID)
+	private APIRequestTask LoadPicturebookData(string targetUserID)
 	{
 		GameWebAPI.RequestFA_MN_PicturebookExec request = new GameWebAPI.RequestFA_MN_PicturebookExec
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_Picturebook param)
 			{
-				param.targetUserId = TargetUserID;
+				param.targetUserId = targetUserID;
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_Picturebook response)
 			{
@@ -139,10 +136,10 @@ public class CMD_Picturebook : CMD
 		{
 			if (monsterM[i].GetArousal() == 0)
 			{
-				GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterM[i].monsterGroupId);
-				if ("0" != monsterGroupMasterByMonsterGroupId.monsterCollectionId && !this.ExistCollectionId(monsterGroupMasterByMonsterGroupId.monsterCollectionId))
+				GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterM[i].monsterGroupId).Group;
+				if ("0" != group.monsterCollectionId && !this.ExistCollectionId(group.monsterCollectionId))
 				{
-					this.collectionIconMonsterDataList.Add(this.GetCollectionMonsterIconData(monsterGroupMasterByMonsterGroupId, monsterM[i]));
+					this.collectionIconMonsterDataList.Add(this.GetCollectionMonsterIconData(group, monsterM[i]));
 				}
 			}
 		}

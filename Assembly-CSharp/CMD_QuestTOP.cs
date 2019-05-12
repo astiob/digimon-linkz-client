@@ -30,16 +30,16 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private UserStamina userStamina;
 
-	[Header("クリッピングしているオブジェクト達")]
 	[SerializeField]
+	[Header("クリッピングしているオブジェクト達")]
 	private GameObject[] clipObjects;
 
 	[Header("ポイントクエスト用 ROOT")]
 	[SerializeField]
 	private GameObject goPartsPointROOT;
 
-	[Header("ポイントクエスト用（ランキングなし） ROOT")]
 	[SerializeField]
+	[Header("ポイントクエスト用（ランキングなし） ROOT")]
 	private GameObject goPartsPointWithoutRankingROOT;
 
 	[Header("ポイントクエスト用 BG")]
@@ -220,6 +220,11 @@ public class CMD_QuestTOP : CMD
 		{
 			AppCoroutine.Start(this.DownloadBannerTexture(bgpath), false);
 		}
+		string anyTimeQuestTopTutorialFileName = this.GetAnyTimeQuestTopTutorialFileName(this.worldStageData[0].worldStageM.worldAreaId);
+		if (!string.IsNullOrEmpty(anyTimeQuestTopTutorialFileName))
+		{
+			base.SetTutorialAnyTime(anyTimeQuestTopTutorialFileName);
+		}
 	}
 
 	private IEnumerator DownloadBannerTexture(string path)
@@ -318,6 +323,30 @@ public class CMD_QuestTOP : CMD
 		{
 			GUICollider.EnableAllCollider("CMD_QuestTOP");
 		}
+	}
+
+	private string GetAnyTimeQuestTopTutorialFileName(string worldAreaId)
+	{
+		string result = string.Empty;
+		switch (worldAreaId)
+		{
+		case "1":
+			result = "anytime_second_tutorial_quest";
+			break;
+		case "2":
+			result = "anytime_second_tutorial_quest_week";
+			break;
+		case "3":
+			result = "anytime_second_tutorial_quest_advent";
+			break;
+		case "8":
+			result = string.Empty;
+			break;
+		case "9":
+			result = "anytime_second_tutorial_quest_beginner";
+			break;
+		}
+		return result;
 	}
 
 	public void HideClips()
@@ -826,7 +855,7 @@ public class CMD_QuestTOP : CMD
 
 	private void OnTapMultiParticipateButton()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop");
+		CMD_MultiRecruitTop.CreateTargetStage(this.StageDataBk.worldDungeonM.worldDungeonId);
 	}
 
 	private void OnClosePartySelect(int i)

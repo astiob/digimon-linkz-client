@@ -71,7 +71,6 @@ public class PrefabFolder : MonoBehaviour
 			gameObject.transform.parent = base.transform;
 			gameObject.transform.localScale = localScale;
 			gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
-			global::Debug.Log("ReplacePrefab");
 			gameObject.name = name;
 			this.target = gameObject;
 		}

@@ -113,14 +113,14 @@ namespace AdventureScene
 					this.runCommand.commandAddress = commandAddress;
 					if (!this.runCommand.RunScriptCommand())
 					{
-						global::Debug.LogWarning("エラー発生");
+						global::Debug.LogWarning("コマンド実行時にエラー発生：プレーンテキスト使用時は " + commandAddress + " 行目");
 						this.isError = true;
 					}
 					global::Debug.Log(string.Concat(new object[]
 					{
-						"RunCommand (",
+						"プレーンテキスト使用時は ",
 						commandAddress,
-						") : ",
+						" 行目: ",
 						this.runCommand.GetType()
 					}));
 					this.continueCommand = this.runCommand.continueAnalyze;
@@ -137,7 +137,7 @@ namespace AdventureScene
 		{
 			if (!this.runCommand.UpdateCommand())
 			{
-				global::Debug.LogWarning("エラー発生");
+				global::Debug.LogWarning("コマンド処理中にエラー発生");
 				this.isError = true;
 			}
 		}
@@ -165,6 +165,10 @@ namespace AdventureScene
 			this.SetCommand(new EffectLocatorCommand());
 			this.SetCommand(new EffectRotationCommand());
 			this.SetCommand(new WorldShakeCommand());
+			this.SetCommand(new LoadBattleStageCommand());
+			this.SetCommand(new ReleaseBattleStageCommand());
+			this.SetCommand(new LoadBattleCameraCommand());
+			this.SetCommand(new BattleCharaShowCommand());
 			this.InitTutorialScriptEngine();
 		}
 

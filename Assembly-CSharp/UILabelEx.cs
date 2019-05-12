@@ -20,4 +20,11 @@ public class UILabelEx : UILabel
 	{
 		return this.masterString;
 	}
+
+	public void SetStringKeyText(string key)
+	{
+		this.stringMasterKey = key;
+		this.masterString = StringMaster.GetString(key);
+		base.text = this.masterString;
+	}
 }

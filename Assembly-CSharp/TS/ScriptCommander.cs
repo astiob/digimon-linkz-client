@@ -45,6 +45,14 @@ namespace TS
 
 		public void MsgEnd(string[] commandParams)
 		{
+			if (2 <= commandParams.Length)
+			{
+				this.commandParams.textInfo.autoFeedTime = ScriptUtil.GetFloat(commandParams[1]);
+			}
+			else
+			{
+				this.commandParams.textInfo.autoFeedTime = 0f;
+			}
 		}
 
 		public void Select(string[] commandParams)

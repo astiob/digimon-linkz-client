@@ -8,12 +8,12 @@ namespace MonsterList.ChangeMonster
 {
 	public sealed class CMD_ChangeMonster : CMD
 	{
-		[Header("ベース用チップ装備")]
 		[SerializeField]
+		[Header("ベース用チップ装備")]
 		private ChipBaseSelect baseChipBaseSelect;
 
-		[SerializeField]
 		[Header("パートナー用チップ装備")]
+		[SerializeField]
 		private ChipBaseSelect partnerChipBaseSelect;
 
 		[SerializeField]
@@ -219,7 +219,7 @@ namespace MonsterList.ChangeMonster
 
 		protected override void WindowClosed()
 		{
-			MonsterDataMng.Instance().PushBackAllMonsterPrefab();
+			ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 			base.WindowClosed();
 		}
 
@@ -246,7 +246,7 @@ namespace MonsterList.ChangeMonster
 				this.detailedNowMonsterSuccessionSkill2.SetSkill(CMD_ChangeMonster.SelectMonsterData);
 				if (MonsterStatusData.IsVersionUp(CMD_ChangeMonster.SelectMonsterData.GetMonsterMaster().Simple.rare))
 				{
-					if (CMD_ChangeMonster.SelectMonsterData.commonSkillM2 == null)
+					if (CMD_ChangeMonster.SelectMonsterData.GetExtraCommonSkill() == null)
 					{
 						this.nowMonsterSuccessionSkillGrayReady.SetActive(true);
 						this.detailedNowMonsterSuccessionSkillGrayReady.SetActive(true);
@@ -302,7 +302,7 @@ namespace MonsterList.ChangeMonster
 			this.detailedChangeMonsterSuccessionSkill2.SetSkill(this.changeMonsterData);
 			if (MonsterStatusData.IsVersionUp(this.changeMonsterData.GetMonsterMaster().Simple.rare))
 			{
-				if (this.changeMonsterData.commonSkillM2 == null)
+				if (this.changeMonsterData.GetExtraCommonSkill() == null)
 				{
 					this.changeMonsterSuccessionSkillGrayReady.SetActive(true);
 					this.detailedChangeMonsterSuccessionSkillGrayReady.SetActive(true);
@@ -395,16 +395,13 @@ namespace MonsterList.ChangeMonster
 
 		private void InitMonsterList()
 		{
-			MonsterDataMng.Instance().ClearSortMessAll();
-			MonsterDataMng.Instance().ClearLevelMessAll();
+			ClassSingleton<GUIMonsterIconList>.Instance.ResetIconState();
 			List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
-			list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 			MonsterDataMng.Instance().SortMDList(list);
+			MonsterDataMng.Instance().SetSortLSMessage();
 			this.csSelectPanelMonsterIcon.initLocation = true;
 			Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-			MonsterDataMng.Instance().SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
-			MonsterDataMng.Instance().SetSelectOffAll();
-			MonsterDataMng.Instance().ClearDimmMessAll();
 			this.csSelectPanelMonsterIcon.useLocationRecord = true;
 			this.csSelectPanelMonsterIcon.SetCheckEnablePushAction(new Func<MonsterData, bool>(this.CheckEnablePush));
 			this.targetMonsterList = list;

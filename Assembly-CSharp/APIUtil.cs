@@ -158,6 +158,8 @@ public sealed class APIUtil : MonoBehaviour
 		requestGA_GashaInfo.SetSendData = delegate(GameWebAPI.GA_Req_GashaInfo param)
 		{
 			param.isTutorial = (int)type;
+			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			param.countryCode = countryCode;
 		};
 		requestGA_GashaInfo.OnReceived = delegate(GameWebAPI.RespDataGA_GetGachaInfo response)
 		{
@@ -344,14 +346,24 @@ public sealed class APIUtil : MonoBehaviour
 		requestCP_Campaign.OnReceived = new Action<GameWebAPI.RespDataCP_Campaign>(this.OnRecievedCampaign);
 		GameWebAPI.RequestCP_Campaign addRequest2 = requestCP_Campaign;
 		requestList.AddRequest(addRequest2);
-		requestList.AddRequest(new GameWebAPI.RequestIN_InfoList
+		RequestList requestList2 = requestList;
+		GameWebAPI.RequestIN_InfoList requestIN_InfoList = new GameWebAPI.RequestIN_InfoList();
+		requestIN_InfoList.SetSendData = delegate(GameWebAPI.SendDataIN_InfoList requestParam)
 		{
-			OnReceived = new Action<GameWebAPI.RespDataIN_InfoList>(this.OnRecievedInformationList)
-		});
-		requestList.AddRequest(new GameWebAPI.RequestMA_BannerMaster
+			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			requestParam.countryCode = countryCode;
+		};
+		requestIN_InfoList.OnReceived = new Action<GameWebAPI.RespDataIN_InfoList>(this.OnRecievedInformationList);
+		requestList2.AddRequest(requestIN_InfoList);
+		RequestList requestList3 = requestList;
+		GameWebAPI.RequestMA_BannerMaster requestMA_BannerMaster = new GameWebAPI.RequestMA_BannerMaster();
+		requestMA_BannerMaster.SetSendData = delegate(GameWebAPI.RequestMA_BannerM requestParam)
 		{
-			OnReceived = new Action<GameWebAPI.RespDataMA_BannerM>(this.OnRecievedBannerMaster)
-		});
+			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			requestParam.countryCode = countryCode;
+		};
+		requestMA_BannerMaster.OnReceived = new Action<GameWebAPI.RespDataMA_BannerM>(this.OnRecievedBannerMaster);
+		requestList3.AddRequest(requestMA_BannerMaster);
 		GameWebAPI.RequestUS_UserProfile requestUS_UserProfile = new GameWebAPI.RequestUS_UserProfile();
 		requestUS_UserProfile.SetSendData = delegate(GameWebAPI.PRF_Req_ProfileData param)
 		{

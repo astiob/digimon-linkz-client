@@ -13,4 +13,6 @@ public sealed class SkillResults
 	public bool onMissHit;
 
 	public CharacterStateControl targetCharacter;
+
+	public ExtraEffectType extraEffectType;
 }

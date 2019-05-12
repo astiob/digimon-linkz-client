@@ -8,17 +8,27 @@ public sealed class CMD_ClearingHouseTop : CMD
 
 	private GUITips tips;
 
+	public static CMD_ClearingHouseTop instance;
+
 	protected override void Awake()
 	{
+		CMD_ClearingHouseTop.instance = this;
 		GUIManager.CloseAllCommonDialog(null);
 		base.Awake();
 		this.menu = base.gameObject.GetComponent<GUIExchangeMenu>();
 		this.tips = base.gameObject.GetComponent<GUITips>();
 	}
 
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+		CMD_ClearingHouseTop.instance = null;
+	}
+
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("ExchangeTitle"));
+		base.SetTutorialAnyTime("anytime_second_tutorial_exchange");
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
 		APIRequestTask task = ClassSingleton<ExchangeWebAPI>.Instance.AccessEventExchangeInfoLogicAPI();
@@ -54,5 +64,14 @@ public sealed class CMD_ClearingHouseTop : CMD
 	{
 		base.WindowOpened();
 		FarmCameraControlForCMD.Off();
+	}
+
+	public void Rebuild()
+	{
+		this.menu.Init();
+		GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] eventExchangeInfoLogicData = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData;
+		bool flag = eventExchangeInfoLogicData != null && eventExchangeInfoLogicData.Length > 0 && eventExchangeInfoLogicData[0] != null;
+		GUITips.TIPS_DISP_TYPE dispType = (!flag) ? GUITips.TIPS_DISP_TYPE.NoneExchangeNavi : GUITips.TIPS_DISP_TYPE.ExchangeNavi;
+		this.tips.Init(dispType);
 	}
 }

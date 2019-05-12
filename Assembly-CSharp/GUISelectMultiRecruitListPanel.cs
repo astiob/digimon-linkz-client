@@ -7,36 +7,27 @@ public class GUISelectMultiRecruitListPanel : GUISelectPanelBSPartsUD
 {
 	private GameWebAPI.ResponseData_Common_MultiRoomList nowRoomList;
 
-	protected override void Awake()
+	public void AllBuild(GameWebAPI.ResponseData_Common_MultiRoomList roomInfo, CMD_MultiRecruitTop parentDialog)
 	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public void AllBuild(GameWebAPI.ResponseData_Common_MultiRoomList data)
-	{
-		this.nowRoomList = data;
+		this.nowRoomList = roomInfo;
 		int num = 0;
 		base.InitBuild();
-		if (data.multiRoomList != null)
+		if (roomInfo.multiRoomList != null)
 		{
-			this.partsCount = data.multiRoomList.Length;
+			this.partsCount = roomInfo.multiRoomList.Length;
 			if (base.selectCollider != null)
 			{
 				GUISelectPanelBSPartsUD.PanelBuildData panelBuildData = base.CalcBuildData(1, this.partsCount, 1f, 1f);
 				float startX = panelBuildData.startX;
 				float num2 = panelBuildData.startY;
-				foreach (GameWebAPI.ResponseData_Common_MultiRoomList.room room in data.multiRoomList)
+				foreach (GameWebAPI.ResponseData_Common_MultiRoomList.room room in roomInfo.multiRoomList)
 				{
 					GameObject gameObject = base.AddBuildPart();
 					GUIListMultiRecruitListParts component = gameObject.GetComponent<GUIListMultiRecruitListParts>();
 					if (component != null)
 					{
 						component.SetOriginalPos(new Vector3(startX, num2, -5f));
+						component.SetParentDialog(parentDialog);
 						component.Data = room;
 					}
 					if (room.multiRoomRequestId != null && num < int.Parse(room.multiRoomRequestId))
@@ -55,7 +46,7 @@ public class GUISelectMultiRecruitListPanel : GUISelectPanelBSPartsUD
 		}
 	}
 
-	public void ReBuild(List<string> excludeRoomIdList)
+	public void ReBuild(List<string> excludeRoomIdList, CMD_MultiRecruitTop parentDialog)
 	{
 		base.InitBuild();
 		if (this.nowRoomList.multiRoomList != null)
@@ -90,6 +81,7 @@ public class GUISelectMultiRecruitListPanel : GUISelectPanelBSPartsUD
 						if (component != null)
 						{
 							component.SetOriginalPos(new Vector3(startX, num, -5f));
+							component.SetParentDialog(parentDialog);
 							component.Data = data;
 						}
 						num -= panelBuildData.pitchH;
@@ -100,7 +92,7 @@ public class GUISelectMultiRecruitListPanel : GUISelectPanelBSPartsUD
 			}
 			else
 			{
-				CMD_MultiRecruitTop.instance.ClickUpdateBtn();
+				parentDialog.ClickUpdateBtn();
 			}
 		}
 	}

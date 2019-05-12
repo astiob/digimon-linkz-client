@@ -4,10 +4,8 @@ using MultiBattle.Tools;
 using System;
 using UnityEngine;
 
-public class CMD_MultiRecruitPass : CMD
+public sealed class CMD_MultiRecruitPass : CMD
 {
-	public static CMD_MultiRecruitPass instance;
-
 	[SerializeField]
 	private UILabel ngTX_MESSAGE;
 
@@ -32,32 +30,13 @@ public class CMD_MultiRecruitPass : CMD
 	[SerializeField]
 	private BoxCollider submitButtonCollider;
 
-	protected override void Awake()
-	{
-		base.Awake();
-		CMD_MultiRecruitPass.instance = this;
-	}
+	private CMD_MultiRecruitTop parentDialog;
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		base.Show(f, sizeX, sizeY, aT);
 		this.SetInitLabel();
 		this.SetGrayButton(true);
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 
 	private void SetInitLabel()
@@ -75,17 +54,18 @@ public class CMD_MultiRecruitPass : CMD
 			if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
 			{
 				MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-				GameWebAPI.MultiRoomJoin multiRoomJoin = new GameWebAPI.MultiRoomJoin();
-				multiRoomJoin.SetSendData = delegate(GameWebAPI.ReqData_MultiRoomJoin param)
+				GameWebAPI.MultiRoomJoin request = new GameWebAPI.MultiRoomJoin
 				{
-					param.roomId = 0;
-					param.password = this.multiRecruitPassInput.value;
+					SetSendData = delegate(GameWebAPI.ReqData_MultiRoomJoin param)
+					{
+						param.roomId = 0;
+						param.password = this.multiRecruitPassInput.value;
+					},
+					OnReceived = delegate(GameWebAPI.RespData_MultiRoomJoin response)
+					{
+						this.parentDialog.passInputJoinData = response;
+					}
 				};
-				multiRoomJoin.OnReceived = delegate(GameWebAPI.RespData_MultiRoomJoin response)
-				{
-					CMD_MultiRecruitTop.instance.passInputJoinData = response;
-				};
-				GameWebAPI.MultiRoomJoin request = multiRoomJoin;
 				base.StartCoroutine(request.RunOneTime(delegate()
 				{
 					RestrictionInput.EndLoad();
@@ -135,5 +115,10 @@ public class CMD_MultiRecruitPass : CMD
 		}
 		this.ngTX_BTN_YES.color = ((!isGray) ? Color.white : Color.gray);
 		this.submitButtonCollider.enabled = !isGray;
+	}
+
+	public void SetParentDialog(CMD_MultiRecruitTop dialog)
+	{
+		this.parentDialog = dialog;
 	}
 }

@@ -80,6 +80,9 @@ public sealed class CMD_Profile : CMD_ProfileBase
 	[SerializeField]
 	private UILabel playHistoryText;
 
+	[SerializeField]
+	private UILabel titleText;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -103,6 +106,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		{
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
+			this.SetTutorialAnyTime("anytime_second_tutorial_profile");
 			this.InitProfile(f, sizeX, sizeY, aT);
 		}, delegate(Exception nop)
 		{
@@ -124,6 +128,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		this.fullScreenText.text = StringMaster.GetString("CharaDetailsFullScreen");
 		this.blockListText.text = StringMaster.GetString("BlockListTitle");
 		this.playHistoryText.text = StringMaster.GetString("PlayHistoryTitle");
+		this.titleText.text = StringMaster.GetString("EditUserTitle");
 	}
 
 	protected override void dataReload()

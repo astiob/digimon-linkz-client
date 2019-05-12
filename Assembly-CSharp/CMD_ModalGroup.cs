@@ -12,8 +12,8 @@ public sealed class CMD_ModalGroup : CMD
 	[Header("サブタイトルラベル")]
 	private UILabel subTitleLabel;
 
-	[Header("サブタイトルのGameObject")]
 	[SerializeField]
+	[Header("サブタイトルのGameObject")]
 	private GameObject subTitleGO;
 
 	[SerializeField]

@@ -1,244 +1,211 @@
-﻿using System;
-using System.Collections;
+﻿using Cutscene;
+using Cutscene.UI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TicketGashaController : MonoBehaviour
+public sealed class TicketGashaController : CutsceneBase
 {
-	[Header("カードアニメフレーム間隔")]
 	[SerializeField]
+	[Header("カードアニメフレーム間隔")]
 	private int cardAnimIntervalFrame;
 
 	[Header("メインカメラ")]
 	[SerializeField]
-	public Camera mainCam;
-
-	[SerializeField]
-	[Header("2Dカメラ")]
-	public Camera camUI;
-
-	[Header("白フェード板")]
-	[SerializeField]
-	private GUISprite spFade;
-
-	[Header("白フェード速度")]
-	[SerializeField]
-	private float fadeSpeed = 0.05f;
-
-	[SerializeField]
-	[Header("スキップ・コリダー")]
-	private BoxCollider skipCollider;
+	private Camera mainCam;
 
 	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
 	[SerializeField]
 	private List<GameObject> goCardEfcList;
 
-	[SerializeField]
 	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
+	[SerializeField]
 	private List<GameObject> goCardAnimList;
 
-	private UITexture ticketGashaTex;
+	[SerializeField]
+	private AllSkipButtonForGUI allSkipButton;
 
-	private RenderTexture renderTex;
+	[SerializeField]
+	private GameObject animationRoot;
 
-	private Action<int> endCallBack;
+	private Action<RenderTexture> endCallback;
+
+	private string[] effectTypeList;
+
+	private List<GameObject> goCardList = new List<GameObject>();
+
+	private int startFadeOutFrame;
 
 	private int cardEfcCT;
 
 	private int cardFrameCT;
 
-	private List<GameObject> goCardList = new List<GameObject>();
-
 	private int frameCT;
 
-	private int frameLast = 80000;
+	private TicketGashaController.EndState endState;
 
-	private bool fadeON;
-
-	private int startFadeOutFrame;
-
-	private void Awake()
-	{
-		base.name = "Cutscene";
-	}
-
-	public void SetTicketGashaTex(UITexture tex)
-	{
-		this.renderTex = new RenderTexture(1200, 1200, 16);
-		this.renderTex.antiAliasing = 2;
-		this.ticketGashaTex = tex;
-		this.ticketGashaTex.mainTexture = this.renderTex;
-		this.ticketGashaTex.width = this.renderTex.width;
-		this.ticketGashaTex.height = this.renderTex.height;
-	}
-
-	public Action<int> EndCallBack
-	{
-		set
-		{
-			this.endCallBack = value;
-		}
-	}
-
-	public GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList[] UserTicketList { get; set; }
-
-	private void Start()
-	{
-		if (this.UserTicketList == null)
-		{
-			this.UserTicketList = new GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList[10];
-			for (int i = 0; i < this.UserTicketList.Length; i++)
-			{
-				this.UserTicketList[i] = new GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList();
-				this.UserTicketList[i].effectType = (i % 3 + 1).ToString();
-			}
-		}
-		this.startFadeOutFrame = this.cardAnimIntervalFrame * this.UserTicketList.Length + 10;
-	}
-
-	private void UpdateCardEfc()
-	{
-		if (this.UserTicketList != null)
-		{
-			if (this.cardFrameCT % this.cardAnimIntervalFrame == 0 && this.cardEfcCT < this.UserTicketList.Length)
-			{
-				if (this.UserTicketList.Length == 1)
-				{
-					this.KickEfc(this.UserTicketList[this.cardEfcCT].effectType, false);
-				}
-				else
-				{
-					this.KickEfc(this.UserTicketList[this.cardEfcCT].effectType, true);
-				}
-				this.cardEfcCT++;
-			}
-			this.cardFrameCT++;
-		}
-	}
-
-	private void KickEfc(string effectType, bool useRand = true)
+	private GameObject CreateEffectCard(string effectType)
 	{
 		int index = int.Parse(effectType) - 1;
-		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.goCardAnimList[index]);
-		Vector3 localPosition = gameObject.transform.localPosition;
-		localPosition.z = 110f;
-		if (useRand)
-		{
-			float num = UnityEngine.Random.Range(-5f, 5f);
-			float num2 = UnityEngine.Random.Range(-2f, 2f);
-			localPosition.x += num;
-			localPosition.y += num2;
-		}
-		Vector3 localScale = gameObject.transform.localScale;
-		Quaternion localRotation = gameObject.transform.localRotation;
-		gameObject.transform.parent = this.mainCam.gameObject.transform;
-		gameObject.transform.localPosition = localPosition;
-		gameObject.transform.localScale = localScale;
-		gameObject.transform.localRotation = localRotation;
-		GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(this.goCardEfcList[index]);
-		localPosition = gameObject2.transform.localPosition;
-		localPosition.z += 0.1f;
-		localScale = gameObject2.transform.localScale;
-		localRotation = gameObject2.transform.localRotation;
-		using (IEnumerator enumerator = gameObject.transform.GetEnumerator())
-		{
-			if (enumerator.MoveNext())
-			{
-				Transform parent = (Transform)enumerator.Current;
-				gameObject2.transform.parent = parent;
-			}
-		}
-		gameObject2.transform.localPosition = localPosition;
-		gameObject2.transform.localScale = localScale;
-		gameObject2.transform.localRotation = localRotation;
-		this.goCardList.Add(gameObject);
+		GameObject original = this.goCardAnimList[index];
+		return UnityEngine.Object.Instantiate<GameObject>(original);
 	}
 
-	private void DestroyEfc()
+	private GameObject CreateEffectStar(string effectType)
 	{
+		int index = int.Parse(effectType) - 1;
+		GameObject original = this.goCardEfcList[index];
+		return UnityEngine.Object.Instantiate<GameObject>(original);
+	}
+
+	private Vector3 GetPosition(GameObject card)
+	{
+		Vector3 localPosition = card.transform.localPosition;
+		localPosition.z = 110f;
+		return localPosition;
+	}
+
+	private Vector3 GetRandomPosition(GameObject card)
+	{
+		Vector3 localPosition = card.transform.localPosition;
+		localPosition.z = 110f;
+		float num = UnityEngine.Random.Range(-5f, 5f);
+		float num2 = UnityEngine.Random.Range(-2f, 2f);
+		localPosition.x += num;
+		localPosition.y += num2;
+		return localPosition;
+	}
+
+	private void KickEffectCard(GameObject card, Vector3 position)
+	{
+		Transform transform = card.transform;
+		Vector3 localScale = transform.localScale;
+		Quaternion localRotation = transform.localRotation;
+		transform.parent = this.mainCam.gameObject.transform;
+		transform.localPosition = position;
+		transform.localScale = localScale;
+		transform.localRotation = localRotation;
+		this.goCardList.Add(card);
+	}
+
+	private void KickEffectStar(GameObject star, GameObject parentEffect)
+	{
+		Transform transform = star.transform;
+		Vector3 localPosition = transform.localPosition;
+		localPosition.z += 0.1f;
+		Vector3 localScale = transform.localScale;
+		Quaternion localRotation = transform.localRotation;
+		transform.parent = parentEffect.transform.GetChild(0);
+		transform.localPosition = localPosition;
+		transform.localScale = localScale;
+		transform.localRotation = localRotation;
+	}
+
+	private void UpdateCardEffect()
+	{
+		if (this.cardFrameCT % this.cardAnimIntervalFrame == 0 && this.cardEfcCT < this.effectTypeList.Length)
+		{
+			GameObject gameObject;
+			if (this.effectTypeList.Length == 1)
+			{
+				gameObject = this.CreateEffectCard(this.effectTypeList[this.cardEfcCT]);
+				Vector3 position = this.GetPosition(gameObject);
+				this.KickEffectCard(gameObject, position);
+			}
+			else
+			{
+				gameObject = this.CreateEffectCard(this.effectTypeList[this.cardEfcCT]);
+				Vector3 randomPosition = this.GetRandomPosition(gameObject);
+				this.KickEffectCard(gameObject, randomPosition);
+			}
+			GameObject star = this.CreateEffectStar(this.effectTypeList[this.cardEfcCT]);
+			this.KickEffectStar(star, gameObject);
+			this.cardEfcCT++;
+		}
+		this.cardFrameCT++;
+	}
+
+	private void StartFadeOut()
+	{
+		this.endState = TicketGashaController.EndState.FADE_OUT;
+		this.allSkipButton.Hide();
+		this.fade.StartFadeOut(new Action(this.EndCutscene));
+	}
+
+	private void EndCutscene()
+	{
+		RenderTexture renderTexture = new RenderTexture(1200, 1200, 16);
+		renderTexture.antiAliasing = 2;
+		this.mainCam.targetTexture = renderTexture;
 		for (int i = 0; i < this.goCardList.Count; i++)
 		{
 			UnityEngine.Object.Destroy(this.goCardList[i]);
 		}
+		this.endState = TicketGashaController.EndState.FINISH_RENDER_TEXTURE;
 	}
 
-	private void Update()
+	private void Finish()
 	{
-		this.UpdateCardEfc();
-		this.UpdateSkip();
-		if (this.frameCT == this.startFadeOutFrame)
+		if (this.endCallback != null)
 		{
-			this.fadeON = true;
+			this.endCallback(this.mainCam.targetTexture);
 		}
-		if (this.fadeON)
+		this.mainCam.targetTexture = null;
+		UnityEngine.Object.Destroy(base.gameObject);
+		GC.Collect();
+		Resources.UnloadUnusedAssets();
+	}
+
+	protected override void OnStartCutscene()
+	{
+		if (!this.animationRoot.gameObject.activeSelf)
 		{
-			Color color = this.spFade.color;
-			color.a += this.fadeSpeed;
-			if (color.a >= 1f)
+			this.animationRoot.gameObject.SetActive(true);
+		}
+	}
+
+	protected override void OnUpdate()
+	{
+		this.UpdateCardEffect();
+		if (this.startFadeOutFrame < this.frameCT)
+		{
+			if (this.endState == TicketGashaController.EndState.FINISH_ANIMATION)
 			{
-				color.a = 1f;
-				this.fadeON = false;
-				this.frameLast = this.frameCT;
-				this.DestroyEfc();
-				this.mainCam.targetTexture = this.renderTex;
-				if (this.endCallBack != null)
-				{
-					this.endCallBack(0);
-				}
+				this.StartFadeOut();
 			}
-			this.spFade.color = color;
-		}
-		if (this.frameCT == this.frameLast + 2)
-		{
-			this.mainCam.targetTexture = null;
-			UnityEngine.Object.Destroy(base.gameObject);
-			GC.Collect();
-			Resources.UnloadUnusedAssets();
+			else if (this.endState == TicketGashaController.EndState.FINISH_RENDER_TEXTURE)
+			{
+				this.Finish();
+			}
 		}
 		this.frameCT++;
 	}
 
-	private void DoSkip()
+	public override void SetData(CutsceneDataBase data)
 	{
-		if (this.frameCT < this.startFadeOutFrame)
+		CutsceneDataTicketGasha cutsceneDataTicketGasha = data as CutsceneDataTicketGasha;
+		if (cutsceneDataTicketGasha != null)
 		{
-			this.frameCT = this.startFadeOutFrame;
-			this.fadeSpeed *= 4f;
-		}
-	}
-
-	private void UpdateSkip()
-	{
-		List<Touch> touch = this.GetTouch();
-		if (touch.Count > 0)
-		{
-			Ray ray = this.camUI.ScreenPointToRay(new Vector3(touch[0].position.x, touch[0].position.y, 0f));
-			RaycastHit[] array = Physics.RaycastAll(ray);
-			if (array.Length > 0)
+			this.endCallback = cutsceneDataTicketGasha.endCallback;
+			this.allSkipButton.Initialize();
+			this.allSkipButton.AddAction(delegate
 			{
-				for (int i = 0; i < array.Length; i++)
-				{
-					if (array[i].collider == this.skipCollider)
-					{
-						this.DoSkip();
-						global::Debug.Log("======================================== CUT SCENE SKIP !! ");
-					}
-				}
+				this.frameCT = this.startFadeOutFrame;
+				this.StartFadeOut();
+			});
+			this.startFadeOutFrame = this.cardAnimIntervalFrame * cutsceneDataTicketGasha.gashaResult.Length + 10;
+			this.effectTypeList = new string[cutsceneDataTicketGasha.gashaResult.Length];
+			for (int i = 0; i < cutsceneDataTicketGasha.gashaResult.Length; i++)
+			{
+				this.effectTypeList[i] = cutsceneDataTicketGasha.gashaResult[i].effectType;
 			}
 		}
 	}
 
-	private List<Touch> GetTouch()
+	private enum EndState
 	{
-		List<Touch> list = new List<Touch>();
-		if (Input.touchCount > 0)
-		{
-			for (int i = 0; i < Input.touchCount; i++)
-			{
-				Touch touch = Input.GetTouch(i);
-				list.Add(touch);
-			}
-		}
-		return list;
+		FINISH_ANIMATION,
+		FADE_OUT,
+		FINISH_RENDER_TEXTURE
 	}
 }

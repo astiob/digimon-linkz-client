@@ -7,8 +7,8 @@ public class BattleMenu : MonoBehaviour
 	[Header("DialogHelpのBG")]
 	private UIWidget helpBGWidget;
 
-	[Header("DialogMENUのBG")]
 	[SerializeField]
+	[Header("DialogMENUのBG")]
 	private UIWidget menuBGWidget;
 
 	[SerializeField]
@@ -19,8 +19,8 @@ public class BattleMenu : MonoBehaviour
 	[Header("DialogHelpのGameObject")]
 	public GameObject helpDialogGO;
 
-	[Header("Menu/PanelのTransform")]
 	[SerializeField]
+	[Header("Menu/PanelのTransform")]
 	public Transform menuPanelTransform;
 
 	public MenuDialog SetupMenu(Transform parent)

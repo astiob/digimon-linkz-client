@@ -91,13 +91,16 @@ namespace MonsterList.BaseSelect
 		public void SetEvolutionIcon(GUIMonsterIcon icon, bool canEvolve, bool onlyGrayOut)
 		{
 			icon.SetMessageLevel();
-			icon.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
 			if (canEvolve)
 			{
 				if (!onlyGrayOut)
 				{
 					icon.SortMess = StringMaster.GetString("CharaIcon-01");
 					icon.SetSortMessageColor(ConstValue.DIGIMON_YELLOW);
+				}
+				else
+				{
+					icon.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
 				}
 			}
 			else
@@ -108,19 +111,27 @@ namespace MonsterList.BaseSelect
 					icon.SortMess = StringMaster.GetString("CharaIcon-02");
 					icon.SetSortMessageColor(ConstValue.DIGIMON_BLUE);
 				}
+				else
+				{
+					icon.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
+				}
 			}
 		}
 
 		public void SetVersionUpIcon(GUIMonsterIcon icon, bool canVersionUp, bool onlyGrayOut)
 		{
 			icon.SetMessageLevel();
-			icon.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
 			if (canVersionUp)
 			{
+				icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
 				if (!onlyGrayOut)
 				{
 					icon.SortMess = StringMaster.GetString("CharaIcon-05");
 					icon.SetSortMessageColor(ConstValue.DIGIMON_YELLOW);
+				}
+				else
+				{
+					icon.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
 				}
 			}
 			else
@@ -131,7 +142,13 @@ namespace MonsterList.BaseSelect
 					icon.SortMess = StringMaster.GetString("CharaIcon-06");
 					icon.SetSortMessageColor(ConstValue.DIGIMON_BLUE);
 				}
+				else
+				{
+					icon.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
+				}
 			}
+			icon.SetTouchAct_S(this.normalStateAction.onTouch);
+			icon.SetTouchAct_L(this.normalStateAction.onPress);
 		}
 	}
 }

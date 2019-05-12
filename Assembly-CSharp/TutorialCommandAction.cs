@@ -125,7 +125,12 @@ public class TutorialCommandAction : TutorialCommandBase
 
 	private void OnFinishedDisplayMessage()
 	{
+		ScriptCommandParams.TextInfo textInfo = this.scriptEngine.GetTextInfo();
 		this.tutorialUI.MessageWindow.SetEnableTapIcon(true, new Action(base.ResumeScript));
+		if (0f < textInfo.autoFeedTime)
+		{
+			this.tutorialUI.MessageWindow.StartAutoFeedCountDown(textInfo.autoFeedTime);
+		}
 	}
 
 	private void OnPushedFadeMessage()

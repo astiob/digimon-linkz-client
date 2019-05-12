@@ -47,9 +47,9 @@ namespace MonsterPicturebook
 			this.viewButton.SetEnable(true);
 		}
 
-		public void LoadModel(string monsterGroupId)
+		public void LoadModel(string modelId)
 		{
-			base.LoadMonster(monsterGroupId);
+			base.LoadMonster(modelId);
 			this.modelViewer.EnableTouchEvent(true);
 			this.viewButton.activeCollider = true;
 		}

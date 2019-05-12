@@ -18,11 +18,11 @@ public abstract class BattleStateBase : IMono
 
 	private bool _isRunning;
 
-	private bool _isGotEvent;
-
-	private EventState gotEventState;
-
 	private Type nextType;
+
+	private static EventState gotEventState;
+
+	private static bool _isGotEvent;
 
 	public BattleStateBase(Action OnStart, Action OnExit)
 	{
@@ -44,23 +44,24 @@ public abstract class BattleStateBase : IMono
 			while (this._isRunning)
 			{
 				IEnumerator r = this.MainRoutine();
-				while (!this._isGotEvent && r.MoveNext())
+				while (!BattleStateBase._isGotEvent && r.MoveNext())
 				{
 					this.UpdateThisState();
 					yield return r.Current;
 				}
 				this.DisabledThisState();
-				if (!this._isGotEvent && this.onExit != null)
+				if (!BattleStateBase._isGotEvent && this.onExit != null)
 				{
 					this.onExit();
 				}
 				this._isRunning = false;
 			}
-			if (this._isGotEvent)
+			if (BattleStateBase._isGotEvent)
 			{
+				BattleStateBase._isGotEvent = false;
 				if (this.onExitGotEvent != null)
 				{
-					this.onExitGotEvent(this.gotEventState);
+					this.onExitGotEvent(BattleStateBase.gotEventState);
 				}
 				yield break;
 			}
@@ -175,7 +176,7 @@ public abstract class BattleStateBase : IMono
 	{
 		get
 		{
-			return this._isGotEvent;
+			return BattleStateBase._isGotEvent;
 		}
 	}
 
@@ -199,7 +200,6 @@ public abstract class BattleStateBase : IMono
 		}
 		this.runningMainRoutine = this.BasedMainRoutine();
 		this._isRunning = true;
-		this._isGotEvent = false;
 		base.StartCoroutine(this.runningMainRoutine);
 	}
 
@@ -221,8 +221,8 @@ public abstract class BattleStateBase : IMono
 	public void SendEventState(EventState eventState)
 	{
 		this.GetEventThisState(eventState);
-		this._isGotEvent = true;
-		this.gotEventState = eventState;
+		BattleStateBase._isGotEvent = true;
+		BattleStateBase.gotEventState = eventState;
 	}
 
 	public bool isRunning

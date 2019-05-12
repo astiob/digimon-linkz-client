@@ -34,6 +34,8 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 
 	private bool isOpenedQuest = true;
 
+	private CMD_MultiRecruitTop parentDialog;
+
 	private GameWebAPI.ResponseData_Common_MultiRoomList.room data;
 
 	public GameWebAPI.ResponseData_Common_MultiRoomList.room Data
@@ -47,21 +49,6 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 			this.data = value;
 			this.ShowGUI();
 		}
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 
 	public override void OnTouchBegan(Touch touch, Vector2 pos)
@@ -159,16 +146,16 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 
 	private void OnClickedInfo()
 	{
-		bool isRecruitListLock;
+		bool flag = false;
 		if (CMD_ChatTop.instance != null)
 		{
-			isRecruitListLock = CMD_ChatTop.instance.isRecruitListLock;
+			flag = CMD_ChatTop.instance.isRecruitListLock;
 		}
-		else
+		else if (null != this.parentDialog)
 		{
-			isRecruitListLock = CMD_MultiRecruitTop.instance.isRecruitListLock;
+			flag = this.parentDialog.isRecruitListLock;
 		}
-		if (!isRecruitListLock)
+		if (!flag)
 		{
 			if (!this.isOpenedQuest)
 			{
@@ -214,12 +201,16 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 							RestrictionInput.EndLoad();
 							CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
 							CMD_MultiRecruitPartyWait.StageDataBk = this.data;
-							GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait");
+							CMD_MultiRecruitPartyWait cmd_MultiRecruitPartyWait = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait") as CMD_MultiRecruitPartyWait;
+							cmd_MultiRecruitPartyWait.SetParentDialog(this.parentDialog);
 						}, delegate(Exception noop)
 						{
 							RestrictionInput.EndLoad();
-							CMD_MultiRecruitTop.instance.AddExcludeRoomIdList(this.data.multiRoomId);
-							CMD_MultiRecruitTop.instance.ReBuildMultiRecruitList();
+							if (null != this.parentDialog)
+							{
+								this.parentDialog.AddExcludeRoomIdList(this.data.multiRoomId);
+								this.parentDialog.ReBuildMultiRecruitList();
+							}
 						}, null));
 					}
 					else
@@ -241,5 +232,10 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 				cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
 			}
 		}
+	}
+
+	public void SetParentDialog(CMD_MultiRecruitTop dialog)
+	{
+		this.parentDialog = dialog;
 	}
 }

@@ -41,7 +41,7 @@ public class BattleStatePvPRoundStartToRoundEnd : BattleStateRoundStartToRoundEn
 		}, delegate(bool isNextWave)
 		{
 			base.stateManager.roundFunction.SetResult(false, false, isNextWave);
-		});
+		}, new Action<EventState>(base.SendEventState));
 		base.AddState(this.subStateCharacterDeadCheckFunction);
 		this.subStateCharacterRevivalFunction = new SubStateCharacterRevivalFunction(null, new Action<EventState>(base.SendEventState));
 		base.AddState(this.subStateCharacterRevivalFunction);
@@ -148,32 +148,13 @@ public class BattleStatePvPRoundStartToRoundEnd : BattleStateRoundStartToRoundEn
 		base.DisabledThisState();
 	}
 
-	protected override List<CharacterStateControl> GetSortedSpeedCharacerList()
+	protected override CharacterStateControl[] GetTotalCharacters()
 	{
-		CharacterStateControl[] collection;
 		if (base.stateManager.pvpFunction.IsOwner)
 		{
-			collection = base.battleStateData.GetTotalCharacters();
+			return base.battleStateData.GetTotalCharacters();
 		}
-		else
-		{
-			collection = base.battleStateData.GetTotalCharactersEnemyFirst();
-		}
-		List<CharacterStateControl> list = new List<CharacterStateControl>(collection);
-		foreach (CharacterStateControl characterStateControl in list)
-		{
-			characterStateControl.SpeedRandomize(base.hierarchyData.onEnableRandomValue);
-			base.stateManager.fraudCheck.FraudCheckOverflowMaxSpeed(characterStateControl);
-		}
-		CharacterStateControl[] collection2 = CharacterStateControlSorter.SortedSpeedLuck(list.ToArray());
-		list = new List<CharacterStateControl>(collection2);
-		base.battleStateData.currentTurnNumber = 0;
-		base.battleStateData.SetOrderInSortedCharacter(list, -1);
-		if (!base.stateManager.onEnableTutorial)
-		{
-			base.hierarchyData.onEnableRandomValue = true;
-		}
-		return list;
+		return base.battleStateData.GetTotalCharactersEnemyFirst();
 	}
 
 	protected override void SaveRecoverData()
@@ -241,12 +222,12 @@ public class BattleStatePvPRoundStartToRoundEnd : BattleStateRoundStartToRoundEn
 		float num4 = 0f;
 		foreach (CharacterStateControl characterStateControl in base.battleStateData.playerCharacters)
 		{
-			num += (float)characterStateControl.maxHp;
+			num += (float)characterStateControl.extraMaxHp;
 			num2 += (float)characterStateControl.hp;
 		}
 		foreach (CharacterStateControl characterStateControl2 in base.battleStateData.enemies)
 		{
-			num3 += (float)characterStateControl2.maxHp;
+			num3 += (float)characterStateControl2.extraMaxHp;
 			num4 += (float)characterStateControl2.hp;
 		}
 		if (num2 / num > num4 / num3)

@@ -25,13 +25,15 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.WaveStart),
 			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.RoundStart),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.TotalRoundStart),
 			this.PlayStageEffect(),
 			this.PlayChipEffect(),
 			this.PlayRoundStartEffect(),
 			this.UpFunction(),
 			this.DownFunction(),
 			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.WaveEnd),
-			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.RoundEnd)
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.RoundEnd),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.TotalRoundEnd)
 		};
 		foreach (IEnumerator function in functions)
 		{
@@ -42,6 +44,19 @@ public class SubStateRoundStartAction : BattleStateController
 			}
 		}
 		yield break;
+	}
+
+	private CharacterStateControl[] GetTotalCharacters()
+	{
+		if (base.stateManager.battleMode != BattleMode.PvP)
+		{
+			return base.battleStateData.GetTotalCharacters();
+		}
+		if (base.stateManager.pvpFunction.IsOwner)
+		{
+			return base.battleStateData.GetTotalCharacters();
+		}
+		return base.battleStateData.GetTotalCharactersEnemyFirst();
 	}
 
 	private IEnumerator PlayAdventureScene(BattleAdventureSceneManager.TriggerType triggerType)
@@ -86,22 +101,14 @@ public class SubStateRoundStartAction : BattleStateController
 	{
 		if (base.battleStateData.currentRoundNumber <= 1)
 		{
-			foreach (CharacterStateControl characterState in base.battleStateData.playerCharacters)
+			foreach (CharacterStateControl character in this.GetTotalCharacters())
 			{
-				characterState.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted, false);
-			}
-			foreach (CharacterStateControl characterState2 in base.battleStateData.enemies)
-			{
-				characterState2.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted, false);
+				character.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted);
 			}
 		}
-		foreach (CharacterStateControl characterState3 in base.battleStateData.playerCharacters)
+		foreach (CharacterStateControl character2 in this.GetTotalCharacters())
 		{
-			characterState3.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted, false);
-		}
-		foreach (CharacterStateControl characterState4 in base.battleStateData.enemies)
-		{
-			characterState4.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted);
 		}
 		base.SetState(typeof(SubStatePlayChipEffect));
 		while (base.isWaitState)

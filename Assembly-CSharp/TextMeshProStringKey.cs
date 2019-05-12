@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(TextMeshPro))]
 public class TextMeshProStringKey : MonoBehaviour
 {
-	[SerializeField]
 	[Header("文言マスタのキー")]
+	[SerializeField]
 	private string stringMasterKey;
 
 	[SerializeField]
@@ -21,6 +21,16 @@ public class TextMeshProStringKey : MonoBehaviour
 		if (this.textMeshPro != null)
 		{
 			this.textMeshPro.text = this.masterString;
+			CountrySetting.ConvertTMProText(ref this.textMeshPro);
+		}
+	}
+
+	protected void OnTransformChildrenChanged()
+	{
+		if (base.GetComponent<NGUIDepth>() != null)
+		{
+			base.GetComponent<NGUIDepth>().includeChildren = true;
+			base.GetComponent<NGUIDepth>().Reset();
 		}
 	}
 

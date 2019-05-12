@@ -105,8 +105,11 @@ public class EffectStatusBase
 		CriticalTheTarget,
 		Skill,
 		SkillAdd,
-		LeaderChange = 70,
-		StageEffextInvalid = 80
+		DropRateUp = 70,
+		ExtaraStageRateUp,
+		DropCountUp,
+		StageEffextInvalid = 80,
+		LeaderChange = 90
 	}
 
 	public enum ExtraEffectSubType
@@ -131,14 +134,21 @@ public class EffectStatusBase
 		RoundEnd,
 		Kill,
 		Area,
-		AttackHit,
-		Suffer,
+		AttackStarted,
+		SufferHit,
 		SkillMiss,
 		SkillStartedApMax,
 		AttackCommandedTarget,
 		SkillSpecies,
 		SkillTargetSpecies,
-		SkillAttribute,
-		SkillRecieveAttribute
+		SkillAttributeStartedSend,
+		SkillAttributeStartedRecieve,
+		LastDead,
+		MonsterGroupId,
+		MonsterIntegrationGroupId,
+		SkillDamageStartedSend,
+		SkillDamageStartedRecieve,
+		SkillDamageEndSend,
+		SkillDamageEndRecieve
 	}
 }

@@ -23,8 +23,8 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel digistoneNumber;
 
-	[SerializeField]
 	[Header("復活タイトル")]
+	[SerializeField]
 	private UILabel revivalLocalize;
 
 	[Header("特定商取引法に基づく表記ローカライズ")]
@@ -47,8 +47,8 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[Header("閉じるローカライズ")]
 	private UILabel closeLocalize;
 
-	[SerializeField]
 	[Header("復活予約ローカライズ")]
+	[SerializeField]
 	private UILabel bookRevivalLocalize;
 
 	[Header("ショップへローカライズ")]

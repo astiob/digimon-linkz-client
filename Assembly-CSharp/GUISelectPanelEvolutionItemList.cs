@@ -11,8 +11,8 @@ public class GUISelectPanelEvolutionItemList : GUISelectPanelViewPartsUD
 
 	public List<GameWebAPI.UserSoulData> partsDataList;
 
-	[SerializeField]
 	[Header("進化素材パーツ")]
+	[SerializeField]
 	private GameObject soulSelectParts;
 
 	private int loadingStatus;

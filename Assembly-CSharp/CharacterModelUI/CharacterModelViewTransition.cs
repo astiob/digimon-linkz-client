@@ -39,16 +39,16 @@ namespace CharacterModelUI
 
 		protected abstract void OnClosedViewer();
 
-		protected void LoadMonster(string monsterGroupId)
+		protected void LoadMonster(string modelId)
 		{
-			this.modelViewer.LoadMonsterModel(monsterGroupId, Vector3.zero, 170f);
+			this.modelViewer.LoadMonsterModel(modelId, Vector3.zero, 170f);
 			this.modelViewer.SetCharacterCameraDistance();
 		}
 
-		protected void LoadEgg(string monsterGroupId)
+		protected void LoadEgg(string modelId)
 		{
 			Vector3 characterPosition = new Vector3(0f, 0.1f, 0f);
-			this.modelViewer.LoadEggModel(monsterGroupId, characterPosition, 0f);
+			this.modelViewer.LoadEggModel(modelId, characterPosition, 0f);
 		}
 
 		public void Initialize(int baseDepth)

@@ -9,24 +9,24 @@ public class PrizeEfcDirector : MonoBehaviour
 
 	private int efcTypeIDX;
 
-	[Header("フェードアウトのアルファ値")]
 	[SerializeField]
+	[Header("フェードアウトのアルファ値")]
 	private float valueA_Min;
 
 	[Header("フェードインのアルファ値")]
 	[SerializeField]
 	private float valueA_Max = 1f;
 
-	[Header("フェードイン時間")]
 	[SerializeField]
+	[Header("フェードイン時間")]
 	private float fadeInTime = 0.3f;
 
-	[SerializeField]
 	[Header("オンしている時間")]
+	[SerializeField]
 	private float stayTime = 0.8f;
 
-	[SerializeField]
 	[Header("フェードアウト時間")]
+	[SerializeField]
 	private float fadeOutTime = 0.3f;
 
 	private float valueA;
@@ -56,23 +56,23 @@ public class PrizeEfcDirector : MonoBehaviour
 		this.efcTypeList = new List<PrizeEfcDirector.EFC_TYPE>();
 		for (int i = 0; i < mdL.Count; i++)
 		{
-			if (mdL[i].commonSkillM != null)
+			if (mdL[i].GetCommonSkill() != null)
 			{
-				int num = int.Parse(mdL[i].commonSkillM.rank);
+				int num = int.Parse(mdL[i].GetCommonSkill().rank);
 				if (num >= ConstValue.GASHA_INHARITANCE_PRIZE_LEVEL)
 				{
 					this.AddNewType(PrizeEfcDirector.EFC_TYPE.INHARITANCE);
 				}
 			}
-			if (mdL[i].leaderSkillM != null)
+			if (mdL[i].GetLeaderSkill() != null)
 			{
-				int num2 = int.Parse(mdL[i].leaderSkillM.rank);
+				int num2 = int.Parse(mdL[i].GetLeaderSkill().rank);
 				if (num2 >= ConstValue.GASHA_LEADERSKILL_PRIZE_LEVEL)
 				{
 					this.AddNewType(PrizeEfcDirector.EFC_TYPE.LEADER_SKILL);
 				}
 			}
-			if (mdL[i].CheckHaveMedal())
+			if (mdL[i].ExistMedal())
 			{
 				this.AddNewType(PrizeEfcDirector.EFC_TYPE.MEDAL);
 			}

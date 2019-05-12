@@ -259,18 +259,10 @@ public class AssetDataMng : MonoBehaviour
 		}
 		else
 		{
-			global::Debug.LogFormat("COMPLETE GET FILE : =========== AB_info.txt => {0}", new object[]
-			{
-				responseText
-			});
 			try
 			{
 				AssetBundleFileInfoList assetBundleFileInfoList = JsonMapper.ToObject<AssetBundleFileInfoList>(responseText);
 				AssetDataMng.assetVersion = assetBundleFileInfoList.version;
-				global::Debug.LogFormat("SET ASSET VERSION : =========== => {0}", new object[]
-				{
-					AssetDataMng.assetVersion
-				});
 				for (int i = 0; i < assetBundleFileInfoList.assetBundleFileInfo.Count; i++)
 				{
 					string name = assetBundleFileInfoList.assetBundleFileInfo[i].name;

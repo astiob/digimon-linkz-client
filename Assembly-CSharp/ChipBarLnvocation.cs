@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ChipBarLnvocation : MonoBehaviour
 {
-	[Header("チップアニメーション")]
 	[SerializeField]
+	[Header("チップアニメーション")]
 	private Animation chipAnimation;
 
-	[SerializeField]
 	[Header("アニメーションチップ")]
+	[SerializeField]
 	private AnimationClip inAnimationClip;
 
 	[SerializeField]

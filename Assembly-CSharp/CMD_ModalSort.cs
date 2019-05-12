@@ -375,7 +375,7 @@ public class CMD_ModalSort : CMD
 	private void SetSelectNum()
 	{
 		int count = this.targetMonsterList.Count;
-		List<MonsterData> list = MonsterDataMng.Instance().DetailFilterMonsterDataList(this.targetMonsterList, this.filterType);
+		List<MonsterData> list = MonsterFilter.DetailedFilter(this.targetMonsterList, this.filterType);
 		int count2 = list.Count;
 		this.lbSelectNum.text = string.Format(StringMaster.GetString("SystemFraction"), count2.ToString(), count.ToString());
 	}

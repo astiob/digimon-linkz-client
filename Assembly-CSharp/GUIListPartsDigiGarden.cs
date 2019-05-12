@@ -123,7 +123,7 @@ public class GUIListPartsDigiGarden : GUIListPartBS
 			{
 				if (monsterEvolutionRouteM2.monsterEvolutionRouteId == this.data.userMonster.monsterEvolutionRouteId)
 				{
-					text = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterEvolutionRouteM2.eggMonsterId).monsterName;
+					text = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterEvolutionRouteM2.eggMonsterId).Group.monsterName;
 				}
 			}
 			this.ngTX_NAME.text = text;

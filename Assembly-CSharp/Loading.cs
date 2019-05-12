@@ -42,7 +42,6 @@ public class Loading : MonoBehaviour
 
 	public static void Display(Loading.LoadingType type, bool isMask)
 	{
-		global::Debug.Log("<color=green>loading.start</color>");
 		Loading.Instance.loadingType = type;
 		Loading.Instance.enableMask = isMask;
 		Loading.Instance.StartLoading(type, isMask);
@@ -60,7 +59,6 @@ public class Loading : MonoBehaviour
 
 	public static void Invisible()
 	{
-		global::Debug.Log("<color=green>loading.end</color>");
 		Loading.Instance.SetMaskActive(false);
 		NativeLoading.Instance.StopAnimation();
 	}

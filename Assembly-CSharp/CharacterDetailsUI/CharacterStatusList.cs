@@ -375,10 +375,10 @@ namespace CharacterDetailsUI
 				GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM.MonsterEvolutionRouteM monsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i];
 				if (monsterEvolutionRouteM.monsterEvolutionRouteId == monsterData.userMonster.monsterEvolutionRouteId)
 				{
-					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterEvolutionRouteM.eggMonsterId);
-					if (monsterGroupMasterByMonsterGroupId != null)
+					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterEvolutionRouteM.eggMonsterId).Group;
+					if (group != null)
 					{
-						eggName = monsterGroupMasterByMonsterGroupId.monsterName;
+						eggName = group.monsterName;
 					}
 				}
 			}
@@ -547,8 +547,8 @@ namespace CharacterDetailsUI
 
 		public void SetViewNextEvolutionMonster(string monsterId, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
 		{
-			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId);
-			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
+			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(monsterId).Simple;
+			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(simple.monsterGroupId).Group;
 			DataMng.ExperienceInfo experienceInfo = DataMng.Instance().GetExperienceInfo(0);
 			MonsterData monsterData = new MonsterData(new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList(userMonster)
 			{
@@ -558,9 +558,9 @@ namespace CharacterDetailsUI
 				levelEx = "0",
 				nextLevelEx = experienceInfo.expLevNext.ToString()
 			});
-			if (!string.IsNullOrEmpty(monsterGroupMasterByMonsterGroupId.leaderSkillId) && "0" != monsterGroupMasterByMonsterGroupId.leaderSkillId)
+			if (!string.IsNullOrEmpty(group.leaderSkillId) && "0" != group.leaderSkillId)
 			{
-				monsterData.userMonster.leaderSkillId = monsterGroupMasterByMonsterGroupId.leaderSkillId;
+				monsterData.userMonster.leaderSkillId = group.leaderSkillId;
 				monsterData.InitSkillInfo();
 			}
 			StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterId, "1");

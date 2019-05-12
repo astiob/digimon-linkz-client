@@ -26,12 +26,6 @@ public static class MultiRecruitConstValue
 
 	public const int MULTI_RECRUIT_SETTING_MESSAGE_NUM = 50;
 
-	public const string PF_MULTI_RECRUIT_TOP = "CMD_MultiRecruitTop";
-
-	public const string PF_MULTI_RECRUIT_PASS = "CMD_MultiRecruitPass";
-
-	public const string PF_MULTI_RECRUIT_PARTY_WAIT = "CMD_MultiRecruitPartyWait";
-
 	public const string PF_MULTI_RECRUIT_FRIEND = "CMD_MultiRecruitFriend";
 
 	public const string PF_MULTI_MODAL_MESSAGE = "CMD_ModalMessage";

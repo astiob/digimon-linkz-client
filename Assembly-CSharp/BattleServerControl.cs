@@ -47,19 +47,20 @@ public class BattleServerControl : BattleFunctionBase
 			GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene[] worldDungeonAdventureSceneM = MasterDataMng.Instance().ResponseWorldDungeonAdventureSceneMaster.worldDungeonAdventureSceneM;
 			if (worldDungeonAdventureSceneM != null)
 			{
-				string text = string.Empty;
+				string dungeonId = string.Empty;
 				if (base.stateManager.battleMode == BattleMode.Multi)
 				{
-					text = DataMng.Instance().RespData_WorldMultiStartInfo.worldDungeonId;
+					dungeonId = DataMng.Instance().RespData_WorldMultiStartInfo.worldDungeonId;
 				}
 				else if (base.stateManager.battleMode == BattleMode.PvP)
 				{
-					text = ClassSingleton<MultiBattleData>.Instance.PvPField.worldDungeonId;
+					dungeonId = ClassSingleton<MultiBattleData>.Instance.PvPField.worldDungeonId;
 				}
 				else
 				{
-					text = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart.worldDungeonId;
+					dungeonId = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart.worldDungeonId;
 				}
+				worldDungeonAdventureScenes = worldDungeonAdventureSceneM.Where((GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene item) => item.worldDungeonId == dungeonId).ToArray<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene>();
 			}
 			base.stateManager.battleAdventureSceneManager = new BattleAdventureSceneManager(worldDungeonAdventureScenes);
 		}
@@ -133,6 +134,7 @@ public class BattleServerControl : BattleFunctionBase
 
 	private void GetMultiBattleData()
 	{
+		UnityEngine.Random.seed = ClassSingleton<MultiBattleData>.Instance.RandomSeed;
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		DataMng.Instance().WD_ReqDngResult.startId = respData_WorldMultiStartInfo.startId;
 		DataMng.Instance().WD_ReqDngResult.dungeonId = respData_WorldMultiStartInfo.worldDungeonId;
@@ -181,6 +183,7 @@ public class BattleServerControl : BattleFunctionBase
 
 	private void GetPvPBattleData()
 	{
+		UnityEngine.Random.seed = ClassSingleton<MultiBattleData>.Instance.RandomSeed;
 		MultiBattleData.PvPUserData pvPUserData = null;
 		foreach (MultiBattleData.PvPUserData pvPUserData2 in ClassSingleton<MultiBattleData>.Instance.PvPUserDatas)
 		{
@@ -335,10 +338,10 @@ public class BattleServerControl : BattleFunctionBase
 
 	private PlayerStatus ConvertMonsterDataToPlayerStatus(string userMonsterId, MonsterData monsterData, List<int> chipIdList)
 	{
-		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterData.monsterM.monsterGroupId);
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterData.monsterM.monsterGroupId).Group;
 		string monsterId = monsterData.monsterM.monsterId;
-		string monsterGroupId = monsterGroupMasterByMonsterGroupId.monsterGroupId;
-		string monsterGroupId2 = monsterData.monsterM.monsterGroupId;
+		string monsterGroupId = group.monsterGroupId;
+		string modelId = group.modelId;
 		int arousal = monsterData.monsterM.GetArousal();
 		int friendshipLevel = monsterData.userMonster.friendship.ToInt32();
 		int hp = monsterData.userMonster.hp.ToInt32();
@@ -358,7 +361,7 @@ public class BattleServerControl : BattleFunctionBase
 		string iconId = monsterData.monsterM.iconId;
 		Talent talent = new Talent(monsterData.userMonster);
 		FriendshipStatus friendshipStatus = new FriendshipStatus(friendshipLevel, maxAttackPower, maxDefencePower, maxSpecialAttackPower, maxSpecialDefencePower, maxSpeed);
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(monsterData.monsterM.resistanceId);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(monsterData.monsterM.resistanceId);
 		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
 		Tolerance tolerance = ServerToBattleUtility.ResistanceToTolerance(data);
@@ -419,7 +422,7 @@ public class BattleServerControl : BattleFunctionBase
 		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
 		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] source = responseMonsterIntegrationGroupMaster.monsterIntegrationGroupM.Where((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterId == monsterId).ToArray<GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup>();
 		string[] monsterIntegrationIds = source.Select((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterIntegrationId).ToArray<string>();
-		PlayerStatus result = new PlayerStatus(userMonsterId, monsterGroupId2, monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, tolerance, luck, text, iconId, talent, arousal, friendshipStatus, list.ToArray(), chipIdList.ToArray(), monsterIntegrationIds);
+		PlayerStatus result = new PlayerStatus(userMonsterId, modelId, monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, tolerance, luck, text, iconId, talent, arousal, friendshipStatus, list.ToArray(), chipIdList.ToArray(), monsterIntegrationIds);
 		base.hierarchyData.AddLeaderSkillStatus(text, this.SkillMToLeaderSkillStatus(text));
 		base.hierarchyData.AddCharacterDatas(monsterGroupId, this.MonsterMToCharacterData(monsterGroupId));
 		return result;
@@ -427,11 +430,11 @@ public class BattleServerControl : BattleFunctionBase
 
 	private EnemyStatus EnemyToEnemyStatus(GameWebAPI.RespDataWD_DungeonStart.Enemy enemy)
 	{
-		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(enemy.monsterId);
-		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
-		string monsterId = monsterMasterByMonsterId.monsterId;
-		string monsterGroupId = monsterGroupMasterByMonsterGroupId.monsterGroupId;
-		string modelId = monsterGroupMasterByMonsterGroupId.modelId;
+		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(enemy.monsterId).Simple;
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(simple.monsterGroupId).Group;
+		string monsterId = simple.monsterId;
+		string monsterGroupId = group.monsterGroupId;
+		string modelId = group.modelId;
 		int hp = enemy.hp;
 		int attack = enemy.attack;
 		int defense = enemy.defense;
@@ -656,11 +659,11 @@ public class BattleServerControl : BattleFunctionBase
 
 	private CharacterDatas MonsterMToCharacterData(string monsterGroupId)
 	{
-		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterGroupId);
-		string monsterName = monsterGroupMasterByMonsterGroupId.monsterName;
-		string tribe = monsterGroupMasterByMonsterGroupId.tribe;
-		GrowStep growStep = MonsterGrowStepData.ToGrowStep(monsterGroupMasterByMonsterGroupId.growStep);
-		string monsterStatusId = monsterGroupMasterByMonsterGroupId.monsterStatusId;
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterGroupId).Group;
+		string monsterName = group.monsterName;
+		string tribe = group.tribe;
+		GrowStep growStep = MonsterGrowStepData.ToGrowStep(group.growStep);
+		string monsterStatusId = group.monsterStatusId;
 		return new CharacterDatas(monsterName, tribe, growStep, monsterStatusId);
 	}
 
@@ -839,8 +842,8 @@ public class BattleServerControl : BattleFunctionBase
 			return ResourcesPath.GetCharacterPrefab(id);
 		}
 		BattleDebug.Log("----- モンスターAB単体取得 id[" + id + "]: 開始");
-		string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(id);
-		GameObject gameObject = AssetDataMng.Instance().LoadObject(monsterCharaPathByMonsterGroupId, null, true) as GameObject;
+		string filePath = MonsterObject.GetFilePath(id);
+		GameObject gameObject = AssetDataMng.Instance().LoadObject(filePath, null, true) as GameObject;
 		if (gameObject != null)
 		{
 			BattleDebug.Log("----- モンスターAB単体取得 id[" + id + "]: 完了");

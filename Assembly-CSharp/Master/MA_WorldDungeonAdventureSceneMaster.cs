@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestDataMA_WorldDungeonAdventureSceneMaster
+			GameWebAPI.RequestDataMA_WorldDungeonAdventureSceneMaster requestDataMA_WorldDungeonAdventureSceneMaster = new GameWebAPI.RequestDataMA_WorldDungeonAdventureSceneMaster();
+			requestDataMA_WorldDungeonAdventureSceneMaster.SetSendData = delegate(GameWebAPI.RequestDataMA_WorldDungeonAdventureSceneM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestDataMA_WorldDungeonAdventureSceneMaster.OnReceived = new Action<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster>(base.SetResponse);
+			return requestDataMA_WorldDungeonAdventureSceneMaster;
 		}
 	}
 }

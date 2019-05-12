@@ -95,13 +95,13 @@ public class SubStatePlayStageEffect : BattleStateController
 	{
 		if (!this.isShowBattleStageEffect)
 		{
-			base.stateManager.uiControl.ShowBattleStageEffect();
+			base.stateManager.uiControl.ShowBattleExtraEffect(BattleExtraEffectUI.AnimationType.Stage);
 			yield return null;
-			while (base.stateManager.uiControl.IsBattleStageEffect())
+			while (base.stateManager.uiControl.IsBattleExtraEffect())
 			{
 				yield return null;
 			}
-			base.stateManager.uiControl.HideBattleStageEffect();
+			base.stateManager.uiControl.HideBattleExtraEffect();
 			this.isShowBattleStageEffect = true;
 		}
 		yield break;
@@ -265,13 +265,13 @@ public class SubStatePlayStageEffect : BattleStateController
 		}
 		if (!this.isShowBattleStageEffect)
 		{
-			base.stateManager.uiControl.ShowBattleStageEffect();
+			base.stateManager.uiControl.ShowBattleExtraEffect(BattleExtraEffectUI.AnimationType.Stage);
 			yield return null;
-			while (base.stateManager.uiControl.IsBattleStageEffect())
+			while (base.stateManager.uiControl.IsBattleExtraEffect())
 			{
 				yield return null;
 			}
-			base.stateManager.uiControl.HideBattleStageEffect();
+			base.stateManager.uiControl.HideBattleExtraEffect();
 			this.isShowBattleStageEffect = true;
 		}
 		string key = ((int)extraEffectStatus.EffectValue).ToString();
@@ -468,7 +468,7 @@ public class SubStatePlayStageEffect : BattleStateController
 			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(i, hitIconPositions[i], skillResultAffectEffect[i], skillResultDamages[i], skillResultStrength[i], skillResultMisses[i], false, false, false, ExtraEffectType.Non);
 			hitIconlist.Add(hitIcon);
 		}
-		base.battleStateData.SetPlayAnimationActionValues(null, skillResultTargets.ToArray(), affectEffectProperty.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconlist.ToArray(), affectEffectProperty, false, ExtraEffectType.Non);
+		base.battleStateData.SetPlayAnimationActionValues(null, skillResultTargets.ToArray(), affectEffectProperty.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconlist.ToArray(), affectEffectProperty, false, null);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{

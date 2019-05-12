@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[AddComponentMenu("Image Effects/Other/Screen Overlay")]
-	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
 	public class ScreenOverlay : PostEffectsBase
 	{
 		public ScreenOverlay.OverlayBlendMode blendMode = ScreenOverlay.OverlayBlendMode.Overlay;

@@ -95,9 +95,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	{
 		if (this.isUniqueSkill)
 		{
-			if (monsterData.actionSkillM != null)
+			if (monsterData.GetUniqueSkill() != null)
 			{
-				this.SetSkillUI(monsterData.actionSkillM.name, monsterData.actionSkillM.description, monsterData.actionSkillM.needPoint, monsterData.actionSkillDetailM.attribute);
+				this.SetSkillUI(monsterData.GetUniqueSkill().name, monsterData.GetUniqueSkill().description, monsterData.GetUniqueSkill().needPoint, monsterData.GetUniqueSkillDetail().attribute);
 			}
 		}
 		else
@@ -105,14 +105,14 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 			int num = this.successionSkillSlotId;
 			if (num == 1 || num != 2)
 			{
-				if (monsterData.commonSkillM != null)
+				if (monsterData.GetCommonSkill() != null)
 				{
-					this.SetSkillUI(monsterData.commonSkillM.name, monsterData.commonSkillM.description, monsterData.commonSkillM.needPoint, monsterData.commonSkillDetailM.attribute);
+					this.SetSkillUI(monsterData.GetCommonSkill().name, monsterData.GetCommonSkill().description, monsterData.GetCommonSkill().needPoint, monsterData.GetCommonSkillDetail().attribute);
 				}
 			}
-			else if (monsterData.commonSkillM2 != null)
+			else if (monsterData.GetExtraCommonSkill() != null)
 			{
-				this.SetSkillUI(monsterData.commonSkillM2.name, monsterData.commonSkillM2.description, monsterData.commonSkillM2.needPoint, monsterData.commonSkillDetailM2.attribute);
+				this.SetSkillUI(monsterData.GetExtraCommonSkill().name, monsterData.GetExtraCommonSkill().description, monsterData.GetExtraCommonSkill().needPoint, monsterData.GetExtraCommonSkillDetail().attribute);
 			}
 			else
 			{
@@ -125,9 +125,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	{
 		this.successionSkillSlotId = 1;
 		this.title.text = StringMaster.GetString("SkillInheritTitle1");
-		if (monsterData != null && monsterData.commonSkillM != null)
+		if (monsterData != null && monsterData.GetCommonSkill() != null)
 		{
-			this.SetSkillUI(monsterData.commonSkillM.name, monsterData.commonSkillM.description, monsterData.commonSkillM.needPoint, monsterData.commonSkillDetailM.attribute);
+			this.SetSkillUI(monsterData.GetCommonSkill().name, monsterData.GetCommonSkill().description, monsterData.GetCommonSkill().needPoint, monsterData.GetCommonSkillDetail().attribute);
 		}
 		else
 		{
@@ -139,9 +139,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	{
 		this.successionSkillSlotId = 2;
 		this.title.text = StringMaster.GetString("SkillInheritTitle2");
-		if (monsterData != null && monsterData.commonSkillM2 != null)
+		if (monsterData != null && monsterData.GetExtraCommonSkill() != null)
 		{
-			this.SetSkillUI(monsterData.commonSkillM2.name, monsterData.commonSkillM2.description, monsterData.commonSkillM2.needPoint, monsterData.commonSkillDetailM2.attribute);
+			this.SetSkillUI(monsterData.GetExtraCommonSkill().name, monsterData.GetExtraCommonSkill().description, monsterData.GetExtraCommonSkill().needPoint, monsterData.GetExtraCommonSkillDetail().attribute);
 		}
 		else
 		{

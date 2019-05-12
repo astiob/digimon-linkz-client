@@ -4,32 +4,32 @@ using UnityEngine;
 
 public sealed class GUIBannerParts : GUIListPartBS
 {
-	[Header("残り時間のラベル")]
 	[SerializeField]
+	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[Header("ガシャの背景色")]
 	[SerializeField]
+	[Header("ガシャの背景色")]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[Header("イベントの背景色")]
 	[SerializeField]
+	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
 	[Header("キャンペーンの背景色")]
 	[SerializeField]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
-	[SerializeField]
 	[Header("外枠のスプライト")]
+	[SerializeField]
 	private UISprite frameSprite;
 
 	[SerializeField]
@@ -37,13 +37,15 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[Header("NEWのスプライト")]
 	[SerializeField]
+	[Header("NEWのスプライト")]
 	private UISprite newSprite;
 
-	[Header("NEWをコントロールする")]
 	[SerializeField]
+	[Header("NEWをコントロールする")]
 	private bool doNewControl;
+
+	private static readonly int DAY_HOUR = 24;
 
 	private static readonly int DAY_SECONDS = 86400;
 
@@ -276,7 +278,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 		}
 	}
 
-	public static void SetTimeTextForDayOfWeek(UILabel label, int totalSeconds, DateTime restTimeDate)
+	public static void SetTimeTextForDayOfWeek(UILabel label, int totalSeconds, DateTime restTimeDate, bool useDateFormat = true)
 	{
 		if (totalSeconds > 0)
 		{
@@ -285,13 +287,13 @@ public sealed class GUIBannerParts : GUIListPartBS
 			int num2 = (totalSeconds - GUIBannerParts.DAY_SECONDS * num) / GUIBannerParts.HOUR_SECONDS;
 			int num3 = (totalSeconds - GUIBannerParts.DAY_SECONDS * num - GUIBannerParts.HOUR_SECONDS * num2) / GUIBannerParts.MINUTES_SECONDS;
 			int num4 = totalSeconds % GUIBannerParts.MINUTES_SECONDS;
-			if (1 <= num)
+			if (useDateFormat && 1 <= num)
 			{
 				GUIBannerParts.SetDateFormat(label, restTimeDate);
 			}
 			else if (num2 >= 1)
 			{
-				label.text = string.Format(StringMaster.GetString("CountDownHM"), num2, num3);
+				label.text = string.Format(StringMaster.GetString("CountDownHM"), num2 + GUIBannerParts.DAY_HOUR * num, num3);
 			}
 			else if (num3 >= 1)
 			{

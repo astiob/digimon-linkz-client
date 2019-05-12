@@ -23,7 +23,7 @@ namespace CharacterMiniStatusUI
 				{
 					this.grayNA.SetActive(false);
 				}
-				if (monsterData.commonSkillM2 == null)
+				if (monsterData.GetExtraCommonSkill() == null)
 				{
 					if (!this.grayReady.activeSelf)
 					{

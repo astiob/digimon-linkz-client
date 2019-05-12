@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Color Adjustments/Grayscale")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Color Adjustments/Grayscale")]
 	public class Grayscale : ImageEffectBase
 	{
 		public Texture textureRamp;

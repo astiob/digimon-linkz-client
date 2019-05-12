@@ -68,17 +68,17 @@ public class CharacterParams : MonoBehaviour
 
 	private Renderer[] _isHavingRenderers = new Renderer[0];
 
-	private bool _isVisibleRenderer = true;
+	private List<GameObject> _particleObjectList = new List<GameObject>();
 
 	private MaterialController[] materialControllers = new MaterialController[0];
 
+	private ShadowParams shadowObject;
+
+	private bool isPlayingAnimation;
+
 	private CharacterStateControl _characterStateControl;
 
-	public ShadowParams shadowObject { get; private set; }
-
 	public Collider collider { get; private set; }
-
-	public bool isPlayingAnimation { get; private set; }
 
 	public bool isActiveAnimation
 	{
@@ -114,7 +114,201 @@ public class CharacterParams : MonoBehaviour
 		}
 	}
 
-	public bool isEnemy { get; set; }
+	public float AnimationClipLength
+	{
+		get
+		{
+			return this._characterAnimation.clip.length;
+		}
+	}
+
+	public float effectScale
+	{
+		get
+		{
+			return this._effectScale;
+		}
+	}
+
+	public Vector3 dropItemOffsetPosition
+	{
+		get
+		{
+			return this._dropItemOffsetPosition;
+		}
+	}
+
+	public string battleInSE
+	{
+		get
+		{
+			return this._battleInSE;
+		}
+	}
+
+	public string battleOutSE
+	{
+		get
+		{
+			return this._battleOutSE;
+		}
+	}
+
+	public Dictionary<string, Transform> attachEffectLocators { get; private set; }
+
+	private void Awake()
+	{
+		this._clips = new CharacterAnimationClip(this._clips, this._characterAnimation);
+		this.collider = base.GetComponentInChildren<Collider>();
+		if (this._isHavingRenderers.Length <= 0)
+		{
+			MeshRenderer[] componentsInChildren = base.GetComponentsInChildren<MeshRenderer>();
+			SkinnedMeshRenderer[] componentsInChildren2 = base.GetComponentsInChildren<SkinnedMeshRenderer>();
+			List<Renderer> list = new List<Renderer>();
+			foreach (MeshRenderer item in componentsInChildren)
+			{
+				list.Add(item);
+			}
+			foreach (SkinnedMeshRenderer item2 in componentsInChildren2)
+			{
+				list.Add(item2);
+			}
+			this._isHavingRenderers = list.ToArray();
+			MaterialController[] componentsInChildren3 = base.GetComponentsInChildren<MaterialController>(true);
+			if (componentsInChildren3 != null)
+			{
+				this.materialControllers = componentsInChildren3;
+			}
+		}
+		if (this._particleObjectList.Count <= 0)
+		{
+			ParticleSystem[] componentsInChildren4 = base.GetComponentsInChildren<ParticleSystem>();
+			foreach (ParticleSystem particleSystem in componentsInChildren4)
+			{
+				this._particleObjectList.Add(particleSystem.gameObject);
+			}
+		}
+		this.characterDeadEffect = new CharacterDeadEffect(this);
+		this.attachEffectLocators = new Dictionary<string, Transform>();
+		if (this._attachEffectLocators != null)
+		{
+			foreach (CharacterParams.AttachEffectLocators attachEffectLocators2 in this._attachEffectLocators)
+			{
+				this.attachEffectLocators[attachEffectLocators2.name] = attachEffectLocators2.locatorTransform;
+			}
+		}
+	}
+
+	public void Initialize(Camera camera)
+	{
+		base.enabled = true;
+		bool activeSelf = base.gameObject.activeSelf;
+		base.gameObject.SetActive(true);
+		this.SetActiveRenderers(true);
+		this._billboardObjects = new List<BillboardObject>(base.GetComponentsInChildren<BillboardObject>());
+		for (int i = 0; i < this._billboardObjects.Count; i++)
+		{
+			this._billboardObjects[i].lookTarget = camera;
+			this._billboardObjects[i].onBillboard = true;
+			if (!this._billboardObjects[i].onIgnoreManage)
+			{
+				this._billboardObjects[i].distance = this._targetToDistance;
+				if (!this._billboardObjects[i].onIgnoreFollowingTransformOverride)
+				{
+					this._billboardObjects[i].manualPositionTransform = base.transform;
+				}
+			}
+			this._billboardObjects[i].ManualUpdate();
+		}
+		base.transform.localScale = Vector3.one;
+		this.StopAnimation();
+		base.gameObject.SetActive(activeSelf);
+		if (this.centerPositionCache == null)
+		{
+			this.centerPositionCache = new Vector3?(base.transform.InverseTransformPoint(this._characterCenterTarget.position));
+			if (this.hudTarget != null)
+			{
+				this._hudHeightCache = this.hudTarget.position.y;
+				this._hudFrontCache = (this.hudTarget.position - base.transform.position).z;
+			}
+		}
+		if (BattleStateManager.current != null)
+		{
+			BattleStateManager.current.soundPlayer.AddEffectSe(this._battleInSE);
+			BattleStateManager.current.soundPlayer.AddEffectSe(this._battleOutSE);
+		}
+		this.SetBillBoardCamera(camera);
+	}
+
+	private void LateUpdate()
+	{
+		if (this.shadowObject != null)
+		{
+			this.shadowObject.UpdateShadowPosition(this);
+		}
+		foreach (BillboardObject billboardObject in this._billboardObjects)
+		{
+			billboardObject.ManualUpdate();
+		}
+	}
+
+	private void SetActiveRenderers(bool value)
+	{
+		foreach (Renderer renderer in this._isHavingRenderers)
+		{
+			renderer.enabled = value;
+		}
+		if (this.shadowObject != null)
+		{
+			this.shadowObject.shadowEnable = value;
+		}
+		foreach (MaterialController materialController in this.materialControllers)
+		{
+			materialController.enabled = value;
+		}
+		foreach (GameObject gameObject in this._particleObjectList)
+		{
+			gameObject.SetActive(value);
+		}
+	}
+
+	public void SetBillBoardCamera(Camera cam)
+	{
+		BillBoardController[] componentsInChildren = base.gameObject.GetComponentsInChildren<BillBoardController>();
+		for (int i = 0; i < componentsInChildren.Length; i++)
+		{
+			componentsInChildren[i].SetUp(cam);
+		}
+	}
+
+	public float RootToCenterDistance()
+	{
+		return this._targetToDistance * Vector3Extension.GetMaxFloat(base.transform.localScale);
+	}
+
+	public Vector3 HudPosition()
+	{
+		if (this.hudTarget != null)
+		{
+			Vector3 result = new Vector3(base.transform.position.x, this._hudHeightCache + 0.15f, base.transform.position.z + this._hudFrontCache);
+			return result;
+		}
+		return base.transform.position;
+	}
+
+	public Vector3 GetFixableCenterPosition()
+	{
+		if (this.centerPositionCache != null)
+		{
+			return base.transform.TransformPoint(this.centerPositionCache.Value) + this.dropItemOffsetPosition;
+		}
+		return this._characterCenterTarget.position + this.dropItemOffsetPosition;
+	}
+
+	public void SetShadowObject()
+	{
+		this.shadowObject = ShadowParams.SetShadowObject(this);
+	}
 
 	public bool isPlaying(CharacterAnimationType animationType)
 	{
@@ -156,105 +350,6 @@ public class CharacterParams : MonoBehaviour
 			break;
 		}
 		return this._characterAnimation.IsPlaying(name);
-	}
-
-	public bool isVisibleRenderer
-	{
-		get
-		{
-			return this._isVisibleRenderer;
-		}
-		set
-		{
-			this._isVisibleRenderer = value;
-			this.SetActiveRenderers(this._isVisibleRenderer);
-		}
-	}
-
-	public float AnimationClipLength
-	{
-		get
-		{
-			return this._characterAnimation.clip.length;
-		}
-	}
-
-	private void Awake()
-	{
-		this._clips = new CharacterAnimationClip(this._clips, this._characterAnimation);
-		this.collider = base.GetComponentInChildren<Collider>();
-		if (this._isHavingRenderers.Length <= 0)
-		{
-			MeshRenderer[] componentsInChildren = base.GetComponentsInChildren<MeshRenderer>();
-			SkinnedMeshRenderer[] componentsInChildren2 = base.GetComponentsInChildren<SkinnedMeshRenderer>();
-			List<Renderer> list = new List<Renderer>();
-			foreach (MeshRenderer item in componentsInChildren)
-			{
-				list.Add(item);
-			}
-			foreach (SkinnedMeshRenderer item2 in componentsInChildren2)
-			{
-				list.Add(item2);
-			}
-			this._isHavingRenderers = list.ToArray();
-			MaterialController[] componentsInChildren3 = base.GetComponentsInChildren<MaterialController>(true);
-			if (componentsInChildren3 != null)
-			{
-				this.materialControllers = componentsInChildren3;
-			}
-		}
-		this.characterDeadEffect = new CharacterDeadEffect(this);
-		this.attachEffectLocators = new Dictionary<string, Transform>();
-		if (this._attachEffectLocators != null)
-		{
-			foreach (CharacterParams.AttachEffectLocators attachEffectLocators2 in this._attachEffectLocators)
-			{
-				this.attachEffectLocators[attachEffectLocators2.name] = attachEffectLocators2.locatorTransform;
-			}
-		}
-	}
-
-	public void Initialize(Camera camera)
-	{
-		base.enabled = true;
-		bool activeSelf = base.gameObject.activeSelf;
-		base.gameObject.SetActive(true);
-		this.SetActiveRenderers(this.isVisibleRenderer);
-		this._billboardObjects = new List<BillboardObject>(base.GetComponentsInChildren<BillboardObject>());
-		for (int i = 0; i < this._billboardObjects.Count; i++)
-		{
-			this._billboardObjects[i].lookTarget = camera;
-			this._billboardObjects[i].onBillboard = true;
-			if (!this._billboardObjects[i].onIgnoreManage)
-			{
-				this._billboardObjects[i].distance = this._targetToDistance;
-				if (!this._billboardObjects[i].onIgnoreFollowingTransformOverride)
-				{
-					this._billboardObjects[i].manualPositionTransform = base.transform;
-				}
-			}
-			this._billboardObjects[i].ManualUpdate();
-		}
-		base.transform.localScale = Vector3.one;
-		this.StopAnimation();
-		base.gameObject.SetActive(activeSelf);
-		this.centerPositionCache = new Vector3?(base.transform.InverseTransformPoint(this._characterCenterTarget.position));
-		this.SetHUDSize();
-		if (BattleStateManager.current != null)
-		{
-			BattleStateManager.current.soundPlayer.AddEffectSe(this._battleInSE);
-			BattleStateManager.current.soundPlayer.AddEffectSe(this._battleOutSE);
-		}
-		this.SetBillBoardCamera(camera);
-	}
-
-	public void SetBillBoardCamera(Camera cam)
-	{
-		BillBoardController[] componentsInChildren = base.gameObject.GetComponentsInChildren<BillBoardController>();
-		for (int i = 0; i < componentsInChildren.Length; i++)
-		{
-			componentsInChildren[i].SetUp(cam);
-		}
 	}
 
 	public bool GetFindAttackMotion(int index)
@@ -548,9 +643,9 @@ public class CharacterParams : MonoBehaviour
 				this._characterAnimation.CrossFadeQueued(this._clips.idle.name, 0.5f, QueueMode.CompleteOthers);
 			}
 		}
+		this.SetActiveRenderers(true);
 		if (type == CharacterAnimationType.dead)
 		{
-			this.SetActiveRenderers(this.isVisibleRenderer);
 			Action callbackDeathEffect = delegate()
 			{
 				if (callback != null)
@@ -561,26 +656,6 @@ public class CharacterParams : MonoBehaviour
 				this.StopAnimation();
 			};
 			this.characterDeadEffect.PlayAnimation(hitEffectParams, 1f, callbackDeathEffect);
-		}
-		else
-		{
-			this.SetActiveRenderers(this.isVisibleRenderer);
-		}
-	}
-
-	private void SetActiveRenderers(bool value)
-	{
-		foreach (Renderer renderer in this._isHavingRenderers)
-		{
-			renderer.enabled = value;
-		}
-		if (this.shadowObject != null)
-		{
-			this.shadowObject.shadowEnable = value;
-		}
-		foreach (MaterialController materialController in this.materialControllers)
-		{
-			materialController.enabled = value;
 		}
 	}
 
@@ -598,55 +673,6 @@ public class CharacterParams : MonoBehaviour
 		}
 	}
 
-	public float RootToCenterDistance()
-	{
-		return this._targetToDistance * Vector3Extension.GetMaxFloat(base.transform.localScale);
-	}
-
-	public float effectScale
-	{
-		get
-		{
-			return this._effectScale;
-		}
-	}
-
-	public Vector3 dropItemOffsetPosition
-	{
-		get
-		{
-			return this._dropItemOffsetPosition;
-		}
-	}
-
-	public string battleInSE
-	{
-		get
-		{
-			return this._battleInSE;
-		}
-	}
-
-	public string battleOutSE
-	{
-		get
-		{
-			return this._battleOutSE;
-		}
-	}
-
-	public Dictionary<string, Transform> attachEffectLocators { get; private set; }
-
-	public Vector3 HudPosition()
-	{
-		if (this.hudTarget != null)
-		{
-			Vector3 result = new Vector3(base.transform.position.x, this._hudHeightCache + 0.15f, base.transform.position.z + this._hudFrontCache);
-			return result;
-		}
-		return base.transform.position;
-	}
-
 	public Vector3 GetPreviewCameraPosition(Transform cameraParent = null)
 	{
 		Quaternion rotation = base.transform.rotation;
@@ -661,38 +687,6 @@ public class CharacterParams : MonoBehaviour
 		camera.transform.localRotation = Quaternion.identity;
 		camera.transform.position = this.GetPreviewCameraPosition(camera.transform);
 		camera.transform.rotation = Quaternion.Euler((!(camera.transform.parent != null)) ? new Vector3(0f, 180f, 0f) : (camera.transform.parent.eulerAngles - new Vector3(0f, 180f, 0f)));
-	}
-
-	public void SetShadowObject()
-	{
-		this.shadowObject = ShadowParams.SetShadowObject(this);
-	}
-
-	private void LateUpdate()
-	{
-		if (this.shadowObject != null)
-		{
-			this.shadowObject.UpdateShadowPosition(this);
-		}
-		foreach (BillboardObject billboardObject in this._billboardObjects)
-		{
-			billboardObject.ManualUpdate();
-		}
-	}
-
-	public void SetHUDSize()
-	{
-		this._hudHeightCache = this.hudTarget.position.y;
-		this._hudFrontCache = (this.hudTarget.position - base.transform.position).z;
-	}
-
-	public Vector3 GetFixableCenterPosition()
-	{
-		if (this.centerPositionCache != null)
-		{
-			return base.transform.TransformPoint(this.centerPositionCache.Value) + this.dropItemOffsetPosition;
-		}
-		return this._characterCenterTarget.position + this.dropItemOffsetPosition;
 	}
 
 	public Vector3 GetPreviewCameraDifference()

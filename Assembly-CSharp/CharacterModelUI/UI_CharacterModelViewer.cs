@@ -67,15 +67,15 @@ namespace CharacterModelUI
 			this.pinch = new PinchInOut();
 		}
 
-		public override void LoadMonsterModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
+		public override void LoadMonsterModel(string modelId, Vector3 characterPosition, float characterEulerAngleY)
 		{
-			base.LoadMonsterModel(monsterGroupId, characterPosition, characterEulerAngleY);
+			base.LoadMonsterModel(modelId, characterPosition, characterEulerAngleY);
 			this.characterModelController = new MonsterModelController();
 		}
 
-		public override void LoadEggModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
+		public override void LoadEggModel(string modelId, Vector3 characterPosition, float characterEulerAngleY)
 		{
-			base.LoadEggModel(monsterGroupId, characterPosition, characterEulerAngleY);
+			base.LoadEggModel(modelId, characterPosition, characterEulerAngleY);
 			this.characterModelController = new EggModelController();
 		}
 

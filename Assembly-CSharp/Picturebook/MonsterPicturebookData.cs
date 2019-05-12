@@ -29,7 +29,7 @@ namespace Picturebook
 			GameWebAPI.RequestFA_MN_PicturebookExec requestFA_MN_PicturebookExec = new GameWebAPI.RequestFA_MN_PicturebookExec();
 			requestFA_MN_PicturebookExec.SetSendData = delegate(GameWebAPI.MN_Req_Picturebook param)
 			{
-				param.targetUserId = DataMng.Instance().RespDataCM_Login.playerInfo.UserId;
+				param.targetUserId = DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 			};
 			requestFA_MN_PicturebookExec.OnReceived = delegate(GameWebAPI.RespDataMN_Picturebook response)
 			{

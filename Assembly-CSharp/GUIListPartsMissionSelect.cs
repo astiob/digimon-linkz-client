@@ -12,20 +12,20 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("選択してないときの外枠色")]
+	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[SerializeField]
 	[Header("選択時の外枠色")]
+	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[Header("残り時間のラベル")]
@@ -40,16 +40,16 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private UISprite bgSprite;
 
-	[Header("外枠のスプライト")]
 	[SerializeField]
+	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
 	[SerializeField]
 	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
-	[SerializeField]
 	[Header("バッジスプライト")]
+	[SerializeField]
 	private UISprite spBadge;
 
 	private bool isTouchEndFromChild;
@@ -112,7 +112,7 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 			break;
 		}
 		path = "MissionBanner/" + path;
-		yield return AssetDataMng.Instance().LoadObject(path, delegate(UnityEngine.Object obj)
+		MissionBannerCacheBuffer.Instance().LoadAndCacheObj(path, delegate(UnityEngine.Object obj)
 		{
 			if (obj != null)
 			{
@@ -121,7 +121,8 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 				this.failedTextLabel.gameObject.SetActive(false);
 				this.bannerTex.mainTexture = mainTexture;
 			}
-		}, true);
+		});
+		yield return null;
 		yield break;
 	}
 

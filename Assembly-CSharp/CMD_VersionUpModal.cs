@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,8 @@ public sealed class CMD_VersionUpModal : CMD_ModalMessageBtn2
 	[Header("バージョンアップ詳細スクリプト")]
 	private VersionUpDetail versionUpDitail;
 
-	[SerializeField]
 	[Header("説明文・警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel messageLabel;
 
 	protected override void Awake()
@@ -34,7 +35,7 @@ public sealed class CMD_VersionUpModal : CMD_ModalMessageBtn2
 
 	public void SetChipParams(MonsterData baseMonsterData)
 	{
-		bool flag = MonsterDataMng.Instance().HasChip(new List<MonsterData>
+		bool flag = MonsterUserDataMng.AnyChipEquipMonster(new List<MonsterData>
 		{
 			baseMonsterData
 		});

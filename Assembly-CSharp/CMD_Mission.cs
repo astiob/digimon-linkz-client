@@ -11,8 +11,8 @@ public sealed class CMD_Mission : CMD
 	[SerializeField]
 	private GUISelectPanelMission missionList;
 
-	[SerializeField]
 	[Header("ミッション選択のタッチ領域")]
+	[SerializeField]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
 	[Header("ミッションの段階終了時カットイン演出コントローラ")]
@@ -192,6 +192,7 @@ public sealed class CMD_Mission : CMD
 		{
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
+			this.SetTutorialAnyTime("anytime_second_tutorial_mission_beginner");
 			this.AddAllList();
 			this.InitMissionStateDataList();
 			this.InitMission(f, sizeX, sizeY, aT);

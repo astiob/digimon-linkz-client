@@ -167,8 +167,9 @@ public class CMD_PicturebookDetail : CMD
 	{
 		GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DRT", null);
 		this.render3DRT = gameObject.GetComponent<CommonRender3DRT>();
-		string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(CMD_PicturebookDetail.displayMonsterData.monsterM.monsterGroupId);
-		this.render3DRT.LoadChara(monsterCharaPathByMonsterGroupId, 0f, 10000f, -0.65f, 1.1f, true);
+		string modelId = CMD_PicturebookDetail.displayMonsterData.GetMonsterMaster().Group.modelId;
+		string filePath = MonsterObject.GetFilePath(modelId);
+		this.render3DRT.LoadChara(filePath, 0f, 10000f, -0.65f, 1.1f, true);
 		this.renderTex = this.render3DRT.SetRenderTarget(1136, 820, 16);
 		this.modelUiTex.mainTexture = this.renderTex;
 		this.monsterParam = this.render3DRT.transform.GetComponentInChildren<CharacterParams>();

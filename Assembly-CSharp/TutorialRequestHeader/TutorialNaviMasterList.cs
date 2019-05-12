@@ -3,7 +3,7 @@ using WebAPIRequest;
 
 namespace TutorialRequestHeader
 {
-	public sealed class TutorialNaviMasterList : RequestTypeBase<WebAPI.SendBaseData, TutorialNaviMasterResponse>
+	public sealed class TutorialNaviMasterList : RequestTypeBase<TutorialNaviMasterListQuery, TutorialNaviMasterResponse>
 	{
 		public TutorialNaviMasterList()
 		{

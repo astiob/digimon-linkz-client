@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -196,8 +197,8 @@ public sealed class PartyEditPartyMember : MonoBehaviour
 			List<MonsterData> nowMD = this.listRoot.fastSetPartObjs[partyNo].GetNowMD();
 			for (int i = 0; i < nowMD.Count; i++)
 			{
-				string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(nowMD[i].monsterM.monsterGroupId);
-				list.Add(monsterCharaPathByMonsterGroupId);
+				string filePath = MonsterObject.GetFilePath(nowMD[i].GetMonsterMaster().Group.modelId);
+				list.Add(filePath);
 			}
 		}
 		return list;

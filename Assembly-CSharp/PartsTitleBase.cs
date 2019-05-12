@@ -18,9 +18,20 @@ public class PartsTitleBase : UtilForCMD
 	[SerializeField]
 	private GUICollider colBTN_CLOSE;
 
+	[SerializeField]
+	private UISprite sprBTN_TUTORIAL;
+
+	[SerializeField]
+	private GUICollider colBTN_TUTORIAL;
+
+	[SerializeField]
+	private UISprite sprBTN_TUTORIAL_GRAY;
+
 	private Action<int> actCallBackReturn;
 
 	private Action<int> actCallBackClose;
+
+	private Action<int> actCallBackTutorial;
 
 	protected override void Awake()
 	{
@@ -36,6 +47,13 @@ public class PartsTitleBase : UtilForCMD
 			if (flag)
 			{
 				this.CloseAct();
+			}
+		};
+		this.colBTN_TUTORIAL.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
+		{
+			if (flag)
+			{
+				this.TutorialAct();
 			}
 		};
 		base.Awake();
@@ -65,6 +83,14 @@ public class PartsTitleBase : UtilForCMD
 		}
 	}
 
+	private void TutorialAct()
+	{
+		if (this.actCallBackTutorial != null)
+		{
+			this.actCallBackTutorial(0);
+		}
+	}
+
 	public void SetTitle(string str)
 	{
 		this.ngTXT_TITLE.text = str;
@@ -81,6 +107,15 @@ public class PartsTitleBase : UtilForCMD
 	{
 		this.colBTN_CLOSE.activeCollider = true;
 		this.actCallBackClose = act;
+	}
+
+	public void SetTutorialAct(Action<int> act)
+	{
+		this.colBTN_TUTORIAL.activeCollider = true;
+		this.colBTN_TUTORIAL.gameObject.SetActive(true);
+		this.sprBTN_TUTORIAL_GRAY.gameObject.SetActive(false);
+		this.sprBTN_TUTORIAL.color = new Color(1f, 1f, 1f, 1f);
+		this.actCallBackTutorial = act;
 	}
 
 	public void DisableCloseBtn(bool flg = true)

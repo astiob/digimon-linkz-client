@@ -42,7 +42,7 @@ namespace Monster
 				for (int i = 0; i < deckUserMonsterIdList.Count; i++)
 				{
 					MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(deckUserMonsterIdList[i]);
-					list.Add(MonsterObject.GetFilePath(userMonster.GetMonsterMaster().Simple.monsterGroupId));
+					list.Add(MonsterObject.GetFilePath(userMonster.GetMonsterMaster().Group.modelId));
 				}
 			}
 			return list;
@@ -269,6 +269,19 @@ namespace Monster
 		public bool ExistColosseumDeckData()
 		{
 			return null != this.colosseumDeckUserMonsterIdList;
+		}
+
+		public bool FindMonsterColosseumDeck(string userMonsterId)
+		{
+			bool result = false;
+			for (int i = 0; i < this.colosseumDeckUserMonsterIdList.Length; i++)
+			{
+				if (!string.IsNullOrEmpty(this.colosseumDeckUserMonsterIdList[i]) && userMonsterId == this.colosseumDeckUserMonsterIdList[i])
+				{
+					result = true;
+				}
+			}
+			return result;
 		}
 
 		public void SetColosseumDeckUserMonster(string[] userMonsteridList)

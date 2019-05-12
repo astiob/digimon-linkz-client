@@ -13,8 +13,8 @@ public class SkillStatus
 	[SerializeField]
 	private string _name = string.Empty;
 
-	[Multiline(2)]
 	[SerializeField]
+	[Multiline(2)]
 	private string _description = string.Empty;
 
 	[SerializeField]
@@ -333,21 +333,21 @@ public class SkillStatus
 			return skillResults;
 		}
 		skillResults.onWeakHit = targetCharacter.tolerance.GetAttributeStrength(this.affectEffect[index].attribute);
-		if (attackerCharacter.hittingTheTargetChipType == InvariantType.Non)
+		if (attackerCharacter.hittingTheTargetType == BattleInvariant.Type.Non)
 		{
 			skillResults.onMissHit = !this.affectEffect[index].OnHit(attackerCharacter, targetCharacter);
 		}
-		else if (attackerCharacter.hittingTheTargetChipType == InvariantType.Up)
+		else if (attackerCharacter.hittingTheTargetType == BattleInvariant.Type.Up)
 		{
 			skillResults.onMissHit = false;
 		}
-		else if (attackerCharacter.hittingTheTargetChipType == InvariantType.Down)
+		else if (attackerCharacter.hittingTheTargetType == BattleInvariant.Type.Down)
 		{
 			skillResults.onMissHit = true;
 		}
 		if (skillResults.onWeakHit == Strength.None || skillResults.onWeakHit == Strength.Weak)
 		{
-			if (attackerCharacter.criticalTheTargetChipType == InvariantType.Non)
+			if (attackerCharacter.criticalTheTargetType == BattleInvariant.Type.Non)
 			{
 				float num = this.affectEffect[index].satisfactionRate;
 				if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.SatisfactionRateUp))
@@ -365,11 +365,11 @@ public class SkillStatus
 				num += attackerCharacter.chipAddCritical;
 				skillResults.onCriticalHit = RandomExtension.Switch(num);
 			}
-			else if (attackerCharacter.criticalTheTargetChipType == InvariantType.Up)
+			else if (attackerCharacter.criticalTheTargetType == BattleInvariant.Type.Up)
 			{
 				skillResults.onCriticalHit = true;
 			}
-			else if (attackerCharacter.criticalTheTargetChipType == InvariantType.Down)
+			else if (attackerCharacter.criticalTheTargetType == BattleInvariant.Type.Down)
 			{
 				skillResults.onCriticalHit = false;
 			}
@@ -610,6 +610,18 @@ public class SkillStatus
 		else
 		{
 			targetCharacter.hp += skillResults.attackPower;
+		}
+		if (skillResults.attackPower < skillResults.originalAttackPower)
+		{
+			skillResults.extraEffectType = ExtraEffectType.Down;
+		}
+		else if (skillResults.attackPower > skillResults.originalAttackPower)
+		{
+			skillResults.extraEffectType = ExtraEffectType.Up;
+		}
+		else
+		{
+			skillResults.extraEffectType = ExtraEffectType.Non;
 		}
 		return skillResults;
 	}

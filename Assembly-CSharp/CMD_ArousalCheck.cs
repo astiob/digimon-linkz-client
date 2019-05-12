@@ -20,12 +20,12 @@ public sealed class CMD_ArousalCheck : CMD
 	[SerializeField]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
+	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[Header("Yesボタンのラベル")]
 	[SerializeField]
+	[Header("Yesボタンのラベル")]
 	private UILabel buttonYesLabel;
 
 	[Header("Noボタンのラベル")]
@@ -36,8 +36,8 @@ public sealed class CMD_ArousalCheck : CMD
 	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	protected override void Awake()
@@ -67,7 +67,7 @@ public sealed class CMD_ArousalCheck : CMD
 		this.CreateIcon(mData, this.icon.gameObject);
 		this.normalMessageLabel.text = StringMaster.GetString("ArousalConfirmInfo");
 		bool flag = this.AnyArousalMonster(partnerDigimons);
-		bool flag2 = MonsterDataMng.Instance().HasChip(partnerDigimons);
+		bool flag2 = MonsterUserDataMng.AnyChipEquipMonster(partnerDigimons);
 		List<string> list = new List<string>();
 		if (flag)
 		{

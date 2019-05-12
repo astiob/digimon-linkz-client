@@ -25,8 +25,8 @@ public class MultiBattleDialog : MonoBehaviour
 	[Header("ボタン")]
 	private UIButton button;
 
-	[SerializeField]
 	[Header("スキン")]
+	[SerializeField]
 	private UIComponentSkinner uiCompornentSkinner;
 
 	[SerializeField]

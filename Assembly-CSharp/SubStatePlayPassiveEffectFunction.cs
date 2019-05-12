@@ -24,17 +24,6 @@ public class SubStatePlayPassiveEffectFunction : BattleStateBase
 
 	protected override IEnumerator MainRoutine()
 	{
-		if (this.currentSuffer.effectNumbers == EffectNumbers.Simple)
-		{
-			base.stateManager.uiControl.ShowCharacterHUDFunction(new CharacterStateControl[]
-			{
-				this.isTargetsStatus[0]
-			});
-		}
-		else
-		{
-			base.stateManager.uiControl.ShowCharacterHUDFunction(this.isTargetsStatus);
-		}
 		this.gettedId = string.Empty;
 		if (this.status.TryGetPassiveSEID(out this.gettedId))
 		{

@@ -110,7 +110,7 @@ public class TitleDataMng
 			if (titleM != null)
 			{
 				string imagePath = TitleDataMng.GetImagePath(titleM);
-				AssetDataMng.Instance().LoadObjectASync(imagePath, delegate(UnityEngine.Object obj)
+				TitleIconCacheBuffer.Instance().LoadAndCacheObj(imagePath, delegate(UnityEngine.Object obj)
 				{
 					if (obj != null)
 					{

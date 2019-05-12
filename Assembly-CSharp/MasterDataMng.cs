@@ -657,7 +657,9 @@ public sealed class MasterDataMng : MonoBehaviour
 		{
 			MasterBase master = this.GetMaster(updateInfoList[i]);
 			RequestBase request = master.CreateRequest();
+			GameWebAPI.Instance().AddDisableVersionCheckApiId(request.apiId);
 			yield return base.StartCoroutine(request.Run(null, null, null));
+			GameWebAPI.Instance().RemoveDisableVersionCheckApiId(request.apiId);
 			this.downloadedMasterDataCount++;
 		}
 		yield break;

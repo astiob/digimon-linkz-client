@@ -22,16 +22,16 @@ public sealed class CMD_InheritCheck : CMD
 	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
+	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
 	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string useCluster, int baseDigimonSkillNumber, int partnerDigimonSkillNumber)
@@ -44,8 +44,8 @@ public sealed class CMD_InheritCheck : CMD
 		{
 			this.monsterSuccessionSkill.SetCommonSkill2(selectedMonsterDataList[0]);
 		}
-		bool flag = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
-		bool flag2 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
+		bool flag = MonsterUserDataMng.AnyChipEquipMonster(selectedMonsterDataList);
+		bool flag2 = MonsterUserDataMng.AnyHighGrowStepMonster(selectedMonsterDataList);
 		List<string> list = new List<string>();
 		bool flag3 = false;
 		bool flag4 = false;

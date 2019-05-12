@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMA_WorldAreaMaster
+			GameWebAPI.RequestMA_WorldAreaMaster requestMA_WorldAreaMaster = new GameWebAPI.RequestMA_WorldAreaMaster();
+			requestMA_WorldAreaMaster.SetSendData = delegate(GameWebAPI.RequestMA_WorldAreaM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_GetWorldAreaM>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestMA_WorldAreaMaster.OnReceived = new Action<GameWebAPI.RespDataMA_GetWorldAreaM>(base.SetResponse);
+			return requestMA_WorldAreaMaster;
 		}
 	}
 }

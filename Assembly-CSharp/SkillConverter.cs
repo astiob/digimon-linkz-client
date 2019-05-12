@@ -26,7 +26,7 @@ public class SkillConverter
 			}
 			if (list2.Count<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>() == 0)
 			{
-				UnityEngine.Debug.LogWarning("skill.skillId " + skillM2.skillId + " " + skillM2.name);
+				UnityEngine.Debug.LogWarning("skillId " + skillM2.skillId + " " + skillM2.name);
 			}
 			while (list2.Count<GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM>() > 0)
 			{
@@ -43,17 +43,33 @@ public class SkillConverter
 						list5.Add(receiveSkillDetailM2);
 					}
 				}
-				GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM item;
-				if (skillM2.type == "1")
+				try
 				{
-					item = LeaderSkillConverter.Convert(list4);
+					GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM item;
+					if (skillM2.type == "1")
+					{
+						item = LeaderSkillConverter.Convert(list4);
+					}
+					else
+					{
+						item = StandardSkillConverter.Convert(list4);
+					}
+					list.Add(item);
+					list2 = list5;
 				}
-				else
+				catch (Exception ex)
 				{
-					item = StandardSkillConverter.Convert(list4);
+					UnityEngine.Debug.LogError(string.Concat(new string[]
+					{
+						"skillId ",
+						skillM2.skillId,
+						" ",
+						skillM2.name,
+						"\n",
+						ex.Message
+					}));
+					break;
 				}
-				list.Add(item);
-				list2 = list5;
 			}
 			skillDetailsMaster = list3.ToArray();
 		}

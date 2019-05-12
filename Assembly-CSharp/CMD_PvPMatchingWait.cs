@@ -15,6 +15,8 @@ public class CMD_PvPMatchingWait : CMD
 
 	private bool isOwner;
 
+	private int randomSeed;
+
 	private string myUserId;
 
 	private string mockBattleEnemyUserCode;
@@ -43,36 +45,36 @@ public class CMD_PvPMatchingWait : CMD
 
 	private IEnumerator pvpEnemyOnlineCheck;
 
-	private int pvpEnemyOnlineStatus;
-
 	private bool IsPvPOnlineCheck;
 
 	private List<int> TCPSendUserIdList = new List<int>();
 
 	private bool pvpDataRetry;
 
+	private float pausedTime;
+
 	[SerializeField]
 	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[SerializeField]
 	[Header("取り消しボタンスプライト")]
+	[SerializeField]
 	private UISprite spCancelBtn;
 
-	[Header("取り消しボタンラベル")]
 	[SerializeField]
+	[Header("取り消しボタンラベル")]
 	private UILabel lbCancelBtn;
 
-	[SerializeField]
 	[Header("モンスター表示")]
+	[SerializeField]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
-	[Header("マッチング中アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング中アニメオブジェクト")]
 	private GameObject goMatchingNowAnim;
 
-	[SerializeField]
 	[Header("マッチング完了アニメオブジェクト")]
+	[SerializeField]
 	private GameObject goMatchingEndAnim;
 
 	[SerializeField]
@@ -82,20 +84,20 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private UITexture background;
 
-	[Header("転送エフェクトの乗算色(アルファは０固定)")]
 	[SerializeField]
+	[Header("転送エフェクトの乗算色(アルファは０固定)")]
 	private Color renderTextureColor;
 
 	[Header("キャラの勝利アニメを見せる時間（秒）")]
 	[SerializeField]
 	private float winAnimationWait;
 
-	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	[SerializeField]
+	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	private float transferWait;
 
-	[Header("３対選択画面")]
 	[SerializeField]
+	[Header("３対選択画面")]
 	private PVPPartySelect3 partySelect;
 
 	[SerializeField]
@@ -503,7 +505,7 @@ public class CMD_PvPMatchingWait : CMD
 		}
 		else if (arg.ContainsKey("enemyDataReceive"))
 		{
-			this.OnRecievedEnemySendData();
+			this.OnRecievedEnemySendData(arg["enemyDataReceive"]);
 		}
 		else if (arg.ContainsKey("080110"))
 		{
@@ -511,9 +513,13 @@ public class CMD_PvPMatchingWait : CMD
 		}
 	}
 
-	private void OnRecievedEnemySendData()
+	private void OnRecievedEnemySendData(object messageObj)
 	{
 		this.myMonsterDataSendCheck = true;
+		if (!this.isOwner)
+		{
+			this.randomSeed = MultiTools.GetValueByKey<int>(messageObj, "randomSeed");
+		}
 	}
 
 	private void OnRecievedBattleStart(Dictionary<string, object> packet)
@@ -635,7 +641,6 @@ public class CMD_PvPMatchingWait : CMD
 		{
 			valueByKey
 		});
-		this.pvpEnemyOnlineStatus = valueByKey;
 		if (valueByKey == 0)
 		{
 			this.IsPvPOnlineCheck = true;
@@ -689,6 +694,7 @@ public class CMD_PvPMatchingWait : CMD
 		MultiBattleData.PvPFieldData field = new MultiBattleData.PvPFieldData();
 		field.worldDungeonId = this.worldDungeonId;
 		ClassSingleton<MultiBattleData>.Instance.PvPField = field;
+		ClassSingleton<MultiBattleData>.Instance.RandomSeed = this.randomSeed;
 		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
 		if (this.matchingFinishAnimation == null)
 		{
@@ -923,6 +929,19 @@ public class CMD_PvPMatchingWait : CMD
 			{
 				this.DispErrorModal(StringMaster.GetString("MultiRecruit-13"), StringMaster.GetString("ColosseumNetworkError"), false);
 			}
+			int num = (int)(Time.realtimeSinceStartup - this.pausedTime);
+			if (num >= ConstValue.MULTI_BATTLE_TIMEOUT_TIME)
+			{
+				global::Debug.LogErrorFormat("{0}秒経ったので負け.", new object[]
+				{
+					num
+				});
+				BattlePvPFunction.isAlreadyLoseBeforeBattle = true;
+			}
+		}
+		else
+		{
+			this.pausedTime = Time.realtimeSinceStartup;
 		}
 	}
 
@@ -1073,16 +1092,12 @@ public class CMD_PvPMatchingWait : CMD
 			yield return null;
 			if (this.pvpEnemyOnlineCheck != null)
 			{
-				yield return base.StartCoroutine(this.pvpEnemyOnlineCheck);
-				if (this.pvpEnemyOnlineStatus == 0)
+				GameWebAPI.Common_MonsterData[] pvpEnemyListData = new GameWebAPI.Common_MonsterData[3];
+				for (int i = 0; i < pvpEnemyListData.Length; i++)
 				{
-					GameWebAPI.Common_MonsterData[] pvpEnemyListData = new GameWebAPI.Common_MonsterData[3];
-					for (int i = 0; i < pvpEnemyListData.Length; i++)
-					{
-						pvpEnemyListData[i] = this.pvpUserDatas[1].monsterData[i];
-					}
-					this.pvpUserDatas[1].monsterData = pvpEnemyListData;
+					pvpEnemyListData[i] = this.pvpUserDatas[1].monsterData[i];
 				}
+				this.pvpUserDatas[1].monsterData = pvpEnemyListData;
 				this.pvpDataRetry = true;
 				MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 			}
@@ -1137,7 +1152,7 @@ public class CMD_PvPMatchingWait : CMD
 		waitSendData = false;
 		retry = false;
 		this.pvpDataRetry = true;
-		goto IL_1E0;
+		goto IL_1D9;
 		Block_4:
 		if (this.selectPartyRetryCount >= MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_SELECT_DATA_RETRY_COUNT)
 		{
@@ -1157,7 +1172,7 @@ public class CMD_PvPMatchingWait : CMD
 			}
 			base.StartCoroutine(this.SelectBattleParty());
 		}
-		IL_1E0:
+		IL_1D9:
 		if (retry)
 		{
 			yield break;
@@ -1249,12 +1264,17 @@ public class CMD_PvPMatchingWait : CMD
 
 	private void SendPvPEnemyDataReceive()
 	{
-		PvPEnemyDataReceive message = new PvPEnemyDataReceive
+		PvPEnemyDataReceive pvPEnemyDataReceive = new PvPEnemyDataReceive
 		{
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.PvPEnemyDataReceive, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
-			resultCode = "1"
+			resultCode = "1",
+			randomSeed = ((int)DateTime.Now.Ticks & 65535)
 		};
-		Singleton<TCPUtil>.Instance.SendMessageForTarget(TCPMessageType.PvPEnemyDataReceive, message, this.TCPSendUserIdList, "enemyDataReceive");
+		Singleton<TCPUtil>.Instance.SendMessageForTarget(TCPMessageType.PvPEnemyDataReceive, pvPEnemyDataReceive, this.TCPSendUserIdList, "enemyDataReceive");
+		if (this.isOwner)
+		{
+			this.randomSeed = pvPEnemyDataReceive.randomSeed;
+		}
 	}
 
 	private void ChangeScene(int noop)

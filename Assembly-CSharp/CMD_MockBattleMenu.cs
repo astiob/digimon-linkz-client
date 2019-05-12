@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CMD_MockBattleMenu : CMD
 {
-	[SerializeField]
 	[Header("アイコン及びボタンのテキスト")]
+	[SerializeField]
 	private UILabel lbBTN_Friend;
 
 	[SerializeField]

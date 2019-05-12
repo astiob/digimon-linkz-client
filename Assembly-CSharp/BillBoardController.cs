@@ -8,8 +8,8 @@ public class BillBoardController : MonoBehaviour
 	[SerializeField]
 	private Camera cam;
 
-	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]
 	[SerializeField]
+	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]
 	private BillBoardController.AXIS_TYPE type = BillBoardController.AXIS_TYPE.Y;
 
 	[SerializeField]
@@ -64,10 +64,32 @@ public class BillBoardController : MonoBehaviour
 				base.transform.rotation = rotation;
 				return;
 			}
+			if (this.type == BillBoardController.AXIS_TYPE.OFSZ_AND_TO_CAMERA || this.type == BillBoardController.AXIS_TYPE.OFSX_AND_TO_CAMERA || this.type == BillBoardController.AXIS_TYPE.OFSY_AND_TO_CAMERA)
+			{
+				Vector3 zero2 = Vector3.zero;
+				switch (this.type)
+				{
+				case BillBoardController.AXIS_TYPE.OFSZ_AND_TO_CAMERA:
+					zero2.z = this.offset;
+					break;
+				case BillBoardController.AXIS_TYPE.OFSX_AND_TO_CAMERA:
+					zero2.x = this.offset;
+					break;
+				case BillBoardController.AXIS_TYPE.OFSY_AND_TO_CAMERA:
+					zero2.y = this.offset;
+					break;
+				}
+				Quaternion rhs2 = Quaternion.Euler(zero2.x, zero2.y, zero2.z);
+				Vector3 forward = this.cam.transform.position - base.transform.position;
+				Quaternion lhs = Quaternion.LookRotation(forward);
+				Quaternion rotation2 = lhs * rhs2;
+				base.transform.rotation = rotation2;
+				return;
+			}
 			Vector3 point = this.cam.transform.position - base.transform.position;
-			Quaternion rotation2 = base.transform.rotation;
-			Quaternion rotation3 = Quaternion.Inverse(rotation2);
-			Vector3 vector = rotation3 * point;
+			Quaternion rotation3 = base.transform.rotation;
+			Quaternion rotation4 = Quaternion.Inverse(rotation3);
+			Vector3 vector = rotation4 * point;
 			Vector3 vector2 = Vector3.zero;
 			switch (this.type)
 			{
@@ -91,22 +113,22 @@ public class BillBoardController : MonoBehaviour
 				num = 3.14159274f - num;
 			}
 			num *= 57.29578f;
-			Vector3 zero2 = Vector3.zero;
+			Vector3 zero3 = Vector3.zero;
 			switch (this.type)
 			{
 			case BillBoardController.AXIS_TYPE.Z:
-				zero2.z = num + this.offset;
+				zero3.z = num + this.offset;
 				break;
 			case BillBoardController.AXIS_TYPE.X:
-				zero2.x = num + this.offset;
+				zero3.x = num + this.offset;
 				break;
 			case BillBoardController.AXIS_TYPE.Y:
-				zero2.y = -(num + this.offset);
+				zero3.y = -(num + this.offset);
 				break;
 			}
-			Quaternion rhs2 = Quaternion.Euler(zero2.x, zero2.y, zero2.z);
-			Quaternion rotation4 = rotation2 * rhs2;
-			base.transform.rotation = rotation4;
+			Quaternion rhs3 = Quaternion.Euler(zero3.x, zero3.y, zero3.z);
+			Quaternion rotation5 = rotation3 * rhs3;
+			base.transform.rotation = rotation5;
 		}
 	}
 
@@ -117,6 +139,9 @@ public class BillBoardController : MonoBehaviour
 		Y,
 		OFSZ_AND_CAMERA,
 		OFSX_AND_CAMERA,
-		OFSY_AND_CAMERA
+		OFSY_AND_CAMERA,
+		OFSZ_AND_TO_CAMERA,
+		OFSX_AND_TO_CAMERA,
+		OFSY_AND_TO_CAMERA
 	}
 }

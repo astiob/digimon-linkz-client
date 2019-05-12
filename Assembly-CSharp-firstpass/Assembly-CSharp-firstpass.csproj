@@ -67,6 +67,7 @@
     <Compile Include="PinchInOut.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Save\PersistentFile.cs" />
+    <Compile Include="SKReview.cs" />
     <Compile Include="SmartBeat\SmartBeat.cs" />
     <Compile Include="SmartBeat\SmartBeatBehaviour.cs" />
     <Compile Include="SmartBeat\SmartBeatIOSBinding.cs" />

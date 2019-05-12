@@ -27,8 +27,8 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[Header("デジモンに吸収されるパーティクルを消す")]
 	[SerializeField]
+	[Header("デジモンに吸収されるパーティクルを消す")]
 	private GameObject particleRemover;
 
 	[Header("取得経験値のラベル")]
@@ -47,12 +47,12 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private UILabel getClusterText;
 
-	[SerializeField]
 	[Header("取得友情度【リーダー】のラベル")]
+	[SerializeField]
 	private UILabel getFriendPointForLeader;
 
-	[SerializeField]
 	[Header("取得友情度【リーダー】の文言ラベル")]
+	[SerializeField]
 	private UILabel getFriendPointForLeaderText;
 
 	[Header("取得友情度のラベル")]
@@ -764,7 +764,7 @@ public class ExperienceResult : ResultBase
 		};
 		requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
 		{
-			MonsterDataMng.Instance().RefreshUserMonsterByUserMonsterList(response.userMonsterList);
+			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonsterList);
 		};
 		GameWebAPI.RequestMonsterList request = requestMonsterList;
 		return new APIRequestTask(request, true);

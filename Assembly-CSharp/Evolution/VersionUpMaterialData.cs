@@ -113,7 +113,7 @@ namespace Evolution
 
 		private static bool IsEnoughCluster(GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterM)
 		{
-			int num = CalculatorUtil.CalcClusterForVersionUp(monsterM.monsterId);
+			int num = EvolutionData.CalcClusterForVersionUp(monsterM.monsterId);
 			int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
 			return num2 >= num;
 		}
@@ -149,20 +149,6 @@ namespace Evolution
 				monsterIcon.SortMess = StringMaster.GetString("CharaIcon-06");
 				monsterIcon.SetSortMessageColor(ConstValue.DIGIMON_BLUE);
 			}
-		}
-
-		public static List<int> VersionUpPostProcess(EvolutionData.MonsterEvolveData med)
-		{
-			List<int> list = new List<int>();
-			string text = med.mem.effectMonsterId;
-			if (text == "0")
-			{
-				text = "1";
-			}
-			string monsterGroupId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(text).monsterGroupId;
-			int item = int.Parse(monsterGroupId);
-			list.Add(item);
-			return list;
 		}
 
 		private static GameWebAPI.UserSoulData GetUserSoulDataBySID(string soulId)

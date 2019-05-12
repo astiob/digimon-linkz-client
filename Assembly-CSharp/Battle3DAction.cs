@@ -142,10 +142,6 @@ public class Battle3DAction : BattleFunctionBase
 			}
 			yield return new WaitForEndOfFrame();
 		}
-		foreach (CharacterStateControl c2 in characters)
-		{
-			c2.CharacterParams.SetHUDSize();
-		}
 		yield break;
 	}
 
@@ -215,12 +211,15 @@ public class Battle3DAction : BattleFunctionBase
 		{
 			foreach (CharacterStateControl player in players)
 			{
-				int extra = player.GetDifferenceExtraPram();
-				if (extra > 0)
+				int upCount = 0;
+				int downCount = 0;
+				player.GetDifferenceExtraPram(out upCount, out downCount);
+				bool isPoint = player.IsPoint();
+				if (upCount > 0 || isPoint)
 				{
 					upCharacters.Add(player.CharacterParams);
 				}
-				else if (extra < 0)
+				if (downCount > 0)
 				{
 					downCharacters.Add(player.CharacterParams);
 				}
@@ -228,35 +227,54 @@ public class Battle3DAction : BattleFunctionBase
 		}
 		foreach (CharacterStateControl enemy in enemies)
 		{
-			int extra2 = enemy.GetDifferenceExtraPram();
-			if (extra2 > 0)
+			int upCount2 = 0;
+			int downCount2 = 0;
+			enemy.GetDifferenceExtraPram(out upCount2, out downCount2);
+			if (upCount2 > 0)
 			{
 				upCharacters.Add(enemy.CharacterParams);
 			}
-			else if (extra2 < 0)
+			if (downCount2 > 0)
 			{
 				downCharacters.Add(enemy.CharacterParams);
 			}
 		}
-		if (base.battleStateData.currentWaveNumber == 0 && (upCharacters.Count > 0 || downCharacters.Count > 0))
+		if (base.battleStateData.currentWaveNumber == 0 && upCharacters.Count > 0)
 		{
-			base.stateManager.uiControl.ShowBattleStageEffect();
+			base.stateManager.uiControl.ShowBattleExtraEffect(BattleExtraEffectUI.AnimationType.Extra);
 			yield return null;
-			while (base.stateManager.uiControl.IsBattleStageEffect())
+			while (base.stateManager.uiControl.IsBattleExtraEffect())
 			{
 				yield return null;
 			}
+			base.stateManager.uiControl.HideBattleExtraEffect();
 		}
-		IEnumerator wait = this.PlayGimmickEffect(upCharacters, downCharacters);
-		while (wait.MoveNext())
+		IEnumerator playUpGimmickEffect = this.PlayUpGimmickEffect(upCharacters);
+		while (playUpGimmickEffect.MoveNext())
 		{
-			object obj = wait.Current;
+			object obj = playUpGimmickEffect.Current;
 			yield return obj;
+		}
+		if (base.battleStateData.currentWaveNumber == 0 && downCharacters.Count > 0)
+		{
+			base.stateManager.uiControl.ShowBattleExtraEffect(BattleExtraEffectUI.AnimationType.Stage);
+			yield return null;
+			while (base.stateManager.uiControl.IsBattleExtraEffect())
+			{
+				yield return null;
+			}
+			base.stateManager.uiControl.HideBattleExtraEffect();
+		}
+		IEnumerator playDownGimmickEffect = this.PlayDownGimmickEffect(downCharacters);
+		while (playDownGimmickEffect.MoveNext())
+		{
+			object obj2 = playDownGimmickEffect.Current;
+			yield return obj2;
 		}
 		yield break;
 	}
 
-	private IEnumerator PlayGimmickEffect(List<CharacterParams> upCharacters, List<CharacterParams> downCharacters)
+	private IEnumerator PlayUpGimmickEffect(List<CharacterParams> upCharacters)
 	{
 		int count = 0;
 		foreach (CharacterParams param in upCharacters)
@@ -274,22 +292,33 @@ public class Battle3DAction : BattleFunctionBase
 			yield return new WaitForSeconds(0.5f);
 			base.StartCoroutine(this.EndStageGimmickUpEffect(0, upCharacters.Count - 1));
 		}
-		foreach (CharacterParams param2 in downCharacters)
+		if (upCharacters.Count > 0)
 		{
-			base.battleStateData.stageGimmickDownEffect[count].SetPosition(param2.transform, null);
+			yield return new WaitForSeconds(0.5f);
+		}
+		this.StopAlwaysEffectAction(base.battleStateData.stageGimmickUpEffect);
+		yield break;
+	}
+
+	private IEnumerator PlayDownGimmickEffect(List<CharacterParams> downCharacters)
+	{
+		int count = 0;
+		foreach (CharacterParams param in downCharacters)
+		{
+			base.battleStateData.stageGimmickDownEffect[count].SetPosition(param.transform, null);
 			this.PlayAlwaysEffectAction(base.battleStateData.stageGimmickDownEffect[count], AlwaysEffectState.In);
 			base.stateManager.soundPlayer.TryPlaySE(base.battleStateData.stageGimmickDownEffect[count], AlwaysEffectState.In);
 			yield return new WaitForEndOfFrame();
-			Vector3 pos2 = base.hierarchyData.cameraObject.camera3D.WorldToViewportPoint(base.battleStateData.stageGimmickDownEffect[count].targetPosition.position);
-			base.stateManager.uiControl.PlayBattleGimmickStatusAnimator(count, pos2, false);
+			Vector3 pos = base.hierarchyData.cameraObject.camera3D.WorldToViewportPoint(base.battleStateData.stageGimmickDownEffect[count].targetPosition.position);
+			base.stateManager.uiControl.PlayBattleGimmickStatusAnimator(count, pos, false);
 			count++;
 		}
 		if (downCharacters.Count > 0)
 		{
 			yield return new WaitForSeconds(0.5f);
-			base.StartCoroutine(this.EndStageGimmickUpEffect(upCharacters.Count, count));
+			base.StartCoroutine(this.EndStageGimmickUpEffect(0, downCharacters.Count - 1));
 		}
-		if (upCharacters.Count > 0 || downCharacters.Count > 0)
+		if (downCharacters.Count > 0)
 		{
 			yield return new WaitForSeconds(0.5f);
 		}
@@ -424,18 +453,6 @@ public class Battle3DAction : BattleFunctionBase
 			index++;
 		}
 		yield break;
-	}
-
-	public void MotionResetAliveCharacterActionVoid(params CharacterStateControl[] characters)
-	{
-		foreach (CharacterStateControl characterStateControl in characters)
-		{
-			bool activeSelf = characterStateControl.CharacterParams.gameObject.activeSelf;
-			characterStateControl.CharacterParams.gameObject.SetActive(true);
-			characterStateControl.CharacterParams.StopAnimation();
-			characterStateControl.CharacterParams.PlayIdleAnimation();
-			characterStateControl.CharacterParams.gameObject.SetActive(activeSelf);
-		}
 	}
 
 	public void PlayHitEffectAction(HitEffectParams hitEffects, CharacterStateControl characters)

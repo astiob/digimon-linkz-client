@@ -54,6 +54,7 @@ public class CMD_QuestSelect : CMD
 		base.PartsTitle.SetTitle(StringMaster.GetString("QuestTopTitle"));
 		this.InitUI();
 		base.Show(f, sizeX, sizeY, aT);
+		base.SetTutorialAnyTime("anytime_second_tutorial_quest");
 		RestrictionInput.EndLoad();
 	}
 

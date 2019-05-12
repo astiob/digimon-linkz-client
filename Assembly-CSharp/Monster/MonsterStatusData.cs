@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Monster
 {
@@ -7,14 +6,14 @@ namespace Monster
 	{
 		private static int CalcLevelStatusUpValue(string valueMin, string valueMax, string levelNow, string levelMax)
 		{
-			float num = (float)int.Parse(valueMin);
-			float num2 = (float)int.Parse(valueMax);
-			float num3 = (float)int.Parse(levelNow);
-			float num4 = (float)int.Parse(levelMax);
+			float num = float.Parse(valueMin);
+			float num2 = float.Parse(valueMax);
+			float num3 = float.Parse(levelNow);
+			float num4 = float.Parse(levelMax);
 			float num5 = (num2 - num) / (num4 - 1f);
 			num5 *= num3 - 1f;
 			num5 += num;
-			return (int)Mathf.Round(num5);
+			return (int)Math.Round((double)num5, MidpointRounding.AwayFromZero);
 		}
 
 		public static StatusValue GetStatusValue(string monsterId, string level)

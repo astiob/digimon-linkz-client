@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GUIListEvolutionItemParts : GUIListPartBS
 {
-	[Header("素材用アイコンのGUICollider")]
 	[SerializeField]
+	[Header("素材用アイコンのGUICollider")]
 	private GUICollider colSoul;
 
 	[Header("素材用アイコンのUITexture")]

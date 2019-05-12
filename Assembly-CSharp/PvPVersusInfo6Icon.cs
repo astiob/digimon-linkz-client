@@ -23,8 +23,8 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 	[Header("相手の情報を表示するUI群")]
 	private PvPVersusInfo6Icon.UserDataUI opponentDataUI;
 
-	[Header("背景のDepth値")]
 	[SerializeField]
+	[Header("背景のDepth値")]
 	private int backgroundDepth;
 
 	[SerializeField]
@@ -55,13 +55,14 @@ public sealed class PvPVersusInfo6Icon : MonoBehaviour
 		{
 			if (mode == 1)
 			{
-				this.title.text = "模擬戦";
+				this.title.text = StringMaster.GetString("PVP_SimulatedGame");
 			}
 		}
 		else
 		{
-			this.title.text = "全国バトル";
+			this.title.text = StringMaster.GetString("PVP_NationwideBattle");
 		}
+		CountrySetting.ConvertTMProText(ref this.title);
 	}
 
 	public void SetUserInfo(MultiBattleData.PvPUserData[] userDataList)

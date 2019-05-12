@@ -199,7 +199,7 @@ namespace Enemy.AI
 					{
 						return true;
 					}
-					if (characterStateControl.GetHpRemingAmoutRange(this.minValue, this.maxValue))
+					if (characterStateControl.GetHpRemainingAmoutRange(this.minValue, this.maxValue))
 					{
 						return true;
 					}

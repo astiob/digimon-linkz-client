@@ -733,7 +733,7 @@ public class SufferStateProperty
 			return this.damagePower;
 		}
 		float num = Mathf.Min(this.damagePercent + (float)(this.keepRoundNumber - this.currentKeepRound) * this.turnRate, this.maxValue);
-		return Mathf.FloorToInt((float)status.maxHp * num);
+		return Mathf.FloorToInt((float)status.extraMaxHp * num);
 	}
 
 	public int GetReflectDamage(int damage)
@@ -775,7 +775,7 @@ public class SufferStateProperty
 		else
 		{
 			float num = Mathf.Min(this.revivalPercent + (float)(this.keepRoundNumber - this.currentKeepRound) * this.turnRate, this.maxValue);
-			result = Mathf.FloorToInt((float)status.maxHp * num);
+			result = Mathf.FloorToInt((float)status.extraMaxHp * num);
 		}
 		return result;
 	}

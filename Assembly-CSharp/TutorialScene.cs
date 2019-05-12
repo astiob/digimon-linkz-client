@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cutscene;
+using System;
 using UnityEngine;
 
 public sealed class TutorialScene : GUIScreen
@@ -9,7 +10,7 @@ public sealed class TutorialScene : GUIScreen
 	[SerializeField]
 	private GameObject blueBG;
 
-	private GameObject warpBackground;
+	private TutorialController cutscene;
 
 	[SerializeField]
 	private UITexture digitalWorldBG;
@@ -27,26 +28,25 @@ public sealed class TutorialScene : GUIScreen
 	{
 		if (type == TutorialScene.BackGroundType.WARP)
 		{
-			GameObject original = AssetDataMng.Instance().LoadObject("Cutscenes/Tutorial", null, true) as GameObject;
-			this.warpBackground = UnityEngine.Object.Instantiate<GameObject>(original);
-			this.warpBackground.transform.parent = base.transform;
-			this.warpBackground.transform.localScale = Vector3.one;
-			this.warpBackground.transform.localPosition = Vector3.zero;
-			Resources.UnloadUnusedAssets();
+			CutsceneDataTutorial cutsceneData = new CutsceneDataTutorial
+			{
+				path = "Cutscenes/Tutorial"
+			};
+			this.cutscene = (CutsceneFactory.Create(cutsceneData) as TutorialController);
+			this.cutscene.StartCutscene();
 			if (completed != null)
 			{
 				completed();
 			}
 		}
-		else if (null != this.warpBackground)
+		else if (null != this.cutscene)
 		{
-			TutorialController component = this.warpBackground.GetComponent<TutorialController>();
-			component.endFlg = true;
-			component.EndCallBack = delegate()
+			Action action = delegate()
 			{
 				this.SetBackGround(type, completed);
 			};
-			this.warpBackground = null;
+			this.cutscene.EndCutscene(action);
+			this.cutscene = null;
 		}
 		else
 		{

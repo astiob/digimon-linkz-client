@@ -313,7 +313,7 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		requestMN_FriendTimeCheck.SetSendData = delegate(GameWebAPI.MN_Req_FriendTimeCheck param)
 		{
 			GameWebAPI.RespDataMN_GetDeckList.DeckList favoriteDeckNumDeck = this.GetFavoriteDeckNumDeck();
-			param.userMonsterIds = favoriteDeckNumDeck.monsterList.Select((GameWebAPI.RespDataMN_GetDeckList.MonsterList x) => int.Parse(x.userMonsterId)).ToArray<int>();
+			param.userMonsterIds = favoriteDeckNumDeck.monsterList.Select((GameWebAPI.RespDataMN_GetDeckList.MonsterList x) => x.userMonsterId).ToArray<string>();
 		};
 		requestMN_FriendTimeCheck.OnReceived = delegate(GameWebAPI.RespDataMN_FriendTimeCheck response)
 		{

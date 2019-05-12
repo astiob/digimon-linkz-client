@@ -104,6 +104,21 @@ public class CMD_OptionSettings : CMD
 	private UILabel soundVolumeSeLabel;
 
 	[SerializeField]
+	private GameObject goLanguageSettings;
+
+	[SerializeField]
+	private UIWidget widgetWindow;
+
+	[SerializeField]
+	private UILabel languageSettingTitle;
+
+	[SerializeField]
+	private UILabel languageChangeBtn;
+
+	[SerializeField]
+	private UILabel currentLanguageSetting;
+
+	[SerializeField]
 	private UILabel pushTitle;
 
 	[SerializeField]
@@ -224,6 +239,14 @@ public class CMD_OptionSettings : CMD
 		{
 			this.soundVolumeSeLabel.text = StringMaster.GetString("Option-04");
 		}
+		if (null != this.languageSettingTitle)
+		{
+			this.languageSettingTitle.text = StringMaster.GetString("OptionLanguageTitle");
+		}
+		if (null != this.languageChangeBtn)
+		{
+			this.languageChangeBtn.text = StringMaster.GetString("OptionLanguageBtn");
+		}
 		if (null != this.pushTitle)
 		{
 			this.pushTitle.text = StringMaster.GetString("Option-05");
@@ -301,6 +324,19 @@ public class CMD_OptionSettings : CMD
 			this.autoButtonOffLabel.color = ((!flag) ? Color.white : Color.gray);
 		}
 		this.ChangeTab(this.currentTab);
+		if (this.goLanguageSettings != null)
+		{
+			if (CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN) != 1.ToString())
+			{
+				this.currentLanguageSetting.text = StringMaster.GetString(string.Format("OptionLanguage_{0}", CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN)));
+				this.goLanguageSettings.SetActive(true);
+			}
+			else
+			{
+				this.widgetWindow.height -= 80;
+				this.goLanguageSettings.SetActive(false);
+			}
+		}
 		this.isInitialized = true;
 	}
 
@@ -590,6 +626,10 @@ public class CMD_OptionSettings : CMD
 			this.autoButtonOffLabel.color = Color.white;
 		}
 		this.autoBattleState = 1;
+	}
+
+	private void OnMultiLangSettingSelect()
+	{
 	}
 
 	public enum TAB

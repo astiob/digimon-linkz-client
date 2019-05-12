@@ -5,23 +5,19 @@ namespace MonsterList.TranceResistance
 {
 	public sealed class TranceResistanceIconGrayOut : MonsterListIconGrayOut
 	{
-		public void LockIconReturnDetailed(GUIMonsterIcon icon, bool isLock, bool isPartner)
+		public void LockIconReturnDetailed(GUIMonsterIcon icon, bool isLock)
 		{
-			icon.Lock = isLock;
-			if (isPartner)
+			if (isLock)
 			{
-				if (isLock)
-				{
-					icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.DISABLE);
-					icon.SetTouchAct_S(this.blockStateAction.onTouch);
-					icon.SetTouchAct_L(this.blockStateAction.onPress);
-				}
-				else
-				{
-					icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
-					icon.SetTouchAct_S(this.normalStateAction.onTouch);
-					icon.SetTouchAct_L(this.normalStateAction.onPress);
-				}
+				icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.DISABLE);
+				icon.SetTouchAct_S(this.blockStateAction.onTouch);
+				icon.SetTouchAct_L(this.blockStateAction.onPress);
+			}
+			else
+			{
+				icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
+				icon.SetTouchAct_S(this.normalStateAction.onTouch);
+				icon.SetTouchAct_L(this.normalStateAction.onPress);
 			}
 		}
 

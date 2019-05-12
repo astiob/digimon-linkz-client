@@ -16,6 +16,8 @@ namespace MultiBattle.Tools
 
 		public bool IsSimulator { get; set; }
 
+		public int RandomSeed { get; set; }
+
 		public MultiUser[] MultiUsers { get; set; }
 
 		public string[] PlayerUserMonsterIds { get; set; }

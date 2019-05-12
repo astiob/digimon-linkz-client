@@ -8,12 +8,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[Header("UIRoot")]
 	private UIRoot _uiRoot;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private Camera _uiCamera;
 
-	[Header("ロードUI")]
 	[SerializeField]
+	[Header("ロードUI")]
 	public BattleUIInitialize initializeUi;
 
 	[SerializeField]
@@ -24,16 +24,16 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[Header("ボスウェーブ開始時のテロップ")]
 	private UIWidget _bossStartUi;
 
-	[Header("バトル開始時のテロップ")]
 	[SerializeField]
+	[Header("バトル開始時のテロップ")]
 	public BattleStartAction battleStartAction;
 
 	[Header("乱入ウェーブ開始時のテロップ")]
 	[SerializeField]
 	private UIWidget _extraStartUi;
 
-	[SerializeField]
 	[Header("ラウンド開始時のテロップ")]
+	[SerializeField]
 	public RoundStart roundStart;
 
 	[SerializeField]
@@ -48,8 +48,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[Header("敵ターン開始時のテロップ")]
 	private UIWidget _enemyTurnUi;
 
-	[SerializeField]
 	[Header("タイムオーバー時のテロップ")]
+	[SerializeField]
 	private UIWidget _timeOverUi;
 
 	[SerializeField]
@@ -60,12 +60,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	public PlayerWinner playerWinnerUi;
 
-	[SerializeField]
 	[Header("ウェーブ開始時のテロップ")]
+	[SerializeField]
 	private UIWidget _nextWaveUi;
 
-	[Header("プレイヤーの敗北UI")]
 	[SerializeField]
+	[Header("プレイヤーの敗北UI")]
 	private UIWidget _playerFailUi;
 
 	[Header("コンテニューダイアログ")]
@@ -76,12 +76,12 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private BattleFadeout _fadeoutUi;
 
-	[SerializeField]
 	[Header("SkillSelect")]
+	[SerializeField]
 	private BattleSkillSelect _skillSelectUi;
 
-	[SerializeField]
 	[Header("復活ダイアログ")]
+	[SerializeField]
 	public CharacterRevivalDialog characterRevivalDialog;
 
 	[NonSerialized]
@@ -113,8 +113,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[NonSerialized]
 	public GameObject helpDialog;
 
-	[SerializeField]
 	[Header("初期誘導UI")]
+	[SerializeField]
 	public BattleUIInitialInduction initialInduction;
 
 	[SerializeField]
@@ -140,9 +140,8 @@ public abstract class BattleUIComponents : MonoBehaviour
 	[SerializeField]
 	private GameObject _droppingItemObject;
 
-	[Header("ステージ効果テロップ")]
-	[SerializeField]
-	private GameObject _battleStageEffectObject;
+	[Header("特効効果テロップ")]
+	public BattleExtraEffectUI battleExtraEffectUI;
 
 	[SerializeField]
 	[Header("Winのオブジェクト(PvP限定)")]
@@ -340,14 +339,6 @@ public abstract class BattleUIComponents : MonoBehaviour
 		get
 		{
 			return this._droppingItemObject;
-		}
-	}
-
-	public GameObject battleStageEffectObject
-	{
-		get
-		{
-			return this._battleStageEffectObject;
 		}
 	}
 

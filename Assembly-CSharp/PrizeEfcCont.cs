@@ -55,9 +55,9 @@ public class PrizeEfcCont : MonoBehaviour
 		List<string> strList = this.CheckHaveMedal(this.Data.userMonster);
 		int num = 0;
 		this.spInharitance.gameObject.SetActive(false);
-		if (this.Data.commonSkillM != null)
+		if (this.Data.GetCommonSkill() != null)
 		{
-			int num2 = int.Parse(this.Data.commonSkillM.rank);
+			int num2 = int.Parse(this.Data.GetCommonSkill().rank);
 			if (num2 >= ConstValue.GASHA_INHARITANCE_PRIZE_LEVEL)
 			{
 				this.spInharitance.gameObject.SetActive(true);
@@ -65,9 +65,9 @@ public class PrizeEfcCont : MonoBehaviour
 			}
 		}
 		this.spLeaderSkill.gameObject.SetActive(false);
-		if (this.Data.leaderSkillM != null)
+		if (this.Data.GetLeaderSkill() != null)
 		{
-			int num3 = int.Parse(this.Data.leaderSkillM.rank);
+			int num3 = int.Parse(this.Data.GetLeaderSkill().rank);
 			if (num3 >= ConstValue.GASHA_LEADERSKILL_PRIZE_LEVEL)
 			{
 				this.spLeaderSkill.gameObject.SetActive(true);

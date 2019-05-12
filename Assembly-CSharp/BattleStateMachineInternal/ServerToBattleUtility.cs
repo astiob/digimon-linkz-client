@@ -12,6 +12,11 @@ namespace BattleStateMachineInternal
 			return Mathf.Clamp01((float)value / 10000f);
 		}
 
+		public static int PercentageToPermillion(float value)
+		{
+			return (int)Math.Round((double)(value * 10000f), MidpointRounding.AwayFromZero);
+		}
+
 		public static float PermillionToPercentage(int value, bool useClamp)
 		{
 			return (!useClamp) ? ((float)value / 10000f) : ServerToBattleUtility.PermillionToPercentage(value);

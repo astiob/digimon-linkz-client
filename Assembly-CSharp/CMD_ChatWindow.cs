@@ -37,9 +37,6 @@ public class CMD_ChatWindow : CMD
 	private UIInput chatCommentInput;
 
 	[SerializeField]
-	private UILabel chatCommentLabel;
-
-	[SerializeField]
 	private UILabel chatPlaceholder;
 
 	[SerializeField]

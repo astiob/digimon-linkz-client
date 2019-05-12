@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMA_FacilityMaster
+			GameWebAPI.RequestMA_FacilityMaster requestMA_FacilityMaster = new GameWebAPI.RequestMA_FacilityMaster();
+			requestMA_FacilityMaster.SetSendData = delegate(GameWebAPI.RequestMA_FacilityM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_GetFacilityM>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestMA_FacilityMaster.OnReceived = new Action<GameWebAPI.RespDataMA_GetFacilityM>(base.SetResponse);
+			return requestMA_FacilityMaster;
 		}
 
 		protected override void PrepareData(GameWebAPI.RespDataMA_GetFacilityM src)

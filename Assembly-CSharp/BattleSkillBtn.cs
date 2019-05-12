@@ -21,12 +21,12 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("スキル名")]
 	private UILabel skillName;
 
-	[Header("スキル説明")]
 	[SerializeField]
+	[Header("スキル説明")]
 	private UILabel skillDescription;
 
-	[SerializeField]
 	[Header("必要AP数")]
+	[SerializeField]
 	private UILabel ap;
 
 	[SerializeField]
@@ -41,12 +41,12 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UITweener rotationEffect1;
 
-	[Header("Tweener2（閉じる）")]
 	[SerializeField]
+	[Header("Tweener2（閉じる）")]
 	private UITweener rotationEffect2;
 
-	[SerializeField]
 	[Header("Collider")]
+	[SerializeField]
 	private Collider colliderValue;
 
 	[SerializeField]
@@ -69,8 +69,8 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private GameObject onSkillButton;
 
-	[Header("スキルOFfボタン")]
 	[SerializeField]
+	[Header("スキルOFfボタン")]
 	private GameObject offSkillButton;
 
 	[SerializeField]

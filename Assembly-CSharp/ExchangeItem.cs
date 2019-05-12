@@ -197,6 +197,10 @@ public class ExchangeItem : GUIListPartBS
 			{
 				num = this.exchangeInfoData.remainCount;
 			}
+			else if (num > 100)
+			{
+				num = 100;
+			}
 		}
 		else if (num > 100)
 		{
@@ -577,6 +581,10 @@ public class ExchangeItem : GUIListPartBS
 
 	public void ItemIconOnTap()
 	{
+		if (this.numUpButtonCollider.isTouching || this.numDownButtonCollider.isTouching)
+		{
+			return;
+		}
 		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)int.Parse(this.exchangeInfoData.assetCategoryId);
 		GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory2 = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(this.exchangeInfoData.assetCategoryId);
 		switch (assetCategory)
@@ -617,7 +625,7 @@ public class ExchangeItem : GUIListPartBS
 					digimonData.userMonster.defaultSkillGroupSubId = fixedValues.defaultSkillGroupSubId;
 					digimonData.userMonster.uniqueSkillId = skillM2.skillId;
 					digimonData.InitSkillInfo();
-					cmd_MonsterParamPop.MonsterDataSet(digimonData, experienceInfo, int.Parse(this.exchangeInfoData.maxExtraSlotNum));
+					cmd_MonsterParamPop.MonsterDataSet(digimonData, experienceInfo, int.Parse(this.exchangeInfoData.maxExtraSlotNum), this.exchangeItemData.eventExchangeId);
 				}
 			}
 			break;

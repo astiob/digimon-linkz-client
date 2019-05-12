@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -124,7 +125,6 @@ public class GUIScreenHome : GUIScreen
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		MonsterDataMng.Instance().InitMonsterGO();
 		this.MissionProcess();
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 		ClassSingleton<FaceNewsAccessor>.Instance.faceNews.SetBadgeOnly();
@@ -363,16 +363,65 @@ public class GUIScreenHome : GUIScreen
 	private void ShowWebWindow()
 	{
 		DataMng dataMng = DataMng.Instance();
-		if (!this.isStartGuidance && (this.isInfoShowed || (null != dataMng && dataMng.IsPopUpInformaiton)))
+		if (!this.isStartGuidance)
 		{
-			CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
-			cmdwebWindow.TitleText = StringMaster.GetString("InfomationTitle");
-			cmdwebWindow.Url = WebAddress.EXT_ADR_INFO;
-			if (null != dataMng)
+			if (this.isInfoShowed || (null != dataMng && dataMng.IsPopUpInformaiton))
 			{
-				dataMng.IsPopUpInformaiton = false;
+				Action<int> action = delegate(int x)
+				{
+					base.StartCoroutine(this.ShowExtraPopupInformations());
+				};
+				CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(action, "CMDWebWindow") as CMDWebWindow;
+				cmdwebWindow.TitleText = StringMaster.GetString("InfomationTitle");
+				cmdwebWindow.Url = WebAddress.EXT_ADR_INFO;
+				if (null != dataMng)
+				{
+					dataMng.IsPopUpInformaiton = false;
+				}
+			}
+			else
+			{
+				base.StartCoroutine(this.ShowExtraPopupInformations());
 			}
 		}
+	}
+
+	private IEnumerator ShowExtraPopupInformations()
+	{
+		DataMng.Instance().ShowPopupInfoNum = 0;
+		if (DataMng.Instance().ShowPopupInfoIds == null)
+		{
+			DataMng.Instance().ShowPopupInfoIds = new Queue();
+		}
+		GameWebAPI.RespDataIN_InfoList dts = DataMng.Instance().RespDataIN_InfoList;
+		GameWebAPI.RespDataIN_InfoList.InfoList[] infoList = dts.infoList;
+		while (DataMng.Instance().ShowPopupInfoNum < infoList.Length)
+		{
+			GameWebAPI.RespDataIN_InfoList.InfoList dt = infoList[DataMng.Instance().ShowPopupInfoNum];
+			if (dt.popupFlg == 1 && !DataMng.Instance().ShowPopupInfoIds.Contains(int.Parse(dt.userInfoId)))
+			{
+				bool isClose = false;
+				Action<int> action = delegate(int x)
+				{
+					isClose = true;
+					DataMng.Instance().ShowPopupInfoNum++;
+				};
+				CMDWebWindowPopup cd = GUIMain.ShowCommonDialog(action, "CMDWebWindowPopup") as CMDWebWindowPopup;
+				cd.setLinkCategoryType(int.Parse(dt.linkCategoryType));
+				cd.userInfoId = int.Parse(dt.userInfoId);
+				cd.TitleText = dt.title;
+				cd.Url = ConstValue.APP_WEB_DOMAIN + ConstValue.WEB_INFO_ADR + dt.userInfoId;
+				while (!isClose)
+				{
+					yield return null;
+				}
+			}
+			else
+			{
+				DataMng.Instance().ShowPopupInfoNum++;
+			}
+		}
+		yield break;
 	}
 
 	private void DownloadMenuBanner()
@@ -432,13 +481,13 @@ public class GUIScreenHome : GUIScreen
 
 	private void CachePartyFavorite()
 	{
-		List<string> deckMonsterPathList = MonsterDataMng.Instance().GetDeckMonsterPathList(true);
+		List<string> deckMonsterPathList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckMonsterPathList(true);
 		AssetDataCacheMng.Instance().RegisterCacheType(deckMonsterPathList, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, false);
 	}
 
 	private void CachePartyAll()
 	{
-		List<string> deckMonsterPathList = MonsterDataMng.Instance().GetDeckMonsterPathList(false);
+		List<string> deckMonsterPathList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckMonsterPathList(false);
 		AssetDataCacheMng.Instance().RegisterCacheType(deckMonsterPathList, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, false);
 	}
 

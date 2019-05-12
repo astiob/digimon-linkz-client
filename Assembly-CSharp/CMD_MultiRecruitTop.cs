@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_MultiRecruitTop : CMD
+public sealed class CMD_MultiRecruitTop : CMD
 {
 	public static CMD_MultiRecruitTop instance;
 
@@ -16,16 +16,16 @@ public class CMD_MultiRecruitTop : CMD
 
 	private int worldDungeonId;
 
-	[Header("フレンドラベル")]
 	[SerializeField]
+	[Header("フレンドラベル")]
 	private UILabel friendLabel;
 
 	[Header("全国ラベル")]
 	[SerializeField]
 	private UILabel nationwideLebel;
 
-	[SerializeField]
 	[Header("PASSラベル")]
+	[SerializeField]
 	private UILabel passLabel;
 
 	[SerializeField]
@@ -82,6 +82,9 @@ public class CMD_MultiRecruitTop : CMD
 	[SerializeField]
 	private Color colorRecruitDefault;
 
+	[SerializeField]
+	private GameObject friendAlertObject;
+
 	public GameWebAPI.RespData_MultiRoomJoin passInputJoinData;
 
 	private GUISelectMultiRecruitListPanel csMultiRecruitListPanel;
@@ -102,29 +105,27 @@ public class CMD_MultiRecruitTop : CMD
 		CMD_MultiRecruitTop.instance = null;
 	}
 
-	protected override void Update()
+	public static CMD_MultiRecruitTop Create()
 	{
-		base.Update();
+		CMD_MultiRecruitTop cmd_MultiRecruitTop = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop") as CMD_MultiRecruitTop;
+		cmd_MultiRecruitTop.SetMultiRecruitList(0);
+		return cmd_MultiRecruitTop;
+	}
+
+	public static CMD_MultiRecruitTop CreateTargetStage(string worldDungeonId)
+	{
+		CMD_MultiRecruitTop cmd_MultiRecruitTop = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop") as CMD_MultiRecruitTop;
+		cmd_MultiRecruitTop.worldDungeonId = int.Parse(worldDungeonId);
+		cmd_MultiRecruitTop.SetMultiRecruitList(0);
+		return cmd_MultiRecruitTop;
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		this.SetCommonUI();
+		base.SetTutorialAnyTime("anytime_second_tutorial_multi_recruite");
 		base.Show(f, sizeX, sizeY, aT);
-		this.setInitLabel();
-		if (CMD_QuestTOP.instance != null)
-		{
-			this.worldDungeonId = int.Parse(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
-		}
-		else
-		{
-			GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
-			if (lastDngReq != null)
-			{
-				this.worldDungeonId = int.Parse(lastDngReq.dungeonId);
-			}
-		}
-		this.SetMultiRecruitList(0);
+		this.SetInitLabel();
 	}
 
 	protected override void WindowOpened()
@@ -142,7 +143,7 @@ public class CMD_MultiRecruitTop : CMD
 		base.ClosePanel(animation);
 	}
 
-	private void setInitLabel()
+	private void SetInitLabel()
 	{
 		this.friendLabel.text = StringMaster.GetString("FriendTitle");
 		this.nationwideLebel.text = StringMaster.GetString("Recruit-03");
@@ -227,7 +228,7 @@ public class CMD_MultiRecruitTop : CMD
 
 	private void ClickPasswordBtn()
 	{
-		GUIMain.ShowCommonDialog(delegate(int idx)
+		CMD_MultiRecruitPass cmd_MultiRecruitPass = GUIMain.ShowCommonDialog(delegate(int idx)
 		{
 			if (idx == 1 && this.passInputJoinData != null)
 			{
@@ -247,10 +248,12 @@ public class CMD_MultiRecruitTop : CMD
 				DataMng.Instance().GetResultUtilData().SetLastDngReq(this.passInputJoinData.multiRoomInfo.worldDungeonId, "-1", "-1");
 				CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
 				CMD_MultiRecruitPartyWait.roomJoinData = this.passInputJoinData;
-				GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait");
+				CMD_MultiRecruitPartyWait cmd_MultiRecruitPartyWait = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait") as CMD_MultiRecruitPartyWait;
+				cmd_MultiRecruitPartyWait.SetParentDialog(this);
 			}
 			this.passInputJoinData = null;
-		}, "CMD_MultiRecruitPass");
+		}, "CMD_MultiRecruitPass") as CMD_MultiRecruitPass;
+		cmd_MultiRecruitPass.SetParentDialog(this);
 	}
 
 	private void SetCommonUI()
@@ -265,6 +268,7 @@ public class CMD_MultiRecruitTop : CMD
 		this.excludeRoomIdList = new List<string>();
 		this.SetUpdateLock();
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_OFF);
+		GameWebAPI.ResponseData_Common_MultiRoomList data = null;
 		GameWebAPI.MultiRoomList request = new GameWebAPI.MultiRoomList
 		{
 			SetSendData = delegate(GameWebAPI.ReqData_MultiRoomList param)
@@ -272,9 +276,16 @@ public class CMD_MultiRecruitTop : CMD
 				param.isFriend = reqFrom;
 				param.dungeonId = this.worldDungeonId;
 			},
-			OnReceived = new Action<GameWebAPI.RespData_MultiRoomList>(this.UpdateMultiRecruitList)
+			OnReceived = delegate(GameWebAPI.RespData_MultiRoomList response)
+			{
+				data = response;
+			}
 		};
-		AppCoroutine.Start(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		AppCoroutine.Start(request.RunOneTime(delegate()
+		{
+			RestrictionInput.EndLoad();
+			this.UpdateMultiRecruitList(data);
+		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null), false);
@@ -289,7 +300,7 @@ public class CMD_MultiRecruitTop : CMD
 		this.partMultiRecruitParent.SetActive(true);
 		this.partMultiRecruit.SetActive(true);
 		this.csMultiRecruitListPanel.initLocation = true;
-		this.csMultiRecruitListPanel.AllBuild(data);
+		this.csMultiRecruitListPanel.AllBuild(data, this);
 		this.partMultiRecruit.SetActive(false);
 		if (data.multiRoomList != null)
 		{
@@ -298,6 +309,14 @@ public class CMD_MultiRecruitTop : CMD
 		else
 		{
 			this.goRecruitDefaultText.SetActive(true);
+		}
+		if (data.friendRequestFlag == 1)
+		{
+			this.friendAlertObject.SetActive(true);
+		}
+		else
+		{
+			this.friendAlertObject.SetActive(false);
 		}
 		this.isRecruitListLock = false;
 		RestrictionInput.EndLoad();
@@ -313,7 +332,7 @@ public class CMD_MultiRecruitTop : CMD
 		this.partMultiRecruitParent.SetActive(true);
 		this.partMultiRecruit.SetActive(true);
 		this.csMultiRecruitListPanel.initLocation = true;
-		this.csMultiRecruitListPanel.ReBuild(this.excludeRoomIdList);
+		this.csMultiRecruitListPanel.ReBuild(this.excludeRoomIdList, this);
 		this.partMultiRecruit.SetActive(false);
 		this.goRecruitDefaultText.SetActive(false);
 		this.isRecruitListLock = false;

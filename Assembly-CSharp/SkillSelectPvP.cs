@@ -11,8 +11,8 @@ public class SkillSelectPvP : MonoBehaviour
 	[Header("Time")]
 	public GameObject timeObject;
 
-	[Header("攻撃ボタンのコライダー")]
 	[SerializeField]
+	[Header("攻撃ボタンのコライダー")]
 	public Collider AttackButtonCollider;
 
 	[Header("スキルボタン1のコライダー")]
@@ -31,7 +31,7 @@ public class SkillSelectPvP : MonoBehaviour
 	[Header("スキルボタン1のチェッカー")]
 	public UITouchChecker skillButton1Checker;
 
-	[SerializeField]
 	[Header("スキルボタン2のチェッカー")]
+	[SerializeField]
 	public UITouchChecker skillButton2Checker;
 }

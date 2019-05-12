@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Font")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Font")]
 public class UIFont : MonoBehaviour
 {
 	[SerializeField]
 	[HideInInspector]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Rect mUVRect = new Rect(0f, 0f, 1f, 1f);
 
 	[HideInInspector]
 	[SerializeField]
 	private BMFont mFont = new BMFont();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIAtlas mAtlas;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIFont mReplacement;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private List<BMSymbol> mSymbols = new List<BMSymbol>();
 
 	[SerializeField]

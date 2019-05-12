@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(UISprite))]
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Sprite Animation")]
+[ExecuteInEditMode]
 public class UISpriteAnimation : MonoBehaviour
 {
 	[HideInInspector]
 	[SerializeField]
 	protected int mFPS = 30;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected string mPrefix = string.Empty;
 
 	[HideInInspector]

@@ -39,8 +39,8 @@ public class UIToggle : UIWidgetContainer
 	[HideInInspector]
 	private Animation checkAnimation;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
 	[SerializeField]

@@ -24,7 +24,7 @@ public class LeaderSkillResult
 	{
 		get
 		{
-			return this._characterStateControl.hp <= Mathf.FloorToInt((float)this._characterStateControl.maxHp * this._leaderSkillStatus.hpFollowingPercent);
+			return this._characterStateControl.hp <= Mathf.FloorToInt((float)this._characterStateControl.extraMaxHp * this._leaderSkillStatus.hpFollowingPercent);
 		}
 	}
 
@@ -32,7 +32,7 @@ public class LeaderSkillResult
 	{
 		get
 		{
-			return this._characterStateControl.hp == this._characterStateControl.maxHp;
+			return this._characterStateControl.hp == this._characterStateControl.extraMaxHp;
 		}
 	}
 

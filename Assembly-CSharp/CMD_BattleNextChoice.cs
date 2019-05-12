@@ -51,6 +51,7 @@ public sealed class CMD_BattleNextChoice : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		CMD_BattleNextChoice.isGoToFarmCalled = false;
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		if (ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic != null)
 		{
 			aT = 0.1f;
@@ -185,8 +186,15 @@ public sealed class CMD_BattleNextChoice : CMD
 					if (idx == 0)
 					{
 						ClassSingleton<PlayLimit>.Instance.SetTicketNumCont(dng, ConstValue.PLAYLIMIT_USE_COUNT);
-						NextChoiceReplay nextChoiceReplay2 = new NextChoiceReplay(this);
-						nextChoiceReplay2.Start();
+						if (this.isMulti)
+						{
+							this.RequestDungeonStart();
+						}
+						else
+						{
+							NextChoiceReplay nextChoiceReplay2 = new NextChoiceReplay(new Action(this.RequestDungeonStart));
+							nextChoiceReplay2.Start();
+						}
 					}
 				}, "CMD_Confirm") as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("TicketQuestTitle");
@@ -268,8 +276,15 @@ public sealed class CMD_BattleNextChoice : CMD
 				{
 					return;
 				}
-				NextChoiceReplay nextChoiceReplay = new NextChoiceReplay(this);
-				nextChoiceReplay.Start();
+				if (this.isMulti)
+				{
+					this.RequestDungeonStart();
+				}
+				else
+				{
+					NextChoiceReplay nextChoiceReplay = new NextChoiceReplay(new Action(this.RequestDungeonStart));
+					nextChoiceReplay.Start();
+				}
 			}
 			else
 			{
@@ -286,6 +301,7 @@ public sealed class CMD_BattleNextChoice : CMD
 
 	public void RequestDungeonStart()
 	{
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		if (this.isMulti)
 		{
 			int[] aliveMonsterList = this.GetAliveMonsterList();
@@ -297,7 +313,6 @@ public sealed class CMD_BattleNextChoice : CMD
 				{
 					DataMng.Instance().WD_ReqDngResult.dungeonId = sendData.dungeonId;
 				}
-				BattleNextBattleOption.SaveBattleMenuSettings(this.battleOption.GetBattleOptionSettings());
 				RestrictionInput.EndLoad();
 				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseMultiBattleMenu), "CMD_MultiBattleParticipateMenu");
 			}, delegate(Exception noop)
@@ -346,7 +361,7 @@ public sealed class CMD_BattleNextChoice : CMD
 		component.SetCloseAction(delegate(int noop)
 		{
 			DataMng.Instance().WD_ReqDngResult.clear = 0;
-			BattleStateManager.StartSingle(0.5f, 0.5f, false, null);
+			BattleStateManager.StartSingle(0.5f, 0.5f, true, null);
 		});
 		component.ClosePanel(true);
 	}
@@ -357,7 +372,8 @@ public sealed class CMD_BattleNextChoice : CMD
 		{
 		case 1:
 		{
-			CMD_MultiRecruitTop cmd1 = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop") as CMD_MultiRecruitTop;
+			GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
+			CMD_MultiRecruitTop cmd1 = CMD_MultiRecruitTop.CreateTargetStage(lastDngReq.dungeonId);
 			cmd1.PartsTitle.SetReturnAct(delegate(int i)
 			{
 				cmd1.ClosePanel(true);
@@ -376,25 +392,40 @@ public sealed class CMD_BattleNextChoice : CMD
 		}
 		case 2:
 		{
-			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
-			CMD_PartyEdit cmd2 = GUIMain.ShowCommonDialog(null, "CMD_PartyEdit") as CMD_PartyEdit;
-			cmd2.PartsTitle.SetReturnAct(delegate(int i)
-			{
-				cmd2.ClosePanel(true);
-			});
-			cmd2.PartsTitle.DisableReturnBtn(false);
-			cmd2.PartsTitle.SetCloseAct(delegate(int i)
-			{
-				this.ClosePanel(false);
-				cmd2.SetCloseAction(delegate(int x)
-				{
-					CMD_BattleNextChoice.GoToFarm();
-				});
-				cmd2.ClosePanel(true);
-			});
+			NextChoiceReplay nextChoiceReplay = new NextChoiceReplay(new Action(this.MultyParty));
+			nextChoiceReplay.Start();
 			break;
 		}
 		}
+	}
+
+	private void MultyParty()
+	{
+		GameWebAPI.WD_Req_DngStart last_dng_req = DataMng.Instance().GetResultUtilData().last_dng_req;
+		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
+		int dungeonID = int.Parse(last_dng_req.dungeonId);
+		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM masterDungeon = worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonID.ToString());
+		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 = worldStageM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM x) => x.worldStageId == masterDungeon.worldStageId);
+		CMD_PartyEdit.replayMultiStageId = worldStageM2.worldStageId;
+		CMD_PartyEdit.replayMultiAreaId = worldStageM2.worldAreaId;
+		CMD_PartyEdit.replayMultiDungeonId = last_dng_req.dungeonId;
+		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
+		CMD_PartyEdit cmd2 = GUIMain.ShowCommonDialog(null, "CMD_PartyEdit") as CMD_PartyEdit;
+		cmd2.PartsTitle.SetReturnAct(delegate(int i)
+		{
+			cmd2.ClosePanel(true);
+		});
+		cmd2.PartsTitle.DisableReturnBtn(false);
+		cmd2.PartsTitle.SetCloseAct(delegate(int i)
+		{
+			this.ClosePanel(false);
+			cmd2.SetCloseAction(delegate(int x)
+			{
+				CMD_BattleNextChoice.GoToFarm();
+			});
+			cmd2.ClosePanel(true);
+		});
 	}
 
 	private void OnPushedNextQuestButton()
@@ -465,23 +496,11 @@ public sealed class CMD_BattleNextChoice : CMD
 
 	private void RequestQuestData()
 	{
-		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		MonsterDataMng.Instance().InitMonsterGO();
 		List<string> list = new List<string>();
 		list.Add("1");
 		list.Add("3");
 		list.Add("8");
 		ClassSingleton<QuestData>.Instance.GetWorldDungeonInfo(list, new Action<bool>(this.OpenQuestUI));
-	}
-
-	private void OpenMultiRecruitTop()
-	{
-		base.SetCloseAction(delegate(int x)
-		{
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_MultiRecruitTop");
-			commonDialog.SetForceReturnValue(1);
-		});
-		base.ClosePanel(true);
 	}
 
 	private void OpenQuestUI(bool isSuccess)

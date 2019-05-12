@@ -15,8 +15,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	private UIWidget _pvpBattleEnemyPartyUi;
 
-	[Header("シード同期中のもの")]
 	[SerializeField]
+	[Header("シード同期中のもの")]
 	private UIWidget _pvpBattleSyncWaitUi;
 
 	[SerializeField]
@@ -34,12 +34,12 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[NonSerialized]
 	public EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("Winの次のボタン")]
+	[SerializeField]
 	public UIButton winNextButton;
 
-	[SerializeField]
 	[Header("Loseの次のボタン")]
+	[SerializeField]
 	public UIButton loseNextButton;
 
 	public override GameObject enemyStatusDescriptionGO

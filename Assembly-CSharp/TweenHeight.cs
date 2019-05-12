@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(UIWidget))]
 [AddComponentMenu("NGUI/Tween/Tween Height")]
+[RequireComponent(typeof(UIWidget))]
 public class TweenHeight : UITweener
 {
 	public int from = 100;

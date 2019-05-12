@@ -53,4 +53,6 @@ public static class PlayerPrefsKeys
 	public const string CLEAR_BACKUP_MISSION_FLAG = "ClearBackupMission";
 
 	public const string COLOSSEUM_TOP_NOTICE_CODE = "ColosseumTopNoticeCode";
+
+	public const string PLAYER_COUNTRY_CODE = "PlayerCountryCode";
 }

@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Cutscene;
+using Master;
 using Monster;
 using MonsterList.InheritSkill;
 using System;
@@ -46,8 +47,8 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private CMD_Succession.SkillTab materialMonsterSkillTab2;
 
-	[SerializeField]
 	[Header("所持クラスタ数")]
+	[SerializeField]
 	private UILabel myClusterLabel;
 
 	[Header("必要クラスタ数")]
@@ -63,12 +64,12 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
 
-	[SerializeField]
 	[Header("表示デジモン数")]
+	[SerializeField]
 	private UILabel ngTX_MN_HAVE;
 
-	[SerializeField]
 	[Header("ソートのラベル")]
+	[SerializeField]
 	private UILabel ngTX_SORT_DISP;
 
 	[SerializeField]
@@ -96,8 +97,6 @@ public sealed class CMD_Succession : CMD
 	private InheritSkillIconGrayOut iconGrayOut;
 
 	private InheritSkillMonsterList monsterList;
-
-	private int materialMonsterGroupId;
 
 	private GameObject goSelectPanelMonsterIcon;
 
@@ -146,16 +145,13 @@ public sealed class CMD_Succession : CMD
 		this.ShowMATInfo();
 		this.UpdateClusterNum();
 		base.Show(f, sizeX, sizeY, aT);
+		base.SetTutorialAnyTime("anytime_second_tutorial_succession");
 		RestrictionInput.EndLoad();
 	}
 
 	protected override void WindowClosed()
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		if (monsterDataMng != null)
-		{
-			monsterDataMng.PushBackAllMonsterPrefab();
-		}
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.WindowClosed();
 	}
 
@@ -237,7 +233,7 @@ public sealed class CMD_Succession : CMD
 
 	private void OnPartnerDigimonSkill2()
 	{
-		if (this.selecterPartnerDigimons.Count > 0 && this.selecterPartnerDigimons[0].commonSkillM2 != null)
+		if (this.selecterPartnerDigimons.Count > 0 && this.selecterPartnerDigimons[0].GetExtraCommonSkill() != null)
 		{
 			this.FunctionPartnerDigimonSkill2();
 		}
@@ -314,18 +310,15 @@ public sealed class CMD_Succession : CMD
 	private void ExecSuccession()
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		int[] mat = new int[this.selecterPartnerDigimons.Count];
-		for (int i = 0; i < this.selecterPartnerDigimons.Count; i++)
-		{
-			mat[i] = int.Parse(this.selecterPartnerDigimons[i].userMonster.userMonsterId);
-		}
-		this.materialMonsterGroupId = int.Parse(this.selecterPartnerDigimons[0].monsterM.monsterGroupId);
-		this.useClusterBK = CalculatorUtil.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
+		string materialMonster = this.selecterPartnerDigimons[0].userMonster.userMonsterId;
+		string materialModelId = this.selecterPartnerDigimons[0].GetMonsterMaster().Group.modelId;
+		string materialGrowStep = this.selecterPartnerDigimons[0].GetMonsterMaster().Group.growStep;
+		this.useClusterBK = this.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
 		GameWebAPI.RequestMN_MonsterInheritance requestMN_MonsterInheritance = new GameWebAPI.RequestMN_MonsterInheritance();
 		requestMN_MonsterInheritance.SetSendData = delegate(GameWebAPI.MN_Req_Success param)
 		{
-			param.baseUserMonsterId = int.Parse(this.baseDigimon.userMonster.userMonsterId);
-			param.materialUserMonsterId = mat[0];
+			param.baseUserMonsterId = this.baseDigimon.userMonster.userMonsterId;
+			param.materialUserMonsterId = materialMonster;
 			param.baseCommonSkillNumber = this.baseDigimonSkillNumber;
 			param.materialCommonSkillNumber = this.partnerDigimonSkillNumber;
 		};
@@ -334,13 +327,16 @@ public sealed class CMD_Succession : CMD
 			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MonsterInheritance request = requestMN_MonsterInheritance;
-		base.StartCoroutine(request.Run(new Action(this.EndSuccession), delegate(Exception noop)
+		base.StartCoroutine(request.Run(delegate()
+		{
+			this.EndSuccession(materialModelId, materialGrowStep);
+		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null));
 	}
 
-	private void EndSuccession()
+	private void EndSuccession(string materialMonsterModelId, string materialMonsterGrowStep)
 	{
 		string[] userMonsterIdList = this.selecterPartnerDigimons.Select((MonsterData x) => x.userMonster.userMonsterId).ToArray<string>();
 		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
@@ -348,30 +344,25 @@ public sealed class CMD_Succession : CMD
 		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		this.InitMonsterList(false);
-		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
-		List<int> umidList = new List<int>
+		CutsceneDataInheritance cutsceneData = new CutsceneDataInheritance
 		{
-			item
-		};
-		List<int> umidList2 = new List<int>
-		{
-			this.materialMonsterGroupId
+			path = "Cutscenes/Inheritance",
+			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
+			materialModelId = materialMonsterModelId,
+			endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
 		};
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene("Cutscenes/Inheritance", new Action<int>(this.StartCutSceneCallBack), delegate(int index)
-		{
-			CutSceneMain.FadeReqCutSceneEnd();
-		}, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
 		{
 			if (PartsUpperCutinController.Instance != null)
 			{
 				PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.InheritanceComplete, null);
 			}
 			RestrictionInput.EndLoad();
-		}, umidList, umidList2, 3, 1, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
-	private void StartCutSceneCallBack(int noop)
+	private void StartCutSceneCallBack()
 	{
 		this.leftLargeMonsterIcon.Data = this.baseDigimon;
 		GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.baseDigimon);
@@ -412,7 +403,7 @@ public sealed class CMD_Succession : CMD
 			if (MonsterStatusData.IsVersionUp(this.baseDigimon.GetMonsterMaster().Simple.rare))
 			{
 				this.baseMonsterSkillTab2.SetActive(true);
-				if (this.baseDigimon.commonSkillM2 != null)
+				if (this.baseDigimon.GetExtraCommonSkill() != null)
 				{
 					this.FunctionBaseDigimonSkill1();
 				}
@@ -444,7 +435,7 @@ public sealed class CMD_Succession : CMD
 			MonsterData monsterData = this.selecterPartnerDigimons[0];
 			this.materialMonsterBasicInfo.SetMonsterData(monsterData);
 			this.materialMonsterSuccessionSkill.SetSkill(monsterData);
-			int num = CalculatorUtil.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
+			int num = this.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
 			this.useClusterLabel.text = StringFormat.Cluster(num);
 			if (num > int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney))
 			{
@@ -489,19 +480,15 @@ public sealed class CMD_Succession : CMD
 
 	private void InitMonsterList(bool initLoc = true)
 	{
+		ClassSingleton<GUIMonsterIconList>.Instance.ResetIconState();
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.ClearSortMessAll();
-		monsterDataMng.ClearLevelMessAll();
 		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
-		list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 		monsterDataMng.SortMDList(list);
 		monsterDataMng.SetSortLSMessage();
 		this.csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
-		monsterDataMng.SetSelectOffAll();
-		monsterDataMng.ClearDimmMessAll();
-		monsterDataMng.SetLockIcon();
+		ClassSingleton<GUIMonsterIconList>.Instance.SetLockIcon();
 		this.csSelectPanelMonsterIcon.SetCheckEnablePushAction(null);
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
 		this.targetMonsterList = list;
@@ -519,21 +506,16 @@ public sealed class CMD_Succession : CMD
 		MonsterDataMng.Instance().SetSortLSMessage();
 		List<MonsterData> dts = MonsterDataMng.Instance().SelectionMDList(this.targetMonsterList);
 		this.csSelectPanelMonsterIcon.ReAllBuild(dts);
-		this.monsterList.SetGrayOutDeckMonster(this.baseDigimon);
-		this.monsterList.SetGrayOutUserMonsterList(this.baseDigimon);
+		if (this.baseDigimon != null)
+		{
+			this.monsterList.SetGrayOutDeckMonster(this.baseDigimon);
+			this.monsterList.SetGrayOutUserMonsterList(this.baseDigimon);
+		}
 	}
 
 	private void ActMIconLong(MonsterData tappedMonsterData)
 	{
-		bool flag = false;
-		for (int j = 0; j < this.selecterPartnerDigimons.Count; j++)
-		{
-			if (this.selecterPartnerDigimons[j] == tappedMonsterData)
-			{
-				flag = true;
-				break;
-			}
-		}
+		bool flag = this.CheckPartnerMonster(tappedMonsterData);
 		CMD_CharacterDetailed.DataChg = tappedMonsterData;
 		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
 		{
@@ -544,7 +526,11 @@ public sealed class CMD_Succession : CMD
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
 			if (null != icon)
 			{
-				this.iconGrayOut.SetLockReturnDetailed(icon, tappedMonsterData.userMonster.IsLocked, this.IsPartnerCandidateMonster(tappedMonsterData));
+				icon.Lock = tappedMonsterData.userMonster.IsLocked;
+				if (!MonsterStatusData.IsSpecialTrainingType(tappedMonsterData.GetMonsterMaster().Group.monsterType) && this.IsPartnerCandidateMonster(tappedMonsterData))
+				{
+					this.iconGrayOut.SetLockReturnDetailed(icon, tappedMonsterData.userMonster.IsLocked);
+				}
 			}
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		if (flag)
@@ -555,10 +541,28 @@ public sealed class CMD_Succession : CMD
 
 	private bool IsDeckMonster(string userMonsterId)
 	{
-		bool result = false;
+		bool flag = false;
 		for (int i = 0; i < this.deckMDList.Count; i++)
 		{
 			if (userMonsterId == this.deckMDList[i].userMonster.userMonsterId)
+			{
+				flag = true;
+				break;
+			}
+		}
+		if (!flag)
+		{
+			flag = ClassSingleton<MonsterUserDataMng>.Instance.FindMonsterColosseumDeck(userMonsterId);
+		}
+		return flag;
+	}
+
+	private bool CheckPartnerMonster(MonsterData targetMonster)
+	{
+		bool result = false;
+		for (int i = 0; i < this.selecterPartnerDigimons.Count; i++)
+		{
+			if (this.selecterPartnerDigimons[i] == targetMonster)
 			{
 				result = true;
 				break;
@@ -570,21 +574,9 @@ public sealed class CMD_Succession : CMD
 	private bool IsPartnerCandidateMonster(MonsterData targetMonster)
 	{
 		bool result = false;
-		if (!MonsterStatusData.IsSpecialTrainingType(targetMonster.GetMonsterMaster().Group.monsterType) && this.baseDigimon != null && this.baseDigimon != targetMonster && 1 > this.selecterPartnerDigimons.Count)
+		if (this.baseDigimon != null && this.baseDigimon != targetMonster && !this.CheckPartnerMonster(targetMonster) && !this.IsDeckMonster(targetMonster.userMonster.userMonsterId))
 		{
-			bool flag = false;
-			for (int i = 0; i < this.selecterPartnerDigimons.Count; i++)
-			{
-				if (this.selecterPartnerDigimons[i] == targetMonster)
-				{
-					flag = true;
-					break;
-				}
-			}
-			if (!flag)
-			{
-				result = this.IsDeckMonster(targetMonster.userMonster.userMonsterId);
-			}
+			result = true;
 		}
 		return result;
 	}
@@ -707,7 +699,7 @@ public sealed class CMD_Succession : CMD
 		bool flag = false;
 		if (this.baseDigimon != null && this.selecterPartnerDigimons.Count > 0)
 		{
-			int num = CalculatorUtil.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
+			int num = this.CalcClusterForSuccession(this.baseDigimon, this.selecterPartnerDigimons);
 			int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
 			if (num <= num2)
 			{
@@ -726,6 +718,23 @@ public sealed class CMD_Succession : CMD
 			this.ngTX_DECIDE.color = Color.gray;
 			this.clBTN_DECIDE.activeCollider = false;
 		}
+	}
+
+	private int CalcClusterForSuccession(MonsterData baseDigimon, List<MonsterData> partnerDigimons)
+	{
+		int num = baseDigimon.monsterM.GetArousal() + ConstValue.SUCCESSION_BASE_COEFFICIENT;
+		int num2 = 0;
+		int num3 = 0;
+		for (int i = 0; i < partnerDigimons.Count; i++)
+		{
+			MonsterData monsterData = partnerDigimons[i];
+			if (monsterData.GetCommonSkill() != null)
+			{
+				num2 += int.Parse(monsterData.GetCommonSkill().inheritancePrice);
+				num3 += monsterData.monsterM.GetArousal() + ConstValue.SUCCESSION_PARTNER_COEFFICIENT;
+			}
+		}
+		return num * num2 * num3 + ConstValue.SUCCESSION_COEFFICIENT;
 	}
 
 	[Serializable]

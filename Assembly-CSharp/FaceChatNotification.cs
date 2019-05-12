@@ -1,5 +1,4 @@
-﻿using Master;
-using Quest;
+﻿using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,12 +9,6 @@ public class FaceChatNotification : GUICollider
 {
 	[SerializeField]
 	private GameObject attensionIcon;
-
-	[SerializeField]
-	private GameObject textPlate;
-
-	[SerializeField]
-	private UILabel notifiCationTextLabel;
 
 	private bool isFirst = true;
 
@@ -29,15 +22,12 @@ public class FaceChatNotification : GUICollider
 
 	public List<FaceChatNotification.UserPrefsHistoryIdList> prefsLastHistoryList { get; set; }
 
-	private string diffApiHistoryStr { get; set; }
-
 	private bool isNewMultiRequestRequest { get; set; }
 
 	protected override void Awake()
 	{
 		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification = this;
 		this.OnNotificationExec(false);
-		this.TextPlateAnimationNone();
 		base.Awake();
 	}
 
@@ -59,7 +49,6 @@ public class FaceChatNotification : GUICollider
 	{
 		if (!this.isLock)
 		{
-			this.TextPlateAnimationNone();
 			this.GetChatLastHistoryIdList();
 		}
 	}
@@ -108,7 +97,6 @@ public class FaceChatNotification : GUICollider
 			}
 			else
 			{
-				this.notifiCationTextLabel.text = StringMaster.GetString("ChatInfo-02");
 				this.apiLastHistoryList = data;
 				this.LoadPrefsHistoryIds();
 			}
@@ -124,9 +112,7 @@ public class FaceChatNotification : GUICollider
 				int @int = PlayerPrefs.GetInt("lastMultiReqId");
 				if (@int < int.Parse(multiRoomRequestId))
 				{
-					this.notifiCationTextLabel.text = StringMaster.GetString("ChatInfo-03");
 					this.OnNotificationExec(true);
-					this.TextPlateAnimationActive();
 					this.chatTabAlertList[0] = true;
 					this.isNewMultiRequestRequest = true;
 				}
@@ -138,9 +124,7 @@ public class FaceChatNotification : GUICollider
 			}
 			else
 			{
-				this.notifiCationTextLabel.text = StringMaster.GetString("ChatInfo-03");
 				this.OnNotificationExec(true);
-				this.TextPlateAnimationActive();
 				this.chatTabAlertList[0] = true;
 				this.isNewMultiRequestRequest = true;
 			}
@@ -163,9 +147,7 @@ public class FaceChatNotification : GUICollider
 				{
 					if (!this.isNewMultiRequestRequest)
 					{
-						this.notifiCationTextLabel.text = StringMaster.GetString("ChatInfo-04");
 						this.OnNotificationExec(true);
-						this.TextPlateAnimationActive();
 					}
 					this.chatTabAlertList[1] = true;
 					this.isNewMockBattleRequest = true;
@@ -180,9 +162,7 @@ public class FaceChatNotification : GUICollider
 			{
 				if (!this.isNewMultiRequestRequest)
 				{
-					this.notifiCationTextLabel.text = StringMaster.GetString("ChatInfo-04");
 					this.OnNotificationExec(true);
-					this.TextPlateAnimationActive();
 				}
 				this.chatTabAlertList[1] = true;
 				this.isNewMockBattleRequest = true;
@@ -273,23 +253,9 @@ public class FaceChatNotification : GUICollider
 			','
 		});
 		PlayerPrefs.SetString("lastHistoryIds", text);
-		bool flag2;
-		if (this.diffApiHistoryStr == null || this.diffApiHistoryStr != text2)
-		{
-			this.diffApiHistoryStr = text2;
-			flag2 = true;
-		}
-		else
-		{
-			flag2 = false;
-		}
 		if (flag)
 		{
 			this.OnNotificationExec(true);
-			if (flag2)
-			{
-				this.TextPlateAnimationActive();
-			}
 		}
 		else
 		{
@@ -326,22 +292,9 @@ public class FaceChatNotification : GUICollider
 		this.attensionIcon.SetActive(flg);
 	}
 
-	private void TextPlateAnimationActive()
-	{
-		NGUITools.SetActiveSelf(this.textPlate.gameObject, true);
-		base.Invoke("TextPlateAnimationNone", 10f);
-	}
-
-	private void TextPlateAnimationNone()
-	{
-		NGUITools.SetActiveSelf(this.textPlate.gameObject, false);
-	}
-
 	private void TextPlateAnimationDefault()
 	{
 		this.DispControlNewIcon(false);
-		NGUITools.SetActiveSelf(this.textPlate.gameObject, true);
-		this.notifiCationTextLabel.text = StringMaster.GetString("ChatInfo-01");
 	}
 
 	private void SetLock(bool flg = false)

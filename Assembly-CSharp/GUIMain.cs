@@ -1,4 +1,5 @@
-﻿using MonsterIcon;
+﻿using Monster;
+using MonsterIcon;
 using Quest;
 using System;
 using System.Collections;
@@ -263,7 +264,7 @@ public class GUIMain : Singleton<GUIMain>
 		CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
 		if (topDialog != null)
 		{
-			float num = GUIManager.GetDLGPitch() / 2f;
+			float num = GUIManager.GetDLGPitch() / 8f * 7f;
 			localPosition.z = topDialog.gameObject.transform.localPosition.z + num;
 		}
 		else
@@ -461,7 +462,7 @@ public class GUIMain : Singleton<GUIMain>
 
 	public static void DestroyAllDialog(CommonDialog cd = null)
 	{
-		MonsterDataMng.Instance().PushBackAllMonsterPrefab();
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		Dictionary<string, CommonDialog> dialogDic = GUIManager.GetDialogDic();
 		List<CommonDialog> list = new List<CommonDialog>();
 		foreach (string key in dialogDic.Keys)
@@ -499,8 +500,8 @@ public class GUIMain : Singleton<GUIMain>
 		{
 			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
 		}
-		MonsterDataMng.Instance().PushBackAllMonsterPrefab();
-		MonsterDataMng.Instance().DestroyAllMonsterData();
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
+		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
 		ClassSingleton<GUIMonsterIconList>.Instance.AllDelete();
 		GUIMain.DestroyAllDialog(null);
 		GUIMain.onFadeBlackLoadScene = null;
@@ -585,7 +586,8 @@ public class GUIMain : Singleton<GUIMain>
 		GUIMain.actCallBackBattle = null;
 		if (destroyMonsterIcon)
 		{
-			MonsterDataMng.Instance().DestroyAllMonsterDataAndPrefab();
+			ClassSingleton<GUIMonsterIconList>.Instance.AllDisable();
+			ClassSingleton<GUIMonsterIconList>.Instance.AllDelete();
 		}
 		GUICollider.DisableAllCollider("GUIMain");
 		GUIFadeControll.SetLoadInfo(new Action<int>(GUIMain.ShiftGUI), SceneName, "UIIdle", string.Empty, actionEnd, false);

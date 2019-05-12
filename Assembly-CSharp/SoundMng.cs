@@ -357,11 +357,10 @@ public class SoundMng : MonoBehaviour
 				break;
 			}
 		}
-		if (i == this.audioSEList.Count)
+		if (i != this.audioSEList.Count)
 		{
-			return;
+			this.StopSE(path, time, act);
 		}
-		this.StopSE(path, time, act);
 	}
 
 	public void StopSE(string path, float time = 0f, Action<int> act = null)
@@ -441,7 +440,7 @@ public class SoundMng : MonoBehaviour
 			soundCtr.ads.clip = clip;
 			soundCtr.ads.loop = false;
 			soundCtr.ads.pitch = 1f;
-			soundCtr.selfVolume = 100;
+			soundCtr.selfVolume = -1;
 			soundCtr.Play(true);
 		}
 		return num;
@@ -464,6 +463,16 @@ public class SoundMng : MonoBehaviour
 			soundCtr.act = null;
 			soundCtr.Stop();
 		}
+	}
+
+	public bool IsPlayingSE_Ex(int handle)
+	{
+		bool result = false;
+		if (handle < this.audioSEList.Count)
+		{
+			result = this.audioSEList[handle].ads.isPlaying;
+		}
+		return result;
 	}
 
 	public string GetNowBGMPath()

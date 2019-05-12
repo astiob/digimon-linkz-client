@@ -3,16 +3,6 @@ using UnityEngine;
 
 public class GUISelectPvPListPanel : GUISelectPanelBSPartsUD
 {
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public void AllBuild(GameWebAPI.RespData_ColosseumMockBattleRequestListLogic data)
 	{
 		int num = 0;

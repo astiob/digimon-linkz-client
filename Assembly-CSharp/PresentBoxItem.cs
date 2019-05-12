@@ -1,6 +1,7 @@
 ﻿using Evolution;
 using FarmData;
 using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Linq;
@@ -80,7 +81,7 @@ public sealed class PresentBoxItem : MonoBehaviour
 		this.ReleaseIcons();
 		GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(assetCategoryId);
 		MasterDataMng.AssetCategory assetCategory2 = (MasterDataMng.AssetCategory)assetCategory.assetCategoryId.ToInt32();
-		this.itemName = this.GetPresentName(assetCategory, objectId);
+		this.itemName = this.GetPresentName(assetCategory, objectId, false);
 		string arg;
 		if (assetCategory2 == MasterDataMng.AssetCategory.TIP)
 		{
@@ -200,7 +201,7 @@ public sealed class PresentBoxItem : MonoBehaviour
 		}
 	}
 
-	private string GetPresentName(GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM masterAssetCategory, string objectId)
+	public string GetPresentName(GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM masterAssetCategory, string objectId, bool showDetail = false)
 	{
 		string result = StringMaster.GetString("Present-10");
 		if (masterAssetCategory != null)
@@ -233,13 +234,13 @@ public sealed class PresentBoxItem : MonoBehaviour
 			}
 			else
 			{
-				GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(objectId);
-				if (monsterMasterByMonsterId != null)
+				GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(objectId).Simple;
+				if (simple != null)
 				{
-					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
-					if (monsterGroupMasterByMonsterGroupId != null)
+					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(simple.monsterGroupId).Group;
+					if (group != null)
 					{
-						result = monsterGroupMasterByMonsterGroupId.monsterName;
+						result = group.monsterName;
 					}
 				}
 			}
@@ -262,6 +263,25 @@ public sealed class PresentBoxItem : MonoBehaviour
 			}
 			break;
 		}
+		}
+		if (showDetail)
+		{
+			switch (masterAssetCategory.assetCategoryId.ToInt32())
+			{
+			case 14:
+			{
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soulMasterBySoulId = VersionUpMaterialData.GetSoulMasterBySoulId(objectId);
+				result = soulMasterBySoulId.soulName;
+				break;
+			}
+			case 17:
+			{
+				int chipId = int.Parse(objectId);
+				GameWebAPI.RespDataMA_ChipM.Chip chipMaster = ChipDataMng.GetChipMaster(chipId);
+				result = chipMaster.name;
+				break;
+			}
+			}
 		}
 		return result;
 	}

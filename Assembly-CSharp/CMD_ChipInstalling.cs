@@ -8,8 +8,8 @@ public sealed class CMD_ChipInstalling : CMD
 {
 	private const string hyphen = "-";
 
-	[SerializeField]
 	[Header("左下のチップアイコン")]
+	[SerializeField]
 	private ChipIcon chipIcon;
 
 	[SerializeField]
@@ -20,8 +20,8 @@ public sealed class CMD_ChipInstalling : CMD
 	[Header("左下のチップの説明ラベル")]
 	private UILabel chipDetailLabel;
 
-	[Header("右下の装着するボタンラベル")]
 	[SerializeField]
+	[Header("右下の装着するボタンラベル")]
 	private UILabel executeButtonLabel;
 
 	[SerializeField]
@@ -36,20 +36,20 @@ public sealed class CMD_ChipInstalling : CMD
 	[Header("右下の装着するボタンスプライト")]
 	private UISprite executeButtonSprite;
 
-	[Header("右下の装着するボタンコライダー")]
 	[SerializeField]
+	[Header("右下の装着するボタンコライダー")]
 	private BoxCollider executeButtonCollider;
 
-	[Header("右下の表示切替ボタンスプライト")]
 	[SerializeField]
+	[Header("右下の表示切替ボタンスプライト")]
 	private UISprite changeViewButtonSprite;
 
-	[SerializeField]
 	[Header("チップ一覧用親")]
+	[SerializeField]
 	private GameObject partsSortListBase;
 
-	[SerializeField]
 	[Header("チップ空メッセージ")]
+	[SerializeField]
 	private UILabel emptyChipLabel;
 
 	private int selectedUserChipId;

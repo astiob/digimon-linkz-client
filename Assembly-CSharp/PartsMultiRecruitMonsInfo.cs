@@ -180,11 +180,9 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 			this.goANIM_RECRUIT_TXT.SetActive(true);
 			this.goANIM_RECRUIT_OUT_CIRCLE.SetActive(true);
 			this.goANIM_RECRUIT.SetActive(true);
+			base.SpButtonActive(false);
 		}
-		if (this.stageGimmickObj.activeSelf)
-		{
-			this.stageGimmickObj.SetActive(false);
-		}
+		this.stageGimmickObj.SetActive(false);
 		if (this.sortieNG.activeSelf)
 		{
 			this.sortieNG.SetActive(false);
@@ -234,6 +232,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 						this.goANIM_RECRUIT_TXT.SetActive(true);
 						this.goANIM_RECRUIT_OUT_CIRCLE.SetActive(true);
 						this.goANIM_RECRUIT.SetActive(true);
+						base.SpButtonActive(false);
 					}
 					this.sortieNG_Label.transform.localPosition = new Vector3(0f, this.sortieNgLabelPositionY_Owner, 0f);
 				}

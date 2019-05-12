@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class SubStatePlayChipEffect : BattleStateController
 {
-	private List<CharacterStateControl> characters = new List<CharacterStateControl>();
-
 	private Func<bool> IsSkillEnd;
 
 	public SubStatePlayChipEffect(Action OnExit, Action<EventState> OnExitGotEvent, Func<bool> isSkillEnd = null) : base(null, OnExit, OnExitGotEvent)
@@ -37,7 +35,6 @@ public class SubStatePlayChipEffect : BattleStateController
 	protected override void EnabledThisState()
 	{
 		base.battleStateData.SetChipSkillFlag(true);
-		this.characters.Clear();
 	}
 
 	protected override IEnumerator MainRoutine()
@@ -46,12 +43,10 @@ public class SubStatePlayChipEffect : BattleStateController
 		{
 			yield break;
 		}
-		bool isLoop = false;
-		int maxChipCount = this.GetMaxChipCount();
-		while (this.characters.Count > 0)
+		CharacterStateControl[] chipActors = this.GetChipActors();
+		while (chipActors.Length > 0)
 		{
-			isLoop = true;
-			List<SubStatePlayChipEffect.ReturnData> resultList = this.CheckPlayStagingChipEffect();
+			List<SubStatePlayChipEffect.ReturnData> resultList = this.CheckPlayStagingChipEffect(chipActors);
 			SubStatePlayChipEffect.ChipPlayType chipPlayType = SubStatePlayChipEffect.ChipPlayType.None;
 			foreach (SubStatePlayChipEffect.ReturnData temp in resultList)
 			{
@@ -92,6 +87,14 @@ public class SubStatePlayChipEffect : BattleStateController
 			}
 			if (chipPlayType != SubStatePlayChipEffect.ChipPlayType.None)
 			{
+				foreach (SubStatePlayChipEffect.ReturnData result2 in resultList)
+				{
+					result2.characterStateControl.CharacterParams.gameObject.SetActive(true);
+					base.stateManager.threeDAction.PlayIdleAnimationCharactersAction(new CharacterStateControl[]
+					{
+						result2.characterStateControl
+					});
+				}
 				IEnumerator chipWait = this.PlayChipEffectPerformance(resultList);
 				while (chipWait.MoveNext())
 				{
@@ -109,37 +112,20 @@ public class SubStatePlayChipEffect : BattleStateController
 					yield return obj2;
 				}
 			}
-			this.characters.Clear();
-			maxChipCount = this.GetMaxChipCount();
-			if (maxChipCount == 0)
+			chipActors = this.GetChipActors();
+			if (chipActors.Length == 0)
 			{
-				break;
-			}
-		}
-		if (isLoop)
-		{
-			foreach (CharacterStateControl character in base.battleStateData.playerCharacters)
-			{
-				if (!character.isDied)
+				foreach (CharacterStateControl character in base.battleStateData.GetTotalCharacters())
 				{
-					character.CharacterParams.gameObject.SetActive(true);
-					character.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
-				}
-				else
-				{
-					character.CharacterParams.gameObject.SetActive(false);
-				}
-			}
-			foreach (CharacterStateControl character2 in base.battleStateData.enemies)
-			{
-				if (!character2.isDied)
-				{
-					character2.CharacterParams.gameObject.SetActive(true);
-					character2.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
-				}
-				else
-				{
-					character2.CharacterParams.gameObject.SetActive(false);
+					if (!character.isDied)
+					{
+						character.CharacterParams.gameObject.SetActive(true);
+						character.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+					}
+					else
+					{
+						character.CharacterParams.gameObject.SetActive(false);
+					}
 				}
 			}
 		}
@@ -149,6 +135,76 @@ public class SubStatePlayChipEffect : BattleStateController
 	protected override void DisabledThisState()
 	{
 		base.battleStateData.SetChipSkillFlag(false);
+	}
+
+	private CharacterStateControl[] GetChipActors()
+	{
+		CharacterStateControl[] source;
+		if (base.stateManager.battleMode == BattleMode.PvP)
+		{
+			if (base.stateManager.pvpFunction.IsOwner)
+			{
+				source = base.battleStateData.GetTotalCharacters();
+			}
+			else
+			{
+				source = base.battleStateData.GetTotalCharactersEnemyFirst();
+			}
+		}
+		else
+		{
+			source = base.battleStateData.GetTotalCharacters();
+		}
+		return source.Where((CharacterStateControl item) => item.stagingChipIdList.Count > 0).ToArray<CharacterStateControl>();
+	}
+
+	private List<SubStatePlayChipEffect.ReturnData> CheckPlayStagingChipEffect(CharacterStateControl[] chipActor)
+	{
+		List<SubStatePlayChipEffect.ReturnData> list = new List<SubStatePlayChipEffect.ReturnData>();
+		foreach (CharacterStateControl characterStateControl in chipActor)
+		{
+			SubStatePlayChipEffect.ReturnData returnData = new SubStatePlayChipEffect.ReturnData();
+			returnData.characterStateControl = characterStateControl;
+			foreach (KeyValuePair<int, int> keyValuePair in characterStateControl.stagingChipIdList)
+			{
+				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(keyValuePair.Key.ToString());
+				if (!characterStateControl.isDied || chipEffectDataToId.effectTrigger.ToInt32() == 6)
+				{
+					if (chipEffectDataToId.effectTrigger.ToInt32() != 12 || chipEffectDataToId.effectType.ToInt32() != 61)
+					{
+						if (!returnData.dictionary.ContainsKey(keyValuePair.Value))
+						{
+							returnData.dictionary[keyValuePair.Value] = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+						}
+						if (chipEffectDataToId.effectType.ToInt32() == 60 || chipEffectDataToId.effectType.ToInt32() == 56)
+						{
+							SkillStatus skillStatus = base.hierarchyData.GetSkillStatus(chipEffectDataToId.effectValue);
+							CharacterStateControl target = this.GetTarget(characterStateControl, chipEffectDataToId);
+							if (skillStatus != null && target != null)
+							{
+								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay;
+								returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
+							}
+							else
+							{
+								returnData.characterStateControl.AddChipEffectCount(chipEffectDataToId.chipEffectId.ToInt32(), 1);
+							}
+						}
+						else
+						{
+							if (returnData.chipPlayType == SubStatePlayChipEffect.ChipPlayType.None)
+							{
+								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipPlay;
+							}
+							returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
+						}
+					}
+				}
+			}
+			list.Add(returnData);
+			characterStateControl.stagingChipIdList.Clear();
+		}
+		return list;
 	}
 
 	private IEnumerator PlayStagingChipEffect(List<SubStatePlayChipEffect.ReturnData> returnDataList)
@@ -184,94 +240,6 @@ public class SubStatePlayChipEffect : BattleStateController
 			}
 		}
 		yield break;
-	}
-
-	private List<SubStatePlayChipEffect.ReturnData> CheckPlayStagingChipEffect()
-	{
-		List<SubStatePlayChipEffect.ReturnData> list = new List<SubStatePlayChipEffect.ReturnData>();
-		foreach (CharacterStateControl characterStateControl in this.characters)
-		{
-			SubStatePlayChipEffect.ReturnData returnData = new SubStatePlayChipEffect.ReturnData();
-			returnData.characterStateControl = characterStateControl;
-			foreach (KeyValuePair<int, int> keyValuePair in characterStateControl.stagingChipIdList)
-			{
-				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(keyValuePair.Key.ToString());
-				if (!characterStateControl.isDied || chipEffectDataToId.effectTrigger.ToInt32() == 6)
-				{
-					if (!returnData.dictionary.ContainsKey(keyValuePair.Value))
-					{
-						returnData.dictionary[keyValuePair.Value] = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
-					}
-					if (chipEffectDataToId.effectTrigger.ToInt32() != 12 || chipEffectDataToId.effectType.ToInt32() != 61)
-					{
-						if (chipEffectDataToId.effectType.ToInt32() == 60 || chipEffectDataToId.effectType.ToInt32() == 56)
-						{
-							SkillStatus skillStatus = base.hierarchyData.GetSkillStatus(chipEffectDataToId.effectValue);
-							CharacterStateControl target = this.GetTarget(characterStateControl, chipEffectDataToId);
-							if (skillStatus != null && target != null)
-							{
-								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay;
-								returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
-							}
-							else
-							{
-								returnData.characterStateControl.AddChipEffectCount(chipEffectDataToId.chipEffectId.ToInt32(), 1);
-							}
-						}
-						else
-						{
-							if (returnData.chipPlayType == SubStatePlayChipEffect.ChipPlayType.None)
-							{
-								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipPlay;
-							}
-							returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
-						}
-					}
-				}
-			}
-			list.Add(returnData);
-			characterStateControl.stagingChipIdList.Clear();
-		}
-		return list;
-	}
-
-	private int GetMaxChipCount()
-	{
-		int num = 0;
-		if (base.stateManager.battleMode == BattleMode.PvP)
-		{
-			if (base.stateManager.pvpFunction.IsOwner)
-			{
-				num += this.GetMaxChipCount(base.battleStateData.GetTotalCharacters());
-			}
-			else
-			{
-				num += this.GetMaxChipCount(base.battleStateData.GetTotalCharactersEnemyFirst());
-			}
-		}
-		else
-		{
-			num += this.GetMaxChipCount(base.battleStateData.playerCharacters);
-			num += this.GetMaxChipCount(base.battleStateData.enemies);
-		}
-		return num;
-	}
-
-	private int GetMaxChipCount(CharacterStateControl[] characterStateControls)
-	{
-		int num = 0;
-		foreach (CharacterStateControl characterStateControl in characterStateControls)
-		{
-			if (characterStateControl.stagingChipIdList.Count > 0)
-			{
-				if (num < characterStateControl.stagingChipIdList.Count)
-				{
-					num = characterStateControl.stagingChipIdList.Count;
-				}
-				this.characters.Add(characterStateControl);
-			}
-		}
-		return num;
 	}
 
 	private IEnumerator PlayChipEffectPerformance(List<SubStatePlayChipEffect.ReturnData> returnDataList)

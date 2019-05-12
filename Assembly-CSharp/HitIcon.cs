@@ -11,24 +11,24 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private UITweener[] tween;
 
-	[Header("通常のUI")]
 	[SerializeField]
+	[Header("通常のUI")]
 	private HitIcon.Data standard = new HitIcon.Data();
 
 	[SerializeField]
 	[Header("ステージ効果用のUI")]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
-	[Header("耐性結果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("耐性結果を表示するフォントテクスチャ")]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
-	[SerializeField]
 	[Header("通常効果を表示するフォントテクスチャ")]
+	[SerializeField]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
 
-	[Header("ステージ効果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("ステージ効果を表示するフォントテクスチャ")]
 	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
 
 	private MaterialPropertyBlock materialPropertyBlock;
@@ -58,7 +58,7 @@ public class HitIcon : MonoBehaviour
 	public void ApplyShowHitIcon(AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isRecoil, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 	{
 		this.ApplyHitIconPlayAnimation(onWeak);
-		bool flag = extraEffectType != ExtraEffectType.Non;
+		bool flag = false;
 		HitIcon.Data data = (!flag) ? this.standard : this.gimmick;
 		this.standard.gameObject.SetActive(!flag);
 		this.gimmick.gameObject.SetActive(flag);
@@ -71,11 +71,7 @@ public class HitIcon : MonoBehaviour
 		this.downSprite.gameObject.SetActive(false);
 		if (onMiss)
 		{
-			this.standard.middleMesh.text = this.GetString("HitIconMiss");
-			this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
-			{
-				this.standard.middleMesh
-			});
+			this.ShowMiss(data);
 		}
 		else
 		{
@@ -269,7 +265,7 @@ public class HitIcon : MonoBehaviour
 		case Strength.Weak:
 			return this.GetString("HitIconWeak");
 		case Strength.Drain:
-			return this.GetString("HitIconDrain");
+			return this.GetString("BattleTxtDamageDrain");
 		case Strength.Invalid:
 			return this.GetString("HitIconInvalid");
 		default:
@@ -313,6 +309,15 @@ public class HitIcon : MonoBehaviour
 		default:
 			return this.resistanceFontTexture.blue;
 		}
+	}
+
+	private void ShowMiss(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconMiss");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
 	}
 
 	private void ShowAttackUp(HitIcon.Data data)
@@ -788,24 +793,6 @@ public class HitIcon : MonoBehaviour
 				data.topMesh
 			});
 		}
-		if (extraEffectType == ExtraEffectType.Up)
-		{
-			this.upSprite.gameObject.SetActive(true);
-			data.middleMesh.text = this.GetString("HitIconStageEffectUp");
-			this.ChangeFontTexture(this.stageEffectFontTexture.up, new TextMeshPro[]
-			{
-				data.middleMesh
-			});
-		}
-		else if (extraEffectType == ExtraEffectType.Down)
-		{
-			this.downSprite.gameObject.SetActive(true);
-			data.middleMesh.text = this.GetString("HitIconStageEffectDown");
-			this.ChangeFontTexture(this.stageEffectFontTexture.down, new TextMeshPro[]
-			{
-				data.middleMesh
-			});
-		}
 	}
 
 	private void ChangeFontTexture(Texture texture, params TextMeshPro[] textMeshPros)
@@ -870,14 +857,6 @@ public class HitIcon : MonoBehaviour
 	public class Data
 	{
 		public GameObject gameObject;
-
-		public UILabel num;
-
-		public UISprite top;
-
-		public UISprite middle;
-
-		public UISprite bottom;
 
 		public TextMeshPro numMesh;
 

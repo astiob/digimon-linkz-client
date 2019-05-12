@@ -1,4 +1,5 @@
-﻿using Evolution;
+﻿using Cutscene;
+using Evolution;
 using Master;
 using Monster;
 using System;
@@ -41,6 +42,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 		{
 			GUICollider.EnableAllCollider("CMD_VersionUP");
 		}
+		base.SetTutorialAnyTime("anytime_second_tutorial_version_up");
 	}
 
 	protected override void OpenConfirmTargetParameter(int selectButtonIndex)
@@ -113,9 +115,8 @@ public class CMD_VersionUP : CMD_PairSelectBase
 	protected override void EndSuccess()
 	{
 		bool hasChip = this.ResetChipAfterExec();
-		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
+		string modelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
 		this.DeleteUsedSoul();
-		List<int> umidList = VersionUpMaterialData.VersionUpPostProcess(this.medList_cache[0]);
 		string[] userMonsterIdList = new string[]
 		{
 			this.baseDigimon.userMonster.userMonsterId
@@ -124,28 +125,29 @@ public class CMD_VersionUP : CMD_PairSelectBase
 		ChipDataMng.DeleteEquipChip(userMonsterIdList);
 		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Laboratory();
-		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.updatedUserMonster_bk.userMonsterId, true);
-		int item2 = int.Parse(monsterDataByUserMonsterID.monsterM.monsterGroupId);
-		List<int> umidList2 = new List<int>
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonsterList());
+		MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(this.updatedUserMonster_bk.userMonsterId);
+		CutsceneDataVersionUp cutsceneData = new CutsceneDataVersionUp
 		{
-			item,
-			item2
+			path = "Cutscenes/VersionUp",
+			beforeModelId = modelId,
+			afterModelId = userMonster.GetMonsterMaster().Group.modelId,
+			endCallback = delegate()
+			{
+				CutSceneMain.FadeReqCutSceneEnd();
+				if (null != this.characterDetailed)
+				{
+					this.DisableCutinButton(this.characterDetailed.transform);
+				}
+				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
+				if (null != partsMenu)
+				{
+					partsMenu.SetEnableMenuButton(false);
+				}
+			}
 		};
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene("Cutscenes/VersionUp", new Action<int>(base.StartCutSceneCallBack), delegate(int index)
-		{
-			CutSceneMain.FadeReqCutSceneEnd();
-			if (null != this.characterDetailed)
-			{
-				this.DisableCutinButton(this.characterDetailed.transform);
-			}
-			PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-			if (null != partsMenu)
-			{
-				partsMenu.SetEnableMenuButton(false);
-			}
-		}, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(base.StartCutSceneCallBack), null, delegate(int index)
 		{
 			if (PartsUpperCutinController.Instance != null)
 			{
@@ -164,12 +166,12 @@ public class CMD_VersionUP : CMD_PairSelectBase
 					partsMenu.SetEnableMenuButton(true);
 				}
 			}
-		}, umidList2, umidList, 2, 1, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
 	private bool ResetChipAfterExec()
 	{
-		bool result = this.baseDigimon.IsAttachedChip();
+		bool result = this.baseDigimon.GetChipEquip().IsAttachedChip();
 		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(this.baseDigimon.userMonster.userMonsterId);
 		if (monsterChipList != null)
 		{
@@ -210,7 +212,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 		int result;
 		if (this.baseDigimon != null)
 		{
-			result = CalculatorUtil.CalcClusterForVersionUp(this.baseDigimon.monsterM.monsterId);
+			result = EvolutionData.CalcClusterForVersionUp(this.baseDigimon.monsterM.monsterId);
 		}
 		else
 		{
@@ -262,7 +264,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 	private int GetCountCanVersionUpMonster()
 	{
 		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.CAN_VERSION_UP);
+		list = MonsterFilter.Filter(list, MonsterFilterType.CAN_VERSION_UP);
 		return list.Count;
 	}
 
@@ -556,6 +558,11 @@ public class CMD_VersionUP : CMD_PairSelectBase
 				hashtable.Add("oncomplete", "ScaleEnd");
 				hashtable.Add("oncompleteparams", 0);
 				iTween.ScaleTo(vupItem.gameObject, hashtable);
+				ITweenResumer component = vupItem.gameObject.GetComponent<ITweenResumer>();
+				if (component == null)
+				{
+					vupItem.gameObject.AddComponent<ITweenResumer>();
+				}
 			}
 		}
 	}

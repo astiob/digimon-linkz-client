@@ -227,7 +227,7 @@ public class MissionItem : GUIListPartBS
 					}
 				}
 			}
-			if (status == 0 && (categoryId == 1 || categoryId == 2 || categoryId == 5 || categoryId == 3 || categoryId == 4 || categoryId == 6 || (categoryId == 7 && flag2) || (categoryId == 8 && flag3) || categoryId == 201 || categoryId == 204 || categoryId == 9 || categoryId == 10 || categoryId == 110 || categoryId == 111 || categoryId == 112 || categoryId == 113 || categoryId == 125 || categoryId == 126 || categoryId == 127 || categoryId == 120 || categoryId == 114 || categoryId == 115 || categoryId == 116 || categoryId == 117 || categoryId == 118 || categoryId == 119 || categoryId == 121 || categoryId == 122 || categoryId == 123 || categoryId == 161 || categoryId == 162 || categoryId == 163 || categoryId == 164 || categoryId == 131 || categoryId == 132 || categoryId == 133 || categoryId == 134 || categoryId == 144 || categoryId == 145 || categoryId == 146 || categoryId == 147 || categoryId == 154 || categoryId == 155 || categoryId == 156 || categoryId == 181))
+			if (status == 0 && (categoryId == 1 || categoryId == 2 || categoryId == 5 || categoryId == 3 || categoryId == 4 || categoryId == 6 || (categoryId == 7 && flag2) || (categoryId == 8 && flag3) || categoryId == 201 || categoryId == 204 || categoryId == 205 || categoryId == 9 || categoryId == 10 || categoryId == 110 || categoryId == 111 || categoryId == 112 || categoryId == 113 || categoryId == 125 || categoryId == 126 || categoryId == 127 || categoryId == 120 || categoryId == 114 || categoryId == 115 || categoryId == 116 || categoryId == 117 || categoryId == 118 || categoryId == 119 || categoryId == 121 || categoryId == 122 || categoryId == 123 || categoryId == 161 || categoryId == 162 || categoryId == 163 || categoryId == 164 || categoryId == 131 || categoryId == 132 || categoryId == 133 || categoryId == 134 || categoryId == 144 || categoryId == 145 || categoryId == 146 || categoryId == 147 || categoryId == 154 || categoryId == 155 || categoryId == 156 || categoryId == 181))
 			{
 				status = 3;
 				component.enabled = true;
@@ -275,7 +275,7 @@ public class MissionItem : GUIListPartBS
 				case 1:
 					break;
 				case 2:
-					goto IL_466;
+					goto IL_475;
 				case 3:
 					text = StringMaster.GetString("CaptureTitle");
 					this.onPushedButton = null;
@@ -283,9 +283,9 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedGASHA();
 					};
-					goto IL_688;
+					goto IL_697;
 				case 4:
-					goto IL_562;
+					goto IL_571;
 				case 5:
 					text = StringMaster.GetString("ReinforcementTitle");
 					this.onPushedButton = null;
@@ -293,9 +293,9 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedREINFORCE();
 					};
-					goto IL_688;
+					goto IL_697;
 				case 6:
-					goto IL_58C;
+					goto IL_59B;
 				case 7:
 					text = StringMaster.GetString("SuccessionTitle");
 					this.onPushedButton = null;
@@ -303,7 +303,7 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedSUCCESSION();
 					};
-					goto IL_688;
+					goto IL_697;
 				case 8:
 				case 10:
 					text = StringMaster.GetString("LaboratoryTitle");
@@ -312,7 +312,7 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedLABORATORY();
 					};
-					goto IL_688;
+					goto IL_697;
 				case 9:
 					text = StringMaster.GetString("ArousalTitle");
 					this.onPushedButton = null;
@@ -320,7 +320,7 @@ public class MissionItem : GUIListPartBS
 					{
 						this.OnClickedAROUSAL();
 					};
-					goto IL_688;
+					goto IL_697;
 				default:
 					switch (categoryId)
 					{
@@ -331,27 +331,28 @@ public class MissionItem : GUIListPartBS
 						{
 							this.OnClickedFRIEND();
 						};
-						goto IL_688;
+						goto IL_697;
 					default:
 						if (categoryId != 181)
 						{
-							goto IL_688;
+							goto IL_697;
 						}
-						goto IL_58C;
+						goto IL_59B;
 					case 204:
+					case 205:
 						text = StringMaster.GetString("ColosseumTitle");
 						this.onPushedButton = null;
 						this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 						{
 							this.OnClicked_VS();
 						};
-						goto IL_688;
+						goto IL_697;
 					}
 					break;
 				}
 				break;
 			case 131:
-				goto IL_466;
+				goto IL_475;
 			case 132:
 				text = StringMaster.GetString("Mission-01");
 				this.onPushedButton = null;
@@ -359,7 +360,7 @@ public class MissionItem : GUIListPartBS
 				{
 					this.OnClickedSTOREHOUSE();
 				};
-				goto IL_688;
+				goto IL_697;
 			case 133:
 				text = StringMaster.GetString("Mission-01");
 				this.onPushedButton = null;
@@ -367,7 +368,7 @@ public class MissionItem : GUIListPartBS
 				{
 					this.OnClickedRESTAURANT();
 				};
-				goto IL_688;
+				goto IL_697;
 			case 134:
 				text = StringMaster.GetString("Mission-01");
 				this.onPushedButton = null;
@@ -375,16 +376,16 @@ public class MissionItem : GUIListPartBS
 				{
 					this.OnClickedTRAINING();
 				};
-				goto IL_688;
+				goto IL_697;
 			case 144:
 			case 145:
 			case 146:
 			case 147:
-				goto IL_562;
+				goto IL_571;
 			case 154:
 			case 155:
 			case 156:
-				goto IL_58C;
+				goto IL_59B;
 			}
 			text = StringMaster.GetString("QuestNormal");
 			this.onPushedButton = null;
@@ -392,31 +393,31 @@ public class MissionItem : GUIListPartBS
 			{
 				this.OnClickedQUEST();
 			};
-			goto IL_688;
-			IL_466:
+			goto IL_697;
+			IL_475:
 			text = StringMaster.GetString("Mission-01");
 			this.onPushedButton = null;
 			this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.OnClickedMEAT();
 			};
-			goto IL_688;
-			IL_562:
+			goto IL_697;
+			IL_571:
 			text = StringMaster.GetString("MealTitle");
 			this.onPushedButton = null;
 			this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.OnClickedMEAL();
 			};
-			goto IL_688;
-			IL_58C:
+			goto IL_697;
+			IL_59B:
 			text = StringMaster.GetString("EvolutionTitle");
 			this.onPushedButton = null;
 			this.lastAddedAction = delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.OnClickedEVOLUTION();
 			};
-			IL_688:
+			IL_697:
 			component2.onTouchEnded += this.lastAddedAction;
 			this.pushedButtonLabel.text = text;
 		}

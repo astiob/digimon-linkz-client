@@ -16,7 +16,7 @@ public class CMD_ChatReqList : CMD
 	[SerializeField]
 	private GameObject partGroupList;
 
-	private UILabel ngChatGroupDefaultText;
+	private UILabelEx ngChatGroupDefaultText;
 
 	private GUISelectChatGroupPanel csPartGroupParent;
 
@@ -51,7 +51,7 @@ public class CMD_ChatReqList : CMD
 	private void setInitLabel()
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("ChatTitle"));
-		this.ngChatGroupDefaultText = this.chatGroupDefaultText.GetComponent<UILabel>();
+		this.ngChatGroupDefaultText = this.chatGroupDefaultText.GetComponent<UILabelEx>();
 	}
 
 	private void SetCommonUI()
@@ -102,7 +102,7 @@ public class CMD_ChatReqList : CMD
 		}
 		else
 		{
-			this.ngChatGroupDefaultText.text = StringMaster.GetString("ChatNoneGroup");
+			this.ngChatGroupDefaultText.SetStringKeyText("ChatNoneGroup");
 			this.chatGroupDefaultText.SetActive(true);
 		}
 	}
@@ -191,7 +191,7 @@ public class CMD_ChatReqList : CMD
 		}
 		else
 		{
-			this.ngChatGroupDefaultText.text = StringMaster.GetString("ChatNoneGroup");
+			this.ngChatGroupDefaultText.SetStringKeyText("ChatNoneGroup");
 			this.chatGroupDefaultText.SetActive(true);
 		}
 	}

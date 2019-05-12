@@ -5,12 +5,12 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UIScrollBar : UISlider
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected float mSize = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mScroll;
 
 	[SerializeField]

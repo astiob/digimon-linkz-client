@@ -19,8 +19,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
-	[SerializeField]
 	[Header("ドロップするアイテムリスト")]
+	[SerializeField]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
 	[SerializeField]
@@ -29,24 +29,24 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_TITLE;
 
-	[Header("ステージの数字のラベル")]
 	[SerializeField]
+	[Header("ステージの数字のラベル")]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
-	[SerializeField]
 	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
+	[SerializeField]
 	private GameObject goContentsROOT;
 
-	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	[SerializeField]
+	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	private GameObject goPointContentsROOT;
 
 	[Header("詳細説明 (ヒナの吹き出し)")]
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[SerializeField]
 	[Header("ポイント・タイトルのリスト)")]
+	[SerializeField]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
@@ -60,24 +60,24 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getEXPLabel;
 
-	[Header("取得できるクラスタタイトル")]
 	[SerializeField]
+	[Header("取得できるクラスタタイトル")]
 	private UILabel getClusterTitleLabel;
 
-	[SerializeField]
 	[Header("取得できるクラスタ数")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
-	[Header("消費するスタミナタイトル")]
 	[SerializeField]
+	[Header("消費するスタミナタイトル")]
 	private UILabel getStaminaTitleLabel;
 
-	[SerializeField]
 	[Header("消費するスタミナ")]
+	[SerializeField]
 	private UILabel getStaminaLabel;
 
-	[Header("バトルボタン")]
 	[SerializeField]
+	[Header("バトルボタン")]
 	private GameObject goBattleBtn;
 
 	private UISprite spBattleBtn;
@@ -89,8 +89,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private RewardIconRoot rewardIconRoot;
 
-	[Header("初回報酬取得済みカラー")]
 	[SerializeField]
+	[Header("初回報酬取得済みカラー")]
 	private Color clearColor = Color.gray;
 
 	private QuestData.WorldDungeonData d_data;
@@ -98,6 +98,8 @@ public class CMD_QuestDetailedPOP : CMD
 	private List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> epbList = new List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>();
 
 	private int epbListViewCnt;
+
+	private List<string> bonusTextList = new List<string>();
 
 	private TweenAlpha bonusPosTween;
 
@@ -224,41 +226,110 @@ public class CMD_QuestDetailedPOP : CMD
 			i++;
 		}
 		this.ShowDropItems();
-		if (CMD_QuestTOP.AreaData.data.type == "3" || CMD_QuestTOP.AreaData.data.type == "4")
+		this.goContentsROOT.SetActive(true);
+		this.goPointContentsROOT.SetActive(true);
+		GameWebAPI.RespDataMA_EventPointBonusM respDataMA_EventPointBonusMaster = MasterDataMng.Instance().RespDataMA_EventPointBonusMaster;
+		for (i = 0; i < respDataMA_EventPointBonusMaster.eventPointBonusM.Length; i++)
 		{
-			this.goContentsROOT.SetActive(false);
-			this.goPointContentsROOT.SetActive(true);
-			GameWebAPI.RespDataMA_EventPointBonusM respDataMA_EventPointBonusMaster = MasterDataMng.Instance().RespDataMA_EventPointBonusMaster;
-			for (i = 0; i < respDataMA_EventPointBonusMaster.eventPointBonusM.Length; i++)
+			if (respDataMA_EventPointBonusMaster.eventPointBonusM[i].worldDungeonId == this.d_data.worldDungeonM.worldDungeonId && !respDataMA_EventPointBonusMaster.eventPointBonusM[i].effectType.Equals("0"))
 			{
-				if (respDataMA_EventPointBonusMaster.eventPointBonusM[i].worldDungeonId == this.d_data.worldDungeonM.worldDungeonId && respDataMA_EventPointBonusMaster.eventPointBonusM[i].effectType != "0")
+				this.epbList.Add(respDataMA_EventPointBonusMaster.eventPointBonusM[i]);
+			}
+		}
+		this.epbList.Sort(new Comparison<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>(this.CompareEffType));
+		int num2 = 0;
+		if (CMD_MultiRecruitPartyWait.StageDataBk != null)
+		{
+			num2 = CMD_MultiRecruitPartyWait.StageDataBk.worldAreaId.ToInt32();
+		}
+		else if (CMD_QuestTOP.instance != null && CMD_QuestTOP.instance.StageDataBk != null)
+		{
+			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+			foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
+			{
+				if (CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldStageId == worldStageM2.worldStageId)
 				{
-					this.epbList.Add(respDataMA_EventPointBonusMaster.eventPointBonusM[i]);
+					num2 = worldStageM2.worldAreaId.ToInt32();
+					break;
 				}
 			}
-			this.epbList.Sort(new Comparison<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>(this.CompareEffType));
-			for (int j = 0; j < this.bonusPointLabelList.Count; j++)
+		}
+		GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] array2 = MasterDataMng.Instance().RespDataMA_ChipEffectMaster.chipEffectM.ToArray<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+		List<string> list2 = new List<string>();
+		if (array2.Length > 0)
+		{
+			for (int k = 0; k < array2.Length; k++)
 			{
-				this.bonusPointLabelList[j].gameObject.SetActive(false);
-				if (j < this.epbList.Count)
+				if (array2[k].effectTrigger.Equals("11") && array2[k].effectTriggerValue.Equals(num2.ToString()))
 				{
-					this.bonusPointLabelList[j].gameObject.SetActive(true);
-					this.bonusPointLabelList[j].text = this.epbList[j].detail;
+					GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(array2[k].chipId);
+					if (chipMainData != null && !list2.Contains(array2[k].chipId))
+					{
+						list.Add(array2[k]);
+						this.bonusTextList.Add(chipMainData.name);
+						list2.Add(array2[k].chipId);
+					}
 				}
 			}
-			if (this.epbList.Count > this.bonusPointLabelList.Count)
+		}
+		List<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> extraEffectDataList = DataMng.Instance().StageGimmick.GetExtraEffectDataList(this.d_data.worldDungeonM.worldStageId, this.d_data.worldDungeonM.worldDungeonId);
+		this.epbList.Sort((GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus a, GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus b) => int.Parse(a.targetSubType) - int.Parse(b.targetSubType));
+		extraEffectDataList.Sort((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM a, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM b) => int.Parse(a.targetSubType) - int.Parse(b.targetSubType));
+		List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> list3 = this.epbList.FindAll((GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus a) => a.targetSubType.Equals("6"));
+		this.epbList.RemoveAll((GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus a) => a.targetSubType.Equals("6"));
+		List<string> list4 = new List<string>();
+		for (int l = 0; l < list3.Count; l++)
+		{
+			bool flag = true;
+			for (int m = 0; m < list.Count; m++)
 			{
-				this.changeBonusButton.SetActive(true);
+				if (list[m].chipId.Equals(list3[l].targetValue))
+				{
+					flag = false;
+				}
 			}
-			else
+			if (flag)
 			{
-				this.changeBonusButton.SetActive(false);
+				GameWebAPI.RespDataMA_ChipM.Chip chipMainData2 = ChipDataMng.GetChipMainData(list3[l].targetValue);
+				if (chipMainData2 != null)
+				{
+					if (!list4.Contains(chipMainData2.chipId))
+					{
+						this.bonusTextList.Add(chipMainData2.name);
+						list4.Add(chipMainData2.chipId);
+					}
+				}
 			}
+		}
+		for (int n = 0; n < this.epbList.Count; n++)
+		{
+			this.bonusTextList.Add(this.epbList[n].detail);
+		}
+		for (int num3 = 0; num3 < extraEffectDataList.Count; num3++)
+		{
+			this.bonusTextList.Add(extraEffectDataList[num3].detail);
+		}
+		if (this.bonusTextList.Count > this.bonusPointLabelList.Count)
+		{
+			this.changeBonusButton.SetActive(true);
 		}
 		else
 		{
-			this.goContentsROOT.SetActive(true);
-			this.goPointContentsROOT.SetActive(false);
+			this.changeBonusButton.SetActive(false);
+		}
+		if (this.bonusTextList.Count == 0)
+		{
+			this.bonusTextList.Add(StringMaster.GetString("QuestNonSpList"));
+		}
+		for (int num4 = 0; num4 < this.bonusPointLabelList.Count; num4++)
+		{
+			this.bonusPointLabelList[num4].gameObject.SetActive(false);
+			if (num4 < this.bonusTextList.Count)
+			{
+				this.bonusPointLabelList[num4].gameObject.SetActive(true);
+				this.bonusPointLabelList[num4].text = this.bonusTextList[num4];
+			}
 		}
 	}
 
@@ -338,8 +409,8 @@ public class CMD_QuestDetailedPOP : CMD
 		this.bonusPosTween.PlayForward();
 		yield return new WaitForSeconds(0.2f);
 		this.epbListViewCnt++;
-		int count = this.epbList.Count / this.bonusPointLabelList.Count;
-		if (this.epbList.Count % this.bonusPointLabelList.Count != 0)
+		int count = this.bonusTextList.Count / this.bonusPointLabelList.Count;
+		if (this.bonusTextList.Count % this.bonusPointLabelList.Count != 0)
 		{
 			count++;
 		}
@@ -347,10 +418,10 @@ public class CMD_QuestDetailedPOP : CMD
 		for (int i = 0; i < this.bonusPointLabelList.Count; i++)
 		{
 			this.bonusPointLabelList[i].gameObject.SetActive(false);
-			if (i + viewNum * this.bonusPointLabelList.Count < this.epbList.Count)
+			if (i + viewNum * this.bonusPointLabelList.Count < this.bonusTextList.Count)
 			{
 				this.bonusPointLabelList[i].gameObject.SetActive(true);
-				this.bonusPointLabelList[i].text = this.epbList[i + viewNum * this.bonusPointLabelList.Count].detail;
+				this.bonusPointLabelList[i].text = this.bonusTextList[i + viewNum * this.bonusPointLabelList.Count];
 			}
 		}
 		UnityEngine.Object.Destroy(this.bonusPosTween);

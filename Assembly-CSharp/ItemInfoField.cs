@@ -17,8 +17,8 @@ public class ItemInfoField : MonoBehaviour
 	[Header("Box(ノーマル)")]
 	private GameObject normalBox;
 
-	[Header("Box(レア)")]
 	[SerializeField]
+	[Header("Box(レア)")]
 	private GameObject rareBox;
 
 	[SerializeField]
@@ -29,8 +29,8 @@ public class ItemInfoField : MonoBehaviour
 	[Header("残りRoundのテキスト")]
 	private UILabel remainingRoundText;
 
-	[Header("Box数テキスト(ノーマル)")]
 	[SerializeField]
+	[Header("Box数テキスト(ノーマル)")]
 	private UILabel normalBoxNumberText;
 
 	[Header("Box数テキスト(レア)")]
@@ -41,8 +41,8 @@ public class ItemInfoField : MonoBehaviour
 	[SerializeField]
 	private UITweener normalBoxTween;
 
-	[Header("BoxのTween(レア)")]
 	[SerializeField]
+	[Header("BoxのTween(レア)")]
 	private UITweener rareBoxTween;
 
 	public void TwinkleNormalBox()

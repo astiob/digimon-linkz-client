@@ -244,7 +244,7 @@ public class GUIMonsterIcon : GUIListPartBS
 		set
 		{
 			this._new = value;
-			if (this.goNEW != null)
+			if (this.goNEW != null && this.goNEW.activeSelf != this._new)
 			{
 				this.goNEW.SetActive(this._new);
 			}

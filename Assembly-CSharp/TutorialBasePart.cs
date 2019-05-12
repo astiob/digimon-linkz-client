@@ -22,6 +22,11 @@ public abstract class TutorialBasePart
 		this.tutorialUI = null;
 	}
 
+	protected virtual string GetFilePath(string fileName)
+	{
+		return string.Empty;
+	}
+
 	protected IEnumerator LoadTutorialUI(string resourceName)
 	{
 		GameObject go = AssetDataMng.Instance().LoadObject(resourceName, null, true) as GameObject;
@@ -48,8 +53,8 @@ public abstract class TutorialBasePart
 
 	protected IEnumerator LoadScriptFile(string fileName, Action<string> onCompleted)
 	{
-		string path = "Tutorial/Text/" + fileName;
-		TextAsset textAsset = Resources.Load(path) as TextAsset;
+		string filePath = this.GetFilePath(fileName);
+		TextAsset textAsset = AssetDataMng.Instance().LoadObject(filePath, null, true) as TextAsset;
 		Action<byte[]> onCompleted2 = delegate(byte[] loadData)
 		{
 			string empty = string.Empty;

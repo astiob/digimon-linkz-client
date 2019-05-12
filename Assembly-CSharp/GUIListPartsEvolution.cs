@@ -4,7 +4,6 @@ using Master;
 using Monster;
 using Picturebook;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -129,15 +128,15 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		string monsterId = this.data.md_next.monsterM.monsterId;
 		if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4")
 		{
-			this.needCluster = CalculatorUtil.CalcClusterForEvolve(monsterId);
+			this.needCluster = EvolutionData.CalcClusterForEvolve(monsterId);
 		}
 		else if (this.evolutionType == "5")
 		{
-			this.needCluster = CalculatorUtil.CalcClusterForVersionUp(monsterId);
+			this.needCluster = EvolutionData.CalcClusterForVersionUp(monsterId);
 		}
 		else if (this.evolutionType == "2")
 		{
-			this.needCluster = CalculatorUtil.CalcClusterForModeChange(monsterId);
+			this.needCluster = EvolutionData.CalcClusterForModeChange(monsterId);
 		}
 		this.ShowNextMonsterIcon();
 		this.ShowNextMonsterData();
@@ -312,17 +311,17 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4")
 		{
 			string monsterId = this.data.md_next.monsterM.monsterId;
-			num = CalculatorUtil.CalcClusterForEvolve(monsterId);
+			num = EvolutionData.CalcClusterForEvolve(monsterId);
 		}
 		else if (this.evolutionType == "5")
 		{
 			string monsterId2 = this.data.md.monsterM.monsterId;
-			num = CalculatorUtil.CalcClusterForVersionUp(monsterId2);
+			num = EvolutionData.CalcClusterForVersionUp(monsterId2);
 		}
 		else if (this.evolutionType == "2")
 		{
 			string monsterId3 = this.data.md_next.monsterM.monsterId;
-			num = CalculatorUtil.CalcClusterForModeChange(monsterId3);
+			num = EvolutionData.CalcClusterForModeChange(monsterId3);
 		}
 		this.ngTX_NEED_CHIP.text = StringFormat.Cluster(num);
 		int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
@@ -413,15 +412,11 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 			{
 				component.color = new Color(0.6f, 0.6f, 0.6f, 1f);
 			}
-			Hashtable hashtable = new Hashtable();
-			hashtable.Add("x", vS.x);
-			hashtable.Add("y", vS.y);
-			hashtable.Add("time", 0.4f);
-			hashtable.Add("delay", 0.01f);
-			hashtable.Add("easetype", "spring");
-			hashtable.Add("oncomplete", "ScaleEnd");
-			hashtable.Add("oncompleteparams", 0);
-			iTween.ScaleTo(this.goITEMS[idx], hashtable);
+			ITweenFrameController component2 = this.goITEMS[idx].GetComponent<ITweenFrameController>();
+			if (component2 == null)
+			{
+				this.goITEMS[idx].AddComponent<ITweenFrameController>();
+			}
 		}
 	}
 

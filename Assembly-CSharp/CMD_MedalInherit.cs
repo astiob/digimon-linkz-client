@@ -1,4 +1,5 @@
 ﻿using Ability;
+using Cutscene;
 using Master;
 using Monster;
 using System;
@@ -29,6 +30,7 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		{
 			GUICollider.EnableAllCollider("CMD_MedalInherit");
 		}
+		base.SetTutorialAnyTime("anytime_second_tutorial_ability_upgrade");
 	}
 
 	protected override void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
@@ -87,8 +89,8 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_MedalInherit param)
 			{
-				param.baseUserMonsterId = int.Parse(this.baseDigimon.userMonster.userMonsterId);
-				param.materialUserMonsterId = int.Parse(this.partnerDigimon.userMonster.userMonsterId);
+				param.baseUserMonsterId = this.baseDigimon.userMonster.userMonsterId;
+				param.materialUserMonsterId = this.partnerDigimon.userMonster.userMonsterId;
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_MedalInherit response)
 			{
@@ -123,31 +125,28 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		ChipDataMng.DeleteEquipChip(userMonsterIdList);
 		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Laboratory();
-		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
-		int item2 = int.Parse(this.partnerDigimon.monsterM.monsterGroupId);
-		List<int> umidList = new List<int>
-		{
-			item
-		};
-		List<int> umidList2 = new List<int>
-		{
-			item2
-		};
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene("Cutscenes/MedalInherit", new Action<int>(base.StartCutSceneCallBack), delegate(int index)
+		CutsceneDataMedalInherit cutsceneData = new CutsceneDataMedalInherit
 		{
-			CutSceneMain.FadeReqCutSceneEnd();
-			if (null != this.characterDetailed)
+			path = "Cutscenes/MedalInherit",
+			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
+			materialModelId = this.partnerDigimon.GetMonsterMaster().Group.modelId,
+			endCallback = delegate()
 			{
-				this.DisableCutinButton(this.characterDetailed.transform);
+				CutSceneMain.FadeReqCutSceneEnd();
+				if (null != this.characterDetailed)
+				{
+					this.DisableCutinButton(this.characterDetailed.transform);
+				}
+				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
+				if (null != partsMenu)
+				{
+					partsMenu.SetEnableMenuButton(false);
+				}
 			}
-			PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-			if (null != partsMenu)
-			{
-				partsMenu.SetEnableMenuButton(false);
-			}
-		}, delegate(int index)
+		};
+		Loading.Invisible();
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(base.StartCutSceneCallBack), null, delegate(int index)
 		{
 			if (PartsUpperCutinController.Instance != null)
 			{
@@ -176,12 +175,12 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 					partsMenu.SetEnableMenuButton(true);
 				}
 			}
-		}, umidList, umidList2, 3, 0, 0.5f, 0.5f);
+		}, 0.5f, 0.5f);
 	}
 
 	private bool ResetChipAfterExec()
 	{
-		bool result = this.partnerDigimon.IsAttachedChip();
+		bool result = this.partnerDigimon.GetChipEquip().IsAttachedChip();
 		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(this.partnerDigimon.userMonster.userMonsterId);
 		if (monsterChipList != null)
 		{
@@ -225,7 +224,12 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		int result;
 		if (this.baseDigimon != null && this.partnerDigimon != null)
 		{
-			result = CalculatorUtil.CalcClusterForAbilityUpgrade(this.baseDigimon.userMonster, this.partnerDigimon.userMonster);
+			float maxAbility = ClassSingleton<AbilityData>.Instance.GetMaxAbility(this.baseDigimon.userMonster);
+			float num = Mathf.Pow(1.15f, maxAbility);
+			float num2 = Mathf.Floor(num * 10f) / 10f * 500f;
+			int totalAbilityCount = ClassSingleton<AbilityData>.Instance.GetTotalAbilityCount(this.partnerDigimon.userMonster);
+			float num3 = 1f + 0.1f * (float)(totalAbilityCount - 1);
+			result = (int)Mathf.Floor(num2 * num3);
 		}
 		else
 		{
@@ -244,8 +248,8 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 	protected override bool CanEnter()
 	{
 		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.HAVE_MEDALS);
+		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
+		list = MonsterFilter.Filter(list, MonsterFilterType.HAVE_MEDALS);
 		return list.Count > 0;
 	}
 
@@ -257,8 +261,8 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 	protected override bool CanSelectMonster(int idx)
 	{
 		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.HAVE_MEDALS);
+		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
+		list = MonsterFilter.Filter(list, MonsterFilterType.HAVE_MEDALS);
 		if (idx == 0)
 		{
 			return list.Count > 0;

@@ -156,7 +156,7 @@ public class BattleSkillDetails : BattleFunctionBase
 		}
 		else
 		{
-			num = Mathf.FloorToInt((float)isTargetsStatus.maxHp * currentSuffer.revivalPercent);
+			num = Mathf.FloorToInt((float)isTargetsStatus.extraMaxHp * currentSuffer.revivalPercent);
 		}
 		isTargetsStatus.hp += num;
 		return num;

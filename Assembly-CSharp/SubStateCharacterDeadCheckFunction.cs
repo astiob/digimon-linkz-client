@@ -16,7 +16,7 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 
 	private bool? isPlayerWinner;
 
-	public SubStateCharacterDeadCheckFunction(Action OnExit, Action<bool> OnEnemyDead, Action<bool> OnPlayerDead) : base(null, null)
+	public SubStateCharacterDeadCheckFunction(Action OnExit, Action<bool> OnEnemyDead, Action<bool> OnPlayerDead, Action<EventState> OnGotEvent = null) : base(null, null, OnGotEvent)
 	{
 		this.onExit = OnExit;
 		this.onEnemyDead = OnEnemyDead;

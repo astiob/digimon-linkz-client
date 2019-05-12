@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Singleton<T> : GameBehaviour where T : Singleton<T>
+public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 {
 	protected static T instance;
 

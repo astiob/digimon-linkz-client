@@ -9,12 +9,12 @@ using WebAPIRequest;
 
 public class CMD_ModalPresentBox : CMD
 {
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel lbTitle;
 
-	[SerializeField]
 	[Header("残り受取件数")]
+	[SerializeField]
 	private UILabel lbSubtitle;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[Header("一括受取ボタン")]
 	[SerializeField]
+	[Header("一括受取ボタン")]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnGetAll;
 
-	[SerializeField]
 	[Header("履歴ボタン")]
+	[SerializeField]
 	private GameObject goBtnHistory;
 
 	[SerializeField]
@@ -47,8 +47,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnHistory;
 
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partListParent;
 
 	[SerializeField]

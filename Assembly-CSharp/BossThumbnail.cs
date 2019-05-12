@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 
 public sealed class BossThumbnail : GUICollider
 {
@@ -16,15 +17,15 @@ public sealed class BossThumbnail : GUICollider
 	{
 		this.bossInfo = enemy;
 		string text = enemy.monsterId.ToString();
-		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(text);
-		if (monsterMasterByMonsterId != null)
+		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(text).Simple;
+		if (simple != null)
 		{
-			text = monsterMasterByMonsterId.monsterGroupId;
-			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(text);
-			if (monsterGroupMasterByMonsterGroupId != null)
+			text = simple.monsterGroupId;
+			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(text).Group;
+			if (group != null)
 			{
 				this.monsterIcon.gameObject.SetActive(true);
-				this.monsterIcon.SetImage(monsterMasterByMonsterId.iconId, monsterGroupMasterByMonsterGroupId.growStep);
+				this.monsterIcon.SetImage(simple.iconId, group.growStep);
 				UIWidget component = this.monsterIcon.GetComponent<UIWidget>();
 				if (null != component)
 				{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using UnityEngine;
 
 namespace CharacterModelUI
@@ -39,16 +40,16 @@ namespace CharacterModelUI
 			}
 		}
 
-		public virtual void LoadMonsterModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
+		public virtual void LoadMonsterModel(string modelId, Vector3 characterPosition, float characterEulerAngleY)
 		{
-			string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
-			this.renderTextureCamera.LoadMonsterModel(monsterCharaPathByMonsterGroupId, characterPosition, characterEulerAngleY);
+			string filePath = MonsterObject.GetFilePath(modelId);
+			this.renderTextureCamera.LoadMonsterModel(filePath, characterPosition, characterEulerAngleY);
 		}
 
-		public virtual void LoadEggModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
+		public virtual void LoadEggModel(string modelId, Vector3 characterPosition, float characterEulerAngleY)
 		{
-			string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
-			this.renderTextureCamera.LoadEgg(monsterCharaPathByMonsterGroupId, this.renderTextureCamera.transform.localPosition.x, this.renderTextureCamera.transform.localPosition.y, characterPosition.y);
+			string filePath = MonsterObject.GetFilePath(modelId);
+			this.renderTextureCamera.LoadEgg(filePath, this.renderTextureCamera.transform.localPosition.x, this.renderTextureCamera.transform.localPosition.y, characterPosition.y);
 		}
 
 		public void SetCharacterCameraDistance()

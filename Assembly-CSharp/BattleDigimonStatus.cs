@@ -77,8 +77,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel leaderSkillDescription;
 
-	[Header("特化型")]
 	[SerializeField]
+	[Header("特化型")]
 	private UILabel specificType;
 
 	[SerializeField]
@@ -89,8 +89,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance1;
 
-	[Header("継承技2")]
 	[SerializeField]
+	[Header("継承技2")]
 	private BattleDigimonStatus.Skill inheritance2;
 
 	[SerializeField]
@@ -100,8 +100,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("各才能メダルの表示切り替え")]
 	private MonsterMedalList MonsterMedalList;
 
-	[SerializeField]
 	[Header("Lvローカライズ")]
+	[SerializeField]
 	private UILabel lvLocalize;
 
 	[SerializeField]
@@ -128,8 +128,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("SDEFローカライズ")]
 	private UILabel sdefLocalize;
 
-	[SerializeField]
 	[Header("SPDローカライズ")]
+	[SerializeField]
 	private UILabel spdLocalize;
 
 	[Header("Luckローカライズ")]
@@ -140,8 +140,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel lSkillLocalize;
 
-	[Header("装着チップ")]
 	[SerializeField]
+	[Header("装着チップ")]
 	private ChipIcon[] chipIcons;
 
 	private void Awake()
@@ -178,12 +178,12 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 		base.SetupEvolutionStep(characterStatus);
 		base.SetupSpecies(characterStatus);
 		int num = 0;
-		num += this.ApplyValue(characterStatus.defaultExtraMaxHp, characterStatus.extraMaxHp, this.hp, this.hpUpObject, this.hpDownObject);
-		num += this.ApplyValue(characterStatus.playerStatus.attackPower + characterStatus.chipAddAttackPower, characterStatus.defaultExtraAttackPower, this.atk, this.atkUpObject, this.atkDownObject);
-		num += this.ApplyValue(characterStatus.playerStatus.defencePower + characterStatus.chipAddDefencePower, characterStatus.defaultExtraDefencePower, this.def, this.defUpObject, this.defDownObject);
-		num += this.ApplyValue(characterStatus.playerStatus.specialAttackPower + characterStatus.chipAddSpecialAttackPower, characterStatus.defaultExtraSpecialAttackPower, this.satk, this.satkUpObject, this.satkDownObject);
-		num += this.ApplyValue(characterStatus.playerStatus.specialDefencePower + characterStatus.chipAddSpecialDefencePower, characterStatus.defaultExtraSpecialDefencePower, this.sdef, this.sdefUpObject, this.sdefDownObject);
-		num += this.ApplyValue(characterStatus.playerStatus.speed + characterStatus.chipAddSpeed, characterStatus.defaultExtraSpeed, this.speed, this.speedUpObject, this.speedDownObject);
+		num += this.ApplyValue(characterStatus.maxHp, characterStatus.extraMaxHp, this.hp, this.hpUpObject, this.hpDownObject);
+		num += this.ApplyValue(characterStatus.attackPower, characterStatus.extraAttackPower, this.atk, this.atkUpObject, this.atkDownObject);
+		num += this.ApplyValue(characterStatus.defencePower, characterStatus.extraDefencePower, this.def, this.defUpObject, this.defDownObject);
+		num += this.ApplyValue(characterStatus.specialAttackPower, characterStatus.extraSpecialAttackPower, this.satk, this.satkUpObject, this.satkDownObject);
+		num += this.ApplyValue(characterStatus.specialDefencePower, characterStatus.extraSpecialDefencePower, this.sdef, this.sdefUpObject, this.sdefDownObject);
+		num += this.ApplyValue(characterStatus.speed, characterStatus.extraSpeed, this.speed, this.speedUpObject, this.speedDownObject);
 		this.luck.text = characterStatus.luck.ToString();
 		if (MonsterDataMng.Instance() != null)
 		{
@@ -264,7 +264,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			this.inheritance2.description.text = "-";
 			this.ApplyValue(0, 0, null, this.inheritance2.upObject, this.inheritance2.downObject);
 		}
-		this.stageGimmickObject.SetActive(num > 0);
+		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipDropRateUp || characterStatus.isChipDropCountUp || characterStatus.isChipExtaraStageRateUp || characterStatus.IsPoint());
 		this.SetArousal(characterStatus.arousal);
 		base.SetupTolerance(characterStatus);
 		this.MonsterMedalList.SetValues(characterStatus.talent);
@@ -313,7 +313,6 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			text2 = extraValue.ToString();
 			effectColor = new Color32(0, 70, 240, byte.MaxValue);
 			downObject.SetActive(true);
-			result = 1;
 		}
 		if (text != null)
 		{

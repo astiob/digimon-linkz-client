@@ -41,8 +41,8 @@ public class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject leaderObj;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	[SerializeField]
@@ -401,7 +401,7 @@ public class PVPPartySelect3 : MonoBehaviour
 			this.detailedMonsterSuccessionSkill2.SetSkill(this.DataChg);
 			if (MonsterStatusData.IsVersionUp(this.DataChg.GetMonsterMaster().Simple.rare))
 			{
-				if (this.DataChg.commonSkillM2 == null)
+				if (this.DataChg.GetExtraCommonSkill() == null)
 				{
 					this.monsterSuccessionSkillGrayReady.SetActive(true);
 					this.detailedMonsterSuccessionSkillGrayReady.SetActive(true);

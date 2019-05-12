@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 
 internal sealed class GashaTutorialMode
@@ -44,10 +45,10 @@ internal sealed class GashaTutorialMode
 	public GameWebAPI.RespDataGA_ExecGacha GetFakeGashaResult()
 	{
 		GameWebAPI.RespDataGA_ExecGacha respDataGA_ExecGacha = new GameWebAPI.RespDataGA_ExecGacha();
-		MonsterData monsterDataByUserMonsterLargeID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterLargeID();
+		MonsterData oldestMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetOldestMonster();
 		respDataGA_ExecGacha.userMonsterList = new GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster[]
 		{
-			new GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster(monsterDataByUserMonsterLargeID.userMonster)
+			new GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster(oldestMonster.userMonster)
 			{
 				isNew = 1
 			}

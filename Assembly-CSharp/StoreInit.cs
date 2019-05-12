@@ -116,29 +116,33 @@ public class StoreInit : MonoBehaviour
 			"2_digistone_240_1_4800",
 			"2_digistone_490_1_9800"
 		};
-		GameWebAPI.RequestSH_ShopList request = new GameWebAPI.RequestSH_ShopList
+		GameWebAPI.RequestSH_ShopList requestSH_ShopList = new GameWebAPI.RequestSH_ShopList();
+		requestSH_ShopList.SetSendData = delegate(GameWebAPI.SendDataSH_ShopList requestParam)
 		{
-			OnReceived = delegate(GameWebAPI.RespDataSH_Info response)
+			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			requestParam.countryCode = countryCode;
+		};
+		requestSH_ShopList.OnReceived = delegate(GameWebAPI.RespDataSH_Info response)
+		{
+			DataMng.Instance().RespDataSH_Info = response;
+			if (response.shopList != null && response.shopList.Length > 0)
 			{
-				DataMng.Instance().RespDataSH_Info = response;
-				if (response.shopList != null && response.shopList.Length > 0)
+				GameWebAPI.RespDataSH_Info.ProductList[] productList = response.shopList[0].productList;
+				if (productList.Length > 0)
 				{
-					GameWebAPI.RespDataSH_Info.ProductList[] productList = response.shopList[0].productList;
-					if (productList.Length > 0)
+					string[] productIDS = new string[productList.Length];
+					for (int i = 0; i < productList.Length; i++)
 					{
-						string[] productIDS = new string[productList.Length];
-						for (int i = 0; i < productList.Length; i++)
-						{
-							productIDS[i] = productList[i].productId;
-						}
+						productIDS[i] = productList[i].productId;
 					}
 				}
-				else
-				{
-					string[] productIDS = null;
-				}
+			}
+			else
+			{
+				string[] productIDS = null;
 			}
 		};
+		GameWebAPI.RequestSH_ShopList request = requestSH_ShopList;
 		yield return base.StartCoroutine(request.Run(delegate()
 		{
 			if (onCompleted != null)

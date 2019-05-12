@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMA_AssetCategoryMaster
+			GameWebAPI.RequestMA_AssetCategoryMaster requestMA_AssetCategoryMaster = new GameWebAPI.RequestMA_AssetCategoryMaster();
+			requestMA_AssetCategoryMaster.SetSendData = delegate(GameWebAPI.RequestMA_AssetCategoryM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_GetAssetCategoryM>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestMA_AssetCategoryMaster.OnReceived = new Action<GameWebAPI.RespDataMA_GetAssetCategoryM>(base.SetResponse);
+			return requestMA_AssetCategoryMaster;
 		}
 	}
 }

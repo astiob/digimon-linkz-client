@@ -1,4 +1,5 @@
-﻿using Monster;
+﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,11 +75,17 @@ public class CMD_MonsterParamPop : CMD
 	[SerializeField]
 	private UILabel speedUpLabel;
 
+	[SerializeField]
+	private UILabel browTypeLabel1;
+
+	[SerializeField]
+	private UILabel browTypeLabel2;
+
 	private int pageCnt;
 
 	private bool viewExtraSkillPage;
 
-	public void MonsterDataSet(MonsterData mData, DataMng.ExperienceInfo experienceInfo, int chipSlotNum)
+	public void MonsterDataSet(MonsterData mData, DataMng.ExperienceInfo experienceInfo, int chipSlotNum, string exchangeId)
 	{
 		this.viewExtraSkillPage = MonsterStatusData.IsVersionUp(mData.GetMonsterMaster().Simple.rare);
 		this.monsterStatusList.ClearValues();
@@ -128,6 +135,18 @@ public class CMD_MonsterParamPop : CMD
 				break;
 			}
 			this.chipObjList[j].SetActive(true);
+		}
+		if (int.Parse(exchangeId) >= 10000)
+		{
+			this.browTypeLabel1.gameObject.SetActive(true);
+			this.browTypeLabel2.gameObject.SetActive(true);
+			this.browTypeLabel1.text = string.Format(StringMaster.GetString("ExchangeSkillTypeDetile"), mData.userMonster.defaultSkillGroupSubId);
+			this.browTypeLabel2.text = string.Format(StringMaster.GetString("ExchangeSkillTypeDetile"), mData.userMonster.defaultSkillGroupSubId);
+		}
+		else
+		{
+			this.browTypeLabel1.gameObject.SetActive(false);
+			this.browTypeLabel2.gameObject.SetActive(false);
 		}
 	}
 

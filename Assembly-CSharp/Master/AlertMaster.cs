@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Master
@@ -71,7 +72,7 @@ namespace Master
 			}
 			if (null == AlertMaster.resourceMaster)
 			{
-				int num = 1;
+				int num = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
 				string path = "Master/message_m" + num;
 				AlertMaster.resourceMaster = Resources.Load<AlertMasterResource>(path);
 			}
@@ -83,6 +84,14 @@ namespace Master
 			{
 				AlertMaster.alertCache.Clear();
 			}
+		}
+
+		public static void Reload()
+		{
+			AlertMaster.ClearCache();
+			File.Delete(Application.persistentDataPath + "/MA_DT_" + MasterId.MESSAGE_MASTER.ToString() + ".txt");
+			int num = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			AlertMaster.resourceMaster = Resources.Load<AlertMasterResource>("Master/message_m" + num);
 		}
 	}
 }

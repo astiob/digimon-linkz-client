@@ -19,16 +19,16 @@ public sealed class BattleResultDropInfo : MonoBehaviour
 	[SerializeField]
 	private UISprite[] luckIcons;
 
-	[Header("マルチ運プレイヤーアイコン")]
 	[SerializeField]
+	[Header("マルチ運プレイヤーアイコン")]
 	private GameObject[] goLuckPlayerIcons;
 
-	[Header("マルチの文字アイコン")]
 	[SerializeField]
+	[Header("マルチの文字アイコン")]
 	private UISprite[] multiIcons;
 
-	[Header("ライン達")]
 	[SerializeField]
+	[Header("ライン達")]
 	private GameObject[] lines;
 
 	private int rewardNum;

@@ -10,7 +10,7 @@ public class FollowTargetCamera : MonoBehaviour
 	private void Awake()
 	{
 		Camera component = base.GetComponent<Camera>();
-		if (!FollowTargetCamera.cameras.Contains(component))
+		if (null != component && !FollowTargetCamera.cameras.Contains(component))
 		{
 			FollowTargetCamera.cameras.Add(component);
 		}
@@ -18,10 +18,6 @@ public class FollowTargetCamera : MonoBehaviour
 
 	public static bool IsVisible()
 	{
-		if (FollowTargetCamera.cameras.Contains(null))
-		{
-			FollowTargetCamera.cameras.Remove(null);
-		}
 		for (int i = 0; i < FollowTargetCamera.cameras.Count; i++)
 		{
 			if (Camera.current == FollowTargetCamera.cameras[i])

@@ -6,8 +6,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UIWidget : UIRect
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected Color mColor = Color.white;
 
 	[HideInInspector]
@@ -18,8 +18,8 @@ public class UIWidget : UIRect
 	[SerializeField]
 	protected int mWidth = 100;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mHeight = 100;
 
 	[HideInInspector]
@@ -675,16 +675,16 @@ public class UIWidget : UIRect
 		}
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int FullCompareFunc(UIWidget left, UIWidget right)
 	{
 		int num = UIPanel.CompareFunc(left.panel, right.panel);
 		return (num != 0) ? num : UIWidget.PanelCompareFunc(left, right);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int PanelCompareFunc(UIWidget left, UIWidget right)
 	{
 		if (left.mDepth < right.mDepth)

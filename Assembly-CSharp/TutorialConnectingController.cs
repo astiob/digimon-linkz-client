@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class TutorialConnectingController : MonoBehaviour
 {
-	[Header("回転するオブジェクト")]
 	[SerializeField]
+	[Header("回転するオブジェクト")]
 	private Transform[] RotationObjects = new Transform[0];
 
 	[Header("回転オブジェクトの回転制御")]

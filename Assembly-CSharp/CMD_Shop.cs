@@ -25,6 +25,8 @@ public class CMD_Shop : CMD
 
 	private int _virtualAddStoneNum;
 
+	private List<StoreUtil.StoneStoreData> ssdList;
+
 	private bool closeWhenConsumed;
 
 	private Action hideGUIAction;
@@ -176,18 +178,11 @@ public class CMD_Shop : CMD
 
 	private void Init_Stone()
 	{
-		List<StoreUtil.StoneStoreData> stoneStoreDataList = StoreUtil.Instance().GetStoneStoreDataList();
+		this.ssdList = StoreUtil.Instance().GetStoneStoreDataList();
 		this.goListPartsStone.SetActive(true);
 		this.csSelectPanelStone.initLocation = true;
-		Vector3 vector = this.csSelectPanelStone.AllBuild(stoneStoreDataList);
+		this.csSelectPanelStone.AllBuild(this.ssdList);
 		this.goListPartsStone.SetActive(false);
-		if (0 < stoneStoreDataList.Count)
-		{
-			float num = this.goListPartsStone.transform.position.x - vector.x;
-			Vector3 position = this.csSelectPanelStone.transform.position;
-			position.x += num;
-			this.csSelectPanelStone.transform.position = position;
-		}
 	}
 
 	public bool CloseWhenConsumed
@@ -200,6 +195,14 @@ public class CMD_Shop : CMD
 		{
 			this.closeWhenConsumed = value;
 		}
+	}
+
+	public void DeleteListParts(int IDX)
+	{
+		this.ssdList.RemoveAt(IDX);
+		this.goListPartsStone.SetActive(true);
+		this.csSelectPanelStone.AllBuild(this.ssdList);
+		this.goListPartsStone.SetActive(false);
 	}
 
 	public void OnEndConsume(bool flg)
@@ -217,9 +220,12 @@ public class CMD_Shop : CMD
 				this.ClosePanel(true);
 			}
 		}
-		else if (StoreInit.Instance().GetStatus() < StoreInit.STATUS.DONE_RECONSUME)
+		else if (!flg)
 		{
-			this.ClosePanel(true);
+			if (StoreInit.Instance().GetStatus() < StoreInit.STATUS.DONE_RECONSUME)
+			{
+				this.ClosePanel(true);
+			}
 		}
 	}
 

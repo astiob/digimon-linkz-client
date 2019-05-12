@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PartsMatchingWaitMonsInfo : MonoBehaviour
 {
-	[Header("RenderTarget用テクスチャ")]
 	[SerializeField]
+	[Header("RenderTarget用テクスチャ")]
 	private UITexture ngTargetTex;
 
 	private RenderTexture renderTex;
@@ -29,8 +30,8 @@ public class PartsMatchingWaitMonsInfo : MonoBehaviour
 		List<string> list = new List<string>();
 		foreach (MonsterData monsterData in this.mdList)
 		{
-			string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterData.monsterM.monsterGroupId);
-			list.Add(monsterCharaPathByMonsterGroupId);
+			string filePath = MonsterObject.GetFilePath(monsterData.GetMonsterMaster().Group.modelId);
+			list.Add(filePath);
 		}
 		this.csRender3DPartyRT.LoadCharas(list, this.v3Chara.x, this.v3Chara.y);
 		this.renderTex = this.csRender3DPartyRT.SetRenderTarget(1136, 820, 16);

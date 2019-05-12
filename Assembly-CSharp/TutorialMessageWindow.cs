@@ -11,6 +11,8 @@ public sealed class TutorialMessageWindow : MonoBehaviour
 	[SerializeField]
 	private TutorialMessageWindowText windowText;
 
+	private float autoFeedTime;
+
 	private Action finishedDisplayTextAction;
 
 	private TutorialMessageWindow.Status windowStatus;
@@ -116,6 +118,7 @@ public sealed class TutorialMessageWindow : MonoBehaviour
 		this.windowText.DisplayText();
 		this.windowStatus = TutorialMessageWindow.Status.NONE;
 		this.window.activeCollider = false;
+		this.autoFeedTime = 0f;
 		this.finishedDisplayTextAction = null;
 	}
 
@@ -124,6 +127,12 @@ public sealed class TutorialMessageWindow : MonoBehaviour
 		this.windowStatus = TutorialMessageWindow.Status.MESSAGE_DRAW;
 		this.window.activeCollider = true;
 		this.finishedDisplayTextAction = completed;
+	}
+
+	public void StartAutoFeedCountDown(float autoFeedSeconds)
+	{
+		this.windowStatus = TutorialMessageWindow.Status.AUTO_FEED_COUND_DOWN;
+		this.autoFeedTime = Time.realtimeSinceStartup + autoFeedSeconds;
 	}
 
 	private void FinishedDisplayText()
@@ -138,7 +147,18 @@ public sealed class TutorialMessageWindow : MonoBehaviour
 
 	private void Update()
 	{
-		if (this.windowStatus == TutorialMessageWindow.Status.MESSAGE_DRAW && this.windowText.UpdateDisplayText())
+		TutorialMessageWindow.Status status = this.windowStatus;
+		if (status != TutorialMessageWindow.Status.MESSAGE_DRAW)
+		{
+			if (status == TutorialMessageWindow.Status.AUTO_FEED_COUND_DOWN)
+			{
+				if (this.autoFeedTime <= Time.realtimeSinceStartup)
+				{
+					this.PageFeed();
+				}
+			}
+		}
+		else if (this.windowText.UpdateDisplayText())
 		{
 			this.FinishedDisplayText();
 		}
@@ -167,7 +187,16 @@ public sealed class TutorialMessageWindow : MonoBehaviour
 			this.windowText.DisplayText();
 			this.FinishedDisplayText();
 		}
-		else if (this.pushTapButtonAction != null)
+		else
+		{
+			this.PageFeed();
+		}
+	}
+
+	private void PageFeed()
+	{
+		this.windowStatus = TutorialMessageWindow.Status.NONE;
+		if (this.pushTapButtonAction != null)
 		{
 			this.pushTapButtonAction();
 			this.pushTapButtonAction = null;
@@ -177,6 +206,7 @@ public sealed class TutorialMessageWindow : MonoBehaviour
 	private enum Status
 	{
 		NONE,
-		MESSAGE_DRAW
+		MESSAGE_DRAW,
+		AUTO_FEED_COUND_DOWN
 	}
 }

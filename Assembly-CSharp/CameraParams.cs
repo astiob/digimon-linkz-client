@@ -12,25 +12,25 @@ public class CameraParams : MonoBehaviour
 
 	private static readonly Vector3 inverseScale = new Vector3(-1f, 1f, 1f);
 
-	[FormerlySerializedAs("cameraType")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraType")]
 	private CameraParams.CameraType _cameraType;
 
-	[SerializeField]
 	[FormerlySerializedAs("rootPosition")]
+	[SerializeField]
 	private CameraParams.RootPosition _rootPosition;
 
 	[SerializeField]
 	[FormerlySerializedAs("useAnimation")]
 	private bool _useAnimation = true;
 
-	[SerializeField]
 	[FormerlySerializedAs("isLoopAnimation")]
+	[SerializeField]
 	private bool _onLoopAnimation;
 
 	[SerializeField]
-	[Range(1f, 179f)]
 	[FormerlySerializedAs("fieldOfView")]
+	[Range(1f, 179f)]
 	private float _fieldOfView = 60f;
 
 	[SerializeField]
@@ -45,8 +45,8 @@ public class CameraParams : MonoBehaviour
 	[FormerlySerializedAs("endTime")]
 	private float _endTime = 3f;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraTarget")]
+	[SerializeField]
 	private Transform _cameraTarget;
 
 	[SerializeField]

@@ -18,28 +18,28 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("ステージ数用のラベル")]
 	private UILabel ngTXT_STAGE;
 
-	[Header("ステージ名用のラベル")]
 	[SerializeField]
+	[Header("ステージ名用のラベル")]
 	private UILabel ngTXT_STAGE_NAME;
 
 	[SerializeField]
 	[Header("消費スタミナ用のラベル")]
 	private UILabel ngTXT_STAMINA;
 
-	[Header("残回数 ラベル")]
 	[SerializeField]
+	[Header("残回数 ラベル")]
 	public UILabel ngTXT_TICKET_LEFT;
 
 	[SerializeField]
 	[Header("ノーコン ラベル")]
 	public UILabel ngTXT_NO_CONTINUE;
 
-	[Header("ソロとマルチができるステージ色")]
 	[SerializeField]
+	[Header("ソロとマルチができるステージ色")]
 	private Color colorNormalStage;
 
-	[Header("マルチ専用のステージ色")]
 	[SerializeField]
+	[Header("マルチ専用のステージ色")]
 	private Color colorMultiStage;
 
 	[Header("ソロ専用のステージ色")]
@@ -54,48 +54,48 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("####ソロとマルチステージ名装飾色")]
 	private Color colorSoloMultiStageNameOutline;
 
-	[SerializeField]
 	[Header("####マルチ専用名装飾色")]
+	[SerializeField]
 	private Color colorMultiStageNameOutline;
 
-	[Header("####ソロ専用ステージ名装飾色")]
 	[SerializeField]
+	[Header("####ソロ専用ステージ名装飾色")]
 	private Color colorSoloStageNameOutline;
 
-	[Header("イベント用のステージ名装飾色")]
 	[SerializeField]
+	[Header("イベント用のステージ名装飾色")]
 	private Color colorEventStageNameOutline;
 
-	[Header("背景色のパーツ（板）")]
 	[SerializeField]
+	[Header("背景色のパーツ（板）")]
 	private UISprite backgroundBord;
 
-	[Header("背景色のパーツ（ライン）")]
 	[SerializeField]
+	[Header("背景色のパーツ（ライン）")]
 	private UITexture backgroundLine;
 
 	[SerializeField]
 	[Header("残回数無しラベル")]
 	private UILabel ngTXT_PLAY_LIMIT;
 
-	[Header("回数限定用グレーアウトSPR素材")]
 	[SerializeField]
+	[Header("回数限定用グレーアウトSPR素材")]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
 	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
+	[SerializeField]
 	private UISprite ngSPR_LOCK;
 
 	[Header("クリアのマークの画像")]
 	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[SerializeField]
 	[Header("ステージギミック表記Obj")]
+	[SerializeField]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -127,10 +127,6 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	private GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfo;
 
 	private bool isShowedDropItems;
-
-	private bool isEndedDropItems;
-
-	private int showedDropItemsCT = -1;
 
 	private List<QuestData.DSCondition_AND_Data> dngStartCondition_OR_DataList;
 
@@ -547,16 +543,6 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		{
 			this.ShowDropItems();
 			this.isShowedDropItems = true;
-			this.showedDropItemsCT = 0;
-		}
-		else if (!this.isEndedDropItems && this.showedDropItemsCT >= 0)
-		{
-			this.showedDropItemsCT++;
-			if (this.showedDropItemsCT > 30)
-			{
-				iTween.Resume(base.gameObject);
-				this.showedDropItemsCT = 0;
-			}
 		}
 	}
 
@@ -638,7 +624,6 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 
 	private void ScaleEnd()
 	{
-		this.isEndedDropItems = true;
 	}
 
 	private bool ExistCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType type)

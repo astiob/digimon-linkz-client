@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -66,7 +67,9 @@ namespace AdventureScene
 			bool result = true;
 			try
 			{
-				string path = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
+				MonsterClientMaster monsterMasterByMonsterGroupId = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterGroupId);
+				string modelId = monsterMasterByMonsterGroupId.Group.modelId;
+				string path = MonsterObject.GetFilePath(modelId);
 				GameObject original = AssetDataMng.Instance().LoadObject(path, null, true) as GameObject;
 				GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
 				gameObject.name = "Digimon_" + monsterGroupId;
@@ -113,10 +116,12 @@ namespace AdventureScene
 			bool result = true;
 			try
 			{
-				string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(this.monsterGroupId);
-				GameObject original = AssetDataMng.Instance().LoadObject(monsterCharaPathByMonsterGroupId, null, true) as GameObject;
+				MonsterClientMaster monsterMasterByMonsterGroupId = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterGroupId);
+				string modelId = monsterMasterByMonsterGroupId.Group.modelId;
+				string filePath = MonsterObject.GetFilePath(modelId);
+				GameObject original = AssetDataMng.Instance().LoadObject(filePath, null, true) as GameObject;
 				GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
-				gameObject.name = "Digimon_" + this.monsterGroupId;
+				gameObject.name = "Digimon_" + monsterGroupId;
 				gameObject.transform.parent = ClassSingleton<AdventureSceneData>.Instance.scriptObjectRoot.transform;
 				gameObject.SetActive(false);
 				digimonInfo.model = gameObject;

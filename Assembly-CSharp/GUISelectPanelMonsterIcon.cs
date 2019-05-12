@@ -141,13 +141,13 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 		{
 			this.actL_bak = actL;
 			this.actS_bak = actS;
-			foreach (MonsterData md in monsterDataList)
+			foreach (MonsterData monsterData in monsterDataList)
 			{
-				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(md);
-				monsterCS_ByMonsterData.SetTouchAct_S(null);
+				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+				icon.SetTouchAct_S(null);
 			}
 		}
-		MonsterDataMng.Instance().PushBackAllMonsterPrefab();
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.InitScrollBar();
 		base.SetSelectPanelParam();
 		this.partsCount = monsterDataList.Count;
@@ -159,13 +159,13 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 			base.InitMinMaxLocation(-1, 0f);
 			return;
 		}
-		GameObject monsterPrefabByMonsterData = MonsterDataMng.Instance().GetMonsterPrefabByMonsterData(monsterDataList[0]);
+		GUIMonsterIcon icon2 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterDataList[0]);
 		int num = this.partsCount / this.PARTS_CT_MN;
 		if (this.partsCount % this.PARTS_CT_MN > 0)
 		{
 			num++;
 		}
-		base.selectParts = monsterPrefabByMonsterData;
+		base.selectParts = icon2.gameObject;
 		GUISelectPanelBSPartsUD.PanelBuildData panelBuildData = base.CalcBuildData(this.PARTS_CT_MN, num, vScl.x, vScl.y);
 		float num2 = panelBuildData.startY;
 		float startX = panelBuildData.startX;
@@ -180,38 +180,38 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 		{
 			effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
 		}
-		foreach (MonsterData monsterData in monsterDataList)
+		foreach (MonsterData monsterData2 in monsterDataList)
 		{
-			GameObject monsterPrefabByMonsterData2 = MonsterDataMng.Instance().GetMonsterPrefabByMonsterData(monsterData);
-			GUIMonsterIcon monsterCS_ByMonsterData2 = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(monsterData);
-			this.partObjs.Add(monsterCS_ByMonsterData2);
-			monsterPrefabByMonsterData2.SetActive(true);
+			GUIMonsterIcon icon3 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData2);
+			GameObject gameObject = icon3.gameObject;
+			this.partObjs.Add(icon3);
+			gameObject.SetActive(true);
 			vScl.z = 1f;
-			monsterPrefabByMonsterData2.transform.parent = base.transform;
-			monsterPrefabByMonsterData2.transform.localScale = vScl;
+			gameObject.transform.parent = base.transform;
+			gameObject.transform.localScale = vScl;
 			float x = startX + panelBuildData.pitchW * (float)(num3 % this.PARTS_CT_MN);
-			monsterCS_ByMonsterData2.SetOriginalPos(new Vector3(x, num2, -5f));
-			monsterCS_ByMonsterData2.SetParent();
-			monsterCS_ByMonsterData2.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(monsterData, effectArray);
+			icon3.SetOriginalPos(new Vector3(x, num2, -5f));
+			icon3.SetParent();
+			icon3.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(monsterData2, effectArray);
 			if (component != null)
 			{
-				DepthController component2 = monsterPrefabByMonsterData2.GetComponent<DepthController>();
-				UIWidget component3 = monsterPrefabByMonsterData2.GetComponent<UIWidget>();
+				DepthController component2 = gameObject.GetComponent<DepthController>();
+				UIWidget component3 = gameObject.GetComponent<UIWidget>();
 				if (component2 != null && component3 != null)
 				{
-					component2.AddWidgetDepth(monsterPrefabByMonsterData2.transform, component.depth + 10 - component3.depth);
+					component2.AddWidgetDepth(gameObject.transform, component.depth + 10 - component3.depth);
 				}
 			}
-			monsterCS_ByMonsterData2.SetTouchAct_L(actL);
-			if (!rebuild || monsterCS_ByMonsterData2.GetTouchAct_S() == null)
+			icon3.SetTouchAct_L(actL);
+			if (!rebuild || icon3.GetTouchAct_S() == null)
 			{
-				if (this.IsEnablePush(monsterData))
+				if (this.IsEnablePush(monsterData2))
 				{
-					monsterCS_ByMonsterData2.SetTouchAct_S(actS);
+					icon3.SetTouchAct_S(actS);
 				}
 				else
 				{
-					monsterCS_ByMonsterData2.SetTouchAct_S(null);
+					icon3.SetTouchAct_S(null);
 				}
 			}
 			num3++;

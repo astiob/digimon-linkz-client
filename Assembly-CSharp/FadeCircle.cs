@@ -10,8 +10,8 @@ public class FadeCircle : ScreenEffectBase
 	[SerializeField]
 	private float circleCenterX;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float circleCenterY;
 
 	[SerializeField]
@@ -187,16 +187,16 @@ public class FadeCircle : ScreenEffectBase
 	[Serializable]
 	private struct AlphaInfo
 	{
-		[Range(0f, 1f)]
 		[SerializeField]
+		[Range(0f, 1f)]
 		public float min;
 
 		[SerializeField]
 		[Range(0f, 1f)]
 		public float max;
 
-		[SerializeField]
 		[Range(0.5f, 5f)]
+		[SerializeField]
 		public float blinkingSpeed;
 
 		[SerializeField]
@@ -210,8 +210,8 @@ public class FadeCircle : ScreenEffectBase
 		[Range(0f, 1.5f)]
 		public float to;
 
-		[Range(0f, 1.5f)]
 		[SerializeField]
+		[Range(0f, 1.5f)]
 		public float from;
 
 		[SerializeField]

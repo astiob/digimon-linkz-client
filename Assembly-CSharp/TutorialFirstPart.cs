@@ -63,6 +63,11 @@ public sealed class TutorialFirstPart : TutorialBasePart
 		yield break;
 	}
 
+	protected override string GetFilePath(string fileName)
+	{
+		return "Tutorial/Text/" + fileName;
+	}
+
 	public override void FinishTutorial(GameObject observer)
 	{
 		global::Debug.Log("PartyTrack送信：チュートリアル終了");

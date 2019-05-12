@@ -30,6 +30,8 @@ public class BattleAdventureSceneManager
 		this.dictionary.Add(BattleAdventureSceneManager.TriggerType.WinEnd, new Func<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene, bool>(BattleAdventureSceneManager.CheckExecuteWin));
 		this.dictionary.Add(BattleAdventureSceneManager.TriggerType.LoseStart, new Func<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene, bool>(BattleAdventureSceneManager.CheckExecuteLose));
 		this.dictionary.Add(BattleAdventureSceneManager.TriggerType.LoseEnd, new Func<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene, bool>(BattleAdventureSceneManager.CheckExecuteLose));
+		this.dictionary.Add(BattleAdventureSceneManager.TriggerType.TotalRoundStart, new Func<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene, bool>(BattleAdventureSceneManager.CheckExecuteTotalRound));
+		this.dictionary.Add(BattleAdventureSceneManager.TriggerType.TotalRoundEnd, new Func<GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene, bool>(BattleAdventureSceneManager.CheckExecuteTotalRound));
 	}
 
 	public bool isUpdate { get; private set; }
@@ -54,7 +56,11 @@ public class BattleAdventureSceneManager
 	private IEnumerator SyncFunction()
 	{
 		BattleStateManager battleStateManager = BattleStateManager.current;
-		while (battleStateManager.battleMode == BattleMode.Multi || battleStateManager.battleMode == BattleMode.PvP)
+		if (battleStateManager.battleMode != BattleMode.Multi && battleStateManager.battleMode != BattleMode.PvP)
+		{
+			yield break;
+		}
+		for (;;)
 		{
 			float time = 10f;
 			do
@@ -69,6 +75,12 @@ public class BattleAdventureSceneManager
 				while (sendAdventureSceneData.MoveNext())
 				{
 					yield return null;
+				}
+				IEnumerator wait = Util.WaitForRealTime(0.5f);
+				while (wait.MoveNext())
+				{
+					object obj = wait.Current;
+					yield return obj;
 				}
 				if (battleStateManager.multiBasicFunction.isAdventureSceneAllEnd)
 				{
@@ -100,7 +112,11 @@ public class BattleAdventureSceneManager
 		this.isUpdate = false;
 		foreach (GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene worldDungeonAdventureScene in this.worldDungeonAdventureScenes)
 		{
-			if (triggerType == (BattleAdventureSceneManager.TriggerType)worldDungeonAdventureScene.adventureTrigger.ToInt32())
+			if (string.IsNullOrEmpty(worldDungeonAdventureScene.adventureValue))
+			{
+				global::Debug.LogWarning("アドベンチャーテキストがない");
+			}
+			else if (triggerType == (BattleAdventureSceneManager.TriggerType)worldDungeonAdventureScene.adventureTrigger.ToInt32())
 			{
 				bool flag = this.dictionary[triggerType](worldDungeonAdventureScene);
 				if (flag)
@@ -129,7 +145,6 @@ public class BattleAdventureSceneManager
 
 	private void EndAction()
 	{
-		UnityEngine.Debug.LogError("EndAction");
 		this.isUpdate = false;
 		this.SetActive(true);
 		BattleStateManager.current.time.SetPlaySpeed(this.currentSpeed2x, false);
@@ -142,7 +157,7 @@ public class BattleAdventureSceneManager
 			return true;
 		}
 		BattleStateManager current = BattleStateManager.current;
-		int num = Math.Max(current.battleStateData.currentWaveNumber, 1);
+		int num = current.battleStateData.currentWaveNumber + 1;
 		return num == data.adventureTriggerValue.ToInt32();
 	}
 
@@ -157,7 +172,7 @@ public class BattleAdventureSceneManager
 		{
 			','
 		});
-		int num = Math.Max(current.battleStateData.currentWaveNumber, 1);
+		int num = current.battleStateData.currentWaveNumber + 1;
 		if (array.Length == 1)
 		{
 			int num2 = array[0].ToInt32();
@@ -187,6 +202,17 @@ public class BattleAdventureSceneManager
 		BattleStateManager current = BattleStateManager.current;
 		int num = data.adventureTriggerValue.ToInt32();
 		return current.battleStateData.currentRoundNumber == num;
+	}
+
+	private static bool CheckExecuteTotalRound(GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene data)
+	{
+		if (string.IsNullOrEmpty(data.adventureTriggerValue) || data.adventureTriggerValue == "0")
+		{
+			return true;
+		}
+		BattleStateManager current = BattleStateManager.current;
+		int num = data.adventureTriggerValue.ToInt32();
+		return current.battleStateData.totalRoundNumber == num;
 	}
 
 	private static bool CheckExecuteSkill(GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene data)
@@ -252,6 +278,8 @@ public class BattleAdventureSceneManager
 		WinStart,
 		WinEnd,
 		LoseStart,
-		LoseEnd
+		LoseEnd,
+		TotalRoundStart,
+		TotalRoundEnd
 	}
 }

@@ -20,16 +20,11 @@ namespace Master
 			GameWebAPI.RequestMA_MessageStringMaster requestMA_MessageStringMaster = new GameWebAPI.RequestMA_MessageStringMaster();
 			requestMA_MessageStringMaster.SetSendData = delegate(GameWebAPI.RequestMA_MessageStringM requestParam)
 			{
-				int countryCode = 1;
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
 				requestParam.countryCode = countryCode;
 			};
 			requestMA_MessageStringMaster.OnReceived = new Action<GameWebAPI.RespDataMA_MessageStringM>(base.SetResponse);
 			return requestMA_MessageStringMaster;
-		}
-
-		public enum CountryCode
-		{
-			JP = 1
 		}
 	}
 }

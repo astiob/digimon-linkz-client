@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class LocalTween : GameBehaviour
+public class LocalTween : MonoBehaviour
 {
 	private LocalTween.TWEEN_TYPE nowType;
 

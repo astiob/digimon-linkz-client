@@ -173,7 +173,7 @@ public sealed class CMD_CharacterDetailed : CMD
 	public void ShowByArousal(string uniqueResistanceId, string oldResistanceIds, string newResistanceIds)
 	{
 		this.enablePageChange = false;
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(uniqueResistanceId);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(uniqueResistanceId);
 		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceListByJson = MonsterResistanceData.GetUniqueResistanceListByJson(oldResistanceIds);
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM oldResistance = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceListByJson);
 		GameObject tranceEffectObject = this.statusList.GetTranceEffectObject(oldResistance, newResistanceIds);

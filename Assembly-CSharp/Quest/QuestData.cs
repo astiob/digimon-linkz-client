@@ -94,7 +94,7 @@ namespace Quest
 			{
 				for (int i = 0; i < enemyList.Length; i++)
 				{
-					if (enemyList[i].type == 2)
+					if (enemyList[i].type == 2 || enemyList[i].type == 4)
 					{
 						list.Add(enemyList[i]);
 					}

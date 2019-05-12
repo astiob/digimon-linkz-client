@@ -3,279 +3,338 @@ using Monster;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class ChipEffectStatus : EffectStatusBase
 {
-	public static GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] GetInvocationList(GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects, EffectStatusBase.EffectTriggerType targetType, int monsterGroupId, CharacterStateControl characterStateControl, int triggerValue = 0)
+	public static GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] GetInvocationList(GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects, EffectStatusBase.EffectTriggerType targetType, int monsterGroupId, CharacterStateControl characterStateControl, int areaId)
 	{
 		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
 		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipEffects)
 		{
-			if (chipEffect.effectType.ToInt32() != 56 || (!(characterStateControl == null) && !(characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState) && !characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Stun) && !characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep)))
+			EffectStatusBase.EffectTriggerType effectTriggerType = (EffectStatusBase.EffectTriggerType)chipEffect.effectTrigger.ToInt32();
+			if (targetType == effectTriggerType)
 			{
-				int num = 0;
-				if (chipEffect.monsterGroupId != null && chipEffect.monsterGroupId.Length > 0)
+				if (ChipEffectStatus.CheckInvocation(chipEffect.effectType, chipEffect.effectValue, chipEffect.effectTrigger, chipEffect.effectTriggerValue, targetType, monsterGroupId, characterStateControl, areaId) && ChipEffectStatus.CheckInvocation(chipEffect.effectType, chipEffect.effectValue, chipEffect.effectTrigger2, chipEffect.effectTriggerValue2, targetType, monsterGroupId, characterStateControl, areaId))
 				{
-					num = chipEffect.monsterGroupId.ToInt32();
-				}
-				if (num <= 0 || num == monsterGroupId)
-				{
-					if (chipEffect.effectTrigger.ToInt32() == (int)targetType)
-					{
-						bool flag = false;
-						if (targetType == EffectStatusBase.EffectTriggerType.HpPercentage)
-						{
-							string[] array = chipEffect.effectTriggerValue.Split(new char[]
-							{
-								','
-							});
-							if (array.Length == 2 && array[0].ToInt32() <= triggerValue && array[1].ToInt32() >= triggerValue)
-							{
-								flag = true;
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.HpFixed)
-						{
-							if (chipEffect.effectTriggerValue.ToInt32() == triggerValue)
-							{
-								flag = true;
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.Kill)
-						{
-							if (chipEffect.effectTriggerValue == "1")
-							{
-								if (characterStateControl != null)
-								{
-									CharacterStateControl[] source;
-									if (characterStateControl.targetCharacter.isEnemy)
-									{
-										source = BattleStateManager.current.battleStateData.enemies;
-									}
-									else
-									{
-										source = BattleStateManager.current.battleStateData.playerCharacters;
-									}
-									if (source.Where((CharacterStateControl item) => !item.isDied).Any<CharacterStateControl>())
-									{
-										flag = true;
-									}
-								}
-							}
-							else
-							{
-								flag = true;
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.Area)
-						{
-							if (triggerValue == chipEffect.effectTriggerValue.ToInt32())
-							{
-								flag = true;
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.AttackHit)
-						{
-							if (characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.currentSkillStatus.skillType == SkillType.Attack)
-							{
-								if (chipEffect.effectType.ToInt32() == 61)
-								{
-									BattleServerControl serverControl = BattleStateManager.current.serverControl;
-									List<AffectEffectProperty> affectEffectPropertyList = serverControl.GetAffectEffectPropertyList(chipEffect.effectValue);
-									if (affectEffectPropertyList != null)
-									{
-										foreach (AffectEffectProperty addAffectEffect in affectEffectPropertyList)
-										{
-											characterStateControl.currentSkillStatus.AddAffectEffect(addAffectEffect);
-										}
-									}
-									flag = true;
-								}
-								else
-								{
-									flag = true;
-								}
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.SkillStartedApMax)
-						{
-							if (characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.ap == characterStateControl.maxAp)
-							{
-								if (chipEffect.effectType.ToInt32() == 61)
-								{
-									BattleServerControl serverControl2 = BattleStateManager.current.serverControl;
-									List<AffectEffectProperty> affectEffectPropertyList2 = serverControl2.GetAffectEffectPropertyList(chipEffect.effectValue);
-									if (affectEffectPropertyList2 != null)
-									{
-										foreach (AffectEffectProperty addAffectEffect2 in affectEffectPropertyList2)
-										{
-											characterStateControl.currentSkillStatus.AddAffectEffect(addAffectEffect2);
-										}
-									}
-									flag = true;
-								}
-								else
-								{
-									flag = true;
-								}
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.AttackCommandedTarget)
-						{
-							if (characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.currentSkillStatus.ThisSkillIsAttack)
-							{
-								if (characterStateControl.currentSkillStatus.numbers == EffectNumbers.Simple)
-								{
-									if (characterStateControl.targetCharacter.skillOrder < characterStateControl.skillOrder)
-									{
-										flag = true;
-									}
-								}
-								else
-								{
-									CharacterStateControl[] source2;
-									if (characterStateControl.targetCharacter.isEnemy)
-									{
-										source2 = BattleStateManager.current.battleStateData.enemies.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
-									}
-									else
-									{
-										source2 = BattleStateManager.current.battleStateData.playerCharacters.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
-									}
-									if (source2.Where((CharacterStateControl item) => item.skillOrder < characterStateControl.skillOrder).Any<CharacterStateControl>())
-									{
-										flag = true;
-									}
-								}
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.SkillSpecies)
-						{
-							if (characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && (chipEffect.effectTriggerValue == "0" || characterStateControl.characterDatas.tribe == chipEffect.effectTriggerValue))
-							{
-								flag = true;
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.SkillTargetSpecies)
-						{
-							if (characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState)
-							{
-								string tribe = chipEffect.effectTriggerValue;
-								if (tribe == "0")
-								{
-									flag = true;
-								}
-								else if (characterStateControl.currentSkillStatus.numbers == EffectNumbers.Simple)
-								{
-									if (characterStateControl.targetCharacter.characterDatas.tribe == tribe)
-									{
-										flag = true;
-									}
-								}
-								else
-								{
-									CharacterStateControl[] source3;
-									if (characterStateControl.targetCharacter.isEnemy)
-									{
-										source3 = BattleStateManager.current.battleStateData.enemies.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
-									}
-									else
-									{
-										source3 = BattleStateManager.current.battleStateData.playerCharacters.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
-									}
-									if (source3.Where((CharacterStateControl item) => item.characterDatas.tribe == tribe).Any<CharacterStateControl>())
-									{
-										flag = true;
-									}
-								}
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.SkillAttribute)
-						{
-							if (characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState)
-							{
-								global::Attribute attribute = ServerToBattleUtility.IntToAttribute(chipEffect.effectTriggerValue.ToInt32());
-								if (chipEffect.effectTriggerValue.ToInt32() == 0 || characterStateControl.currentSkillStatus.attribute == attribute)
-								{
-									flag = true;
-								}
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.SkillRecieveAttribute)
-						{
-							CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
-							global::Attribute attribute2 = ServerToBattleUtility.IntToAttribute(chipEffect.effectTriggerValue.ToInt32());
-							if (chipEffect.effectTriggerValue.ToInt32() == 0)
-							{
-								flag = true;
-							}
-							else if (currentSelectCharacterState.currentSkillStatus.attribute == attribute2)
-							{
-								if (currentSelectCharacterState.currentSkillStatus.numbers == EffectNumbers.Simple)
-								{
-									if (currentSelectCharacterState.targetCharacter == characterStateControl)
-									{
-										flag = true;
-									}
-								}
-								else
-								{
-									CharacterStateControl[] source4;
-									if (currentSelectCharacterState.targetCharacter.isEnemy)
-									{
-										source4 = BattleStateManager.current.battleStateData.enemies.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
-									}
-									else
-									{
-										source4 = BattleStateManager.current.battleStateData.playerCharacters.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
-									}
-									if (source4.Where((CharacterStateControl item) => item == characterStateControl).Any<CharacterStateControl>())
-									{
-										flag = true;
-									}
-								}
-							}
-						}
-						else if (targetType == EffectStatusBase.EffectTriggerType.Suffer)
-						{
-							if (characterStateControl != null)
-							{
-								string[] array2 = chipEffect.effectTriggerValue.Split(new char[]
-								{
-									','
-								});
-								List<SufferStateProperty.SufferType> list2 = new List<SufferStateProperty.SufferType>();
-								for (int j = 0; j < array2.Length; j++)
-								{
-									SufferStateProperty.SufferType item2 = (SufferStateProperty.SufferType)array2[j].ToInt32();
-									list2.Add(item2);
-								}
-								foreach (SufferStateProperty.SufferType sufferType in list2)
-								{
-									foreach (SufferStateProperty sufferStateProperty in characterStateControl.hitSufferList)
-									{
-										if (sufferStateProperty.sufferTypeCache == sufferType)
-										{
-											flag = true;
-											break;
-										}
-									}
-								}
-							}
-						}
-						else
-						{
-							flag = true;
-						}
-						if (flag)
-						{
-							list.Add(chipEffect);
-						}
-					}
+					list.Add(chipEffect);
 				}
 			}
 		}
 		return list.ToArray();
+	}
+
+	private static bool CheckInvocation(string effectType, string effectValue, string effectTrigger, string effectTriggerValue, EffectStatusBase.EffectTriggerType targetType, int monsterGroupId, CharacterStateControl characterStateControl, int areaId)
+	{
+		if (effectType.ToInt32() == 56 && !ChipEffectStatus.CheckCounter(characterStateControl))
+		{
+			return false;
+		}
+		BattleStateManager current = BattleStateManager.current;
+		switch (effectTrigger.ToInt32())
+		{
+		case 3:
+		case 4:
+		{
+			int targetNumber = current.battleStateData.currentWaveNumber + 1;
+			return ChipEffectStatus.CheckLoop(effectTriggerValue, targetNumber);
+		}
+		case 5:
+			return ChipEffectStatus.CheckHpPercentage(effectTriggerValue, characterStateControl.hp, characterStateControl.extraMaxHp);
+		case 7:
+			return ChipEffectStatus.CheckHpFixed(effectTriggerValue, characterStateControl.hp);
+		case 8:
+		case 9:
+		{
+			int currentRoundNumber = current.battleStateData.currentRoundNumber;
+			return ChipEffectStatus.CheckLoop(effectTriggerValue, currentRoundNumber);
+		}
+		case 10:
+			return ChipEffectStatus.CheckKill(effectTriggerValue, characterStateControl);
+		case 11:
+			return ChipEffectStatus.CheckArea(effectTriggerValue, areaId);
+		case 12:
+			return ChipEffectStatus.CheckAttackStarted(effectType, effectValue, characterStateControl);
+		case 13:
+			return ChipEffectStatus.CheckSufferHit(effectTriggerValue, characterStateControl);
+		case 15:
+			return ChipEffectStatus.CheckSkillStartedApMax(effectType, effectValue, characterStateControl);
+		case 16:
+			return ChipEffectStatus.CheckAttackCommandedTarget(characterStateControl);
+		case 17:
+			return ChipEffectStatus.CheckSkillSpecies(effectTriggerValue, characterStateControl);
+		case 18:
+			return ChipEffectStatus.CheckSkillTargetSpecies(effectTriggerValue, characterStateControl);
+		case 19:
+			return ChipEffectStatus.CheckSkillStartedSendAttribute(effectTriggerValue, characterStateControl);
+		case 20:
+			return ChipEffectStatus.CheckSkillStartedRecieveAttribute(effectTriggerValue, characterStateControl);
+		case 22:
+			return ChipEffectStatus.CheckMonsterGroupId(effectTriggerValue, monsterGroupId);
+		case 23:
+			return ChipEffectStatus.CheckMonsterIntegrationGroupId(effectTriggerValue, characterStateControl.characterStatus.monsterIntegrationIds);
+		case 24:
+			return ChipEffectStatus.CheckSkillDamageSend(effectTriggerValue, characterStateControl);
+		case 25:
+			return ChipEffectStatus.CheckSkillDamageRecieve(effectTriggerValue, characterStateControl);
+		case 26:
+		case 27:
+			return true;
+		}
+		return true;
+	}
+
+	private static bool CheckCounter(CharacterStateControl characterStateControl)
+	{
+		return !(characterStateControl == null) && !(characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState) && !characterStateControl.isDied && !characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Stun) && !characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep);
+	}
+
+	private static bool CheckMonsterGroupId(string effectTriggerValue, int monsterGroupId)
+	{
+		int num = effectTriggerValue.ToInt32();
+		return num == 0 || num == monsterGroupId;
+	}
+
+	private static bool CheckMonsterIntegrationGroupId(string effectTriggerValue, string[] monsterIntegrationIds)
+	{
+		return effectTriggerValue == "0" || monsterIntegrationIds.Where((string item) => item == effectTriggerValue).Any<string>();
+	}
+
+	private static bool CheckHpPercentage(string effectTriggerValue, int currentHp, int maxHp)
+	{
+		string[] array = effectTriggerValue.Split(new char[]
+		{
+			','
+		});
+		if (array.Length != 2)
+		{
+			return false;
+		}
+		int num = Mathf.FloorToInt((float)(maxHp * array[0].ToInt32()) / 100f);
+		int num2 = Mathf.FloorToInt((float)(maxHp * array[1].ToInt32()) / 100f);
+		return num <= currentHp && currentHp <= num2;
+	}
+
+	private static bool CheckHpFixed(string effectTriggerValue, int currentHp)
+	{
+		return effectTriggerValue.ToInt32() == currentHp;
+	}
+
+	private static bool CheckKill(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		if (characterStateControl != null)
+		{
+			if (!(effectTriggerValue == "1"))
+			{
+				return true;
+			}
+			CharacterStateControl[] source;
+			if (characterStateControl.targetCharacter.isEnemy)
+			{
+				source = BattleStateManager.current.battleStateData.enemies;
+			}
+			else
+			{
+				source = BattleStateManager.current.battleStateData.playerCharacters;
+			}
+			if (source.Where((CharacterStateControl item) => !item.isDied).Any<CharacterStateControl>())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static bool CheckArea(string effectTriggerValue, int areaId)
+	{
+		return areaId == effectTriggerValue.ToInt32();
+	}
+
+	private static bool CheckAttackStarted(string effectType, string effectValue, CharacterStateControl characterStateControl)
+	{
+		return characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.currentSkillStatus.skillType == SkillType.Attack;
+	}
+
+	private static bool CheckSkillStartedApMax(string effectType, string effectValue, CharacterStateControl characterStateControl)
+	{
+		return characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.ap == characterStateControl.maxAp;
+	}
+
+	private static bool CheckAttackCommandedTarget(CharacterStateControl characterStateControl)
+	{
+		if (characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState && characterStateControl.currentSkillStatus.ThisSkillIsAttack)
+		{
+			CharacterStateControl[] targets = ChipEffectStatus.GetTargets(characterStateControl);
+			if (targets.Where((CharacterStateControl item) => item.skillOrder < characterStateControl.skillOrder).Any<CharacterStateControl>())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static bool CheckSkillSpecies(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		return ChipEffectStatus.CheckSkillSendBase(effectTriggerValue, characterStateControl) && (effectTriggerValue == "0" || characterStateControl.characterDatas.tribe == effectTriggerValue);
+	}
+
+	private static bool CheckSkillTargetSpecies(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		if (ChipEffectStatus.CheckSkillSendBase(effectTriggerValue, characterStateControl))
+		{
+			string tribe = effectTriggerValue;
+			if (tribe == "0")
+			{
+				return true;
+			}
+			CharacterStateControl[] targets = ChipEffectStatus.GetTargets(characterStateControl);
+			if (targets.Where((CharacterStateControl item) => item.characterDatas.tribe == tribe).Any<CharacterStateControl>())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static bool CheckSkillStartedSendAttribute(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		return ChipEffectStatus.CheckSkillSendBase(effectTriggerValue, characterStateControl) && ChipEffectStatus.CheckSkillAttribute(effectTriggerValue, characterStateControl);
+	}
+
+	private static bool CheckSkillStartedRecieveAttribute(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		return ChipEffectStatus.CheckSkillRecieveBase(effectTriggerValue, characterStateControl) && ChipEffectStatus.CheckSkillAttribute(effectTriggerValue, characterStateControl);
+	}
+
+	private static bool CheckSkillAttribute(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		if (effectTriggerValue.ToInt32() == 0)
+		{
+			return true;
+		}
+		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
+		global::Attribute attribute = ServerToBattleUtility.IntToAttribute(effectTriggerValue.ToInt32());
+		return currentSelectCharacterState.currentSkillStatus.attribute == attribute;
+	}
+
+	private static bool CheckSufferHit(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		if (characterStateControl != null)
+		{
+			string[] array = effectTriggerValue.Split(new char[]
+			{
+				','
+			});
+			List<SufferStateProperty.SufferType> list = new List<SufferStateProperty.SufferType>();
+			for (int i = 0; i < array.Length; i++)
+			{
+				SufferStateProperty.SufferType item = (SufferStateProperty.SufferType)array[i].ToInt32();
+				list.Add(item);
+			}
+			foreach (SufferStateProperty.SufferType sufferType in list)
+			{
+				foreach (SufferStateProperty sufferStateProperty in characterStateControl.hitSufferList)
+				{
+					if (sufferStateProperty.sufferTypeCache == sufferType)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		return false;
+	}
+
+	private static bool CheckSkillDamageSend(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		return ChipEffectStatus.CheckSkillSendBase(effectTriggerValue, characterStateControl) && ChipEffectStatus.CheckSkillDamage(effectTriggerValue, characterStateControl);
+	}
+
+	private static bool CheckSkillDamageRecieve(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		return ChipEffectStatus.CheckSkillRecieveBase(effectTriggerValue, characterStateControl) && ChipEffectStatus.CheckSkillDamage(effectTriggerValue, characterStateControl);
+	}
+
+	private static bool CheckSkillDamage(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
+		return currentSelectCharacterState.currentSkillStatus.ThisSkillIsAttack;
+	}
+
+	private static bool CheckSkillSendBase(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		return characterStateControl != null && characterStateControl == BattleStateManager.current.battleStateData.currentSelectCharacterState;
+	}
+
+	private static bool CheckSkillRecieveBase(string effectTriggerValue, CharacterStateControl characterStateControl)
+	{
+		if (characterStateControl != null)
+		{
+			CharacterStateControl[] targets = ChipEffectStatus.GetTargets(characterStateControl);
+			if (targets.Where((CharacterStateControl item) => item == characterStateControl).Any<CharacterStateControl>())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static CharacterStateControl[] GetTargets(CharacterStateControl characterStateControl)
+	{
+		List<CharacterStateControl> list = new List<CharacterStateControl>();
+		CharacterStateControl currentSelectCharacterState = BattleStateManager.current.battleStateData.currentSelectCharacterState;
+		if (currentSelectCharacterState.currentSkillStatus.numbers == EffectNumbers.Simple)
+		{
+			list.Add(characterStateControl.targetCharacter);
+		}
+		else
+		{
+			CharacterStateControl[] collection;
+			if (currentSelectCharacterState.targetCharacter.isEnemy)
+			{
+				collection = BattleStateManager.current.battleStateData.enemies.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
+			}
+			else
+			{
+				collection = BattleStateManager.current.battleStateData.playerCharacters.Where((CharacterStateControl item) => !item.isDied).ToArray<CharacterStateControl>();
+			}
+			list.AddRange(collection);
+		}
+		return list.ToArray();
+	}
+
+	private static bool CheckLoop(string effectTriggerValue, int targetNumber)
+	{
+		if (string.IsNullOrEmpty(effectTriggerValue) || effectTriggerValue == "0")
+		{
+			return true;
+		}
+		string[] array = effectTriggerValue.Split(new char[]
+		{
+			','
+		});
+		if (array.Length == 1)
+		{
+			if (array[0].ToInt32() == targetNumber)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			int num = array[1].ToInt32();
+			int num2 = targetNumber % num;
+			if (num2 == 0)
+			{
+				num2 = num;
+			}
+			if (array[0].ToInt32() == num2)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static int GetChipEffectValue(GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects, int baseValue, CharacterStateControl character, EffectStatusBase.ExtraEffectType effectType)
@@ -372,38 +431,6 @@ public class ChipEffectStatus : EffectStatusBase
 		return ChipEffectStatus.GetChipEffectValueToFloat(chipEffects, skillPropety.hitRate, character.isEnemy, character.characterStatus.monsterIntegrationIds, character.groupId, character.tolerance, character.characterDatas.tribe, character.characterDatas.growStep, skillPropety, character.currentSufferState, ChipEffectStatus.GetTargetType(character, character), effectType);
 	}
 
-	private static int GetCorrectionValue(int baseValue, List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> extraEffectStatusList)
-	{
-		int num = baseValue;
-		float num2 = 0f;
-		bool flag = false;
-		float num3 = 0f;
-		float num4 = 0f;
-		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in extraEffectStatusList)
-		{
-			if (chipEffect.effectSubType.ToInt32() == 1)
-			{
-				num2 = ((num2 <= chipEffect.effectValue.ToFloat()) ? chipEffect.effectValue.ToFloat() : num2);
-				flag = true;
-			}
-			else if (chipEffect.effectSubType.ToInt32() == 2)
-			{
-				num3 += chipEffect.effectValue.ToFloat();
-			}
-			else if (chipEffect.effectSubType.ToInt32() == 3)
-			{
-				num4 += chipEffect.effectValue.ToFloat();
-			}
-		}
-		num += (int)num4;
-		num += (int)((float)num * num3);
-		if (flag)
-		{
-			num = (int)num2;
-		}
-		return num;
-	}
-
 	private static float GetCorrectionValue(float baseValue, List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> extraEffectStatusList)
 	{
 		float num = baseValue;
@@ -438,36 +465,36 @@ public class ChipEffectStatus : EffectStatusBase
 
 	private static List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> GetChipEffectList(GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects, ChipEffectStatus.TargetType targetType, EffectStatusBase.ExtraTargetSubType targetSubType, int targetValue, bool isEnemy, ConstValue.ResistanceType resistanceType, EffectStatusBase.ExtraEffectType effectType)
 	{
-		ChipEffectStatus.<GetChipEffectList>c__AnonStorey2ED <GetChipEffectList>c__AnonStorey2ED = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2ED();
-		<GetChipEffectList>c__AnonStorey2ED.effectType = effectType;
-		<GetChipEffectList>c__AnonStorey2ED.targetType = targetType;
-		<GetChipEffectList>c__AnonStorey2ED.isEnemy = isEnemy;
-		<GetChipEffectList>c__AnonStorey2ED.targetSubType = targetSubType;
-		<GetChipEffectList>c__AnonStorey2ED.targetValue = targetValue;
+		ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E1 <GetChipEffectList>c__AnonStorey2E = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E1();
+		<GetChipEffectList>c__AnonStorey2E.effectType = effectType;
+		<GetChipEffectList>c__AnonStorey2E.targetType = targetType;
+		<GetChipEffectList>c__AnonStorey2E.isEnemy = isEnemy;
+		<GetChipEffectList>c__AnonStorey2E.targetSubType = targetSubType;
+		<GetChipEffectList>c__AnonStorey2E.targetValue = targetValue;
 		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
 		if (chipEffects.Length == 0)
 		{
 			return list;
 		}
-		<GetChipEffectList>c__AnonStorey2ED.searchEffectType = ((int x) => x == (int)<GetChipEffectList>c__AnonStorey2ED.effectType);
-		if (EffectStatusBase.ExtraEffectType.Atk <= <GetChipEffectList>c__AnonStorey2ED.effectType && <GetChipEffectList>c__AnonStorey2ED.effectType < EffectStatusBase.ExtraEffectType.AllStatus)
+		<GetChipEffectList>c__AnonStorey2E.searchEffectType = ((int x) => x == (int)<GetChipEffectList>c__AnonStorey2E.effectType);
+		if (EffectStatusBase.ExtraEffectType.Atk <= <GetChipEffectList>c__AnonStorey2E.effectType && <GetChipEffectList>c__AnonStorey2E.effectType < EffectStatusBase.ExtraEffectType.AllStatus)
 		{
-			<GetChipEffectList>c__AnonStorey2ED.searchEffectType = ((int x) => x == (int)<GetChipEffectList>c__AnonStorey2ED.effectType || x == 27);
+			<GetChipEffectList>c__AnonStorey2E.searchEffectType = ((int x) => x == (int)<GetChipEffectList>c__AnonStorey2E.effectType || x == 27);
 		}
-		<GetChipEffectList>c__AnonStorey2ED.searchTargetType = ((int x) => x == (int)<GetChipEffectList>c__AnonStorey2ED.targetType || (!<GetChipEffectList>c__AnonStorey2ED.isEnemy && x == 1) || (<GetChipEffectList>c__AnonStorey2ED.isEnemy && x == 2));
+		<GetChipEffectList>c__AnonStorey2E.searchTargetType = ((int x) => x == (int)<GetChipEffectList>c__AnonStorey2E.targetType || (!<GetChipEffectList>c__AnonStorey2E.isEnemy && x == 1) || (<GetChipEffectList>c__AnonStorey2E.isEnemy && x == 2));
 		IEnumerable<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> enumerable;
 		if (resistanceType == ConstValue.ResistanceType.NONE)
 		{
-			enumerable = chipEffects.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect x) => <GetChipEffectList>c__AnonStorey2ED.searchTargetType(x.targetType.ToInt32()) && x.targetSubType.ToInt32() == (int)<GetChipEffectList>c__AnonStorey2ED.targetSubType && x.targetValue.ToInt32() == <GetChipEffectList>c__AnonStorey2ED.targetValue && <GetChipEffectList>c__AnonStorey2ED.searchEffectType(x.effectType.ToInt32()));
+			enumerable = chipEffects.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect x) => <GetChipEffectList>c__AnonStorey2E.searchTargetType(x.targetType.ToInt32()) && x.targetSubType.ToInt32() == (int)<GetChipEffectList>c__AnonStorey2E.targetSubType && x.targetValue.ToInt32() == <GetChipEffectList>c__AnonStorey2E.targetValue && <GetChipEffectList>c__AnonStorey2E.searchEffectType(x.effectType.ToInt32()));
 		}
 		else
 		{
-			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2EE <GetChipEffectList>c__AnonStorey2EE = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2EE();
-			<GetChipEffectList>c__AnonStorey2EE.<>f__ref$749 = <GetChipEffectList>c__AnonStorey2ED;
-			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2EE <GetChipEffectList>c__AnonStorey2EE2 = <GetChipEffectList>c__AnonStorey2EE;
+			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E2 <GetChipEffectList>c__AnonStorey2E2 = new ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E2();
+			<GetChipEffectList>c__AnonStorey2E2.<>f__ref$737 = <GetChipEffectList>c__AnonStorey2E;
+			ChipEffectStatus.<GetChipEffectList>c__AnonStorey2E2 <GetChipEffectList>c__AnonStorey2E3 = <GetChipEffectList>c__AnonStorey2E2;
 			int num = (int)resistanceType;
-			<GetChipEffectList>c__AnonStorey2EE2.resistance = num.ToString();
-			enumerable = chipEffects.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect x) => <GetChipEffectList>c__AnonStorey2EE.<>f__ref$749.searchTargetType(x.targetType.ToInt32()) && x.targetSubType.ToInt32() == (int)<GetChipEffectList>c__AnonStorey2EE.<>f__ref$749.targetSubType && x.targetValue.ToInt32() == <GetChipEffectList>c__AnonStorey2EE.<>f__ref$749.targetValue && x.targetValue2.Contains(<GetChipEffectList>c__AnonStorey2EE.resistance) && <GetChipEffectList>c__AnonStorey2EE.<>f__ref$749.searchEffectType(x.effectType.ToInt32()));
+			<GetChipEffectList>c__AnonStorey2E3.resistance = num.ToString();
+			enumerable = chipEffects.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect x) => <GetChipEffectList>c__AnonStorey2E2.<>f__ref$737.searchTargetType(x.targetType.ToInt32()) && x.targetSubType.ToInt32() == (int)<GetChipEffectList>c__AnonStorey2E2.<>f__ref$737.targetSubType && x.targetValue.ToInt32() == <GetChipEffectList>c__AnonStorey2E2.<>f__ref$737.targetValue && x.targetValue2.Contains(<GetChipEffectList>c__AnonStorey2E2.resistance) && <GetChipEffectList>c__AnonStorey2E2.<>f__ref$737.searchEffectType(x.effectType.ToInt32()));
 		}
 		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect item in enumerable)
 		{
@@ -519,32 +546,35 @@ public class ChipEffectStatus : EffectStatusBase
 		return list;
 	}
 
-	public static bool CheckStageEffectInvalid(List<ExtraEffectStatus> extraEffectStatusList, CharacterStateControl characterStateControl)
+	public static List<ExtraEffectStatus> CheckStageEffectInvalid(List<ExtraEffectStatus> extraEffectStatusList, CharacterStateControl characterStateControl)
 	{
+		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
 		foreach (ExtraEffectStatus extraEffectStatus in extraEffectStatusList)
 		{
-			if (ChipEffectStatus.CheckStageEffectInvalid(characterStateControl, extraEffectStatus))
+			if (!ChipEffectStatus.CheckStageEffectInvalid(characterStateControl, extraEffectStatus))
 			{
-				return true;
+				list.Add(extraEffectStatus);
 			}
 		}
-		return false;
+		return list;
 	}
 
-	public static bool CheckStageEffectInvalid(int areaId, List<ExtraEffectStatus> extraEffectStatusList, MonsterData[] chipPlayers, MonsterData[] chipEnemys, MonsterData chipTarget)
+	public static List<ExtraEffectStatus> CheckStageEffectInvalid(int areaId, List<ExtraEffectStatus> extraEffectStatusList, MonsterData[] chipPlayers, MonsterData[] chipEnemys, MonsterData chipTarget)
 	{
+		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
 		bool flag = chipEnemys.Where((MonsterData item) => item.userMonster.userMonsterId == chipTarget.userMonster.userMonsterId).Any<MonsterData>();
-		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(chipTarget.monsterM.monsterGroupId);
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(chipTarget.monsterM.monsterGroupId).Group;
 		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
 		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] source = responseMonsterIntegrationGroupMaster.monsterIntegrationGroupM.Where((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterId == chipTarget.monsterM.monsterId).ToArray<GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup>();
 		string[] monsterIntegrationIds = source.Select((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterIntegrationId).ToArray<string>();
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(chipTarget.monsterM.resistanceId);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(chipTarget.monsterM.resistanceId);
 		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(chipTarget.GetResistanceIdList());
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
 		Tolerance tolerance = ServerToBattleUtility.ResistanceToTolerance(data);
-		GrowStep growStep = MonsterGrowStepData.ToGrowStep(monsterGroupMasterByMonsterGroupId.growStep);
+		GrowStep growStep = MonsterGrowStepData.ToGrowStep(group.growStep);
 		foreach (ExtraEffectStatus extraEffectStatus in extraEffectStatusList)
 		{
+			bool flag2 = true;
 			foreach (MonsterData chipActer in chipPlayers)
 			{
 				if (chipActer != null)
@@ -573,29 +603,33 @@ public class ChipEffectStatus : EffectStatusBase
 					{
 						targetType = ChipEffectStatus.TargetType.Enemy;
 					}
-					foreach (int num in chipActer.GetChipIdList())
+					foreach (int num in chipActer.GetChipEquip().GetChipIdList())
 					{
 						GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] array = ChipDataMng.GetChipEffectData(num.ToString());
 						array = ChipEffectStatus.GetStageEffectInvalidList(areaId, array, extraEffectStatus).ToArray();
 						if (array.Length > 0)
 						{
-							List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> totalChipEffectStatusList = ChipEffectStatus.GetTotalChipEffectStatusList(array, flag, monsterIntegrationIds, chipTarget.monsterM.monsterGroupId, tolerance, monsterGroupMasterByMonsterGroupId.tribe, growStep, null, null, targetType, EffectStatusBase.ExtraEffectType.StageEffextInvalid);
+							List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> totalChipEffectStatusList = ChipEffectStatus.GetTotalChipEffectStatusList(array, flag, monsterIntegrationIds, chipTarget.monsterM.monsterGroupId, tolerance, group.tribe, growStep, null, null, targetType, EffectStatusBase.ExtraEffectType.StageEffextInvalid);
 							if (totalChipEffectStatusList.Count > 0)
 							{
-								return true;
+								flag2 = false;
+								break;
 							}
 						}
 					}
 				}
 			}
+			if (flag2)
+			{
+				list.Add(extraEffectStatus);
+			}
 		}
-		return false;
+		return list;
 	}
 
 	private static bool CheckStageEffectInvalid(CharacterStateControl chipTarget, ExtraEffectStatus extraEffectStatus)
 	{
 		BattleStateManager current = BattleStateManager.current;
-		int areaId = current.hierarchyData.areaId;
 		CharacterStateControl[] totalCharacters = current.battleStateData.GetTotalCharacters();
 		foreach (CharacterStateControl characterStateControl in totalCharacters)
 		{

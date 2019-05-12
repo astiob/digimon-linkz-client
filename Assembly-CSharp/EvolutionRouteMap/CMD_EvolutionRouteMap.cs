@@ -46,6 +46,7 @@ namespace EvolutionRouteMap
 
 		protected override void OnShowDialog()
 		{
+			base.SetTutorialAnyTime("anytime_second_tutorial_evolution_rootmap");
 			base.PartsTitle.SetTitle(StringMaster.GetString("EvolutionDiagramTitle"));
 			this.monsterIconSource = MonsterIconFactory.CreateIcon(1);
 			this.selectMonsterInfo.Initialize();

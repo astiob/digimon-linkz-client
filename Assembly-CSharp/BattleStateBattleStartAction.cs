@@ -54,6 +54,14 @@ public class BattleStateBattleStartAction : BattleStateBase
 	{
 		base.stateManager.threeDAction.HideAllCharactersAction(base.battleStateData.GetTotalCharacters());
 		base.hierarchyData.stageParams.TransformStage(this.battleWave.cameraType);
+		if (this.isBigBoss)
+		{
+			base.battleStateData.commandSelectTweenTargetCamera = base.battleStateData.bigBossCommandSelectTweenTargetCamera;
+		}
+		else
+		{
+			base.battleStateData.commandSelectTweenTargetCamera = base.battleStateData.normalCommandSelectTweenTargetCamera;
+		}
 		base.stateManager.battleAdventureSceneManager.OnTrigger(BattleAdventureSceneManager.TriggerType.DigimonEntryStart);
 		if (base.stateManager.battleAdventureSceneManager.isUpdate)
 		{
@@ -86,13 +94,13 @@ public class BattleStateBattleStartAction : BattleStateBase
 			{
 				yield return null;
 			}
-		}
-		if (this.is1stStart && !this.isBigBoss)
-		{
-			IEnumerator insertFinish = this.InsertFinish();
-			while (insertFinish.MoveNext())
+			if (this.is1stStart && !this.isBigBoss)
 			{
-				yield return null;
+				IEnumerator insertFinish = this.InsertFinish();
+				while (insertFinish.MoveNext())
+				{
+					yield return null;
+				}
 			}
 		}
 		base.stateManager.battleAdventureSceneManager.OnTrigger(BattleAdventureSceneManager.TriggerType.DigimonEntryEnd);
@@ -300,6 +308,7 @@ public class BattleStateBattleStartAction : BattleStateBase
 		{
 			yield return null;
 		}
+		base.stateManager.uiControl.ApplyBattleStartAction(false);
 		base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
 		yield break;
 	}

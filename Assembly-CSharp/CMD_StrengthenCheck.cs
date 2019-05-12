@@ -18,8 +18,8 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[Header("強化前のレベルのラベル")]
 	[SerializeField]
+	[Header("強化前のレベルのラベル")]
 	private UILabel beforeLevelLabel;
 
 	[Header("強化後のレベルのラベル")]
@@ -30,8 +30,8 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private UILabel plusLevelLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]
@@ -42,8 +42,8 @@ public sealed class CMD_StrengthenCheck : CMD
 	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)
@@ -63,8 +63,8 @@ public sealed class CMD_StrengthenCheck : CMD
 			format = StringMaster.GetString("ReinforcementInfo");
 		}
 		this.normalMessageLabel.text = string.Format(format, StringMaster.GetString("ReinforcementTitle"));
-		bool flag = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
-		bool flag2 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
+		bool flag = MonsterUserDataMng.AnyChipEquipMonster(selectedMonsterDataList);
+		bool flag2 = MonsterUserDataMng.AnyHighGrowStepMonster(selectedMonsterDataList);
 		List<string> list = new List<string>();
 		bool flag3 = false;
 		bool flag4 = false;

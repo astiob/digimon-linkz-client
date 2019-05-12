@@ -28,7 +28,7 @@ public class GUISelectPanelChipList : GUISelectPanelViewPartsUD
 		List<string> myDigimonChipGroupIds = null;
 		if (shouldDim)
 		{
-			myDigimonChipGroupIds = CMD_ChipSphere.DataChg.GetChipGroupList();
+			myDigimonChipGroupIds = CMD_ChipSphere.DataChg.GetChipEquip().GetChipGroupList();
 		}
 		GUISelectPanelChipList.partsDataList = new List<GUIListChipParts.Data>();
 		for (int i = 0; i < dataList.Length; i++)

@@ -34,16 +34,16 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_PASSWORD_EXP;
 
-	[SerializeField]
 	[Header("フレンドボタン")]
+	[SerializeField]
 	private GameObject goBTN_FRIEND;
 
 	[Header("チャットボタン")]
 	[SerializeField]
 	private GameObject goBTN_CHAT;
 
-	[Header("ステータス変更ボタン")]
 	[SerializeField]
+	[Header("ステータス変更ボタン")]
 	private UILabel lbTXT_ST_EXCHANGE;
 
 	[Header("準備完了ボタン")]
@@ -146,6 +146,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[NonSerialized]
 	public List<string> recruitedFriendIdList;
 
+	private CMD_MultiRecruitTop parentDialog;
+
 	public static GameWebAPI.ResponseData_Common_MultiRoomList.room StageDataBk { get; set; }
 
 	public static CMD_MultiRecruitPartyWait Instance
@@ -246,9 +248,9 @@ public class CMD_MultiRecruitPartyWait : CMD
 		{
 			CMD_PartyEdit.instance.ReloadAllCharacters(true);
 		}
-		if (CMD_MultiRecruitTop.instance != null)
+		if (this.parentDialog != null)
 		{
-			CMD_MultiRecruitTop.instance.ClickUpdateBtn();
+			this.parentDialog.ClickUpdateBtn();
 		}
 		Screen.sleepTimeout = -2;
 		CMD_MultiRecruitPartyWait.StageDataBk = null;
@@ -366,7 +368,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			{
 				this.SendTCPRoomResume();
 			}
-			base.StartCoroutine(this.SendTCPShareUserInfo(this.myMonsterData, true, false));
+			AppCoroutine.Start(this.SendTCPShareUserInfo(this.myMonsterData, true, false), true);
 		}
 		else
 		{
@@ -404,7 +406,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			this.monsterDataList[positionNumber] = md;
 		}
 		this.SetReadyBtnLabel(this.CheckSortieLimit());
-		base.StartCoroutine(this.SendTCPShareUserInfo(md, false, isOwnerSubMonster));
+		AppCoroutine.Start(this.SendTCPShareUserInfo(md, false, isOwnerSubMonster), true);
 	}
 
 	private IEnumerator ReturnRoom(float connectWait = 0f)
@@ -412,7 +414,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		if (connectWait > 0f)
 		{
 			MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-			yield return base.StartCoroutine(Util.WaitForRealTime(connectWait));
+			yield return AppCoroutine.Start(Util.WaitForRealTime(connectWait), true);
 		}
 		if (!Singleton<TCPUtil>.Instance.CheckTCPConnection())
 		{
@@ -456,7 +458,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			info = StringMaster.GetString("MultiRecruit-14");
 			break;
 		}
-		base.StartCoroutine(this.DispErrorModal(title, info));
+		AppCoroutine.Start(this.DispErrorModal(title, info), true);
 	}
 
 	private void PrepareGoToBattleScene(GameWebAPI.RespData_WorldMultiStartInfo data)
@@ -470,6 +472,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId = this.myUserId;
 		ClassSingleton<MultiBattleData>.Instance.MaxAttackTime = ConstValue.MULTI_MAX_ATTACK_TIME;
 		ClassSingleton<MultiBattleData>.Instance.HurryUpAttackTime = ConstValue.MULTI_HURRYUP_ATTACK_TIME;
+		ClassSingleton<MultiBattleData>.Instance.RandomSeed = this.roomInfo.multiRoomId.ToInt32();
 		MultiUser[] array = new MultiUser[3];
 		if (data.memberPatternId > 0)
 		{
@@ -525,27 +528,24 @@ public class CMD_MultiRecruitPartyWait : CMD
 		{
 			global::Debug.Log("最大人数未満での出発になるためサーバデータとチェックします");
 			string[] array2 = new string[3];
-			bool flag = false;
-			int num2 = 0;
-			GameWebAPI.RespData_WorldMultiStartInfo.Party[] party = data.party;
-			for (int m = 0; m < party.Length; m++)
+			for (int m = 0; m < data.party.Length; m++)
 			{
-				GameWebAPI.RespData_WorldMultiStartInfo.Party party2 = party[m];
-				foreach (GameWebAPI.Common_MonsterData monster in party2.userMonsters)
+				GameWebAPI.Common_MonsterData[] userMonsters = data.party[m].userMonsters;
+				array2[m] = userMonsters[0].userMonsterId;
+				if (userMonsters.Length > 1)
 				{
-					if (ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds.Where((string ids) => ids == monster.userMonsterId).Count<string>() == 0)
-					{
-						global::Debug.Log("サーバとローカルでユーザ情報に差異が生じました");
-						flag = true;
-					}
-					array2[num2] = monster.userMonsterId;
-					num2++;
+					int num2 = array2.Length - 1;
+					array2[num2] = userMonsters[1].userMonsterId;
 				}
 			}
-			if (flag)
+			for (int n = 0; n < 3; n++)
 			{
-				global::Debug.Log("モンスターデータをサーバデータで補正します");
-				ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = array2;
+				if (ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[n] != array2[n])
+				{
+					global::Debug.Log("モンスターデータをサーバデータで補正します");
+					ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = array2;
+					break;
+				}
 			}
 		}
 		TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.QuestToMultiBattle, false);
@@ -565,10 +565,10 @@ public class CMD_MultiRecruitPartyWait : CMD
 			CMD_QuestTOP.instance.isGoingBattle = true;
 			CMD_QuestTOP.instance.ClosePanel(false);
 		}
-		if (CMD_MultiRecruitTop.instance != null)
+		if (this.parentDialog != null)
 		{
-			CMD_MultiRecruitTop.instance.SetForceReturnValue(0);
-			CMD_MultiRecruitTop.instance.ClosePanel(false);
+			this.parentDialog.SetForceReturnValue(0);
+			this.parentDialog.ClosePanel(false);
 		}
 		if (CMD_ChatTop.instance != null)
 		{
@@ -657,7 +657,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		GameWebAPI.RespDataMA_GetSkillM.SkillM skillM = null;
 		if (this.leaderMonsterData != null)
 		{
-			skillM = this.leaderMonsterData.leaderSkillM;
+			skillM = this.leaderMonsterData.GetLeaderSkill();
 		}
 		if (skillM == null)
 		{
@@ -944,7 +944,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			this.SetReadyBtnLabel(this.CheckSortieLimit());
 			this.UpdateReadyState(this.myUserId, this.isReady);
 			this.SetBtnDecide();
-			base.StartCoroutine(this.SendTCPReady());
+			AppCoroutine.Start(this.SendTCPReady(), true);
 		}
 	}
 
@@ -1001,7 +1001,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				OnReceived = delegate(WebAPI.ResponseData resData)
 				{
 					MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-					this.StartCoroutine(ie);
+					AppCoroutine.Start(ie, true);
 				}
 			};
 		}
@@ -1015,14 +1015,14 @@ public class CMD_MultiRecruitPartyWait : CMD
 			multiRoomLeave.OnReceived = delegate(WebAPI.ResponseData resData)
 			{
 				MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-				this.StartCoroutine(ie);
+				AppCoroutine.Start(ie, true);
 			};
 			request = multiRoomLeave;
 		}
-		base.StartCoroutine(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		AppCoroutine.Start(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-		}, null));
+		}, null), true);
 	}
 
 	private void OnClickStart()
@@ -1143,7 +1143,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		}
 		else
 		{
-			base.StartCoroutine(this.DispErrorModal(StringMaster.GetString("QuestEventTitle"), StringMaster.GetString("QuestEventInfo2")));
+			AppCoroutine.Start(this.DispErrorModal(StringMaster.GetString("QuestEventTitle"), StringMaster.GetString("QuestEventInfo2")), true);
 		}
 		yield break;
 	}
@@ -1284,11 +1284,11 @@ public class CMD_MultiRecruitPartyWait : CMD
 						MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 						if (keyValuePair2.Value.ToString() == "E-WD10")
 						{
-							base.StartCoroutine(this.SendTCPRoomOut(CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.QUEST_ENDED));
+							AppCoroutine.Start(this.SendTCPRoomOut(CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.QUEST_ENDED), true);
 						}
 						else
 						{
-							base.StartCoroutine(this.DispErrorModal(StringMaster.GetString("AlertNetworkErrorTitle"), keyValuePair2.Key.ToString() + " " + keyValuePair2.Value.ToString()));
+							AppCoroutine.Start(this.DispErrorModal(StringMaster.GetString("AlertNetworkErrorTitle"), keyValuePair2.Key.ToString() + " " + keyValuePair2.Value.ToString()), true);
 						}
 						break;
 					}
@@ -1308,14 +1308,14 @@ public class CMD_MultiRecruitPartyWait : CMD
 						startInfo = response;
 					}
 				};
-				base.StartCoroutine(request.Run(delegate()
+				AppCoroutine.Start(request.Run(delegate()
 				{
 					RestrictionInput.EndLoad();
 					this.PrepareGoToBattleScene(startInfo);
 				}, delegate(Exception noop)
 				{
 					RestrictionInput.EndLoad();
-				}, null));
+				}, null), true);
 			}
 		}
 		else if (arg.ContainsKey("820106"))
@@ -1352,12 +1352,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 				{
 					if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
 					{
-						base.StartCoroutine(this.SendTCPShareUserInfo(this.leaderMonsterData, true, true));
+						AppCoroutine.Start(this.SendTCPShareUserInfo(this.leaderMonsterData, true, true), true);
 						this.isOwnerReturnRoom = true;
 					}
 					else
 					{
-						base.StartCoroutine(this.SendTCPShareUserInfo(this.myMonsterData, true, false));
+						AppCoroutine.Start(this.SendTCPShareUserInfo(this.myMonsterData, true, false), true);
 					}
 				}
 			}
@@ -1488,12 +1488,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 					}
 					if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
 					{
-						base.StartCoroutine(this.SendTCPShareUserInfo(this.leaderMonsterData, false, true));
+						AppCoroutine.Start(this.SendTCPShareUserInfo(this.leaderMonsterData, false, true), true);
 						this.CheckAndSetOwnerSubMonster();
 					}
 					else
 					{
-						base.StartCoroutine(this.SendTCPShareUserInfo(this.myMonsterData, false, false));
+						AppCoroutine.Start(this.SendTCPShareUserInfo(this.myMonsterData, false, false), true);
 					}
 				}
 				if (recruitShareUserInfo.subMonsInfo != null)
@@ -1530,7 +1530,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				}
 				else if (recruitRoomOut.roomOutType == 4)
 				{
-					base.StartCoroutine(this.DispErrorModal(StringMaster.GetString("QuestEventTitle"), StringMaster.GetString("QuestEventInfo2")));
+					AppCoroutine.Start(this.DispErrorModal(StringMaster.GetString("QuestEventTitle"), StringMaster.GetString("QuestEventInfo2")), true);
 				}
 				else
 				{
@@ -1600,7 +1600,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				{
 					if (x == 0)
 					{
-						this.StartCoroutine(this.ReturnRoom(connectWait));
+						AppCoroutine.Start(this.ReturnRoom(connectWait), true);
 					}
 					else
 					{
@@ -1612,7 +1612,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			}
 			else
 			{
-				base.StartCoroutine(this.DispErrorModal(StringMaster.GetString("AlertNetworkErrorTitle"), StringMaster.GetString("AlertNetworkErrorInfo")));
+				AppCoroutine.Start(this.DispErrorModal(StringMaster.GetString("AlertNetworkErrorTitle"), StringMaster.GetString("AlertNetworkErrorInfo")), true);
 			}
 		}
 		else
@@ -1635,7 +1635,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				{
 					base.gameObject.SetActive(true);
 				}
-				base.StartCoroutine(this.ReturnRoom(0f));
+				AppCoroutine.Start(this.ReturnRoom(0f), true);
 			}
 			else
 			{
@@ -1671,10 +1671,10 @@ public class CMD_MultiRecruitPartyWait : CMD
 			}
 		};
 		RequestBase request = multiRoomStatusInfoLogic;
-		base.StartCoroutine(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		AppCoroutine.Start(request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-		}, null));
+		}, null), true);
 	}
 
 	public void ReloadAllCharacters(bool isShow)
@@ -1794,6 +1794,11 @@ public class CMD_MultiRecruitPartyWait : CMD
 				this.sortieLimitList.SetSortieLimit(worldDungeonId.ToInt32());
 			}
 		}
+	}
+
+	public void SetParentDialog(CMD_MultiRecruitTop dialog)
+	{
+		this.parentDialog = dialog;
 	}
 
 	public enum USER_TYPE

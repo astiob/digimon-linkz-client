@@ -18,10 +18,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new TutorialNaviMasterList
+			TutorialNaviMasterList tutorialNaviMasterList = new TutorialNaviMasterList();
+			tutorialNaviMasterList.SetSendData = delegate(TutorialNaviMasterListQuery requestParam)
 			{
-				OnReceived = new Action<TutorialNaviMasterResponse>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			tutorialNaviMasterList.OnReceived = new Action<TutorialNaviMasterResponse>(base.SetResponse);
+			return tutorialNaviMasterList;
 		}
 
 		protected override void PrepareData(TutorialNaviMasterResponse src)

@@ -171,7 +171,7 @@ public class BattleRoundFunction : BattleFunctionBase
 			if (battleWave.enemiesBossFlag[i])
 			{
 				num2++;
-				if ((float)base.battleStateData.enemies[i].hp / (float)base.battleStateData.enemies[i].maxHp < battleWave.bgmChangeHpPercentage)
+				if ((float)base.battleStateData.enemies[i].hp / (float)base.battleStateData.enemies[i].extraMaxHp < battleWave.bgmChangeHpPercentage)
 				{
 					num++;
 				}

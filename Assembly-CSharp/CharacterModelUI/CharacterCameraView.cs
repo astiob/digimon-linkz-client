@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using UnityEngine;
 
 namespace CharacterModelUI
@@ -29,25 +30,15 @@ namespace CharacterModelUI
 			this.csRender3DRT = gameObject.GetComponent<CommonRender3DRT>();
 			if (!monsterData.userMonster.IsEgg())
 			{
-				string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterData.monsterM.monsterGroupId);
-				this.csRender3DRT.LoadChara(monsterCharaPathByMonsterGroupId, 0f, 10000f, -0.65f, 1.1f, true);
+				string filePath = MonsterObject.GetFilePath(monsterData.GetMonsterMaster().Group.modelId);
+				this.csRender3DRT.LoadChara(filePath, 0f, 10000f, -0.65f, 1.1f, true);
 				this.csRender3DRT.SetBillBoardCamera();
 			}
 			else
 			{
-				GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM respDataMA_MonsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM;
-				string monsterGroupId = string.Empty;
-				for (int i = 0; i < respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM.Length; i++)
-				{
-					GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM.MonsterEvolutionRouteM monsterEvolutionRouteM = respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i];
-					if (monsterEvolutionRouteM.monsterEvolutionRouteId == monsterData.userMonster.monsterEvolutionRouteId)
-					{
-						monsterGroupId = monsterEvolutionRouteM.eggMonsterId;
-						break;
-					}
-				}
-				string monsterCharaPathByMonsterGroupId2 = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
-				this.csRender3DRT.LoadEgg(monsterCharaPathByMonsterGroupId2, 0f, 10000f, 0.1f);
+				string eggModelId = MonsterObject.GetEggModelId(monsterData.userMonster.monsterEvolutionRouteId);
+				string filePath2 = MonsterObject.GetFilePath(eggModelId);
+				this.csRender3DRT.LoadEgg(filePath2, 0f, 10000f, 0.1f);
 			}
 			this.renderTex = this.csRender3DRT.SetRenderTarget(1136, 820, 16);
 			this.defaultPos = Camera.main.ScreenToViewportPoint(new Vector3(-382f, -80f, 0f));

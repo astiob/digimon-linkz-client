@@ -123,6 +123,24 @@ public class CMD : CommonDialog
 		}
 	}
 
+	public void SetTutorialAnyTime(string tutorialName)
+	{
+		this.PartsTitle.SetTutorialAct(delegate(int i)
+		{
+			this.tutorialAnyTime(tutorialName);
+		});
+	}
+
+	private void tutorialAnyTime(string tutorialName)
+	{
+		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
+		if (tutorialObserver != null)
+		{
+			GUIMain.BarrierON(null);
+			tutorialObserver.StartHelp(tutorialName, new Action(GUIMain.BarrierOFF));
+		}
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();

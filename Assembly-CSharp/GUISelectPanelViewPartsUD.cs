@@ -23,8 +23,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 
 	private GUICollider _selectCollider;
 
-	[Header("リサイクルビュー X方向 パーツカウント")]
 	[SerializeField]
+	[Header("リサイクルビュー X方向 パーツカウント")]
 	protected int PARTS_CT_MN = 1;
 
 	[Header("リサイクルビュー Y MAX")]
@@ -35,8 +35,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 	[SerializeField]
 	protected float fRecycleViewMinY = -500f;
 
-	[SerializeField]
 	[Header("リサイクルビュー セクターサイズ")]
+	[SerializeField]
 	protected int RecycleViewSectorSize = 4;
 
 	[SerializeField]
@@ -57,6 +57,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 	private bool hideNonMoveScrollBar = true;
 
 	private string prefName = string.Empty;
+
+	private float zpos = -5f;
 
 	protected int partsCount;
 
@@ -358,6 +360,18 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 		}
 	}
 
+	public float ZPos
+	{
+		get
+		{
+			return this.zpos;
+		}
+		set
+		{
+			this.zpos = value;
+		}
+	}
+
 	public void AllBuild(int count, bool initLoc = true, float sclX = 1f, float sclY = 1f, List<float> sizeYList = null, CMD instCMD = null)
 	{
 		if (this._selectParts != null)
@@ -391,7 +405,7 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 					listPartsData.sizeY = sizeYList[num3];
 				}
 				float x = startX + panelBuildData.pitchW * (float)(num3 % this.PARTS_CT_MN);
-				listPartsData.vPos = new Vector3(x, num2, -5f);
+				listPartsData.vPos = new Vector3(x, num2, this.ZPos);
 				if (num3 == this.partsCount - 1)
 				{
 					break;

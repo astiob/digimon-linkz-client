@@ -46,21 +46,32 @@ public sealed class CMD_Inquiry : CMD
 			}
 		};
 		APIRequestTask apirequestTask = new APIRequestTask(request, true);
+		string apiId = string.Empty;
 		if (string.IsNullOrEmpty(ConstValue.CONTACT_SITE_URL))
 		{
 			MasterBase master = MasterDataMng.Instance().GetMaster(MasterId.CODE_MASTER);
-			RequestBase request2 = master.CreateRequest();
-			apirequestTask.Add(new APIRequestTask(request2, true));
+			RequestBase requestBase = master.CreateRequest();
+			apirequestTask.Add(new APIRequestTask(requestBase, true));
+			apiId = requestBase.apiId;
+			GameWebAPI.Instance().AddDisableVersionCheckApiId(apiId);
 		}
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.StartCoroutine(apirequestTask.Run(delegate
 		{
+			if (!string.IsNullOrEmpty(apiId))
+			{
+				GameWebAPI.Instance().RemoveDisableVersionCheckApiId(apiId);
+			}
 			RestrictionInput.EndLoad();
 			this.contactCode.text = this.GetMoldedContactCode(this.responseContactCode);
 			this.ShowDLG();
 			this.Show(closeEvent, sizeX, sizeY, showTime);
 		}, delegate(Exception nop)
 		{
+			if (!string.IsNullOrEmpty(apiId))
+			{
+				GameWebAPI.Instance().RemoveDisableVersionCheckApiId(apiId);
+			}
 			RestrictionInput.EndLoad();
 			this.ClosePanel(false);
 		}, null));

@@ -62,6 +62,7 @@ public class CMD_TitleSelect : CMD
 		this.titleNameLbl.text = string.Empty;
 		this.titleName.text = string.Empty;
 		this.titleDetail.text = string.Empty;
+		this.equipBtnLbl.text = StringMaster.GetString("EquipUserTitle");
 		this.equipBtn.GetComponent<UISprite>().spriteName = "Common02_Btn_Gray";
 		this.equipBtnLbl.color = ConstValue.DEACTIVE_BUTTON_LABEL;
 		this.equipBtn.GetComponent<BoxCollider>().enabled = false;

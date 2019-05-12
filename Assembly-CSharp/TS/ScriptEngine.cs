@@ -334,7 +334,7 @@ namespace TS
 			}
 			if (this.actionExternalCommand != null && !this.actionExternalCommand(commandParams))
 			{
-				global::Debug.LogError("未知のコマンド");
+				global::Debug.LogError("未知のコマンド : " + commandParams[0]);
 			}
 		}
 

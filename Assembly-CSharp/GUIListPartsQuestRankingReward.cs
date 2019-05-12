@@ -1,6 +1,7 @@
 ﻿using Evolution;
 using FarmData;
 using Master;
+using Monster;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -186,13 +187,13 @@ public sealed class GUIListPartsQuestRankingReward : MonoBehaviour
 			}
 			else
 			{
-				GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(objectId);
-				if (monsterMasterByMonsterId != null)
+				GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(objectId).Simple;
+				if (simple != null)
 				{
-					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
-					if (monsterGroupMasterByMonsterGroupId != null)
+					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(simple.monsterGroupId).Group;
+					if (group != null)
 					{
-						result = monsterGroupMasterByMonsterGroupId.monsterName;
+						result = group.monsterName;
 					}
 				}
 			}

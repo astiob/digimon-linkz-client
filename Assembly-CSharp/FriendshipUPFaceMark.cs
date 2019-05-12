@@ -9,27 +9,25 @@ public class FriendshipUPFaceMark : MonoBehaviour
 
 	private Camera mainCamera;
 
-	public bool barrierOn;
-
 	[SerializeField]
 	private GameObject barrierObj;
 
 	[SerializeField]
 	private UISprite partsFace;
 
+	[SerializeField]
+	private Animation iconAnimation;
+
+	[SerializeField]
+	private EffectAnimatorEventTime eventTime;
+
 	private float scaleDifferenceY;
 
 	private void Start()
 	{
-		base.Invoke("DestroyPref", 1.8f);
 		FarmRoot instance = FarmRoot.Instance;
 		this.farmCamera = instance.Camera;
 		this.mainCamera = Singleton<GUIMain>.Instance.GetComponent<Camera>();
-	}
-
-	private void DestroyPref()
-	{
-		UnityEngine.Object.Destroy(base.gameObject);
 	}
 
 	private void Update()
@@ -52,11 +50,6 @@ public class FriendshipUPFaceMark : MonoBehaviour
 				y = base.gameObject.transform.localPosition.y + 100f + this.scaleDifferenceY * 2f;
 			}
 			base.transform.localPosition = new Vector3(base.gameObject.transform.localPosition.x - 90f, y, base.gameObject.transform.localPosition.z);
-			if (this.barrierOn)
-			{
-				this.barrierObj.SetActive(true);
-				this.barrierOn = false;
-			}
 		}
 	}
 
@@ -71,5 +64,33 @@ public class FriendshipUPFaceMark : MonoBehaviour
 			this.partsFace.spriteName = "Farm02_icon_Amazed";
 		}
 		this.scaleDifferenceY = digimonSizeY;
+	}
+
+	public void StartAnimation()
+	{
+		if (!base.gameObject.activeSelf)
+		{
+			base.gameObject.SetActive(true);
+		}
+		if (this.iconAnimation.isPlaying)
+		{
+			this.iconAnimation.Stop();
+		}
+		this.iconAnimation.Play();
+		this.eventTime.SetEvent(0, new Action(this.DestroyIcon));
+	}
+
+	public void SetBarrier()
+	{
+		this.barrierObj.SetActive(true);
+	}
+
+	public void DestroyIcon()
+	{
+		base.gameObject.SetActive(false);
+		if (this.barrierObj.activeSelf)
+		{
+			this.barrierObj.SetActive(false);
+		}
 	}
 }

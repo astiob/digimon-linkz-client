@@ -6,9 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PushNotice : MonoBehaviour, NpPush.INpPushListener
+public sealed class PushNotice : MonoBehaviour, NpPush.INpPushListener
 {
-	private readonly string senderID = "994857230643";
+	private const string SENDER_ID = "994857230643";
 
 	private static PushNotice instance;
 
@@ -16,15 +16,13 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 
 	private bool isRecieveGardenPushNotice;
 
-	private List<Action<bool, string>> neptuneCallbackList = new List<Action<bool, string>>();
-
 	private bool isRecieveStaminaMaxPushNotice;
 
 	private bool isRecieveEndBuildingPushNotice;
 
 	public int staminaRecovery;
 
-	private List<UserFacility> userFacilityList = new List<UserFacility>();
+	private List<UserFacility> userFacilityList;
 
 	private List<PushNotice.GardenPushNoticeData> gardenDataList = new List<PushNotice.GardenPushNoticeData>();
 
@@ -66,7 +64,7 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 			this.isRecieveEndBuildingPushNotice = value;
 			if (!value)
 			{
-				this.userFacilityList = new List<UserFacility>();
+				this.userFacilityList = null;
 			}
 		}
 	}
@@ -87,49 +85,41 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 		}
 	}
 
-	public void OnGetDeviceToken(string DeviceToken)
+	public void OnGetDeviceToken(string deviceToken)
 	{
-		foreach (Action<bool, string> action in this.neptuneCallbackList)
-		{
-			action(true, DeviceToken);
-		}
-		this.neptuneCallbackList.Clear();
+		base.StartCoroutine(this.SaveDeviceTokenToServer(deviceToken));
 	}
 
-	public void OnPushError(string ErrorMessage)
+	public void OnPushError(string errorMessage)
 	{
-		global::Debug.LogError("Failed GetDeviceToken() : " + ErrorMessage);
-		foreach (Action<bool, string> action in this.neptuneCallbackList)
-		{
-			action(false, ErrorMessage);
-		}
-		this.neptuneCallbackList.Clear();
+		global::Debug.LogError("Failed GetDeviceToken() : " + errorMessage);
 	}
 
 	private void Update()
 	{
-		if (this.isRecieveStaminaMaxPushNotice && Singleton<UserDataMng>.Instance != null && DataMng.Instance() != null && DataMng.Instance().RespDataUS_PlayerInfo != null)
+		if (Singleton<UserDataMng>.Instance != null)
 		{
-			TimeSpan timeSpan = ServerDateTime.Now - Singleton<UserDataMng>.Instance.playerStaminaBaseTime;
-			this.staminaRecovery = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery - (int)timeSpan.TotalSeconds;
-		}
-		if (this.isRecieveEndBuildingPushNotice && Singleton<UserDataMng>.Instance != null && Singleton<UserDataMng>.Instance.userFacilityList != null)
-		{
-			this.userFacilityList = Singleton<UserDataMng>.Instance.userFacilityList;
+			if (this.isRecieveStaminaMaxPushNotice && DataMng.Instance() != null && DataMng.Instance().RespDataUS_PlayerInfo != null)
+			{
+				TimeSpan timeSpan = ServerDateTime.Now - Singleton<UserDataMng>.Instance.playerStaminaBaseTime;
+				this.staminaRecovery = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery - (int)timeSpan.TotalSeconds;
+			}
+			if (this.isRecieveEndBuildingPushNotice && Singleton<UserDataMng>.Instance.userFacilityList != null)
+			{
+				this.userFacilityList = Singleton<UserDataMng>.Instance.userFacilityList;
+			}
 		}
 	}
 
-	private void OnApplicationPause(bool PauseStatus)
+	private void OnApplicationPause(bool pauseStatus)
 	{
-		if (PauseStatus)
+		if (pauseStatus)
 		{
 			this.SetLocalPushNotice();
 		}
 		else
 		{
-			NpPush.BadgeNumberChange(0);
-			this.ClearStaminaLocalPushNotice();
-			this.ClearBuildedLocalPushNotice();
+			this.DeleteLocalPushNotice();
 		}
 	}
 
@@ -138,60 +128,35 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 		this.SetLocalPushNotice();
 	}
 
-	private void Initialize()
+	private void DeleteLocalPushNotice()
 	{
-		this.npPush = new NpPush(base.gameObject, this);
 		NpPush.BadgeNumberChange(0);
 		this.ClearStaminaLocalPushNotice();
 		this.ClearBuildedLocalPushNotice();
-		this.SendDeviceTokenToServer(null);
 	}
 
-	private void SetCallback(Action<bool, string> OnRecieveDeviceToken)
+	private void Initialize()
 	{
-		this.neptuneCallbackList.Add(OnRecieveDeviceToken);
+		this.npPush = new NpPush(base.gameObject, this);
+		this.DeleteLocalPushNotice();
+		this.npPush.GetDeviceToken("994857230643");
 	}
 
-	private void SendDeviceTokenToServer(Action<bool> ResultGetDeviceToken = null)
-	{
-		this.SetCallback(delegate(bool result, string resultString)
-		{
-			if (result)
-			{
-				if (ResultGetDeviceToken != null)
-				{
-					this.StartCoroutine(this.SaveDeviceTokenToServer(resultString, ResultGetDeviceToken));
-				}
-				else
-				{
-					this.StartCoroutine(this.SaveDeviceTokenToServer(resultString, null));
-				}
-			}
-			else if (ResultGetDeviceToken != null)
-			{
-				ResultGetDeviceToken(false);
-			}
-		});
-		this.npPush.GetDeviceToken(this.senderID);
-	}
-
-	private IEnumerator SaveDeviceTokenToServer(string DeviceToken, Action<bool> ResultSendDeviceToken)
+	private IEnumerator SaveDeviceTokenToServer(string deviceToken)
 	{
 		GameWebAPI.Request_CM_UpdateDeviceToken request = new GameWebAPI.Request_CM_UpdateDeviceToken
 		{
 			SetSendData = delegate(GameWebAPI.CM_Req_UpdateDeviceToken param)
 			{
 				param.osType = 2;
-				param.deviceToken = DeviceToken;
+				param.deviceToken = deviceToken;
 			}
 		};
-		return request.Run(delegate()
-		{
-			if (ResultSendDeviceToken != null)
-			{
-				ResultSendDeviceToken(true);
-			}
-		}, null, null);
+		return request.Run(new Action(this.OnEndSaveDeviceToken), null, null);
+	}
+
+	private void OnEndSaveDeviceToken()
+	{
 	}
 
 	private void SetLocalPushNotice()
@@ -207,13 +172,12 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 
 	private void SetStaminaLocalPushNotice()
 	{
-		if (!this.isRecieveStaminaMaxPushNotice || this.staminaRecovery <= 0)
+		if (this.isRecieveStaminaMaxPushNotice && 0 < this.staminaRecovery)
 		{
-			return;
+			string @string = StringMaster.GetString("LocalNotice-01");
+			NpPush.LocalPushSendRequestCode(@string, 1, this.staminaRecovery, 0);
+			this.staminaRecovery = 0;
 		}
-		string @string = StringMaster.GetString("LocalNotice-01");
-		NpPush.LocalPushSendRequestCode(@string, 1, this.staminaRecovery, 0);
-		this.staminaRecovery = 0;
 	}
 
 	private void ClearStaminaLocalPushNotice()
@@ -223,38 +187,105 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 
 	private void SetBuildedLocalPushNotice()
 	{
-		if (!this.isRecieveEndBuildingPushNotice || this.userFacilityList.Count == 0)
+		if (this.isRecieveEndBuildingPushNotice && this.userFacilityList != null && 0 < this.userFacilityList.Count)
 		{
-			return;
-		}
-		List<TimeSpan> list = new List<TimeSpan>();
-		foreach (UserFacility userFacility in this.userFacilityList)
-		{
-			if (!string.IsNullOrEmpty(userFacility.completeTime))
+			List<TimeSpan> list = new List<TimeSpan>();
+			foreach (UserFacility userFacility in this.userFacilityList)
 			{
-				DateTime d = DateTime.Parse(userFacility.completeTime);
-				TimeSpan item = d - ServerDateTime.Now;
-				if (item.TotalSeconds > 0.0)
+				if (!string.IsNullOrEmpty(userFacility.completeTime))
 				{
-					list.Add(item);
+					DateTime d = DateTime.Parse(userFacility.completeTime);
+					TimeSpan item = d - ServerDateTime.Now;
+					if (item.TotalSeconds > 0.0)
+					{
+						list.Add(item);
+					}
 				}
 			}
-		}
-		if (list.Count > 0)
-		{
-			if (list.Count > 1)
+			if (list.Count > 0)
 			{
-				list.Sort((TimeSpan a, TimeSpan b) => (int)(a.TotalSeconds - b.TotalSeconds));
+				if (list.Count > 1)
+				{
+					list.Sort((TimeSpan a, TimeSpan b) => (int)(a.TotalSeconds - b.TotalSeconds));
+				}
+				string @string = StringMaster.GetString("LocalNotice-03");
+				NpPush.LocalPushSendRequestCode(@string, 1, (int)list[0].TotalSeconds, 1);
 			}
-			string @string = StringMaster.GetString("LocalNotice-03");
-			NpPush.LocalPushSendRequestCode(@string, 1, (int)list[0].TotalSeconds, 1);
+			this.userFacilityList = null;
 		}
-		this.userFacilityList = new List<UserFacility>();
 	}
 
 	private void ClearBuildedLocalPushNotice()
 	{
 		NpPush.CancelLocalNotifications(1);
+	}
+
+	private void ResetGardenPushNotice()
+	{
+		if (this.isRecieveGardenPushNotice)
+		{
+			string @string = PlayerPrefs.GetString("RESERVED_GARDEN_NOTICE", string.Empty);
+			if (string.IsNullOrEmpty(@string))
+			{
+				if (this.gardenDataList.Count == 0)
+				{
+					return;
+				}
+			}
+			else
+			{
+				if (this.gardenDataList.Count == 0)
+				{
+					PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
+					return;
+				}
+				if (@string != this.gardenDataList[0].monsterID)
+				{
+					PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
+				}
+				else
+				{
+					if ((this.gardenDataList[0].growEndDate - ServerDateTime.Now).TotalSeconds > 0.0)
+					{
+						return;
+					}
+					PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
+				}
+			}
+			foreach (PushNotice.GardenPushNoticeData gardenPushNoticeData in this.gardenDataList)
+			{
+				TimeSpan timeSpan = gardenPushNoticeData.growEndDate - ServerDateTime.Now;
+				if (timeSpan.TotalSeconds > 0.0)
+				{
+					string string2 = StringMaster.GetString("LocalNotice-02");
+					NpPush.LocalPushSendRequestCode(string2, 1, (int)timeSpan.TotalSeconds, 2);
+					PlayerPrefs.SetString("RESERVED_GARDEN_NOTICE", gardenPushNoticeData.monsterID);
+					break;
+				}
+			}
+		}
+	}
+
+	private void SortGardenPushNoticeData()
+	{
+		if (0 < this.gardenDataList.Count)
+		{
+			this.gardenDataList.Sort(delegate(PushNotice.GardenPushNoticeData a, PushNotice.GardenPushNoticeData b)
+			{
+				double totalSeconds = (a.growEndDate - b.growEndDate).TotalSeconds;
+				if (totalSeconds < 0.0)
+				{
+					return -1;
+				}
+				if (totalSeconds > 0.0)
+				{
+					return 1;
+				}
+				int num = int.Parse(a.monsterID);
+				int num2 = int.Parse(b.monsterID);
+				return num - num2;
+			});
+		}
 	}
 
 	public void SetGardenPushNotice()
@@ -266,123 +297,50 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 		this.ResetGardenPushNotice();
 	}
 
-	public void SyncGardenPushNoticeData(List<MonsterData> mds)
-	{
-		this.gardenDataList.Clear();
-		if (mds.Count == 0)
-		{
-			return;
-		}
-		foreach (MonsterData monsterData in mds)
-		{
-			if (!monsterData.userMonster.IsEgg())
-			{
-				PushNotice.GardenPushNoticeData item = new PushNotice.GardenPushNoticeData(monsterData.userMonster.userMonsterId, DateTime.Parse(monsterData.userMonster.growEndDate));
-				this.gardenDataList.Add(item);
-			}
-		}
-		this.SortGardenPushNoticeData();
-	}
-
-	private void SortGardenPushNoticeData()
-	{
-		if (this.gardenDataList.Count == 0)
-		{
-			return;
-		}
-		this.gardenDataList.Sort(delegate(PushNotice.GardenPushNoticeData a, PushNotice.GardenPushNoticeData b)
-		{
-			double totalSeconds = (a.growEndDate - b.growEndDate).TotalSeconds;
-			if (totalSeconds < 0.0)
-			{
-				return -1;
-			}
-			if (totalSeconds > 0.0)
-			{
-				return 1;
-			}
-			int num = int.Parse(a.monsterID);
-			int num2 = int.Parse(b.monsterID);
-			return num - num2;
-		});
-	}
-
-	private void ResetGardenPushNotice()
-	{
-		if (!this.isRecieveGardenPushNotice)
-		{
-			return;
-		}
-		string @string = PlayerPrefs.GetString("RESERVED_GARDEN_NOTICE", string.Empty);
-		if (string.IsNullOrEmpty(@string))
-		{
-			if (this.gardenDataList.Count == 0)
-			{
-				return;
-			}
-		}
-		else
-		{
-			if (this.gardenDataList.Count == 0)
-			{
-				PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
-				return;
-			}
-			if (@string != this.gardenDataList[0].monsterID)
-			{
-				PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
-			}
-			else
-			{
-				if ((this.gardenDataList[0].growEndDate - ServerDateTime.Now).TotalSeconds > 0.0)
-				{
-					return;
-				}
-				PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
-			}
-		}
-		foreach (PushNotice.GardenPushNoticeData gardenPushNoticeData in this.gardenDataList)
-		{
-			TimeSpan timeSpan = gardenPushNoticeData.growEndDate - ServerDateTime.Now;
-			if (timeSpan.TotalSeconds > 0.0)
-			{
-				int num = int.Parse(gardenPushNoticeData.monsterID);
-				string string2 = StringMaster.GetString("LocalNotice-02");
-				NpPush.LocalPushSendRequestCode(string2, 1, (int)timeSpan.TotalSeconds, 2);
-				PlayerPrefs.SetString("RESERVED_GARDEN_NOTICE", gardenPushNoticeData.monsterID);
-				break;
-			}
-		}
-	}
-
 	public void ClearGardenPushNotice()
 	{
 		string @string = PlayerPrefs.GetString("RESERVED_GARDEN_NOTICE", string.Empty);
-		if (string.IsNullOrEmpty(@string))
+		if (!string.IsNullOrEmpty(@string))
 		{
-			return;
+			PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
+			NpPush.CancelLocalNotifications(2);
 		}
-		PlayerPrefs.DeleteKey("RESERVED_GARDEN_NOTICE");
-		NpPush.CancelLocalNotifications(2);
 	}
 
-	public enum NoticeType
+	public void SyncGardenPushNoticeData(List<MonsterData> mds)
 	{
-		StaminaMax,
-		EndBuilding,
-		Garden
+		this.gardenDataList.Clear();
+		if (0 < mds.Count)
+		{
+			foreach (MonsterData monsterData in mds)
+			{
+				if (!monsterData.userMonster.IsEgg())
+				{
+					PushNotice.GardenPushNoticeData item = new PushNotice.GardenPushNoticeData(monsterData.userMonster.userMonsterId, DateTime.Parse(monsterData.userMonster.growEndDate));
+					this.gardenDataList.Add(item);
+				}
+			}
+			this.SortGardenPushNoticeData();
+		}
 	}
 
-	public struct GardenPushNoticeData
+	private enum NoticeType
+	{
+		STAMINA_MAX,
+		END_BUILDING,
+		GARDEN_EVOLUVE
+	}
+
+	private struct GardenPushNoticeData
 	{
 		public string monsterID;
 
 		public DateTime growEndDate;
 
-		public GardenPushNoticeData(string MonsterID, DateTime GrowEndDate)
+		public GardenPushNoticeData(string monsterID, DateTime growEndDate)
 		{
-			this.monsterID = MonsterID;
-			this.growEndDate = GrowEndDate;
+			this.monsterID = monsterID;
+			this.growEndDate = growEndDate;
 		}
 	}
 }

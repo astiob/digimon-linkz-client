@@ -9,11 +9,14 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 	[Header("受信用の各々のエモーションアイコンのスプライト(UIAtlasSkinnerを使わない方)")]
 	private UISprite[] emotionSprites;
 
+	[SerializeField]
+	private UITexture[] emotionTextures;
+
 	[NonSerialized]
 	public List<GameObject> iconSpriteParents = new List<GameObject>();
 
-	[Header("送信用アイコンたちが載ってる親")]
 	[SerializeField]
+	[Header("送信用アイコンたちが載ってる親")]
 	private GameObject dialog;
 
 	[SerializeField]
@@ -27,13 +30,13 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 
 	private void Awake()
 	{
-		if (this.emotionSprites != null && 0 < this.emotionSprites.Length)
+		if (this.emotionTextures != null && 0 < this.emotionTextures.Length)
 		{
-			for (int i = 0; i < this.emotionSprites.Length; i++)
+			for (int i = 0; i < this.emotionTextures.Length; i++)
 			{
-				if (this.emotionSprites[i])
+				if (this.emotionTextures[i])
 				{
-					this.emotionSprites[i].gameObject.SetActive(false);
+					this.emotionTextures[i].gameObject.SetActive(false);
 				}
 			}
 		}
@@ -42,11 +45,11 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 
 	private void Initilaize()
 	{
-		if (this.iconSpriteParents.Count == 0 && this.emotionSprites != null && 0 < this.emotionSprites.Length)
+		if (this.iconSpriteParents.Count == 0 && this.emotionTextures != null && 0 < this.emotionTextures.Length)
 		{
-			for (int i = 0; i < this.emotionSprites.Length; i++)
+			for (int i = 0; i < this.emotionTextures.Length; i++)
 			{
-				GameObject spriteParentObject = this.GetSpriteParentObject(this.emotionSprites[i].transform);
+				GameObject spriteParentObject = this.GetSpriteParentObject(this.emotionTextures[i].transform);
 				if (null != spriteParentObject)
 				{
 					this.iconSpriteParents.Add(spriteParentObject);
@@ -81,20 +84,20 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 	public void SetEmotion(int index, int emotionType, bool isOther = false)
 	{
 		UIButton uibutton = this.emotionDialogButtons[emotionType];
-		UISprite component = uibutton.GetComponent<UISprite>();
+		UITexture component = uibutton.GetComponent<UITexture>();
 		if (null == component)
 		{
 			Transform child = uibutton.transform.GetChild(0);
 			if (null != child)
 			{
-				component = child.GetComponent<UISprite>();
+				component = child.GetComponent<UITexture>();
 			}
 		}
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], false);
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], true);
-		UISprite uisprite = this.iconSpriteParents[index].GetComponentsInChildren<UISprite>(true)[0];
-		uisprite.gameObject.SetActive(true);
-		uisprite.spriteName = component.spriteName;
+		UITexture uitexture = this.iconSpriteParents[index].GetComponentsInChildren<UITexture>(true)[0];
+		uitexture.gameObject.SetActive(true);
+		uitexture.mainTexture = component.mainTexture;
 		if (isOther)
 		{
 			SoundPlayer.PlayBattlePopupOtherEmotionSE();
@@ -108,10 +111,10 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 	{
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], false);
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], true);
-		this.emotionSprites[index].gameObject.SetActive(true);
-		UISprite uisprite = this.emotionSprites[index];
-		uisprite.gameObject.SetActive(true);
-		uisprite.spriteName = spriteName;
+		this.emotionTextures[index].gameObject.SetActive(true);
+		UITexture uitexture = this.emotionTextures[index];
+		uitexture.gameObject.SetActive(true);
+		uitexture.mainTexture = (AssetDataMng.Instance().LoadObject("StampIcons/JP/" + spriteName, null, true) as Texture2D);
 		if (isOther)
 		{
 			SoundPlayer.PlayBattlePopupOtherEmotionSE();

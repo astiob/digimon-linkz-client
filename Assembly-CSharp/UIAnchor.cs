@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Anchor")]
+[ExecuteInEditMode]
 public class UIAnchor : MonoBehaviour
 {
 	public Camera uiCamera;
@@ -17,8 +17,8 @@ public class UIAnchor : MonoBehaviour
 
 	public Vector2 pixelOffset = Vector2.zero;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIWidget widgetContainer;
 
 	private Transform mTrans;

@@ -13,12 +13,12 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 	[SerializeField]
 	public UISprite spSelectIcon;
 
-	[Header("個数プレート")]
 	[SerializeField]
+	[Header("個数プレート")]
 	public UISprite spNumPlate;
 
-	[Header("個数表示")]
 	[SerializeField]
+	[Header("個数表示")]
 	public UILabel lbNum;
 
 	private Vector2 beganPosition;
@@ -106,6 +106,11 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 			hashtable.Add("oncomplete", "ScaleEnd");
 			hashtable.Add("oncompleteparams", 0);
 			iTween.ScaleTo(this.gameObject, hashtable);
+			ITweenResumer component = this.gameObject.GetComponent<ITweenResumer>();
+			if (component == null)
+			{
+				this.gameObject.AddComponent<ITweenResumer>();
+			}
 		});
 	}
 

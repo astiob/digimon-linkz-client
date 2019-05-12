@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Bloom and Glow/Bloom")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Bloom and Glow/Bloom")]
 	[RequireComponent(typeof(Camera))]
 	public class Bloom : PostEffectsBase
 	{

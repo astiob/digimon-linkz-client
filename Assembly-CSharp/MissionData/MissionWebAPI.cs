@@ -8,24 +8,28 @@ namespace MissionData
 
 		public APIRequestTask AccessMissionInfoLogicAPI()
 		{
-			GameWebAPI.MissionInfoLogic request = new GameWebAPI.MissionInfoLogic
+			GameWebAPI.MissionInfoLogic missionInfoLogic = new GameWebAPI.MissionInfoLogic();
+			missionInfoLogic.SetSendData = delegate(GameWebAPI.SendDataMS_MissionInfoLogic requestParam)
 			{
-				OnReceived = delegate(GameWebAPI.RespDataMS_MissionInfoLogic response)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
+			};
+			missionInfoLogic.OnReceived = delegate(GameWebAPI.RespDataMS_MissionInfoLogic response)
+			{
+				this.MissionInfoLogicData = response;
+				foreach (object obj in Enum.GetValues(typeof(Type.DisplayGroup)))
 				{
-					this.MissionInfoLogicData = response;
-					foreach (object obj in Enum.GetValues(typeof(Type.DisplayGroup)))
+					Type.DisplayGroup displayGroup = (Type.DisplayGroup)((int)obj);
+					GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[] array = (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[])typeof(GameWebAPI.RespDataMS_MissionInfoLogic.Result).GetField(displayGroup.ToString()).GetValue(this.MissionInfoLogicData.result);
+					foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission in array)
 					{
-						Type.DisplayGroup displayGroup = (Type.DisplayGroup)((int)obj);
-						GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[] array = (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[])typeof(GameWebAPI.RespDataMS_MissionInfoLogic.Result).GetField(displayGroup.ToString()).GetValue(this.MissionInfoLogicData.result);
-						foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission in array)
-						{
-							GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission2 = mission;
-							int num = (int)displayGroup;
-							mission2.displayGroup = num.ToString();
-						}
+						GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission2 = mission;
+						int num = (int)displayGroup;
+						mission2.displayGroup = num.ToString();
 					}
 				}
 			};
+			GameWebAPI.MissionInfoLogic request = missionInfoLogic;
 			return new APIRequestTask(request, true);
 		}
 

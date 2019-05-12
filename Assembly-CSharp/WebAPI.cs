@@ -10,7 +10,9 @@ public class WebAPI : MonoBehaviour
 	[SerializeField]
 	protected float timeout = 20f;
 
-	protected string[] disableVCList;
+	protected string[] disableVC_StaticList;
+
+	protected List<string> disableVC_DynamicList;
 
 	private string masterDataVersion;
 
@@ -33,12 +35,16 @@ public class WebAPI : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(apiId))
 		{
-			for (int i = 0; i < this.disableVCList.Length; i++)
+			for (int i = 0; i < this.disableVC_StaticList.Length; i++)
 			{
-				if (this.disableVCList[i] == apiId)
+				if (this.disableVC_StaticList[i] == apiId)
 				{
 					return WebAPI.DisableVersionCheckCode.CHECK_DISABLE;
 				}
+			}
+			if (this.disableVC_DynamicList.Contains(apiId))
+			{
+				return WebAPI.DisableVersionCheckCode.CHECK_DISABLE;
 			}
 		}
 		return WebAPI.DisableVersionCheckCode.CHECK_ENABLE;

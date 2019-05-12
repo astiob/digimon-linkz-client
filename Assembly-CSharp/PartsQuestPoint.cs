@@ -14,12 +14,12 @@ public class PartsQuestPoint : MonoBehaviour
 	[SerializeField]
 	private List<UISprite> spRankingList;
 
-	[Header("ランキングの位の文字 -> 圏外で消し")]
 	[SerializeField]
+	[Header("ランキングの位の文字 -> 圏外で消し")]
 	private UILabel lbTX_Ranking;
 
-	[SerializeField]
 	[Header("ランキング圏外")]
+	[SerializeField]
 	private UILabel lbTX_RankingOut;
 
 	public QuestData.WorldAreaData AreaData;

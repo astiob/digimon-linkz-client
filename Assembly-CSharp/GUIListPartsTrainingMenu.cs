@@ -21,16 +21,16 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_Title;
 
-	[SerializeField]
 	[Header("タイトル左")]
+	[SerializeField]
 	private UISprite spL_Title;
 
 	[Header("タイトル右")]
 	[SerializeField]
 	private UISprite spR_Title;
 
-	[Header("キャンペーンラベル")]
 	[SerializeField]
+	[Header("キャンペーンラベル")]
 	private UILabel lbTX_Campaign;
 
 	private GUIListPartsTrainingMenu.PartsData data;
@@ -41,9 +41,9 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 		string strTitle = this.data.strTitle;
 		if (strTitle != null)
 		{
-			if (GUIListPartsTrainingMenu.<>f__switch$map37 == null)
+			if (GUIListPartsTrainingMenu.<>f__switch$map38 == null)
 			{
-				GUIListPartsTrainingMenu.<>f__switch$map37 = new Dictionary<string, int>(2)
+				GUIListPartsTrainingMenu.<>f__switch$map38 = new Dictionary<string, int>(2)
 				{
 					{
 						"MealTitle",
@@ -56,7 +56,7 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 				};
 			}
 			int num;
-			if (GUIListPartsTrainingMenu.<>f__switch$map37.TryGetValue(strTitle, out num))
+			if (GUIListPartsTrainingMenu.<>f__switch$map38.TryGetValue(strTitle, out num))
 			{
 				if (num != 0)
 				{

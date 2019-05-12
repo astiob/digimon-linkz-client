@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class GUIBase : GameBehaviour
+public class GUIBase : MonoBehaviour
 {
 	[SerializeField]
 	private bool resident_;

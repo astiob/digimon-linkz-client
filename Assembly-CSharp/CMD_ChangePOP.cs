@@ -116,6 +116,8 @@ public class CMD_ChangePOP : CMD
 	{
 		this.possessionTitle.text = StringMaster.GetString("SystemPossession");
 		this.costTitle.text = StringMaster.GetString("SystemCost");
+		this.BtnTextYes = StringMaster.GetString("SystemButtonYes");
+		this.BtnTextNo = StringMaster.GetString("SystemButtonNo");
 	}
 
 	public void SetPoint(int possession, int cost)

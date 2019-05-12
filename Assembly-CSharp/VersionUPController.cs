@@ -1,143 +1,83 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cutscene;
+using Cutscene.UI;
+using System;
 using UnityEngine;
 
-public class VersionUPController : CutsceneControllerBase
+public sealed class VersionUPController : CutsceneControllerBase
 {
 	[SerializeField]
-	[Header("キャラクターのスタンド")]
-	private GameObject[] charaStand;
+	private Camera mainCamera;
 
 	[SerializeField]
-	[Header("スタンドの回転速度")]
-	private float[] standRollSpeed;
+	private Transform beforeMonsterParentTransform;
 
 	[SerializeField]
-	[Header("UIカメラ")]
-	private GameObject camera2D;
+	private Transform afterMonsterParentTransform;
 
-	[Header("3Dカメラ")]
 	[SerializeField]
-	private GameObject camera3D_1;
+	private AllSkipButton allSkipButton;
 
-	public float rollSpeed = 1f;
+	[SerializeField]
+	private TouchScreenButton touchScreenButton;
 
-	private bool isBaseAdjusted;
+	[SerializeField]
+	private VersionUpAnimationEvent animeEvent;
 
-	private Transform TargetPos;
+	private Action endCallback;
 
-	private Material wireMaterial;
-
-	private List<Material[]> materialsListA;
-
-	private List<Material[]> materialsListB;
-
-	private void Start()
+	private void EndCutscene()
 	{
-		this.monsA_instance = base.monsterInstantiater(this.monsA_instance, this.character1Parent, this.character1Params, 0);
-		base.monsPosAdjustment(this.monsterLevelClass1, this.monsA_instance);
-		this.monsB_instance = base.monsterInstantiater(this.monsB_instance, this.character2Parent, this.character2Params, 1);
-		base.monsPosAdjustment(this.monsterLevelClass2, this.monsB_instance);
-		this.character2Params = this.monsB_instance.GetComponent<CharacterParams>();
-		Camera component = this.camera3D_1.GetComponent<Camera>();
-		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
-		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
-		this.wireMaterial = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
-		base.PlaySE("SE/Farm/se_222", true);
+		this.fade.StartFadeOut(new Action(this.Finish));
+		this.allSkipButton.Hide();
+		this.touchScreenButton.Hide();
 	}
 
-	protected override void UpdateChild()
+	private void Finish()
 	{
-		this.monsA_instance.transform.Rotate(new Vector3(0f, this.rollSpeed, 0f));
-		for (int i = 0; i <= this.charaStand.Length - 1; i++)
+		this.cutsceneSound.StopAllSE();
+		this.animeEvent.ResetMonsterMaterial();
+		if (this.endCallback != null)
 		{
-			this.charaStand[i].transform.Rotate(new Vector3(0f, 0f, this.standRollSpeed[i]));
+			this.endCallback();
+			this.endCallback = null;
+		}
+		UnityEngine.Object.Destroy(base.gameObject);
+		Resources.UnloadUnusedAssets();
+	}
+
+	protected override void OnStartCutscene()
+	{
+		if (!this.animeEvent.IsPlaying())
+		{
+			this.animeEvent.StartAnimation();
 		}
 	}
 
-	private void LateUpdate()
+	protected override void OnUpdate()
 	{
-		if (!this.isBaseAdjusted)
+	}
+
+	protected override void OnLateUpdate()
+	{
+	}
+
+	public override void SetData(CutsceneDataBase data)
+	{
+		CutsceneDataVersionUp cutsceneDataVersionUp = data as CutsceneDataVersionUp;
+		if (cutsceneDataVersionUp != null)
 		{
-			Vector3 localPosition = this.monsA_instance.transform.parent.transform.localPosition;
-			localPosition.y = 0f;
-			this.monsA_instance.transform.parent.transform.localPosition = localPosition;
-			Vector3 eulerAngles = this.monsB_instance.transform.parent.transform.localRotation.eulerAngles;
-			this.monsB_instance.transform.parent.transform.localRotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y - 47f, eulerAngles.z);
-		}
-	}
-
-	public void CharacterA_LineOn()
-	{
-		this.materialsListA = base.OnWireFrameRenderer(this.monsA_instance, this.wireMaterial);
-		this.materialsListB = base.OnWireFrameRenderer(this.monsB_instance, this.wireMaterial);
-	}
-
-	public void CharacterB_LineOn()
-	{
-	}
-
-	public void CharacterA_LineOff()
-	{
-		base.OffWireFrameRenderer(this.monsA_instance, this.materialsListA);
-	}
-
-	public void CharacterB_LineOff()
-	{
-		base.OffWireFrameRenderer(this.monsB_instance, this.materialsListB);
-	}
-
-	private void AttackAnimation()
-	{
-		this.monsB_instance.GetComponent<CharacterParams>().PlayAnimation(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
-	}
-
-	private void monsterBpositionAdjustment()
-	{
-		this.monsB_instance.transform.localPosition = Vector3.zero;
-	}
-
-	private void ChaseFlagStarter()
-	{
-		this.TargetPos = this.character2Params.characterFaceCenterTarget.gameObject.transform;
-		this.camera3D_1.transform.LookAt(this.TargetPos);
-	}
-
-	public void SoudPlayer1()
-	{
-	}
-
-	public void SoudPlayer2()
-	{
-	}
-
-	public void SoudPlayer3()
-	{
-	}
-
-	public void SoudPlayer4()
-	{
-	}
-
-	protected override IEnumerator NextPageBefore()
-	{
-		this.camera2D.SendMessage("fadeOut");
-		yield break;
-	}
-
-	protected override IEnumerator NextPageAfter()
-	{
-		this.CharacterA_LineOff();
-		this.CharacterB_LineOff();
-		yield break;
-	}
-
-	protected override float fadeWaitTime
-	{
-		get
-		{
-			return 1f;
+			this.endCallback = cutsceneDataVersionUp.endCallback;
+			this.allSkipButton.Initialize();
+			this.allSkipButton.AddAction(new Action(this.EndCutscene));
+			this.touchScreenButton.Initialize();
+			this.touchScreenButton.AddAction(new Action(this.EndCutscene));
+			GameObject gameObject = CutsceneCommon.LoadMonsterModel(this.beforeMonsterParentTransform, cutsceneDataVersionUp.beforeModelId);
+			gameObject.transform.localPosition = Vector3.zero;
+			GameObject gameObject2 = CutsceneCommon.LoadMonsterModel(this.afterMonsterParentTransform, cutsceneDataVersionUp.afterModelId);
+			gameObject2.transform.localPosition = Vector3.zero;
+			CutsceneCommon.SetBillBoardCamera(gameObject, this.mainCamera);
+			CutsceneCommon.SetBillBoardCamera(gameObject2, this.mainCamera);
+			this.animeEvent.Initialize(this.cutsceneSound, this.mainCamera.transform, gameObject, gameObject2);
 		}
 	}
 }

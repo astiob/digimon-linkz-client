@@ -43,7 +43,7 @@ namespace EvolutionRouteMap
 				ChangeModelViewerAnimationEvent behaviour = component2.GetBehaviour<ChangeModelViewerAnimationEvent>();
 				if (null != behaviour)
 				{
-					behaviour.SetMonsterData(selectMonster.master.Simple.monsterGroupId);
+					behaviour.SetMonsterData(selectMonster.master.Group.modelId);
 				}
 				component2.SetTrigger("Show");
 			}

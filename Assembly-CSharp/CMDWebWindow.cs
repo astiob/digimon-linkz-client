@@ -24,11 +24,11 @@ public class CMDWebWindow : CMD, INpWebViewListener
 
 	public static CMDWebWindow instance;
 
-	private bool isFullscreen;
+	protected bool isFullscreen;
 
-	private static NpWebView webViewObject;
+	protected static NpWebView webViewObject;
 
-	private string _Url = string.Empty;
+	protected string _Url = string.Empty;
 
 	public string TitleText
 	{
@@ -165,7 +165,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		this.WebViewOpen(this._Url);
 	}
 
-	private void WebViewOpen(string url)
+	protected void WebViewOpen(string url)
 	{
 		string requestMethod = "GET";
 		int num = url.IndexOf('?');
@@ -343,7 +343,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		}
 	}
 
-	private void actCBQuest(bool isSuccess)
+	protected void actCBQuest(bool isSuccess)
 	{
 		if (isSuccess)
 		{

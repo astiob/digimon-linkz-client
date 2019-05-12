@@ -590,7 +590,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		yield break;
 	}
 
-	private void RecieveAdventureSceneData(TCPMessageType tcpMessageType, object messageObj)
+	protected void RecieveAdventureSceneData(TCPMessageType tcpMessageType, object messageObj)
 	{
 		if (this.isDisconnected)
 		{

@@ -2,6 +2,7 @@
 using MultiBattle.Tools;
 using Quest;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class DataMng : MonoBehaviour
@@ -45,6 +46,8 @@ public class DataMng : MonoBehaviour
 	private GameWebAPI.RespDataMN_LaboExec resp_data_mn_laboexec;
 
 	private GameWebAPI.RespDataMN_GetDeckList resp_data_mn_decklist;
+
+	public static int MAX_SHOW_POPUP_INFO_IDS = 10;
 
 	private DataMng.ResultUtilData resultUtilData = new DataMng.ResultUtilData();
 
@@ -448,6 +451,10 @@ public class DataMng : MonoBehaviour
 
 	public int ShowLoginBonusNumN { get; set; }
 
+	public int ShowPopupInfoNum { get; set; }
+
+	public Queue ShowPopupInfoIds { get; set; }
+
 	public bool IsPopUpInformaiton { get; set; }
 
 	public GameWebAPI.RespDataCM_LoginBonus RespDataCM_LoginBonus { get; set; }
@@ -693,13 +700,17 @@ public class DataMng : MonoBehaviour
 
 	public APIRequestTask RequestNews(bool requestRetry = true)
 	{
-		GameWebAPI.RequestIN_InfoList request = new GameWebAPI.RequestIN_InfoList
+		GameWebAPI.RequestIN_InfoList requestIN_InfoList = new GameWebAPI.RequestIN_InfoList();
+		requestIN_InfoList.SetSendData = delegate(GameWebAPI.SendDataIN_InfoList requestParam)
 		{
-			OnReceived = delegate(GameWebAPI.RespDataIN_InfoList response)
-			{
-				this.RespDataIN_InfoList = response;
-			}
+			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			requestParam.countryCode = countryCode;
 		};
+		requestIN_InfoList.OnReceived = delegate(GameWebAPI.RespDataIN_InfoList response)
+		{
+			this.RespDataIN_InfoList = response;
+		};
+		GameWebAPI.RequestIN_InfoList request = requestIN_InfoList;
 		return new APIRequestTask(request, requestRetry);
 	}
 
@@ -717,13 +728,17 @@ public class DataMng : MonoBehaviour
 
 	public APIRequestTask RequestBannerMaster(bool requestRetry = true)
 	{
-		GameWebAPI.RequestMA_BannerMaster request = new GameWebAPI.RequestMA_BannerMaster
+		GameWebAPI.RequestMA_BannerMaster requestMA_BannerMaster = new GameWebAPI.RequestMA_BannerMaster();
+		requestMA_BannerMaster.SetSendData = delegate(GameWebAPI.RequestMA_BannerM requestParam)
 		{
-			OnReceived = delegate(GameWebAPI.RespDataMA_BannerM response)
-			{
-				this.RespData_BannerMaster = response;
-			}
+			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+			requestParam.countryCode = countryCode;
 		};
+		requestMA_BannerMaster.OnReceived = delegate(GameWebAPI.RespDataMA_BannerM response)
+		{
+			this.RespData_BannerMaster = response;
+		};
+		GameWebAPI.RequestMA_BannerMaster request = requestMA_BannerMaster;
 		return new APIRequestTask(request, requestRetry);
 	}
 

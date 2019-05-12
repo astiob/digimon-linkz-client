@@ -5,28 +5,28 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UI2DSprite : UIBasicSprite
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Sprite mSprite;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMat;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Shader mShader;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector4 mBorder = Vector4.zero;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool mFixedAspect;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mPixelSize = 1f;
 
 	public Sprite nextSprite;

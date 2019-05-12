@@ -60,8 +60,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider showBtnCollider;
 
-	[Header("一覧ボタンのラベル")]
 	[SerializeField]
+	[Header("一覧ボタンのラベル")]
 	private UILabelEx showBtnLabel;
 
 	[SerializeField]
@@ -70,8 +70,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[Header("お別れボタンのラベル")]
 	[SerializeField]
+	[Header("お別れボタンのラベル")]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]
@@ -125,8 +125,35 @@ public sealed class CMD_FarewellListRun : CMD
 		this.InitMonsterList(true);
 		this.ChangeMode();
 		this.ShowHaveMonster();
+		base.SetTutorialAnyTime("anytime_second_tutorial_house");
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
+		GUICollider.DisableAllCollider("CMD_FarewellListRun");
+	}
+
+	protected override void WindowOpened()
+	{
+		base.WindowOpened();
+		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SHOW)
+		{
+			TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
+			if (tutorialObserver != null)
+			{
+				GUIMain.BarrierON(null);
+				tutorialObserver.StartSecondTutorial("second_tutorial_house", new Action(GUIMain.BarrierOFF), delegate
+				{
+					GUICollider.EnableAllCollider("CMD_FarewellListRun");
+				});
+			}
+			else
+			{
+				GUICollider.EnableAllCollider("CMD_FarewellListRun");
+			}
+		}
+		else
+		{
+			GUICollider.EnableAllCollider("CMD_FarewellListRun");
+		}
 	}
 
 	protected override void Update()
@@ -138,10 +165,7 @@ public sealed class CMD_FarewellListRun : CMD
 	protected override void WindowClosed()
 	{
 		this.csSelectPanelMonsterIcon.PARTS_CT_MN = 4;
-		if (MonsterDataMng.Instance() != null)
-		{
-			MonsterDataMng.Instance().PushBackAllMonsterPrefab();
-		}
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.WindowClosed();
 	}
 
@@ -185,9 +209,8 @@ public sealed class CMD_FarewellListRun : CMD
 			req.saleMonsterDataList = new GameWebAPI.MN_Req_Sale.SaleMonsterDataList[this.sellMonsterList.Count];
 			for (int i = 0; i < this.sellMonsterList.Count; i++)
 			{
-				int userMonsterId = int.Parse(this.sellMonsterList[i].userMonster.userMonsterId);
 				GameWebAPI.MN_Req_Sale.SaleMonsterDataList saleMonsterDataList = new GameWebAPI.MN_Req_Sale.SaleMonsterDataList();
-				saleMonsterDataList.userMonsterId = userMonsterId;
+				saleMonsterDataList.userMonsterId = this.sellMonsterList[i].userMonster.userMonsterId;
 				req.saleMonsterDataList[i] = saleMonsterDataList;
 			}
 			this.chip_bak = this.CalcChipGet();
@@ -343,9 +366,8 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void InitMonsterList(bool initLoc = true)
 	{
+		ClassSingleton<GUIMonsterIconList>.Instance.ResetIconState();
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.ClearSortMessAll();
-		monsterDataMng.ClearLevelMessAll();
 		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
 		this.ngTX_MN_HAVE_ADULT.text = this.GetDigiHouseMonsterNum(list).ToString();
 		int gerdenMonsterNum = this.GetGerdenMonsterNum(list);
@@ -362,20 +384,17 @@ public sealed class CMD_FarewellListRun : CMD
 		}
 		if (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN && CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 		}
 		else
 		{
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_IN_GARDEN);
+			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_IN_GARDEN);
 		}
 		monsterDataMng.SortMDList(list);
 		monsterDataMng.SetSortLSMessage();
 		this.csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
-		monsterDataMng.SetSelectOffAll();
-		monsterDataMng.ClearDimmMessAll();
-		monsterDataMng.SetLockIcon();
+		ClassSingleton<GUIMonsterIconList>.Instance.SetLockIcon();
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
 		this.csSelectPanelMonsterIcon.SetCheckEnablePushAction(null);
 		this.targetMonsterList = list;
@@ -395,14 +414,15 @@ public sealed class CMD_FarewellListRun : CMD
 		MonsterDataMng.Instance().SetSortLSMessage();
 		List<MonsterData> dts = MonsterDataMng.Instance().SelectionMDList(this.targetMonsterList);
 		this.csSelectPanelMonsterIcon.ReAllBuild(dts);
-		this.monsterList.SetGrayOutBlockMonster();
 		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL)
 		{
+			this.monsterList.SetGrayOutBlockMonster();
 			this.monsterList.SetGrayOutPartyUsed();
 			this.monsterList.SetSellMonsterList();
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
+			this.monsterList.SetGrayOutBlockMonster();
 			this.monsterList.SetGrayOutGrowing(this.targetMonsterList);
 			this.monsterList.SetSellMonsterList();
 		}
@@ -608,7 +628,7 @@ public sealed class CMD_FarewellListRun : CMD
 		int num = 0;
 		for (int i = 0; i < this.sellMonsterList.Count; i++)
 		{
-			num += this.sellMonsterList[i].GetPriceValue();
+			num += this.sellMonsterList[i].GetPrice();
 		}
 		for (int j = 0; j < this.sellMonsterList.Count; j++)
 		{

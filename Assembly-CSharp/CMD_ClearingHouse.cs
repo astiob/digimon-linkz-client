@@ -77,6 +77,7 @@ public class CMD_ClearingHouse : CMD
 		this.needNumText.text = StringMaster.GetString("ExchangeNeedNum");
 		this.buttonText.text = StringMaster.GetString("ExchangeButtonText");
 		this.limitText.text = StringMaster.GetString("ExchangeLimit");
+		base.SetTutorialAnyTime("anytime_second_tutorial_exchange");
 		this.InitExchange(f, sizeX, sizeY, aT);
 	}
 
@@ -444,6 +445,15 @@ public class CMD_ClearingHouse : CMD
 			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney = num2.ToString();
 			break;
 		}
+		case MasterDataMng.AssetCategory.ITEM:
+		{
+			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(exchangeItem.exchangeItemData.assetValue);
+			if (itemM != null && int.Parse(itemM.itemId) == 2)
+			{
+				Singleton<UserDataMng>.Instance.UpdateUserItemNum(2, -int.Parse(this.consumeNum));
+			}
+			break;
+		}
 		}
 		int num3 = int.Parse(exchangeItem.exchangeDetailNum, NumberStyles.AllowThousands);
 		string exchangeDetailName = exchangeItem.exchangeDetailName;
@@ -511,13 +521,25 @@ public class CMD_ClearingHouse : CMD
 
 	private void RefreshInfo()
 	{
+		bool flag = false;
 		foreach (GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result result in ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData)
 		{
 			if (result.eventExchangeId == CMD_ClearingHouse.exchangeResultInfo.eventExchangeId)
 			{
+				flag = true;
 				CMD_ClearingHouse.exchangeResultInfo = result;
 				break;
 			}
+		}
+		if (!flag)
+		{
+			ClassSingleton<ExchangeWebAPI>.Instance.DeleteExchangeInfoLogicResult(CMD_ClearingHouse.exchangeResultInfo.eventExchangeId);
+			base.SetCloseAction(delegate(int i)
+			{
+				CMD_ClearingHouseTop.instance.Rebuild();
+			});
+			this.ClosePanel(true);
+			return;
 		}
 		this.exchangeItemDataList.Clear();
 		Dictionary<string, string> dictionary = new Dictionary<string, string>();

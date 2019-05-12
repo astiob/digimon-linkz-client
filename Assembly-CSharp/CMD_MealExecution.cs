@@ -193,6 +193,7 @@ public class CMD_MealExecution : CMD
 		this.ShowChgInfo();
 		this.CheckMeat();
 		this.InitBtnHQMeat();
+		base.SetTutorialAnyTime("anytime_second_tutorial_meal");
 	}
 
 	protected override void WindowOpened()
@@ -309,8 +310,8 @@ public class CMD_MealExecution : CMD
 		this.ngTargetTex = this.goTargetTex.GetComponent<UITexture>();
 		GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DRT", null);
 		this.csRender3DRT = gameObject.GetComponent<CommonRender3DRT>();
-		string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(CMD_MealExecution.DataChg.monsterM.monsterGroupId);
-		this.csRender3DRT.LoadChara(monsterCharaPathByMonsterGroupId, 0f, 4000f, -0.65f, 1.1f, true);
+		string filePath = MonsterObject.GetFilePath(CMD_MealExecution.DataChg.GetMonsterMaster().Group.modelId);
+		this.csRender3DRT.LoadChara(filePath, 0f, 4000f, -0.65f, 1.1f, true);
 		this.renderTex = this.csRender3DRT.SetRenderTarget(1136, 820, 16);
 		this.ngTargetTex.mainTexture = this.renderTex;
 		this.charaParams = this.csRender3DRT.transform.GetComponentInChildren<CharacterParams>();
@@ -664,7 +665,7 @@ public class CMD_MealExecution : CMD
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_HQMeal param)
 			{
-				param.baseMonster = int.Parse(CMD_MealExecution.DataChg.userMonster.userMonsterId);
+				param.baseMonster = CMD_MealExecution.DataChg.userMonster.userMonsterId;
 				param.fusionType = (int)fusionType;
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_HQMealExec resData)
@@ -797,7 +798,7 @@ public class CMD_MealExecution : CMD
 			GameWebAPI.RequestMN_MonsterMeal requestMN_MonsterMeal = new GameWebAPI.RequestMN_MonsterMeal();
 			requestMN_MonsterMeal.SetSendData = delegate(GameWebAPI.MN_Req_Meal param)
 			{
-				param.mealMonster = int.Parse(CMD_MealExecution.DataChg.userMonster.userMonsterId);
+				param.mealMonster = CMD_MealExecution.DataChg.userMonster.userMonsterId;
 				param.meatNum = this.execMeatNum;
 			};
 			requestMN_MonsterMeal.OnReceived = delegate(GameWebAPI.RespDataMN_MealExec response)

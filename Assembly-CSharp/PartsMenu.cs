@@ -261,7 +261,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedMeal(int i)
 	{
 		CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
-		GUIMain.ShowCommonDialog(null, "CMD_BaseSelect");
+		this.PartsMenuShowDialog(null, "CMD_BaseSelect");
 		global::Debug.Log("============================================= PARTS_MENU Meal");
 	}
 
@@ -276,7 +276,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedTraining(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ReinforcementTOP");
+		this.PartsMenuShowDialog(null, "CMD_ReinforcementTOP");
 		global::Debug.Log("============================================= PARTS_MENU Training");
 	}
 
@@ -292,7 +292,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedTrainingMenu(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_Training_Menu");
+		this.PartsMenuShowDialog(null, "CMD_Training_Menu");
 		global::Debug.Log("============================================= PARTS_MENU Training_Menu");
 	}
 
@@ -308,7 +308,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedArousal(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ArousalTOP");
+		this.PartsMenuShowDialog(null, "CMD_ArousalTOP");
 		global::Debug.Log("============================================= PARTS_MENU ArousalTOP");
 	}
 
@@ -324,7 +324,7 @@ public class PartsMenu : MonoBehaviour
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = this.PartsMenuShowDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ExchangeMissingAlertTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ExchangeMissingAlertInfo");
 		}
@@ -332,7 +332,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedClearing(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ClearingHouseTOP");
+		this.PartsMenuShowDialog(null, "CMD_ClearingHouseTOP");
 		global::Debug.Log("============================================= PARTS_MENU Training");
 	}
 
@@ -349,7 +349,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedEvo(int i)
 	{
 		CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.EVOLVE;
-		GUIMain.ShowCommonDialog(null, "CMD_BaseSelect");
+		this.PartsMenuShowDialog(null, "CMD_BaseSelect");
 		global::Debug.Log("============================================= PARTS_MENU Evo");
 	}
 
@@ -366,7 +366,7 @@ public class PartsMenu : MonoBehaviour
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.EDIT;
-		GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
+		this.PartsMenuShowDialog(null, "CMD_PartyEdit");
 	}
 
 	public void OnClickedQuest()
@@ -402,13 +402,13 @@ public class PartsMenu : MonoBehaviour
 			{
 				if (this.quest_ui_type_bk == 0)
 				{
-					GUIMain.ShowCommonDialog(null, "CMD_QuestSelect");
+					this.PartsMenuShowDialog(null, "CMD_QuestSelect");
 				}
 				else if (this.quest_ui_type_bk == 1)
 				{
 					RestrictionInput.EndLoad();
 					CMD_QuestTOP.AreaData = ClassSingleton<QuestData>.Instance.GetWorldAreaM_NormalByAreaId("8");
-					CMD cmd = GUIMain.ShowCommonDialog(null, "CMD_QuestTOP") as CMD;
+					CMD cmd = this.PartsMenuShowDialog(null, "CMD_QuestTOP") as CMD;
 					PartsTitleBase partsTitle = cmd.PartsTitle;
 					if (partsTitle != null)
 					{
@@ -416,7 +416,7 @@ public class PartsMenu : MonoBehaviour
 						{
 							cmd.SetCloseAction(delegate(int i)
 							{
-								GUIMain.ShowCommonDialog(null, "CMD_QuestSelect");
+								this.PartsMenuShowDialog(null, "CMD_QuestSelect");
 							});
 							cmd.ClosePanel(true);
 						});
@@ -525,7 +525,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedGacha(int i)
 	{
 		global::Debug.Log("================================================== OnClickedGacha;");
-		GUIMain.ShowCommonDialog(null, "CMD_GashaTOP");
+		this.PartsMenuShowDialog(null, "CMD_GashaTOP");
 	}
 
 	private void OnClickedChat()
@@ -539,7 +539,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedChat(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ChatTop");
+		this.PartsMenuShowDialog(null, "CMD_ChatTop");
 	}
 
 	private void OnClickedShop()
@@ -553,7 +553,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedShop(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_Shop");
+		this.PartsMenuShowDialog(null, "CMD_Shop");
 		FarmRoot farmRoot = FarmRoot.Instance;
 		if (null != farmRoot)
 		{
@@ -574,7 +574,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedFriend(int i)
 	{
 		global::Debug.Log("============================================= PARTS_MENU Friend");
-		GUIMain.ShowCommonDialog(null, "CMD_FriendTop");
+		this.PartsMenuShowDialog(null, "CMD_FriendTop");
 	}
 
 	private void OnClickedBook()
@@ -588,7 +588,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedBook(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_PictureBookTOP");
+		this.PartsMenuShowDialog(null, "CMD_PictureBookTOP");
 	}
 
 	private void OnClickedHelp()
@@ -603,7 +603,7 @@ public class PartsMenu : MonoBehaviour
 	private void OpenHelpUI(int i)
 	{
 		CMD_HelpCategory.Data = MasterDataMng.Instance().RespDataMA_HelpCategoryM;
-		GUIMain.ShowCommonDialog(null, "CMD_HelpCategory");
+		this.PartsMenuShowDialog(null, "CMD_HelpCategory");
 	}
 
 	private void OnClickedSettings()
@@ -617,7 +617,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedSettings(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_Setting1");
+		this.PartsMenuShowDialog(null, "CMD_Setting1");
 	}
 
 	private void OnClickedInfo()
@@ -631,7 +631,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedInfo(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_NewsALL");
+		this.PartsMenuShowDialog(null, "CMD_NewsALL");
 	}
 
 	private void OnClickedProfile()
@@ -645,7 +645,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedProfile(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_Profile");
+		this.PartsMenuShowDialog(null, "CMD_Profile");
 	}
 
 	private void OnClickedOthers()
@@ -659,7 +659,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedOthers(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_OtherTOP");
+		this.PartsMenuShowDialog(null, "CMD_OtherTOP");
 	}
 
 	private void OnClickedClearingHouse()
@@ -673,7 +673,7 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnClickedClearingHouse(int i)
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ClearingHouse");
+		this.PartsMenuShowDialog(null, "CMD_ClearingHouse");
 	}
 
 	private void SetCommonUI()
@@ -741,6 +741,13 @@ public class PartsMenu : MonoBehaviour
 		{
 			PartsMenu.instance.evolutionAlertState = state;
 		}
+	}
+
+	private CommonDialog PartsMenuShowDialog(Action<int> action, string dialogName)
+	{
+		CommonDialog result = GUIManager.ShowCommonDialog(action, true, dialogName, null, null, 0.2f, 0f, 0f, -1f, -1f);
+		GUIMain.AdjustBarrierZ();
+		return result;
 	}
 
 	private void UpdateBackKeyAndroid()

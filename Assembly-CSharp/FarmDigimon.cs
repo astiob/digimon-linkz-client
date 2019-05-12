@@ -54,13 +54,7 @@ public sealed class FarmDigimon : MonoBehaviour
 
 	private GameWebAPI.RespDataMN_Friendship digimonFriendShip;
 
-	[SerializeField]
-	private GameObject friendshipUpPref;
-
-	[SerializeField]
-	private GameObject TapfaceMark;
-
-	private GameObject faceMark;
+	private FriendshipUPFaceMark faceMark;
 
 	private bool isSetUpBillBoard;
 
@@ -193,9 +187,10 @@ public sealed class FarmDigimon : MonoBehaviour
 		}
 	}
 
-	private IEnumerator LoadDigimon(string monsterGroupID)
+	private IEnumerator LoadDigimon(string modelId)
 	{
-		GameObject resource = AssetDataMng.Instance().LoadObject("Characters/" + monsterGroupID + "/prefab", null, true) as GameObject;
+		string path = MonsterObject.GetFilePath(modelId);
+		GameObject resource = AssetDataMng.Instance().LoadObject(path, null, true) as GameObject;
 		yield return null;
 		this.digimon = UnityEngine.Object.Instantiate<GameObject>(resource);
 		CharacterParams param = this.digimon.GetComponent<CharacterParams>();
@@ -525,7 +520,7 @@ public sealed class FarmDigimon : MonoBehaviour
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_FriendshipStatus param)
 			{
-				param.userMonsterId = int.Parse(this.userMonsterID);
+				param.userMonsterId = this.userMonsterID;
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_Friendship response)
 			{
@@ -583,7 +578,10 @@ public sealed class FarmDigimon : MonoBehaviour
 
 	private IEnumerator PopFriendshipUpStatus()
 	{
-		this.faceMark.GetComponent<FriendshipUPFaceMark>().barrierOn = true;
+		if (null != this.faceMark)
+		{
+			this.faceMark.SetBarrier();
+		}
 		yield return new WaitForSeconds(1f);
 		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP") as CMD_FriendshipStatusUP;
 		cd.SetData(this.monsterData);
@@ -597,15 +595,19 @@ public sealed class FarmDigimon : MonoBehaviour
 		{
 			this.DigimonSizeY = base.gameObject.GetComponentInChildren<CharacterParams>().RootToCenterDistance();
 		}
-		if (this.faceMark != null)
+		if (null == this.faceMark)
 		{
-			UnityEngine.Object.Destroy(this.faceMark);
+			GameObject original = AssetDataMng.Instance().LoadObject("UICommon/Farm/FriendshipUPFaceMark", null, true) as GameObject;
+			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
+			gameObject.transform.parent = Singleton<GUIMain>.Instance.transform;
+			this.faceMark = gameObject.GetComponent<FriendshipUPFaceMark>();
 		}
-		this.faceMark = UnityEngine.Object.Instantiate<GameObject>(this.TapfaceMark);
-		this.faceMark.transform.parent = Singleton<GUIMain>.Instance.transform;
-		this.faceMark.GetComponent<FriendshipUPFaceMark>().farmObject = base.gameObject;
-		FriendshipUPFaceMark component = this.faceMark.GetComponent<FriendshipUPFaceMark>();
-		component.ChangeIcon(friendshipUpFlg, this.DigimonSizeY);
+		if (null != this.faceMark)
+		{
+			this.faceMark.farmObject = base.gameObject;
+			this.faceMark.ChangeIcon(friendshipUpFlg, this.DigimonSizeY);
+			this.faceMark.StartAnimation();
+		}
 		if (friendshipUpFlg)
 		{
 			base.Invoke("PopFriendshipUpCount", 0.8f);
@@ -614,7 +616,8 @@ public sealed class FarmDigimon : MonoBehaviour
 
 	private void PopFriendshipUpCount()
 	{
-		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.friendshipUpPref);
+		GameObject original = AssetDataMng.Instance().LoadObject("UICommon/Farm/FriendshipUP", null, true) as GameObject;
+		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
 		gameObject.transform.parent = Singleton<GUIMain>.Instance.transform;
 		gameObject.GetComponent<FriendshipUP>().farmObject = base.gameObject;
 		gameObject.GetComponent<FriendshipUP>().ViewFriendshipStatus(this.digimonFriendShip.upFriendship);

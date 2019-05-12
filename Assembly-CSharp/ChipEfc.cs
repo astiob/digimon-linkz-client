@@ -11,16 +11,16 @@ public class ChipEfc : MonoBehaviour
 	[Header("アニメーション コンポーネント")]
 	public Animation anim;
 
-	[SerializeField]
 	[Header("アニメーション OBJ")]
+	[SerializeField]
 	public GameObject goANIM;
 
 	[Header("パーティクル OBJ")]
 	[SerializeField]
 	public GameObject goPARTICLE;
 
-	[SerializeField]
 	[Header("NEW スプライト")]
+	[SerializeField]
 	public UISprite spNew;
 
 	private int frameCT;

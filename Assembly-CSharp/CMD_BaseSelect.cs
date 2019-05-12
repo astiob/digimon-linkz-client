@@ -115,8 +115,8 @@ public sealed class CMD_BaseSelect : CMD
 	[SerializeField]
 	private UILabel ngTX_SORT_DISP;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	[SerializeField]
@@ -222,11 +222,7 @@ public sealed class CMD_BaseSelect : CMD
 	protected override void WindowClosed()
 	{
 		CMD_BaseSelect.instance = null;
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		if (null != monsterDataMng)
-		{
-			monsterDataMng.PushBackAllMonsterPrefab();
-		}
+		ClassSingleton<GUIMonsterIconList>.Instance.PushBackAllMonsterPrefab();
 		base.WindowClosed();
 	}
 
@@ -382,6 +378,18 @@ public sealed class CMD_BaseSelect : CMD
 			this.InitMonsterList(true);
 			this.ShowChgInfo();
 			base.ShowDLG();
+			switch (CMD_BaseSelect.BaseType)
+			{
+			case CMD_BaseSelect.BASE_TYPE.EVOLVE:
+				base.SetTutorialAnyTime("anytime_second_tutorial_evolution");
+				break;
+			case CMD_BaseSelect.BASE_TYPE.MEAL:
+				base.SetTutorialAnyTime("anytime_second_tutorial_meal");
+				break;
+			case CMD_BaseSelect.BASE_TYPE.CHIP:
+				base.SetTutorialAnyTime("anytime_second_tutorial_chip_equipment");
+				break;
+			}
 			base.Show(f, sizeX, sizeY, aT);
 		}
 		else
@@ -529,7 +537,7 @@ public sealed class CMD_BaseSelect : CMD
 			this.detailedMonsterSuccessionSkill2.SetSkill(CMD_BaseSelect.DataChg);
 			if (MonsterStatusData.IsVersionUp(CMD_BaseSelect.DataChg.GetMonsterMaster().Simple.rare))
 			{
-				if (CMD_BaseSelect.DataChg.commonSkillM2 == null)
+				if (CMD_BaseSelect.DataChg.GetExtraCommonSkill() == null)
 				{
 					this.monsterSuccessionSkillGrayReady.SetActive(true);
 					this.detailedMonsterSuccessionSkillGrayReady.SetActive(true);
@@ -670,9 +678,8 @@ public sealed class CMD_BaseSelect : CMD
 
 	public void InitMonsterList(bool initLoc = true)
 	{
+		ClassSingleton<GUIMonsterIconList>.Instance.ResetIconState();
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.ClearSortMessAll();
-		monsterDataMng.ClearLevelMessAll();
 		if (this.targetMonsterList != null)
 		{
 			this.targetMonsterList.Clear();
@@ -681,38 +688,37 @@ public sealed class CMD_BaseSelect : CMD
 		switch (CMD_BaseSelect.BaseType)
 		{
 		case CMD_BaseSelect.BASE_TYPE.EVOLVE:
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.CAN_EVOLVE);
+			list = MonsterFilter.Filter(list, MonsterFilterType.CAN_EVOLVE);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.EVOLVE;
-			goto IL_118;
+			goto IL_10E;
 		case CMD_BaseSelect.BASE_TYPE.MEAL:
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+			list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
-			goto IL_118;
+			goto IL_10E;
 		case CMD_BaseSelect.BASE_TYPE.LABO:
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.RESEARCH_TARGET);
+			list = MonsterFilter.Filter(list, MonsterFilterType.RESEARCH_TARGET);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.LABO;
-			goto IL_118;
+			goto IL_10E;
 		case CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT:
 			if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.BASE)
 			{
-				list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+				list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
 			}
 			else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
 			{
-				list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
-				list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.HAVE_MEDALS);
+				list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
+				list = MonsterFilter.Filter(list, MonsterFilterType.HAVE_MEDALS);
 			}
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT;
-			goto IL_118;
+			goto IL_10E;
 		case CMD_BaseSelect.BASE_TYPE.VERSION_UP:
-			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.CAN_VERSION_UP);
+			list = MonsterFilter.Filter(list, MonsterFilterType.CAN_VERSION_UP);
 			this.csSelectPanelMonsterIcon.BaseType = CMD_BaseSelect.BASE_TYPE.VERSION_UP;
-			goto IL_118;
+			goto IL_10E;
 		}
-		list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
-		IL_118:
+		list = MonsterFilter.Filter(list, MonsterFilterType.ALL_OUT_GARDEN);
+		IL_10E:
 		monsterDataMng.SortMDList(list);
-		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
 		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.EVOLVE)
 		{
 			this.SetEvolutionMonsterIconList(list);
@@ -727,10 +733,8 @@ public sealed class CMD_BaseSelect : CMD
 		}
 		this.csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-		monsterDataMng.SetSelectOffAll();
-		monsterDataMng.ClearDimmMessAll();
-		monsterDataMng.SetLockIcon();
-		List<MonsterData> deckMonsterDataList = monsterDataMng.GetDeckMonsterDataList();
+		ClassSingleton<GUIMonsterIconList>.Instance.SetLockIcon();
+		List<MonsterData> deckUserMonsterList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckUserMonsterList();
 		if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.LABO || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT || CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.VERSION_UP)
 		{
 			MonsterData baseDigimon = CMD_PairSelectBase.instance.baseDigimon;
@@ -772,8 +776,8 @@ public sealed class CMD_BaseSelect : CMD
 				int num2 = int.Parse(list[i].monsterM.maxLevel);
 				if (num >= num2)
 				{
-					GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(list[i]);
-					this.iconGrayOut.BlockLevelMax(monsterCS_ByMonsterData);
+					GUIMonsterIcon icon3 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(list[i]);
+					this.iconGrayOut.BlockLevelMax(icon3);
 				}
 			}
 		}
@@ -799,13 +803,13 @@ public sealed class CMD_BaseSelect : CMD
 				{
 					if (monsterData.userMonster.IsLocked)
 					{
-						GUIMonsterIcon icon3 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
-						this.iconGrayOut.BlockLockMonster(icon3);
+						GUIMonsterIcon icon4 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+						this.iconGrayOut.BlockLockMonster(icon4);
 					}
 					if (MonsterStatusData.IsSpecialTrainingType(monsterData.GetMonsterMaster().Group.monsterType) && CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
 					{
-						GUIMonsterIcon icon4 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
-						this.iconGrayOut.BlockSpecialTypeMonster(icon4);
+						GUIMonsterIcon icon5 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+						this.iconGrayOut.BlockSpecialTypeMonster(icon5);
 					}
 					if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.MEDAL_INHERIT && CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
 					{
@@ -813,9 +817,9 @@ public sealed class CMD_BaseSelect : CMD
 						if (baseDigimon2 != null && baseDigimon2 != monsterData)
 						{
 							bool flag3 = false;
-							for (int j = 0; j < deckMonsterDataList.Count; j++)
+							for (int j = 0; j < deckUserMonsterList.Count; j++)
 							{
-								if (deckMonsterDataList[j] == monsterData)
+								if (deckUserMonsterList[j] == monsterData)
 								{
 									flag3 = true;
 									break;
@@ -828,8 +832,8 @@ public sealed class CMD_BaseSelect : CMD
 								float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(mas);
 								if (totalAbilityRate <= 0f)
 								{
-									GUIMonsterIcon icon5 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
-									this.iconGrayOut.BlockMedalNoPossibility(icon5);
+									GUIMonsterIcon icon6 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+									this.iconGrayOut.BlockMedalNoPossibility(icon6);
 								}
 							}
 						}
@@ -842,14 +846,14 @@ public sealed class CMD_BaseSelect : CMD
 				{
 					if (CMD_BaseSelect.DataChg != null)
 					{
-						GUIMonsterIcon icon6 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(CMD_BaseSelect.DataChg);
-						this.iconGrayOut.SetSelectText(icon6, StringMaster.GetString("SystemBase"));
+						GUIMonsterIcon icon7 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(CMD_BaseSelect.DataChg);
+						this.iconGrayOut.SetSelectText(icon7, StringMaster.GetString("SystemBase"));
 					}
 				}
 				else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER)
 				{
-					GUIMonsterIcon icon7 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(CMD_BaseSelect.DataChg);
-					this.iconGrayOut.SetSelectText(icon7, "1");
+					GUIMonsterIcon icon8 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(CMD_BaseSelect.DataChg);
+					this.iconGrayOut.SetSelectText(icon8, "1");
 				}
 			}
 		}
@@ -920,16 +924,7 @@ public sealed class CMD_BaseSelect : CMD
 		{
 			bool flag = false;
 			bool isCheckDim = true;
-			bool flag2 = false;
-			if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.VERSION_UP)
-			{
-				List<HaveSoulData> versionUpAlMightyMaterial = VersionUpMaterialData.GetVersionUpAlMightyMaterial();
-				if (!VersionUpMaterialData.CanVersionUp(tappedMonsterData.monsterM, tappedMonsterData.userMonster, versionUpAlMightyMaterial))
-				{
-					flag2 = true;
-				}
-			}
-			if (tappedMonsterData == CMD_BaseSelect.DataChg || tappedMonsterData == CMD_PairSelectBase.instance.baseDigimon || tappedMonsterData == CMD_PairSelectBase.instance.partnerDigimon || flag2)
+			if (tappedMonsterData == CMD_BaseSelect.DataChg || tappedMonsterData == CMD_PairSelectBase.instance.baseDigimon || tappedMonsterData == CMD_PairSelectBase.instance.partnerDigimon)
 			{
 				isCheckDim = false;
 			}
@@ -955,8 +950,8 @@ public sealed class CMD_BaseSelect : CMD
 					MonsterData baseDigimon = CMD_PairSelectBase.instance.baseDigimon;
 					if (baseDigimon != null && baseDigimon != tappedMonsterData)
 					{
-						bool flag3 = false;
-						MonsterAbilityStatusInfo mas = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon, tappedMonsterData, ref flag3);
+						bool flag2 = false;
+						MonsterAbilityStatusInfo mas = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(baseDigimon, tappedMonsterData, ref flag2);
 						float totalAbilityRate = ClassSingleton<AbilityData>.Instance.GetTotalAbilityRate(mas);
 						if (totalAbilityRate <= 0f)
 						{
@@ -969,12 +964,19 @@ public sealed class CMD_BaseSelect : CMD
 					isCheckDim = false;
 				}
 			}
-			List<MonsterData> deckMonsterDataList = MonsterDataMng.Instance().GetDeckMonsterDataList();
-			foreach (MonsterData monsterData in deckMonsterDataList)
+			if (ClassSingleton<MonsterUserDataMng>.Instance.FindMonsterColosseumDeck(tappedMonsterData.GetMonster().userMonsterId))
 			{
-				if (monsterData == tappedMonsterData)
+				isCheckDim = false;
+			}
+			else
+			{
+				List<MonsterData> deckUserMonsterList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckUserMonsterList();
+				foreach (MonsterData monsterData in deckUserMonsterList)
 				{
-					isCheckDim = false;
+					if (monsterData == tappedMonsterData)
+					{
+						isCheckDim = false;
+					}
 				}
 			}
 			CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
@@ -990,6 +992,11 @@ public sealed class CMD_BaseSelect : CMD
 					else if (CMD_BaseSelect.ElementType == CMD_BaseSelect.ELEMENT_TYPE.PARTNER && MonsterStatusData.IsSpecialTrainingType(tappedMonsterData.GetMonsterMaster().Group.monsterType))
 					{
 						this.iconGrayOut.BlockLockMonsterReturnDetailed(icon);
+					}
+					else if (CMD_BaseSelect.BaseType == CMD_BaseSelect.BASE_TYPE.VERSION_UP)
+					{
+						List<HaveSoulData> versionUpAlMightyMaterial = VersionUpMaterialData.GetVersionUpAlMightyMaterial();
+						this.SetVersionUPMonsterIcon(tappedMonsterData, versionUpAlMightyMaterial);
 					}
 					else
 					{

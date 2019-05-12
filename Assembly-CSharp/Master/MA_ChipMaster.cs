@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMA_ChipMaster
+			GameWebAPI.RequestMA_ChipMaster requestMA_ChipMaster = new GameWebAPI.RequestMA_ChipMaster();
+			requestMA_ChipMaster.SetSendData = delegate(GameWebAPI.RequestMA_ChipM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_ChipM>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestMA_ChipMaster.OnReceived = new Action<GameWebAPI.RespDataMA_ChipM>(base.SetResponse);
+			return requestMA_ChipMaster;
 		}
 	}
 }

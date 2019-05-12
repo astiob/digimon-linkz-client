@@ -27,24 +27,24 @@ public sealed class CMD_ChipSphere : CMD
 
 	public const int arousal4ButtonNo = 5;
 
-	[SerializeField]
 	[Header("演出中に守るバリア")]
+	[SerializeField]
 	private GameObject barrierGO;
 
 	[Header("左下のベースを変更ボタンラベル")]
 	[SerializeField]
 	private UILabel changeBaseButtonLabel;
 
-	[Header("取外パッチの残り個数")]
 	[SerializeField]
+	[Header("取外パッチの残り個数")]
 	private UILabel ejectCountLabel;
 
-	[Header("拡張パッチの残り個数")]
 	[SerializeField]
+	[Header("拡張パッチの残り個数")]
 	private UILabel extraCountLabel;
 
-	[SerializeField]
 	[Header("右下の切り替わるメニューのオブジェクト")]
+	[SerializeField]
 	private ChipSphereStatus[] chipSphereStatus;
 
 	[SerializeField]
@@ -67,12 +67,12 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private UITexture[] partsUpperCutinTextures;
 
-	[SerializeField]
 	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
+	[SerializeField]
 	private GameObject ejectItemCutinGO;
 
-	[Header("拡張/チップ取外アニメーションのテクスチャ")]
 	[SerializeField]
+	[Header("拡張/チップ取外アニメーションのテクスチャ")]
 	private UITexture[] ejectItemCutinTextures;
 
 	private CharacterCameraView characterCameraView;
@@ -162,6 +162,7 @@ public sealed class CMD_ChipSphere : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		base.Show(f, sizeX, sizeY, aT);
+		base.SetTutorialAnyTime("anytime_second_tutorial_chip_equipment");
 		this.Init(ChipDataMng.userChipData);
 	}
 
@@ -235,13 +236,13 @@ public sealed class CMD_ChipSphere : CMD
 		int arousal = CMD_ChipSphere.DataChg.monsterM.GetArousal();
 		this.myMaxChipSlot = 5;
 		int num = 0;
-		if (CMD_ChipSphere.DataChg.GetSlotStatus() == null)
+		if (CMD_ChipSphere.DataChg.GetChipEquip().GetSlotStatus() == null)
 		{
 			global::Debug.LogError("DataChg.GetSlotStatus() == null");
 		}
 		else
 		{
-			GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage slotStatus = CMD_ChipSphere.DataChg.GetSlotStatus();
+			GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage slotStatus = CMD_ChipSphere.DataChg.GetChipEquip().GetSlotStatus();
 			global::Debug.LogFormat("無料:{0}/{1}, 課金:{2}/{3}", new object[]
 			{
 				slotStatus.slotNum,
@@ -312,7 +313,7 @@ public sealed class CMD_ChipSphere : CMD
 		string chipDetail = string.Empty;
 		int userChipId = 0;
 		int itemCount = 0;
-		GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage slotStatus = CMD_ChipSphere.DataChg.GetSlotStatus();
+		GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage slotStatus = CMD_ChipSphere.DataChg.GetChipEquip().GetSlotStatus();
 		int num = slotStatus.maxSlotNum + slotStatus.extraSlotNum;
 		if (buttonNo == 1)
 		{

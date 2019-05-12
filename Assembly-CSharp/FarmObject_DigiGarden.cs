@@ -63,7 +63,7 @@ public sealed class FarmObject_DigiGarden : FarmObject
 		bool flag2 = false;
 		base.CancelInvoke("SetActiveCanEvolveParticle");
 		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.GROWING_IN_GARDEN);
+		list = MonsterFilter.Filter(list, MonsterFilterType.GROWING_IN_GARDEN);
 		if (0 < list.Count)
 		{
 			int num = -1;

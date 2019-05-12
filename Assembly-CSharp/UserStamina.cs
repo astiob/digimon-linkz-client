@@ -33,7 +33,7 @@ public sealed class UserStamina : MonoBehaviour
 		this.SetStaminaDetails();
 		if (0 < this.countDown && this.countDownCoroutine == null)
 		{
-			this.countDownCoroutine = AppCoroutine.Start(this.UpdateRecoverTime(), false);
+			this.countDownCoroutine = AppCoroutine.Start(this.UpdateRecoverTime(), true);
 		}
 	}
 
@@ -41,7 +41,14 @@ public sealed class UserStamina : MonoBehaviour
 	{
 		if (this.countDownCoroutine != null)
 		{
-			base.StopCoroutine(this.countDownCoroutine);
+		}
+	}
+
+	private void OnDestroy()
+	{
+		if (this.countDownCoroutine != null)
+		{
+			AppCoroutine.Stop(this.countDownCoroutine, false);
 			this.countDownCoroutine = null;
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿using CharacterModelUI;
+using Monster;
 using System;
 using UnityEngine;
 
@@ -10,19 +11,21 @@ namespace EvolutionRouteMap
 
 		private BoxCollider returnButtonCollider;
 
-		private string monsterGroupId;
+		private string monsterModelId;
+
+		private string eggModelId;
 
 		private void OnFinishShowAnimation()
 		{
-			if (!string.IsNullOrEmpty(this.monsterGroupId))
+			if (!string.IsNullOrEmpty(this.monsterModelId))
 			{
-				this.modelViewer.LoadMonsterModel(this.monsterGroupId, Vector3.zero, 170f);
+				this.modelViewer.LoadMonsterModel(this.monsterModelId, Vector3.zero, 170f);
 				this.modelViewer.SetCharacterCameraDistance();
 			}
 			else
 			{
 				Vector3 characterPosition = new Vector3(0f, 0.1f, 0f);
-				this.modelViewer.LoadEggModel(this.monsterGroupId, characterPosition, 0f);
+				this.modelViewer.LoadEggModel(this.eggModelId, characterPosition, 0f);
 			}
 			this.modelViewer.EnableTouchEvent(true);
 			this.returnButtonCollider.enabled = true;
@@ -57,24 +60,16 @@ namespace EvolutionRouteMap
 			this.returnButtonCollider = collider;
 		}
 
-		public void SetMonsterData(string monsterGroupId)
+		public void SetMonsterData(string modelId)
 		{
-			this.monsterGroupId = monsterGroupId;
+			this.monsterModelId = modelId;
+			this.eggModelId = string.Empty;
 		}
 
 		public void SetEggData(string monsterEvolutionRouteId)
 		{
-			GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM respDataMA_MonsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM;
-			this.monsterGroupId = string.Empty;
-			for (int i = 0; i < respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM.Length; i++)
-			{
-				GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM.MonsterEvolutionRouteM monsterEvolutionRouteM = respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i];
-				if (string.IsNullOrEmpty(monsterEvolutionRouteId) || monsterEvolutionRouteM.monsterEvolutionRouteId == monsterEvolutionRouteId)
-				{
-					this.monsterGroupId = monsterEvolutionRouteM.eggMonsterId;
-					break;
-				}
-			}
+			this.eggModelId = MonsterObject.GetEggModelId(monsterEvolutionRouteId);
+			this.monsterModelId = string.Empty;
 		}
 	}
 }

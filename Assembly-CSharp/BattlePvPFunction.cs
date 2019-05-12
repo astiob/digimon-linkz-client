@@ -450,7 +450,14 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		case TCPMessageType.None:
 			return;
 		default:
-			if (tcpMessageType == TCPMessageType.LeaderChange)
+			if (tcpMessageType != TCPMessageType.LeaderChange)
+			{
+				if (tcpMessageType == TCPMessageType.AdventureScene)
+				{
+					base.RecieveAdventureSceneData(tcpMessageType, messageObj);
+				}
+			}
+			else
 			{
 				base.RecieveLeaderChange(tcpMessageType, messageObj);
 			}
@@ -480,19 +487,19 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 	{
 		int index = 0;
 		int iconSpritesIndex = 1;
-		UISprite componentInChildren = button.transform.GetComponentInChildren<UISprite>();
+		UITexture componentInChildren = button.transform.GetComponentInChildren<UITexture>();
 		if (componentInChildren == null)
 		{
 			return;
 		}
-		string spriteName = componentInChildren.spriteName;
-		base.stateManager.uiControlPvP.ShowEmotion(index, spriteName, false);
+		string name = componentInChildren.mainTexture.name;
+		base.stateManager.uiControlPvP.ShowEmotion(index, name, false);
 		SoundPlayer.PlayButtonEnter();
 		EmotionData message = new EmotionData
 		{
 			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.Emotion, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
-			spriteName = spriteName,
+			spriteName = name,
 			iconSpritesIndex = iconSpritesIndex
 		};
 		base.SendMessageForSync(TCPMessageType.Emotion, message);

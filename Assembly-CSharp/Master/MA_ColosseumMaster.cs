@@ -17,10 +17,14 @@ namespace Master
 
 		public override RequestBase CreateRequest()
 		{
-			return new GameWebAPI.RequestMA_ColosseumMaster
+			GameWebAPI.RequestMA_ColosseumMaster requestMA_ColosseumMaster = new GameWebAPI.RequestMA_ColosseumMaster();
+			requestMA_ColosseumMaster.SetSendData = delegate(GameWebAPI.RequestMA_ColosseumM requestParam)
 			{
-				OnReceived = new Action<GameWebAPI.RespDataMA_ColosseumM>(base.SetResponse)
+				int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
+				requestParam.countryCode = countryCode;
 			};
+			requestMA_ColosseumMaster.OnReceived = new Action<GameWebAPI.RespDataMA_ColosseumM>(base.SetResponse);
+			return requestMA_ColosseumMaster;
 		}
 	}
 }
