@@ -212,17 +212,10 @@ public static class FarmDataManager
 			break;
 		}
 		default:
-			switch (facilityID)
-			{
-			case 23:
-				result = FarmDataManager.GetEvolutionEffectValue(level);
-				break;
-			case 25:
+			if (facilityID == 25)
 			{
 				FacilityChipM facilityChipFarmMaster = FarmDataManager.GetFacilityChipFarmMaster(level);
 				result = facilityChipFarmMaster.maxChipNum;
-				break;
-			}
 			}
 			break;
 		case 7:
@@ -244,16 +237,7 @@ public static class FarmDataManager
 	public static string GetFacilityDescription(int facilityId, int level)
 	{
 		FacilityM facilityM = FarmDataManager.GetFacilityMaster(facilityId);
-		string result = string.Empty;
-		if (facilityId == 23)
-		{
-			result = facilityM.description + FarmDataManager.GetEvolutionEffectDesctiption(level);
-		}
-		else
-		{
-			result = facilityM.description;
-		}
-		return result;
+		return facilityM.description;
 	}
 
 	public static FacilityMeatFieldM GetFacilityMeatFarmMaster(int level)
@@ -440,82 +424,5 @@ public static class FarmDataManager
 			OnReceived = onSuccessed
 		};
 		return new APIRequestTask(request, requestRetry);
-	}
-
-	private static string GetEvolutionEffectDesctiption(int level)
-	{
-		string facilityId = 23.ToString();
-		string level2 = level.ToString();
-		FacilityExtraEffectLevelM[] facilityExtraEffectLevelM = FarmDataManager.GetFacilityExtraEffectLevelM(facilityId, level2);
-		FacilityExtraEffectM[] facilityExtraEffectMasterList = FarmDataManager.GetFacilityExtraEffectMasterList(facilityExtraEffectLevelM);
-		string text;
-		if (0 < facilityExtraEffectMasterList.Length)
-		{
-			text = facilityExtraEffectMasterList[0].effectValue;
-			for (int i = 1; i < facilityExtraEffectMasterList.Length; i++)
-			{
-				text = text + "・" + facilityExtraEffectMasterList[i].detail;
-			}
-		}
-		else
-		{
-			text = string.Empty;
-		}
-		return text;
-	}
-
-	private static string GetEvolutionEffectValue(int level)
-	{
-		string facilityId = 23.ToString();
-		string level2 = level.ToString();
-		FacilityExtraEffectLevelM[] facilityExtraEffectLevelM = FarmDataManager.GetFacilityExtraEffectLevelM(facilityId, level2);
-		FacilityExtraEffectM[] facilityExtraEffectMasterList = FarmDataManager.GetFacilityExtraEffectMasterList(facilityExtraEffectLevelM);
-		string result;
-		if (1 < facilityExtraEffectMasterList.Length)
-		{
-			result = "0";
-		}
-		else if (facilityExtraEffectMasterList.Length == 1)
-		{
-			result = facilityExtraEffectMasterList[0].effectValue;
-		}
-		else
-		{
-			result = "0";
-		}
-		return result;
-	}
-
-	private static FacilityExtraEffectLevelM[] GetFacilityExtraEffectLevelM(string facilityId, string level)
-	{
-		return FarmDataManager.facilityExtraEffectLevelMaster.Where((FacilityExtraEffectLevelM x) => x.facilityId == facilityId && x.level == level).ToArray<FacilityExtraEffectLevelM>();
-	}
-
-	private static FacilityExtraEffectM[] GetFacilityExtraEffectMasterList(FacilityExtraEffectLevelM[] extraEffectLevelList)
-	{
-		List<FacilityExtraEffectM> list = new List<FacilityExtraEffectM>();
-		for (int i = 0; i < extraEffectLevelList.Length; i++)
-		{
-			FacilityExtraEffectM facilityExtraEffectM = FarmDataManager.GetFacilityExtraEffectM(extraEffectLevelList[i].facilityExtraEffectId);
-			if (facilityExtraEffectM != null)
-			{
-				list.Add(facilityExtraEffectM);
-			}
-		}
-		return list.ToArray();
-	}
-
-	private static FacilityExtraEffectM GetFacilityExtraEffectM(string extraEffectId)
-	{
-		FacilityExtraEffectM result = null;
-		for (int i = 0; i < FarmDataManager.facilityExtraEffectMaster.Count; i++)
-		{
-			if (FarmDataManager.facilityExtraEffectMaster[i].facilityExtraEffectId == extraEffectId)
-			{
-				result = FarmDataManager.facilityExtraEffectMaster[i];
-				break;
-			}
-		}
-		return result;
 	}
 }

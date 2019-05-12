@@ -503,7 +503,6 @@
     <Compile Include="CMD_ResearchModal.cs" />
     <Compile Include="CMD_ResearchModalAlert.cs" />
     <Compile Include="CMD_SaleCheck.cs" />
-    <Compile Include="CMD_SAMPLE.cs" />
     <Compile Include="CMD_Shop.cs" />
     <Compile Include="CMD_ShortDownload.cs" />
     <Compile Include="CMD_SPBonusList.cs" />
@@ -1872,6 +1871,7 @@
     <Compile Include="UtilForCMD.cs" />
     <Compile Include="UVAnimHelper.cs" />
     <Compile Include="UVAnimHelper_2.cs" />
+    <Compile Include="UVSplitAnimationHelper.cs" />
     <Compile Include="VersatileDataStore.cs" />
     <Compile Include="VersionManager.cs" />
     <Compile Include="VersionUPController.cs" />
@@ -1901,87 +1901,87 @@
       <Name>Chopin</Name>
     </ProjectReference>
     <ProjectReference Include="..\JsonFx.Json\JsonFx.Json.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857967}</Project>
       <Name>JsonFx.Json</Name>
     </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796A}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Secure\Secure.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
       <Name>Secure</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml\System.Xml.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>System.Xml</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\TextMeshPro-2017.3-1.0.56-Runtime\TextMeshPro-2017.3-1.0.56-Runtime.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>TextMeshPro-2017.3-1.0.56-Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.AnimationModule\UnityEngine.AnimationModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>UnityEngine.AnimationModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.AudioModule\UnityEngine.AudioModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857978}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
       <Name>UnityEngine.AudioModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857977}</Project>
       <Name>UnityEngine.CoreModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.ImageConversionModule\UnityEngine.ImageConversionModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857980}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797D}</Project>
       <Name>UnityEngine.ImageConversionModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.IMGUIModule\UnityEngine.IMGUIModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857981}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797E}</Project>
       <Name>UnityEngine.IMGUIModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.JSONSerializeModule\UnityEngine.JSONSerializeModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857983}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857980}</Project>
       <Name>UnityEngine.JSONSerializeModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.ParticleSystemModule\UnityEngine.ParticleSystemModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857986}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857983}</Project>
       <Name>UnityEngine.ParticleSystemModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.Physics2DModule\UnityEngine.Physics2DModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857988}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857985}</Project>
       <Name>UnityEngine.Physics2DModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.PhysicsModule\UnityEngine.PhysicsModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857989}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857986}</Project>
       <Name>UnityEngine.PhysicsModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.TextRenderingModule\UnityEngine.TextRenderingModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857993}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857990}</Project>
       <Name>UnityEngine.TextRenderingModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857996}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857993}</Project>
       <Name>UnityEngine.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UnityWebRequestModule\UnityEngine.UnityWebRequestModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799A}</Project>
       <Name>UnityEngine.UnityWebRequestModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UnityWebRequestWWWModule\UnityEngine.UnityWebRequestWWWModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799C}</Project>
       <Name>UnityEngine.UnityWebRequestWWWModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\websocket-sharp\websocket-sharp.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A5}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A2}</Project>
       <Name>websocket-sharp</Name>
     </ProjectReference>
   </ItemGroup>

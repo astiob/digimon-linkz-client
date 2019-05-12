@@ -4,6 +4,7 @@ using Quest;
 using System;
 using System.Collections;
 using Title;
+using TS;
 using UnityEngine;
 
 public sealed class GUIScreenTitle : GUIScreen
@@ -311,10 +312,7 @@ public sealed class GUIScreenTitle : GUIScreen
 	{
 		if (GUIManager.IsEnableBackKeyAndroid() && Input.GetKeyDown(KeyCode.Escape))
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.AppQuit), "CMD_Confirm", null) as CMD_Confirm;
-			cmd_Confirm.Title = StringMaster.GetString("BackKeyConfirmTitle");
-			cmd_Confirm.Info = StringMaster.GetString("BackKeyConfirmExit");
-			SoundMng.Instance().PlaySE("SEInternal/Common/se_106", 0f, false, true, null, -1, 1f);
+			ScriptUtil.ShowCommonDialog(new Action<int>(this.AppQuit), "BackKeyConfirmTitle", "BackKeyConfirmExit", "SEInternal/Common/se_106");
 		}
 	}
 

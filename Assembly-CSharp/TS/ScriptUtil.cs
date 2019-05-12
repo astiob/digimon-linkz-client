@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Master;
+using System;
 
 namespace TS
 {
@@ -60,6 +61,47 @@ namespace TS
 				}
 			}
 			return result;
+		}
+
+		public static void ShowCommonDialogForMessage(Action<int> callback, string title, string info, string se = "SEInternal/Common/se_106")
+		{
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(callback, "CMD_Confirm", null) as CMD_Confirm;
+			cmd_Confirm.Title = title;
+			cmd_Confirm.Info = info;
+			SoundMng.Instance().PlaySE(se, 0f, false, true, null, -1, 1f);
+		}
+
+		public static void ShowCommonDialog(Action<int> callback, string titleKey, string infoKey, string se = "SEInternal/Common/se_106")
+		{
+			ScriptUtil.ShowCommonDialogForMessage(callback, StringMaster.GetString(titleKey), StringMaster.GetString(infoKey), se);
+		}
+
+		public static float CheckSize(int size, ref ScriptUtil.SIZE_TYPE type)
+		{
+			type = ScriptUtil.SIZE_TYPE.KILOBYTE;
+			float num = (float)size;
+			if (num > 1024f)
+			{
+				num /= 1024f;
+			}
+			if (num > 1024f)
+			{
+				num /= 1024f;
+				type = ScriptUtil.SIZE_TYPE.MEGABYTE;
+			}
+			if (num > 1024f)
+			{
+				num /= 1024f;
+				type = ScriptUtil.SIZE_TYPE.GIGABYTE;
+			}
+			return num;
+		}
+
+		public enum SIZE_TYPE
+		{
+			KILOBYTE,
+			MEGABYTE,
+			GIGABYTE
 		}
 	}
 }

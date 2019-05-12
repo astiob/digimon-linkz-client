@@ -108,7 +108,7 @@ public sealed class CMD_CharacterDetailed : CMD
 		return cmd_CharacterDetailed;
 	}
 
-	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, string evolutionType, bool reviewFirstUltima, bool reviewFirstEvolution, Action endCutin)
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, string evolutionType, bool reviewFirstEvolution, bool reviewFirstUltimaEvolution, Action endCutin)
 	{
 		CMD_CharacterDetailed.DataChg = monster;
 		CMD_CharacterDetailed window = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
@@ -122,11 +122,11 @@ public sealed class CMD_CharacterDetailed : CMD
 			{
 				endCutin();
 			}
-			if (reviewFirstUltima)
+			if (reviewFirstEvolution)
 			{
 				LeadReview.ShowReviewConfirm(LeadReview.MessageType.FIRST_EVOLUTION, null, false);
 			}
-			else if (reviewFirstEvolution)
+			else if (reviewFirstUltimaEvolution)
 			{
 				LeadReview.ShowReviewConfirm(LeadReview.MessageType.FIRST_ULTIMA_EVOLUTION, null, false);
 			}

@@ -62,14 +62,14 @@ namespace UI.Common
 
 		public void StartFadeIn()
 		{
-			this.SetTween(0f, 1f, 0f);
 			EventDelegate.Set(this.tweenAlpha.onFinished, new EventDelegate.Callback(this.OnCompleteFadeIn));
+			this.SetTween(0f, 1f, 0f);
 		}
 
 		public void StartFadeOut()
 		{
-			this.SetTween(1f, 0f, this.delayFadeOutTime);
 			EventDelegate.Set(this.tweenAlpha.onFinished, new EventDelegate.Callback(this.OnCompleteFadeOut));
+			this.SetTween(1f, 0f, this.delayFadeOutTime);
 		}
 
 		public void StopFade()

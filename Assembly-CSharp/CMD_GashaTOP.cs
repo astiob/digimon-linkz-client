@@ -108,6 +108,7 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 			List<int> list = this.gashaInfoManager.RemoveExcessGasha();
 			if (0 < list.Count)
 			{
+				this.RemoveGashaButtonTexture(list);
 				this.CreateGashaButtonList(this.gashaInfoManager.GetInfoList(), this.gashaButtonTextureList, this.selectGashaButtonIndex, this.isTutorial);
 				for (int i = 0; i < list.Count; i++)
 				{
@@ -309,6 +310,30 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 			}
 		}
 		return result;
+	}
+
+	private void RemoveGashaButtonTexture(List<int> deleteGashaIds)
+	{
+		for (int i = 0; i < deleteGashaIds.Count; i++)
+		{
+			if (this.gashaButtonTextureList.Length > deleteGashaIds[i])
+			{
+				this.gashaButtonTextureList[deleteGashaIds[i]] = null;
+			}
+		}
+		int num = (this.gashaButtonTextureList != null) ? this.gashaButtonTextureList.Length : 0;
+		num = ((num >= deleteGashaIds.Count) ? (num - deleteGashaIds.Count) : 0);
+		Texture[] array = new Texture[num];
+		int num2 = 0;
+		for (int j = 0; j < this.gashaButtonTextureList.Length; j++)
+		{
+			if (null != this.gashaButtonTextureList[j] && num2 < num)
+			{
+				array[num2] = this.gashaButtonTextureList[j];
+				num2++;
+			}
+		}
+		this.gashaButtonTextureList = array;
 	}
 
 	public void SetTutorialParameter(Dictionary<string, Action> passTutorialAction)

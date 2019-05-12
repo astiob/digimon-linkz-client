@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857979}</ProjectGuid>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnityEngine</RootNamespace>
@@ -46,15 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857977}</Project>
       <Name>UnityEngine.CoreModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.PhysicsModule\UnityEngine.PhysicsModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857989}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857986}</Project>
       <Name>UnityEngine.PhysicsModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.SharedInternalsModule\UnityEngine.SharedInternalsModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857988}</Project>
       <Name>UnityEngine.SharedInternalsModule</Name>
     </ProjectReference>
   </ItemGroup>

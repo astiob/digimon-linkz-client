@@ -657,7 +657,7 @@ public class SkillStatus
 			num6 = ((!isPhysics) ? targetCharacter.extraSpecialDefencePower : targetCharacter.extraDefencePower);
 		}
 		float num7 = (!isPhysics) ? attackerCharacter.leaderSkillResult.specialAttackUpPercent : attackerCharacter.leaderSkillResult.attackUpPercent;
-		float num8 = (!isPhysics) ? attackerCharacter.leaderSkillResult.specialDefenceUpPercent : targetCharacter.leaderSkillResult.defenceUpPercent;
+		float num8 = (!isPhysics) ? targetCharacter.leaderSkillResult.specialDefenceUpPercent : targetCharacter.leaderSkillResult.defenceUpPercent;
 		float num9 = num7 * (float)num5;
 		float num10 = num8 * (float)num6;
 		global::Debug.Log(string.Format("onLeaderAttackUp {0} | onLeaderDefenceUp {1}", num9, num10));
@@ -694,10 +694,29 @@ public class SkillStatus
 		}
 		attackCalced = (float)num5 + num - num2 + num9;
 		defenceCalced = (float)num6 + num3 - num4 + num10;
-		attackCalced = Mathf.Min(attackCalced, (float)num5 * 2.2f);
-		attackCalced = Mathf.Max(attackCalced, (float)num5 * 0.6f);
-		defenceCalced = Mathf.Min(defenceCalced, (float)num6 * 2.2f);
-		defenceCalced = Mathf.Max(defenceCalced, (float)num6 * 0.6f);
+		attackCalced = Mathf.Min(attackCalced, (float)num5 * 3f);
+		attackCalced = Mathf.Max(attackCalced, 0f);
+		defenceCalced = Mathf.Min(defenceCalced, (float)num6 * 3f);
+		defenceCalced = Mathf.Max(defenceCalced, 0f);
+		global::Debug.Log("=========================================");
+		global::Debug.Log("onAttackUp : " + num);
+		global::Debug.Log("onAttackDown : " + num2);
+		global::Debug.Log("onDefenceUp : " + num3);
+		global::Debug.Log("onDefenceDown : " + num4);
+		global::Debug.Log(string.Format("攻撃 {0}/(上限{1}/下限{2}/基礎{3})", new object[]
+		{
+			attackCalced,
+			(float)num5 * 3f,
+			0f,
+			num5
+		}));
+		global::Debug.Log(string.Format("防御 {0}/(上限{1}/下限{2}/基礎{3})", new object[]
+		{
+			defenceCalced,
+			(float)num6 * 3f,
+			0f,
+			num6
+		}));
 	}
 
 	public static SkillResults GetStageDamageSkillResult(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)

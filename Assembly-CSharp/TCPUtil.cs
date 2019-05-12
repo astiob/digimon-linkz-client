@@ -62,6 +62,8 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		}
 	}
 
+	public static bool USE_DEBUG_OUT { get; set; }
+
 	public void PrepareTCPServer(Action<string> action, string shardingType)
 	{
 		this.afterGetTcpShardingStringAction = action;
@@ -265,6 +267,7 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		}
 		Dictionary<string, object> dictionary = new Dictionary<string, object>();
 		dictionary.Add(tcpKey, data);
+		this.ShowSendData(tcpKey, data);
 		this.manager.Request(dictionary, this.SocketCtrl, false, 0u);
 	}
 
@@ -277,6 +280,7 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		}
 		Dictionary<string, object> dictionary = new Dictionary<string, object>();
 		dictionary.Add(tcpKey, data);
+		this.ShowSendData(tcpKey, data);
 		this.manager.Request(to, dictionary);
 	}
 
@@ -598,6 +602,10 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 	{
 		string message = string.Format(StringMaster.GetString(mes), uname);
 		base.StartCoroutine(this.SendChatMessage(cgi, message, 3, action));
+	}
+
+	private void ShowSendData(string key, Dictionary<string, object> sendData)
+	{
 	}
 
 	public void OnJoinRoom(NpRoomParameter roomData)

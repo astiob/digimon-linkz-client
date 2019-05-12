@@ -60,7 +60,7 @@ public sealed class PartsMenu : MonoBehaviour
 		this.UpdateBackKeyAndroid();
 		if (this.mainParts.IsShow())
 		{
-			this.ngTX_DATE.text = DateTime.Now.ToString(StringMaster.GetString("PartsMenu_txt"));
+			this.ngTX_DATE.text = ServerDateTime.Now.ToString(StringMaster.GetString("PartsMenu_txt"));
 		}
 	}
 

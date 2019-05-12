@@ -2,6 +2,7 @@
 using Monster;
 using System;
 using System.Collections;
+using TS;
 using UnityEngine;
 
 public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
@@ -64,6 +65,8 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 
 	private SwipeControllerLR swipeController;
 
+	private bool closeDownloadPopup;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -105,9 +108,57 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 		this.InitAndSpawnOthers();
 		GUIFadeControll.StartFadeIn(1f);
 		RestrictionInput.EndLoad();
-		yield return base.StartCoroutine(this.StartDownload());
+		int size = 0;
+		int count = AssetDataMng.Instance().GetDownloadAssetBundleCount(string.Empty, out size);
+		this.DownloadConfirmation(size, false);
+		while (!this.closeDownloadPopup)
+		{
+			yield return null;
+		}
+		yield return base.StartCoroutine(this.StartDownload(count));
 		base.StartCoroutine(this.EndAssetBundleDownload());
 		yield break;
+	}
+
+	private void DownloadConfirmation(int size, bool returnConfirmation = false)
+	{
+		if (size <= 0)
+		{
+			this.closeDownloadPopup = true;
+			return;
+		}
+		string[] array = new string[]
+		{
+			StringMaster.GetString("DownloadSizeKB"),
+			StringMaster.GetString("DownloadSizeMB"),
+			StringMaster.GetString("DownloadSizeGB")
+		};
+		ScriptUtil.SIZE_TYPE size_TYPE = ScriptUtil.SIZE_TYPE.KILOBYTE;
+		ScriptUtil.ShowCommonDialogForMessage(delegate(int index)
+		{
+			if (index == 0)
+			{
+				this.closeDownloadPopup = true;
+			}
+			else if (returnConfirmation)
+			{
+				ScriptUtil.ShowCommonDialog(delegate(int id)
+				{
+					if (id == 0)
+					{
+						GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
+					}
+					else
+					{
+						this.DownloadConfirmation(size, false);
+					}
+				}, "BackKeyConfirmTitle", "DownloadSizeExit", "SEInternal/Common/se_106");
+			}
+			else
+			{
+				GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
+			}
+		}, StringMaster.GetString("DownloadSizeTitle"), string.Format(StringMaster.GetString("DownloadSizeInfo"), ScriptUtil.CheckSize(size, ref size_TYPE), array[(int)size_TYPE]), "SEInternal/Common/se_106");
 	}
 
 	private IEnumerator PreloadSpawnMonsters()
@@ -167,13 +218,12 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 		this.GetRightDigimonTransform().localPosition = this.circleTrans.localPosition + Vector3.right * 5f;
 	}
 
-	private IEnumerator StartDownload()
+	private IEnumerator StartDownload(int count)
 	{
 		AssetDataMng assetDataMng = AssetDataMng.Instance();
 		if (!assetDataMng.IsAssetBundleDownloading())
 		{
-			int downloadAssetBundleCount = assetDataMng.GetDownloadAssetBundleCount(string.Empty);
-			assetDataMng.StartDownloadAssetBundle(downloadAssetBundleCount, 4);
+			assetDataMng.StartDownloadAssetBundle(count, 4);
 		}
 		yield return base.StartCoroutine(this.UpdateProgressBar());
 		yield break;

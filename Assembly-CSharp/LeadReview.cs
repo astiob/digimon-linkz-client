@@ -105,12 +105,12 @@ public sealed class LeadReview
 				string2 = StringMaster.GetString("LeadReview02Info");
 				break;
 			case LeadReview.MessageType.FIRST_EVOLUTION:
-				@string = StringMaster.GetString("LeadReview03Title");
-				string2 = StringMaster.GetString("LeadReview03Info");
-				break;
-			case LeadReview.MessageType.FIRST_ULTIMA_EVOLUTION:
 				@string = StringMaster.GetString("LeadReview04Title");
 				string2 = StringMaster.GetString("LeadReview04Info");
+				break;
+			case LeadReview.MessageType.FIRST_ULTIMA_EVOLUTION:
+				@string = StringMaster.GetString("LeadReview03Title");
+				string2 = StringMaster.GetString("LeadReview03Info");
 				break;
 			default:
 				if (finishedAction != null)
