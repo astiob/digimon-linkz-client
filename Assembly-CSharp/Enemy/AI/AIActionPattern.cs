@@ -28,7 +28,12 @@ namespace Enemy.AI
 			this._minRange = minRange;
 			this._maxRange = maxRange;
 			this._aiActionClip = new List<AIActionClip>(aiActionClip);
-			this.NormalizeActionPattern();
+			float value = 0f;
+			for (int i = 0; i < this._aiActionClip.Count; i++)
+			{
+				this._aiActionClip[i] = new AIActionClip(this._aiActionClip[i].targetSelectRerefence, this._aiActionClip[i].selectingOrder, this._aiActionClip[i].minValue, this._aiActionClip[i].maxValue, Mathf.Clamp01(value), Mathf.Clamp01(this._aiActionClip[i].maxRange), this._aiActionClip[i].useSkillId);
+				value = this._aiActionClip[i].maxRange;
+			}
 		}
 
 		public float minRange
@@ -85,7 +90,7 @@ namespace Enemy.AI
 			float num = UnityEngine.Random.Range(0f, 1f);
 			for (int i = 0; i < this.aiActionClip.Count; i++)
 			{
-				if (!this.aiActionClip[i].isZeroRate)
+				if (this.aiActionClip[i].minRange != this.aiActionClip[i].maxRange)
 				{
 					if (this.aiActionClip[i].minRange <= num && this.aiActionClip[i].maxRange > num)
 					{
@@ -94,16 +99,6 @@ namespace Enemy.AI
 				}
 			}
 			return this.aiActionClip[this.aiActionClip.Count - 1];
-		}
-
-		private void NormalizeActionPattern()
-		{
-			float value = 0f;
-			for (int i = 0; i < this._aiActionClip.Count; i++)
-			{
-				this._aiActionClip[i] = new AIActionClip(this._aiActionClip[i].targetSelectRerefence, this._aiActionClip[i].selectingOrder, this._aiActionClip[i].minValue, this._aiActionClip[i].maxValue, Mathf.Clamp01(value), Mathf.Clamp01(this._aiActionClip[i].maxRange), this._aiActionClip[i].useSkillId);
-				value = this._aiActionClip[i].maxRange;
-			}
 		}
 
 		public override string ToString()

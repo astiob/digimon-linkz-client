@@ -28,6 +28,10 @@ public class MonsterData
 
 	public GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM commonSkillDetailM;
 
+	public GameWebAPI.RespDataMA_GetSkillM.SkillM commonSkillM2;
+
+	public GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM commonSkillDetailM2;
+
 	public GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceM;
 
 	public GameWebAPI.RespDataMA_GetMonsterGrowStepM.MonsterGrowStepM growStepM;
@@ -102,11 +106,24 @@ public class MonsterData
 		return this.userMonsterSlotInfo.equip != null && this.userMonsterSlotInfo.equip.Length > 0;
 	}
 
+	public bool IsVersionUp()
+	{
+		int num = int.Parse(this.monsterM.rare);
+		return num >= 6;
+	}
+
+	public bool CanVersionUp()
+	{
+		int num = int.Parse(this.monsterMG.growStep);
+		int num2 = int.Parse(this.monsterM.rare);
+		return (num == 7 || num == 9) && num2 >= 5;
+	}
+
 	public void InitSkillInfo()
 	{
 		GameWebAPI.RespDataMA_GetSkillM.SkillM[] skillM = MasterDataMng.Instance().RespDataMA_SkillM.skillM;
-		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] skillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.skillDetailM;
-		int num = 3;
+		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] convertSkillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.convertSkillDetailM;
+		int num = 4;
 		for (int i = 0; i < skillM.Length; i++)
 		{
 			if (skillM[i].skillId == this.userMonster.leaderSkillId)
@@ -124,6 +141,11 @@ public class MonsterData
 				this.commonSkillM = skillM[i];
 				num--;
 			}
+			if (skillM[i].skillId == this.userMonster.extraCommonSkillId)
+			{
+				this.commonSkillM2 = skillM[i];
+				num--;
+			}
 			if (num == 0)
 			{
 				break;
@@ -132,24 +154,30 @@ public class MonsterData
 		List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM> list = new List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM>();
 		List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM> list2 = new List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM>();
 		List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM> list3 = new List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM>();
-		for (int i = 0; i < skillDetailM.Length; i++)
+		List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM> list4 = new List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM>();
+		for (int i = 0; i < convertSkillDetailM.Length; i++)
 		{
-			if (skillDetailM[i].skillId == this.userMonster.leaderSkillId)
+			if (convertSkillDetailM[i].skillId == this.userMonster.leaderSkillId)
 			{
-				list.Add(skillDetailM[i]);
+				list.Add(convertSkillDetailM[i]);
 			}
-			if (skillDetailM[i].skillId == this.userMonster.uniqueSkillId)
+			if (convertSkillDetailM[i].skillId == this.userMonster.uniqueSkillId)
 			{
-				list2.Add(skillDetailM[i]);
+				list2.Add(convertSkillDetailM[i]);
 			}
-			if (skillDetailM[i].skillId == this.userMonster.commonSkillId)
+			if (convertSkillDetailM[i].skillId == this.userMonster.commonSkillId)
 			{
-				list3.Add(skillDetailM[i]);
+				list3.Add(convertSkillDetailM[i]);
+			}
+			if (convertSkillDetailM[i].skillId == this.userMonster.extraCommonSkillId)
+			{
+				list4.Add(convertSkillDetailM[i]);
 			}
 		}
 		this.SetSkillDetailData(out this.leaderSkillDetailM, list);
 		this.SetSkillDetailData(out this.actionSkillDetailM, list2);
 		this.SetSkillDetailData(out this.commonSkillDetailM, list3);
+		this.SetSkillDetailData(out this.commonSkillDetailM2, list4);
 	}
 
 	private void SetSkillDetailData(out GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM dust, List<GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM> source)
@@ -177,21 +205,7 @@ public class MonsterData
 
 	public List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> GetUserUnitResistanceList()
 	{
-		string tranceResistance = this.userMonster.tranceResistance;
-		string[] array = null;
-		char[] separator = new char[]
-		{
-			','
-		};
-		if (!string.IsNullOrEmpty(tranceResistance))
-		{
-			array = tranceResistance.Split(separator);
-		}
-		if (array == null)
-		{
-			return new List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM>();
-		}
-		return array.ToList<string>().Select((string n) => this.SerchResistanceById(n)).ToList<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM>();
+		return this.GetUserUnitResistanceList(this.userMonster);
 	}
 
 	public GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM AddResistanceFromMultipleTranceData()
@@ -214,67 +228,40 @@ public class MonsterData
 		monsterResistanceM2.stun = monsterResistanceM.stun;
 		monsterResistanceM2.skillLock = monsterResistanceM.skillLock;
 		monsterResistanceM2.death = monsterResistanceM.death;
-		monsterResistanceM2.deleteFlg = monsterResistanceM.deleteFlg;
-		string[] array = null;
-		char[] separator = new char[]
+		List<string> resistanceIdList = this.GetResistanceIdList(this.userMonster);
+		for (int i = 0; i < resistanceIdList.Count; i++)
 		{
-			','
-		};
-		string tranceResistance = this.userMonster.tranceResistance;
-		if (!string.IsNullOrEmpty(tranceResistance))
-		{
-			array = tranceResistance.Split(separator);
-		}
-		if (array != null)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = this.SerchResistanceById(array[i]);
-				this.AddResistanceFromTranceData(data, monsterResistanceM2);
-			}
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = this.SerchResistanceById(resistanceIdList[i]);
+			this.AddResistanceFromTranceData(data, monsterResistanceM2);
 		}
 		return monsterResistanceM2;
 	}
 
 	public GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM GetUserMonsterTranceData()
 	{
-		string tranceResistance = this.userMonster.tranceResistance;
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM ret = new GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM();
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = new GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM();
 		string text = "0";
-		ret.fire = text;
-		ret.water = text;
-		ret.thunder = text;
-		ret.nature = text;
-		ret.none = text;
-		ret.light = text;
-		ret.dark = text;
-		ret.poison = text;
-		ret.confusion = text;
-		ret.paralysis = text;
-		ret.sleep = text;
-		ret.stun = text;
-		ret.skillLock = text;
-		ret.death = text;
-		ret.deleteFlg = text;
-		string[] array = null;
-		char[] separator = new char[]
+		monsterResistanceM.fire = text;
+		monsterResistanceM.water = text;
+		monsterResistanceM.thunder = text;
+		monsterResistanceM.nature = text;
+		monsterResistanceM.none = text;
+		monsterResistanceM.light = text;
+		monsterResistanceM.dark = text;
+		monsterResistanceM.poison = text;
+		monsterResistanceM.confusion = text;
+		monsterResistanceM.paralysis = text;
+		monsterResistanceM.sleep = text;
+		monsterResistanceM.stun = text;
+		monsterResistanceM.skillLock = text;
+		monsterResistanceM.death = text;
+		List<string> resistanceIdList = this.GetResistanceIdList(this.userMonster);
+		for (int i = 0; i < resistanceIdList.Count; i++)
 		{
-			','
-		};
-		if (!string.IsNullOrEmpty(tranceResistance))
-		{
-			array = tranceResistance.Split(separator);
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = this.SerchResistanceById(resistanceIdList[i]);
+			this.AddResistanceFromTranceData(data, monsterResistanceM);
 		}
-		if (array == null)
-		{
-			return ret;
-		}
-		array.ToList<string>().ForEach(delegate(string n)
-		{
-			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = this.SerchResistanceById(n);
-			this.AddResistanceFromTranceData(data, ret);
-		});
-		return ret;
+		return monsterResistanceM;
 	}
 
 	public GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM AddResistanceFromTranceData(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data, GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM baseData)
@@ -547,8 +534,8 @@ public class MonsterData
 
 	private float CalcParamLinear(float min, float max, float now_lv, float max_lv, float min_lv = 1f)
 	{
-		float f = min + (max - min) / (max_lv - min_lv) * (now_lv - min_lv);
-		return Mathf.Round(f);
+		float num = min + (max - min) / (max_lv - min_lv) * (now_lv - min_lv);
+		return (float)Math.Round((double)num, MidpointRounding.AwayFromZero);
 	}
 
 	private int GetLevel(int level)
@@ -742,5 +729,40 @@ public class MonsterData
 	{
 		GrowStep growStep2 = MonsterData.ToGrowStepId(growStep);
 		return GrowStep.EGG == growStep2;
+	}
+
+	private List<string> GetResistanceIdList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
+	{
+		List<string> list = new List<string>();
+		if (!string.IsNullOrEmpty(userMonster.tranceResistance))
+		{
+			list.AddRange(userMonster.tranceResistance.Split(new char[]
+			{
+				','
+			}));
+		}
+		if (!string.IsNullOrEmpty(userMonster.tranceStatusAilment))
+		{
+			list.AddRange(userMonster.tranceStatusAilment.Split(new char[]
+			{
+				','
+			}));
+		}
+		return list;
+	}
+
+	private List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> GetUserUnitResistanceList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
+	{
+		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> list = new List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM>();
+		List<string> resistanceIdList = this.GetResistanceIdList(userMonster);
+		for (int i = 0; i < resistanceIdList.Count; i++)
+		{
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = this.SerchResistanceById(resistanceIdList[i]);
+			if (monsterResistanceM != null)
+			{
+				list.Add(monsterResistanceM);
+			}
+		}
+		return list;
 	}
 }

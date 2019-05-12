@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(UISprite))]
+[ExecuteInEditMode]
 public class CustomUISpriteAnimation : MonoBehaviour
 {
 	[SerializeField]
@@ -18,8 +18,8 @@ public class CustomUISpriteAnimation : MonoBehaviour
 	[SerializeField]
 	protected bool mLoop = true;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected bool mSnap = true;
 
 	protected UISprite mSprite;

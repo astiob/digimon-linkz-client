@@ -38,9 +38,6 @@ public sealed class CMD_BattleNextChoice : CMD
 	[SerializeField]
 	private UILabel multiNextText;
 
-	[SerializeField]
-	private UILabel battleOptionDescription;
-
 	private GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] newMonsterParamList;
 
 	[SerializeField]
@@ -95,10 +92,6 @@ public sealed class CMD_BattleNextChoice : CMD
 		{
 			this.multiNextText.text = StringMaster.GetString("BattleResult-13");
 		}
-		if (this.battleOptionDescription != null)
-		{
-			this.battleOptionDescription.text = StringMaster.GetString("BattleResult-15");
-		}
 		base.Show(f, sizeX, sizeY, aT);
 	}
 
@@ -139,6 +132,10 @@ public sealed class CMD_BattleNextChoice : CMD
 
 	private void OnPushedAgainButton()
 	{
+		if (!this.CanPlayDungeonOver())
+		{
+			return;
+		}
 		if (!ClassSingleton<QuestData>.Instance.IsWD_DngInfoDataExist())
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
@@ -312,6 +309,10 @@ public sealed class CMD_BattleNextChoice : CMD
 
 	private void OnPushedNextQuestButton()
 	{
+		if (!this.CanPlayDungeonOver())
+		{
+			return;
+		}
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		int[] aliveMonsterList = this.GetAliveMonsterList();
 		APIRequestTask apirequestTask = this.RequestUserMonsterData(aliveMonsterList, true);
@@ -543,6 +544,31 @@ public sealed class CMD_BattleNextChoice : CMD
 				}
 			}
 		}
+		return false;
+	}
+
+	private bool CanPlayDungeonOver()
+	{
+		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+		{
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int result)
+			{
+				this.OnPushedFarmButton();
+			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage.Title = "所持数オーバー";
+			cmd_ModalMessage.Info = "チップが所持数を超えましたのでファームへ遷移します。";
+			return false;
+		}
+		if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
+		{
+			return true;
+		}
+		CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(delegate(int result)
+		{
+			this.OnPushedFarmButton();
+		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		cmd_ModalMessage2.Title = "所持数オーバー";
+		cmd_ModalMessage2.Info = "デジモンが所持数を超えましたのでファームへ遷移します。";
 		return false;
 	}
 

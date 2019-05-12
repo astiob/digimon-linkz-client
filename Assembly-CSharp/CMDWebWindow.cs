@@ -282,6 +282,10 @@ public class CMDWebWindow : CMD, INpWebViewListener
 			text = this.DecodeUrl(text);
 			this.CloseWebView();
 			this.StartWebView(ConstValue.APP_WEB_DOMAIN + text);
+			if (base.GetActionStatus() == CommonDialog.ACT_STATUS.CLOSING || base.GetActionStatus() == CommonDialog.ACT_STATUS.CLOSED)
+			{
+				this.CloseWebView();
+			}
 			break;
 		}
 		case "ExLink":

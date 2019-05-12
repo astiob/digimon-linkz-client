@@ -8,8 +8,8 @@ public class EmotionButtonFront : MonoBehaviour
 	[Header("エモーションを開くボタン")]
 	private UIButton openEmotionButton;
 
-	[Header("スタンプのラベル")]
 	[SerializeField]
+	[Header("スタンプのラベル")]
 	private UILabel stampLabel;
 
 	private void Awake()

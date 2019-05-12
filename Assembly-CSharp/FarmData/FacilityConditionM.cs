@@ -20,7 +20,5 @@ namespace FarmData
 		public string conditionValue;
 
 		public string operatorType;
-
-		public string deleteFlg;
 	}
 }

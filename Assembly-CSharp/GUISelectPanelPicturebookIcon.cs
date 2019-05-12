@@ -10,6 +10,9 @@ public sealed class GUISelectPanelPicturebookIcon : GUISelectPanelBSPartsUD
 	[SerializeField]
 	private int PARTS_CT_MN;
 
+	[SerializeField]
+	private Color iconTextColor = new Color(1f, 1f, 0f, 1f);
+
 	private void SetIconMonsterData(GUIMonsterIcon monsterIcon, MonsterData monsterData, Action<MonsterData> actionShortPress)
 	{
 		monsterIcon.Data = monsterData;
@@ -18,9 +21,13 @@ public sealed class GUISelectPanelPicturebookIcon : GUISelectPanelBSPartsUD
 		{
 			monsterIcon.SetTouchAct_S(null);
 		}
-		else if (monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.ACTIVE || monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE)
+		else
 		{
-			monsterIcon.SetTouchAct_S(actionShortPress);
+			monsterIcon.DimmLevel = monsterData.dimmLevel;
+			if (monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.ACTIVE || monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE)
+			{
+				monsterIcon.SetTouchAct_S(actionShortPress);
+			}
 		}
 	}
 

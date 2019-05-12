@@ -61,7 +61,7 @@ public class BattleInputBasic : BattleInputFunctionBase
 		{
 			return;
 		}
-		base.callAction.ShowHideSkillDescription(index - 1);
+		base.callAction.ShowHideSkillDescription(index);
 	}
 
 	public void OffPressSkillButton(int index)
@@ -79,7 +79,7 @@ public class BattleInputBasic : BattleInputFunctionBase
 			return;
 		}
 		base.callAction.ShowHideSkillDescription(-1);
-		base.ui.skillButton[index].SetColliderActive(true);
+		base.ui.skillSelectUi.skillButton[index].SetColliderActive(true);
 	}
 
 	public void OnPressMonsterButton(int index)
@@ -401,6 +401,6 @@ public class BattleInputBasic : BattleInputFunctionBase
 
 	public void OnSkillButtonRotateAfter(int index)
 	{
-		base.ui.skillButton[index].SetColliderActive(true);
+		base.ui.skillSelectUi.skillButton[index].SetColliderActive(true);
 	}
 }

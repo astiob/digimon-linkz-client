@@ -34,7 +34,10 @@ public class CharacterStatus
 	[SerializeField]
 	protected string _leaderSkillId = string.Empty;
 
-	public CharacterStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, int[] chipIdList)
+	[SerializeField]
+	protected string[] _skillIds;
+
+	public CharacterStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, int[] chipIdList)
 	{
 		this._prefabId = prefabId;
 		this._hp = hp;
@@ -45,8 +48,15 @@ public class CharacterStatus
 		this._speed = speed;
 		this._level = level;
 		this._toleranceId = toleranceId;
+		this.tolerance = tolerance;
 		this.chipIds = chipIdList;
 		Array.Sort<int>(this.chipIds);
+		this._skillIds = new string[]
+		{
+			string.Empty,
+			string.Empty,
+			string.Empty
+		};
 	}
 
 	public CharacterStatus()
@@ -61,6 +71,13 @@ public class CharacterStatus
 		this._level = 1;
 		this._attackPower = this.attackPower;
 		this.chipIds = new int[0];
+		this._skillIds = new string[]
+		{
+			string.Empty,
+			string.Empty,
+			string.Empty
+		};
+		this.tolerance = Tolerance.GetNutralTolerance();
 	}
 
 	public CharacterStatus(CharacterStatus characterStatus)
@@ -74,6 +91,13 @@ public class CharacterStatus
 		this._speed = characterStatus._speed;
 		this._level = characterStatus._level;
 		this.chipIds = characterStatus.chipIds;
+		this._skillIds = new string[]
+		{
+			string.Empty,
+			string.Empty,
+			string.Empty
+		};
+		this.tolerance = Tolerance.GetNutralTolerance();
 	}
 
 	public string prefabId
@@ -148,6 +172,8 @@ public class CharacterStatus
 		}
 	}
 
+	public Tolerance tolerance { get; private set; }
+
 	public string leaderSkillId
 	{
 		get
@@ -164,10 +190,22 @@ public class CharacterStatus
 		}
 	}
 
+	public string[] skillIds
+	{
+		get
+		{
+			return this._skillIds;
+		}
+		set
+		{
+			this._skillIds = value;
+		}
+	}
+
 	public int[] chipIds { get; private set; }
 
 	public CharacterStatus ToCharacterStatus()
 	{
-		return new CharacterStatus(this._prefabId, this._hp, this._attackPower, this._defencePower, this._specialAttackPower, this._specialDefencePower, this._speed, this._level, this._toleranceId, this.chipIds);
+		return new CharacterStatus(this._prefabId, this._hp, this._attackPower, this._defencePower, this._specialAttackPower, this._specialDefencePower, this._speed, this._level, this._toleranceId, this.tolerance, this.chipIds);
 	}
 }

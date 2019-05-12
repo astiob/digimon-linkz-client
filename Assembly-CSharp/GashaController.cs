@@ -51,8 +51,8 @@ public class GashaController : MonoBehaviour
 	[Header("メインカメラリグ")]
 	private GameObject obj_camrig;
 
-	[SerializeField]
 	[Header("サブカメラ")]
+	[SerializeField]
 	private GameObject obj_cam2;
 
 	[SerializeField]
@@ -63,8 +63,8 @@ public class GashaController : MonoBehaviour
 	[Header("カメラスイッチャー")]
 	private GameObject obj_cs;
 
-	[Header("魔方陣")]
 	[SerializeField]
+	[Header("魔方陣")]
 	private GameObject obj_mc;
 
 	[SerializeField]
@@ -79,8 +79,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_mcpar3;
 
-	[SerializeField]
 	[Header("オーラ")]
+	[SerializeField]
 	private GameObject obj_aura;
 
 	[SerializeField]
@@ -95,8 +95,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_aura3;
 
-	[Header("電子球")]
 	[SerializeField]
+	[Header("電子球")]
 	private GameObject obj_electron;
 
 	[SerializeField]
@@ -134,8 +134,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_r3;
 
-	[Header("成熟期")]
 	[SerializeField]
+	[Header("成熟期")]
 	private GameObject obj_sr1;
 
 	[SerializeField]
@@ -154,8 +154,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_ssr3;
 
-	[SerializeField]
 	[Header("究極体")]
+	[SerializeField]
 	private GameObject obj_lr1;
 
 	[SerializeField]
@@ -164,8 +164,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_lr3;
 
-	[Header("アーマー体")]
 	[SerializeField]
+	[Header("アーマー体")]
 	private GameObject obj_sr1b;
 
 	[SerializeField]
@@ -203,8 +203,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_ssr4_r;
 
-	[SerializeField]
 	[Header("超絶レア")]
+	[SerializeField]
 	private GameObject obj_lr1_r;
 
 	[SerializeField]
@@ -216,8 +216,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_lr4_r;
 
-	[Header("キラキラ")]
 	[SerializeField]
+	[Header("キラキラ")]
 	private GameObject obj_newfx10;
 
 	[SerializeField]
@@ -617,6 +617,8 @@ public class GashaController : MonoBehaviour
 		{
 			this.obj_mons = (GameObject)UnityEngine.Object.Instantiate(AssetDataMng.Instance().LoadObject("Characters/" + this.target[i] + "/prefab", null, true));
 		}
+		Camera cam = this.obj_cam.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.obj_mons, cam);
 		this.obj_mons.layer = LayerMask.NameToLayer("Cutscene");
 		foreach (Transform j in this.obj_mons.GetComponentsInChildren<Transform>())
 		{

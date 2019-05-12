@@ -54,16 +54,16 @@ public class UIPanel : UIRect
 	[HideInInspector]
 	private UIDrawCall.Clipping mClipping;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector4 mClipRange = new Vector4(0f, 0f, 300f, 200f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector2 mClipSoftness = new Vector2(4f, 4f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private int mDepth;
 
 	[HideInInspector]

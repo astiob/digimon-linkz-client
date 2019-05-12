@@ -7,20 +7,20 @@ using UnityEngine;
 
 public class GUIListPartsA_StageL : GUIListPartBS
 {
-	[SerializeField]
 	[Header("デフォルトの進捗の画像")]
+	[SerializeField]
 	private string normalProgress = "Common02_ProgressG";
 
-	[SerializeField]
 	[Header("クリア進捗の画像")]
+	[SerializeField]
 	private string clearProgress = "Common02_Progress";
 
 	[SerializeField]
 	[Header("進捗の四角")]
 	private List<GameObject> goPROGRESS_LIST;
 
-	[Header("NEWのGameObject")]
 	[SerializeField]
+	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
 	[SerializeField]
@@ -47,8 +47,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 
 	private Color defalutBackground2Color;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite background;
 
 	private UILabel ngTXT_AREA;
@@ -62,8 +62,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[SerializeField]

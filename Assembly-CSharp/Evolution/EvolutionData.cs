@@ -1,7 +1,6 @@
 ﻿using Master;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Evolution
 {
@@ -9,21 +8,25 @@ namespace Evolution
 	{
 		private Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>> monsterEvolutionDic;
 
+		private Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>> nextMonsterEvolutionTable;
+
+		private Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>> nextMonsterVersionUpTable;
+
 		private Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>> baseMonsterEvolutionTable;
 
-		private void GetEvolutionList(string monsterId, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evolutionList)
+		private void GetBeforeEvolutionList(string monsterId, ref List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evolutionList)
 		{
 			GameWebAPI.RespDataMA_GetMonsterEvolutionM respDataMA_MonsterEvolutionM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionM;
 			for (int i = 0; i < respDataMA_MonsterEvolutionM.monsterEvolutionM.Length; i++)
 			{
-				if (respDataMA_MonsterEvolutionM.monsterEvolutionM[i].nextMonsterId == monsterId)
+				if (respDataMA_MonsterEvolutionM.monsterEvolutionM[i].nextMonsterId == monsterId && respDataMA_MonsterEvolutionM.monsterEvolutionM[i].IsEvolution())
 				{
 					evolutionList.Add(respDataMA_MonsterEvolutionM.monsterEvolutionM[i]);
 				}
 			}
 		}
 
-		private void GetBeforeEvolutionChildList(string monsterId, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evolutionList)
+		private void GetBeforeEvolutionChildList(string monsterId, ref List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evolutionList)
 		{
 			GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM respDataMA_MonsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM;
 			for (int i = 0; i < respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM.Length; i++)
@@ -50,7 +53,7 @@ namespace Evolution
 			}
 		}
 
-		private void GetAfterEvolutionChildList(string monsterId, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evolutionList)
+		private void GetAfterEvolutionChildList(string monsterId, ref List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evolutionList)
 		{
 			GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM respDataMA_MonsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM;
 			for (int i = 0; i < respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM.Length; i++)
@@ -77,6 +80,71 @@ namespace Evolution
 			}
 		}
 
+		private void GetNextVersionUpList(string monsterId, ref List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> versionUpList)
+		{
+			GameWebAPI.RespDataMA_GetMonsterEvolutionM respDataMA_MonsterEvolutionM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionM;
+			for (int i = 0; i < respDataMA_MonsterEvolutionM.monsterEvolutionM.Length; i++)
+			{
+				if (respDataMA_MonsterEvolutionM.monsterEvolutionM[i].baseMonsterId == monsterId && respDataMA_MonsterEvolutionM.monsterEvolutionM[i].IsVersionUp())
+				{
+					versionUpList.Add(respDataMA_MonsterEvolutionM.monsterEvolutionM[i]);
+				}
+			}
+		}
+
+		public bool CheckMaterialNum(int evolutionMaterialId)
+		{
+			bool result = true;
+			GameWebAPI.MonsterEvolutionMaterialMaster.Material evolutionMaterial = EvolutionMaterialData.GetEvolutionMaterial(evolutionMaterialId);
+			for (int i = 1; i <= 7; i++)
+			{
+				string assetValue = evolutionMaterial.GetAssetValue(i);
+				string assetNum = evolutionMaterial.GetAssetNum(i);
+				int num = assetNum.ToInt32();
+				GameWebAPI.UserSoulData userSoulDataBySID = MonsterDataMng.Instance().GetUserSoulDataBySID(assetValue);
+				int num2 = userSoulDataBySID.num.ToInt32();
+				if (num > num2)
+				{
+					result = false;
+					break;
+				}
+			}
+			return result;
+		}
+
+		private bool AnyClearEvolutionCondition(List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> masterList, bool isMaxLevel)
+		{
+			bool result = false;
+			int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
+			for (int i = 0; i < masterList.Count; i++)
+			{
+				string nextMonsterId = masterList[i].nextMonsterId;
+				string effectType = masterList[i].effectType;
+				if (effectType == "1" || effectType == "3" || effectType == "4" || effectType == "5")
+				{
+					if (isMaxLevel && this.CheckMaterialNum(masterList[i].monsterEvolutionMaterialId))
+					{
+						int num2 = CalculatorUtil.CalcClusterForEvolve(nextMonsterId);
+						if (num2 <= num)
+						{
+							result = true;
+							break;
+						}
+					}
+				}
+				else if (this.CheckMaterialNum(masterList[i].monsterEvolutionMaterialId))
+				{
+					int num3 = CalculatorUtil.CalcClusterForModeChange(nextMonsterId);
+					if (num3 <= num)
+					{
+						result = true;
+						break;
+					}
+				}
+			}
+			return result;
+		}
+
 		public void Initialize()
 		{
 			GameWebAPI.RespDataMA_GetMonsterEvolutionM respDataMA_MonsterEvolutionM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionM;
@@ -89,29 +157,32 @@ namespace Evolution
 			{
 				this.baseMonsterEvolutionTable = new Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>>();
 			}
+			if (this.nextMonsterVersionUpTable != null)
+			{
+				this.nextMonsterVersionUpTable.Clear();
+			}
+			else
+			{
+				this.nextMonsterVersionUpTable = new Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>>();
+			}
 		}
 
 		private Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>> MakeEvolutionDic(GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution[] evoS)
 		{
-			global::Debug.Log("================================ 進化辞書作成 開始 = " + Time.realtimeSinceStartup);
 			Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>> dictionary = new Dictionary<string, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>>();
-			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> list = null;
-			string b = "-1";
 			for (int i = 0; i < evoS.Length; i++)
 			{
-				if (evoS[i].baseMonsterId != b)
+				if (evoS[i].IsEvolution())
 				{
-					list = new List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>();
-					dictionary.Add(evoS[i].baseMonsterId, list);
-					list.Add(evoS[i]);
-					b = evoS[i].baseMonsterId;
-				}
-				else
-				{
+					List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> list = null;
+					if (!dictionary.TryGetValue(evoS[i].baseMonsterId, out list))
+					{
+						list = new List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>();
+						dictionary.Add(evoS[i].baseMonsterId, list);
+					}
 					list.Add(evoS[i]);
 				}
 			}
-			global::Debug.Log("================================ 進化辞書作成 終了 = " + Time.realtimeSinceStartup);
 			return dictionary;
 		}
 
@@ -138,10 +209,10 @@ namespace Evolution
 				case GrowStep.CHILD_1:
 				case GrowStep.CHILD_2:
 				case GrowStep.GROWING:
-					this.GetBeforeEvolutionChildList(monsterId, list);
+					this.GetBeforeEvolutionChildList(monsterId, ref list);
 					break;
 				default:
-					this.GetEvolutionList(monsterId, list);
+					this.GetBeforeEvolutionList(monsterId, ref list);
 					break;
 				}
 				this.baseMonsterEvolutionTable.Add(monsterId, list);
@@ -161,7 +232,7 @@ namespace Evolution
 				case GrowStep.EGG:
 				case GrowStep.CHILD_1:
 				case GrowStep.CHILD_2:
-					this.GetAfterEvolutionChildList(monsterId, list);
+					this.GetAfterEvolutionChildList(monsterId, ref list);
 					this.monsterEvolutionDic.Add(monsterId, list);
 					break;
 				}
@@ -169,44 +240,24 @@ namespace Evolution
 			return list;
 		}
 
-		public List<EvolutionData.MonsterEvolveData> GetEvolveListByMonsterData(MonsterData md)
+		public List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> GetMonsterVersionUpList(string monsterId)
 		{
-			List<EvolutionData.MonsterEvolveData> list = new List<EvolutionData.MonsterEvolveData>();
-			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evoList = this.GetEvoList(md.monsterM.monsterId);
-			for (int i = 0; i < evoList.Count; i++)
+			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> list = null;
+			if (!this.nextMonsterVersionUpTable.TryGetValue(monsterId, out list))
 			{
-				EvolutionData.MonsterEvolveData monsterEvolveData = new EvolutionData.MonsterEvolveData();
-				monsterEvolveData.md = md;
-				monsterEvolveData.md_next = MonsterDataMng.Instance().CreateMonsterDataByMID(evoList[i].nextMonsterId);
-				monsterEvolveData.mem = evoList[i];
-				GameWebAPI.MonsterEvolutionMaterialMaster.Material evolutionMaterial = MonsterEvolutionUtil.GetEvolutionMaterial(evoList[i].monsterEvolutionMaterialId);
-				monsterEvolveData.itemList = new List<EvolutionData.MonsterEvolveItem>();
-				for (int j = 1; j <= 7; j++)
-				{
-					EvolutionData.MonsterEvolveItem monsterEvolveItem = new EvolutionData.MonsterEvolveItem();
-					string assetCategoryId = evolutionMaterial.GetAssetCategoryId(j);
-					string assetValue = evolutionMaterial.GetAssetValue(j);
-					string assetNum = evolutionMaterial.GetAssetNum(j);
-					if (assetCategoryId == ConstValue.EVOLVE_ITEM_MONS.ToString())
-					{
-						monsterEvolveItem.catId = ConstValue.EVOLVE_ITEM_MONS;
-						monsterEvolveItem.need_num = int.Parse(assetNum);
-						monsterEvolveItem.md_item = MonsterDataMng.Instance().CreateMonsterDataByMID(assetValue);
-						monsterEvolveItem.haveMDList = MonsterDataMng.Instance().GetMonsterDataListByMID(assetValue);
-						monsterEvolveData.itemList.Add(monsterEvolveItem);
-					}
-					else if (assetCategoryId == ConstValue.EVOLVE_ITEM_SOUL.ToString())
-					{
-						monsterEvolveItem.catId = ConstValue.EVOLVE_ITEM_SOUL;
-						monsterEvolveItem.need_num = int.Parse(assetNum);
-						monsterEvolveItem.sd_item = MonsterDataMng.Instance().GetUserSoulDataBySID(assetValue);
-						monsterEvolveItem.haveNum = int.Parse(monsterEvolveItem.sd_item.num);
-						monsterEvolveData.itemList.Add(monsterEvolveItem);
-					}
-				}
-				list.Add(monsterEvolveData);
+				list = new List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>();
+				this.GetNextVersionUpList(monsterId, ref list);
+				this.nextMonsterVersionUpTable.Add(monsterId, list);
 			}
 			return list;
+		}
+
+		public List<EvolutionData.MonsterEvolveData> GetEvolveListByMonsterData(MonsterData md)
+		{
+			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evoList = this.GetEvoList(md.monsterM.monsterId);
+			List<EvolutionData.MonsterEvolveData> result = new List<EvolutionData.MonsterEvolveData>();
+			this.GetEvolutionDataList(md, evoList, ref result);
+			return result;
 		}
 
 		public List<int> EvolvePostProcess(EvolutionData.MonsterEvolveData med)
@@ -232,85 +283,14 @@ namespace Evolution
 			return list;
 		}
 
-		private bool CanEvolve(MonsterData monsterData)
+		public bool CanEvolve(MonsterData monsterData)
 		{
-			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evoList = this.GetEvoList(monsterData.monsterM.monsterId);
-			int i = 0;
-			while (i < evoList.Count)
-			{
-				string monsterId = new EvolutionData.MonsterEvolveData
-				{
-					md = monsterData,
-					md_next = MonsterDataMng.Instance().CreateMonsterDataByMID(evoList[i].nextMonsterId),
-					mem = evoList[i]
-				}.md_next.userMonster.monsterId;
-				string evolutionType = monsterData.GetEvolutionType(monsterId);
-				int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
-				if (evolutionType == "2")
-				{
-					int num2 = CalculatorUtil.CalcClusterForModeChange(monsterId);
-					if (num >= num2)
-					{
-						goto IL_138;
-					}
-				}
-				else
-				{
-					if (!(evolutionType == "1") && !(evolutionType == "3") && !(evolutionType == "4"))
-					{
-						goto IL_138;
-					}
-					int num2 = CalculatorUtil.CalcClusterForEvolve(monsterId);
-					if (num >= num2)
-					{
-						int num3 = int.Parse(monsterData.userMonster.level);
-						int num4 = int.Parse(monsterData.monsterM.maxLevel);
-						if (num3 >= num4)
-						{
-							goto IL_138;
-						}
-					}
-				}
-				IL_22F:
-				i++;
-				continue;
-				IL_138:
-				bool flag = true;
-				GameWebAPI.MonsterEvolutionMaterialMaster.Material evolutionMaterial = MonsterEvolutionUtil.GetEvolutionMaterial(evoList[i].monsterEvolutionMaterialId);
-				for (int j = 1; j <= 7; j++)
-				{
-					string assetCategoryId = evolutionMaterial.GetAssetCategoryId(j);
-					string assetValue = evolutionMaterial.GetAssetValue(j);
-					string assetNum = evolutionMaterial.GetAssetNum(j);
-					if (assetCategoryId == ConstValue.EVOLVE_ITEM_MONS.ToString())
-					{
-						int num5 = assetNum.ToInt32();
-						List<MonsterData> monsterDataListByMID = MonsterDataMng.Instance().GetMonsterDataListByMID(assetValue);
-						if (num5 > monsterDataListByMID.Count)
-						{
-							flag = false;
-							break;
-						}
-					}
-					else if (assetCategoryId == ConstValue.EVOLVE_ITEM_SOUL.ToString())
-					{
-						int num6 = assetNum.ToInt32();
-						GameWebAPI.UserSoulData userSoulDataBySID = MonsterDataMng.Instance().GetUserSoulDataBySID(assetValue);
-						int num7 = userSoulDataBySID.num.ToInt32();
-						if (num6 > num7)
-						{
-							flag = false;
-							break;
-						}
-					}
-				}
-				if (flag)
-				{
-					return true;
-				}
-				goto IL_22F;
-			}
-			return false;
+			string monsterId = monsterData.userMonster.monsterId;
+			int num = int.Parse(monsterData.userMonster.level);
+			int num2 = int.Parse(monsterData.monsterM.maxLevel);
+			bool isMaxLevel = num2 <= num;
+			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> evoList = this.GetEvoList(monsterId);
+			return this.AnyClearEvolutionCondition(evoList, isMaxLevel);
 		}
 
 		public void CheckEvolveable(GUIMonsterIcon monsterIcon, MonsterData monsterData, bool isOnlyDim = false)
@@ -353,19 +333,95 @@ namespace Evolution
 			return list;
 		}
 
+		private void GetEvolutionDataList(MonsterData md, List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> memS, ref List<EvolutionData.MonsterEvolveData> medList)
+		{
+			for (int i = 0; i < memS.Count; i++)
+			{
+				EvolutionData.MonsterEvolveData monsterEvolveData = new EvolutionData.MonsterEvolveData();
+				monsterEvolveData.md = md;
+				monsterEvolveData.md_next = MonsterDataMng.Instance().CreateMonsterDataByMID(memS[i].nextMonsterId);
+				monsterEvolveData.mem = memS[i];
+				GameWebAPI.MonsterEvolutionMaterialMaster.Material evolutionMaterial = EvolutionMaterialData.GetEvolutionMaterial(memS[i].monsterEvolutionMaterialId);
+				monsterEvolveData.itemList = new List<EvolutionData.MonsterEvolveItem>();
+				for (int j = 1; j <= 7; j++)
+				{
+					EvolutionData.MonsterEvolveItem monsterEvolveItem = new EvolutionData.MonsterEvolveItem();
+					string assetCategoryId = evolutionMaterial.GetAssetCategoryId(j);
+					string assetValue = evolutionMaterial.GetAssetValue(j);
+					string assetNum = evolutionMaterial.GetAssetNum(j);
+					if (assetCategoryId == ConstValue.EVOLVE_ITEM_MONS.ToString())
+					{
+						monsterEvolveItem.catId = ConstValue.EVOLVE_ITEM_MONS;
+						monsterEvolveItem.need_num = int.Parse(assetNum);
+						List<MonsterData> monsterDataListByMID = MonsterDataMng.Instance().GetMonsterDataListByMID(assetValue);
+						monsterEvolveItem.haveNum = monsterDataListByMID.Count;
+						monsterEvolveData.itemList.Add(monsterEvolveItem);
+					}
+					else if (assetCategoryId == ConstValue.EVOLVE_ITEM_SOUL.ToString())
+					{
+						monsterEvolveItem.catId = ConstValue.EVOLVE_ITEM_SOUL;
+						monsterEvolveItem.need_num = int.Parse(assetNum);
+						monsterEvolveItem.sd_item = MonsterDataMng.Instance().GetUserSoulDataBySID(assetValue);
+						monsterEvolveItem.haveNum = int.Parse(monsterEvolveItem.sd_item.num);
+						monsterEvolveData.itemList.Add(monsterEvolveItem);
+					}
+				}
+				medList.Add(monsterEvolveData);
+			}
+		}
+
+		public List<EvolutionData.MonsterEvolveData> GetVersionUpList(MonsterData monsterData)
+		{
+			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> memS = new List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution>();
+			this.GetNextVersionUpList(monsterData.userMonster.monsterId, ref memS);
+			List<EvolutionData.MonsterEvolveData> result = new List<EvolutionData.MonsterEvolveData>();
+			this.GetEvolutionDataList(monsterData, memS, ref result);
+			return result;
+		}
+
+		public bool CanVersionUp(MonsterData monsterData)
+		{
+			string monsterId = monsterData.userMonster.monsterId;
+			int num = int.Parse(monsterData.userMonster.level);
+			int num2 = int.Parse(monsterData.monsterM.maxLevel);
+			bool isMaxLevel = num2 <= num;
+			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> monsterVersionUpList = this.GetMonsterVersionUpList(monsterId);
+			return this.AnyClearEvolutionCondition(monsterVersionUpList, isMaxLevel);
+		}
+
+		public void SetVersionUpCondition(GUIMonsterIcon monsterIcon, MonsterData monsterData, bool isOnlyDim = false)
+		{
+			if (this.CanVersionUp(monsterData))
+			{
+				if (isOnlyDim)
+				{
+					return;
+				}
+				monsterIcon.SortMess = StringMaster.GetString("CharaIcon-01");
+				monsterIcon.SetSortMessageColor(ConstValue.DIGIMON_YELLOW);
+			}
+			else
+			{
+				monsterData.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
+				monsterIcon.DimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
+				if (isOnlyDim)
+				{
+					return;
+				}
+				monsterIcon.SortMess = StringMaster.GetString("CharaIcon-02");
+				monsterIcon.SetSortMessageColor(ConstValue.DIGIMON_BLUE);
+			}
+		}
+
 		public class MonsterEvolveItem
 		{
 			public int catId;
 
 			public int need_num;
 
-			public MonsterData md_item;
-
-			public List<MonsterData> haveMDList;
+			public int haveNum;
 
 			public GameWebAPI.UserSoulData sd_item;
-
-			public int haveNum;
 		}
 
 		public class MonsterEvolveData

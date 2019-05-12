@@ -86,14 +86,51 @@ public class CMD_PairSelectBase : CMD
 
 	private void OnTouchDecide()
 	{
-		if (this.partnerDigimon.IsArousal())
+		bool flag = false;
+		bool flag2 = false;
+		bool flag3 = false;
+		if (this.baseDigimon != null)
 		{
-			this.OpenConfirmPartnerArousal(new Action<int>(this.OpenConfirmTargetParameter));
+			flag3 = this.baseDigimon.IsVersionUp();
 		}
-		else
+		if (this.partnerDigimon != null)
 		{
-			this.OpenConfirmTargetParameter(1);
+			flag = this.partnerDigimon.IsArousal();
+			flag2 = this.partnerDigimon.IsVersionUp();
 		}
+		Action<int> action = new Action<int>(this.OpenConfirmTargetParameter);
+		if (flag2)
+		{
+			action = delegate(int i)
+			{
+				if (i == 1)
+				{
+					this.OpenConfirmPartnerVersionUp(new Action<int>(this.OpenConfirmTargetParameter));
+				}
+			};
+		}
+		else if (flag)
+		{
+			action = delegate(int i)
+			{
+				if (i == 1)
+				{
+					this.OpenConfirmPartnerArousal(new Action<int>(this.OpenConfirmTargetParameter));
+				}
+			};
+		}
+		if (base.GetType() == typeof(CMD_Laboratory) && flag3)
+		{
+			Action<int> _callback = action;
+			action = delegate(int i)
+			{
+				if (i == 1)
+				{
+					this.OpenConfirmBaseVersionUp(_callback);
+				}
+			};
+		}
+		action(1);
 	}
 
 	protected virtual void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
@@ -105,6 +142,31 @@ public class CMD_PairSelectBase : CMD
 		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert") as CMD_ResearchModalAlert;
 		cmd_ResearchModalAlert.SetDigimonIcon(this.partnerDigimon);
 		this.SetTextConfirmPartnerArousal(cmd_ResearchModalAlert);
+		cmd_ResearchModalAlert.AdjustSize();
+	}
+
+	protected virtual void SetTextConfirmBaseVersionUp(CMD_ResearchModalAlert cd)
+	{
+	}
+
+	private void OpenConfirmBaseVersionUp(Action<int> onClosedPopupAction)
+	{
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert") as CMD_ResearchModalAlert;
+		cmd_ResearchModalAlert.SetDigimonIcon(this.baseDigimon);
+		this.SetTextConfirmBaseVersionUp(cmd_ResearchModalAlert);
+		cmd_ResearchModalAlert.AdjustSize();
+	}
+
+	protected virtual void SetTextConfirmPartnerVersionUp(CMD_ResearchModalAlert cd)
+	{
+	}
+
+	private void OpenConfirmPartnerVersionUp(Action<int> onClosedPopupAction)
+	{
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert") as CMD_ResearchModalAlert;
+		cmd_ResearchModalAlert.SetDigimonIcon(this.partnerDigimon);
+		this.SetTextConfirmPartnerVersionUp(cmd_ResearchModalAlert);
+		cmd_ResearchModalAlert.AdjustSize();
 	}
 
 	protected virtual void OpenConfirmTargetParameter(int selectButtonIndex)
@@ -237,23 +299,34 @@ public class CMD_PairSelectBase : CMD
 
 	private void ShowMATInfo_0()
 	{
-		this.baseDetail.ShowMATInfo(this.baseDigimon);
-		this.costTip.text = StringFormat.Cluster(this.CalcCluster());
+		if (this.baseDetail != null && this.baseDetail.gameObject.activeSelf)
+		{
+			this.baseDetail.ShowMATInfo(this.baseDigimon);
+			this.costTip.text = StringFormat.Cluster(this.CalcCluster());
+		}
 	}
 
-	private void ShowMATInfo_1()
+	protected virtual void ShowMATInfo_1()
 	{
-		this.partnerDetail.ShowMATInfo(this.partnerDigimon);
-		this.costTip.text = StringFormat.Cluster(this.CalcCluster());
+		if (this.partnerDetail != null && this.partnerDetail.gameObject.activeSelf)
+		{
+			this.partnerDetail.ShowMATInfo(this.partnerDigimon);
+			this.costTip.text = StringFormat.Cluster(this.CalcCluster());
+		}
 	}
 
 	protected virtual void SetTargetStatus()
 	{
 	}
 
+	protected virtual bool TargetStatusReady()
+	{
+		return this.baseDigimon != null && this.partnerDigimon != null;
+	}
+
 	private void ShowCHGInfo()
 	{
-		if (this.baseDigimon != null && this.partnerDigimon != null)
+		if (this.TargetStatusReady())
 		{
 			this.SetTargetStatus();
 		}
@@ -469,10 +542,15 @@ public class CMD_PairSelectBase : CMD
 		this.OnTappedMAT_1();
 	}
 
-	private void BtnCont()
+	protected virtual bool CheckMaterial()
+	{
+		return true;
+	}
+
+	protected void BtnCont()
 	{
 		bool flag = false;
-		if (this.baseDigimon != null && this.partnerDigimon != null)
+		if (this.TargetStatusReady())
 		{
 			int num = this.CalcCluster();
 			int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
@@ -491,7 +569,8 @@ public class CMD_PairSelectBase : CMD
 			this.costTip.text = "0";
 			this.costTip.color = Color.white;
 		}
-		if (flag)
+		bool flag2 = this.CheckMaterial();
+		if (flag2 && flag)
 		{
 			this.ngBTN_DECIDE.spriteName = "Common02_Btn_Blue";
 			this.ngTX_DECIDE.color = Color.white;
@@ -525,7 +604,10 @@ public class CMD_PairSelectBase : CMD
 			UnityEngine.Object.DestroyImmediate(this.goPartnerDigimon);
 		}
 		this.partnerDigimon = null;
-		this.partnerDetail.SetActiveIcon(true);
+		if (this.partnerDetail != null)
+		{
+			this.partnerDetail.SetActiveIcon(true);
+		}
 		this.ShowMATInfo_1();
 		this.ShowCHGInfo();
 		this.BtnCont();

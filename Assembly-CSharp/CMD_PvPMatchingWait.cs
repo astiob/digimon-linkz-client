@@ -35,12 +35,12 @@ public class CMD_PvPMatchingWait : CMD
 
 	private GameWebAPI.ColosseumUserStatus colosseumUserStatus;
 
-	[Header("取り消しボタンコライダー")]
 	[SerializeField]
+	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[SerializeField]
 	[Header("取り消しボタンスプライト")]
+	[SerializeField]
 	private UISprite spCancelBtn;
 
 	[SerializeField]
@@ -51,36 +51,38 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("モンスター表示")]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
-	[Header("マッチング中アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング中アニメオブジェクト")]
 	private GameObject goMatchingNowAnim;
 
-	[SerializeField]
 	[Header("マッチング完了アニメオブジェクト")]
+	[SerializeField]
 	private GameObject goMatchingEndAnim;
 
-	[SerializeField]
 	[Header("マッチング完了エフェクト")]
+	[SerializeField]
 	private Animator MatchingEffectAnimator;
 
 	[SerializeField]
 	private UITexture background;
 
-	[SerializeField]
 	[Header("転送エフェクトの乗算色(アルファは０固定)")]
+	[SerializeField]
 	private Color renderTextureColor;
 
-	[SerializeField]
 	[Header("キャラの勝利アニメを見せる時間（秒）")]
+	[SerializeField]
 	private float winAnimationWait;
 
 	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	[SerializeField]
 	private float transferWait;
 
-	[Header("演出チェック用")]
 	[SerializeField]
+	[Header("演出チェック用")]
 	private bool debugAnimation;
+
+	private Coroutine matchingFinishAnimation;
 
 	private PvPVersusInfo versusInfo;
 
@@ -333,9 +335,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_291;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map36 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map35 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map36 = new Dictionary<string, int>(9)
+							CMD_PvPMatchingWait.<>f__switch$map35 = new Dictionary<string, int>(9)
 							{
 								{
 									"0",
@@ -376,7 +378,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map36.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map35.TryGetValue(text, out num))
 						{
 							goto IL_291;
 						}
@@ -463,9 +465,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_13D;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map37 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map36 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map37 = new Dictionary<string, int>(3)
+							CMD_PvPMatchingWait.<>f__switch$map36 = new Dictionary<string, int>(3)
 							{
 								{
 									"1",
@@ -482,7 +484,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map37.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map36.TryGetValue(text, out num))
 						{
 							goto IL_13D;
 						}
@@ -562,7 +564,10 @@ public class CMD_PvPMatchingWait : CMD
 		field.worldDungeonId = this.worldDungeonId;
 		ClassSingleton<MultiBattleData>.Instance.PvPField = field;
 		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
-		base.StartCoroutine(this.StartMatchingFinishAnimation());
+		if (this.matchingFinishAnimation == null)
+		{
+			this.matchingFinishAnimation = base.StartCoroutine(this.StartMatchingFinishAnimation());
+		}
 		yield break;
 	}
 
@@ -892,13 +897,16 @@ public class CMD_PvPMatchingWait : CMD
 		yield return base.StartCoroutine(animationController.StartMatchingEffect());
 		WaitForSeconds waitTime = new WaitForSeconds(this.transferWait);
 		yield return waitTime;
-		this.versusInfo = PvPVersusInfo.CreateInstance(Singleton<GUIMain>.Instance.transform);
-		this.versusInfo.SetTitle(this.isMockBattle);
-		this.versusInfo.SetUserInfo(ClassSingleton<MultiBattleData>.Instance.PvPUserDatas);
-		this.versusInfo.SetActionAnimationEnd(delegate
+		if (null == this.versusInfo)
 		{
-			base.StartCoroutine(this.OnFinishedMatchingAnimation(animationController));
-		});
+			this.versusInfo = PvPVersusInfo.CreateInstance(Singleton<GUIMain>.Instance.transform);
+			this.versusInfo.SetTitle(this.isMockBattle);
+			this.versusInfo.SetUserInfo(ClassSingleton<MultiBattleData>.Instance.PvPUserDatas);
+			this.versusInfo.SetActionAnimationEnd(delegate
+			{
+				base.StartCoroutine(this.OnFinishedMatchingAnimation(animationController));
+			});
+		}
 		yield break;
 	}
 

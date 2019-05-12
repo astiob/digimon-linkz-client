@@ -108,17 +108,23 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			}
 			if (this.eggArousalIcon != null)
 			{
-				this.SetArousalValue(eggStatus.isArousal, eggStatus.rare);
+				this.SetArousalValue(eggStatus.isArousal, eggStatus.isReturn, eggStatus.rare);
 			}
 		}
 	}
 
-	private void SetArousalValue(bool isArousal, string rarity)
+	private void SetArousalValue(bool isArousal, bool isReturn, string rarity)
 	{
 		int num = int.Parse(rarity);
 		if (isArousal)
 		{
 			num++;
+			this.eggArousalIconTween.style = UITweener.Style.PingPong;
+			this.eggArousalIconTween.PlayForward();
+		}
+		else if (isReturn)
+		{
+			num--;
 			this.eggArousalIconTween.style = UITweener.Style.PingPong;
 			this.eggArousalIconTween.PlayForward();
 		}

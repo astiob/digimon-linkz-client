@@ -8,8 +8,8 @@ public class CMD_TicketGashaResult : CMD
 {
 	public static CMD_TicketGashaResult instance;
 
-	[Header("アイコン中心位置")]
 	[SerializeField]
+	[Header("アイコン中心位置")]
 	private GameObject goICON_CENTER_POS;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class CMD_TicketGashaResult : CMD
 	[Header("アイコン登場時間(フレーム数)")]
 	private int showChipInterval = 16;
 
-	[SerializeField]
 	[Header("アイコンルート)")]
+	[SerializeField]
 	private GameObject goICON_ROOT;
 
 	[SerializeField]
@@ -40,24 +40,24 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private UILabel ngTX_EXP_TEN;
 
-	[SerializeField]
 	[Header("シングルキャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteSingle;
 
 	[Header("10連キャプチャボタンSprite")]
 	[SerializeField]
 	private UISprite buttonSpriteTen;
 
-	[SerializeField]
 	[Header("TOPへボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTOP;
 
-	[Header("シングルキャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("シングルキャプチャボタンGUICollider")]
 	private GUICollider buttonColliderSingle;
 
-	[Header("10連キャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("10連キャプチャボタンGUICollider")]
 	private GUICollider buttonColliderTen;
 
 	[SerializeField]
@@ -79,12 +79,12 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private GameObject goEFC_WHITE;
 
-	[Header("GOLD エフェクト")]
 	[SerializeField]
+	[Header("GOLD エフェクト")]
 	private GameObject goEFC_GOLD;
 
-	[SerializeField]
 	[Header("RAINBOW エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_RAINBOW;
 
 	[Header("BG TEX")]
@@ -114,6 +114,7 @@ public class CMD_TicketGashaResult : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		this.ShowDetails();
+		CMD_GashaTOP.removeExceededGasha();
 		base.Show(f, sizeX, sizeY, aT);
 	}
 
@@ -125,6 +126,7 @@ public class CMD_TicketGashaResult : CMD
 		this.ShowPointData();
 		this.SettingButton();
 		this.ShowCampaign();
+		this.ShowPlayCount();
 	}
 
 	private void ShowCampaign()
@@ -143,6 +145,7 @@ public class CMD_TicketGashaResult : CMD
 				if (string.IsNullOrEmpty(gashaInfo.appealText1) || gashaInfo.appealText1 == "null")
 				{
 					this.goCAMPAIGN_1.SetActive(false);
+					this.lbCAMPAIGN_1.text = string.Empty;
 				}
 				else
 				{
@@ -152,12 +155,45 @@ public class CMD_TicketGashaResult : CMD
 				if (string.IsNullOrEmpty(gashaInfo.appealText10) || gashaInfo.appealText10 == "null")
 				{
 					this.goCAMPAIGN_10.SetActive(false);
+					this.lbCAMPAIGN_10.text = string.Empty;
 				}
 				else
 				{
 					this.goCAMPAIGN_10.SetActive(true);
 					this.lbCAMPAIGN_10.text = gashaInfo.appealText10;
 				}
+			}
+		}
+	}
+
+	private void ShowPlayCount()
+	{
+		if (CMD_GashaTOP.instance != null)
+		{
+			GameWebAPI.RespDataGA_GetGachaInfo.Result gashaInfo = CMD_GashaTOP.instance.GetGashaInfo();
+			int num = int.Parse(gashaInfo.totalPlayLimitCount);
+			int num2 = num - int.Parse(gashaInfo.totalPlayCount);
+			if (num2 < 0)
+			{
+				num2 = 0;
+			}
+			if (num > 0)
+			{
+				this.goCAMPAIGN_1.SetActive(true);
+				this.goCAMPAIGN_10.SetActive(true);
+				string @string = StringMaster.GetString("RemainingPlayCount");
+				string text = string.Format(@string, num2 / 1);
+				if (this.lbCAMPAIGN_1.text.Length > 0)
+				{
+					text = text + "\n" + this.lbCAMPAIGN_1.text;
+				}
+				this.lbCAMPAIGN_1.text = text;
+				text = string.Format(@string, num2 / 10);
+				if (this.lbCAMPAIGN_10.text.Length > 0)
+				{
+					text = text + "\n" + this.lbCAMPAIGN_10.text;
+				}
+				this.lbCAMPAIGN_10.text = text;
 			}
 		}
 	}
@@ -207,6 +243,24 @@ public class CMD_TicketGashaResult : CMD
 			this.buttonColliderSingle.activeCollider = (num3 >= num);
 			this.buttonSpriteTen.spriteName = ((num3 < num2) ? "Common02_Btn_Gray" : "Common02_Btn_Red");
 			this.buttonColliderTen.activeCollider = (num3 >= num2);
+		}
+		if (CMD_GashaTOP.instance != null)
+		{
+			GameWebAPI.RespDataGA_GetGachaInfo.Result gashaInfo = CMD_GashaTOP.instance.GetGashaInfo();
+			if (gashaInfo != null && int.Parse(gashaInfo.totalPlayLimitCount) > 0)
+			{
+				int num4 = int.Parse(gashaInfo.totalPlayLimitCount) - int.Parse(gashaInfo.totalPlayCount);
+				if (num4 < 1)
+				{
+					this.buttonSpriteSingle.spriteName = "Common02_Btn_Gray";
+					this.buttonColliderSingle.activeCollider = false;
+				}
+				if (num4 < 10)
+				{
+					this.buttonSpriteTen.spriteName = "Common02_Btn_Gray";
+					this.buttonColliderTen.activeCollider = false;
+				}
+			}
 		}
 	}
 
@@ -380,5 +434,6 @@ public class CMD_TicketGashaResult : CMD
 	public void ReShow()
 	{
 		this.ShowDetails();
+		CMD_GashaTOP.removeExceededGasha();
 	}
 }

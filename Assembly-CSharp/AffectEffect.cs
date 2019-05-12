@@ -52,6 +52,7 @@ public enum AffectEffect
 	CountEvasion,
 	ReferenceTargetHpRate,
 	ApDrain,
+	HpBorderlineDamage,
 	gimmickSpecialAttackUp,
 	gimmickSpecialAttackDown
 }

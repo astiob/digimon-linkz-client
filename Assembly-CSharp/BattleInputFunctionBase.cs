@@ -28,14 +28,6 @@ public abstract class BattleInputFunctionBase : MonoBehaviour, IBattleFunctionIn
 		}
 	}
 
-	protected bool isSkipAction
-	{
-		get
-		{
-			return this.stateManager.battleMode == BattleMode.SkipAction;
-		}
-	}
-
 	protected bool onServerConnect
 	{
 		get

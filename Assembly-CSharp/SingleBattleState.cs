@@ -16,7 +16,7 @@ public class SingleBattleState : BattleStateMainController
 		{
 			base.SetState(typeof(BattleStateWaveController));
 			base.RemoveState(typeof(BattleStateInitialize));
-		}));
+		}, null));
 		base.AddState(new BattleStateWaveController(delegate()
 		{
 			base.SetState(typeof(BattleStateBattleStartActionFunction));

@@ -7,7 +7,7 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 {
 	public static List<GUIListDropItemParts.Data> partsDataList;
 
-	public void AllBuild(int widthLength, Vector2 windowSize, GameWebAPI.RespDataWD_DungeonStart.Drop[] standardDrops, GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] ownerMultiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] multiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] multiLuckDrops, GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrops)
+	public void AllBuild(int widthLength, Vector2 windowSize, GameWebAPI.RespDataWD_DungeonStart.Drop[] standardDrops, GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] ownerMultiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] multiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] multiLuckDrops, GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrops, GameWebAPI.RespDataWD_DungeonResult.EventChipReward[] eventChipRewards)
 	{
 		Rect listWindowViewRect = default(Rect);
 		float num = windowSize.x * 0.5f;
@@ -27,7 +27,8 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 		int num6 = (multiDrops == null) ? 0 : multiDrops.Length;
 		int num7 = (multiLuckDrops == null) ? 0 : multiLuckDrops.Length;
 		int num8 = (optionDrops == null) ? 0 : optionDrops.Length;
-		int num9 = num3 + num4 + num5 + num6 + num7 + num8;
+		int num9 = (eventChipRewards == null) ? 0 : eventChipRewards.Length;
+		int num10 = num3 + num4 + num5 + num6 + num7 + num8 + num9;
 		GUISelectPanelDropItemList.partsDataList = new List<GUIListDropItemParts.Data>();
 		for (int i = 0; i < num3; i++)
 		{
@@ -59,43 +60,53 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 			data3.dropType = GUIListDropItemParts.DropType.Challenge;
 			GUISelectPanelDropItemList.partsDataList.Add(data3);
 		}
-		for (int k = 0; k < num5; k++)
+		for (int k = 0; k < num9; k++)
 		{
 			GUIListDropItemParts.Data data4 = new GUIListDropItemParts.Data();
-			data4.assetCategoryId = (MasterDataMng.AssetCategory)ownerMultiDrops[k].assetCategoryId.ToInt32();
-			data4.assetNum = ownerMultiDrops[k].assetNum;
-			data4.assetValue = ownerMultiDrops[k].assetValue;
-			data4.dropBoxType = (GUIListDropItemParts.BoxType)ownerMultiDrops[k].dropBoxType;
-			data4.dropType = GUIListDropItemParts.DropType.Owner;
+			data4.assetCategoryId = (MasterDataMng.AssetCategory)eventChipRewards[k].assetCategoryId.ToInt32();
+			data4.assetNum = eventChipRewards[k].assetNum.ToInt32();
+			data4.assetValue = eventChipRewards[k].assetValue.ToInt32();
+			data4.dropBoxType = (GUIListDropItemParts.BoxType)eventChipRewards[k].dropBoxType.ToInt32();
+			data4.dropType = GUIListDropItemParts.DropType.EventChip;
 			GUISelectPanelDropItemList.partsDataList.Add(data4);
 		}
-		for (int l = 0; l < num6; l++)
+		for (int l = 0; l < num5; l++)
 		{
 			GUIListDropItemParts.Data data5 = new GUIListDropItemParts.Data();
-			data5.assetCategoryId = (MasterDataMng.AssetCategory)multiDrops[l].assetCategoryId.ToInt32();
-			data5.assetNum = multiDrops[l].assetNum;
-			data5.assetValue = multiDrops[l].assetValue;
-			data5.dropBoxType = (GUIListDropItemParts.BoxType)multiDrops[l].dropBoxType;
-			data5.dropType = GUIListDropItemParts.DropType.Multi;
+			data5.assetCategoryId = (MasterDataMng.AssetCategory)ownerMultiDrops[l].assetCategoryId.ToInt32();
+			data5.assetNum = ownerMultiDrops[l].assetNum;
+			data5.assetValue = ownerMultiDrops[l].assetValue;
+			data5.dropBoxType = (GUIListDropItemParts.BoxType)ownerMultiDrops[l].dropBoxType;
+			data5.dropType = GUIListDropItemParts.DropType.Owner;
 			GUISelectPanelDropItemList.partsDataList.Add(data5);
 		}
-		for (int m = 0; m < num7; m++)
+		for (int m = 0; m < num6; m++)
 		{
 			GUIListDropItemParts.Data data6 = new GUIListDropItemParts.Data();
-			data6.assetCategoryId = (MasterDataMng.AssetCategory)multiLuckDrops[m].assetCategoryId.ToInt32();
-			data6.assetNum = multiLuckDrops[m].assetNum;
-			data6.assetValue = multiLuckDrops[m].assetValue;
-			data6.dropBoxType = (GUIListDropItemParts.BoxType)multiLuckDrops[m].dropBoxType;
-			data6.dropType = GUIListDropItemParts.DropType.LuckMulti;
-			data6.multiLuckDropUserId = multiLuckDrops[m].userId;
+			data6.assetCategoryId = (MasterDataMng.AssetCategory)multiDrops[m].assetCategoryId.ToInt32();
+			data6.assetNum = multiDrops[m].assetNum;
+			data6.assetValue = multiDrops[m].assetValue;
+			data6.dropBoxType = (GUIListDropItemParts.BoxType)multiDrops[m].dropBoxType;
+			data6.dropType = GUIListDropItemParts.DropType.Multi;
 			GUISelectPanelDropItemList.partsDataList.Add(data6);
 		}
-		for (int n = 0; n < num9; n++)
+		for (int n = 0; n < num7; n++)
 		{
-			GUISelectPanelDropItemList.partsDataList[n].index = n;
+			GUIListDropItemParts.Data data7 = new GUIListDropItemParts.Data();
+			data7.assetCategoryId = (MasterDataMng.AssetCategory)multiLuckDrops[n].assetCategoryId.ToInt32();
+			data7.assetNum = multiLuckDrops[n].assetNum;
+			data7.assetValue = multiLuckDrops[n].assetValue;
+			data7.dropBoxType = (GUIListDropItemParts.BoxType)multiLuckDrops[n].dropBoxType;
+			data7.dropType = GUIListDropItemParts.DropType.LuckMulti;
+			data7.multiLuckDropUserId = multiLuckDrops[n].userId;
+			GUISelectPanelDropItemList.partsDataList.Add(data7);
+		}
+		for (int num11 = 0; num11 < num10; num11++)
+		{
+			GUISelectPanelDropItemList.partsDataList[num11].index = num11;
 		}
 		base.initLocation = true;
-		base.AllBuild(num9, true, 1f, 1f, null, null);
+		base.AllBuild(num10, true, 1f, 1f, null, null);
 		if (base.scrollBar.activeInHierarchy)
 		{
 			this.boxCollider.size = new Vector3(this.boxCollider.size.x, this.boxCollider.size.y, 40f);
@@ -113,7 +124,7 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 			IEnumerator setDrops = parts.SetDrops(isSkip, null);
 			while (setDrops.MoveNext())
 			{
-				if (!isSkip && !isEndMultiDrop && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.Standard && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.Luck && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.Challenge)
+				if (!isSkip && !isEndMultiDrop && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.Standard && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.Luck && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.Challenge && GUISelectPanelDropItemList.partsDataList[i].dropType != GUIListDropItemParts.DropType.EventChip)
 				{
 					isEndMultiDrop = true;
 					this.PlayMultiClearRewardAnimation();

@@ -34,8 +34,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[NonSerialized]
 	public EmotionSenderMulti emotionSenderMulti;
 
-	[Header("Winの次のボタン")]
 	[SerializeField]
+	[Header("Winの次のボタン")]
 	public UIButton winNextButton;
 
 	[SerializeField]

@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class ChipEfc : MonoBehaviour
 {
-	[Header("サムネイル OBJ")]
 	[SerializeField]
+	[Header("サムネイル OBJ")]
 	public GameObject goCHIP_THUMB;
 
 	[SerializeField]
 	[Header("アニメーション コンポーネント")]
 	public Animation anim;
 
-	[Header("アニメーション OBJ")]
 	[SerializeField]
+	[Header("アニメーション OBJ")]
 	public GameObject goANIM;
 
-	[Header("パーティクル OBJ")]
 	[SerializeField]
+	[Header("パーティクル OBJ")]
 	public GameObject goPARTICLE;
 
-	[Header("NEW スプライト")]
 	[SerializeField]
+	[Header("NEW スプライト")]
 	public UISprite spNew;
 
 	private int frameCT;

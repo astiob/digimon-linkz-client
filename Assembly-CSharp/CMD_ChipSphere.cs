@@ -34,20 +34,20 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private UILabel changeBaseButtonLabel;
 
-	[SerializeField]
 	[Header("取外パッチの残り個数")]
+	[SerializeField]
 	private UILabel ejectCountLabel;
 
-	[SerializeField]
 	[Header("拡張パッチの残り個数")]
+	[SerializeField]
 	private UILabel extraCountLabel;
 
-	[Header("右下の切り替わるメニューのオブジェクト")]
 	[SerializeField]
+	[Header("右下の切り替わるメニューのオブジェクト")]
 	private ChipSphereStatus[] chipSphereStatus;
 
-	[Header("チップボタン達の親")]
 	[SerializeField]
+	[Header("チップボタン達の親")]
 	private Transform sphereRoot;
 
 	[SerializeField]
@@ -122,8 +122,8 @@ public sealed class CMD_ChipSphere : CMD
 
 	private Action fusionSuccessCallback;
 
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private ChipSphereLines chipSphereLines;
 
 	public static MonsterData DataChg { get; set; }

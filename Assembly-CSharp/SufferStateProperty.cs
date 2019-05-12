@@ -12,12 +12,6 @@ public class SufferStateProperty
 
 	private const int maxFloatValueLength = 7;
 
-	private static Func<int> GetLastGenerationStartTiming;
-
-	private static Action<int> SetLastGenerationStartTiming;
-
-	private static int startValue;
-
 	public bool isActive;
 
 	private PowerType _powerType;
@@ -27,9 +21,6 @@ public class SufferStateProperty
 
 	[SerializeField]
 	private float[] floatValue = new float[7];
-
-	[NonSerialized]
-	private CharacterStateControl _triggerCharacter;
 
 	[NonSerialized]
 	private SufferStateProperty.SufferType _sufferTypecache;
@@ -46,11 +37,11 @@ public class SufferStateProperty
 	{
 	}
 
-	public SufferStateProperty(AffectEffectProperty affectProperty)
+	public SufferStateProperty(AffectEffectProperty affectProperty, int lastGenerationStartTiming = 0)
 	{
 		this.isActive = true;
 		SufferStateProperty.SufferType sufferTypecache = SufferStateProperty.SufferType.Null;
-		this.generationStartTiming = SufferStateProperty.lastGenerationStartTiming;
+		this.generationStartTiming = lastGenerationStartTiming;
 		switch (affectProperty.type)
 		{
 		case AffectEffect.AttackUp:
@@ -60,10 +51,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.AttackDown:
 			sufferTypecache = SufferStateProperty.SufferType.AttackDown;
@@ -72,10 +59,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.DefenceUp:
 			sufferTypecache = SufferStateProperty.SufferType.DefenceUp;
@@ -84,10 +67,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.DefenceDown:
 			sufferTypecache = SufferStateProperty.SufferType.DefenceDown;
@@ -96,10 +75,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SpAttackUp:
 			sufferTypecache = SufferStateProperty.SufferType.SpAttackUp;
@@ -108,10 +83,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SpAttackDown:
 			sufferTypecache = SufferStateProperty.SufferType.SpAttackDown;
@@ -120,10 +91,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SpDefenceUp:
 			sufferTypecache = SufferStateProperty.SufferType.SpDefenceUp;
@@ -132,10 +99,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SpDefenceDown:
 			sufferTypecache = SufferStateProperty.SufferType.SpDefenceDown;
@@ -144,10 +107,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SpeedUp:
 			sufferTypecache = SufferStateProperty.SufferType.SpeedUp;
@@ -156,10 +115,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SpeedDown:
 			sufferTypecache = SufferStateProperty.SufferType.SpeedDown;
@@ -168,10 +123,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.Counter:
 			sufferTypecache = SufferStateProperty.SufferType.Counter;
@@ -194,8 +145,8 @@ public class SufferStateProperty
 			break;
 		case AffectEffect.PowerCharge:
 			sufferTypecache = SufferStateProperty.SufferType.PowerCharge;
-			this.keepRoundNumber = affectProperty.keepRoundNumber;
-			this.currentKeepRound = affectProperty.keepRoundNumber;
+			this.keepRoundNumber = affectProperty.chargeRoundNumber;
+			this.currentKeepRound = affectProperty.chargeRoundNumber;
 			this.physicUpPercent = affectProperty.physicUpPercent;
 			this.specialUpPercent = affectProperty.specialUpPercent;
 			break;
@@ -214,10 +165,6 @@ public class SufferStateProperty
 			this.damagePercent = affectProperty.damagePercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.Sleep:
 			sufferTypecache = SufferStateProperty.SufferType.Sleep;
@@ -239,10 +186,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.HitRateDown:
 			sufferTypecache = SufferStateProperty.SufferType.HitRateDown;
@@ -251,10 +194,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.Confusion:
 			sufferTypecache = SufferStateProperty.SufferType.Confusion;
@@ -274,10 +213,6 @@ public class SufferStateProperty
 			this.upPercent = affectProperty.upPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.SatisfactionRateDown:
 			sufferTypecache = SufferStateProperty.SufferType.SatisfactionRateDown;
@@ -286,10 +221,6 @@ public class SufferStateProperty
 			this.downPercent = affectProperty.downPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.ApRevival:
 			sufferTypecache = SufferStateProperty.SufferType.ApRevival;
@@ -328,8 +259,8 @@ public class SufferStateProperty
 			break;
 		case AffectEffect.DamageRateUp:
 			sufferTypecache = SufferStateProperty.SufferType.DamageRateUp;
-			this.keepRoundNumber = affectProperty.keepRoundNumber;
-			this.currentKeepRound = affectProperty.keepRoundNumber;
+			this.keepRoundNumber = affectProperty.damageRateKeepRoundNumber;
+			this.currentKeepRound = affectProperty.damageRateKeepRoundNumber;
 			this.damageRateForPhantomStudents = affectProperty.damageRateForPhantomStudents;
 			this.damageRateForHeatHaze = affectProperty.damageRateForHeatHaze;
 			this.damageRateForGlacier = affectProperty.damageRateForGlacier;
@@ -340,8 +271,8 @@ public class SufferStateProperty
 			break;
 		case AffectEffect.DamageRateDown:
 			sufferTypecache = SufferStateProperty.SufferType.DamageRateDown;
-			this.keepRoundNumber = affectProperty.keepRoundNumber;
-			this.currentKeepRound = affectProperty.keepRoundNumber;
+			this.keepRoundNumber = affectProperty.damageRateKeepRoundNumber;
+			this.currentKeepRound = affectProperty.damageRateKeepRoundNumber;
 			this.damageRateForPhantomStudents = affectProperty.damageRateForPhantomStudents;
 			this.damageRateForHeatHaze = affectProperty.damageRateForHeatHaze;
 			this.damageRateForGlacier = affectProperty.damageRateForGlacier;
@@ -359,10 +290,6 @@ public class SufferStateProperty
 			this.revivalPercent = affectProperty.revivalPercent;
 			this.turnRate = affectProperty.turnRate;
 			this.maxValue = affectProperty.maxValue;
-			if (this.maxValue <= 0f)
-			{
-				this.maxValue = float.MaxValue;
-			}
 			break;
 		case AffectEffect.TurnEvasion:
 			sufferTypecache = SufferStateProperty.SufferType.TurnEvasion;
@@ -378,29 +305,6 @@ public class SufferStateProperty
 		this._sufferTypecache = sufferTypecache;
 	}
 
-	public static void InitializeSufferState(int StartValue = 0, Func<int> Get = null, Action<int> Set = null)
-	{
-		SufferStateProperty.GetLastGenerationStartTiming = Get;
-		SufferStateProperty.SetLastGenerationStartTiming = Set;
-		SufferStateProperty.startValue = StartValue;
-	}
-
-	public static int lastGenerationStartTiming
-	{
-		get
-		{
-			return (SufferStateProperty.GetLastGenerationStartTiming != null) ? SufferStateProperty.GetLastGenerationStartTiming() : SufferStateProperty.startValue;
-		}
-		set
-		{
-			if (SufferStateProperty.SetLastGenerationStartTiming != null)
-			{
-				SufferStateProperty.SetLastGenerationStartTiming(value);
-			}
-			SufferStateProperty.startValue = value;
-		}
-	}
-
 	public SufferStateProperty.SufferType sufferTypeCache
 	{
 		get
@@ -413,7 +317,13 @@ public class SufferStateProperty
 	{
 		string str = string.Join(",", this.intValue.Select((int x) => x.ToString()).ToArray<string>());
 		string str2 = string.Join(",", this.floatValue.Select((float x) => x.ToString()).ToArray<string>());
-		return str + "#" + str2;
+		string str3 = str + "#" + str2;
+		string strVal = str3 + "#" + ((!this.isActive) ? "0" : "1");
+		SufferStatePropertyStore value = new SufferStatePropertyStore
+		{
+			strVal = strVal
+		};
+		return JsonWriter.Serialize(value);
 	}
 
 	public void SetParams(string serializedStr, BattleStateData battleStateData)
@@ -460,38 +370,6 @@ public class SufferStateProperty
 		{
 			this.isActive = Convert.ToBoolean(text3.ToInt32());
 		}
-		string triggerCharacter = sufferStatePropertyStore.triggerCharacter;
-		if (!string.IsNullOrEmpty(triggerCharacter))
-		{
-			this.SetTriggerCharacter(triggerCharacter, battleStateData);
-		}
-	}
-
-	public string GetTriggerCharacter()
-	{
-		CharacterStateControl triggerCharacter = this.TriggerCharacter;
-		if (triggerCharacter == null)
-		{
-			return string.Empty;
-		}
-		return triggerCharacter.myIndex + "!" + triggerCharacter.isEnemy;
-	}
-
-	private void SetTriggerCharacter(string serializedStr, BattleStateData battleStateData)
-	{
-		string[] array = serializedStr.Split(new char[]
-		{
-			'!'
-		});
-		bool flag = array[1].ToLower().Equals("true");
-		int num = array[0].ToInt32();
-		CharacterStateControl[] array2 = (!flag) ? battleStateData.playerCharacters : battleStateData.enemies;
-		this.TriggerCharacter = array2[num];
-	}
-
-	private bool RandomSwitch(int switchIndex = 0)
-	{
-		return RandomExtension.Switch(this.floatValue[switchIndex], null);
 	}
 
 	public PowerType powerType
@@ -674,18 +552,6 @@ public class SufferStateProperty
 		}
 	}
 
-	public CharacterStateControl TriggerCharacter
-	{
-		get
-		{
-			return this._triggerCharacter;
-		}
-		set
-		{
-			this._triggerCharacter = value;
-		}
-	}
-
 	public int currentKeepRound
 	{
 		get
@@ -848,7 +714,7 @@ public class SufferStateProperty
 
 	public bool GetOccurrenceFreeze()
 	{
-		return this.RandomSwitch(0);
+		return RandomExtension.Switch(this.floatValue[0]);
 	}
 
 	public int GetPoisonDamageFluctuation(CharacterStateControl status)
@@ -875,9 +741,14 @@ public class SufferStateProperty
 		return Mathf.FloorToInt((float)damage * this.recieveDamageRate);
 	}
 
-	public bool GetSleepGetupOccurrence(bool isDamage)
+	public bool GetSleepGetupOccurrence()
 	{
-		return this.RandomSwitch((!isDamage) ? 0 : 1);
+		return RandomExtension.Switch(this.floatValue[0]);
+	}
+
+	public bool GetSleepGetupOccurrenceDamage()
+	{
+		return RandomExtension.Switch(this.floatValue[1]);
 	}
 
 	public int GetRevivalAp(int maxAp)
@@ -904,59 +775,12 @@ public class SufferStateProperty
 		return result;
 	}
 
-	public bool Equals(SufferStateProperty obj)
-	{
-		return obj._sufferTypecache == this._sufferTypecache;
-	}
-
 	public void SetNull()
 	{
 		this.isActive = false;
 		this._powerType = PowerType.Fixable;
 		this.intValue = new int[3];
 		this.floatValue = new float[7];
-		this._triggerCharacter = null;
-	}
-
-	public static bool OnInfluenceSufferAffectEffect(AffectEffect type)
-	{
-		switch (type)
-		{
-		case AffectEffect.AttackUp:
-		case AffectEffect.AttackDown:
-		case AffectEffect.DefenceUp:
-		case AffectEffect.DefenceDown:
-		case AffectEffect.SpAttackUp:
-		case AffectEffect.SpAttackDown:
-		case AffectEffect.SpDefenceUp:
-		case AffectEffect.SpDefenceDown:
-		case AffectEffect.SpeedUp:
-		case AffectEffect.SpeedDown:
-		case AffectEffect.Counter:
-		case AffectEffect.Reflection:
-		case AffectEffect.Protect:
-		case AffectEffect.PowerCharge:
-		case AffectEffect.Paralysis:
-		case AffectEffect.Poison:
-		case AffectEffect.Sleep:
-		case AffectEffect.SkillLock:
-		case AffectEffect.HitRateUp:
-		case AffectEffect.HitRateDown:
-		case AffectEffect.Confusion:
-		case AffectEffect.Stun:
-		case AffectEffect.SatisfactionRateUp:
-		case AffectEffect.SatisfactionRateDown:
-		case AffectEffect.ApRevival:
-		case AffectEffect.ApConsumptionUp:
-		case AffectEffect.ApConsumptionDown:
-		case AffectEffect.CountGuard:
-		case AffectEffect.TurnBarrier:
-		case AffectEffect.CountBarrier:
-		case AffectEffect.DamageRateUp:
-		case AffectEffect.DamageRateDown:
-			return true;
-		}
-		return false;
 	}
 
 	public enum SufferType

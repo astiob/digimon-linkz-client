@@ -11,12 +11,8 @@ public class AffectEffectProperty
 
 	private const int FloatValueLength = 6;
 
-	private int _skillId;
-
-	private float _hitRate;
-
-	[SerializeField]
 	[FormerlySerializedAs("_numbers")]
+	[SerializeField]
 	private EffectNumbers _effectNumbers;
 
 	[SerializeField]
@@ -39,19 +35,15 @@ public class AffectEffectProperty
 	[FormerlySerializedAs("floatValue")]
 	private float[] _floatValue = new float[6];
 
-	private System.Random _random = new System.Random();
-
-	private bool _useDrain;
-
 	public AffectEffectProperty()
 	{
 	}
 
-	public AffectEffectProperty(AffectEffect type, int skillId, float hitRate, EffectTarget target, EffectNumbers effectNumbers, int[] intValue, float[] floatValue, bool onDrain, PowerType powerType, TechniqueType techniqueType, global::Attribute attribute, bool isMissThrough)
+	public AffectEffectProperty(AffectEffect type, int skillId, float hitRate, EffectTarget target, EffectNumbers effectNumbers, int[] intValue, float[] floatValue, bool useDrain, PowerType powerType, TechniqueType techniqueType, global::Attribute attribute, bool isMissThrough)
 	{
 		this._type = type;
-		this._skillId = skillId;
-		this._hitRate = hitRate;
+		this.skillId = skillId;
+		this.hitRate = hitRate;
 		this._techniqueType = techniqueType;
 		this._attribute = attribute;
 		this.target = target;
@@ -59,9 +51,8 @@ public class AffectEffectProperty
 		this._powerType = powerType;
 		this._floatValue = floatValue;
 		this._intValue = intValue;
-		this._useDrain = onDrain;
+		this.useDrain = useDrain;
 		this.isMissThrough = isMissThrough;
-		this._random = new System.Random();
 	}
 
 	public EffectTarget target { get; private set; }
@@ -72,10 +63,6 @@ public class AffectEffectProperty
 		{
 			return this._type;
 		}
-		set
-		{
-			this._type = value;
-		}
 	}
 
 	public TechniqueType techniqueType
@@ -84,33 +71,15 @@ public class AffectEffectProperty
 		{
 			return this._techniqueType;
 		}
-		set
-		{
-			this._techniqueType = value;
-		}
 	}
 
-	public int skillId
-	{
-		get
-		{
-			return this._skillId;
-		}
-		set
-		{
-			this._skillId = Mathf.Clamp(value, 0, int.MaxValue);
-		}
-	}
+	public int skillId { get; private set; }
 
 	public int power
 	{
 		get
 		{
 			return this._intValue[1];
-		}
-		set
-		{
-			this._intValue[1] = Mathf.Clamp(value, 0, int.MaxValue);
 		}
 	}
 
@@ -120,10 +89,6 @@ public class AffectEffectProperty
 		{
 			return this._intValue[1];
 		}
-		set
-		{
-			this._intValue[1] = Mathf.Clamp(value, 0, int.MaxValue);
-		}
 	}
 
 	public int downPower
@@ -131,10 +96,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._intValue[1];
-		}
-		set
-		{
-			this._intValue[1] = Mathf.Clamp(value, 0, int.MaxValue);
 		}
 	}
 
@@ -144,10 +105,6 @@ public class AffectEffectProperty
 		{
 			return this._intValue[1];
 		}
-		set
-		{
-			this._intValue[1] = Mathf.Clamp(value, 0, int.MaxValue);
-		}
 	}
 
 	public int damagePower
@@ -155,10 +112,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._intValue[1];
-		}
-		set
-		{
-			this._intValue[1] = Mathf.Clamp(value, 0, int.MaxValue);
 		}
 	}
 
@@ -168,33 +121,15 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[0];
 		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
-		}
 	}
 
-	public float hitRate
-	{
-		get
-		{
-			return this._hitRate;
-		}
-		set
-		{
-			this._hitRate = Mathf.Clamp01(value);
-		}
-	}
+	public float hitRate { get; private set; }
 
 	public float satisfactionRate
 	{
 		get
 		{
 			return this._floatValue[1];
-		}
-		set
-		{
-			this._floatValue[1] = Mathf.Clamp01(value);
 		}
 	}
 
@@ -204,10 +139,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[0];
 		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
-		}
 	}
 
 	public float upPercent
@@ -215,10 +146,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._floatValue[0];
-		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
 		}
 	}
 
@@ -228,10 +155,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[0];
 		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
-		}
 	}
 
 	public float revivalPercent
@@ -239,34 +162,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._floatValue[0];
-		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
-		}
-	}
-
-	public float physicUpPercent
-	{
-		get
-		{
-			return this._floatValue[0];
-		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp(value, 1f, float.PositiveInfinity);
-		}
-	}
-
-	public float specialUpPercent
-	{
-		get
-		{
-			return this._floatValue[1];
-		}
-		set
-		{
-			this._floatValue[1] = Mathf.Clamp(value, 1f, float.PositiveInfinity);
 		}
 	}
 
@@ -276,10 +171,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[0];
 		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp(value, 0f, 1f);
-		}
 	}
 
 	public float damageGetupIncidenceRate
@@ -287,10 +178,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._floatValue[1];
-		}
-		set
-		{
-			this._floatValue[1] = Mathf.Clamp01(value);
 		}
 	}
 
@@ -300,10 +187,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[0];
 		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
-		}
 	}
 
 	public int keepRoundNumber
@@ -311,22 +194,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._intValue[0];
-		}
-		set
-		{
-			this._intValue[0] = Mathf.Clamp(value, 1, int.MaxValue);
-		}
-	}
-
-	public int chargeRoundNumber
-	{
-		get
-		{
-			return this._intValue[0];
-		}
-		set
-		{
-			this._intValue[0] = Mathf.Clamp(value, 1, int.MaxValue);
 		}
 	}
 
@@ -336,10 +203,6 @@ public class AffectEffectProperty
 		{
 			return this._intValue[0];
 		}
-		set
-		{
-			this._intValue[0] = Mathf.Clamp(value, 1, int.MaxValue);
-		}
 	}
 
 	public PowerType powerType
@@ -347,10 +210,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._powerType;
-		}
-		set
-		{
-			this._powerType = value;
 		}
 	}
 
@@ -360,10 +219,6 @@ public class AffectEffectProperty
 		{
 			return this._effectNumbers;
 		}
-		set
-		{
-			this._effectNumbers = value;
-		}
 	}
 
 	public global::Attribute attribute
@@ -371,10 +226,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._attribute;
-		}
-		set
-		{
-			this._attribute = value;
 		}
 	}
 
@@ -384,10 +235,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[0];
 		}
-		set
-		{
-			this._floatValue[0] = Mathf.Clamp01(value);
-		}
 	}
 
 	public float clearConfusionIncidenceRate
@@ -395,10 +242,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._floatValue[1];
-		}
-		set
-		{
-			this._floatValue[1] = Mathf.Clamp01(value);
 		}
 	}
 
@@ -408,10 +251,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[2];
 		}
-		set
-		{
-			this._floatValue[2] = Mathf.Clamp01(value);
-		}
 	}
 
 	public float clearSleepIncidenceRate
@@ -419,10 +258,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this._floatValue[3];
-		}
-		set
-		{
-			this._floatValue[3] = Mathf.Clamp01(value);
 		}
 	}
 
@@ -432,10 +267,6 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[4];
 		}
-		set
-		{
-			this._floatValue[4] = Mathf.Clamp01(value);
-		}
 	}
 
 	public float clearSkillLockIncidenceRate
@@ -444,21 +275,59 @@ public class AffectEffectProperty
 		{
 			return this._floatValue[5];
 		}
-		set
-		{
-			this._floatValue[5] = Mathf.Clamp01(value);
-		}
 	}
 
-	public bool useDrain
+	public bool useDrain { get; private set; }
+
+	public float turnRate
 	{
 		get
 		{
-			return this._useDrain;
+			return this._floatValue[1];
 		}
-		set
+	}
+
+	public float maxValue
+	{
+		get
 		{
-			this._useDrain = value;
+			if (this._floatValue[2] <= 0f)
+			{
+				return float.MaxValue;
+			}
+			return this._floatValue[2];
+		}
+	}
+
+	public int chargeRoundNumber
+	{
+		get
+		{
+			return this._intValue[0];
+		}
+	}
+
+	public float physicUpPercent
+	{
+		get
+		{
+			return this._floatValue[0];
+		}
+	}
+
+	public float specialUpPercent
+	{
+		get
+		{
+			return this._floatValue[1];
+		}
+	}
+
+	public int damageRateKeepRoundNumber
+	{
+		get
+		{
+			return this._intValue[0];
 		}
 	}
 
@@ -524,25 +393,45 @@ public class AffectEffectProperty
 		{
 			return this._intValue[1];
 		}
-		set
-		{
-			this._intValue[1] = Mathf.Clamp(value, 0, int.MaxValue);
-		}
 	}
 
-	public float turnRate
-	{
-		get
-		{
-			return this._floatValue[1];
-		}
-	}
-
-	public float maxValue
+	public float defaultDamage
 	{
 		get
 		{
 			return this._floatValue[2];
+		}
+	}
+
+	public float borderlineDamage1
+	{
+		get
+		{
+			return this._floatValue[3];
+		}
+	}
+
+	public float borderlineRange1
+	{
+		get
+		{
+			return this._floatValue[4];
+		}
+	}
+
+	public float borderlineDamage2
+	{
+		get
+		{
+			return this._floatValue[5];
+		}
+	}
+
+	public float borderlineRange2
+	{
+		get
+		{
+			return this._floatValue[6];
 		}
 	}
 
@@ -551,14 +440,6 @@ public class AffectEffectProperty
 		get
 		{
 			return this.type == AffectEffect.Damage;
-		}
-	}
-
-	public bool ThisSkillIsHpRevival
-	{
-		get
-		{
-			return this.type == AffectEffect.HpRevival;
 		}
 	}
 
@@ -613,7 +494,7 @@ public class AffectEffectProperty
 				}
 			}
 		}
-		return RandomExtension.Switch(Mathf.Clamp01(num), this._random);
+		return RandomExtension.Switch(Mathf.Clamp01(num));
 	}
 
 	public bool OnHit(CharacterStateControl target)
@@ -640,7 +521,7 @@ public class AffectEffectProperty
 				num *= 0f;
 			}
 		}
-		return RandomExtension.Switch(Mathf.Clamp01(num), this._random);
+		return RandomExtension.Switch(Mathf.Clamp01(num));
 	}
 
 	public int GetHate()
@@ -658,10 +539,5 @@ public class AffectEffectProperty
 			return 15;
 		}
 		return 5;
-	}
-
-	public void SetRandomSeed(int seed)
-	{
-		this._random = new System.Random(seed);
 	}
 }

@@ -614,7 +614,7 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 		else
 		{
 			this.colosseumRankSprite.spriteName = "Rank_" + this.colosseumUserStatus.colosseumRankId.ToString();
-			this.outComeNumLabel.text = string.Format(StringMaster.GetString("ColosseumScore"), this.colosseumUserStatus.winWeek, this.colosseumUserStatus.loseWeek);
+			this.outComeNumLabel.text = string.Format(StringMaster.GetString("ColosseumScore"), this.colosseumUserStatus.winTotal, this.colosseumUserStatus.loseTotal);
 		}
 	}
 

@@ -3,8 +3,6 @@ using System.Collections;
 
 public class SubStatePlayPassiveEffectFunction : BattleStateBase
 {
-	private CharacterStateControl currentCharacter;
-
 	private CharacterStateControl[] isTargetsStatus;
 
 	private SkillStatus status;
@@ -19,7 +17,6 @@ public class SubStatePlayPassiveEffectFunction : BattleStateBase
 
 	protected override void EnabledThisState()
 	{
-		this.currentCharacter = (CharacterStateControl)base.battleStateData.sendValues["currentCharacter"];
 		this.isTargetsStatus = (base.battleStateData.sendValues["isTargetsStatus"] as CharacterStateControl[]);
 		this.status = (base.battleStateData.sendValues["status"] as SkillStatus);
 		this.currentSuffer = (base.battleStateData.sendValues["currentSuffer"] as AffectEffectProperty);

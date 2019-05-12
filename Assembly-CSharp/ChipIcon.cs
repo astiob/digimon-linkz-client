@@ -6,24 +6,24 @@ using UnityEngine;
 
 public class ChipIcon : MonoBehaviour
 {
-	[SerializeField]
 	[Header("装備アイコン")]
+	[SerializeField]
 	private UISprite equipment;
 
 	[Header("選択中のメッセージラベル")]
 	[SerializeField]
 	private UILabel dimMessage;
 
-	[Header("チップアイコン")]
 	[SerializeField]
+	[Header("チップアイコン")]
 	private UITexture iconTexture;
 
-	[SerializeField]
 	[Header("ランクアイコン")]
+	[SerializeField]
 	private UISprite rankSprite;
 
-	[Header("複数選択時のメッセージラベル")]
 	[SerializeField]
+	[Header("複数選択時のメッセージラベル")]
 	private UILabel selectMessage;
 
 	private string texturePath = string.Empty;
@@ -49,26 +49,20 @@ public class ChipIcon : MonoBehaviour
 		{
 			this.rankSprite.spriteName = text;
 		}
-		string b = (data == null) ? "ChipThumbnail/Chip_Empty" : data.GetIconPath();
-		if (this.texturePath != b)
+		string texname = (data == null) ? "ChipThumbnail/Chip_Empty" : data.GetIconPath();
+		NGUIUtil.LoadTextureAsync(this.iconTexture, texname, delegate
 		{
-			this.texturePath = b;
-			AssetDataMng.Instance().LoadObjectASync(this.texturePath, delegate(UnityEngine.Object obj)
+			if (this != null)
 			{
-				if (obj != null)
+				this.transform.localScale = Vector3.one;
+				if (texSizeWidth > 0 && texSizeHeight > 0)
 				{
-					Texture2D mainTexture = obj as Texture2D;
-					this.iconTexture.mainTexture = mainTexture;
-					this.transform.localScale = Vector3.one;
-					if (texSizeWidth > 0 && texSizeHeight > 0)
-					{
-						float x = (float)texSizeWidth / (float)this.defaultTexSizeWidth;
-						float y = (float)texSizeHeight / (float)this.defaultTexSizeHeight;
-						this.transform.localScale = new Vector3(x, y, 1f);
-					}
+					float x = (float)texSizeWidth / (float)this.defaultTexSizeWidth;
+					float y = (float)texSizeHeight / (float)this.defaultTexSizeHeight;
+					this.transform.localScale = new Vector3(x, y, 1f);
 				}
-			});
-		}
+			}
+		});
 		if (this.dimMessage != null)
 		{
 			this.SetNowSelectMessage(false);

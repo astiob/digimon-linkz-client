@@ -18,8 +18,8 @@ public class MedalInheritController : CutsceneControllerBase
 	[SerializeField]
 	private GameObject inharitanceCamera;
 
-	[SerializeField]
 	[Header("カメラ2")]
+	[SerializeField]
 	private GameObject inharitanceCamera2;
 
 	[SerializeField]
@@ -64,6 +64,9 @@ public class MedalInheritController : CutsceneControllerBase
 		this.monsA_instance.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
 		this.monsB_instance.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
 		base.monsPosAdjustment(this.monsterLevelClass2, this.monsB_instance);
+		Camera component = this.inharitanceCamera.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
 		this.character1Params = this.monsA_instance.GetComponent<CharacterParams>();
 		this.character2Params = this.monsB_instance.GetComponent<CharacterParams>();
 		this.character2Params.PlayAnimation(CharacterAnimationType.move, SkillType.Attack, 0, null, null);

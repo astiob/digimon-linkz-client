@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,17 +9,9 @@ public class PlayerStatus : CharacterStatus
 	[SerializeField]
 	private int _luck = 1;
 
-	[Range(0f, 4f)]
-	[SerializeField]
 	[FormerlySerializedAs("_rarity")]
-	private int _arousal;
-
 	[SerializeField]
-	private string[] _skillIds = new string[]
-	{
-		string.Empty,
-		string.Empty
-	};
+	private int _arousal;
 
 	[SerializeField]
 	private string _thumbnailId = string.Empty;
@@ -29,19 +22,27 @@ public class PlayerStatus : CharacterStatus
 	[SerializeField]
 	private FriendshipStatus _friendshipStatus;
 
-	public PlayerStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, int luck, string deathblowId, string inheritanceTechniqueId, string leaderSkillId, string thumbnailId, Talent talent, int arousal, FriendshipStatus friendshipStatus, int[] chipIds) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, chipIds)
+	public PlayerStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, int luck, string deathblowId, string inheritanceTechniqueId, string inheritanceTechniqueId2, string leaderSkillId, string thumbnailId, Talent talent, int arousal, FriendshipStatus friendshipStatus, int[] chipIds) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, tolerance, chipIds)
 	{
 		this._luck = luck;
 		this._arousal = arousal;
-		this._skillIds = new string[]
+		List<string> list = new List<string>();
+		if (!string.IsNullOrEmpty(deathblowId))
 		{
-			deathblowId,
-			inheritanceTechniqueId
-		};
+			list.Add(deathblowId);
+		}
+		if (!string.IsNullOrEmpty(inheritanceTechniqueId))
+		{
+			list.Add(inheritanceTechniqueId);
+		}
+		if (!string.IsNullOrEmpty(inheritanceTechniqueId2) && inheritanceTechniqueId2 != "0")
+		{
+			list.Add(inheritanceTechniqueId2);
+		}
+		base.skillIds = list.ToArray();
 		this._leaderSkillId = leaderSkillId;
 		this._thumbnailId = thumbnailId;
 		this._talent = talent;
-		this.tolerance = tolerance;
 		this._friendshipStatus = friendshipStatus;
 	}
 
@@ -49,8 +50,9 @@ public class PlayerStatus : CharacterStatus
 	{
 		this._luck = 1;
 		this._arousal = 0;
-		this._skillIds = new string[]
+		base.skillIds = new string[]
 		{
+			string.Empty,
 			string.Empty,
 			string.Empty
 		};
@@ -76,19 +78,11 @@ public class PlayerStatus : CharacterStatus
 		}
 	}
 
-	public string[] skillIds
-	{
-		get
-		{
-			return this._skillIds;
-		}
-	}
-
 	public string deathblowId
 	{
 		get
 		{
-			return this._skillIds[0];
+			return base.skillIds[0];
 		}
 	}
 
@@ -96,7 +90,7 @@ public class PlayerStatus : CharacterStatus
 	{
 		get
 		{
-			return this._skillIds[1];
+			return base.skillIds[1];
 		}
 	}
 
@@ -123,8 +117,6 @@ public class PlayerStatus : CharacterStatus
 			return this._friendshipStatus;
 		}
 	}
-
-	public Tolerance tolerance { get; private set; }
 
 	public static bool Match(CharacterStatus characterStatus)
 	{

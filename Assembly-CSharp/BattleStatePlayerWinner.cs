@@ -102,9 +102,9 @@ public class BattleStatePlayerWinner : BattleStateController
 		{
 			PlayerPrefs.SetInt("Battle2xSpeedPlay", 0);
 		}
-		if (base.hierarchyData.onAutoPlay)
+		if (base.hierarchyData.onAutoPlay != 0)
 		{
-			PlayerPrefs.SetInt("BattleAutoPlay", 1);
+			PlayerPrefs.SetInt("BattleAutoPlay", base.hierarchyData.onAutoPlay);
 		}
 		else
 		{

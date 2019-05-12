@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class CMD_OptionSettings : CMD
 {
+	private const int AUTO_FLAG_OFF = 1;
+
+	private const int AUTO_FLAG_ON = 0;
+
 	private readonly int pushNoticeOn = 1;
 
 	private readonly int pushNoticeOff;
@@ -21,6 +25,24 @@ public class CMD_OptionSettings : CMD
 
 	[SerializeField]
 	private List<UISprite> pushNoticeOffSprite;
+
+	[SerializeField]
+	private UISprite autoButtonOnSprite;
+
+	[SerializeField]
+	private UISprite autoButtonOffSprite;
+
+	[SerializeField]
+	private UILabel autoButtonOnLabel;
+
+	[SerializeField]
+	private UILabel autoButtonOffLabel;
+
+	[SerializeField]
+	private UILabel autoButtonTitleLabel;
+
+	[SerializeField]
+	private UILabel autoButtonTextLabel;
 
 	[SerializeField]
 	private List<UILabel> pushNoticeOnLabel;
@@ -55,6 +77,10 @@ public class CMD_OptionSettings : CMD
 	private CMD_OptionSettings.TAB currentTab;
 
 	private Coroutine progressBarUpdatingCoroutine;
+
+	private int autoBattleState;
+
+	private int initAutoBattleState;
 
 	[SerializeField]
 	private GameObject systemEnvironmentWindow;
@@ -135,6 +161,14 @@ public class CMD_OptionSettings : CMD
 		if (this.CompareOptionList(OptionSetting.Instance.OptionList, this.editOptionList))
 		{
 			this.SaveOptionSettings();
+		}
+		if (this.AutoBattleStateCheck())
+		{
+			OptionSetting.Instance.SaveAutoBattle(this.autoBattleState);
+			if (this.autoBattleState == 1)
+			{
+				OptionSetting.Instance.ResetAutoBattlePrefas();
+			}
 		}
 		this.CloseAndFarmCamOn(animation);
 	}
@@ -234,10 +268,37 @@ public class CMD_OptionSettings : CMD
 		{
 			this.gardenEvolutionSubTitle.text = StringMaster.GetString("Option-15");
 		}
+		if (null != this.autoButtonTitleLabel)
+		{
+			this.autoButtonTitleLabel.text = StringMaster.GetString("OptionAutoTitle");
+		}
+		if (null != this.autoButtonTextLabel)
+		{
+			this.autoButtonTextLabel.text = StringMaster.GetString("OptionAutoText");
+		}
 		this.CopyOptionList(OptionSetting.Instance.OptionList, this.editOptionList);
 		if (this.editOptionList != null)
 		{
 			this.SetupController();
+		}
+		bool flag = PlayerPrefs.GetInt("BattleAuto", 0) == 0;
+		if (this.autoButtonOnSprite != null)
+		{
+			this.autoButtonOnSprite.spriteName = ((!flag) ? "Common02_Btn_SupportWhite" : "Common02_Btn_SupportRed");
+		}
+		if (this.autoButtonOffSprite != null)
+		{
+			this.autoButtonOffSprite.spriteName = ((!flag) ? "Common02_Btn_SupportRed" : "Common02_Btn_SupportWhite");
+		}
+		this.autoBattleState = PlayerPrefs.GetInt("BattleAuto", 0);
+		this.initAutoBattleState = PlayerPrefs.GetInt("BattleAuto", 0);
+		if (this.autoButtonOnLabel != null)
+		{
+			this.autoButtonOnLabel.color = ((!flag) ? Color.gray : Color.white);
+		}
+		if (this.autoButtonOffLabel != null)
+		{
+			this.autoButtonOffLabel.color = ((!flag) ? Color.white : Color.gray);
 		}
 		this.ChangeTab(this.currentTab);
 		this.isInitialized = true;
@@ -319,6 +380,11 @@ public class CMD_OptionSettings : CMD
 			}
 		}
 		return false;
+	}
+
+	private bool AutoBattleStateCheck()
+	{
+		return this.autoBattleState != this.initAutoBattleState;
 	}
 
 	private void CopyOptionList(Dictionary<string, int> from, Dictionary<string, int> to)
@@ -500,6 +566,30 @@ public class CMD_OptionSettings : CMD
 	public void OnClickedPushNoticeTab(int index)
 	{
 		this.ChangeTab(CMD_OptionSettings.TAB.PushNotice);
+	}
+
+	public void OnClickedAutoBattleOn()
+	{
+		if (this.autoButtonOnSprite != null && this.autoButtonOffSprite != null)
+		{
+			this.autoButtonOnSprite.spriteName = "Common02_Btn_SupportRed";
+			this.autoButtonOffSprite.spriteName = "Common02_Btn_SupportWhite";
+			this.autoButtonOnLabel.color = Color.white;
+			this.autoButtonOffLabel.color = Color.gray;
+		}
+		this.autoBattleState = 0;
+	}
+
+	public void OnClickedAutoBattleOff()
+	{
+		if (this.autoButtonOnSprite != null && this.autoButtonOffSprite != null)
+		{
+			this.autoButtonOnSprite.spriteName = "Common02_Btn_SupportWhite";
+			this.autoButtonOffSprite.spriteName = "Common02_Btn_SupportRed";
+			this.autoButtonOnLabel.color = Color.gray;
+			this.autoButtonOffLabel.color = Color.white;
+		}
+		this.autoBattleState = 1;
 	}
 
 	public enum TAB

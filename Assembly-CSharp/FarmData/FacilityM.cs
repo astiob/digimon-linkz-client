@@ -93,8 +93,6 @@ namespace FarmData
 
 		public string levelUpFlg;
 
-		public string deleteFlg;
-
 		public string GetIconPath()
 		{
 			return string.Format("Farm/Textures/{0}", this.iconResource);

@@ -38,7 +38,7 @@ namespace UnityExtension
 			return result;
 		}
 
-		public static bool Switch(float percentage, System.Random randomSource = null)
+		public static bool Switch(float percentage)
 		{
 			float num = UnityEngine.Random.Range(0f, 1f);
 			return num <= percentage;

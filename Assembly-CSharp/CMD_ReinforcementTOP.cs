@@ -37,8 +37,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[Header("所持クラスタ")]
 	private UILabel possessionClusterLabel;
 
-	[Header("消費クラスタ")]
 	[SerializeField]
+	[Header("消費クラスタ")]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -47,12 +47,15 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private GUICollider clBTN_DECIDE;
 
-	[SerializeField]
 	[Header("決定ラベル")]
+	[SerializeField]
 	private UILabelEx decideLabel;
 
 	[SerializeField]
 	private UILabel ngTX_MN_HAVE;
+
+	[SerializeField]
+	private UILabel luckUpChance;
 
 	private GUIMonsterIcon leftLargeMonsterIcon;
 
@@ -257,14 +260,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		};
 		requestMN_MonsterFusion.OnReceived = delegate(GameWebAPI.RespDataMN_FusionExec response)
 		{
-			if (response.userMonsterList != null)
-			{
-				DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-			}
-			if (response.userMonster != null)
-			{
-				DataMng.Instance().SetUserMonster(response.userMonster);
-			}
+			DataMng.Instance().SetUserMonster(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MonsterFusion request = requestMN_MonsterFusion;
 		base.StartCoroutine(request.Run(new Action(this.EndReinforce), delegate(Exception noop)
@@ -346,7 +342,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 			CutSceneMain.FadeReqCutSceneEnd();
 		}, delegate(int index)
 		{
-			this.charaDetail.ShowByReinforcement(this.oldMonsterData, this.oldLevel, this.upLuck);
+			this.charaDetail.ShowByReinforcement(this.baseDigimon.userMonster.ex, this.oldMonsterData, this.oldLevel, this.upLuck);
 			RestrictionInput.EndLoad();
 		}, list, list2, 2, 1, 0.5f, 0.5f);
 	}
@@ -390,6 +386,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		{
 			this.chipBaseSelect.ClearChipIcons();
 			this.monsterBasicInfo.ClearMonsterData();
+			this.luckUpChance.text = string.Empty;
 		}
 	}
 
@@ -544,6 +541,19 @@ public sealed class CMD_ReinforcementTOP : CMD
 			{
 				this.SetOtherDimIcon(true);
 			}
+			if (this.baseDigimon == null)
+			{
+				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+			}
+			else
+			{
+				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+				if ("1" == this.baseDigimon.monsterMG.monsterType)
+				{
+					GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+					monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+				}
+			}
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		if (flag)
 		{
@@ -584,9 +594,23 @@ public sealed class CMD_ReinforcementTOP : CMD
 			this.SetOtherDimIcon(true);
 		}
 		this.SetLockIcon();
+		if (this.baseDigimon == null)
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+		}
+		else
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+			if ("1" == this.baseDigimon.monsterMG.monsterType)
+			{
+				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+			}
+		}
 		this.CalcAndShowLevelChange();
 		this.RefreshSelectedInMonsterList();
 		this.BtnCont();
+		this.SetLuckChanceDescript();
 	}
 
 	private void ActMIconS_Remove(MonsterData md)
@@ -612,9 +636,23 @@ public sealed class CMD_ReinforcementTOP : CMD
 		}
 		this.SetOtherDimIcon(false);
 		this.SetLockIcon();
+		if (this.baseDigimon == null)
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+		}
+		else
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+			if ("1" == this.baseDigimon.monsterMG.monsterType)
+			{
+				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+			}
+		}
 		this.CalcAndShowLevelChange();
 		this.RefreshSelectedInMonsterList();
 		this.BtnCont();
+		this.SetLuckChanceDescript();
 	}
 
 	private void SetDimParty(bool isDim)
@@ -766,5 +804,80 @@ public sealed class CMD_ReinforcementTOP : CMD
 			this.decideLabel.color = Color.gray;
 			this.clBTN_DECIDE.activeCollider = false;
 		}
+	}
+
+	private void SetLuckChanceDescript()
+	{
+		this.luckUpChance.text = string.Empty;
+		if (this.baseDigimon != null)
+		{
+			if (this.IsLuckMax(this.baseDigimon.userMonster.monsterId, this.baseDigimon.userMonster.luck))
+			{
+				this.luckUpChance.text = StringMaster.GetString("ReinforcementLuckMax");
+			}
+			else if (0 < this.partnerDigimons.Count)
+			{
+				string[] array = new string[this.partnerDigimons.Count];
+				for (int i = 0; i < this.partnerDigimons.Count; i++)
+				{
+					array[i] = this.partnerDigimons[i].monsterMG.tribe;
+				}
+				if (this.CheckLuckUpChance(this.baseDigimon.monsterMG.tribe, array))
+				{
+					this.luckUpChance.text = StringMaster.GetString("ReinforcementLuckChance");
+				}
+			}
+		}
+	}
+
+	private bool IsLuckMax(string monsterId, string luck)
+	{
+		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId);
+		int num = int.Parse(luck);
+		int num2 = int.Parse(monsterMasterByMonsterId.maxLuck);
+		return num2 <= num;
+	}
+
+	private bool CheckLuckUpChance(string baseTribe, string[] partnerTribeList)
+	{
+		bool result = false;
+		for (int i = 0; i < partnerTribeList.Length; i++)
+		{
+			if (partnerTribeList[i] == baseTribe)
+			{
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
+	private int GetLuckUpChanceRateMax(string baseTribe, string[] partnerTribeList, string[] partnerGrowStepList)
+	{
+		int num = 0;
+		for (int i = 0; i < partnerTribeList.Length; i++)
+		{
+			if (partnerTribeList[i] == baseTribe)
+			{
+				switch (int.Parse(partnerGrowStepList[i]))
+				{
+				case 4:
+					num = Mathf.Max(num, 7);
+					break;
+				case 5:
+				case 8:
+					num = Mathf.Max(num, 20);
+					break;
+				case 6:
+					num = Mathf.Max(num, 50);
+					break;
+				case 7:
+				case 9:
+					num = Mathf.Max(num, 100);
+					break;
+				}
+			}
+		}
+		return num;
 	}
 }

@@ -30,11 +30,12 @@ public class CharacterDatas
 		this._evolutionStep = EvolutionStep.InfancyPhase1;
 	}
 
-	public CharacterDatas(string name, Species species, EvolutionStep evolutionStep)
+	public CharacterDatas(string name, Species species, EvolutionStep evolutionStep, string monsterStatusId)
 	{
 		this._name = name;
 		this._species = species;
 		this._evolutionStep = evolutionStep;
+		this.monsterStatusId = monsterStatusId;
 	}
 
 	public string name
@@ -60,6 +61,8 @@ public class CharacterDatas
 			return this._evolutionStep;
 		}
 	}
+
+	public string monsterStatusId { get; private set; }
 
 	public int GetMaxFriendshipLevel()
 	{

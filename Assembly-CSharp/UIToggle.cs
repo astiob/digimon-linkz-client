@@ -39,16 +39,16 @@ public class UIToggle : UIWidgetContainer
 	[HideInInspector]
 	private Animation checkAnimation;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
 	[HideInInspector]
 	[SerializeField]
 	private string functionName = "OnActivate";
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool startsChecked;
 
 	private bool mIsActive = true;

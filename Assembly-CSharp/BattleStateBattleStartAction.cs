@@ -44,7 +44,6 @@ public class BattleStateBattleStartAction : BattleStateBase
 
 	protected override IEnumerator MainRoutine()
 	{
-		base.battleStateData.calledBattleStartAction = true;
 		base.stateManager.threeDAction.HideAllCharactersAction(base.battleStateData.GetTotalCharacters());
 		base.hierarchyData.stageParams.TransformStage(base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType);
 		this.smallToBigTransition.Clear();

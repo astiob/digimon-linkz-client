@@ -33,7 +33,7 @@ public class BattleWaveControl : BattleFunctionBase
 			{
 				dictionary.Add(prefabId, 0);
 			}
-			this.WaveResetEnemyResetupFunction(prefabId, num, i);
+			this.WaveResetEnemyResetupFunction(prefabId, num, i, isRecover);
 			int index = base.battleStateData.playerCharacters.Length + i;
 			base.stateManager.uiControl.ApplyCharacterHudBoss(index, base.hierarchyData.batteWaves[waveNumber].enemiesBossFlag[i]);
 			base.stateManager.uiControl.ApplyCharacterHudContent(index, base.battleStateData.enemies[i]);
@@ -71,12 +71,8 @@ public class BattleWaveControl : BattleFunctionBase
 		GC.Collect();
 	}
 
-	private void WaveResetEnemyResetupFunction(string prefabId, int num, int i)
+	private void WaveResetEnemyResetupFunction(string prefabId, int num, int i, bool isRecover = false)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		CharacterParams @object = base.battleStateData.preloadEnemiesParams.GetObject(prefabId, num.ToString());
 		@object.gameObject.SetActive(true);
 		@object.Initialize(base.hierarchyData.cameraObject.camera3D);
@@ -84,7 +80,10 @@ public class BattleWaveControl : BattleFunctionBase
 		@object.transform.position = base.battleStateData.enemiesSpawnPoint[i].position;
 		@object.transform.rotation = base.battleStateData.enemiesSpawnPoint[i].rotation;
 		base.battleStateData.enemies[i].CharacterParams = @object;
-		base.battleStateData.enemies[i].InitializeAp();
+		if (!isRecover)
+		{
+			base.battleStateData.enemies[i].InitializeAp();
+		}
 		ThreeDHoldPressButton threeDHoldPressButton = @object.gameObject.GetComponent<ThreeDHoldPressButton>();
 		if (threeDHoldPressButton == null)
 		{
@@ -104,10 +103,6 @@ public class BattleWaveControl : BattleFunctionBase
 
 	private void WaveResetPlayerResetupFunction(int i)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		Transform transform = base.battleStateData.playerCharactersSpawnPoint[i];
 		CharacterParams characterParams = base.battleStateData.playerCharacters[i].CharacterParams;
 		AlwaysEffectParams alwaysEffectParams = base.battleStateData.revivalReservedEffect[i];
@@ -126,7 +121,7 @@ public class BattleWaveControl : BattleFunctionBase
 			if (!characterStateControl.isDied)
 			{
 				bool flag = false;
-				if (characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && characterStateControl.currentSufferState.onSleep.GetSleepGetupOccurrence(false))
+				if (characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && characterStateControl.currentSufferState.onSleep.GetSleepGetupOccurrence())
 				{
 					characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
 				}

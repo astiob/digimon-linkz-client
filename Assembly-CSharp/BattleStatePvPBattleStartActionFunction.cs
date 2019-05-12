@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BattleStatePvPBattleStartActionFunction : BattleStateController
 {
-	public BattleStatePvPBattleStartActionFunction(Action OnRoundStart) : base(null, OnRoundStart)
+	public BattleStatePvPBattleStartActionFunction(Action OnRoundStart, Action<EventState> OnExitGotEvent) : base(null, OnRoundStart, OnExitGotEvent)
 	{
 	}
 

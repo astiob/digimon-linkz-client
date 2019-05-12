@@ -30,7 +30,7 @@ public class BattleTutorial : BattleFunctionBase
 		base.stateManager.time.SetPlaySpeed(base.hierarchyData.on2xSpeedPlay, onPose);
 	}
 
-	public void SetAutoPlay(bool onAutoPlay)
+	public void SetAutoPlay(int onAutoPlay)
 	{
 		base.hierarchyData.onAutoPlay = onAutoPlay;
 		base.stateManager.uiControl.ApplyAutoPlay(base.hierarchyData.onAutoPlay);
@@ -56,7 +56,7 @@ public class BattleTutorial : BattleFunctionBase
 	{
 		get
 		{
-			return this.ui.skillButton[0].gameObject;
+			return this.ui.skillSelectUi.skillButton[0].gameObject;
 		}
 	}
 
@@ -64,7 +64,7 @@ public class BattleTutorial : BattleFunctionBase
 	{
 		get
 		{
-			return this.ui.skillButton[1].gameObject;
+			return this.ui.skillSelectUi.skillButton[1].gameObject;
 		}
 	}
 
@@ -72,7 +72,7 @@ public class BattleTutorial : BattleFunctionBase
 	{
 		get
 		{
-			return this.ui.skillButton[2].gameObject;
+			return this.ui.skillSelectUi.skillButton[2].gameObject;
 		}
 	}
 
@@ -80,9 +80,9 @@ public class BattleTutorial : BattleFunctionBase
 	{
 		return new GameObject[]
 		{
-			this.ui.monsterButton[0].gameObject,
-			this.ui.monsterButton[1].gameObject,
-			this.ui.monsterButton[2].gameObject
+			this.ui.skillSelectUi.monsterButton[0].gameObject,
+			this.ui.skillSelectUi.monsterButton[1].gameObject,
+			this.ui.skillSelectUi.monsterButton[2].gameObject
 		};
 	}
 
@@ -90,7 +90,7 @@ public class BattleTutorial : BattleFunctionBase
 	{
 		get
 		{
-			return this.ui.monsterButton[1].gameObject;
+			return this.ui.skillSelectUi.monsterButton[1].gameObject;
 		}
 	}
 
@@ -127,18 +127,6 @@ public class BattleTutorial : BattleFunctionBase
 		set
 		{
 			base.battleStateData.isPossibleTargetSelect = value;
-		}
-	}
-
-	public bool isPossibleMenuSelect
-	{
-		get
-		{
-			return base.battleStateData.isPossibleMenuSelect;
-		}
-		set
-		{
-			base.battleStateData.isPossibleMenuSelect = value;
 		}
 	}
 

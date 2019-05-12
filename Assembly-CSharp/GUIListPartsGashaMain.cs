@@ -4,8 +4,8 @@ using UnityEngine;
 
 public sealed class GUIListPartsGashaMain : GUIListPartBS
 {
-	[Header("NEWの スプライト")]
 	[SerializeField]
+	[Header("NEWの スプライト")]
 	private UISprite newSprite;
 
 	[Header("回数表示")]
@@ -24,28 +24,28 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[Header("選択時の外枠色")]
 	[SerializeField]
+	[Header("選択時の外枠色")]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
 	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[SerializeField]
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	private GameWebAPI.RespDataGA_GetGachaInfo.Result data;
@@ -233,7 +233,9 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 		}
 		if (flag && !this.selectPanelA.animationMoving)
 		{
+			float z = this.selectPanelA.transform.localPosition.z;
 			base.OnTouchEnded(touch, pos, flag);
+			this.selectPanelA.transform.SetLocalZ(z);
 			if (0 < this.totalSeconds)
 			{
 				float magnitude = (this.beganPostion - pos).magnitude;

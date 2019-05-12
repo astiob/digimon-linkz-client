@@ -12,29 +12,29 @@ public class CameraParams : MonoBehaviour
 
 	private static readonly Vector3 inverseScale = new Vector3(-1f, 1f, 1f);
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraType")]
+	[SerializeField]
 	private CameraParams.CameraType _cameraType;
 
-	[SerializeField]
 	[FormerlySerializedAs("rootPosition")]
+	[SerializeField]
 	private CameraParams.RootPosition _rootPosition;
 
-	[SerializeField]
 	[FormerlySerializedAs("useAnimation")]
+	[SerializeField]
 	private bool _useAnimation = true;
 
 	[FormerlySerializedAs("isLoopAnimation")]
 	[SerializeField]
 	private bool _onLoopAnimation;
 
-	[Range(1f, 179f)]
 	[FormerlySerializedAs("fieldOfView")]
 	[SerializeField]
+	[Range(1f, 179f)]
 	private float _fieldOfView = 60f;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraAnimation")]
+	[SerializeField]
 	private Animation _cameraAnimation;
 
 	[SerializeField]
@@ -45,16 +45,16 @@ public class CameraParams : MonoBehaviour
 	[FormerlySerializedAs("endTime")]
 	private float _endTime = 3f;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraTarget")]
+	[SerializeField]
 	private Transform _cameraTarget;
 
 	[FormerlySerializedAs("cameraLookTarget")]
 	[SerializeField]
 	private Transform _cameraLookTarget;
 
-	[SerializeField]
 	[FormerlySerializedAs("onPossibleInverse")]
+	[SerializeField]
 	private bool _onPossibleInverse;
 
 	[SerializeField]
@@ -581,8 +581,8 @@ public class CameraParams : MonoBehaviour
 		[SerializeField]
 		private CameraParams.CameraType _cameraType;
 
-		[Range(1f, 179f)]
 		[SerializeField]
+		[Range(1f, 179f)]
 		private float _fieldOfView = 60f;
 
 		[SerializeField]

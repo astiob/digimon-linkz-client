@@ -248,6 +248,22 @@ public class GUIMain : Singleton<GUIMain>
 		}
 	}
 
+	public static void AdjustBarrierZ()
+	{
+		Vector3 localPosition = GUIMain.self.goMainBarrier.transform.localPosition;
+		CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
+		if (topDialog != null)
+		{
+			float num = GUIManager.GetDLGPitch() / 2f;
+			localPosition.z = topDialog.gameObject.transform.localPosition.z + num;
+		}
+		else
+		{
+			localPosition.z = GUIManager.GetDLGStartZ() + 5f;
+		}
+		GUIMain.self.goMainBarrier.transform.localPosition = localPosition;
+	}
+
 	public static void BarrierOFF()
 	{
 		Vector3 localPosition = GUIMain.self.goMainBarrier.transform.localPosition;
@@ -565,6 +581,7 @@ public class GUIMain : Singleton<GUIMain>
 		GUIFadeControll.SetLoadInfo(new Action<int>(GUIMain.ShiftGUI), SceneName, "UIIdle", string.Empty, actionEnd, false);
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		BattleStateManager.onAutoServerConnect = true;
+		ServerDateTime.isUpdateServerDateTime = false;
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
 		Resources.UnloadUnusedAssets();
 	}

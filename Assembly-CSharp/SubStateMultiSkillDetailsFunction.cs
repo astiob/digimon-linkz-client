@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class SubStateMultiSkillDetailsFunction : SubStateSkillDetailsFunction
 {
@@ -22,11 +21,6 @@ public class SubStateMultiSkillDetailsFunction : SubStateSkillDetailsFunction
 		}
 	}
 
-	protected override void SetRandomSeed(AffectEffectProperty currentSuffer)
-	{
-		currentSuffer.SetRandomSeed(UnityEngine.Random.seed);
-	}
-
 	protected override IEnumerator AffectEffectApDrain(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
 	{
 		IEnumerator function = base.AffectEffectApDrain(currentCharacter, targetDataList, currentSuffer);
@@ -34,6 +28,34 @@ public class SubStateMultiSkillDetailsFunction : SubStateSkillDetailsFunction
 		{
 			yield return null;
 		}
+		IEnumerator refreshSharedAP = this.RefreshSharedAP();
+		while (refreshSharedAP.MoveNext())
+		{
+			yield return null;
+		}
+		yield break;
+	}
+
+	protected override IEnumerator Other(CharacterStateControl currentCharacter, List<SubStateSkillDetailsFunction.TargetData> targetDataList, AffectEffectProperty currentSuffer)
+	{
+		IEnumerator function = base.Other(currentCharacter, targetDataList, currentSuffer);
+		while (function.MoveNext())
+		{
+			yield return null;
+		}
+		if (currentSuffer.type == AffectEffect.ApUp || currentSuffer.type == AffectEffect.ApDown)
+		{
+			IEnumerator refreshSharedAP = this.RefreshSharedAP();
+			while (refreshSharedAP.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		yield break;
+	}
+
+	private IEnumerator RefreshSharedAP()
+	{
 		base.stateManager.battleUiComponentsMulti.sharedApMulti.PlayApUpAnimations();
 		base.stateManager.uiControlMulti.RefreshSharedAP(false);
 		while (base.stateManager.uiControlMulti.isPlayingSharedAp)

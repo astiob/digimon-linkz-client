@@ -661,7 +661,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			{
 				base.stateManager.battleUiComponentsMulti.continueTimer.Stop();
 			}
-			base.stateManager.battleUiComponentsMulti.attackTime.StopTimer();
+			base.stateManager.battleUiComponentsMulti.skillSelectUi.attackTime.StopTimer();
 			yield return wait.Current;
 		}
 		global::Debug.Log("時間経過");
@@ -713,7 +713,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			{
 				base.stateManager.battleUiComponentsMulti.continueTimer.Restart();
 			}
-			base.stateManager.battleUiComponentsMulti.attackTime.RestartTimer();
+			base.stateManager.battleUiComponentsMulti.skillSelectUi.attackTime.RestartTimer();
 			base.stateManager.uiControlMulti.HideAlertDialog();
 		}
 		yield break;
@@ -2112,7 +2112,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		}, !isDisconnectMember, (!isDisconnectMember) ? -1 : 1);
 		if (!isDisconnectMember)
 		{
-			base.stateManager.battleUiComponentsMulti.attackTime.StopTimer();
+			base.stateManager.battleUiComponentsMulti.skillSelectUi.attackTime.StopTimer();
 			base.stateManager.uiControlMulti.BlockNewDialog();
 		}
 	}

@@ -21,37 +21,41 @@ public class GUIListDropItemParts : GUIListPartBS
 
 	private bool _LongTouch = true;
 
-	[SerializeField]
 	[Header("箱のアイコン")]
+	[SerializeField]
 	private UISprite boxIcons;
 
-	[Header("ドロップアイテム")]
 	[SerializeField]
+	[Header("ドロップアイテム")]
 	private PresentBoxItem dropItemItems;
 
+	[SerializeField]
 	[Header("運の文字アイコン")]
-	[SerializeField]
-	private UISprite luckIcons;
+	private UILabel luckIcons;
 
-	[SerializeField]
 	[Header("マルチ運プレイヤーアイコン")]
+	[SerializeField]
 	private GameObject goLuckPlayerIcons;
 
 	[SerializeField]
 	[Header("マルチの文字アイコン")]
-	private UISprite multiIcons;
+	private UILabel multiIcons;
 
-	[SerializeField]
 	[Header("マルチのオーナー報酬アイコン")]
-	private UISprite ownerRewardIcon;
+	[SerializeField]
+	private UILabel ownerRewardIcon;
 
 	[SerializeField]
 	[Header("マルチのゲスト報酬アイコン")]
-	private UISprite guestRewardIcon;
+	private UILabel guestRewardIcon;
+
+	[Header("チャレンジの文字アイコン")]
+	[SerializeField]
+	private UILabel challengeIcon;
 
 	[SerializeField]
-	[Header("チャレンジの文字アイコン")]
-	private UISprite challengeIcon;
+	[Header("イベントチップドロップのアイコン")]
+	private UILabel eventChipDropIcon;
 
 	[SerializeField]
 	[Header("ドロップ数のラベル")]
@@ -93,6 +97,7 @@ public class GUIListDropItemParts : GUIListPartBS
 		this.ownerRewardIcon.gameObject.SetActive(false);
 		this.guestRewardIcon.gameObject.SetActive(false);
 		this.challengeIcon.gameObject.SetActive(false);
+		this.eventChipDropIcon.gameObject.SetActive(false);
 		this.dropNumLabel.gameObject.SetActive(false);
 	}
 
@@ -271,6 +276,9 @@ public class GUIListDropItemParts : GUIListPartBS
 		case GUIListDropItemParts.DropType.Challenge:
 			this.AddIconAnimationList(this.challengeIcon);
 			break;
+		case GUIListDropItemParts.DropType.EventChip:
+			this.AddIconAnimationList(this.eventChipDropIcon);
+			break;
 		}
 		PresentBoxItem presentBoxItem = this.dropItemItems;
 		int assetCategoryId = (int)this.data.assetCategoryId;
@@ -339,6 +347,7 @@ public class GUIListDropItemParts : GUIListPartBS
 		this.multiIcons.alpha = 1f;
 		this.luckIcons.alpha = 1f;
 		this.challengeIcon.alpha = 1f;
+		this.eventChipDropIcon.alpha = 1f;
 		this.dropNumLabel.alpha = 0f;
 	}
 
@@ -453,7 +462,8 @@ public class GUIListDropItemParts : GUIListPartBS
 		Owner,
 		Multi,
 		LuckMulti,
-		Challenge
+		Challenge,
+		EventChip
 	}
 
 	public enum BoxType

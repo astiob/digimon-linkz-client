@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class TicketGashaController : MonoBehaviour
 {
-	[SerializeField]
 	[Header("カードアニメフレーム間隔")]
+	[SerializeField]
 	private int cardAnimIntervalFrame;
 
-	[SerializeField]
 	[Header("メインカメラ")]
+	[SerializeField]
 	public Camera mainCam;
 
 	[Header("2Dカメラ")]
@@ -33,8 +33,8 @@ public class TicketGashaController : MonoBehaviour
 	[SerializeField]
 	private List<GameObject> goCardEfcList;
 
-	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
 	[SerializeField]
+	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
 	private List<GameObject> goCardAnimList;
 
 	private UITexture ticketGashaTex;
@@ -64,10 +64,12 @@ public class TicketGashaController : MonoBehaviour
 
 	public void SetTicketGashaTex(UITexture tex)
 	{
-		this.renderTex = new RenderTexture(1100, 800, 16);
+		this.renderTex = new RenderTexture(1100, 1000, 16);
 		this.renderTex.antiAliasing = 2;
 		this.ticketGashaTex = tex;
 		this.ticketGashaTex.mainTexture = this.renderTex;
+		this.ticketGashaTex.width = this.renderTex.width;
+		this.ticketGashaTex.height = this.renderTex.height;
 	}
 
 	public Action<int> EndCallBack

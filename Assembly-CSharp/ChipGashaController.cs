@@ -7,17 +7,17 @@ public class ChipGashaController : MonoBehaviour
 	private Action<int> endCallBack;
 
 	[SerializeField]
-	[Header("動作ロケーターのゲームオブジェクト、のリスト")]
 	[Header("MAX １０個")]
+	[Header("動作ロケーターのゲームオブジェクト、のリスト")]
 	private List<GameObject> goLocatorList;
 
-	[SerializeField]
-	[Header("MAX １０個")]
 	[Header("動作ロケーターライト用のゲームオブジェクト、のリスト")]
+	[Header("MAX １０個")]
+	[SerializeField]
 	private List<GameObject> goLightLocatorList;
 
-	[Header("ライト")]
 	[Header("素材のゲームオブジェクト、のリスト、順番は以下")]
+	[Header("ライト")]
 	[SerializeField]
 	private GameObject goPartsLight;
 
@@ -25,32 +25,32 @@ public class ChipGashaController : MonoBehaviour
 	[Header("青→青")]
 	private GameObject goPartsBlue;
 
-	[SerializeField]
 	[Header("青→黄")]
+	[SerializeField]
 	private GameObject goPartsYellow;
 
 	[SerializeField]
 	[Header("青→虹")]
 	private GameObject goPartsRainbow;
 
-	[SerializeField]
 	[Header("フェードアウト開始フレーム")]
+	[SerializeField]
 	private int startFadeOutFrame;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	public Camera mainCam;
 
-	[Header("2Dカメラ")]
 	[SerializeField]
+	[Header("2Dカメラ")]
 	public Camera camUI;
 
 	[Header("白フェード板")]
 	[SerializeField]
 	private GUISprite spFade;
 
-	[SerializeField]
 	[Header("白フェード速度")]
+	[SerializeField]
 	private float fadeSpeed = 0.05f;
 
 	[Header("スキップ・コリダー")]
@@ -89,10 +89,12 @@ public class ChipGashaController : MonoBehaviour
 
 	public void SetChipGashaTex(UITexture tex)
 	{
-		this.renderTex = new RenderTexture(1100, 800, 16);
+		this.renderTex = new RenderTexture(1100, 1000, 16);
 		this.renderTex.antiAliasing = 2;
 		this.chipGashaTex = tex;
 		this.chipGashaTex.mainTexture = this.renderTex;
+		this.chipGashaTex.width = this.renderTex.width;
+		this.chipGashaTex.height = this.renderTex.height;
 	}
 
 	private void Update()

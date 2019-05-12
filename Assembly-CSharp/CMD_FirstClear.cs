@@ -152,7 +152,7 @@ public sealed class CMD_FirstClear : CMD
 
 	private void CheckExistFrontDialog()
 	{
-		if (GUIManager.CheckOpenDialog("CMD_Alert") || GUIManager.CheckOpenDialog("CMD_AlertDBG"))
+		if (GUIManager.CheckOpenDialog("CMD_Alert"))
 		{
 			if (this.particle != null && !this.particle.isStopped)
 			{

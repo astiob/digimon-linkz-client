@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class TicketEfc : MonoBehaviour
 {
-	[SerializeField]
 	[Header("サムネイル TEX")]
+	[SerializeField]
 	public UITexture ngTICKET_THUMB;
 
-	[Header("チケット TEX")]
 	[SerializeField]
+	[Header("チケット TEX")]
 	public UITexture ngTICKET;
 
-	[SerializeField]
 	[Header("パーティクル OBJ")]
+	[SerializeField]
 	public GameObject goPARTICLE;
 
 	[SerializeField]

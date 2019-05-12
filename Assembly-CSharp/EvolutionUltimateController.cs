@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EvolutionUltimateController : CutsceneControllerBase
@@ -12,20 +13,20 @@ public class EvolutionUltimateController : CutsceneControllerBase
 	[Header("スタンドの回転速度")]
 	private float[] standRollSpeed;
 
-	[SerializeField]
 	[Header("UIカメラ")]
+	[SerializeField]
 	private GameObject camera2D;
 
-	[SerializeField]
 	[Header("3Dカメラ")]
+	[SerializeField]
 	private GameObject camera3D_1;
 
 	[SerializeField]
 	[Header("黄色いデジタルなマテリアル")]
 	private Material afterConversionMaterialB;
 
-	[Header("ライン時のマテリアル")]
 	[SerializeField]
+	[Header("ライン時のマテリアル")]
 	private Material afterConversionMaterialC;
 
 	[SerializeField]
@@ -42,13 +43,18 @@ public class EvolutionUltimateController : CutsceneControllerBase
 
 	private bool spiralBRotatoFlag;
 
+	private List<Material[]> materialsListA;
+
+	private List<Material[]> materialsListB;
+
 	private void Start()
 	{
 		this.copyMaterial = UnityEngine.Object.Instantiate<Material>(this.afterConversionMaterialB);
 		this.monsA_instance = base.monsterInstantiater(this.monsA_instance, this.character1Parent, this.character1Params, 0);
 		this.monsB_instance = base.monsterInstantiater(this.monsB_instance, this.character2Parent, this.character2Params, 1);
-		this.elementsA = this.monsA_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-		this.elementsB = this.monsB_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+		Camera component = this.camera3D_1.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
 		this.materialAlpha = this.copyMaterial.color;
 	}
 
@@ -71,23 +77,22 @@ public class EvolutionUltimateController : CutsceneControllerBase
 
 	public void CharacterA_LineOn()
 	{
-		base.OnWireFrameRenderer(this.monsA_instance, this.afterConversionMaterialC);
+		this.materialsListA = base.OnWireFrameRenderer(this.monsA_instance, this.afterConversionMaterialC);
 	}
 
 	public void CharacterB_LineOn()
 	{
-		base.OnWireFrameRenderer(this.monsB_instance, this.afterConversionMaterialC);
+		this.materialsListB = base.OnWireFrameRenderer(this.monsB_instance, this.afterConversionMaterialC);
 	}
 
 	public void CharacterA_LineOff()
 	{
-		base.OffWireFrameRenderer(this.monsA_instance);
-		this.monsA_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsA;
+		base.OffWireFrameRenderer(this.monsA_instance, this.materialsListA);
 	}
 
 	public void CharacterB_LineOff()
 	{
-		base.OffWireFrameRenderer(this.monsB_instance);
+		base.OffWireFrameRenderer(this.monsB_instance, null);
 	}
 
 	private void MaterialConverterB()
@@ -97,7 +102,7 @@ public class EvolutionUltimateController : CutsceneControllerBase
 
 	private void MaterialResetB()
 	{
-		this.monsB_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsB;
+		base.ResetMaterialRenderer(this.monsB_instance, this.materialsListB);
 	}
 
 	private void AttackAnimation()

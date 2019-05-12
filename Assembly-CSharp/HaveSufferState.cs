@@ -1,12 +1,12 @@
-﻿using System;
+﻿using BattleStateMachineInternal;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
 public class HaveSufferState
 {
 	private Dictionary<SufferStateProperty.SufferType, SufferStateProperty> sufferStatePropertyDictionary;
-
-	public List<SufferStateProperty.SufferType> sufferOrderList = new List<SufferStateProperty.SufferType>();
 
 	public HaveSufferState()
 	{
@@ -445,140 +445,29 @@ public class HaveSufferState
 		}
 	}
 
+	public List<SufferStateProperty.SufferType> GetSufferOrderList()
+	{
+		IEnumerable<KeyValuePair<SufferStateProperty.SufferType, SufferStateProperty>> source = this.sufferStatePropertyDictionary.Where((KeyValuePair<SufferStateProperty.SufferType, SufferStateProperty> item) => item.Value.isActive);
+		return source.Select((KeyValuePair<SufferStateProperty.SufferType, SufferStateProperty> item) => item.Key).ToList<SufferStateProperty.SufferType>();
+	}
+
 	public bool FindSufferState(SufferStateProperty.SufferType type)
 	{
-		return this.GetSufferStateProperty(type).isActive;
+		return this.sufferStatePropertyDictionary[type].isActive;
 	}
 
 	public void RemoveSufferState(SufferStateProperty.SufferType type)
 	{
-		if (this.sufferOrderList.Contains(type))
-		{
-			this.sufferOrderList.Remove(type);
-		}
-		this.GetSufferStateProperty(type).SetNull();
+		this.sufferStatePropertyDictionary[type].SetNull();
 	}
 
 	public void SetSufferState(SufferStateProperty suffer, CharacterStateControl status = null)
 	{
-		if (status != null)
-		{
-			suffer.TriggerCharacter = status;
-		}
-		this.RemoveSufferOnOrderList(suffer);
 		if (!suffer.isActive)
 		{
 			return;
 		}
-		switch (suffer.sufferTypeCache)
-		{
-		case SufferStateProperty.SufferType.Poison:
-			this.onPoison = suffer;
-			break;
-		case SufferStateProperty.SufferType.Confusion:
-			this.onConfusion = suffer;
-			break;
-		case SufferStateProperty.SufferType.Paralysis:
-			this.onParalysis = suffer;
-			break;
-		case SufferStateProperty.SufferType.Sleep:
-			this.onSleep = suffer;
-			break;
-		case SufferStateProperty.SufferType.Stun:
-			this.onStun = suffer;
-			break;
-		case SufferStateProperty.SufferType.SkillLock:
-			this.onSkillLock = suffer;
-			break;
-		case SufferStateProperty.SufferType.AttackUp:
-			this.onAttackUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.AttackDown:
-			this.onAttackDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.DefenceUp:
-			this.onDefenceUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.DefenceDown:
-			this.onDefenceDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.SpAttackUp:
-			this.onSpAttackUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.SpAttackDown:
-			this.onSpAttackDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.SpDefenceUp:
-			this.onSpDefenceUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.SpDefenceDown:
-			this.onSpDefenceDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.SpeedUp:
-			this.onSpeedUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.SpeedDown:
-			this.onSpeedDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.Counter:
-			this.onCounter = suffer;
-			break;
-		case SufferStateProperty.SufferType.Reflection:
-			this.onReflection = suffer;
-			break;
-		case SufferStateProperty.SufferType.Protect:
-			this.onProtect = suffer;
-			break;
-		case SufferStateProperty.SufferType.PowerCharge:
-			this.onPowerCharge = suffer;
-			break;
-		case SufferStateProperty.SufferType.HitRateUp:
-			this.onHitRateUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.HitRateDown:
-			this.onHitRateDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.SatisfactionRateUp:
-			this.onSatisfactionRateUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.SatisfactionRateDown:
-			this.onSatisfactionRateDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.ApRevival:
-			this.onApRevival = suffer;
-			break;
-		case SufferStateProperty.SufferType.ApConsumptionUp:
-			this.onApConsumptionUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.ApConsumptionDown:
-			this.onApConsumptionDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.CountGuard:
-			this.onCountGuard = suffer;
-			break;
-		case SufferStateProperty.SufferType.TurnBarrier:
-			this.onTurnBarrier = suffer;
-			break;
-		case SufferStateProperty.SufferType.CountBarrier:
-			this.onCountBarrier = suffer;
-			break;
-		case SufferStateProperty.SufferType.DamageRateUp:
-			this.onDamageRateUp = suffer;
-			break;
-		case SufferStateProperty.SufferType.DamageRateDown:
-			this.onDamageRateDown = suffer;
-			break;
-		case SufferStateProperty.SufferType.Regenerate:
-			this.onRegenerate = suffer;
-			break;
-		case SufferStateProperty.SufferType.TurnEvasion:
-			this.onTurnEvasion = suffer;
-			break;
-		case SufferStateProperty.SufferType.CountEvasion:
-			this.onCountEvasion = suffer;
-			break;
-		}
-		this.sufferOrderList.Add(suffer.sufferTypeCache);
+		this.sufferStatePropertyDictionary[suffer.sufferTypeCache] = suffer;
 	}
 
 	public void RoundCount()
@@ -629,22 +518,57 @@ public class HaveSufferState
 				sufferStateProperty.currentKeepRound--;
 				if (sufferStateProperty.OnDisappearance)
 				{
-					this.RemoveSufferOnOrderList(sufferStateProperty);
 					sufferStateProperty.SetNull();
 				}
-			}
-			else
-			{
-				this.RemoveSufferOnOrderList(sufferStateProperty);
 			}
 		}
 	}
 
-	private void RemoveSufferOnOrderList(SufferStateProperty sufferState)
+	private string CheckNull(SufferStateProperty sufferStateProperty)
 	{
-		if (this.sufferOrderList.Contains(sufferState.sufferTypeCache))
+		if (sufferStateProperty != null)
 		{
-			this.sufferOrderList.Remove(sufferState.sufferTypeCache);
+			return sufferStateProperty.GetParams();
+		}
+		return string.Empty;
+	}
+
+	public HaveSufferStateStore GetCurrentSufferState()
+	{
+		HaveSufferStateStore haveSufferStateStore = new HaveSufferStateStore();
+		List<HaveSufferStateStore.Data> list = new List<HaveSufferStateStore.Data>();
+		Array values = Enum.GetValues(typeof(SufferStateProperty.SufferType));
+		foreach (object obj in values)
+		{
+			SufferStateProperty.SufferType key = (SufferStateProperty.SufferType)((int)obj);
+			if (this.sufferStatePropertyDictionary.ContainsKey(key))
+			{
+				list.Add(new HaveSufferStateStore.Data
+				{
+					key = (int)key,
+					value = this.sufferStatePropertyDictionary[key].GetParams()
+				});
+			}
+		}
+		haveSufferStateStore.sufferStatePropertys = list.ToArray();
+		return haveSufferStateStore;
+	}
+
+	public void SetCurrentSufferState(HaveSufferStateStore haveSufferStateStore, BattleStateData battleStateData)
+	{
+		Array values = Enum.GetValues(typeof(SufferStateProperty.SufferType));
+		foreach (object obj in values)
+		{
+			SufferStateProperty.SufferType key = (SufferStateProperty.SufferType)((int)obj);
+			HaveSufferStateStore.Data data = haveSufferStateStore.sufferStatePropertys.Where((HaveSufferStateStore.Data item) => item.key == (int)key).SingleOrDefault<HaveSufferStateStore.Data>();
+			if (data != null)
+			{
+				if (!this.sufferStatePropertyDictionary.ContainsKey(key))
+				{
+					this.sufferStatePropertyDictionary.Add(key, new SufferStateProperty());
+				}
+				this.sufferStatePropertyDictionary[key].SetParams(data.value, battleStateData);
+			}
 		}
 	}
 }

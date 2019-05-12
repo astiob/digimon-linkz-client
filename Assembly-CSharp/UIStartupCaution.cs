@@ -9,6 +9,12 @@ public class UIStartupCaution : GUIScreen
 	[SerializeField]
 	private GameObject TXT;
 
+	[SerializeField]
+	private GameObject AnniversaryLogo;
+
+	[SerializeField]
+	private bool isDispAnnivLogo;
+
 	private float originTime;
 
 	private float fTimer;
@@ -36,6 +42,61 @@ public class UIStartupCaution : GUIScreen
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
+		if (this.isDispAnnivLogo)
+		{
+			this.FadeInAnnivLogo();
+		}
+		else
+		{
+			this.DisplayNoticeText();
+		}
+	}
+
+	private void FadeInAnnivLogo()
+	{
+		this.timer += 3f;
+		iTween.ValueTo(base.gameObject, iTween.Hash(new object[]
+		{
+			"from",
+			0,
+			"to",
+			1,
+			"time",
+			2f,
+			"easeType",
+			iTween.EaseType.easeOutQuart,
+			"onupdate",
+			"SetAnnivLogoAlpha",
+			"oncomplete",
+			"FadeOutAnnivLogo",
+			"oncompletetarget",
+			base.gameObject
+		}));
+	}
+
+	private void FadeOutAnnivLogo()
+	{
+		iTween.ValueTo(base.gameObject, iTween.Hash(new object[]
+		{
+			"from",
+			1,
+			"to",
+			0,
+			"time",
+			1f,
+			"easeType",
+			iTween.EaseType.easeInCirc,
+			"onupdate",
+			"SetAnnivLogoAlpha",
+			"oncomplete",
+			"DisplayNoticeText",
+			"oncompletetarget",
+			base.gameObject
+		}));
+	}
+
+	private void DisplayNoticeText()
+	{
 		iTween.ValueTo(base.gameObject, iTween.Hash(new object[]
 		{
 			"from",
@@ -45,13 +106,18 @@ public class UIStartupCaution : GUIScreen
 			"time",
 			this.fTimer,
 			"onupdate",
-			"SetAlpha"
+			"SetNoticeTextAlpha"
 		}));
 	}
 
-	private void SetAlpha(float value)
+	private void SetNoticeTextAlpha(float value)
 	{
 		this.TXT.GetComponent<UILabel>().alpha = value;
+	}
+
+	private void SetAnnivLogoAlpha(float value)
+	{
+		this.AnniversaryLogo.GetComponent<UITexture>().alpha = value;
 	}
 
 	protected override void Update()

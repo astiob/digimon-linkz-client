@@ -40,7 +40,12 @@ public sealed class CMD_ResearchModal : CMD_ModalMessageBtn2
 		int num = status.rare.ToInt32();
 		string arousalSpriteName = MonsterDetailUtil.GetArousalSpriteName(num);
 		this.SetArousalValue(this.beforeRarity, this.beforeLabel, arousalSpriteName);
-		if (!status.isArousal)
+		if (status.isReturn)
+		{
+			num--;
+			this.afterRarity.spriteName = MonsterDetailUtil.GetArousalSpriteName(num);
+		}
+		else if (!status.isArousal)
 		{
 			this.SetArousalValue(this.afterRarity, this.afterLabel, arousalSpriteName);
 		}

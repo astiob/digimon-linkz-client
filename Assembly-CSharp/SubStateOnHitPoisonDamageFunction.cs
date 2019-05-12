@@ -101,13 +101,6 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, hitIconPositions[j], AffectEffect.Regenerate, damage[j], Strength.None, isMiss[j], false, false, false, ExtraEffectType.Non);
 			hitIconlist.Add(hitIcon);
 		}
-		Action<Vector3[]> reposition = delegate(Vector3[] positions)
-		{
-			for (int k = 0; k < characters.Count; k++)
-			{
-				hitIconlist[k].HitIconReposition(positions[k]);
-			}
-		};
 		base.stateManager.uiControl.ShowCharacterHUDFunction(characters.ToArray());
 		Action hudReposition = delegate()
 		{
@@ -210,13 +203,6 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(j, hitIconPositions[j], AffectEffect.Poison, damage[j], Strength.None, isMiss[j], false, false, false, ExtraEffectType.Non);
 			hitIconlist.Add(hitIcon);
 		}
-		Action<Vector3[]> reposition = delegate(Vector3[] positions)
-		{
-			for (int k = 0; k < characters.Count; k++)
-			{
-				hitIconlist[k].HitIconReposition(positions[k]);
-			}
-		};
 		base.stateManager.uiControl.ShowCharacterHUDFunction(characters.ToArray());
 		foreach (CharacterStateControl c in currentDeathCharacters)
 		{

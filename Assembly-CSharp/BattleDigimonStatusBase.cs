@@ -7,8 +7,8 @@ public class BattleDigimonStatusBase : MonoBehaviour
 	[SerializeField]
 	protected UILabel monsterName;
 
-	[SerializeField]
 	[Header("耐性ローカライズ")]
+	[SerializeField]
 	protected UILabel toleranceLocalize;
 
 	[SerializeField]

@@ -13,6 +13,15 @@ public class PartsMenuNotfIcon : MonoBehaviour
 	[SerializeField]
 	private bool useLongDescription;
 
+	[SerializeField]
+	private bool updateTrainingMenuAlertState;
+
+	[SerializeField]
+	private bool updateClearMenuAlertState;
+
+	[SerializeField]
+	private bool updateEvolutionMenuAlertState;
+
 	protected virtual void Start()
 	{
 		DataMng dataMng = DataMng.Instance();
@@ -70,10 +79,12 @@ public class PartsMenuNotfIcon : MonoBehaviour
 			{
 				this.SetCampaignData(underwayCampaignList);
 				base.gameObject.SetActive(true);
+				this.updateMenuAlertState(true);
 			}
 			else
 			{
 				base.gameObject.SetActive(false);
+				this.updateMenuAlertState(false);
 			}
 		}
 	}
@@ -91,5 +102,25 @@ public class PartsMenuNotfIcon : MonoBehaviour
 	protected string GetMultipleHoldingCampaignDescription()
 	{
 		return StringMaster.GetString("Campaign");
+	}
+
+	private void updateMenuAlertState(bool state)
+	{
+		if (this.updateTrainingMenuAlertState)
+		{
+			PartsMenu.SetTrainingAlertState(state);
+		}
+		if (this.updateClearMenuAlertState)
+		{
+			PartsMenu.SetClearAlertState(state);
+		}
+		if (this.updateEvolutionMenuAlertState)
+		{
+			PartsMenu.SetEvolutionAlertState(state);
+		}
+		if (this.updateTrainingMenuAlertState || this.updateClearMenuAlertState || this.updateEvolutionMenuAlertState)
+		{
+			PartsMenu.SetMenuButtonAlertBadge();
+		}
 	}
 }

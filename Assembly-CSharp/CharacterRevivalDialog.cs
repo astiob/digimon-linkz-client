@@ -1,5 +1,4 @@
-﻿using BattleStateMachineInternal;
-using Master;
+﻿using Master;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -24,12 +23,12 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel digistoneNumber;
 
-	[Header("復活タイトル")]
 	[SerializeField]
+	[Header("復活タイトル")]
 	private UILabel revivalLocalize;
 
-	[Header("特定商取引法に基づく表記ローカライズ")]
 	[SerializeField]
+	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
 	[Header("足りないエッセージローカライズ(マルチバトル用)")]
@@ -40,20 +39,20 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel consumeMessageLocalize;
 
-	[SerializeField]
 	[Header("所持ローカライズ")]
+	[SerializeField]
 	private UILabel haveLocalize;
 
-	[SerializeField]
 	[Header("閉じるローカライズ")]
+	[SerializeField]
 	private UILabel closeLocalize;
 
 	[SerializeField]
 	[Header("復活予約ローカライズ")]
 	private UILabel bookRevivalLocalize;
 
-	[Header("ショップへローカライズ")]
 	[SerializeField]
+	[Header("ショップへローカライズ")]
 	private UILabel goShopLocalize;
 
 	public GameObject GetRevivalDialogEnterUIButton
@@ -114,18 +113,10 @@ public class CharacterRevivalDialog : MonoBehaviour
 
 	public IEnumerator ApplyEnableCharacterRevivalWindow(bool isShow, bool isPossibleRevival = false, Action onFinishedAction = null)
 	{
-		BattleStateData battleStateData = BattleStateManager.current.battleStateData;
 		BattleUIControlBasic uiControl = BattleStateManager.current.uiControl;
 		if (isShow)
 		{
-			if (battleStateData.isEnableShopMoveDigistoneZero)
-			{
-				this.revivalOrGoShopButtonSwitch.SetSkins((!isPossibleRevival) ? 1 : 0);
-			}
-			else
-			{
-				this.revivalOrGoShopButtonSwitch.SetSkins(0);
-			}
+			this.revivalOrGoShopButtonSwitch.SetSkins((!isPossibleRevival) ? 1 : 0);
 			return uiControl.WaitOpenCloseDialog(isShow, base.gameObject, this.openCloseDialog, null);
 		}
 		return uiControl.WaitOpenCloseDialog(isShow, base.gameObject, this.openCloseDialog, onFinishedAction);

@@ -2,7 +2,7 @@
 
 public sealed class PresentBoxItemIconCacheBuffer : AssetDataCacheBuffer
 {
-	private const int CACHE_ICON_NUM = 40;
+	private const int CACHE_ICON_NUM = 300;
 
 	private static PresentBoxItemIconCacheBuffer instance;
 
@@ -14,7 +14,7 @@ public sealed class PresentBoxItemIconCacheBuffer : AssetDataCacheBuffer
 	{
 		if (PresentBoxItemIconCacheBuffer.instance == null)
 		{
-			PresentBoxItemIconCacheBuffer.instance = new PresentBoxItemIconCacheBuffer(40);
+			PresentBoxItemIconCacheBuffer.instance = new PresentBoxItemIconCacheBuffer(300);
 		}
 		return PresentBoxItemIconCacheBuffer.instance;
 	}

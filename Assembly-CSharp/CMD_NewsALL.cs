@@ -83,7 +83,7 @@ public sealed class CMD_NewsALL : CMD
 
 	public override void ClosePanel(bool animation = true)
 	{
-		ClassSingleton<PartsMenuNewsIconAccessor>.Instance.artsMenuNewsIcon.NewsCheck();
+		ClassSingleton<FaceNewsAccessor>.Instance.faceNews.SetBadgeOnly();
 		this.CloseAndFarmCamOn(animation);
 		if (this.infoList != null)
 		{
@@ -119,8 +119,23 @@ public sealed class CMD_NewsALL : CMD
 	{
 		this.infoListItem.SetActive(true);
 		this.infoList.initLocation = true;
-		int activeNoneDiscription = this.infoList.AllBuild(DataMng.Instance().RespDataIN_InfoList, tabNumber);
+		int activeNoneDiscription = this.infoList.AllBuild(DataMng.Instance().RespDataIN_InfoList, tabNumber, new Action(this.Refresh));
 		this.infoListItem.SetActive(false);
 		this.SetActiveNoneDiscription(activeNoneDiscription);
+	}
+
+	private void Refresh()
+	{
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		APIRequestTask task = DataMng.Instance().RequestNews(false);
+		base.StartCoroutine(task.Run(delegate
+		{
+			RestrictionInput.EndLoad();
+			this.infoList.Refresh(DataMng.Instance().RespDataIN_InfoList);
+		}, delegate(Exception nop)
+		{
+			RestrictionInput.EndLoad();
+			this.ClosePanel(false);
+		}, null));
 	}
 }

@@ -1,5 +1,4 @@
-﻿using Enemy.DropItem;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,10 +71,10 @@ public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 					this.isEffectPlaying[dropCount] = true;
 					dropCount++;
 					base.battleStateData.itemDropResults.Add(dropResult);
-					DropAssetType dropAssetType = dropResult.dropAssetType;
-					if (dropAssetType != DropAssetType.Chip)
+					MasterDataMng.AssetCategory dropAssetType = dropResult.dropAssetType;
+					if (dropAssetType != MasterDataMng.AssetCategory.TIP)
 					{
-						if (dropAssetType == DropAssetType.Exp)
+						if (dropAssetType == MasterDataMng.AssetCategory.EXP)
 						{
 							base.battleStateData.currentGettedItemDropExp += dropResult.dropNumber;
 						}

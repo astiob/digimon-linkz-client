@@ -159,10 +159,6 @@ public class CMD_ColosseumRanking : CMD
 			{
 				this.lbColosseumRankingListEmpty.gameObject.SetActive(true);
 			}
-			if (!this.csParts.gameObject.activeSelf)
-			{
-				this.csParts.gameObject.SetActive(true);
-			}
 		}
 	}
 
@@ -242,6 +238,10 @@ public class CMD_ColosseumRanking : CMD
 			{
 				this.listIdx = this.keysList.Count - 1;
 				this.amIOutRange = true;
+			}
+			else
+			{
+				this.amIOutRange = false;
 			}
 		}
 		else

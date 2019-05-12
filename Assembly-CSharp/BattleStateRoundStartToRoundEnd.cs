@@ -362,11 +362,13 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		base.stateManager.uiControl.ApplyTurnActionBarSwipeout(false);
 		base.stateManager.uiControl.CharacterHudResetAndUpdate(false);
 		base.battleStateData.SetChipSkillFlag(false);
+		base.battleStateData.isConfusionAttack = base.stateManager.roundFunction.onConfusion;
 		base.SetState(this.subStateSkillDetailsFunction.GetType());
 		while (base.isWaitState)
 		{
 			yield return null;
 		}
+		base.battleStateData.isConfusionAttack = false;
 		this.isSkillEnd = true;
 		base.SetState(this.subStateWaitForCertainPeriodTimeAction.GetType());
 		while (base.isWaitState)
@@ -451,7 +453,8 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 			characterStateControl.SpeedRandomize(base.hierarchyData.onEnableRandomValue);
 			base.stateManager.fraudCheck.FraudCheckOverflowMaxSpeed(characterStateControl);
 		}
-		list = new List<CharacterStateControl>(CharacterStateControl.SortedSpeedEnemyPriority(list.ToArray()));
+		CharacterStateControl[] collection = CharacterStateControlSorter.SortedSpeedEnemyPriority(list.ToArray());
+		list = new List<CharacterStateControl>(collection);
 		base.battleStateData.currentTurnNumber = 0;
 		base.battleStateData.SetOrderInSortedCharacter(list, -1);
 		if (!base.stateManager.onEnableTutorial)

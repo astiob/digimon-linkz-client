@@ -26,17 +26,29 @@ public sealed class CMD_Succession : CMD
 	private MonsterLearnSkill baseMonsterSuccessionSkill;
 
 	[SerializeField]
+	private CMD_Succession.SkillTab baseMonsterSkillTab1;
+
+	[SerializeField]
+	private CMD_Succession.SkillTab baseMonsterSkillTab2;
+
+	[SerializeField]
 	private MonsterBasicInfo materialMonsterBasicInfo;
 
 	[SerializeField]
 	private MonsterLearnSkill materialMonsterSuccessionSkill;
 
 	[SerializeField]
+	private CMD_Succession.SkillTab materialMonsterSkillTab1;
+
+	[SerializeField]
+	private CMD_Succession.SkillTab materialMonsterSkillTab2;
+
 	[Header("所持クラスタ数")]
+	[SerializeField]
 	private UILabel myClusterLabel;
 
-	[Header("必要クラスタ数")]
 	[SerializeField]
+	[Header("必要クラスタ数")]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -65,6 +77,10 @@ public sealed class CMD_Succession : CMD
 	private GUIMonsterIcon leftLargeMonsterIcon;
 
 	private int useClusterBK;
+
+	private int baseDigimonSkillNumber = 1;
+
+	private int partnerDigimonSkillNumber = 1;
 
 	private int materialMonsterGroupId;
 
@@ -96,6 +112,16 @@ public sealed class CMD_Succession : CMD
 		this.ngTX_DECIDE.text = StringMaster.GetString("SuccessionTitle");
 		this.sortButtonLabel.text = StringMaster.GetString("SystemSortButton");
 		this.necessaryLabel.text = StringMaster.GetString("Succession-02");
+		this.baseMonsterSkillTab1.SetLabel(StringMaster.GetString("SkillInheritTitle1"));
+		this.baseMonsterSkillTab2.SetLabel(StringMaster.GetString("SkillInheritTitle2"));
+		this.materialMonsterSkillTab1.SetLabel(StringMaster.GetString("SkillInheritTitle1"));
+		this.materialMonsterSkillTab2.SetLabel(StringMaster.GetString("SkillInheritTitle2"));
+		this.baseMonsterSkillTab1.Off();
+		this.baseMonsterSkillTab2.Off();
+		this.baseMonsterSkillTab2.SetActive(false);
+		this.materialMonsterSkillTab1.Off();
+		this.materialMonsterSkillTab2.Off();
+		this.materialMonsterSkillTab2.SetActive(false);
 		this.SetCommonUI();
 		this.InitMonsterList(true);
 		this.ShowChgInfo();
@@ -141,7 +167,71 @@ public sealed class CMD_Succession : CMD
 	private void OnTouchDecide()
 	{
 		CMD_InheritCheck cmd_InheritCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSuccession), "CMD_InheritCheck") as CMD_InheritCheck;
-		cmd_InheritCheck.SetParams(this.selecterPartnerDigimons, this.useClusterLabel.text);
+		cmd_InheritCheck.SetParams(this.selecterPartnerDigimons, this.useClusterLabel.text, this.baseDigimonSkillNumber, this.partnerDigimonSkillNumber);
+	}
+
+	private void OnBaseDigimonSkill1()
+	{
+		if (this.baseDigimon != null)
+		{
+			this.FunctionBaseDigimonSkill1();
+		}
+	}
+
+	private void FunctionBaseDigimonSkill1()
+	{
+		this.baseDigimonSkillNumber = 1;
+		this.baseMonsterSuccessionSkill.SetCommonSkill(this.baseDigimon);
+		this.baseMonsterSkillTab1.On();
+		this.baseMonsterSkillTab2.Off();
+	}
+
+	private void OnBaseDigimonSkill2()
+	{
+		if (this.baseDigimon != null && this.baseDigimon.IsVersionUp())
+		{
+			this.FunctionBaseDigimonSkill2();
+		}
+	}
+
+	private void FunctionBaseDigimonSkill2()
+	{
+		this.baseDigimonSkillNumber = 2;
+		this.baseMonsterSuccessionSkill.SetCommonSkill2(this.baseDigimon);
+		this.baseMonsterSkillTab1.Off();
+		this.baseMonsterSkillTab2.On();
+	}
+
+	private void OnPartnerDigimonSkill1()
+	{
+		if (this.selecterPartnerDigimons.Count > 0)
+		{
+			this.FunctionPartnerDigimonSkill1();
+		}
+	}
+
+	private void FunctionPartnerDigimonSkill1()
+	{
+		this.partnerDigimonSkillNumber = 1;
+		this.materialMonsterSuccessionSkill.SetCommonSkill(this.selecterPartnerDigimons[0]);
+		this.materialMonsterSkillTab1.On();
+		this.materialMonsterSkillTab2.Off();
+	}
+
+	private void OnPartnerDigimonSkill2()
+	{
+		if (this.selecterPartnerDigimons.Count > 0 && this.selecterPartnerDigimons[0].commonSkillM2 != null)
+		{
+			this.FunctionPartnerDigimonSkill2();
+		}
+	}
+
+	private void FunctionPartnerDigimonSkill2()
+	{
+		this.partnerDigimonSkillNumber = 2;
+		this.materialMonsterSuccessionSkill.SetCommonSkill2(this.selecterPartnerDigimons[0]);
+		this.materialMonsterSkillTab1.Off();
+		this.materialMonsterSkillTab2.On();
 	}
 
 	private bool IsMATLevelMax()
@@ -160,7 +250,25 @@ public sealed class CMD_Succession : CMD
 
 	private bool IsSameSkill()
 	{
-		return this.baseDigimon.userMonster.commonSkillId == this.selecterPartnerDigimons[0].userMonster.commonSkillId;
+		string a = string.Empty;
+		if (this.baseDigimonSkillNumber == 1)
+		{
+			a = this.baseDigimon.userMonster.commonSkillId;
+		}
+		else
+		{
+			a = this.baseDigimon.userMonster.extraCommonSkillId;
+		}
+		string b = string.Empty;
+		if (this.partnerDigimonSkillNumber == 1)
+		{
+			b = this.selecterPartnerDigimons[0].userMonster.commonSkillId;
+		}
+		else
+		{
+			b = this.selecterPartnerDigimons[0].userMonster.extraCommonSkillId;
+		}
+		return a == b;
 	}
 
 	private void OnCloseSuccession(int idx)
@@ -201,17 +309,12 @@ public sealed class CMD_Succession : CMD
 		{
 			param.baseUserMonsterId = int.Parse(this.baseDigimon.userMonster.userMonsterId);
 			param.materialUserMonsterId = mat[0];
+			param.baseCommonSkillNumber = this.baseDigimonSkillNumber;
+			param.materialCommonSkillNumber = this.partnerDigimonSkillNumber;
 		};
 		requestMN_MonsterInheritance.OnReceived = delegate(GameWebAPI.RespDataMN_SuccessExec response)
 		{
-			if (response.userMonsterList != null)
-			{
-				DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-			}
-			if (response.userMonster != null)
-			{
-				DataMng.Instance().SetUserMonster(response.userMonster);
-			}
+			DataMng.Instance().SetUserMonster(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MonsterInheritance request = requestMN_MonsterInheritance;
 		base.StartCoroutine(request.Run(new Action(this.EndSuccession), delegate(Exception noop)
@@ -272,6 +375,12 @@ public sealed class CMD_Succession : CMD
 		this.selecterPartnerDigimons = new List<MonsterData>();
 		DataMng.Instance().US_PlayerInfoSubChipNum(this.useClusterBK);
 		this.UpdateClusterNum();
+		this.baseMonsterSkillTab1.Off();
+		this.baseMonsterSkillTab2.Off();
+		this.baseMonsterSkillTab2.SetActive(false);
+		this.materialMonsterSkillTab1.Off();
+		this.materialMonsterSkillTab2.Off();
+		this.materialMonsterSkillTab2.SetActive(false);
 		this.ShowChgInfo();
 		this.ShowMATInfo();
 		this.SetDimParty(true);
@@ -279,6 +388,19 @@ public sealed class CMD_Succession : CMD
 		this.BtnCont();
 		this.ShowHaveMonster();
 		this.ActMIconLong(this.baseDigimon);
+		if (this.baseDigimon == null)
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+		}
+		else
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+			if ("1" == this.baseDigimon.monsterMG.monsterType)
+			{
+				GUIMonsterIcon monsterCS_ByMonsterData2 = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+				monsterCS_ByMonsterData2.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+			}
+		}
 	}
 
 	private void ShowChgInfo()
@@ -286,12 +408,31 @@ public sealed class CMD_Succession : CMD
 		if (this.baseDigimon != null)
 		{
 			this.baseMonsterBasicInfo.SetMonsterData(this.baseDigimon);
-			this.baseMonsterSuccessionSkill.SetSkill(this.baseDigimon);
+			if (this.baseDigimon.IsVersionUp())
+			{
+				this.baseMonsterSkillTab2.SetActive(true);
+				if (this.baseDigimon.commonSkillM2 != null)
+				{
+					this.FunctionBaseDigimonSkill1();
+				}
+				else
+				{
+					this.FunctionBaseDigimonSkill2();
+				}
+			}
+			else
+			{
+				this.baseMonsterSkillTab2.SetActive(false);
+				this.FunctionBaseDigimonSkill1();
+			}
 		}
 		else
 		{
 			this.baseMonsterBasicInfo.ClearMonsterData();
-			this.baseMonsterSuccessionSkill.ClearSkill();
+			this.baseMonsterSuccessionSkill.SetCommonSkill(null);
+			this.baseMonsterSkillTab1.Off();
+			this.baseMonsterSkillTab2.Off();
+			this.baseMonsterSkillTab2.SetActive(false);
 		}
 	}
 
@@ -312,6 +453,9 @@ public sealed class CMD_Succession : CMD
 			{
 				this.useClusterLabel.color = Color.white;
 			}
+			bool active = monsterData.IsVersionUp();
+			this.materialMonsterSkillTab2.SetActive(active);
+			this.FunctionPartnerDigimonSkill1();
 		}
 		else
 		{
@@ -319,6 +463,9 @@ public sealed class CMD_Succession : CMD
 			this.materialMonsterSuccessionSkill.ClearSkill();
 			this.useClusterLabel.text = "0";
 			this.useClusterLabel.color = Color.white;
+			this.materialMonsterSkillTab1.Off();
+			this.materialMonsterSkillTab2.Off();
+			this.materialMonsterSkillTab2.SetActive(false);
 		}
 	}
 
@@ -392,6 +539,19 @@ public sealed class CMD_Succession : CMD
 				this.leftLargeMonsterIcon.Lock = tappedMonsterData.userMonster.IsLocked;
 			}
 			PartyUtil.SetLock(tappedMonsterData, isCheckDim);
+			if (this.baseDigimon == null)
+			{
+				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+			}
+			else
+			{
+				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+				if ("1" == this.baseDigimon.monsterMG.monsterType)
+				{
+					GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+					monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+				}
+			}
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		if (flag)
 		{
@@ -405,6 +565,7 @@ public sealed class CMD_Succession : CMD
 		{
 			this.baseDigimon = md;
 			this.leftLargeMonsterIcon = this.ShowCreateIcon(this.baseDigimon, this.goMN_ICON_CHG);
+			this.leftLargeMonsterIcon.transform.localScale = new Vector3(0.84f, 0.84f, 1f);
 			this.baseDigimon.csMIcon = this.leftLargeMonsterIcon;
 			this.leftLargeMonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
 			this.ShowChgInfo();
@@ -416,6 +577,7 @@ public sealed class CMD_Succession : CMD
 			this.selecterPartnerDigimons.Add(md);
 			int index = this.selecterPartnerDigimons.Count - 1;
 			GUIMonsterIcon guimonsterIcon = this.ShowCreateIcon(this.selecterPartnerDigimons[index], this.goMN_ICON_MAT_LIST[index]);
+			guimonsterIcon.transform.localScale = new Vector3(0.84f, 0.84f, 1f);
 			this.selecterPartnerDigimons[index].csMIcon = guimonsterIcon;
 			this.ShowMATInfo();
 			guimonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
@@ -426,12 +588,26 @@ public sealed class CMD_Succession : CMD
 			this.selecterPartnerDigimons.Add(md);
 			int index2 = this.selecterPartnerDigimons.Count - 1;
 			GUIMonsterIcon guimonsterIcon2 = this.ShowCreateIcon(this.selecterPartnerDigimons[index2], this.goMN_ICON_MAT_LIST[index2]);
+			guimonsterIcon2.transform.localScale = new Vector3(0.84f, 0.84f, 1f);
 			this.selecterPartnerDigimons[index2].csMIcon = guimonsterIcon2;
 			this.ShowMATInfo();
 			guimonsterIcon2.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
 		}
 		this.RefreshSelectedInMonsterList();
 		this.BtnCont();
+		if (this.baseDigimon == null)
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+		}
+		else
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+			if ("1" == this.baseDigimon.monsterMG.monsterType)
+			{
+				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+			}
+		}
 	}
 
 	private void ActMIconS_Remove(MonsterData md)
@@ -459,6 +635,19 @@ public sealed class CMD_Succession : CMD
 		}
 		this.RefreshSelectedInMonsterList();
 		this.BtnCont();
+		if (this.baseDigimon == null)
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+		}
+		else
+		{
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
+			if ("1" == this.baseDigimon.monsterMG.monsterType)
+			{
+				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
+				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+			}
+		}
 	}
 
 	private void SetDimParty(bool flg)
@@ -627,5 +816,40 @@ public sealed class CMD_Succession : CMD
 		int count = MonsterDataMng.Instance().GetSelectMonsterDataList().Count;
 		int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.unitLimitMax);
 		this.ngTX_MN_HAVE.text = string.Format(StringMaster.GetString("SystemFraction"), count.ToString(), num.ToString());
+	}
+
+	[Serializable]
+	private class SkillTab
+	{
+		[Header("スプライト")]
+		[SerializeField]
+		private UISprite sprite;
+
+		[SerializeField]
+		[Header("ラベル")]
+		private UILabelEx label;
+
+		public void On()
+		{
+			this.sprite.spriteName = "Common02_Btn_tab_1";
+			this.label.color = Color.white;
+		}
+
+		public void Off()
+		{
+			this.sprite.spriteName = "Common02_Btn_tab_2";
+			this.label.color = Color.gray;
+		}
+
+		public void SetLabel(string text)
+		{
+			this.label.text = text;
+		}
+
+		public void SetActive(bool value)
+		{
+			this.sprite.gameObject.SetActive(value);
+			this.label.gameObject.SetActive(value);
+		}
 	}
 }

@@ -22,8 +22,8 @@ public sealed class SharedAPMulti : MonoBehaviour
 	[SerializeField]
 	private UITextReplacer numLabel;
 
-	[Header("スラッシュ分母数字")]
 	[SerializeField]
+	[Header("スラッシュ分母数字")]
 	private UITextReplacer maxNumLabel;
 
 	private bool isPlayedFirstAnimation;

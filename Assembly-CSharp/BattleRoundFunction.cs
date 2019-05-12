@@ -157,7 +157,6 @@ public class BattleRoundFunction : BattleFunctionBase
 		{
 			base.battleStateData.isRoundStartHpRevival[j] = false;
 		}
-		base.battleStateData.calledBattleStartAction = false;
 		for (int k = 0; k < base.battleStateData.playerCharacters.Length; k++)
 		{
 			base.battleStateData.playerCharacters[k].targetCharacter = null;

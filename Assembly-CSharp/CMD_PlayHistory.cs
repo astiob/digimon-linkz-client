@@ -126,16 +126,16 @@ public class CMD_PlayHistory : CMD
 		else
 		{
 			this.colosseumRankSprite.spriteName = "Rank_" + ColosseumInfo.colosseumRankId.ToString();
-			this.competitionNumLabel.text = (ColosseumInfo.winWeek + ColosseumInfo.loseWeek).ToString();
-			this.outComeNumLabel.text = string.Format(StringMaster.GetString("ColosseumScore"), ColosseumInfo.winWeek, ColosseumInfo.loseWeek);
-			int num = ColosseumInfo.winWeek + ColosseumInfo.loseWeek;
+			this.competitionNumLabel.text = (ColosseumInfo.winTotal + ColosseumInfo.loseTotal).ToString();
+			this.outComeNumLabel.text = string.Format(StringMaster.GetString("ColosseumScore"), ColosseumInfo.winTotal, ColosseumInfo.loseTotal);
+			int num = ColosseumInfo.winTotal + ColosseumInfo.loseTotal;
 			if (num == 0)
 			{
 				this.winRate.text = string.Format(StringMaster.GetString("PlayHistory-13"), 0f);
 			}
 			else
 			{
-				this.winRate.text = string.Format(StringMaster.GetString("PlayHistory-13"), (float)ColosseumInfo.winWeek / (float)num * 100f);
+				this.winRate.text = string.Format(StringMaster.GetString("PlayHistory-13"), (float)ColosseumInfo.winTotal / (float)num * 100f);
 			}
 		}
 	}

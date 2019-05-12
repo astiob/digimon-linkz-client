@@ -10,7 +10,5 @@ namespace FarmData
 		public string level;
 
 		public string maxMonsterNum;
-
-		public string deleteFlg;
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using Evolution;
-using EvolutionRouteMap;
 using EvolutionSelect;
 using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +16,8 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	public const string JOGRESS = "3";
 
 	public const string COMBINE = "4";
+
+	public const string VERSION_UP = "5";
 
 	private GUIListPartsEvolution instance;
 
@@ -38,6 +40,9 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	private UILabel ngTX_MONS_NEXT_SKILL;
 
 	[SerializeField]
+	private UILabel specificTypeName;
+
+	[SerializeField]
 	private UILabel ngTAG_NEED_CHIP;
 
 	[SerializeField]
@@ -45,6 +50,11 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 
 	[SerializeField]
 	private EvolutionSelectExecutionButton executionButton;
+
+	[SerializeField]
+	private Color iconTextColor = new Color(1f, 1f, 0f, 1f);
+
+	private GUIMonsterIcon csNextMons;
 
 	private string evolutionType;
 
@@ -59,8 +69,6 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	private EvolutionData.MonsterEvolveData data;
 
 	private bool isShowedItemIcon;
-
-	private GUIMonsterIcon csNextMons;
 
 	public EvolutionData.MonsterEvolveData Data
 	{
@@ -122,6 +130,10 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		{
 			this.needCluster = CalculatorUtil.CalcClusterForEvolve(monsterId);
 		}
+		else if (this.evolutionType == "5")
+		{
+			this.needCluster = CalculatorUtil.CalcClusterForVersionUp(monsterId);
+		}
 		else if (this.evolutionType == "2")
 		{
 			this.needCluster = CalculatorUtil.CalcClusterForModeChange(monsterId);
@@ -144,7 +156,7 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 					this.SetActiveButton();
 				}
 			}
-			else if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4")
+			else if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4" || this.evolutionType == "5")
 			{
 				if (this.myCluster < this.needCluster)
 				{
@@ -247,10 +259,10 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 
 	private void OnLongPushedMonsterIcon(MonsterData tappedMonsterData)
 	{
-		FarmCameraControlForCMD.ClearRefCT();
-		FarmCameraControlForCMD.On();
-		GUIMain.DestroyAllDialog(null);
-		CMD_EvolutionRouteMap.CreateDialog(null, tappedMonsterData);
+		CMD_CharacterDetailed.DataChg = null;
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		cmd_CharacterDetailed.SetViewNextEvolutionMonster(tappedMonsterData.monsterM.monsterId, CMD_BaseSelect.DataChg.userMonster);
+		cmd_CharacterDetailed.DisableEvolutionButton();
 	}
 
 	protected override void Update()
@@ -289,16 +301,22 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	{
 		this.ngTX_MONS_NEXT_NAME.text = this.data.md_next.monsterMG.monsterName;
 		this.ngTX_MONS_NEXT_SKILL.text = this.data.md_next.tribeM.monsterTribeName;
+		this.specificTypeName.text = MonsterSpecificTypeData.GetSpecificTypeName(this.data.md_next.monsterMG.monsterStatusId);
 		int num = 0;
 		if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4")
 		{
 			string monsterId = this.data.md_next.monsterM.monsterId;
 			num = CalculatorUtil.CalcClusterForEvolve(monsterId);
 		}
+		else if (this.evolutionType == "5")
+		{
+			string monsterId2 = this.data.md.monsterM.monsterId;
+			num = CalculatorUtil.CalcClusterForVersionUp(monsterId2);
+		}
 		else if (this.evolutionType == "2")
 		{
-			string monsterId2 = this.data.md_next.monsterM.monsterId;
-			num = CalculatorUtil.CalcClusterForModeChange(monsterId2);
+			string monsterId3 = this.data.md_next.monsterM.monsterId;
+			num = CalculatorUtil.CalcClusterForModeChange(monsterId3);
 		}
 		this.ngTX_NEED_CHIP.text = StringFormat.Cluster(num);
 		int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
@@ -315,7 +333,7 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		{
 			if (itemList[i].catId == ConstValue.EVOLVE_ITEM_MONS)
 			{
-				if (itemList[i].need_num > itemList[i].haveMDList.Count)
+				if (itemList[i].need_num > itemList[i].haveNum)
 				{
 					return false;
 				}

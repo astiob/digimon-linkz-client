@@ -63,8 +63,16 @@ public class BattleTargetSelect : BattleFunctionBase
 			break;
 		}
 		CharacterStateControl[] aliveCharacters = CharacterStateControl.GetAliveCharacters(characterStatus);
-		CharacterStateControl[] array2 = CharacterStateControl.SortedTargetSelect(aliveCharacters, currentCharacter.currentSkillStatus, null);
+		CharacterStateControl[] array2 = CharacterStateControlSorter.SortedTargetSelect(aliveCharacters, currentCharacter.currentSkillStatus, null);
 		currentCharacter.targetCharacter = array2[0];
+	}
+
+	public void AutoPlayCharacterAndAttackSelectFunction(CharacterStateControl currentCharacter)
+	{
+		currentCharacter.isSelectSkill = 0;
+		CharacterStateControl[] aliveCharacters = CharacterStateControl.GetAliveCharacters(base.battleStateData.enemies);
+		CharacterStateControl[] array = CharacterStateControlSorter.SortedTargetSelect(aliveCharacters, currentCharacter.currentSkillStatus, null);
+		currentCharacter.targetCharacter = array[0];
 	}
 
 	public void EnemyAICharacterAndSkillSelectFunction(CharacterStateControl currentCharacters)
@@ -89,7 +97,7 @@ public class BattleTargetSelect : BattleFunctionBase
 			array = base.battleStateData.playerCharacters;
 		}
 		CharacterStateControl[] aliveCharacters = CharacterStateControl.GetAliveCharacters(array);
-		CharacterStateControl[] array2 = CharacterStateControl.SortedTargetSelect(aliveCharacters, currentCharacters.currentSkillStatus, randomActionClip);
+		CharacterStateControl[] array2 = CharacterStateControlSorter.SortedTargetSelect(aliveCharacters, currentCharacters.currentSkillStatus, randomActionClip);
 		currentCharacters.targetCharacter = array2[0];
 	}
 
@@ -205,6 +213,10 @@ public class BattleTargetSelect : BattleFunctionBase
 		CharacterStateControl characterStateControl = targetCharacter;
 		bool flag = characterStateControl == null || characterStateControl.isDied;
 		SkillStatus currentSkillStatus = currentCharacter.currentSkillStatus;
+		if (currentSkillStatus == null)
+		{
+			return;
+		}
 		CharacterStateControl[] skillTargetList = this.GetSkillTargetList(currentCharacter, currentSkillStatus.target);
 		bool flag2 = true;
 		if (characterStateControl != null)

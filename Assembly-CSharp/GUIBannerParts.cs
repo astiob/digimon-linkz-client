@@ -8,8 +8,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
 	[Header("ガシャの背景色")]
@@ -20,8 +20,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
-	[Header("キャンペーンの背景色")]
 	[SerializeField]
+	[Header("キャンペーンの背景色")]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[SerializeField]
 	[Header("NEWのスプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
 	[SerializeField]
@@ -112,6 +112,10 @@ public sealed class GUIBannerParts : GUIListPartBS
 		case GUIBannerParts.LinkCategoryType.Meal:
 			this.MethodToInvoke = "OnClickedMeal";
 			break;
+		case GUIBannerParts.LinkCategoryType.Schedule:
+			this.CallBackClass = base.gameObject;
+			this.MethodToInvoke = "ScheduleShortcut";
+			break;
 		default:
 			global::Debug.LogError("ER : ===== 想定外遷移 =====");
 			break;
@@ -142,7 +146,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 		return "BANNER_IS_SHOWED_CAT_" + this.Data.linkCategoryType + "_ID_" + this.Data.bannerId;
 	}
 
-	private void SetNew()
+	public void SetNew()
 	{
 		string prefsID = this.GetPrefsID();
 		if (PlayerPrefs.HasKey(prefsID))
@@ -348,6 +352,12 @@ public sealed class GUIBannerParts : GUIListPartBS
 		cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
 	}
 
+	private void ScheduleShortcut()
+	{
+		this.InfoShortcut();
+		PartsMenu.instance.RefreshMenuBannerNewAlert();
+	}
+
 	public void OnBannerReceived(Texture2D texture)
 	{
 		if (null == texture)
@@ -371,6 +381,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 		Event,
 		Reinforcement,
 		Evolution,
-		Meal
+		Meal,
+		Schedule
 	}
 }

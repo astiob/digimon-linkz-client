@@ -2,17 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class SubStatePvPSkillDetailsFunction : SubStateSkillDetailsFunction
 {
 	public SubStatePvPSkillDetailsFunction(Action OnExit, Action<EventState> OnExitGotEvent) : base(OnExit, OnExitGotEvent)
 	{
-	}
-
-	protected override void SetRandomSeed(AffectEffectProperty currentSuffer)
-	{
-		currentSuffer.SetRandomSeed(UnityEngine.Random.seed);
 	}
 
 	protected override void AfterEnemyDeadFunction(params CharacterStateControl[] currentDeathCharacters)

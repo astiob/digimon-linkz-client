@@ -112,6 +112,14 @@ public class SubStateMultiCharacterDeadCheckFunction : BattleStateController
 					yield return null;
 				}
 			}
+			if (base.battleStateData.isShowMenuWindow)
+			{
+				base.stateManager.callAction.OnHideMenu();
+				while (base.battleStateData.isShowMenuWindow)
+				{
+					yield return null;
+				}
+			}
 			base.stateManager.SetBattleScreen(BattleScreen.Continue);
 			SoundPlayer.PlayMenuOpen();
 			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(base.battleStateData.enemies);

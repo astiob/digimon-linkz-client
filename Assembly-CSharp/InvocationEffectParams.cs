@@ -13,16 +13,16 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private int _motionIndex;
 
-	[FormerlySerializedAs("cameraMotionId")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraMotionId")]
 	private string _cameraMotionId;
 
 	[FormerlySerializedAs("hideStage")]
 	[SerializeField]
 	private bool _hideStage;
 
-	[SerializeField]
 	[FormerlySerializedAs("hideStageBackgroundColor")]
+	[SerializeField]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]
@@ -158,14 +158,24 @@ public class InvocationEffectParams : EffectParamsGeneric
 				ParticleScaler.Scale(particleSystem, this._scale, true, null);
 			}
 		}
-		float time = (!(attacker != null)) ? 0f : attacker.AnimationClipLength;
-		while (this._effectAnimation.isPlaying || time > 0f)
+		if (this._attackAnimationType == SkillType.InheritanceTechnique)
 		{
-			if (time > 0f)
+			float time = (!(attacker != null)) ? 0f : attacker.AnimationClipLength;
+			while (this._effectAnimation.isPlaying || time > 0f)
 			{
-				time -= Time.deltaTime;
+				if (time > 0f)
+				{
+					time -= Time.deltaTime;
+				}
+				yield return null;
 			}
-			yield return null;
+		}
+		else
+		{
+			while (this._effectAnimation.isPlaying)
+			{
+				yield return null;
+			}
 		}
 		yield break;
 	}

@@ -18,14 +18,6 @@ public class BattleCameraControl : IMono
 		this.m_battleStateManager = battleStateManager;
 	}
 
-	private bool isSkipAction
-	{
-		get
-		{
-			return !(this.m_battleStateManager == null) && this.m_battleStateManager.battleMode == BattleMode.SkipAction;
-		}
-	}
-
 	private BattleStateData battleStateData
 	{
 		get
@@ -116,10 +108,6 @@ public class BattleCameraControl : IMono
 
 	public void PlayCameraMotionAction(string cameraKey, Transform position, bool isClamp = true)
 	{
-		if (this.isSkipAction)
-		{
-			return;
-		}
 		if (this.cameraParamsObject.ContainsKey(cameraKey))
 		{
 			if (this.m_cameraMotion != null)
@@ -138,10 +126,6 @@ public class BattleCameraControl : IMono
 
 	public void PlayCameraMotionActionCharacter(string cameraKey, CharacterStateControl characters)
 	{
-		if (this.isSkipAction)
-		{
-			return;
-		}
 		if (this.cameraParamsObject.ContainsKey(cameraKey))
 		{
 			if (this.m_cameraMotion != null)
@@ -160,10 +144,6 @@ public class BattleCameraControl : IMono
 
 	public void StopCameraMotionAction(string cameraKey)
 	{
-		if (this.isSkipAction)
-		{
-			return;
-		}
 		if (this.m_cameraMotion != null)
 		{
 			this.m_cameraMotion.StopCameraAnimation();
@@ -176,10 +156,6 @@ public class BattleCameraControl : IMono
 
 	public void PlayTweenCameraMotion(TweenCameraTargetFunction tweenCamera, CharacterStateControl target = null)
 	{
-		if (this.isSkipAction)
-		{
-			return;
-		}
 		bool flag = this.hierarchyData.batteWaves[this.battleStateData.currentWaveNumber].cameraType == 1;
 		if (target == null)
 		{
@@ -207,19 +183,11 @@ public class BattleCameraControl : IMono
 
 	public void SetCameraLengthAction(TweenCameraTargetFunction tweenCamera)
 	{
-		if (this.isSkipAction)
-		{
-			return;
-		}
 		tweenCamera.SetLastTime();
 	}
 
 	public void StopTweenCameraMotionAction(TweenCameraTargetFunction tweenCamera)
 	{
-		if (this.isSkipAction)
-		{
-			return;
-		}
 		tweenCamera.Stop();
 	}
 

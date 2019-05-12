@@ -22,16 +22,6 @@ namespace BattleStateMachineInternal
 			return Mathf.Clamp01((float)value / 100f);
 		}
 
-		public static int ServerSeqIdToCpuSeqId(int value)
-		{
-			return value - 1;
-		}
-
-		public static int ServerValueToInt(string value)
-		{
-			return int.Parse(value);
-		}
-
 		public static float PermillionToPercentage(string value)
 		{
 			return ServerToBattleUtility.PermillionToPercentage(int.Parse(value));
@@ -95,44 +85,6 @@ namespace BattleStateMachineInternal
 			return SelectingOrder.LowAndHavent;
 		}
 
-		public static DropAssetType IntToDropAssetType(int value)
-		{
-			switch (value)
-			{
-			case 1:
-				return DropAssetType.Monster;
-			case 2:
-				return DropAssetType.DigiStone;
-			case 3:
-				return DropAssetType.LinkPoint;
-			case 4:
-				return DropAssetType.Chip;
-			case 5:
-				return DropAssetType.Exp;
-			case 6:
-				return DropAssetType.Item;
-			case 7:
-				return DropAssetType.MonsterSlots;
-			case 8:
-				return DropAssetType.DeckCosts;
-			case 9:
-				return DropAssetType.FriendMaxNumber;
-			case 10:
-				return DropAssetType.StaminaMaxNumber;
-			case 11:
-				return DropAssetType.UnitedFrontTicket;
-			case 12:
-				return DropAssetType.Meat;
-			case 13:
-				return DropAssetType.Soul;
-			case 14:
-				return DropAssetType.Plugin;
-			default:
-				global::Debug.LogError("DropAssetTypeの値が不正です. (" + value + ")");
-				return DropAssetType.Monster;
-			}
-		}
-
 		public static DropBoxType IntToDropBoxType(int value)
 		{
 			if (value == 1)
@@ -145,22 +97,6 @@ namespace BattleStateMachineInternal
 				return DropBoxType.Normal;
 			}
 			return DropBoxType.Rare;
-		}
-
-		public static SkillType IntToSkillType(int value)
-		{
-			switch (value)
-			{
-			case 2:
-				return SkillType.Deathblow;
-			case 3:
-				return SkillType.InheritanceTechnique;
-			case 4:
-				return SkillType.Attack;
-			default:
-				global::Debug.LogError("SkillTypeの値が不正です. (" + value + ")");
-				return SkillType.Attack;
-			}
 		}
 
 		public static EffectNumbers IntToEffectNumbers(int value)
@@ -328,6 +264,8 @@ namespace BattleStateMachineInternal
 				return AffectEffect.ReferenceTargetHpRate;
 			case 62:
 				return AffectEffect.ApDrain;
+			case 63:
+				return AffectEffect.HpBorderlineDamage;
 			default:
 				global::Debug.LogError("AffectEffectの値が不正です. (" + value + ")");
 				return AffectEffect.Damage;
@@ -336,169 +274,22 @@ namespace BattleStateMachineInternal
 
 		public static LeaderSkillType IntToLeaderSkillType(int value)
 		{
-			switch (value)
+			if (Enum.IsDefined(typeof(LeaderSkillType), value))
 			{
-			case 1:
-				return LeaderSkillType.HpFollowingDamageUp;
-			case 2:
-				return LeaderSkillType.HpFollowingAttackUp;
-			case 3:
-				return LeaderSkillType.HpFollowingDefenceUp;
-			case 4:
-				return LeaderSkillType.HpFollowingSpecialAttackUp;
-			case 5:
-				return LeaderSkillType.HpFollowingSpecialDefenceUp;
-			case 6:
-				return LeaderSkillType.HpFollowingSpeedUp;
-			case 7:
-				return LeaderSkillType.HpFollowingHitRateUp;
-			case 8:
-				return LeaderSkillType.HpFollowingSatisfactionRateUp;
-			case 9:
-				return LeaderSkillType.HpMaxDamageUp;
-			case 10:
-				return LeaderSkillType.HpMaxAttackUp;
-			case 11:
-				return LeaderSkillType.HpMaxDefenceUp;
-			case 12:
-				return LeaderSkillType.HpMaxSpecialAttackUp;
-			case 13:
-				return LeaderSkillType.HpMaxSpecialDefenceUp;
-			case 14:
-				return LeaderSkillType.HpMaxSpeedUp;
-			case 15:
-				return LeaderSkillType.HpMaxHitRateUp;
-			case 16:
-				return LeaderSkillType.HpMaxMachSatisfactionRateUp;
-			case 17:
-				return LeaderSkillType.SpeciesMachDamageUp;
-			case 18:
-				return LeaderSkillType.SpeciesMachHpUp;
-			case 19:
-				return LeaderSkillType.SpeciesMachAttackUp;
-			case 20:
-				return LeaderSkillType.SpeciesMachDefenceUp;
-			case 21:
-				return LeaderSkillType.SpeciesMachSpecialAttackUp;
-			case 22:
-				return LeaderSkillType.SpeciesMachSpecialDefenceUp;
-			case 23:
-				return LeaderSkillType.SpeciesMachSpeedUp;
-			case 24:
-				return LeaderSkillType.SpeciesMachHitRateUp;
-			case 25:
-				return LeaderSkillType.SpeciesMachSatisfactionRateUp;
-			case 26:
-				return LeaderSkillType.DamageUp;
-			case 27:
-				return LeaderSkillType.HpUp;
-			case 28:
-				return LeaderSkillType.AttackUp;
-			case 29:
-				return LeaderSkillType.DefenceUp;
-			case 30:
-				return LeaderSkillType.SpecialAttackUp;
-			case 31:
-				return LeaderSkillType.SpecialDefenceUp;
-			case 32:
-				return LeaderSkillType.SpeedUp;
-			case 33:
-				return LeaderSkillType.HitRateUp;
-			case 34:
-				return LeaderSkillType.SatisfactionRateUp;
-			case 35:
-				return LeaderSkillType.ToleranceUp;
-			default:
-				global::Debug.LogError("LeaderSkillTypeの値が不正です. (" + value + ")");
-				return LeaderSkillType.HpFollowingDamageUp;
+				return (LeaderSkillType)value;
 			}
-		}
-
-		public static Species IntToSpecies(int value)
-		{
-			switch (value)
-			{
-			case 1:
-				return Species.PhantomStudents;
-			case 2:
-				return Species.HeatHaze;
-			case 3:
-				return Species.Glacier;
-			case 4:
-				return Species.Electromagnetic;
-			case 5:
-				return Species.Earth;
-			case 6:
-				return Species.ShaftOfLight;
-			case 7:
-				return Species.Abyss;
-			default:
-				global::Debug.LogError("Speciesの値が不正です. (" + value + ")");
-				return Species.Null;
-			}
-		}
-
-		public static EvolutionStep IntToEvolutionStep(int value)
-		{
-			switch (value)
-			{
-			case 2:
-				return EvolutionStep.InfancyPhase1;
-			case 3:
-				return EvolutionStep.InfancyPhase2;
-			case 4:
-				return EvolutionStep.GrowthPhase;
-			case 5:
-				return EvolutionStep.MaturationPhase;
-			case 6:
-				return EvolutionStep.PerfectPhase;
-			case 7:
-				return EvolutionStep.UltimatePhase;
-			case 8:
-				return EvolutionStep.AmorPhase1;
-			case 9:
-				return EvolutionStep.AmorPhase2;
-			default:
-				global::Debug.LogError("EvolutionStepの値が不正です. (" + value + ")");
-				return EvolutionStep.InfancyPhase1;
-			}
-		}
-
-		public static Strength IntToStrength(int value)
-		{
-			switch (value + 1)
-			{
-			case 0:
-				return Strength.Weak;
-			case 1:
-				return Strength.None;
-			case 2:
-				return Strength.Strong;
-			case 3:
-				return Strength.Drain;
-			default:
-				if (value != 99)
-				{
-					global::Debug.LogError("Strengthの値が不正です. (" + value + ")");
-					return Strength.None;
-				}
-				return Strength.Invalid;
-			}
-		}
-
-		public static DropAssetType IntToDropAssetType(string value)
-		{
-			return ServerToBattleUtility.IntToDropAssetType(int.Parse(value));
-		}
-
-		public static SkillType IntToSkillType(string value)
-		{
-			return ServerToBattleUtility.IntToSkillType(int.Parse(value));
+			global::Debug.LogError("LeaderSkillTypeの値が不正です. (" + value + ")");
+			return LeaderSkillType.HpFollowingDamageUp;
 		}
 
 		public static Species IntToSpecies(string value)
 		{
-			return ServerToBattleUtility.IntToSpecies(int.Parse(value));
+			if (Enum.IsDefined(typeof(Species), value.ToInt32()))
+			{
+				return (Species)value.ToInt32();
+			}
+			global::Debug.LogError("Speciesの値が不正です. (" + value + ")");
+			return Species.Null;
 		}
 
 		public static Strength IntToStrength(string value)
@@ -522,24 +313,27 @@ namespace BattleStateMachineInternal
 
 		public static EvolutionStep IntToEvolutionStep(string value)
 		{
-			return ServerToBattleUtility.IntToEvolutionStep(int.Parse(value));
-		}
-
-		public static bool GetIsLeaderSkill(int value)
-		{
-			switch (value)
+			switch (int.Parse(value))
 			{
-			case 1:
-				return true;
 			case 2:
-				return false;
+				return EvolutionStep.InfancyPhase1;
 			case 3:
-				return false;
+				return EvolutionStep.InfancyPhase2;
 			case 4:
-				return false;
+				return EvolutionStep.GrowthPhase;
+			case 5:
+				return EvolutionStep.MaturationPhase;
+			case 6:
+				return EvolutionStep.PerfectPhase;
+			case 7:
+				return EvolutionStep.UltimatePhase;
+			case 8:
+				return EvolutionStep.AmorPhase1;
+			case 9:
+				return EvolutionStep.AmorPhase2;
 			default:
-				global::Debug.LogError("GetIsLeaderSkillは想定外の値です. (" + value + ")");
-				return false;
+				global::Debug.LogError("EvolutionStepの値が不正です. (" + value + ")");
+				return EvolutionStep.InfancyPhase1;
 			}
 		}
 
@@ -552,32 +346,26 @@ namespace BattleStateMachineInternal
 		{
 			switch (value)
 			{
-			case 35:
-				return PowerType.Percentage;
+			case 39:
+				return PowerType.Fixable;
 			default:
 				if (value == 14)
 				{
 					return PowerType.Fixable;
 				}
-				if (value != 23)
+				if (value == 23)
+				{
+					return PowerType.Fixable;
+				}
+				if (value != 58)
 				{
 					return PowerType.Percentage;
 				}
 				return PowerType.Fixable;
-			case 38:
-				return PowerType.Percentage;
-			case 39:
-				return PowerType.Fixable;
-			case 40:
-				return PowerType.Percentage;
 			case 41:
 				return PowerType.Fixable;
 			case 42:
 				return PowerType.Fixable;
-			case 43:
-				return PowerType.Percentage;
-			case 44:
-				return PowerType.Percentage;
 			case 47:
 				return PowerType.Fixable;
 			case 48:
@@ -585,10 +373,6 @@ namespace BattleStateMachineInternal
 			case 49:
 				return PowerType.Fixable;
 			case 50:
-				return PowerType.Fixable;
-			case 57:
-				return PowerType.Percentage;
-			case 58:
 				return PowerType.Fixable;
 			}
 		}
@@ -630,19 +414,38 @@ namespace BattleStateMachineInternal
 			return value == LeaderSkillType.HpFollowingDamageUp || value == LeaderSkillType.HpFollowingAttackUp || value == LeaderSkillType.HpFollowingDefenceUp || value == LeaderSkillType.HpFollowingSpecialAttackUp || value == LeaderSkillType.HpFollowingSpecialDefenceUp || value == LeaderSkillType.HpFollowingSpeedUp || value == LeaderSkillType.HpFollowingHitRateUp || value == LeaderSkillType.HpFollowingSatisfactionRateUp;
 		}
 
-		public static int GetArousal(int value)
-		{
-			if (value > 0 || value <= 6)
-			{
-				return value;
-			}
-			global::Debug.LogError("GetArousalは想定外の値です. (" + value + ")");
-			return 1;
-		}
-
 		public static bool GetIsLeaderSkill(string value)
 		{
-			return ServerToBattleUtility.GetIsLeaderSkill(int.Parse(value));
+			switch (int.Parse(value))
+			{
+			case 1:
+				return true;
+			case 2:
+				return false;
+			case 3:
+				return false;
+			case 4:
+				return false;
+			default:
+				global::Debug.LogError("GetIsLeaderSkillは想定外の値です. (" + value + ")");
+				return false;
+			}
+		}
+
+		public static SkillType IntToSkillType(string value)
+		{
+			switch (int.Parse(value))
+			{
+			case 2:
+				return SkillType.Deathblow;
+			case 3:
+				return SkillType.InheritanceTechnique;
+			case 4:
+				return SkillType.Attack;
+			default:
+				global::Debug.LogError("SkillTypeの値が不正です. (" + value + ")");
+				return SkillType.Attack;
+			}
 		}
 	}
 }

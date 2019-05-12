@@ -20,6 +20,10 @@ public class ConstValue
 
 	public const int AROUSAL_MAX_VALUE = 5;
 
+	public const int AROUSAL_VERSIONUP_MIN_VALUE = 6;
+
+	public const int AROUSAL_VERSIONUP_MAX_VALUE = 6;
+
 	public const string ACTIVE_BLUE_BUTTON = "Common02_Btn_Blue";
 
 	public const string ACTIVE_RED_BUTTON = "Common02_Btn_Red";

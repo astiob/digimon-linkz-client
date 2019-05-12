@@ -10,7 +10,5 @@ namespace FarmData
 		public string level;
 
 		public string limitMeatNum;
-
-		public string deleteFlg;
 	}
 }

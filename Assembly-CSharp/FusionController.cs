@@ -33,16 +33,16 @@ public class FusionController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_cam;
 
-	[Header("メインカメラリグ")]
 	[SerializeField]
+	[Header("メインカメラリグ")]
 	private GameObject obj_camrig;
 
-	[Header("サブカメラ")]
 	[SerializeField]
+	[Header("サブカメラ")]
 	private GameObject obj_cam2;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private GameObject obj_uicam;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class FusionController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_mcpar3;
 
-	[Header("オーラ")]
 	[SerializeField]
+	[Header("オーラ")]
 	private GameObject obj_aura1;
 
 	[SerializeField]
@@ -179,6 +179,10 @@ public class FusionController : MonoBehaviour
 		MotionBlur[] componentsInChildren4 = this.obj_cam.GetComponentsInChildren<MotionBlur>();
 		componentsInChildren4[0].blurAmount = 0.2f;
 		global::Debug.Log("blurAmount：" + componentsInChildren4[0].blurAmount);
+		Camera component = this.obj_cam.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.obj_mons1, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.obj_mons2, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.obj_egg, component);
 		this.obj_cam2.transform.position = new Vector3(0f, -2f, 2f);
 		this.cs_switcher = this.obj_cs.GetComponent<CameraSwitcher>();
 		this.cs_switcher.targetName = "Egg/EggCenterTarget";

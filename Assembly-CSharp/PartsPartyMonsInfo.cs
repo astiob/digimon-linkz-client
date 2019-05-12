@@ -1,12 +1,13 @@
-﻿using Quest;
+﻿using Master;
+using Quest;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[SerializeField]
 	[Header("チップの処理")]
+	[SerializeField]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
@@ -29,6 +30,18 @@ public class PartsPartyMonsInfo : GUICollider
 
 	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
+
+	[SerializeField]
+	private MonsterLearnSkill monsterSuccessionSkill2;
+
+	[SerializeField]
+	private UILabel monsterSuccessionSkill2Name;
+
+	[SerializeField]
+	private UILabel monsterSuccessionSkill2Info;
+
+	[SerializeField]
+	private UILabel monsterSuccessionSkill2AP;
 
 	[SerializeField]
 	protected GameObject sortieNG;
@@ -70,12 +83,12 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject gimmickSkillSucceedDown;
 
-	[SerializeField]
 	[Header("左クリップのOBJ")]
+	[SerializeField]
 	private GameObject goL_CLIP;
 
-	[Header("右クリップのOBJ")]
 	[SerializeField]
+	[Header("右クリップのOBJ")]
 	private GameObject goR_CLIP;
 
 	[SerializeField]
@@ -369,12 +382,35 @@ public class PartsPartyMonsInfo : GUICollider
 		this.monsterLeaderSkill.SetSkill(this.Data);
 		this.monsterUniqueSkill.SetSkill(this.Data);
 		this.monsterSuccessionSkill.SetSkill(this.Data);
+		bool flag = this.Data.IsVersionUp();
+		if (flag)
+		{
+			if (this.monsterSuccessionSkill2 != null)
+			{
+				this.monsterSuccessionSkill2.gameObject.SetActive(true);
+				if (this.Data.commonSkillM2 != null)
+				{
+					this.monsterSuccessionSkill2.SetSkill(this.Data);
+				}
+				else
+				{
+					this.monsterSuccessionSkill2.ClearSkill();
+					this.monsterSuccessionSkill2Name.text = StringMaster.GetString("SystemNone");
+					this.monsterSuccessionSkill2Info.text = StringMaster.GetString("CharaStatus-02");
+					this.monsterSuccessionSkill2AP.text = string.Format(StringMaster.GetString("BattleSkillUI-01"), 0);
+				}
+			}
+		}
+		else if (this.monsterSuccessionSkill2 != null)
+		{
+			this.monsterSuccessionSkill2.gameObject.SetActive(false);
+		}
 		this.statusPanel.ResetUI();
 		this.monsterBasicInfo.SetMonsterData(this.Data);
 		this.monsterMedalList.SetValues(this.Data.userMonster);
 		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] gimmickEffectArray = this.SetStageGimmick();
-		bool flag = this.monsterGimickEffectStatusList.SetValues(this.Data, gimmickEffectArray);
-		if (flag)
+		bool flag2 = this.monsterGimickEffectStatusList.SetValues(this.Data, gimmickEffectArray);
+		if (flag2)
 		{
 			this.stageGimmickObj.SetActive(true);
 		}

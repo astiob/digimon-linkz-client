@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class BattleStatePvPBattleEnd : BattleStateBase
 {
@@ -84,15 +83,7 @@ public class BattleStatePvPBattleEnd : BattleStateBase
 				param.battleResult = ClassSingleton<MultiBattleData>.Instance.BattleResult;
 				param.roundCount = base.battleStateData.currentRoundNumber;
 				param.isMockBattle = ((!(ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode == "0")) ? 1 : 0);
-				if (base.battleStateData.useInheritanceSkillPlayers.Count > 0)
-				{
-					int[] source = base.battleStateData.useInheritanceSkillPlayers.ToArray();
-					param.skillUseDeckPosition = string.Join(",", source.Select((int x) => x.ToString()).ToArray<string>());
-				}
-				else
-				{
-					param.skillUseDeckPosition = "0";
-				}
+				param.skillUseDeckPosition = "0";
 			},
 			OnReceived = delegate(GameWebAPI.RespData_ColosseumBattleEndLogic resData)
 			{

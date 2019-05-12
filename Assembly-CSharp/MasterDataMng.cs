@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Evolution;
+using Master;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -88,6 +89,10 @@ public sealed class MasterDataMng : MonoBehaviour
 		this.CreateMasterData<MA_NavigationMessageMaster>();
 		this.CreateMasterData<MA_TitleMaster>();
 		this.CreateMasterData<MA_AbilityUpgradeM>();
+		this.CreateMasterData<MA_MonsterArousalMaster>();
+		this.CreateMasterData<MA_MonsterSpecificTypeMaster>();
+		this.CreateMasterData<MA_MonsterStatusAilmentMaster>();
+		this.CreateMasterData<MA_MonsterStatusAilmentGroupMaster>();
 	}
 
 	private void CreateMasterData<MasterT>() where MasterT : MasterBase, new()
@@ -509,11 +514,47 @@ public sealed class MasterDataMng : MonoBehaviour
 		}
 	}
 
+	public GameWebAPI.RespDataMA_MonsterArousalMaster ResponseMonsterArousalMaster
+	{
+		get
+		{
+			MA_MonsterArousalMaster ma_MonsterArousalMaster = this.GetMaster(MasterId.MONSTER_AROUSAL) as MA_MonsterArousalMaster;
+			return ma_MonsterArousalMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_MonsterSpecificTypeMaster ResponseMonsterSpecificTypeMaster
+	{
+		get
+		{
+			MA_MonsterSpecificTypeMaster ma_MonsterSpecificTypeMaster = this.GetMaster(MasterId.MONSTER_SPECIFIC_TYPE) as MA_MonsterSpecificTypeMaster;
+			return ma_MonsterSpecificTypeMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_MonsterStatusAilmentMaster ResponseMonsterStatusAilmentMaster
+	{
+		get
+		{
+			MA_MonsterStatusAilmentMaster ma_MonsterStatusAilmentMaster = this.GetMaster(MasterId.MONSTER_STATUS_AILMENT) as MA_MonsterStatusAilmentMaster;
+			return ma_MonsterStatusAilmentMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_MonsterStatusAilmentGroupMaster ResponseMonsterStatusAilmentGroupMaster
+	{
+		get
+		{
+			MA_MonsterStatusAilmentGroupMaster ma_MonsterStatusAilmentGroupMaster = this.GetMaster(MasterId.MONSTER_STATUS_AILMENT_MATERIAL) as MA_MonsterStatusAilmentGroupMaster;
+			return ma_MonsterStatusAilmentGroupMaster.GetMasterData();
+		}
+	}
+
 	public void ClearCache()
 	{
 		AlertMaster.ClearCache();
 		StringMaster.ClearCache();
-		MonsterEvolutionUtil.ClearCache();
+		EvolutionMaterialData.ClearCache();
 		CommonSentenceData.ClearCache();
 		ChipDataMng.ClearCache();
 		TitleDataMng.ClearCache();
@@ -623,7 +664,7 @@ public sealed class MasterDataMng : MonoBehaviour
 		MULTI_ITEM,
 		MEAT,
 		SOUL,
-		PLUGIN,
+		NO_DATA_ID,
 		FACILITY_KEY,
 		CHIP,
 		DUNGEON_TICKET,

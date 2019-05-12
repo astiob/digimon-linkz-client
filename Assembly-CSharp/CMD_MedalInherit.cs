@@ -38,6 +38,14 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
 	}
 
+	protected override void SetTextConfirmPartnerVersionUp(CMD_ResearchModalAlert cd)
+	{
+		cd.SetTitle(StringMaster.GetString("MedalInheritAlertTitle"));
+		cd.SetExp(StringMaster.GetString("MedalInheritAlertInfo2"));
+		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
+		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
+	}
+
 	protected override void OpenConfirmTargetParameter(int selectButtonIndex)
 	{
 		if (selectButtonIndex == 1)

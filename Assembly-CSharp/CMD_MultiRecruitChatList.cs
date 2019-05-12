@@ -20,8 +20,8 @@ public class CMD_MultiRecruitChatList : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("全選択ボタン")]
+	[SerializeField]
 	private GameObject goBtnSelectAll;
 
 	[SerializeField]
@@ -30,8 +30,8 @@ public class CMD_MultiRecruitChatList : CMD
 	[SerializeField]
 	private UISprite spBtnSelectAll;
 
-	[Header("誘うボタン")]
 	[SerializeField]
+	[Header("誘うボタン")]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]

@@ -27,15 +27,7 @@ public class BattleInitialize : BattleFunctionBase
 	public CharacterStateControl LoadCharacterStateControl(CharacterStatus getStatus, LeaderSkillStatus leaderSkill = null, CharacterDatas leaderCharacter = null, bool isEnemy = false)
 	{
 		CharacterDatas characterData = base.stateManager.serverControl.GetCharacterData(getStatus.prefabId);
-		Tolerance tolerance = null;
-		if (getStatus.GetType() == typeof(PlayerStatus))
-		{
-			tolerance = ((PlayerStatus)getStatus).tolerance;
-		}
-		if (tolerance == null)
-		{
-			tolerance = base.stateManager.serverControl.GetToleranceStatus(getStatus.toleranceId);
-		}
+		Tolerance tolerance = getStatus.tolerance;
 		LeaderSkillStatus myLeaderSkill = null;
 		if (getStatus.GetType() == typeof(PlayerStatus) && ((PlayerStatus)getStatus).isHavingLeaderSkill)
 		{

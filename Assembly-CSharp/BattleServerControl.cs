@@ -126,7 +126,7 @@ public class BattleServerControl : BattleFunctionBase
 		DataMng.Instance().SetClearFlag(onClearBattle);
 		DataMng.Instance().SetAliveFlag(characterAliveFlags);
 		DataMng.Instance().SetEnemyAliveFlag(enemyAliveList);
-		this.ApplyResultDigiStone();
+		DataMng.Instance().AddStone(base.battleStateData.beforeConfirmDigiStoneNumber - DataMng.Instance().GetStone());
 		if (!isRetire && onClearBattle != DataMng.ClearFlag.Win)
 		{
 			if (!base.hierarchyData.useInitialIntroduction)
@@ -136,26 +136,6 @@ public class BattleServerControl : BattleFunctionBase
 			PlayerPrefs.SetInt("BATTLE_LOSE_COUNT", Mathf.Clamp(base.hierarchyData.initialIntroductionIndex + 1, 0, base.hierarchyData.maxInitialIntroductionIndex + 1));
 			PlayerPrefs.Save();
 		}
-	}
-
-	private void SetSkillSeeds(int[,] seeds)
-	{
-		int num = 0;
-		foreach (KeyValuePair<string, SkillStatus> keyValuePair in this._cachedSkillStatus)
-		{
-			int num2 = 0;
-			foreach (AffectEffectProperty affectEffectProperty in keyValuePair.Value.affectEffect)
-			{
-				affectEffectProperty.SetRandomSeed(seeds[num, num2]);
-				num2++;
-			}
-			num++;
-		}
-	}
-
-	private void ApplyResultDigiStone()
-	{
-		DataMng.Instance().AddStone(base.battleStateData.beforeConfirmDigiStoneNumber - DataMng.Instance().GetStone());
 	}
 
 	public BattleWave[] DungeonFloorToBattleWave(GameWebAPI.RespDataWD_DungeonStart.DungeonFloor[] floor, string worldDungeonId)
@@ -214,24 +194,25 @@ public class BattleServerControl : BattleFunctionBase
 	{
 		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
 		string monsterGroupId = monsterDataByUserMonsterID.monsterM.monsterGroupId;
-		int arousal = ServerToBattleUtility.GetArousal(monsterDataByUserMonsterID.monsterM.rare.ToInt32() - 1);
-		int friendshipLevel = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.friendship);
-		int hp = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.hp);
-		int attackPower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.attack);
-		int defencePower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.defense);
-		int specialAttackPower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.spAttack);
-		int specialDefencePower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.spDefense);
-		int speed = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.speed);
-		int maxAttackPower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.monsterM.maxAttack);
-		int maxDefencePower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.monsterM.maxDefense);
-		int maxSpecialAttackPower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.monsterM.maxSpAttack);
-		int maxSpecialDefencePower = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.monsterM.maxSpDefense);
-		int maxSpeed = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.monsterM.speed);
-		int level = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.level);
+		int arousal = monsterDataByUserMonsterID.monsterM.GetArousal();
+		int friendshipLevel = monsterDataByUserMonsterID.userMonster.friendship.ToInt32();
+		int hp = monsterDataByUserMonsterID.userMonster.hp.ToInt32();
+		int attackPower = monsterDataByUserMonsterID.userMonster.attack.ToInt32();
+		int defencePower = monsterDataByUserMonsterID.userMonster.defense.ToInt32();
+		int specialAttackPower = monsterDataByUserMonsterID.userMonster.spAttack.ToInt32();
+		int specialDefencePower = monsterDataByUserMonsterID.userMonster.spDefense.ToInt32();
+		int speed = monsterDataByUserMonsterID.userMonster.speed.ToInt32();
+		int maxAttackPower = monsterDataByUserMonsterID.monsterM.maxAttack.ToInt32();
+		int maxDefencePower = monsterDataByUserMonsterID.monsterM.maxDefense.ToInt32();
+		int maxSpecialAttackPower = monsterDataByUserMonsterID.monsterM.maxSpAttack.ToInt32();
+		int maxSpecialDefencePower = monsterDataByUserMonsterID.monsterM.maxSpDefense.ToInt32();
+		int maxSpeed = monsterDataByUserMonsterID.monsterM.speed.ToInt32();
+		int level = monsterDataByUserMonsterID.userMonster.level.ToInt32();
 		string resistanceId = monsterDataByUserMonsterID.monsterM.resistanceId;
-		int luck = ServerToBattleUtility.ServerValueToInt(monsterDataByUserMonsterID.userMonster.luck);
+		int luck = monsterDataByUserMonsterID.userMonster.luck.ToInt32();
 		string uniqueSkillId = monsterDataByUserMonsterID.userMonster.uniqueSkillId;
 		string commonSkillId = monsterDataByUserMonsterID.userMonster.commonSkillId;
+		string extraCommonSkillId = monsterDataByUserMonsterID.userMonster.extraCommonSkillId;
 		string text = monsterDataByUserMonsterID.userMonster.leaderSkillId.Equals("0") ? string.Empty : monsterDataByUserMonsterID.userMonster.leaderSkillId;
 		string iconId = monsterDataByUserMonsterID.monsterM.iconId;
 		Talent talent = new Talent(monsterDataByUserMonsterID.userMonster);
@@ -251,7 +232,7 @@ public class BattleServerControl : BattleFunctionBase
 				list.Add(userChipDataByUserChipId.chipId);
 			}
 		}
-		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
+		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, extraCommonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
 		if (!this._cachedSkillStatus.ContainsKey(uniqueSkillId.Trim()))
 		{
 			this._cachedSkillStatus.Add(uniqueSkillId.Trim(), this.SkillMToSkillStatus(uniqueSkillId));
@@ -259,6 +240,10 @@ public class BattleServerControl : BattleFunctionBase
 		if (!this._cachedSkillStatus.ContainsKey(commonSkillId.Trim()))
 		{
 			this._cachedSkillStatus.Add(commonSkillId.Trim(), this.SkillMToSkillStatus(commonSkillId));
+		}
+		if (!string.IsNullOrEmpty(extraCommonSkillId) && !this._cachedSkillStatus.ContainsKey(extraCommonSkillId.Trim()))
+		{
+			this._cachedSkillStatus.Add(extraCommonSkillId.Trim(), this.SkillMToSkillStatus(extraCommonSkillId));
 		}
 		if (!this._cachedLeaderSkillStatus.ContainsKey(text.Trim()) && !text.Equals(string.Empty))
 		{
@@ -285,6 +270,7 @@ public class BattleServerControl : BattleFunctionBase
 		int speed = enemy.speed;
 		int level = enemy.level;
 		string resistanceId = enemy.resistanceId;
+		Tolerance tolerance = this.ResistanceToTolerance(enemy.resistanceId);
 		if (enemy.ai == null || enemy.ai.Length <= 0)
 		{
 			global::Debug.LogError("enemy.aiのマスタがおかしいです.");
@@ -295,7 +281,7 @@ public class BattleServerControl : BattleFunctionBase
 		List<AIActionPattern> list2 = new List<AIActionPattern>();
 		for (int i = 0; i < enemy.ai.Length; i++)
 		{
-			int num = (aicycle != AICycle.fixableRotation) ? 0 : ServerToBattleUtility.ServerSeqIdToCpuSeqId(enemy.ai[i].priority);
+			int num = (aicycle != AICycle.fixableRotation) ? 0 : (enemy.ai[i].priority - 1);
 			float minRange = (aicycle != AICycle.targetHpAltenation) ? 0f : ServerToBattleUtility.HundredToPercentage(enemy.ai[i].minHpRange);
 			float maxRange = (aicycle != AICycle.targetHpAltenation) ? 0f : ServerToBattleUtility.HundredToPercentage(enemy.ai[i].maxHpRange);
 			TargetSelectReference targetSelectReference = ServerToBattleUtility.IntToTargetSelectReference(enemy.ai[i].lookStatus);
@@ -319,7 +305,7 @@ public class BattleServerControl : BattleFunctionBase
 			{
 				if (aicycle == AICycle.fixableRotation)
 				{
-					if (ServerToBattleUtility.ServerSeqIdToCpuSeqId(enemy.ai[i + 1].priority) != num)
+					if (enemy.ai[i + 1].priority - 1 != num)
 					{
 						flag = true;
 					}
@@ -349,7 +335,7 @@ public class BattleServerControl : BattleFunctionBase
 			foreach (GameWebAPI.RespDataWD_DungeonStart.Drop drop2 in enemy.drop)
 			{
 				DropBoxType dropBoxType = ServerToBattleUtility.IntToDropBoxType(drop2.dropBoxType);
-				DropAssetType dropAssetType = ServerToBattleUtility.IntToDropAssetType(drop2.assetCategoryId);
+				MasterDataMng.AssetCategory dropAssetType = (MasterDataMng.AssetCategory)drop2.assetCategoryId.ToInt32();
 				int assetNum = drop2.assetNum;
 				ItemDropResult item2 = new ItemDropResult(dropBoxType, dropAssetType, assetNum);
 				list3.Add(item2);
@@ -365,7 +351,7 @@ public class BattleServerControl : BattleFunctionBase
 		{
 			chipIdList = new int[0];
 		}
-		EnemyStatus result = new EnemyStatus(monsterGroupId, hp, attack, defense, spAttack, spDefense, speed, level, resistanceId, enemyAiPattern, fixedMoney, fixedExp, list3, chipIdList);
+		EnemyStatus result = new EnemyStatus(monsterGroupId, hp, attack, defense, spAttack, spDefense, speed, level, resistanceId, tolerance, enemyAiPattern, fixedMoney, fixedExp, list3, chipIdList);
 		if (!this._cachedTolerance.ContainsKey(resistanceId.Trim()))
 		{
 			this._cachedTolerance.Add(resistanceId.Trim(), this.ResistanceToTolerance(resistanceId));
@@ -379,6 +365,10 @@ public class BattleServerControl : BattleFunctionBase
 
 	public SkillStatus SkillMToSkillStatus(string skillId)
 	{
+		if (string.IsNullOrEmpty(skillId))
+		{
+			return null;
+		}
 		GameWebAPI.RespDataMA_GetSkillM.SkillM[] skillM = MasterDataMng.Instance().RespDataMA_SkillM.skillM;
 		for (int i = 0; i < skillM.Length; i++)
 		{
@@ -408,7 +398,7 @@ public class BattleServerControl : BattleFunctionBase
 				}
 			}
 		}
-		global::Debug.LogError("SkillStatusの生成に失敗しました. (" + skillId + ")");
+		global::Debug.LogWarning("SkillStatusの生成に失敗しました. (" + skillId + ")");
 		return null;
 	}
 
@@ -425,19 +415,19 @@ public class BattleServerControl : BattleFunctionBase
 				{
 					string name = skillM[i].name;
 					string description = skillM[i].description;
-					GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] skillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.skillDetailM;
+					GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] convertSkillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.convertSkillDetailM;
 					leaderSkillM = skillM[i];
-					for (int j = 0; j < skillDetailM.Length; j++)
+					for (int j = 0; j < convertSkillDetailM.Length; j++)
 					{
-						if (leaderSkillId.Equals(skillDetailM[j].skillId))
+						if (leaderSkillId.Equals(convertSkillDetailM[j].skillId))
 						{
-							LeaderSkillType leaderSkillType = ServerToBattleUtility.IntToLeaderSkillType(skillDetailM[j].effectType);
-							float hpFollowingPercent = (!ServerToBattleUtility.GetOnHpFollowingLeaderSkill(leaderSkillType)) ? 0f : ServerToBattleUtility.PermillionToPercentage(skillDetailM[j].effect2);
-							float upPercent = ServerToBattleUtility.PermillionToPercentage(skillDetailM[j].effect1);
+							LeaderSkillType leaderSkillType = ServerToBattleUtility.IntToLeaderSkillType(convertSkillDetailM[j].effectType);
+							float hpFollowingPercent = (!ServerToBattleUtility.GetOnHpFollowingLeaderSkill(leaderSkillType)) ? 0f : ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[j].effect2);
+							float upPercent = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[j].effect1);
 							Tolerance tolerance;
 							if (leaderSkillType == LeaderSkillType.ToleranceUp)
 							{
-								tolerance = new Tolerance((Strength)skillDetailM[j].effect3, (Strength)skillDetailM[j].effect4, (Strength)skillDetailM[j].effect5, (Strength)skillDetailM[j].effect6, (Strength)skillDetailM[j].effect7, (Strength)skillDetailM[j].effect8, (Strength)skillDetailM[j].effect9, (Strength)skillDetailM[j].effect10, (Strength)skillDetailM[j].effect11, (Strength)skillDetailM[j].effect12, (Strength)skillDetailM[j].effect13, (Strength)skillDetailM[j].effect14, (Strength)skillDetailM[j].effect15, (Strength)skillDetailM[j].effect16);
+								tolerance = new Tolerance((Strength)convertSkillDetailM[j].effect3, (Strength)convertSkillDetailM[j].effect4, (Strength)convertSkillDetailM[j].effect5, (Strength)convertSkillDetailM[j].effect6, (Strength)convertSkillDetailM[j].effect7, (Strength)convertSkillDetailM[j].effect8, (Strength)convertSkillDetailM[j].effect9, (Strength)convertSkillDetailM[j].effect10, (Strength)convertSkillDetailM[j].effect11, (Strength)convertSkillDetailM[j].effect12, (Strength)convertSkillDetailM[j].effect13, (Strength)convertSkillDetailM[j].effect14, (Strength)convertSkillDetailM[j].effect15, (Strength)convertSkillDetailM[j].effect16);
 							}
 							else
 							{
@@ -469,7 +459,8 @@ public class BattleServerControl : BattleFunctionBase
 		string monsterName = monsterGroupMasterByMonsterGroupId.monsterName;
 		Species species = ServerToBattleUtility.IntToSpecies(monsterGroupMasterByMonsterGroupId.tribe);
 		EvolutionStep evolutionStep = ServerToBattleUtility.IntToEvolutionStep(monsterGroupMasterByMonsterGroupId.growStep);
-		return new CharacterDatas(monsterName, species, evolutionStep);
+		string monsterStatusId = monsterGroupMasterByMonsterGroupId.monsterStatusId;
+		return new CharacterDatas(monsterName, species, evolutionStep, monsterStatusId);
 	}
 
 	public Tolerance ResistanceToTolerance(string resistanceId)
@@ -546,30 +537,30 @@ public class BattleServerControl : BattleFunctionBase
 
 	public List<AffectEffectProperty> GetAffectEffectPropertyList(string skillId)
 	{
-		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] skillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.skillDetailM;
+		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] convertSkillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.convertSkillDetailM;
 		List<AffectEffectProperty> list = new List<AffectEffectProperty>();
-		for (int i = 0; i < skillDetailM.Length; i++)
+		for (int i = 0; i < convertSkillDetailM.Length; i++)
 		{
-			if (skillId.Equals(skillDetailM[i].skillId))
+			if (skillId.Equals(convertSkillDetailM[i].skillId))
 			{
-				EffectTarget target = ServerToBattleUtility.IntToEffectTarget(skillDetailM[i].target);
-				AffectEffect type = ServerToBattleUtility.IntToAffectEffect(skillDetailM[i].effectType);
-				float hitRate = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].hitRate);
-				EffectNumbers effectNumbers = ServerToBattleUtility.IntToEffectNumbers(skillDetailM[i].targetType);
-				int effect = skillDetailM[i].effect1;
-				int effect2 = skillDetailM[i].effect2;
-				float num = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect3, false);
-				float num2 = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect4, false);
-				float num3 = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect5, false);
-				float num4 = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect6, false);
-				float num5 = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect7, false);
-				float num6 = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect8, false);
-				float num7 = ServerToBattleUtility.PermillionToPercentage(skillDetailM[i].effect9, false);
-				bool useDrainAffectEffect = ServerToBattleUtility.GetUseDrainAffectEffect(skillDetailM[i].effectType);
-				PowerType powerType = ServerToBattleUtility.GetPowerType(skillDetailM[i].effectType);
-				TechniqueType techniqueType = ServerToBattleUtility.GetTechniqueType(skillDetailM[i].effectType);
-				global::Attribute attribute = ServerToBattleUtility.IntToAttribute(skillDetailM[i].attribute);
-				bool isMissThrough = skillDetailM[i].isMissTrough > 0;
+				EffectTarget target = ServerToBattleUtility.IntToEffectTarget(convertSkillDetailM[i].target);
+				AffectEffect type = ServerToBattleUtility.IntToAffectEffect(convertSkillDetailM[i].effectType);
+				float hitRate = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].hitRate);
+				EffectNumbers effectNumbers = ServerToBattleUtility.IntToEffectNumbers(convertSkillDetailM[i].targetType);
+				int effect = convertSkillDetailM[i].effect1;
+				int effect2 = convertSkillDetailM[i].effect2;
+				float num = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect3, false);
+				float num2 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect4, false);
+				float num3 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect5, false);
+				float num4 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect6, false);
+				float num5 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect7, false);
+				float num6 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect8, false);
+				float num7 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect9, false);
+				bool useDrainAffectEffect = ServerToBattleUtility.GetUseDrainAffectEffect(convertSkillDetailM[i].effectType);
+				PowerType powerType = ServerToBattleUtility.GetPowerType(convertSkillDetailM[i].effectType);
+				TechniqueType techniqueType = ServerToBattleUtility.GetTechniqueType(convertSkillDetailM[i].effectType);
+				global::Attribute attribute = ServerToBattleUtility.IntToAttribute(convertSkillDetailM[i].attribute);
+				bool isMissThrough = convertSkillDetailM[i].isMissTrough > 0;
 				AffectEffectProperty item = new AffectEffectProperty(type, skillId.ToInt32(), hitRate, target, effectNumbers, new int[]
 				{
 					effect,
@@ -732,14 +723,6 @@ public class BattleServerControl : BattleFunctionBase
 		yield break;
 	}
 
-	public string publicAttackSkillId
-	{
-		get
-		{
-			return base.stateManager.publicAttackSkillId;
-		}
-	}
-
 	public void SetLoadingImage(bool isShow)
 	{
 		if (base.onServerConnect)
@@ -755,6 +738,7 @@ public class BattleServerControl : BattleFunctionBase
 			else
 			{
 				TipsLoading.Instance.StopTipsLoad(false);
+				RestrictionInput.DeleteDisplayObject();
 				RestrictionInput.EndLoad();
 			}
 		}

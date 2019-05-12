@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/NGUI Progress Bar")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/NGUI Progress Bar")]
 public class UIProgressBar : UIWidgetContainer
 {
 	public static UIProgressBar current;
@@ -12,8 +12,8 @@ public class UIProgressBar : UIWidgetContainer
 
 	public Transform thumb;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIWidget mBG;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class UIProgressBar : UIWidgetContainer
 	[HideInInspector]
 	protected float mValue = 1f;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIProgressBar.FillDirection mFill;
 
 	protected Transform mTrans;

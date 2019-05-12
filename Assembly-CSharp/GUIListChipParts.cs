@@ -41,7 +41,7 @@ public class GUIListChipParts : GUIListPartBS
 		base.ShowGUI();
 	}
 
-	public void Init()
+	private void Init()
 	{
 		this.chipIcon.SetData(this.data.masterChip, -1, -1);
 		this.SetSelectColor(this.data.isSelect);

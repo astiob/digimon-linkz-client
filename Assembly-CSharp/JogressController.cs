@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class JogressController : CutsceneControllerBase
@@ -8,24 +9,24 @@ public class JogressController : CutsceneControllerBase
 
 	private GameObject monsC_instance;
 
-	[Header("進化後デジモンの親")]
 	[SerializeField]
+	[Header("進化後デジモンの親")]
 	private GameObject character3Parent;
 
 	[Header("キャラクターのスタンド")]
 	[SerializeField]
 	private GameObject[] charaStand;
 
-	[SerializeField]
 	[Header("スタンドの回転速度")]
+	[SerializeField]
 	private float[] standRollSpeed;
 
-	[SerializeField]
 	[Header("デジ文字リング")]
+	[SerializeField]
 	private GameObject ringSet;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private GameObject camera2D;
 
 	[Header("3Dカメラ")]
@@ -43,7 +44,9 @@ public class JogressController : CutsceneControllerBase
 
 	private Transform TargetPos;
 
-	private Material m;
+	private Material wireMaterial;
+
+	private List<Material[]> materialsListC;
 
 	private void Start()
 	{
@@ -56,8 +59,12 @@ public class JogressController : CutsceneControllerBase
 		this.character3Params.PlayIdleAnimation();
 		this.monsC_instance.transform.parent = this.character3Parent.transform;
 		this.monsC_instance.transform.localPosition = new Vector3(0f, 0f, 0f);
-		this.elementsA = this.monsC_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-		this.m = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
+		Camera component = this.camera3D_1.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
+		component = this.camera3D_2.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsC_instance, component);
+		this.wireMaterial = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
 	}
 
 	private GameObject monsterBirth(GameObject mons, int i)
@@ -119,18 +126,16 @@ public class JogressController : CutsceneControllerBase
 
 	private void GetBaseMaterials()
 	{
-		this.elementsA = this.monsC_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials;
 	}
 
 	public void Character3_LineOn()
 	{
-		base.OnWireFrameRenderer(this.monsC_instance, this.m);
+		this.materialsListC = base.OnWireFrameRenderer(this.monsC_instance, this.wireMaterial);
 	}
 
 	public void Character3_LineOff()
 	{
-		base.OffWireFrameRenderer(this.monsC_instance);
-		this.monsC_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsA;
+		base.OffWireFrameRenderer(this.monsC_instance, this.materialsListC);
 	}
 
 	private void Character3MotionTrigger()

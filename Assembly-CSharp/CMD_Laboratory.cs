@@ -33,6 +33,22 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
 	}
 
+	protected override void SetTextConfirmBaseVersionUp(CMD_ResearchModalAlert cd)
+	{
+		cd.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
+		cd.SetExp(StringMaster.GetString("LaboratoryResearchAlertInfo3"));
+		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
+		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
+	}
+
+	protected override void SetTextConfirmPartnerVersionUp(CMD_ResearchModalAlert cd)
+	{
+		cd.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
+		cd.SetExp(StringMaster.GetString("LaboratoryResearchAlertInfo2"));
+		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
+		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
+	}
+
 	protected override void OpenConfirmTargetParameter(int selectButtonIndex)
 	{
 		if (selectButtonIndex == 1)
@@ -217,16 +233,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList GetUserMonsterData()
 	{
-		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList result;
-		if (DataMng.Instance().RespDataMN_LaboExec.userMonsterList != null)
-		{
-			result = DataMng.Instance().RespDataMN_LaboExec.userMonsterList[0];
-		}
-		else
-		{
-			result = DataMng.Instance().RespDataMN_LaboExec.userMonster;
-		}
-		return result;
+		return DataMng.Instance().RespDataMN_LaboExec.userMonster;
 	}
 
 	protected override void AddButton()
@@ -303,11 +310,16 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	{
 		MonsterEggStatusInfo monsterEggStatusInfo = new MonsterEggStatusInfo();
 		monsterEggStatusInfo.rare = baseData.monsterM.rare;
-		int num = int.Parse(this.baseDigimon.userMonster.friendship);
-		int num2 = CommonSentenceData.MaxFriendshipValue(this.baseDigimon.monsterMG.growStep);
-		int num3 = this.baseDigimon.monsterM.rare.ToInt32();
+		int num = int.Parse(baseData.userMonster.friendship);
+		int num2 = CommonSentenceData.MaxFriendshipValue(baseData.monsterMG.growStep);
+		int num3 = monsterEggStatusInfo.rare.ToInt32();
 		monsterEggStatusInfo.isArousal = false;
-		if (num == num2 && num3 < 5)
+		monsterEggStatusInfo.isReturn = false;
+		if (num3 >= 6)
+		{
+			monsterEggStatusInfo.isReturn = true;
+		}
+		else if (num == num2 && num3 < 5)
 		{
 			monsterEggStatusInfo.isArousal = true;
 		}

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public static class NGUIMath
 {
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static float Lerp(float from, float to, float factor)
 	{
 		return from * (1f - factor) + to * factor;
@@ -18,8 +18,8 @@ public static class NGUIMath
 		return (val >= 0) ? ((val >= max) ? (max - 1) : val) : 0;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int RepeatIndex(int val, int max)
 	{
 		if (max < 1)
@@ -37,8 +37,8 @@ public static class NGUIMath
 		return val;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float WrapAngle(float angle)
 	{
 		while (angle > 180f)
@@ -59,8 +59,8 @@ public static class NGUIMath
 		return val - (float)Mathf.FloorToInt(val);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int HexToDecimal(char ch)
 	{
 		switch (ch)
@@ -120,8 +120,8 @@ public static class NGUIMath
 		return 10;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static char DecimalToHexChar(int num)
 	{
 		if (num > 15)
@@ -135,31 +135,31 @@ public static class NGUIMath
 		return (char)(65 + num - 10);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string DecimalToHex8(int num)
 	{
 		num &= 255;
 		return num.ToString("X2");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string DecimalToHex24(int num)
 	{
 		num &= 16777215;
 		return num.ToString("X6");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string DecimalToHex32(int num)
 	{
 		return num.ToString("X8");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int ColorToInt(Color c)
 	{
 		int num = 0;
@@ -169,8 +169,8 @@ public static class NGUIMath
 		return num | Mathf.RoundToInt(c.a * 255f);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color IntToColor(int val)
 	{
 		float num = 0.003921569f;
@@ -387,8 +387,8 @@ public static class NGUIMath
 		return new Bounds(Vector3.zero, Vector3.zero);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private static void CalculateRelativeWidgetBounds(Transform content, bool considerInactive, bool isRoot, ref Matrix4x4 toLocal, ref Vector3 vMin, ref Vector3 vMax, ref bool isSet, bool considerChildren)
 	{
 		if (content == null)

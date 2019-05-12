@@ -111,14 +111,25 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							break;
 						}
 						default:
-							if (affectEffect2 != AffectEffect.ReferenceTargetHpRate)
+							switch (affectEffect2)
 							{
-								goto IL_604;
+							case AffectEffect.ReferenceTargetHpRate:
+								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+								{
+									isTargetsStatus[i]
+								});
+								break;
+							case AffectEffect.ApDrain:
+								goto IL_642;
+							case AffectEffect.HpBorderlineDamage:
+								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+								{
+									isTargetsStatus[i]
+								});
+								break;
+							default:
+								goto IL_642;
 							}
-							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
-							{
-								isTargetsStatus[i]
-							});
 							break;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
@@ -146,10 +157,10 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.Reflection:
 						case AffectEffect.PowerCharge:
 						case AffectEffect.Destruct:
-							goto IL_604;
+							goto IL_642;
 						}
-						goto IL_666;
-						IL_604:
+						goto IL_6A4;
+						IL_642:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							isTargetsStatus[i]
@@ -162,7 +173,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							isTargetsStatus[i]
 						});
 					}
-					IL_666:;
+					IL_6A4:;
 				}
 				else
 				{
@@ -226,7 +237,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 	private HitEffectParams[] GetHitEffectParams(AffectEffect affectEffect, CharacterStateControl[] isTargetsStatus, AffectEffectProperty status, ExtraEffectType extraEffectType)
 	{
 		HitEffectParams[] result;
-		if (affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate)
+		if (affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage)
 		{
 			if (!base.stateManager.onEnableTutorial && extraEffectType == ExtraEffectType.Up)
 			{
@@ -261,6 +272,10 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 					else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
 					{
 						item = base.battleStateData.hitEffects.GetObject(AffectEffect.ReferenceTargetHpRate.ToString())[i];
+					}
+					else if (affectEffect == AffectEffect.HpBorderlineDamage)
+					{
+						item = base.battleStateData.GetDamageEffect(Strength.None)[i];
 					}
 					else
 					{

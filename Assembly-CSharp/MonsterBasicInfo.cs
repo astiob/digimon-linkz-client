@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ public class MonsterBasicInfo : MonoBehaviour
 
 	[SerializeField]
 	protected MonsterBasicInfo.ArousalUI arousalUI;
+
+	[SerializeField]
+	protected UILabel specificTypeName;
 
 	[SerializeField]
 	protected UILabel growName;
@@ -32,11 +36,12 @@ public class MonsterBasicInfo : MonoBehaviour
 
 	private void SetArousal(int arousalCount)
 	{
+		this.arousalUI.title.text = MonsterArousalData.GetTitle(arousalCount.ToString());
 		if (2 <= arousalCount)
 		{
 			this.arousalUI.nothing.text = string.Empty;
 			this.arousalUI.count.gameObject.SetActive(true);
-			this.arousalUI.count.spriteName = MonsterDetailUtil.GetArousalSpriteName(arousalCount);
+			this.arousalUI.count.spriteName = MonsterArousalData.GetSpriteName(arousalCount.ToString());
 		}
 		else
 		{
@@ -65,10 +70,6 @@ public class MonsterBasicInfo : MonoBehaviour
 		{
 			this.levelUI.title.text = StringMaster.GetString("CharaStatus-11");
 		}
-		if (this.arousalUI.exist)
-		{
-			this.arousalUI.title.text = StringMaster.GetString("CharaStatus-23");
-		}
 	}
 
 	public void SetMonsterData(MonsterData monsterData)
@@ -84,21 +85,23 @@ public class MonsterBasicInfo : MonoBehaviour
 			this.SetArousal(monsterData.monsterM.rare.ToInt32());
 		}
 		this.SetLevel(monsterData);
+		this.specificTypeName.text = MonsterSpecificTypeData.GetSpecificTypeName(monsterData.monsterMG.monsterStatusId);
 	}
 
-	public void SetEggData(string eggName)
+	public void SetEggData(string eggName, string rare)
 	{
 		this.monsterName.text = eggName;
 		this.growName.text = StringMaster.GetString("CharaStatus-04");
 		this.tribeName.text = StringMaster.GetString("CharaStatus-01");
 		if (this.arousalUI.exist)
 		{
-			this.SetNoneArousal();
+			this.SetArousal(rare.ToInt32());
 		}
 		if (!this.levelUI.disable)
 		{
 			this.levelUI.level.text = StringMaster.GetString("CharaStatus-01");
 		}
+		this.specificTypeName.text = StringMaster.GetString("CharaStatus-01");
 	}
 
 	public virtual void ClearMonsterData()
@@ -117,6 +120,7 @@ public class MonsterBasicInfo : MonoBehaviour
 		{
 			this.levelUI.level.text = string.Empty;
 		}
+		this.specificTypeName.text = string.Empty;
 	}
 
 	[Serializable]

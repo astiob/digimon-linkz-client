@@ -90,14 +90,6 @@ public abstract class BattleStateBase : IMono
 		}
 	}
 
-	protected bool isSkipAction
-	{
-		get
-		{
-			return this.stateManager.battleMode == BattleMode.SkipAction;
-		}
-	}
-
 	protected bool isMulti
 	{
 		get

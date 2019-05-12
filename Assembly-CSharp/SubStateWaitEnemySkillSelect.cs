@@ -12,7 +12,7 @@ public class SubStateWaitEnemySkillSelect : SubStatePlayerCharacterAndSkillSelec
 		base.EnabledThisState();
 		base.stateManager.uiControl.SetHudCollider(false);
 		base.stateManager.uiControlPvP.ShowLoading(true);
-		if (!base.hierarchyData.onAutoPlay)
+		if (base.hierarchyData.onAutoPlay == 0)
 		{
 			if (!this.currentCharacter.isEnemy)
 			{

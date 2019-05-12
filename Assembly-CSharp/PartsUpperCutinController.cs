@@ -105,6 +105,10 @@ public class PartsUpperCutinController : MonoBehaviour
 		Jogress,
 		Combine,
 		TalentBlooms,
-		BloomsFailed
+		BloomsFailed,
+		VersionUp,
+		StageClear,
+		MissionClear,
+		Versionup
 	}
 }

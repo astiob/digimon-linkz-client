@@ -35,7 +35,7 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 	{
 		get
 		{
-			return this.ui.attackTime;
+			return this.ui.skillSelectUi.attackTime;
 		}
 	}
 
@@ -91,30 +91,24 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		NGUITools.SetActiveSelf(this.battleDialog.gameObject, true);
 		base.stateManager.uiControl.AfterInitializeUIBefore();
 		this.HideAlertDialog();
-		for (int i = 0; i < this.ui.monsterButton.Length; i++)
+		for (int i = 0; i < this.ui.skillSelectUi.monsterButton.Length; i++)
 		{
-			BattleInputUtility.AddEvent(this.ui.monsterButton[i].playerMonsterDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressMonsterButton), i);
-			BattleInputUtility.AddEvent(this.ui.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action(base.input.OffPressMonsterButton));
+			BattleInputUtility.AddEvent(this.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressMonsterButton), i);
+			BattleInputUtility.AddEvent(this.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action(base.input.OffPressMonsterButton));
 		}
-		for (int j = 0; j < this.ui.skillButton.Length; j++)
+		for (int j = 0; j < this.ui.skillSelectUi.skillButton.Length; j++)
 		{
 			if (j > 0)
 			{
-				BattleInputUtility.AddEvent(this.ui.skillButton[j].skillDescriptionSwitch.onClick, new Action<int>(base.input.OnClickSkillButton), j);
+				this.ui.skillSelectUi.skillButton[j].SetClickCallback(new Action<int>(base.input.OnClickSkillButton), j);
+				this.ui.skillSelectUi.skillButton[j].SetHoldWaitPressCallback(new Action<int>(base.input.OnPressSkillButton), j);
+				this.ui.skillSelectUi.skillButton[j].SetDisengagePressCallback(new Action<int>(base.input.OffPressSkillButton), j);
 			}
 			else
 			{
-				BattleInputUtility.AddEvent(this.ui.skillButton[j].button.onClick, new Action<int>(base.input.OnClickSkillButton), j);
+				this.ui.skillSelectUi.skillButton[j].SetButtonCallback(new Action<int>(base.input.OnClickSkillButton), j);
 			}
-			UITweenEventSystem tevsystem = this.ui.skillButton[j].rotationEffect1.gameObject.GetComponent<UITweenEventSystem>();
-			BattleInputUtility.AddEvent(tevsystem.onFinished, new Action<int>(base.input.OnSkillButtonRotateAfter), j);
-			tevsystem = this.ui.skillButton[j].rotationEffect2.gameObject.GetComponent<UITweenEventSystem>();
-			BattleInputUtility.AddEvent(tevsystem.onFinished, new Action<int>(base.input.OnSkillButtonRotateAfter), j);
-			if (j != 0)
-			{
-				BattleInputUtility.AddEvent(this.ui.skillButton[j].skillDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressSkillButton), j);
-				BattleInputUtility.AddEvent(this.ui.skillButton[j].skillDescriptionSwitch.onDisengagePress, new Action<int>(base.input.OffPressSkillButton), j);
-			}
+			this.ui.skillSelectUi.skillButton[j].SetRotationEffectCallback(new Action<int>(base.input.OnSkillButtonRotateAfter), j);
 		}
 		BattleInputUtility.AddEvent(this.ui.menuButton.onClick, new Action(this.inputPvP.OnPvPShowMenu));
 		this.ui.dialogRetire.AddEvent(new Action(this.inputPvP.OnClickPvPRetireDialogOkButton), new Action(base.input.OnClickRetireDialogCancelButton));
@@ -145,7 +139,7 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 
 	private void SetupEmotion()
 	{
-		this.ui.emotionSenderMulti = this.ui.skillSelectUi.emotionSenderMulti;
+		this.ui.emotionSenderMulti = this.ui.skillSelectUi.emotionSenderPvP;
 		this.alwaysUi.Initialize(this.ui, new Action<UIButton>(base.stateManager.pvpFunction.SendEmotion));
 		this.HideEmotionButton();
 		this.HideEmotion();
@@ -219,6 +213,11 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 	public void HideAlwaysUI()
 	{
 		NGUITools.SetActiveSelf(this.alwaysUi.gameObject, false);
+	}
+
+	public void ApplyAttackTimer(bool isActive)
+	{
+		this.attackTime.gameObject.SetActive(isActive);
 	}
 
 	public void RegisterAttackRed()

@@ -9,8 +9,8 @@ public sealed class CMD_AbilityModal : CMD_ModalMessageBtn2
 	[SerializeField]
 	private AbilityUpgradeDetail abilityUpgradeDetail;
 
-	[SerializeField]
 	[Header("説明文・警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel messageLabel;
 
 	protected override void Awake()

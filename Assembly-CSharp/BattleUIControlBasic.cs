@@ -1,5 +1,4 @@
 ﻿using BattleStateMachineInternal;
-using Master;
 using MultiBattle.Tools;
 using System;
 using System.Collections;
@@ -218,31 +217,25 @@ public class BattleUIControlBasic : BattleUIControl
 	public virtual IEnumerator AfterInitializeUI()
 	{
 		this.AfterInitializeUIBefore();
-		for (int i = 0; i < base.ui.monsterButton.Length; i++)
+		for (int i = 0; i < base.ui.skillSelectUi.monsterButton.Length; i++)
 		{
-			BattleInputUtility.AddEvent(base.ui.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action<int>(base.input.OnClickMonsterButton), i);
-			BattleInputUtility.AddEvent(base.ui.monsterButton[i].playerMonsterDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressMonsterButton), i);
-			BattleInputUtility.AddEvent(base.ui.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action(base.input.OffPressMonsterButton));
+			BattleInputUtility.AddEvent(base.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action<int>(base.input.OnClickMonsterButton), i);
+			BattleInputUtility.AddEvent(base.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressMonsterButton), i);
+			BattleInputUtility.AddEvent(base.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action(base.input.OffPressMonsterButton));
 		}
-		for (int j = 0; j < base.ui.skillButton.Length; j++)
+		for (int j = 0; j < base.ui.skillSelectUi.skillButton.Length; j++)
 		{
 			if (j > 0)
 			{
-				BattleInputUtility.AddEvent(base.ui.skillButton[j].skillDescriptionSwitch.onClick, new Action<int>(base.input.OnClickSkillButton), j);
+				base.ui.skillSelectUi.skillButton[j].SetClickCallback(new Action<int>(base.input.OnClickSkillButton), j);
+				base.ui.skillSelectUi.skillButton[j].SetHoldWaitPressCallback(new Action<int>(base.input.OnPressSkillButton), j);
+				base.ui.skillSelectUi.skillButton[j].SetDisengagePressCallback(new Action<int>(base.input.OffPressSkillButton), j);
 			}
 			else
 			{
-				BattleInputUtility.AddEvent(base.ui.skillButton[j].button.onClick, new Action<int>(base.input.OnClickSkillButton), j);
+				base.ui.skillSelectUi.skillButton[j].SetButtonCallback(new Action<int>(base.input.OnClickSkillButton), j);
 			}
-			UITweenEventSystem tevsystem = base.ui.skillButton[j].rotationEffect1.gameObject.GetComponent<UITweenEventSystem>();
-			BattleInputUtility.AddEvent(tevsystem.onFinished, new Action<int>(base.input.OnSkillButtonRotateAfter), j);
-			tevsystem = base.ui.skillButton[j].rotationEffect2.gameObject.GetComponent<UITweenEventSystem>();
-			BattleInputUtility.AddEvent(tevsystem.onFinished, new Action<int>(base.input.OnSkillButtonRotateAfter), j);
-			if (j != 0)
-			{
-				BattleInputUtility.AddEvent(base.ui.skillButton[j].skillDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressSkillButton), j);
-				BattleInputUtility.AddEvent(base.ui.skillButton[j].skillDescriptionSwitch.onDisengagePress, new Action<int>(base.input.OffPressSkillButton), j);
-			}
+			base.ui.skillSelectUi.skillButton[j].SetRotationEffectCallback(new Action<int>(base.input.OnSkillButtonRotateAfter), j);
 		}
 		BattleInputUtility.AddEvent(base.ui.menuButton.onClick, new Action(base.input.OnClickMenuButton));
 		base.ui.characterRevivalDialog.AddRevivalButtonEvent(new Action(base.input.OnClickCharacterRevivalButton));
@@ -371,7 +364,6 @@ public class BattleUIControlBasic : BattleUIControl
 			});
 		}, delegate()
 		{
-			base.ui.skillSelectUi.SetColliderActive(true);
 			BattleScreenDetail.ActiveObjects(new UIWidget[]
 			{
 				base.ui.skillSelectUi.widget
@@ -507,59 +499,37 @@ public class BattleUIControlBasic : BattleUIControl
 
 	public void ApplySkillButtonData(int index, SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl character)
 	{
-		if (index < 0)
-		{
-			return;
-		}
-		int num = index + 1;
-		if (base.ui.skillButton != null && base.ui.skillButton.Length > num)
-		{
-			base.ui.skillButton[num].ApplySkillButtonData(skills, onEnable, onSkillLock, character);
-		}
+		base.ui.skillSelectUi.skillButton[index].ApplySkillButtonData(skills, onEnable, onSkillLock, character);
+	}
+
+	public void ApplySkillButtonColliderActive(int index, bool value)
+	{
+		base.ui.skillSelectUi.skillButton[index].SetColliderActive(value);
+	}
+
+	public void ApplyTwoSkillButtonPosition()
+	{
+		base.ui.skillSelectUi.ApplyTwoSkillButtonPosition();
+	}
+
+	public void ApplyThreeSkillButtonPosition()
+	{
+		base.ui.skillSelectUi.ApplyThreeSkillButtonPosition();
 	}
 
 	public void ApplySkillButtonReflesh()
 	{
-		foreach (BattleSkillBtn battleSkillBtn in base.ui.skillButton)
-		{
-			battleSkillBtn.rotationEffect2.enabled = false;
-			battleSkillBtn.rotationEffect2.ResetToBeginning();
-			battleSkillBtn.rotationEffect2.tweenFactor = 0f;
-			battleSkillBtn.rotationEffect1.enabled = false;
-			battleSkillBtn.rotationEffect1.ResetToBeginning();
-			battleSkillBtn.rotationEffect1.tweenFactor = 0f;
-			battleSkillBtn.rotationEffect1.transform.localScale = Vector3.one;
-			battleSkillBtn.rotationEffect2.transform.localScale = Vector3.one;
-			battleSkillBtn.skillButtonMode.SetSkins(0);
-		}
+		base.ui.skillSelectUi.RefleshSkillButton();
 	}
 
 	public void ApplySkillButtonRotation(int oldIndex = -1, int newIndex = -1)
 	{
-		if (oldIndex > -1)
-		{
-			base.ui.skillButton[oldIndex].SetColliderActive(false);
-			base.ui.skillButton[oldIndex].rotationEffect2.enabled = true;
-			base.ui.skillButton[oldIndex].rotationEffect2.PlayForward();
-		}
-		if (newIndex > -1)
-		{
-			base.ui.skillButton[newIndex].SetColliderActive(false);
-			base.ui.skillButton[newIndex].rotationEffect1.enabled = true;
-			base.ui.skillButton[newIndex].rotationEffect1.PlayForward();
-		}
-		for (int i = 0; i < base.ui.skillButton.Length; i++)
-		{
-			if (i != oldIndex && i != newIndex)
-			{
-				base.ui.skillButton[i].SetColliderActive(true);
-			}
-		}
+		base.ui.skillSelectUi.ApplySkillButtonRotation(oldIndex, newIndex);
 	}
 
 	public void ApplyAllMonsterButtonEnable(bool value)
 	{
-		foreach (BattleMonsterButton battleMonsterButton in base.ui.monsterButton)
+		foreach (BattleMonsterButton battleMonsterButton in base.ui.skillSelectUi.monsterButton)
 		{
 			battleMonsterButton.gameObject.SetActive(value);
 		}
@@ -569,30 +539,29 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		if (isDead)
 		{
-			base.ui.monsterButton[index].buttonMode.SetSkins(2);
-			base.ui.monsterButton[index].currentSelection.SetScreenPosition(0);
+			base.ui.skillSelectUi.monsterButton[index].SetType(BattleMonsterButton.Type.Dead);
 			return;
 		}
 		if (isSelect)
 		{
-			base.ui.monsterButton[index].buttonMode.SetSkins(1);
-			base.ui.monsterButton[index].currentSelection.SetScreenPosition(1);
+			base.ui.skillSelectUi.monsterButton[index].SetType(BattleMonsterButton.Type.Select);
 		}
 		else
 		{
-			base.ui.monsterButton[index].buttonMode.SetSkins(0);
-			base.ui.monsterButton[index].currentSelection.SetScreenPosition(0);
+			base.ui.skillSelectUi.monsterButton[index].SetType(BattleMonsterButton.Type.None);
 		}
 	}
 
 	public void ApplyMonsterButtonIcon(int index, Sprite image, CharacterStateControl characterStatus, bool isLeader)
 	{
-		base.ui.monsterButton[index].ApplyMonsterButtonIcon(image, characterStatus, isLeader);
+		base.ui.skillSelectUi.monsterButton[index].ApplyMonsterButtonIcon(image, characterStatus, isLeader);
+		base.ui.skillSelectUi.monsterButton[index].SetPlayerNameActive(base.battleMode == BattleMode.Multi);
+		base.ui.skillSelectUi.monsterButton[index].SetPlayerNumber(0);
 	}
 
 	public void ApplyLeaderIcon(int index, bool isLeader)
 	{
-		base.ui.monsterButton[index].ApplyLeaderIcon(isLeader);
+		base.ui.skillSelectUi.monsterButton[index].ApplyLeaderIcon(isLeader);
 	}
 
 	public void ApplySkillName(bool isShow, string skillName = "", CharacterStateControl characterStateControl = null)
@@ -602,14 +571,28 @@ public class BattleUIControlBasic : BattleUIControl
 
 	public void ApplySkillDescriptionEnable(int index, bool onEnable)
 	{
-		if (onEnable)
+		base.ui.skillSelectUi.skillButton[index].ApplySkillDescriptionEnable(onEnable);
+	}
+
+	public void ApplySkillEnable(int index, bool onEnable)
+	{
+	}
+
+	public int GetSkillButtonLength()
+	{
+		return base.ui.skillSelectUi.skillButton.Length;
+	}
+
+	public bool GetIsClickedUI()
+	{
+		foreach (UITouchChecker uitouchChecker in base.ui.skillSelectUi.touchChecker)
 		{
-			base.ui.skillButton[index + 1].skillDescriptionEnabled.SetSkins(0);
+			if (uitouchChecker.isClicked)
+			{
+				return true;
+			}
 		}
-		else
-		{
-			base.ui.skillButton[index + 1].skillDescriptionEnabled.SetSkins(1);
-		}
+		return false;
 	}
 
 	public void ApplyMonsterDescription(bool isShow, CharacterStateControl characterStatus = null, int currentSelectCharacter = 0)
@@ -997,18 +980,6 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.dialogContinue.SetColliderActive(isEnable);
 	}
 
-	public bool GetIsClickedUI()
-	{
-		foreach (UITouchChecker uitouchChecker in base.ui.skillSelectUi.touchChecker)
-		{
-			if (uitouchChecker.isClicked)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public void ApplyWaveAndRound(int wave, int round)
 	{
 		base.ui.itemInfoField.SetRemainingRoundText(-1);
@@ -1084,7 +1055,7 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.dialogContinue.ApplySpecificTrade(isShow);
 	}
 
-	public void ApplyAutoPlay(bool isEnable)
+	public void ApplyAutoPlay(int isEnable)
 	{
 		base.ui.autoPlayButton.ApplyAutoPlay(isEnable);
 	}
@@ -1251,28 +1222,16 @@ public class BattleUIControlBasic : BattleUIControl
 
 	public Vector3 GetCharacterCenterPosition2DFunction(CharacterStateControl character)
 	{
-		if (base.isSkipAction)
-		{
-			return Vector3.zero;
-		}
 		return base.hierarchyData.cameraObject.camera3D.WorldToViewportPoint(character.CharacterParams.characterCenterTarget.position);
 	}
 
 	public Vector3 GetFixableCharacterCenterPosition2DFunction(CharacterStateControl character)
 	{
-		if (base.isSkipAction)
-		{
-			return Vector3.zero;
-		}
 		return base.hierarchyData.cameraObject.camera3D.WorldToViewportPoint(character.CharacterParams.GetFixableCenterPosition());
 	}
 
 	public Vector3 GetHUDCenterPosition2DFunction(CharacterStateControl character)
 	{
-		if (base.isSkipAction)
-		{
-			return Vector3.zero;
-		}
 		return base.hierarchyData.cameraObject.camera3D.WorldToViewportPoint(character.CharacterParams.HudPosition());
 	}
 
@@ -1460,35 +1419,6 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		int widgetDepth = int.MaxValue - Mathf.RoundToInt(z * 1E+07f);
 		d.SetWidgetDepth(widgetDepth);
-	}
-
-	private static void SetActiveSelfs(bool state, params Component[] gos)
-	{
-		foreach (Component component in gos)
-		{
-			NGUITools.SetActiveSelf(component.gameObject, state);
-		}
-	}
-
-	public static int GetEvolutionStepSetSkinner(EvolutionStep evolutionStep)
-	{
-		if (GrowStep.GROWING.ConverBattleInt() == (int)evolutionStep)
-		{
-			return 0;
-		}
-		if (GrowStep.RIPE.ConverBattleInt() == (int)evolutionStep || GrowStep.ARMOR_1.ConverBattleInt() == (int)evolutionStep)
-		{
-			return 1;
-		}
-		if (GrowStep.PERFECT.ConverBattleInt() == (int)evolutionStep)
-		{
-			return 2;
-		}
-		if (GrowStep.ULTIMATE.ConverBattleInt() == (int)evolutionStep || GrowStep.ARMOR_2.ConverBattleInt() == (int)evolutionStep)
-		{
-			return 3;
-		}
-		return 0;
 	}
 
 	public static int GetEvolutionStepSetTextReplacer(EvolutionStep evolutionStep)

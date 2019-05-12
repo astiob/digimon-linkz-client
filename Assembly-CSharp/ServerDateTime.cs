@@ -50,6 +50,10 @@ public class ServerDateTime
 		{
 			return;
 		}
+		if (GUIManager.GetDialog("CMD_Alert") != null)
+		{
+			return;
+		}
 		GameWebAPI.Request_CM_GetSystemDateTime request_CM_GetSystemDateTime = new GameWebAPI.Request_CM_GetSystemDateTime();
 		request_CM_GetSystemDateTime.OnReceived = delegate(GameWebAPI.RespDataCM_GetSystemDateTime response)
 		{

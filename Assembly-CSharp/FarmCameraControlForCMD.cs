@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class FarmCameraControlForCMD
+public static class FarmCameraControlForCMD
 {
 	private static int refCT;
 
@@ -34,5 +34,10 @@ public class FarmCameraControlForCMD
 			FarmRoot.Instance.Camera.enabled = true;
 			FarmRoot.Instance.DigimonManager.SetActiveDigimon(true);
 		}
+	}
+
+	public static void ClearCount()
+	{
+		FarmCameraControlForCMD.refCT = 0;
 	}
 }

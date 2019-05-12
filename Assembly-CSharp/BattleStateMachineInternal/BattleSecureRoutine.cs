@@ -144,7 +144,7 @@ namespace BattleStateMachineInternal
 			this.state = BattleSecureRoutine.RoutineState.LongTapWait;
 			while (!(helpUI == null) && !(retrieUI == null) && !(menuUI == null))
 			{
-				if (this.manager.hierarchyData.on2xSpeedPlay || this.manager.hierarchyData.onAutoPlay)
+				if (this.manager.hierarchyData.on2xSpeedPlay || this.manager.hierarchyData.onAutoPlay != 0)
 				{
 					this.MyDestroy();
 					yield break;

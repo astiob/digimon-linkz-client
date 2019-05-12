@@ -1,83 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Monster;
+using System;
 using UnityEngine;
 
 public static class MonsterDetailUtil
 {
-	public static void SetTolerances(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceM, List<GameObject> toleranceGOs)
-	{
-		string[] array = new string[]
-		{
-			resistanceM.none,
-			resistanceM.fire,
-			resistanceM.water,
-			resistanceM.thunder,
-			resistanceM.nature,
-			resistanceM.light,
-			resistanceM.dark,
-			resistanceM.stun,
-			resistanceM.skillLock,
-			resistanceM.sleep,
-			resistanceM.paralysis,
-			resistanceM.confusion,
-			resistanceM.poison,
-			resistanceM.death
-		};
-		int i = 0;
-		while (i < array.Length)
-		{
-			toleranceGOs[i].SetActive(true);
-			UISprite component = toleranceGOs[i].GetComponent<UISprite>();
-			string spriteName = "Battle_Resistance_" + (i + 1).ToString();
-			string text = array[i];
-			switch (text)
-			{
-			case "1":
-				component.color = new Color(0.784313738f, 0f, 0f);
-				break;
-			case "0":
-				component.color = Color.gray;
-				break;
-			case "-1":
-				component.color = new Color(0f, 0.5882353f, 1f);
-				break;
-			case "2":
-				component.color = Color.green;
-				break;
-			}
-			IL_1AE:
-			component.spriteName = spriteName;
-			i++;
-			continue;
-			goto IL_1AE;
-		}
-	}
-
-	public static void SetInvalidTolerances(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceM, List<GameObject> toleranceGOs)
-	{
-		int[] array = new int[]
-		{
-			int.Parse(resistanceM.none),
-			int.Parse(resistanceM.fire),
-			int.Parse(resistanceM.water),
-			int.Parse(resistanceM.thunder),
-			int.Parse(resistanceM.nature),
-			int.Parse(resistanceM.light),
-			int.Parse(resistanceM.dark),
-			int.Parse(resistanceM.stun),
-			int.Parse(resistanceM.skillLock),
-			int.Parse(resistanceM.sleep),
-			int.Parse(resistanceM.paralysis),
-			int.Parse(resistanceM.confusion),
-			int.Parse(resistanceM.poison),
-			int.Parse(resistanceM.death)
-		};
-		for (int i = 0; i < array.Length; i++)
-		{
-			toleranceGOs[i].SetActive(array[i] == 99);
-		}
-	}
-
 	public static string GetMedalSpriteName(string medalType)
 	{
 		ConstValue.Medal medal = (ConstValue.Medal)medalType.ToInt32();
@@ -131,12 +57,11 @@ public static class MonsterDetailUtil
 		string result = string.Empty;
 		if (2 <= rarity)
 		{
-			if (5 < rarity)
+			if (6 < rarity)
 			{
-				rarity = 5;
+				rarity = 6;
 			}
-			string str = (rarity - 1).ToString();
-			result = "Common02_Arousal_" + str;
+			result = MonsterArousalData.GetSpriteName(rarity.ToString());
 		}
 		return result;
 	}

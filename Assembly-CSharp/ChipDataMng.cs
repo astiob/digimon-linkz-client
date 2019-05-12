@@ -364,10 +364,24 @@ public class ChipDataMng
 					if (MonsterDataMng.Instance().userMonsterSlotInfoListLogic != null && MonsterDataMng.Instance().userMonsterSlotInfoListLogic.slotInfo != null && MonsterDataMng.Instance().userMonsterSlotInfoListLogic.slotInfo.Count<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo>() > 0)
 					{
 						UnityEngine.Debug.Log(MonsterDataMng.Instance().userMonsterSlotInfoListLogic.slotInfo.Count<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo>());
-						List<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo> list = MonsterDataMng.Instance().userMonsterSlotInfoListLogic.slotInfo.ToList<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo>();
-						foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo item in resData.slotInfo)
+						List<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo> list = new List<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo>();
+						GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo[] slotInfo = MonsterDataMng.Instance().userMonsterSlotInfoListLogic.slotInfo;
+						list.AddRange(resData.slotInfo);
+						foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo slotInfo2 in slotInfo)
 						{
-							list.Add(item);
+							bool flag = true;
+							foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo slotInfo3 in list)
+							{
+								if (slotInfo3.userMonsterId == slotInfo2.userMonsterId)
+								{
+									flag = false;
+									break;
+								}
+							}
+							if (flag)
+							{
+								list.Add(slotInfo2);
+							}
 						}
 						MonsterDataMng.Instance().userMonsterSlotInfoListLogic.slotInfo = list.ToArray();
 					}

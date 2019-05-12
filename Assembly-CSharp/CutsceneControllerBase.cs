@@ -39,8 +39,8 @@ public class CutsceneControllerBase : MonoBehaviour
 	[Header("親モンスターのレベル帯")]
 	public int monsterLevelClass2;
 
-	[FormerlySerializedAs("target")]
 	[SerializeField]
+	[FormerlySerializedAs("target")]
 	private int[] _target = new int[0];
 
 	protected CharacterParams character1Params;
@@ -59,13 +59,9 @@ public class CutsceneControllerBase : MonoBehaviour
 
 	protected GameObject monsB_instance;
 
-	protected Material[] elements;
-
 	protected Material[] elementsA;
 
 	protected Material[] elementsB;
-
-	private SkinnedMeshRenderer smr;
 
 	protected Material copyMaterial;
 
@@ -191,6 +187,15 @@ public class CutsceneControllerBase : MonoBehaviour
 		return mons;
 	}
 
+	public static void SetBillBoardCamera(GameObject goMons, Camera cam)
+	{
+		BillBoardController[] componentsInChildren = goMons.GetComponentsInChildren<BillBoardController>();
+		for (int i = 0; i < componentsInChildren.Length; i++)
+		{
+			componentsInChildren[i].SetUp(cam);
+		}
+	}
+
 	private void Update()
 	{
 		this.UpdateChild();
@@ -216,40 +221,82 @@ public class CutsceneControllerBase : MonoBehaviour
 		}
 	}
 
-	protected void OnWireFrameRenderer(GameObject g, Material m)
+	protected List<Material[]> OnWireFrameRenderer(GameObject g, Material m)
 	{
-		this.smr = g.GetComponentInChildren<SkinnedMeshRenderer>();
-		this.elements = this.smr.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-		for (int i = 0; i < this.elements.Length; i++)
+		List<SkinnedMeshRenderer> compoSMR = CommonRender3DRT.GetCompoSMR(g);
+		List<Material[]> list = new List<Material[]>();
+		for (int i = 0; i < compoSMR.Count; i++)
 		{
-			this.elements[i] = m;
+			SkinnedMeshRenderer skinnedMeshRenderer = compoSMR[i];
+			Material[] materials = skinnedMeshRenderer.materials;
+			list.Add(materials);
+			materials = skinnedMeshRenderer.materials;
+			for (int j = 0; j < skinnedMeshRenderer.materials.Length; j++)
+			{
+				materials[j] = m;
+			}
+			skinnedMeshRenderer.materials = materials;
+			for (int k = 0; k < skinnedMeshRenderer.materials.Length; k++)
+			{
+				skinnedMeshRenderer.sharedMesh.SetIndices(skinnedMeshRenderer.sharedMesh.GetIndices(k), MeshTopology.LineStrip, k);
+			}
 		}
-		g.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elements;
-		for (int j = 0; j < this.elements.Length; j++)
+		return list;
+	}
+
+	protected void OffWireFrameRenderer(GameObject g, List<Material[]> materialsList = null)
+	{
+		List<SkinnedMeshRenderer> compoSMR = CommonRender3DRT.GetCompoSMR(g);
+		for (int i = 0; i < compoSMR.Count; i++)
 		{
-			this.smr.sharedMesh.SetIndices(this.smr.sharedMesh.GetIndices(j), MeshTopology.LineStrip, j);
+			SkinnedMeshRenderer skinnedMeshRenderer = compoSMR[i];
+			if (materialsList != null)
+			{
+				skinnedMeshRenderer.materials = materialsList[i];
+			}
+			for (int j = 0; j < skinnedMeshRenderer.materials.Length; j++)
+			{
+				skinnedMeshRenderer.sharedMesh.SetIndices(skinnedMeshRenderer.sharedMesh.GetIndices(j), MeshTopology.Triangles, j);
+			}
 		}
 	}
 
-	protected void OffWireFrameRenderer(GameObject g)
+	protected List<Material[]> GetMaterialRenderer(GameObject g)
 	{
-		this.smr = g.GetComponentInChildren<SkinnedMeshRenderer>();
-		this.elements = this.smr.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-		for (int i = 0; i < this.elements.Length; i++)
+		List<SkinnedMeshRenderer> compoSMR = CommonRender3DRT.GetCompoSMR(g);
+		List<Material[]> list = new List<Material[]>();
+		for (int i = 0; i < compoSMR.Count; i++)
 		{
-			this.smr.sharedMesh.SetIndices(this.smr.sharedMesh.GetIndices(i), MeshTopology.Triangles, i);
+			SkinnedMeshRenderer skinnedMeshRenderer = compoSMR[i];
+			Material[] materials = skinnedMeshRenderer.materials;
+			list.Add(materials);
+		}
+		return list;
+	}
+
+	protected void ResetMaterialRenderer(GameObject g, List<Material[]> materialsList)
+	{
+		List<SkinnedMeshRenderer> compoSMR = CommonRender3DRT.GetCompoSMR(g);
+		for (int i = 0; i < compoSMR.Count; i++)
+		{
+			SkinnedMeshRenderer skinnedMeshRenderer = compoSMR[i];
+			skinnedMeshRenderer.materials = materialsList[i];
 		}
 	}
 
 	protected void OnMaterialChanger(Material m, GameObject g)
 	{
-		this.smr = g.GetComponentInChildren<SkinnedMeshRenderer>();
-		this.elements = this.smr.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-		for (int i = 0; i < this.elements.Length; i++)
+		List<SkinnedMeshRenderer> compoSMR = CommonRender3DRT.GetCompoSMR(g);
+		for (int i = 0; i < compoSMR.Count; i++)
 		{
-			this.elements[i] = m;
+			SkinnedMeshRenderer skinnedMeshRenderer = compoSMR[i];
+			Material[] materials = skinnedMeshRenderer.materials;
+			for (int j = 0; j < materials.Length; j++)
+			{
+				materials[j] = m;
+			}
+			skinnedMeshRenderer.materials = materials;
 		}
-		g.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elements;
 	}
 
 	protected IEnumerator FadeoutCorutine(float fadecount)

@@ -9,6 +9,8 @@ public class BtnSort : GUICollider
 
 	public bool IsEvolvePage { get; set; }
 
+	public Action ActCallBackEnd { get; set; }
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -78,5 +80,9 @@ public class BtnSort : GUICollider
 	private void EndSort(int i)
 	{
 		this.ngTX_SORT.text = MonsterDataMng.Instance().GetSortName();
+		if (this.ActCallBackEnd != null)
+		{
+			this.ActCallBackEnd();
+		}
 	}
 }

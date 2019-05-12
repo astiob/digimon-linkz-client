@@ -9,32 +9,32 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
 	[Header("消費クラスタのラベル")]
 	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[Header("強化前のレベルのラベル")]
 	[SerializeField]
+	[Header("強化前のレベルのラベル")]
 	private UILabel beforeLevelLabel;
 
 	[Header("強化後のレベルのラベル")]
 	[SerializeField]
 	private UILabel afterLevelLabel;
 
-	[Header("上昇値のレベルのラベル")]
 	[SerializeField]
+	[Header("上昇値のレベルのラベル")]
 	private UILabel plusLevelLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
+	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
 	[SerializeField]
@@ -62,19 +62,37 @@ public sealed class CMD_StrengthenCheck : CMD
 			format = StringMaster.GetString("ReinforcementInfo");
 		}
 		this.normalMessageLabel.text = string.Format(format, StringMaster.GetString("ReinforcementTitle"));
-		bool flag = MonsterDataMng.Instance().HasArousal(selectedMonsterDataList);
-		bool flag2 = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
-		bool flag3 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
+		bool flag = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
+		bool flag2 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
 		List<string> list = new List<string>();
-		if (flag)
+		bool flag3 = false;
+		bool flag4 = false;
+		foreach (MonsterData monsterData in selectedMonsterDataList)
+		{
+			bool flag5 = monsterData.IsArousal();
+			bool flag6 = monsterData.IsVersionUp();
+			if (flag6)
+			{
+				flag4 = true;
+			}
+			else if (flag5)
+			{
+				flag3 = true;
+			}
+		}
+		if (flag3)
 		{
 			list.Add(StringMaster.GetString("ReinforcementCautionArousal"));
 		}
-		if (flag2)
+		if (flag4)
+		{
+			list.Add(StringMaster.GetString("ReinforcementCautionVersionUp"));
+		}
+		if (flag)
 		{
 			list.Add(StringMaster.GetString("CautionDisappearChip"));
 		}
-		if (flag3)
+		if (flag2)
 		{
 			GameWebAPI.RespDataMA_GetMonsterGrowStepM.MonsterGrowStepM[] monsterGrowStepM = MasterDataMng.Instance().RespDataMA_MonsterGrowStepM.monsterGrowStepM;
 			string b = ConstValue.GROW_STEP_HIGH.ToString();
@@ -93,7 +111,7 @@ public sealed class CMD_StrengthenCheck : CMD
 		}
 		if (list.Count >= 2)
 		{
-			int num = (this.warningMessageLabel.fontSize + this.warningMessageLabel.spacingY * 2) * (list.Count - 1);
+			int num = (this.warningMessageLabel.fontSize + this.warningMessageLabel.spacingY) * (list.Count - 1);
 			this.warningMessageLabel.transform.SetLocalY(this.warningMessageLabel.transform.localPosition.y - (float)(num / 2));
 			this.dialogPlate.transform.SetLocalY(this.dialogPlate.transform.localPosition.y - (float)(num / 2));
 			this.dialogPlate.GetComponent<UIWidget>().height += num;

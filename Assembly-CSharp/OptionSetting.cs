@@ -22,6 +22,8 @@ public class OptionSetting
 
 	public static readonly string graphicsQualityKey = "104";
 
+	public static readonly string autoBattleKey = "105";
+
 	private static readonly int bgmSeDefaultVolume = 5;
 
 	private static OptionSetting instance;
@@ -99,6 +101,17 @@ public class OptionSetting
 		PlayerPrefs.SetInt("VolumeBGM", this.optionList[OptionSetting.bgmKey]);
 		PlayerPrefs.SetInt("VolumeSE", this.optionList[OptionSetting.seKey]);
 		PlayerPrefs.Save();
+	}
+
+	public void SaveAutoBattle(int auto)
+	{
+		PlayerPrefs.SetInt("BattleAuto", auto);
+	}
+
+	public void ResetAutoBattlePrefas()
+	{
+		PlayerPrefs.SetInt("Battle2xSpeedPlay", 0);
+		PlayerPrefs.SetInt("BattleAutoPlay", 0);
 	}
 
 	public static void LoadSoundVolume()

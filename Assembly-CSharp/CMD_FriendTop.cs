@@ -449,6 +449,7 @@ public class CMD_FriendTop : CMD
 			RestrictionInput.EndLoad();
 		}), false);
 		ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.FrinedListCheck();
+		PartsMenu.SetMenuButtonAlertBadge();
 		base.MultiTab.SetActiveAlertIcon(new bool[]
 		{
 			DataMng.Instance().RespDataMP_MyPage.userNewsCountList.newFriend > 0,

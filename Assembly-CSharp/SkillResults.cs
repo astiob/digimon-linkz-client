@@ -12,9 +12,5 @@ public sealed class SkillResults
 
 	public bool onMissHit;
 
-	public bool onIgnoreTarget = true;
-
-	public int attackPowerNormal;
-
 	public CharacterStateControl targetCharacter;
 }

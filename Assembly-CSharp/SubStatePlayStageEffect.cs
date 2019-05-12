@@ -432,8 +432,9 @@ public class SubStatePlayStageEffect : BattleStateController
 						}
 						else
 						{
-							SufferStateProperty suffer = new SufferStateProperty(affectEffectProperty);
+							SufferStateProperty suffer = new SufferStateProperty(affectEffectProperty, base.battleStateData.currentLastGenerateStartTimingSufferState);
 							target.currentSufferState.SetSufferState(suffer, null);
+							base.battleStateData.currentLastGenerateStartTimingSufferState++;
 						}
 					}
 					else

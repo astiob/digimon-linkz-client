@@ -3,16 +3,16 @@ using UnityEngine;
 
 public sealed class BattleResultDropInfo : MonoBehaviour
 {
-	[SerializeField]
 	[Header("アイテムのグレーアウトの色")]
+	[SerializeField]
 	private Color itemGrayOutColor = new Color32(70, 70, 70, byte.MaxValue);
 
-	[Header("箱のアイコン")]
 	[SerializeField]
+	[Header("箱のアイコン")]
 	private UISprite[] boxIcons;
 
-	[Header("ドロップアイテム")]
 	[SerializeField]
+	[Header("ドロップアイテム")]
 	private PresentBoxItem[] dropItemItems;
 
 	[SerializeField]
@@ -23,12 +23,12 @@ public sealed class BattleResultDropInfo : MonoBehaviour
 	[SerializeField]
 	private GameObject[] goLuckPlayerIcons;
 
-	[SerializeField]
 	[Header("マルチの文字アイコン")]
+	[SerializeField]
 	private UISprite[] multiIcons;
 
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private GameObject[] lines;
 
 	private int rewardNum;

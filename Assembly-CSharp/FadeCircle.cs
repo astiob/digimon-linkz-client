@@ -6,12 +6,12 @@ public class FadeCircle : ScreenEffectBase
 	[SerializeField]
 	private Color baseColor;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float circleCenterX;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float circleCenterY;
 
 	[SerializeField]
@@ -191,8 +191,8 @@ public class FadeCircle : ScreenEffectBase
 		[SerializeField]
 		public float min;
 
-		[Range(0f, 1f)]
 		[SerializeField]
+		[Range(0f, 1f)]
 		public float max;
 
 		[Range(0.5f, 5f)]
@@ -210,8 +210,8 @@ public class FadeCircle : ScreenEffectBase
 		[Range(0f, 1.5f)]
 		public float to;
 
-		[Range(0f, 1.5f)]
 		[SerializeField]
+		[Range(0f, 1.5f)]
 		public float from;
 
 		[Range(0.5f, 5f)]

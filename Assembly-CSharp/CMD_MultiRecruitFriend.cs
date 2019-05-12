@@ -8,8 +8,8 @@ using UnityEngine;
 
 public class CMD_MultiRecruitFriend : CMD
 {
-	[Header("リストパーツ")]
 	[SerializeField]
+	[Header("リストパーツ")]
 	private GameObject partFriendParent;
 
 	[SerializeField]

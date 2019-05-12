@@ -16,12 +16,12 @@ namespace Enemy.DropItem
 		private DropBoxType _dropBoxType;
 
 		[SerializeField]
-		private DropAssetType _dropAssetType;
+		private MasterDataMng.AssetCategory _dropAssetType;
 
 		[SerializeField]
 		private int _dropNumber;
 
-		public DropAssetPattern(float MinRange, float MaxRange, DropBoxType DropBoxType, DropAssetType DropAssetType, int DropNumber)
+		public DropAssetPattern(float MinRange, float MaxRange, DropBoxType DropBoxType, MasterDataMng.AssetCategory DropAssetType, int DropNumber)
 		{
 			this._minRange = MinRange;
 			this._maxRange = MaxRange;
@@ -32,7 +32,7 @@ namespace Enemy.DropItem
 
 		public static DropAssetPattern GetUnDropped()
 		{
-			return new DropAssetPattern(0f, 0f, DropBoxType.Normal, DropAssetType.Monster, 0);
+			return new DropAssetPattern(0f, 0f, DropBoxType.Normal, MasterDataMng.AssetCategory.MONSTER, 0);
 		}
 
 		public float minRange
@@ -59,7 +59,7 @@ namespace Enemy.DropItem
 			}
 		}
 
-		public DropAssetType dropAssetType
+		public MasterDataMng.AssetCategory dropAssetType
 		{
 			get
 			{

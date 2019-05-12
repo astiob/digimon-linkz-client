@@ -11,7 +11,7 @@ public class SubStateMultiPlayerCharacterAndSkillSelectFunction : SubStatePlayer
 	protected override void EnabledThisState()
 	{
 		base.EnabledThisState();
-		if (!base.hierarchyData.onAutoPlay)
+		if (base.hierarchyData.onAutoPlay == 0)
 		{
 			base.stateManager.uiControlMulti.ApplySkillSelectUI(base.stateManager.multiFunction.isMyTurn);
 		}

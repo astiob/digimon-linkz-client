@@ -1,35 +1,40 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ModeChangeController : CutsceneControllerBase
 {
-	[Header("キャラクターのスタンド")]
 	[SerializeField]
+	[Header("キャラクターのスタンド")]
 	private GameObject[] charaStand;
 
-	[Header("スタンドの回転速度")]
 	[SerializeField]
+	[Header("スタンドの回転速度")]
 	private float[] standRollSpeed;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private GameObject camera2D;
+
+	[Header("3Dカメラ")]
+	[SerializeField]
+	private GameObject camera3D_1;
 
 	[Header("スフィア")]
 	[SerializeField]
 	private GameObject[] breakSphere;
 
-	[SerializeField]
 	[Header("スフィアの回転速度")]
+	[SerializeField]
 	private float[] sphereSpeed;
 
-	[SerializeField]
 	[Header("青いデジタルなマテリアル")]
+	[SerializeField]
 	private Material afterConversionMaterialA;
 
-	[Header("黄色いデジタルなマテリアル")]
 	[SerializeField]
+	[Header("黄色いデジタルなマテリアル")]
 	private Material afterConversionMaterialB;
 
 	[SerializeField]
@@ -42,13 +47,20 @@ public class ModeChangeController : CutsceneControllerBase
 
 	private bool cameraRollFlag;
 
+	private List<Material[]> materialsListA;
+
+	private List<Material[]> materialsListB;
+
 	private void Start()
 	{
 		this.copyMaterial = UnityEngine.Object.Instantiate<Material>(this.afterConversionMaterialB);
 		this.monsA_instance = base.monsterInstantiater(this.monsA_instance, this.character1Parent, this.character1Params, 0);
 		this.monsB_instance = base.monsterInstantiater(this.monsB_instance, this.character2Parent, this.character2Params, 1);
-		this.elementsA = this.monsA_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-		this.elementsB = this.monsB_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+		Camera component = this.camera3D_1.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
+		this.materialsListA = base.GetMaterialRenderer(this.monsA_instance);
+		this.materialsListB = base.GetMaterialRenderer(this.monsB_instance);
 		this.materialAlpha = this.copyMaterial.color;
 	}
 
@@ -86,6 +98,7 @@ public class ModeChangeController : CutsceneControllerBase
 		gameObject.transform.parent = gameObject2.transform;
 		gameObject.transform.localPosition = Vector3.zero;
 		gameObject.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsB;
+		base.ResetMaterialRenderer(gameObject2, this.materialsListB);
 	}
 
 	private void FadeOuter()
@@ -105,12 +118,12 @@ public class ModeChangeController : CutsceneControllerBase
 
 	private void OffMaterialConvertA()
 	{
-		this.monsA_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsA;
+		base.ResetMaterialRenderer(this.monsA_instance, this.materialsListA);
 	}
 
 	private void OffMaterialConvertB()
 	{
-		this.monsB_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsB;
+		base.ResetMaterialRenderer(this.monsB_instance, this.materialsListB);
 	}
 
 	private void OnAttackAnimation()

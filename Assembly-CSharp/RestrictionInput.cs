@@ -63,16 +63,8 @@ public sealed class RestrictionInput
 		}
 	}
 
-	public static void EndLoad()
+	public static void DeleteDisplayObject()
 	{
-		if (Loading.IsShow())
-		{
-			Loading.Invisible();
-		}
-		if (!RestrictionInput.isDisableBackKeySetting)
-		{
-			GUIManager.ExtBackKeyReady = true;
-		}
 		if (0 < RestrictionInput.displayObjects.Count)
 		{
 			for (int i = 0; i < RestrictionInput.displayObjects.Count; i++)
@@ -83,6 +75,18 @@ public sealed class RestrictionInput
 				}
 			}
 			RestrictionInput.displayObjects.Clear();
+		}
+	}
+
+	public static void EndLoad()
+	{
+		if (Loading.IsShow())
+		{
+			Loading.Invisible();
+		}
+		if (!RestrictionInput.isDisableBackKeySetting)
+		{
+			GUIManager.ExtBackKeyReady = true;
 		}
 		GUIMain.BarrierOFF();
 	}

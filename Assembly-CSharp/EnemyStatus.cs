@@ -22,7 +22,7 @@ public class EnemyStatus : CharacterStatus
 	[NonSerialized]
 	private List<ItemDropResult> _itemDropResult = new List<ItemDropResult>();
 
-	public EnemyStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, EnemyAIPattern enemyAiPattern, int getChip, int getExp, EnemyDropItemPattern dropItemPattern, int[] chipIdList) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, chipIdList)
+	public EnemyStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, EnemyAIPattern enemyAiPattern, int getChip, int getExp, EnemyDropItemPattern dropItemPattern, int[] chipIdList) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, tolerance, chipIdList)
 	{
 		this._enemyAiPattern = enemyAiPattern;
 		this._getChip = getChip;
@@ -31,13 +31,14 @@ public class EnemyStatus : CharacterStatus
 		this._itemDropResult = new List<ItemDropResult>();
 	}
 
-	public EnemyStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, EnemyAIPattern enemyAiPattern, int getChip, int getExp, List<ItemDropResult> itemDropResult, int[] chipIdList) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, chipIdList)
+	public EnemyStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, EnemyAIPattern enemyAiPattern, int getChip, int getExp, List<ItemDropResult> itemDropResult, int[] chipIdList) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, tolerance, chipIdList)
 	{
 		this._enemyAiPattern = enemyAiPattern;
 		this._getChip = getChip;
 		this._getExp = getExp;
 		this._dropItemPattern = new EnemyDropItemPattern(new DropAssetPattern[0]);
 		this._itemDropResult = itemDropResult;
+		base.skillIds = this._enemyAiPattern.GetAllSkillID();
 	}
 
 	public EnemyStatus()
@@ -46,6 +47,7 @@ public class EnemyStatus : CharacterStatus
 		this._getChip = 0;
 		this._getExp = 0;
 		this._dropItemPattern = new EnemyDropItemPattern(new DropAssetPattern[0]);
+		base.skillIds = new string[0];
 	}
 
 	public EnemyAIPattern enemyAiPattern
@@ -90,10 +92,5 @@ public class EnemyStatus : CharacterStatus
 		{
 			this._itemDropResult = value;
 		}
-	}
-
-	public static bool Match(CharacterStatus characterStatus)
-	{
-		return characterStatus.GetType() == typeof(EnemyStatus);
 	}
 }

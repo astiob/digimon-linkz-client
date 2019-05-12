@@ -16,15 +16,15 @@ public class PvPBattleState : BattleStateMainController
 		base.AddState(new BattleStatePvPInitialize(delegate()
 		{
 			base.SetState(typeof(BattleStateWaveController));
-		}));
+		}, new Action<EventState>(this.ExitGotEvent)));
 		base.AddState(new BattleStateWaveController(delegate()
 		{
 			base.SetState(typeof(BattleStatePvPBattleStartActionFunction));
-		}, null));
+		}, new Action<EventState>(this.ExitGotEvent)));
 		base.AddState(new BattleStatePvPBattleStartActionFunction(delegate()
 		{
 			base.SetState(typeof(BattleStatePvPRoundStartToRoundEnd));
-		}));
+		}, new Action<EventState>(this.ExitGotEvent)));
 		base.AddState(new BattleStatePvPRoundStartToRoundEnd(delegate()
 		{
 			base.SetState(typeof(BattleStatePvPRoundStartToRoundEnd));
@@ -65,25 +65,7 @@ public class PvPBattleState : BattleStateMainController
 			}
 			ClassSingleton<MultiBattleData>.Instance.BattleResult = battleResult;
 			base.SetState(typeof(BattleStatePvPTimeOver));
-		}, delegate(EventState eventState)
-		{
-			base.stateManager.pvpFunction.FinishTCP();
-			if (eventState == EventState.Retire)
-			{
-				ClassSingleton<MultiBattleData>.Instance.BattleResult = 4;
-				base.SetState(typeof(BattleStatePvPRetire));
-			}
-			else if (eventState == EventState.ConnectionError)
-			{
-				ClassSingleton<MultiBattleData>.Instance.BattleResult = 3;
-				base.SetState(typeof(BattleStatePvPBattleEnd));
-			}
-			else if (eventState == EventState.Win)
-			{
-				ClassSingleton<MultiBattleData>.Instance.BattleResult = 1;
-				base.SetState(typeof(BattleStatePvPBattleEnd));
-			}
-		}));
+		}, new Action<EventState>(this.ExitGotEvent)));
 		base.AddState(new BattleStatePvPTimeOver(delegate()
 		{
 			base.SetState(typeof(BattleStatePvPBattleEnd));
@@ -120,5 +102,25 @@ public class PvPBattleState : BattleStateMainController
 			base.SetState(typeof(BattleStatePvPFadeOut));
 		}));
 		base.AddState(new BattleStatePvPFadeOut());
+	}
+
+	private void ExitGotEvent(EventState eventState)
+	{
+		base.stateManager.pvpFunction.FinishTCP();
+		if (eventState == EventState.Retire)
+		{
+			ClassSingleton<MultiBattleData>.Instance.BattleResult = 4;
+			base.SetState(typeof(BattleStatePvPRetire));
+		}
+		else if (eventState == EventState.ConnectionError)
+		{
+			ClassSingleton<MultiBattleData>.Instance.BattleResult = 3;
+			base.SetState(typeof(BattleStatePvPBattleEnd));
+		}
+		else if (eventState == EventState.Win)
+		{
+			ClassSingleton<MultiBattleData>.Instance.BattleResult = 1;
+			base.SetState(typeof(BattleStatePvPBattleEnd));
+		}
 	}
 }

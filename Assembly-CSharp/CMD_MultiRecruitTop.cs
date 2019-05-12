@@ -16,8 +16,8 @@ public class CMD_MultiRecruitTop : CMD
 
 	private int worldDungeonId;
 
-	[SerializeField]
 	[Header("フレンドラベル")]
+	[SerializeField]
 	private UILabel friendLabel;
 
 	[Header("全国ラベル")]

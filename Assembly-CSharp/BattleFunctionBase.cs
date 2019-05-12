@@ -27,14 +27,6 @@ public abstract class BattleFunctionBase : IMono, IBattleFunctionInput
 		}
 	}
 
-	protected bool isSkipAction
-	{
-		get
-		{
-			return this.stateManager.battleMode == BattleMode.SkipAction;
-		}
-	}
-
 	protected bool onServerConnect
 	{
 		get

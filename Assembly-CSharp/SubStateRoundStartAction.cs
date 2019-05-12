@@ -357,6 +357,13 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			yield return null;
 		}
+		for (int j = 0; j < characters.Count; j++)
+		{
+			base.stateManager.threeDAction.StopHitEffectAction(new HitEffectParams[]
+			{
+				hitEffectParams[j]
+			});
+		}
 		base.stateManager.soundPlayer.TryStopSE(hitEffectParams[0]);
 		base.stateManager.soundPlayer.StopHitEffectSE();
 		yield break;

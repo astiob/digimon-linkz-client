@@ -7,12 +7,12 @@ using UnityEngine;
 
 public class CMD_DeckList : CMD
 {
-	[Header("ベース用チップ装備")]
 	[SerializeField]
+	[Header("ベース用チップ装備")]
 	private ChipBaseSelect baseChipBaseSelect;
 
-	[Header("パートナー用チップ装備")]
 	[SerializeField]
+	[Header("パートナー用チップ装備")]
 	private ChipBaseSelect partnerChipBaseSelect;
 
 	[SerializeField]
@@ -46,6 +46,18 @@ public class CMD_DeckList : CMD
 	private MonsterLearnSkill nowMonsterSuccessionSkill;
 
 	[SerializeField]
+	private MonsterLearnSkill nowMonsterSuccessionSkill2;
+
+	[SerializeField]
+	private GameObject nowMonsterSuccessionSkillAvailable;
+
+	[SerializeField]
+	private GameObject nowMonsterSuccessionSkillGrayReady;
+
+	[SerializeField]
+	private GameObject nowMonsterSuccessionSkillGrayNA;
+
+	[SerializeField]
 	private MonsterBasicInfo changeMonsterBasicInfo;
 
 	[SerializeField]
@@ -67,7 +79,64 @@ public class CMD_DeckList : CMD
 	private MonsterLearnSkill changeMonsterSuccessionSkill;
 
 	[SerializeField]
+	private MonsterLearnSkill changeMonsterSuccessionSkill2;
+
+	[SerializeField]
+	private GameObject changeMonsterSuccessionSkillAvailable;
+
+	[SerializeField]
+	private GameObject changeMonsterSuccessionSkillGrayReady;
+
+	[SerializeField]
+	private GameObject changeMonsterSuccessionSkillGrayNA;
+
+	[SerializeField]
 	private MonsterStatusChangeValueList monsterStatusChangeValueList;
+
+	[SerializeField]
+	private GameObject goSimpleSkillPanel;
+
+	[SerializeField]
+	private GameObject goDetailedSkillPanel;
+
+	[SerializeField]
+	private MonsterLearnSkill detailedNowMonsterUniqueSkill;
+
+	[SerializeField]
+	private MonsterLearnSkill detailedNowMonsterSuccessionSkill;
+
+	[SerializeField]
+	private MonsterLearnSkill detailedNowMonsterSuccessionSkill2;
+
+	[SerializeField]
+	private GameObject detailedNowMonsterSuccessionSkillAvailable;
+
+	[SerializeField]
+	private GameObject detailedNowMonsterSuccessionSkillGrayReady;
+
+	[SerializeField]
+	private GameObject detailedNowMonsterSuccessionSkillGrayNA;
+
+	[SerializeField]
+	private MonsterLearnSkill detailedChangeMonsterUniqueSkill;
+
+	[SerializeField]
+	private MonsterLearnSkill detailedChangeMonsterSuccessionSkill;
+
+	[SerializeField]
+	private MonsterLearnSkill detailedChangeMonsterSuccessionSkill2;
+
+	[SerializeField]
+	private GameObject detailedChangeMonsterSuccessionSkillAvailable;
+
+	[SerializeField]
+	private GameObject detailedChangeMonsterSuccessionSkillGrayReady;
+
+	[SerializeField]
+	private GameObject detailedChangeMonsterSuccessionSkillGrayNA;
+
+	[SerializeField]
+	private GameObject switchSkillPanelBtn;
 
 	[SerializeField]
 	private UILabel ngTX_MN_HAVE;
@@ -95,8 +164,8 @@ public class CMD_DeckList : CMD
 
 	private static CMD_DeckList instance;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
@@ -226,7 +295,35 @@ public class CMD_DeckList : CMD
 			this.nowMonsterMedalList.SetValues(CMD_DeckList.OriginMonsterData.userMonster);
 			this.nowMonsterLeaderSkill.SetSkill(CMD_DeckList.OriginMonsterData);
 			this.nowMonsterUniqueSkill.SetSkill(CMD_DeckList.OriginMonsterData);
+			this.detailedNowMonsterUniqueSkill.SetSkill(CMD_DeckList.OriginMonsterData);
 			this.nowMonsterSuccessionSkill.SetSkill(CMD_DeckList.OriginMonsterData);
+			this.detailedNowMonsterSuccessionSkill.SetSkill(CMD_DeckList.OriginMonsterData);
+			this.nowMonsterSuccessionSkillGrayReady.SetActive(false);
+			this.nowMonsterSuccessionSkillAvailable.SetActive(false);
+			this.nowMonsterSuccessionSkillGrayNA.SetActive(false);
+			this.detailedNowMonsterSuccessionSkillGrayReady.SetActive(false);
+			this.detailedNowMonsterSuccessionSkillAvailable.SetActive(false);
+			this.detailedNowMonsterSuccessionSkillGrayNA.SetActive(false);
+			this.nowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.OriginMonsterData);
+			this.detailedNowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.OriginMonsterData);
+			if (CMD_DeckList.OriginMonsterData.IsVersionUp())
+			{
+				if (CMD_DeckList.OriginMonsterData.commonSkillM2 == null)
+				{
+					this.nowMonsterSuccessionSkillGrayReady.SetActive(true);
+					this.detailedNowMonsterSuccessionSkillGrayReady.SetActive(true);
+				}
+				else
+				{
+					this.nowMonsterSuccessionSkillAvailable.SetActive(true);
+					this.detailedNowMonsterSuccessionSkillAvailable.SetActive(true);
+				}
+			}
+			else
+			{
+				this.nowMonsterSuccessionSkillGrayNA.SetActive(true);
+				this.detailedNowMonsterSuccessionSkillGrayNA.SetActive(true);
+			}
 			this.nowMonsterResistanceList.SetValues(CMD_DeckList.OriginMonsterData);
 		}
 		else
@@ -247,7 +344,35 @@ public class CMD_DeckList : CMD
 			this.changeMonsterMedalList.SetValues(this.DataChg.userMonster);
 			this.changeMonsterLeaderSkill.SetSkill(this.DataChg);
 			this.changeMonsterUniqueSkill.SetSkill(this.DataChg);
+			this.detailedChangeMonsterUniqueSkill.SetSkill(this.DataChg);
 			this.changeMonsterSuccessionSkill.SetSkill(this.DataChg);
+			this.detailedChangeMonsterSuccessionSkill.SetSkill(this.DataChg);
+			this.changeMonsterSuccessionSkillGrayReady.SetActive(false);
+			this.changeMonsterSuccessionSkillAvailable.SetActive(false);
+			this.changeMonsterSuccessionSkillGrayNA.SetActive(false);
+			this.detailedChangeMonsterSuccessionSkillGrayReady.SetActive(false);
+			this.detailedChangeMonsterSuccessionSkillAvailable.SetActive(false);
+			this.detailedChangeMonsterSuccessionSkillGrayNA.SetActive(false);
+			this.changeMonsterSuccessionSkill2.SetSkill(this.DataChg);
+			this.detailedChangeMonsterSuccessionSkill2.SetSkill(this.DataChg);
+			if (this.DataChg.IsVersionUp())
+			{
+				if (this.DataChg.commonSkillM2 == null)
+				{
+					this.changeMonsterSuccessionSkillGrayReady.SetActive(true);
+					this.detailedChangeMonsterSuccessionSkillGrayReady.SetActive(true);
+				}
+				else
+				{
+					this.changeMonsterSuccessionSkillAvailable.SetActive(true);
+					this.detailedChangeMonsterSuccessionSkillAvailable.SetActive(true);
+				}
+			}
+			else
+			{
+				this.changeMonsterSuccessionSkillGrayNA.SetActive(true);
+				this.detailedChangeMonsterSuccessionSkillGrayNA.SetActive(true);
+			}
 			this.changeMonsterResistanceList.SetValues(this.DataChg);
 		}
 		else
@@ -257,7 +382,11 @@ public class CMD_DeckList : CMD
 			this.changeMonsterStatusList.ClearValues();
 			this.changeMonsterLeaderSkill.ClearSkill();
 			this.changeMonsterUniqueSkill.ClearSkill();
+			this.detailedChangeMonsterUniqueSkill.ClearSkill();
 			this.changeMonsterSuccessionSkill.ClearSkill();
+			this.changeMonsterSuccessionSkill2.ClearSkill();
+			this.detailedChangeMonsterSuccessionSkill.ClearSkill();
+			this.detailedChangeMonsterSuccessionSkill2.ClearSkill();
 			this.changeMonsterResistanceList.ClearValues();
 		}
 		StatusValue values = this.nowMonsterStatusList.GetValues();
@@ -493,6 +622,7 @@ public class CMD_DeckList : CMD
 
 	public void StatusPageChangeTap()
 	{
+		this.switchDetailSkillPanel(false);
 		this.StatusPageChange(true);
 	}
 
@@ -515,6 +645,7 @@ public class CMD_DeckList : CMD
 			if (num == this.statusPage)
 			{
 				gameObject.SetActive(true);
+				this.switchSkillPanelBtn.SetActive(gameObject.name == "SkillChange");
 			}
 			else
 			{
@@ -536,5 +667,25 @@ public class CMD_DeckList : CMD
 	{
 		this.sortieLimitList = limitList;
 		this.csSelectPanelMonsterIcon.SetIconSortieLimitParts(this.sortieLimitList);
+	}
+
+	public void switchDetailSkillPanel(bool isOpen)
+	{
+		this.goDetailedSkillPanel.SetActive(isOpen);
+		this.goSimpleSkillPanel.SetActive(!isOpen);
+		UISprite component = this.switchSkillPanelBtn.GetComponent<UISprite>();
+		if (isOpen)
+		{
+			component.flip = UIBasicSprite.Flip.Vertically;
+		}
+		else
+		{
+			component.flip = UIBasicSprite.Flip.Nothing;
+		}
+	}
+
+	public void OnSwitchSkillPanelBtn()
+	{
+		this.switchDetailSkillPanel(!this.goDetailedSkillPanel.activeSelf);
 	}
 }

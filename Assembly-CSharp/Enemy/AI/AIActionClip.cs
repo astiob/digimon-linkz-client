@@ -209,14 +209,6 @@ namespace Enemy.AI
 			return false;
 		}
 
-		public bool isZeroRate
-		{
-			get
-			{
-				return this._minRange == this._maxRange;
-			}
-		}
-
 		public override string ToString()
 		{
 			return string.Format("[AIActionClip: targetSelectRerefence={0}, selectingOrder={1}, minValue={2}, maxValue={3}, minRange={4}, maxRange={5}, useSkillId={6}]", new object[]

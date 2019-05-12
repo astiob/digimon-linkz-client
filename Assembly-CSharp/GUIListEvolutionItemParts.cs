@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 public class GUIListEvolutionItemParts : GUIListPartBS
@@ -16,71 +15,71 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[SerializeField]
 	private GameObject goNum;
 
-	[Header("所持数のUIlabel")]
 	[SerializeField]
+	[Header("所持数のUIlabel")]
 	private UILabel lbNum;
 
-	[Header("所持数背景のGameObject")]
 	[SerializeField]
+	[Header("所持数背景のGameObject")]
 	private GameObject goNumBG;
+
+	[Header("親のパネル")]
+	[SerializeField]
+	private GUISelectPanelEvolutionItemList parentPanel;
 
 	private string soulId;
 
-	private GameWebAPI.UserSoulData soulData;
+	private GameWebAPI.UserSoulData data;
 
-	public GameWebAPI.UserSoulData SoulData
+	public override void SetData()
 	{
-		get
-		{
-			return this.soulData;
-		}
-		set
-		{
-			this.soulData = value;
-			this.ShowGUI();
-		}
+		this.data = this.parentPanel.partsDataList[base.IDX];
 	}
 
-	protected override void Update()
+	public override void InitParts()
 	{
-		base.Update();
+		this.ShowGUI();
+	}
+
+	public override void RefreshParts()
+	{
+		this.ShowGUI();
+	}
+
+	protected override void Awake()
+	{
+		base.Awake();
 	}
 
 	public override void ShowGUI()
 	{
+		this.ShowData();
 		base.ShowGUI();
+	}
+
+	private void ShowData()
+	{
 		this.ShowItemIcon();
 	}
 
 	private void ShowItemIcon()
 	{
-		if (this.soulData != null)
+		if (this.data != null)
 		{
-			this.soulId = this.soulData.soulId;
+			this.soulId = this.data.soulId;
 			string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(this.soulId);
-			this.lbNum.text = this.soulData.num;
-			this.LoadObjectASync(this.texSoul, evolveItemIconPathByID);
+			this.lbNum.text = this.data.num;
+			NGUIUtil.LoadTextureAsync(this.texSoul, evolveItemIconPathByID, new Action(this.DispItemNum));
 		}
 	}
 
-	private void LoadObjectASync(UITexture uiTex, string path)
+	private void DispItemNum()
 	{
-		AssetDataMng.Instance().LoadObjectASync(path, delegate(UnityEngine.Object obj)
+		if (this.goNum != null && this.goNumBG != null)
 		{
-			Texture2D mainTexture = obj as Texture2D;
-			uiTex.mainTexture = mainTexture;
-			Hashtable hashtable = new Hashtable();
-			hashtable.Add("x", 1f);
-			hashtable.Add("y", 1f);
-			hashtable.Add("time", 0.4f);
-			hashtable.Add("delay", 0.01f);
-			hashtable.Add("easetype", "spring");
-			hashtable.Add("oncomplete", "ScaleEnd");
-			hashtable.Add("oncompleteparams", 0);
 			this.goNum.SetActive(true);
 			this.goNumBG.SetActive(true);
-			iTween.ScaleTo(uiTex.gameObject, hashtable);
-		});
+		}
 	}
 
 	private void OnTouchedSoulIcon()

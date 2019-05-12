@@ -331,7 +331,8 @@ namespace LitJson
 						}
 						return obj;
 						Block_27:
-						throw new JsonException(string.Format("The type {0} doesn't have the property '{1}'", inst_type, text));
+						string message = string.Format("The type {0} doesn't have the property '{1}'", inst_type, text);
+						throw new JsonException(message);
 					}
 					return obj;
 				}

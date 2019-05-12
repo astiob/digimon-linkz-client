@@ -17,7 +17,7 @@ public class SubStatePvPAreaRandomDamageHitFunction : BattleStateController
 	protected override IEnumerator MainRoutine()
 	{
 		CharacterStateControl attacker = base.battleStateData.currentSelectCharacterState;
-		if ((!attacker.isEnemy && !RandomExtension.Switch(base.hierarchyData.playerPursuitPercentage, null)) || (attacker.isEnemy && !RandomExtension.Switch(base.hierarchyData.enemyPursuitPercentage, null)))
+		if ((!attacker.isEnemy && !RandomExtension.Switch(base.hierarchyData.playerPursuitPercentage)) || (attacker.isEnemy && !RandomExtension.Switch(base.hierarchyData.enemyPursuitPercentage)))
 		{
 			yield break;
 		}

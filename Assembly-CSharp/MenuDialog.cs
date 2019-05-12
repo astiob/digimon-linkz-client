@@ -44,8 +44,8 @@ public class MenuDialog : MonoBehaviour
 	[Header("ヘルプローカライズ")]
 	private UILabel helpLocalize;
 
-	[Header("リタイアローカライズ")]
 	[SerializeField]
+	[Header("リタイアローカライズ")]
 	private UILabel retireLocalize;
 
 	[Header("獲得EXPローカライズ")]
@@ -56,8 +56,8 @@ public class MenuDialog : MonoBehaviour
 	[SerializeField]
 	private UILabel coinLocalize;
 
-	[SerializeField]
 	[Header("DialogMENUの左上")]
+	[SerializeField]
 	private UILabel menuTitleLocalize;
 
 	private void Awake()

@@ -8,7 +8,9 @@ public class BuildNumber
 {
 	private readonly string textPath = "/BuildNumber/BuildNumber.txt";
 
-	private static BuildNumber instance;
+	private static BuildNumber instance = null;
+
+	private static string loadedText = string.Empty;
 
 	private BuildNumber()
 	{
@@ -26,6 +28,14 @@ public class BuildNumber
 		}
 	}
 
+	public static string LoadedText
+	{
+		get
+		{
+			return BuildNumber.loadedText;
+		}
+	}
+
 	public Coroutine LoadBuildNumber(Action<string> OnLoaded)
 	{
 		return AppCoroutine.Start(this.LoadBuildNumber_(OnLoaded), false);
@@ -33,7 +43,6 @@ public class BuildNumber
 
 	private IEnumerator LoadBuildNumber_(Action<string> OnLoaded)
 	{
-		string loadedText = string.Empty;
 		WWW www = new WWW(Application.streamingAssetsPath + this.textPath);
 		yield return www;
 		if (!string.IsNullOrEmpty(www.error))
@@ -42,9 +51,9 @@ public class BuildNumber
 		}
 		else
 		{
-			loadedText = www.text;
+			BuildNumber.loadedText = www.text;
 		}
-		OnLoaded(loadedText.Trim());
+		OnLoaded(BuildNumber.loadedText.Trim());
 		yield break;
 	}
 

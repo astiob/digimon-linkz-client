@@ -308,9 +308,9 @@ public sealed class InputControll : MonoBehaviour
 			string tag = raycasts[i].transform.tag;
 			if (tag != null)
 			{
-				if (InputControll.<>f__switch$map3C == null)
+				if (InputControll.<>f__switch$map3B == null)
 				{
-					InputControll.<>f__switch$map3C = new Dictionary<string, int>(4)
+					InputControll.<>f__switch$map3B = new Dictionary<string, int>(4)
 					{
 						{
 							"Farm.Facility",
@@ -331,7 +331,7 @@ public sealed class InputControll : MonoBehaviour
 					};
 				}
 				int num;
-				if (InputControll.<>f__switch$map3C.TryGetValue(tag, out num))
+				if (InputControll.<>f__switch$map3B.TryGetValue(tag, out num))
 				{
 					InputControll.TouchObjectType type;
 					switch (num)

@@ -6,8 +6,8 @@ public class TutorialController : MonoBehaviour
 {
 	public bool endFlg;
 
-	[Header("カメラ")]
 	[SerializeField]
+	[Header("カメラ")]
 	private GameObject obj_cam2;
 
 	private int skipLock;

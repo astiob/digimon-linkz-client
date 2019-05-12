@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+[RequireComponent(typeof(ParticleSystem))]
 [DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Tools/Particle Controller")]
-[RequireComponent(typeof(ParticleSystem))]
 public class ParticleController : MonoBehaviour
 {
 	[SerializeField]

@@ -61,8 +61,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider showBtnCollider;
 
-	[SerializeField]
 	[Header("一覧ボタンのラベル")]
+	[SerializeField]
 	private UILabelEx showBtnLabel;
 
 	[SerializeField]
@@ -71,8 +71,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[SerializeField]
 	[Header("お別れボタンのラベル")]
+	[SerializeField]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]
@@ -184,21 +184,31 @@ public sealed class CMD_FarewellListRun : CMD
 				req.saleMonsterDataList[i] = saleMonsterDataList;
 			}
 			this.chip_bak = this.CalcChipGet();
+			GameWebAPI.RespDataMN_SaleExec response = null;
 			GameWebAPI.RequestMN_MonsterSale request = new GameWebAPI.RequestMN_MonsterSale
 			{
 				SetSendData = delegate(GameWebAPI.MN_Req_Sale param)
 				{
 					param.saleMonsterDataList = req.saleMonsterDataList;
 				},
-				OnReceived = new Action<GameWebAPI.RespDataMN_SaleExec>(this.EndSale)
+				OnReceived = delegate(GameWebAPI.RespDataMN_SaleExec res)
+				{
+					response = res;
+				}
 			};
-			base.StartCoroutine(request.Run(null, null, null));
+			base.StartCoroutine(request.Run(delegate()
+			{
+				RestrictionInput.EndLoad();
+				this.EndSale(response);
+			}, delegate(Exception noop)
+			{
+				RestrictionInput.EndLoad();
+			}, null));
 		}
 	}
 
 	private void EndSale(GameWebAPI.RespDataMN_SaleExec response)
 	{
-		RestrictionInput.EndLoad();
 		int[] array = new int[this.data_matL.Count];
 		for (int i = 0; i < this.data_matL.Count; i++)
 		{
@@ -217,6 +227,7 @@ public sealed class CMD_FarewellListRun : CMD
 			this.SetDimGrowing(true);
 		}
 		this.CheckDimPartners(true);
+		MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 		this.data_matL = new List<MonsterData>();
 		this.ShowHaveMonster();
 		int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
@@ -250,6 +261,7 @@ public sealed class CMD_FarewellListRun : CMD
 				this.SetDimGrowing(true);
 			}
 			this.ReleaseAllMat();
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
@@ -275,6 +287,7 @@ public sealed class CMD_FarewellListRun : CMD
 			}
 			this.ReleaseAllMat();
 			this.BTSeleOn();
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 		}
 	}
 
@@ -382,6 +395,7 @@ public sealed class CMD_FarewellListRun : CMD
 					this.SetOtherDimIcon(true);
 				}
 			}
+			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN)
 		{
@@ -475,14 +489,7 @@ public sealed class CMD_FarewellListRun : CMD
 		};
 		requestMN_MoveDigiGarden.OnReceived = delegate(GameWebAPI.RespDataMN_MoveDigiGarden response)
 		{
-			if (response.userMonsterList != null)
-			{
-				DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-			}
-			if (response.userMonster != null)
-			{
-				DataMng.Instance().SetUserMonster(response.userMonster);
-			}
+			DataMng.Instance().SetUserMonster(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MoveDigiGarden request = requestMN_MoveDigiGarden;
 		return new APIRequestTask(request, requestRetry);
@@ -528,6 +535,7 @@ public sealed class CMD_FarewellListRun : CMD
 		monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
 		this.RefreshSelectedInMonsterList();
 		this.BTSeleOn();
+		MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 	}
 
 	private void ShowMonsterDetailForList(MonsterData monsterData)
@@ -579,6 +587,14 @@ public sealed class CMD_FarewellListRun : CMD
 			if (this.data_matL.Count == 10)
 			{
 				this.SetOtherDimIcon(true);
+			}
+			if (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.SELL && CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL)
+			{
+				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
+			}
+			else
+			{
+				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 			}
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		if (flag)

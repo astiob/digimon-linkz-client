@@ -8,8 +8,8 @@ public class AwakeningController : CutsceneControllerBase
 	[SerializeField]
 	private GameObject Camera;
 
-	[SerializeField]
 	[Header("カメラの向き先")]
+	[SerializeField]
 	private GameObject CameraTarget;
 
 	[Header("回ってるサークル小")]
@@ -74,6 +74,8 @@ public class AwakeningController : CutsceneControllerBase
 		CharacterParams component = this.monsA_instance.GetComponent<CharacterParams>();
 		component.PlayIdleAnimation();
 		this.CameraTarget = component.characterCenterTarget.gameObject;
+		Camera component2 = this.Camera.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component2);
 	}
 
 	protected override void UpdateChild()

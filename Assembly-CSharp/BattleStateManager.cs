@@ -10,8 +10,8 @@ public sealed class BattleStateManager : MonoBehaviour
 	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
-	[SerializeField]
 	[Header("マルチUI")]
+	[SerializeField]
 	private BattleUIComponentsMulti battleUIComponentsMulti;
 
 	[SerializeField]
@@ -404,14 +404,9 @@ public sealed class BattleStateManager : MonoBehaviour
 		this.battleUiComponents.Init();
 		this._stateProperty = BattleActionProperties.GetProperties(this.battleMode);
 		this._uiProperty = BattleActionProperties.GetUIProperties(this.battleMode);
-		this._battleStateData.SetInitializeSufferState();
 		if (BattleStateManager.onAutoServerConnect)
 		{
 			this._onServerConnect = true;
-		}
-		if (BattleStateManager.onAutoChangeSkipActionMode)
-		{
-			BattleStateManager._battleMode = BattleMode.SkipAction;
 		}
 		if (BattleStateManager.onAutoChangeTutorialMode)
 		{
@@ -447,7 +442,7 @@ public sealed class BattleStateManager : MonoBehaviour
 			{
 				base.gameObject.AddComponent<TCPMessageSender>();
 			}
-			goto IL_39A;
+			break;
 		case BattleMode.PvP:
 			this.uiControl = new BattleUIControlPvP();
 			this.multiBasicFunction = new BattlePvPFunction();
@@ -456,16 +451,17 @@ public sealed class BattleStateManager : MonoBehaviour
 			{
 				base.gameObject.AddComponent<TCPMessageSender>();
 			}
-			goto IL_39A;
+			break;
 		case BattleMode.Tutorial:
 			this.tutorial = new BattleTutorial();
 			this.uiControl = new BattleUIControlSingle();
 			this._rootState = new SingleBattleState();
-			goto IL_39A;
+			break;
+		default:
+			this.uiControl = new BattleUIControlSingle();
+			this._rootState = new SingleBattleState();
+			break;
 		}
-		this.uiControl = new BattleUIControlSingle();
-		this._rootState = new SingleBattleState();
-		IL_39A:
 		this.uiControl.ApplySetBattleStateRegistration();
 		foreach (IBattleFunctionInput battleFunctionInput in this.GetAllBattleFunctions())
 		{

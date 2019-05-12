@@ -6,20 +6,20 @@ public class CMD_MultiBattleParticipateMenu : CMD
 {
 	public static CMD_MultiBattleParticipateMenu instance;
 
-	[Header("GameObject：参加")]
 	[SerializeField]
+	[Header("GameObject：参加")]
 	private GameObject goBtnParticipate;
 
-	[SerializeField]
 	[Header("GameObject：募集")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[Header("Label：参加")]
 	[SerializeField]
 	private UILabel lbBtnParticipate;
 
-	[Header("Label：募集")]
 	[SerializeField]
+	[Header("Label：募集")]
 	private UILabel lbBtnRecruit;
 
 	protected override void Awake()

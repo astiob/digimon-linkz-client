@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class BattleStateInitialize : BattleStateController
 {
-	public BattleStateInitialize(Action OnExit) : base(null, OnExit)
+	public BattleStateInitialize(Action OnExit, Action<EventState> OnExitGotEvent = null) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
 
@@ -625,7 +625,7 @@ public class BattleStateInitialize : BattleStateController
 		}
 		List<IEnumerator> hitEffectStore = base.stateManager.initialize.LoadHitEffectsByFlags(skillStatusTemp.ToArray());
 		List<string> invocationEffectKeys = new List<string>();
-		InvocationEffectParams[] invocationEffectParams = invocationEffectParamsTemp.GetAllObject(false);
+		InvocationEffectParams[] invocationEffectParams = invocationEffectParamsTemp.GetAllObject();
 		foreach (InvocationEffectParams invocationEffectParam in invocationEffectParams)
 		{
 			if (!BattleFunctionUtility.IsEmptyPath(invocationEffectParam.cameraMotionId) && !invocationEffectKeys.Contains(invocationEffectParam.cameraMotionId))
@@ -662,16 +662,25 @@ public class BattleStateInitialize : BattleStateController
 		{
 			base.hierarchyData.on2xSpeedPlay = true;
 		}
-		if (PlayerPrefs.GetInt("BattleAutoPlay", 0) == 1)
+		int autoFlag = PlayerPrefs.GetInt("BattleAutoPlay", 0);
+		if (0 < autoFlag)
 		{
-			base.hierarchyData.onAutoPlay = true;
+			if (autoFlag == 1)
+			{
+				base.hierarchyData.onAutoPlay = 1;
+			}
+			else if (autoFlag == 2)
+			{
+				base.hierarchyData.onAutoPlay = 2;
+			}
 		}
 		base.stateManager.uiControl.ApplyHideHitIcon();
 		base.stateManager.uiControl.ApplyDroppedItemHide();
 		base.stateManager.uiControl.ApplyAutoPlay(base.hierarchyData.onAutoPlay);
 		base.stateManager.uiControl.Apply2xPlay(base.hierarchyData.on2xSpeedPlay);
 		base.stateManager.uiControl.ApplyAreaName(base.hierarchyData.areaName);
-		base.stateManager.sleep.SetSleepOff(base.hierarchyData.onAutoPlay);
+		bool sleep = base.hierarchyData.onAutoPlay > 0;
+		base.stateManager.sleep.SetSleepOff(sleep);
 		yield break;
 	}
 

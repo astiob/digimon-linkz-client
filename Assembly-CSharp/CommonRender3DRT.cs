@@ -155,6 +155,11 @@ public class CommonRender3DRT : MonoBehaviour
 		}
 	}
 
+	public void SetBillBoardCamera()
+	{
+		this.cpParams.SetBillBoardCamera(this.cam);
+	}
+
 	public void ResumeAnimation()
 	{
 		if (null != this.cpParams)
@@ -202,6 +207,7 @@ public class CommonRender3DRT : MonoBehaviour
 		{
 			this.cpParams.PlayIdleAnimation();
 		}
+		this.SetBillBoardCamera();
 	}
 
 	public void DeleteCharacterModel()

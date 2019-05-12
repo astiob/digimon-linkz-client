@@ -86,11 +86,7 @@ namespace BattleStateMachineInternal
 
 		private UnityObjectPooler<HitEffectParams[]> _hitEffects = new UnityObjectPooler<HitEffectParams[]>();
 
-		private HitEffectParams _destructEffect;
-
 		private HitEffectParams _drainEffect;
-
-		private HitEffectParams _powerChargeEffect;
 
 		private HitEffectParams[] _playersDeathEffect = new HitEffectParams[0];
 
@@ -156,11 +152,7 @@ namespace BattleStateMachineInternal
 
 		private int _currentGettedItemDropExp;
 
-		private int _currentHalfEffectDamageNumber;
-
 		private bool _onSkillTrigger;
-
-		private bool _isShowSkillDescription;
 
 		private bool _useCharacterShadow = true;
 
@@ -170,17 +162,11 @@ namespace BattleStateMachineInternal
 
 		private bool _isPossibleTargetSelect = true;
 
-		private bool _isPossibleMenuSelect = true;
-
 		private bool _isImpossibleShowMenu;
-
-		private bool _isEnableShopMoveDigistoneZero = true;
 
 		private bool _isEnableBackKeySystem = true;
 
 		private bool _isRunnedRevivalFunction;
-
-		private bool _calledBattleStartAction;
 
 		private bool _isBattleRetired;
 
@@ -189,8 +175,6 @@ namespace BattleStateMachineInternal
 		private bool[] _isRoundStartHpRevival = new bool[3];
 
 		private bool[] _isRevivalReservedCharacter = new bool[3];
-
-		private bool[] _onBgmChangeConditions = new bool[3];
 
 		private int[] _revivaledCharactersIndex = new int[3];
 
@@ -202,8 +186,6 @@ namespace BattleStateMachineInternal
 		private List<FraudDataLog> _fraudDataLogs = new List<FraudDataLog>();
 
 		private int[] _apRevival = new int[3];
-
-		private List<int> _useInheritanceSkillPlayers = new List<int>();
 
 		private bool _isShowMenuWindow;
 
@@ -232,6 +214,8 @@ namespace BattleStateMachineInternal
 		private bool _isShowShop;
 
 		private bool isChipSkill;
+
+		public bool isConfusionAttack;
 
 		public List<ChipEffectStatus.EffectTriggerType> reqestStageEffectTriggerList = new List<ChipEffectStatus.EffectTriggerType>();
 
@@ -705,18 +689,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public HitEffectParams destructEffect
-		{
-			get
-			{
-				return this._destructEffect;
-			}
-			set
-			{
-				this._destructEffect = value;
-			}
-		}
-
 		public HitEffectParams drainEffect
 		{
 			get
@@ -726,18 +698,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._drainEffect = value;
-			}
-		}
-
-		public HitEffectParams powerChargeEffect
-		{
-			get
-			{
-				return this._powerChargeEffect;
-			}
-			set
-			{
-				this._powerChargeEffect = value;
 			}
 		}
 
@@ -810,14 +770,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._roundChangeApRevivalEffect = value;
-			}
-		}
-
-		public HitEffectParams defaultHitEffect
-		{
-			get
-			{
-				return this.hitEffects.GetObject(AffectEffect.Damage.ToString(), Strength.None.ToString())[0];
 			}
 		}
 
@@ -958,14 +910,14 @@ namespace BattleStateMachineInternal
 			{
 				UnityEngine.Object.Destroy(this._stageObject);
 			}
-			foreach (SpawnPointParams spawnPointParams in this._preloadSpawnPoints.GetAllObject(false))
+			foreach (SpawnPointParams spawnPointParams in this._preloadSpawnPoints.GetAllObject())
 			{
 				if (spawnPointParams != null)
 				{
 					UnityEngine.Object.Destroy(spawnPointParams.gameObject);
 				}
 			}
-			foreach (CharacterParams characterParams in this._preloadEnemiesParams.GetAllObject(false))
+			foreach (CharacterParams characterParams in this._preloadEnemiesParams.GetAllObject())
 			{
 				if (!(characterParams == null))
 				{
@@ -979,7 +931,7 @@ namespace BattleStateMachineInternal
 					UnityEngine.Object.Destroy(characterStateControl.CharacterParams.gameObject);
 				}
 			}
-			foreach (SkillStatus skillStatus in this._skillStatus.GetAllObject(false))
+			foreach (SkillStatus skillStatus in this._skillStatus.GetAllObject())
 			{
 				if (skillStatus.invocationEffectParams != null)
 				{
@@ -993,7 +945,7 @@ namespace BattleStateMachineInternal
 					}
 				}
 			}
-			foreach (HitEffectParams array in this.hitEffects.GetAllObject(false))
+			foreach (HitEffectParams array in this.hitEffects.GetAllObject())
 			{
 				foreach (HitEffectParams hitEffectParams in array)
 				{
@@ -1003,17 +955,9 @@ namespace BattleStateMachineInternal
 					}
 				}
 			}
-			if (this._destructEffect != null)
-			{
-				UnityEngine.Object.Destroy(this._destructEffect.gameObject);
-			}
 			if (this._drainEffect != null)
 			{
 				UnityEngine.Object.Destroy(this._drainEffect.gameObject);
-			}
-			if (this._powerChargeEffect != null)
-			{
-				UnityEngine.Object.Destroy(this._powerChargeEffect.gameObject);
 			}
 			foreach (HitEffectParams hitEffectParams2 in this._playersDeathEffect)
 			{
@@ -1158,18 +1102,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public int currentLastGenerateStartTimingSufferState
-		{
-			get
-			{
-				return this._currentLastGenerateStartTimingSufferState;
-			}
-			set
-			{
-				this._currentLastGenerateStartTimingSufferState = Mathf.Clamp(value, 0, int.MaxValue);
-			}
-		}
-
 		public int currentWaveNumberGUI
 		{
 			get
@@ -1302,18 +1234,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public int currentHalfEffectDamageNumber
-		{
-			get
-			{
-				return this._currentHalfEffectDamageNumber;
-			}
-			set
-			{
-				this._currentHalfEffectDamageNumber = value;
-			}
-		}
-
 		public bool onSkillTrigger
 		{
 			get
@@ -1323,18 +1243,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._onSkillTrigger = value;
-			}
-		}
-
-		public bool isShowSkillDescription
-		{
-			get
-			{
-				return this._isShowSkillDescription;
-			}
-			set
-			{
-				this._isShowSkillDescription = value;
 			}
 		}
 
@@ -1386,18 +1294,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public bool isPossibleMenuSelect
-		{
-			get
-			{
-				return this._isPossibleMenuSelect;
-			}
-			set
-			{
-				this._isPossibleMenuSelect = value;
-			}
-		}
-
 		public bool isRunnedRevivalFunction
 		{
 			get
@@ -1407,18 +1303,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._isRunnedRevivalFunction = value;
-			}
-		}
-
-		public bool calledBattleStartAction
-		{
-			get
-			{
-				return this._calledBattleStartAction;
-			}
-			set
-			{
-				this._calledBattleStartAction = value;
 			}
 		}
 
@@ -1443,18 +1327,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._isImpossibleShowMenu = value;
-			}
-		}
-
-		public bool isEnableShopMoveDigistoneZero
-		{
-			get
-			{
-				return this._isEnableShopMoveDigistoneZero;
-			}
-			set
-			{
-				this._isEnableShopMoveDigistoneZero = value;
 			}
 		}
 
@@ -1505,18 +1377,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._isRevivalReservedCharacter = value;
-			}
-		}
-
-		public bool[] onBgmChangeConditions
-		{
-			get
-			{
-				return this._onBgmChangeConditions;
-			}
-			set
-			{
-				this._onBgmChangeConditions = value;
 			}
 		}
 
@@ -1577,18 +1437,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._fraudDataLogs = value;
-			}
-		}
-
-		public List<int> useInheritanceSkillPlayers
-		{
-			get
-			{
-				return this._useInheritanceSkillPlayers;
-			}
-			set
-			{
-				this._useInheritanceSkillPlayers = value;
 			}
 		}
 
@@ -1748,9 +1596,16 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public bool OnAllBgmChangeCondition()
+		public int currentLastGenerateStartTimingSufferState
 		{
-			return BoolExtension.AllMachValue(true, this.onBgmChangeConditions);
+			get
+			{
+				return this._currentLastGenerateStartTimingSufferState;
+			}
+			set
+			{
+				this._currentLastGenerateStartTimingSufferState = Mathf.Clamp(value, 0, int.MaxValue);
+			}
 		}
 
 		public bool isFindRevivalCharacter
@@ -1765,7 +1620,7 @@ namespace BattleStateMachineInternal
 		{
 			List<CharacterStateControl> list = new List<CharacterStateControl>(this.GetTotalCharacters());
 			int num = list.IndexOf(character);
-			if (num < 0 || this.apRevival.Length <= num)
+			if (num < 0 || this.apRevival.Length <= num || this.apRevival[num] == 1)
 			{
 				return;
 			}
@@ -1794,14 +1649,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public void SetInitializeSufferState()
-		{
-			SufferStateProperty.InitializeSufferState(this.currentLastGenerateStartTimingSufferState, () => this.currentLastGenerateStartTimingSufferState, delegate(int val)
-			{
-				this.currentLastGenerateStartTimingSufferState = val;
-			});
-		}
-
 		public void SetPlayAnimationActionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, AffectEffect affectEffect, float waitTime, bool[] onMissHit, HitIcon[] hitIconList, AffectEffectProperty status = null, bool useSlowMotion = false, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 		{
 			this.sendValues["currentCharacter"] = currentCharacter;
@@ -1815,9 +1662,8 @@ namespace BattleStateMachineInternal
 			this.sendValues["extraEffectType"] = extraEffectType;
 		}
 
-		public void SetPlayPassiveEffectFunctionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, SkillStatus status, AffectEffectProperty currentSuffer)
+		public void SetPlayPassiveEffectFunctionValues(CharacterStateControl[] isTargetsStatus, SkillStatus status, AffectEffectProperty currentSuffer)
 		{
-			this.sendValues["currentCharacter"] = currentCharacter;
 			this.sendValues["isTargetsStatus"] = isTargetsStatus;
 			this.sendValues["status"] = status;
 			this.sendValues["currentSuffer"] = currentSuffer;

@@ -57,6 +57,11 @@ public class BattleSimulator : MonoBehaviour
 		hierarchyData.areaName = this._areaName;
 		hierarchyData.leaderCharacter = 0;
 		hierarchyData.limitRound = this._limitRound;
-		hierarchyData.onAutoPlay = onAutoPlay;
+		int onAutoPlay2 = 0;
+		if (onAutoPlay)
+		{
+			onAutoPlay2 = 2;
+		}
+		hierarchyData.onAutoPlay = onAutoPlay2;
 	}
 }

@@ -263,7 +263,6 @@ public class FacilityShopItem : GUIListPartBS
 		int nowCount = this.GetNowCount();
 		if (nowCount != -1)
 		{
-			global::Debug.Log("this.facilityID = " + this.facilityID);
 			FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(this.facilityID);
 			if (int.Parse(facilityMaster.maxNum) <= nowCount)
 			{

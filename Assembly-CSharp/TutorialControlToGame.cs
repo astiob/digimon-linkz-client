@@ -283,7 +283,6 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		{
 			yield return null;
 		}
-		managerTutorial.isPossibleMenuSelect = false;
 		managerTutorial.isPossibleTargetSelect = false;
 		bool wait = false == managerTutorial.isBattleStarted;
 		while (wait)
@@ -1272,7 +1271,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	public void SetAutoBattleFlag()
 	{
 		BattleTutorial tutorial = UnityEngine.Object.FindObjectOfType<BattleStateManager>().tutorial;
-		tutorial.SetAutoPlay(true);
+		tutorial.SetAutoPlay(2);
 	}
 
 	public void SetPlayerMeatCount(int meatNum)

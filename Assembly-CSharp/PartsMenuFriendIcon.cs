@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PartsMenuFriendIcon : MonoBehaviour
 {
+	private bool badgeActive;
+
 	private void Start()
 	{
 		ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon = this;
@@ -16,6 +18,12 @@ public class PartsMenuFriendIcon : MonoBehaviour
 			int newFriend = respDataMP_MyPage.userNewsCountList.newFriend;
 			int friendApplication = respDataMP_MyPage.userNewsCountList.friendApplication;
 			base.gameObject.SetActive(newFriend > 0 || friendApplication > 0);
+			this.badgeActive = (newFriend > 0 || friendApplication > 0);
 		}
+	}
+
+	public bool IsBadgeActive()
+	{
+		return this.badgeActive;
 	}
 }

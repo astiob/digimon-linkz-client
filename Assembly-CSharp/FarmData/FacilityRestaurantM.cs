@@ -12,7 +12,5 @@ namespace FarmData
 		public string maxStamina;
 
 		public string recoveryTime;
-
-		public string deleteFlg;
 	}
 }

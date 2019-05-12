@@ -10,8 +10,8 @@ using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[SerializeField]
 	[Header("エリア名 ステージ名")]
+	[SerializeField]
 	private UILabel lbAreaName;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_LEADERSKILL_EXP;
 
-	[SerializeField]
 	[Header("ルームパスワード")]
+	[SerializeField]
 	private GameObject goPASSWORD_BOX;
 
 	[SerializeField]
@@ -38,16 +38,16 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private GameObject goBTN_FRIEND;
 
-	[SerializeField]
 	[Header("チャットボタン")]
+	[SerializeField]
 	private GameObject goBTN_CHAT;
 
 	[Header("ステータス変更ボタン")]
 	[SerializeField]
 	private UILabel lbTXT_ST_EXCHANGE;
 
-	[Header("準備完了ボタン")]
 	[SerializeField]
+	[Header("準備完了ボタン")]
 	private UILabel lbTXT_BTN_READY;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private BoxCollider coBTN_READY;
 
-	[Header("決定ボタン")]
 	[SerializeField]
+	[Header("決定ボタン")]
 	private GameObject goBTN_DECIDE;
 
 	[SerializeField]
@@ -74,8 +74,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[SerializeField]
 	[Header("エモーション処理")]
+	[SerializeField]
 	private EmotionSenderMulti emotionSenderMulti;
 
 	[Header("エモーションコンポーネント")]

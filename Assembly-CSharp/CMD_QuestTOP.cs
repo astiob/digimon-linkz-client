@@ -3,6 +3,7 @@ using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CMD_QuestTOP : CMD
@@ -28,8 +29,8 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private UserStamina userStamina;
 
-	[Header("クリッピングしているオブジェクト達")]
 	[SerializeField]
+	[Header("クリッピングしているオブジェクト達")]
 	private GameObject[] clipObjects;
 
 	[SerializeField]
@@ -44,6 +45,18 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private UITexture txEVENT_BG;
 
+	[Header("降臨エリア用 スケジュールバナー領域")]
+	[SerializeField]
+	private GameObject goScheduleBannerROOT;
+
+	[Header("降臨エリア用 スケジュールバナー")]
+	[SerializeField]
+	private GameObject goScheduleBannerParts;
+
+	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
+	[SerializeField]
+	private float timeOutSeconds;
+
 	public bool isGoingBattle;
 
 	private GameObject goSelectPanelA_StageL;
@@ -57,6 +70,8 @@ public class CMD_QuestTOP : CMD
 	private List<QuestData.WorldDungeonData> worldDungeonData;
 
 	public int battlePartyDeckNo;
+
+	private bool isScheduleBannerActive;
 
 	private List<QuestData.WorldStageData> worldStageData;
 
@@ -138,8 +153,34 @@ public class CMD_QuestTOP : CMD
 		{
 			this.goPartsPointROOT.SetActive(false);
 			this.goPartsPointWithoutRankingROOT.SetActive(false);
+			this.goScheduleBannerROOT.SetActive(false);
+			if (CMD_QuestTOP.AreaData.data.worldAreaId == "3")
+			{
+				IEnumerable<GameWebAPI.RespDataMA_BannerM.BannerM> source = DataMng.Instance().RespData_BannerMaster.bannerM.Where((GameWebAPI.RespDataMA_BannerM.BannerM _banner) => _banner.linkCategoryType == "9" && _banner.actionType == "menu" && ServerDateTime.Now >= DateTime.Parse(_banner.startTime) && GUIBannerParts.GetRestTimeSeconds(DateTime.Parse(_banner.endTime)) > 0);
+				this.isScheduleBannerActive = (source.Count<GameWebAPI.RespDataMA_BannerM.BannerM>() >= 1);
+				this.goScheduleBannerROOT.SetActive(this.isScheduleBannerActive);
+				if (this.isScheduleBannerActive)
+				{
+					IEnumerator routine = this.BuildBanner(source.ElementAt(0));
+					base.StartCoroutine(routine);
+				}
+			}
 			this.IntDLG(f, sizeX, sizeY, aT);
 		}
+	}
+
+	private IEnumerator BuildBanner(GameWebAPI.RespDataMA_BannerM.BannerM banner)
+	{
+		GUIBannerParts parts = this.goScheduleBannerParts.GetComponent<GUIBannerParts>();
+		if (parts != null)
+		{
+			parts.name += banner.dispNum.ToString();
+			parts.Data = banner;
+			parts.SetBGColor();
+			string path = ConstValue.APP_ASSET_DOMAIN + "/asset/img" + banner.img;
+			yield return TextureManager.instance.Load(path, new Action<Texture2D>(parts.OnBannerReceived), this.timeOutSeconds, true);
+		}
+		yield break;
 	}
 
 	private IEnumerator CloseImmidiate_OpenQuestSelect(int ct)
@@ -328,6 +369,12 @@ public class CMD_QuestTOP : CMD
 			GameObject gameObject = UnityEngine.Object.Instantiate(Resources.Load("UISelectPanelParam/SelectPanelParamUD_A_StageL_Point")) as GameObject;
 			gameObject.transform.parent = base.transform;
 			this.csSelectPanelA_StageL.SetSelectPanelParam(gameObject);
+		}
+		else if (CMD_QuestTOP.AreaData.data.worldAreaId == "3" && this.isScheduleBannerActive)
+		{
+			GameObject gameObject2 = UnityEngine.Object.Instantiate(Resources.Load("UISelectPanelParam/SelectPanelParamUD_A_StageL_Point")) as GameObject;
+			gameObject2.transform.parent = base.transform;
+			this.csSelectPanelA_StageL.SetSelectPanelParam(gameObject2);
 		}
 		Vector3 localPosition = this.goLP_SATGE.transform.localPosition;
 		GUICollider component = this.goSelectPanelA_StageL.GetComponent<GUICollider>();
@@ -810,7 +857,8 @@ public class CMD_QuestTOP : CMD
 			}, delegate(Exception noop)
 			{
 				this.DeleteLoading();
-				this.ClosePanel(true);
+				FarmCameraControlForCMD.On();
+				GUIManager.CloseAllCommonDialog(null);
 			}, null), false);
 		}
 	}

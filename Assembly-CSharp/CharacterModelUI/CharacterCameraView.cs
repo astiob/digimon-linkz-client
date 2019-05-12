@@ -31,6 +31,7 @@ namespace CharacterModelUI
 			{
 				string monsterCharaPathByMonsterData = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterData(monsterData);
 				this.csRender3DRT.LoadChara(monsterCharaPathByMonsterData, 0f, 10000f, -0.65f, 1.1f, true);
+				this.csRender3DRT.SetBillBoardCamera();
 			}
 			else
 			{

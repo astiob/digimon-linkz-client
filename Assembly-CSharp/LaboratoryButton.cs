@@ -16,4 +16,9 @@ public sealed class LaboratoryButton : FacilityButtonSet
 	{
 		GUIMain.ShowCommonDialog(null, "CMD_MedalInherit");
 	}
+
+	private void OnPushedTransitionButtonOfVersionUP()
+	{
+		GUIMain.ShowCommonDialog(null, "CMD_VersionUP");
+	}
 }

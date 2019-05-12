@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace EvolutionDiagram
 {
@@ -6,13 +7,16 @@ namespace EvolutionDiagram
 	{
 		public static void CreateMonsterDataList(EvolutionDiagramData diagramData)
 		{
-			foreach (GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterM2 in MasterDataMng.Instance().RespDataMA_MonsterMS.monsterM)
+			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM[] monsterM = MasterDataMng.Instance().RespDataMA_MonsterMS.monsterM;
+			List<string> list = new List<string>();
+			foreach (GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterM2 in monsterM)
 			{
 				if (monsterM2.GetArousal() == 0)
 				{
 					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterM2.monsterGroupId);
-					if ("0" != monsterGroupMasterByMonsterGroupId.monsterCollectionId)
+					if ("0" != monsterGroupMasterByMonsterGroupId.monsterCollectionId && !list.Contains(monsterGroupMasterByMonsterGroupId.monsterCollectionId))
 					{
+						list.Add(monsterGroupMasterByMonsterGroupId.monsterCollectionId);
 						EvolutionDiagramData.IconMonster monsterData = new EvolutionDiagramData.IconMonster
 						{
 							collectionId = monsterGroupMasterByMonsterGroupId.monsterCollectionId.ToInt32(),

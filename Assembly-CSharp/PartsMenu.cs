@@ -13,6 +13,12 @@ public class PartsMenu : MonoBehaviour
 
 	public Vector3 openPos;
 
+	private bool trainingAlertState;
+
+	private bool clearAlertState;
+
+	private bool evolutionAlertState;
+
 	[SerializeField]
 	private List<PartsMenuButtonData> buttonDataList;
 
@@ -32,6 +38,8 @@ public class PartsMenu : MonoBehaviour
 	private bool _isShowed;
 
 	public GameObject goMENU_BAR;
+
+	public GameObject goNEW_ICON;
 
 	public GameObject goTX_DATE;
 
@@ -165,6 +173,10 @@ public class PartsMenu : MonoBehaviour
 		if (!this.isShow)
 		{
 			GUIManager.ExtBackKeyReady = false;
+			if (CMD_CharacterDetailed.Instance != null)
+			{
+				CMD_CharacterDetailed.Instance.TranceEffectActiveSet(false);
+			}
 			this.isShow = true;
 			EfcCont efcCont = this.ecROOT;
 			Vector2 vP;
@@ -213,13 +225,19 @@ public class PartsMenu : MonoBehaviour
 		if (this.isShow)
 		{
 			this.goMENU_BAR.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+			this.goNEW_ICON.SetActive(false);
 			this._isShowed = true;
 		}
 		else
 		{
 			this.goMENU_BAR.transform.localRotation = Quaternion.Euler(0f, 0f, -90f);
+			PartsMenu.SetMenuButtonAlertBadge();
 			this._isShowed = false;
 			GUIManager.ExtBackKeyReady = true;
+			if (CMD_CharacterDetailed.Instance != null)
+			{
+				CMD_CharacterDetailed.Instance.TranceEffectActiveSet(true);
+			}
 		}
 		GUICollider.EnableAllCollider("PartsMenu");
 	}
@@ -488,10 +506,20 @@ public class PartsMenu : MonoBehaviour
 	public void OnClickedGacha()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_GashaTOP", null) == null)
+		CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
+		if (topDialog != null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedGacha));
+			if (topDialog.name == "CMD_10gashaResult" || topDialog.name == "CMD_ChipGashaResult" || topDialog.name == "CMD_TicketGashaResult")
+			{
+				topDialog.ClosePanel(true);
+				return;
+			}
+			if (topDialog.name == "CMD_GashaTOP")
+			{
+				return;
+			}
 		}
+		GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedGacha));
 	}
 
 	private void OnClickedGacha(int i)
@@ -664,9 +692,55 @@ public class PartsMenu : MonoBehaviour
 		base.StartCoroutine(this.bannerPanel.AllBuild(GUIBannerPanel.Data));
 	}
 
+	public void RefreshMenuBannerNewAlert()
+	{
+		this.bannerPanel.RefreshNewAlert();
+	}
+
 	public void SetEnableMenuButton(bool active)
 	{
 		this.menuButtonCollider.enabled = active;
+	}
+
+	public static void SetMenuButtonAlertBadge()
+	{
+		if (PartsMenu.instance != null)
+		{
+			bool active = ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.IsBadgeActive() | PartsMenu.instance.trainingAlertState | PartsMenu.instance.clearAlertState | PartsMenu.instance.evolutionAlertState;
+			PartsMenu.instance.goNEW_ICON.SetActive(active);
+		}
+	}
+
+	public static void SetMenuAlertState(bool state)
+	{
+		if (PartsMenu.instance != null)
+		{
+			PartsMenu.instance.trainingAlertState = state;
+		}
+	}
+
+	public static void SetTrainingAlertState(bool state)
+	{
+		if (PartsMenu.instance != null)
+		{
+			PartsMenu.instance.trainingAlertState = state;
+		}
+	}
+
+	public static void SetClearAlertState(bool state)
+	{
+		if (PartsMenu.instance != null)
+		{
+			PartsMenu.instance.clearAlertState = state;
+		}
+	}
+
+	public static void SetEvolutionAlertState(bool state)
+	{
+		if (PartsMenu.instance != null)
+		{
+			PartsMenu.instance.evolutionAlertState = state;
+		}
 	}
 
 	private void UpdateBackKeyAndroid()

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(UISprite))]
 [AddComponentMenu("NGUI/UI/Atlas Sprite Animation")]
 [ExecuteInEditMode]
+[RequireComponent(typeof(UISprite))]
 public class UIAtlasSpriteAnimation : CustomUISpriteAnimation
 {
 	[SerializeField]

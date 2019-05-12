@@ -99,4 +99,19 @@ public sealed class CMD_ModalMessage : CMD
 	{
 		base.OnDestroy();
 	}
+
+	public void AdjustSize()
+	{
+		UILabel component = this.ngTX_EXP.GetComponent<UILabel>();
+		int num = component.text.Split(new char[]
+		{
+			'\n'
+		}).Length;
+		global::Debug.Log(num);
+		if (num >= 5)
+		{
+			int num2 = (component.fontSize + component.spacingY) * (num - 4);
+			base.GetComponent<UIWidget>().height += num2;
+		}
+	}
 }

@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -144,21 +145,20 @@ public class CMD_PicturebookDetail : CMD
 				list2.Add(skillM2.description);
 			}
 		}
+		string monsterStatusId = CMD_PicturebookDetail.displayMonsterData.monsterMG.monsterStatusId;
+		string specificTypeName = MonsterSpecificTypeData.GetSpecificTypeName(monsterStatusId);
 		switch (list.Count)
 		{
-		case 0:
+		default:
 			list.Add(string.Empty);
 			list2.Add(string.Empty);
-			this.oneSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, description, list, list2);
+			this.oneSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, specificTypeName, description, list, list2);
 			break;
 		case 1:
-			this.oneSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, description, list, list2);
+			this.oneSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, specificTypeName, description, list, list2);
 			break;
 		case 2:
-			this.twoSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, description, list, list2);
-			break;
-		default:
-			global::Debug.LogError("スキル数増えた？\n対応して下さい！");
+			this.twoSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, specificTypeName, description, list, list2);
 			break;
 		}
 	}

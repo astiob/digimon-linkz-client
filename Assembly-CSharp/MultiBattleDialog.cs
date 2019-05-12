@@ -9,32 +9,32 @@ public class MultiBattleDialog : MonoBehaviour
 
 	private int nowTime = 10;
 
-	[SerializeField]
 	[Header("内容ラベル")]
+	[SerializeField]
 	private UILabel messageLabel;
 
 	[SerializeField]
 	[Header("ボタンのテキストラベル")]
 	private UILabel buttonTextLabel;
 
-	[SerializeField]
 	[Header("ボタン無し内容ラベル")]
+	[SerializeField]
 	private UILabel noButtonMessageLabel;
 
-	[SerializeField]
 	[Header("ボタン")]
+	[SerializeField]
 	private UIButton button;
 
 	[Header("スキン")]
 	[SerializeField]
 	private UIComponentSkinner uiCompornentSkinner;
 
-	[Header("背景オブジェクト")]
 	[SerializeField]
+	[Header("背景オブジェクト")]
 	private GameObject[] bg;
 
-	[SerializeField]
 	[Header("閉じるローカライズ")]
+	[SerializeField]
 	private UILabel closeLocalize;
 
 	private int failedLeftTime;

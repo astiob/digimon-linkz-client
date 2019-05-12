@@ -12,28 +12,28 @@ public class DropItemResult : ResultBase
 
 	public const int MAX_SCROLL_HEIGHT = 2;
 
-	[Header("Winのロゴ")]
 	[SerializeField]
+	[Header("Winのロゴ")]
 	private GameObject winLogo;
 
-	[SerializeField]
 	[Header("スキップ用Winのロゴ")]
+	[SerializeField]
 	private GameObject winLogoForSkip;
 
-	[Header("エリア名とステージ名が入ってるGameObject")]
 	[SerializeField]
+	[Header("エリア名とステージ名が入ってるGameObject")]
 	private GameObject titleGO;
 
 	[SerializeField]
 	[Header("エリア名")]
 	private UILabel areaName;
 
-	[SerializeField]
 	[Header("ステージ名")]
+	[SerializeField]
 	private UILabel stageName;
 
-	[SerializeField]
 	[Header("ライン達")]
+	[SerializeField]
 	private GameObject[] lines;
 
 	[Header("クリッピングテクスチャ")]
@@ -47,6 +47,10 @@ public class DropItemResult : ResultBase
 	private DropItemList dropItemList;
 
 	private DropItemTotalList dropItemTotalList;
+
+	public bool isUserMonsterRefresh { get; private set; }
+
+	public bool isChipMonsterRefresh { get; private set; }
 
 	public override void Init()
 	{
@@ -122,9 +126,10 @@ public class DropItemResult : ResultBase
 		GameWebAPI.RespDataWD_DungeonStart.Drop[] array = null;
 		GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop = null;
 		GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] array2 = null;
-		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] array3 = null;
+		GameWebAPI.RespDataWD_DungeonResult.EventChipReward[] array3 = null;
 		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] array4 = null;
-		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] array5 = null;
+		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] array5 = null;
+		GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] array6 = null;
 		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 		if (respDataWD_DungeonStart != null)
 		{
@@ -133,6 +138,7 @@ public class DropItemResult : ResultBase
 			if (ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult != null)
 			{
 				array2 = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult.optionDrop;
+				array3 = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult.eventChipReward;
 			}
 		}
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
@@ -144,16 +150,17 @@ public class DropItemResult : ResultBase
 			GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
 			if (respData_WorldMultiResultInfoLogic.dungeonReward != null)
 			{
-				array5 = respData_WorldMultiResultInfoLogic.dungeonReward.luckDrop;
+				array6 = respData_WorldMultiResultInfoLogic.dungeonReward.luckDrop;
 				GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo2 = DataMng.Instance().RespData_WorldMultiStartInfo;
 				bool flag = respData_WorldMultiStartInfo2.party[0].userId == DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 				if (flag)
 				{
-					array3 = respData_WorldMultiResultInfoLogic.dungeonReward.ownerDropReward;
+					array4 = respData_WorldMultiResultInfoLogic.dungeonReward.ownerDropReward;
 				}
-				array4 = respData_WorldMultiResultInfoLogic.dungeonReward.multiReward;
+				array5 = respData_WorldMultiResultInfoLogic.dungeonReward.multiReward;
 			}
 			array2 = respData_WorldMultiResultInfoLogic.optionDrop;
+			array3 = respData_WorldMultiResultInfoLogic.eventChipReward;
 		}
 		List<DropItemTotalParts.Data> list = new List<DropItemTotalParts.Data>();
 		if (array != null)
@@ -177,9 +184,9 @@ public class DropItemResult : ResultBase
 				num = luckDrop.assetNum
 			});
 		}
-		if (array3 != null)
+		if (array4 != null)
 		{
-			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward in array3)
+			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward in array4)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{
@@ -189,9 +196,9 @@ public class DropItemResult : ResultBase
 				});
 			}
 		}
-		if (array4 != null)
+		if (array5 != null)
 		{
-			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward2 in array4)
+			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward dropReward2 in array5)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{
@@ -201,9 +208,9 @@ public class DropItemResult : ResultBase
 				});
 			}
 		}
-		if (array5 != null)
+		if (array6 != null)
 		{
-			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop luckDrop2 in array5)
+			foreach (GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop luckDrop2 in array6)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{
@@ -222,6 +229,18 @@ public class DropItemResult : ResultBase
 					assetCategoryId = optionDrop.assetCategoryId,
 					objectId = optionDrop.assetValue.ToString(),
 					num = optionDrop.assetNum.ToInt32()
+				});
+			}
+		}
+		if (array3 != null)
+		{
+			foreach (GameWebAPI.RespDataWD_DungeonResult.EventChipReward eventChipReward in array3)
+			{
+				list.Add(new DropItemTotalParts.Data
+				{
+					assetCategoryId = eventChipReward.assetCategoryId,
+					objectId = eventChipReward.assetValue.ToString(),
+					num = eventChipReward.assetNum.ToInt32()
 				});
 			}
 		}
@@ -246,7 +265,7 @@ public class DropItemResult : ResultBase
 		}
 		this.dropItemTotalList = new DropItemTotalList(base.gameObject, list2.ToArray());
 		this.dropItemTotalList.SetActive(false);
-		this.dropItemList = new DropItemList(base.gameObject, 10, new Vector2(890f, 250f), array, luckDrop, array3, array4, array5, array2);
+		this.dropItemList = new DropItemList(base.gameObject, 10, new Vector2(890f, 250f), array, luckDrop, array4, array5, array6, array2, array3);
 		this.dropItemList.SetScrollBarPosX(550f);
 		this.dropItemList.SetPosition(new Vector3(0f, 40f, 100f));
 		if (this.clipingTextures != null)
@@ -263,6 +282,19 @@ public class DropItemResult : ResultBase
 			foreach (GameObject gameObject in this.lines)
 			{
 				gameObject.SetActive(true);
+			}
+		}
+		this.isUserMonsterRefresh = false;
+		this.isChipMonsterRefresh = false;
+		foreach (DropItemTotalParts.Data data3 in list2)
+		{
+			if (data3.assetCategoryId.ToInt32() == 1)
+			{
+				this.isUserMonsterRefresh = true;
+			}
+			if (data3.assetCategoryId.ToInt32() == 17)
+			{
+				this.isChipMonsterRefresh = true;
 			}
 		}
 	}

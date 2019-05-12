@@ -5,16 +5,16 @@ using UnityEngine;
 
 public sealed class CMD_SaleCheck : CMD
 {
-	[SerializeField]
 	[Header("サムネイルのアイコン達")]
+	[SerializeField]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[Header("タイトルのラベル")]
 	[SerializeField]
+	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
-	[Header("取得クラスタのタイトルラベル")]
 	[SerializeField]
+	[Header("取得クラスタのタイトルラベル")]
 	private UILabel getClusterTitleLabel;
 
 	[Header("取得クラスタのラベル")]
@@ -29,12 +29,12 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)
@@ -47,19 +47,37 @@ public sealed class CMD_SaleCheck : CMD
 		this.titleLabel.text = StringMaster.GetString("SaleConfirmTitle");
 		this.getClusterTitleLabel.text = StringMaster.GetString("SaleConfirmGain");
 		this.normalMessageLabel.text = StringMaster.GetString("SaleConfirmInfo");
-		bool flag = MonsterDataMng.Instance().HasArousal(selectedMonsterDataList);
-		bool flag2 = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
-		bool flag3 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
+		bool flag = MonsterDataMng.Instance().HasChip(selectedMonsterDataList);
+		bool flag2 = MonsterDataMng.Instance().HasGrowStepHigh(selectedMonsterDataList);
 		List<string> list = new List<string>();
-		if (flag)
+		bool flag3 = false;
+		bool flag4 = false;
+		foreach (MonsterData monsterData in selectedMonsterDataList)
+		{
+			bool flag5 = monsterData.IsArousal();
+			bool flag6 = monsterData.IsVersionUp();
+			if (flag6)
+			{
+				flag4 = true;
+			}
+			else if (flag5)
+			{
+				flag3 = true;
+			}
+		}
+		if (flag3)
 		{
 			list.Add(StringMaster.GetString("SaleCautionArousal"));
 		}
-		if (flag2)
+		if (flag4)
+		{
+			list.Add(StringMaster.GetString("SaleCautionVersionUp"));
+		}
+		if (flag)
 		{
 			list.Add(StringMaster.GetString("SaleCautionChip"));
 		}
-		if (flag3)
+		if (flag2)
 		{
 			GameWebAPI.RespDataMA_GetMonsterGrowStepM.MonsterGrowStepM[] monsterGrowStepM = MasterDataMng.Instance().RespDataMA_MonsterGrowStepM.monsterGrowStepM;
 			string b = ConstValue.GROW_STEP_HIGH.ToString();
@@ -78,7 +96,7 @@ public sealed class CMD_SaleCheck : CMD
 		}
 		if (list.Count >= 2)
 		{
-			int num = (this.warningMessageLabel.fontSize + this.warningMessageLabel.spacingY * 2) * (list.Count - 1);
+			int num = (this.warningMessageLabel.fontSize + this.warningMessageLabel.spacingY) * (list.Count - 1);
 			this.warningMessageLabel.transform.SetLocalY(this.warningMessageLabel.transform.localPosition.y - (float)(num / 2));
 			this.dialogPlate.transform.SetLocalY(this.dialogPlate.transform.localPosition.y - (float)(num / 2));
 			this.dialogPlate.GetComponent<UIWidget>().height += num;

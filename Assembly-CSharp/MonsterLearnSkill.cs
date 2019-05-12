@@ -12,6 +12,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	private bool isUniqueSkill;
 
 	[SerializeField]
+	private int successionSkillSlotId;
+
+	[SerializeField]
 	private UILabel title;
 
 	[SerializeField]
@@ -26,6 +29,12 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	[SerializeField]
 	private UISprite skillAttribute;
 
+	[SerializeField]
+	private bool shortenName;
+
+	[SerializeField]
+	private int shortenNameLength;
+
 	private void Start()
 	{
 		if (this.isUniqueSkill)
@@ -34,13 +43,28 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 		}
 		else
 		{
-			this.title.text = StringMaster.GetString("CharaStatus-20");
+			int num = this.successionSkillSlotId;
+			if (num == 1 || num != 2)
+			{
+				this.title.text = StringMaster.GetString("SkillInheritTitle1");
+			}
+			else
+			{
+				this.title.text = StringMaster.GetString("SkillInheritTitle2");
+			}
 		}
 	}
 
 	private void SetSkillUI(string skillName, string skillInfo, string skillCost, int skillAttribute)
 	{
-		this.skillName.text = skillName;
+		if (this.shortenName && skillName.Length > this.shortenNameLength)
+		{
+			this.skillName.text = string.Format("{0} ...", skillName.Substring(0, this.shortenNameLength));
+		}
+		else
+		{
+			this.skillName.text = skillName;
+		}
 		this.skillInfo.text = skillInfo;
 		this.skillCost.text = string.Format(StringMaster.GetString("BattleSkillUI-01"), skillCost);
 		this.skillAttribute.enabled = true;
@@ -76,9 +100,52 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 				this.SetSkillUI(monsterData.actionSkillM.name, monsterData.actionSkillM.description, monsterData.actionSkillM.needPoint, monsterData.actionSkillDetailM.attribute);
 			}
 		}
-		else if (monsterData.commonSkillM != null)
+		else
+		{
+			int num = this.successionSkillSlotId;
+			if (num == 1 || num != 2)
+			{
+				if (monsterData.commonSkillM != null)
+				{
+					this.SetSkillUI(monsterData.commonSkillM.name, monsterData.commonSkillM.description, monsterData.commonSkillM.needPoint, monsterData.commonSkillDetailM.attribute);
+				}
+			}
+			else if (monsterData.commonSkillM2 != null)
+			{
+				this.SetSkillUI(monsterData.commonSkillM2.name, monsterData.commonSkillM2.description, monsterData.commonSkillM2.needPoint, monsterData.commonSkillDetailM2.attribute);
+			}
+			else
+			{
+				this.ClearSkill();
+			}
+		}
+	}
+
+	public void SetCommonSkill(MonsterData monsterData)
+	{
+		this.successionSkillSlotId = 1;
+		this.title.text = StringMaster.GetString("SkillInheritTitle1");
+		if (monsterData != null && monsterData.commonSkillM != null)
 		{
 			this.SetSkillUI(monsterData.commonSkillM.name, monsterData.commonSkillM.description, monsterData.commonSkillM.needPoint, monsterData.commonSkillDetailM.attribute);
+		}
+		else
+		{
+			this.ClearSkill();
+		}
+	}
+
+	public void SetCommonSkill2(MonsterData monsterData)
+	{
+		this.successionSkillSlotId = 2;
+		this.title.text = StringMaster.GetString("SkillInheritTitle2");
+		if (monsterData != null && monsterData.commonSkillM2 != null)
+		{
+			this.SetSkillUI(monsterData.commonSkillM2.name, monsterData.commonSkillM2.description, monsterData.commonSkillM2.needPoint, monsterData.commonSkillDetailM2.attribute);
+		}
+		else
+		{
+			this.ClearSkill();
 		}
 	}
 }

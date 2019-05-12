@@ -33,12 +33,12 @@ public class TrainingController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_cam;
 
-	[Header("メインカメラリグ")]
 	[SerializeField]
+	[Header("メインカメラリグ")]
 	private GameObject obj_camrig;
 
-	[SerializeField]
 	[Header("サブカメラ")]
+	[SerializeField]
 	private GameObject obj_cam2;
 
 	[SerializeField]
@@ -89,6 +89,8 @@ public class TrainingController : MonoBehaviour
 	private GameObject fx7_instance;
 
 	private Material[] elements;
+
+	private int skipFlg;
 
 	private Transform t;
 
@@ -141,6 +143,8 @@ public class TrainingController : MonoBehaviour
 		MotionBlur[] componentsInChildren2 = this.obj_cam.GetComponentsInChildren<MotionBlur>();
 		componentsInChildren2[0].blurAmount = 0.2f;
 		global::Debug.Log("blurAmount：" + componentsInChildren2[0].blurAmount);
+		Camera component = this.obj_cam.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.obj_mons1, component);
 		this.obj_cam2.transform.position = new Vector3(-2f, 10f, 0f);
 		this.t = this.obj_mons1.GetComponent<CharacterParams>().characterCenterTarget;
 		this.obj_infinity.transform.position = this.t.position;
@@ -312,15 +316,18 @@ public class TrainingController : MonoBehaviour
 		}
 		yield return new WaitForSeconds(0.8f);
 		trans = this.obj_mons1.transform;
-		for (int j = 0; j < trans.childCount; j++)
+		if (this.skipFlg == 0)
 		{
-			SkinnedMeshRenderer[] smr2 = trans.GetChild(j).GetComponentsInChildren<SkinnedMeshRenderer>();
-			for (int p2 = 0; p2 < smr2.Length; p2++)
+			for (int j = 0; j < trans.childCount; j++)
 			{
-				this.elements = smr2[p2].materials;
-				for (int q2 = 0; q2 < this.elements.Length; q2++)
+				SkinnedMeshRenderer[] smr2 = trans.GetChild(j).GetComponentsInChildren<SkinnedMeshRenderer>();
+				for (int p2 = 0; p2 < smr2.Length; p2++)
 				{
-					smr2[p2].sharedMesh.SetIndices(smr2[p2].sharedMesh.GetIndices(q2), MeshTopology.Lines, q2);
+					this.elements = smr2[p2].materials;
+					for (int q2 = 0; q2 < this.elements.Length; q2++)
+					{
+						smr2[p2].sharedMesh.SetIndices(smr2[p2].sharedMesh.GetIndices(q2), MeshTopology.Lines, q2);
+					}
 				}
 			}
 		}
@@ -385,7 +392,7 @@ public class TrainingController : MonoBehaviour
 		{
 			if (Time.time - fStartTime > fSeconds)
 			{
-				IL_1C8:
+				IL_1D4:
 				yield break;
 			}
 			yield return 0;
@@ -393,6 +400,7 @@ public class TrainingController : MonoBehaviour
 		global::Debug.Log("[ SKIP ]");
 		this.efxSource.Stop();
 		this.cam_cam2.fieldOfView = 40f;
+		this.skipFlg = 1;
 		Transform trans = this.obj_mons1.transform;
 		for (int i = 0; i < trans.childCount; i++)
 		{
@@ -406,7 +414,7 @@ public class TrainingController : MonoBehaviour
 				}
 			}
 		}
-		goto IL_1C8;
+		goto IL_1D4;
 	}
 
 	private void Update()

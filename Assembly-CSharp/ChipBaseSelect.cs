@@ -14,28 +14,28 @@ public sealed class ChipBaseSelect : MonoBehaviour
 	[SerializeField]
 	private GameObject[] mustHideObjects;
 
-	[Header("PartsStatusChipのオブジェクト")]
 	[SerializeField]
+	[Header("PartsStatusChipのオブジェクト")]
 	private GameObject partsStatusChipGO;
 
-	[Header("チップの□スロット")]
 	[SerializeField]
+	[Header("チップの□スロット")]
 	private UISprite[] chipSlots;
 
-	[Header("チップのセル")]
 	[SerializeField]
+	[Header("チップのセル")]
 	private BaseSelectChipCell[] chipCells;
 
 	[SerializeField]
 	[Header("チップのラベル")]
 	private UILabel chipLabel;
 
-	[Header("チップがないメッセージ")]
 	[SerializeField]
+	[Header("チップがないメッセージ")]
 	private UILabel noChipLabel;
 
-	[Header("分数ラベル(パーティ編成限定)")]
 	[SerializeField]
+	[Header("分数ラベル(パーティ編成限定)")]
 	private UILabel fractionLabel;
 
 	private int myMaxChipSlot;

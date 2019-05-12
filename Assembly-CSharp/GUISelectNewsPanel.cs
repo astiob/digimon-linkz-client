@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GUISelectNewsPanel : GUISelectPanelBSPartsUD
 {
-	public int AllBuild(GameWebAPI.RespDataIN_InfoList dts, int tabNumber)
+	private List<GUIListNewsParts> guiListNewsPartsList;
+
+	private Action callbackCloseParts;
+
+	public int AllBuild(GameWebAPI.RespDataIN_InfoList dts, int tabNumber, Action callbackCloseParts = null)
 	{
+		this.callbackCloseParts = callbackCloseParts;
+		this.guiListNewsPartsList = new List<GUIListNewsParts>();
 		base.InitBuild();
 		this.partsCount = 0;
 		if (base.selectCollider != null)
@@ -64,6 +71,31 @@ public class GUISelectNewsPanel : GUISelectPanelBSPartsUD
 		{
 			component.SetOriginalPos(setPos);
 			component.Data = dt;
+			component.callbackClose = new Action(this.CallbackCloseParts);
+			this.guiListNewsPartsList.Add(component);
+		}
+	}
+
+	private void CallbackCloseParts()
+	{
+		if (this.callbackCloseParts != null)
+		{
+			this.callbackCloseParts();
+		}
+	}
+
+	public void Refresh(GameWebAPI.RespDataIN_InfoList dts)
+	{
+		foreach (GUIListNewsParts guilistNewsParts in this.guiListNewsPartsList)
+		{
+			foreach (GameWebAPI.RespDataIN_InfoList.InfoList infoList2 in dts.infoList)
+			{
+				if (guilistNewsParts.Data.userInfoId == infoList2.userInfoId)
+				{
+					guilistNewsParts.Data = infoList2;
+					break;
+				}
+			}
 		}
 	}
 }

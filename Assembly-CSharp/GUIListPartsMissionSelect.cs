@@ -8,12 +8,12 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[Header("NEWの スプライト")]
 	private UISprite newSprite;
 
-	[Header("回数表示")]
 	[SerializeField]
+	[Header("回数表示")]
 	private UILabel lbAbleCount;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
@@ -32,20 +32,20 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[SerializeField]
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[Header("バッジスプライト")]
@@ -82,7 +82,7 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 		base.ShowGUI();
 		this.bgSprite.color = this.normalBGColor;
 		this.SetNew();
-		int num = int.Parse(this.data.missionType);
+		int num = int.Parse(this.data.displayGroup);
 		CMD_Mission.MissionType missionType = (CMD_Mission.MissionType)num;
 		CMD_Mission cmd_Mission = (CMD_Mission)base.GetInstanceCMD();
 		string title = cmd_Mission.GetTitle(missionType);
@@ -93,31 +93,35 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	{
 		this.failedTextLabel.gameObject.SetActive(true);
 		this.failedTextLabel.text = name;
-		int _type = int.Parse(this.data.missionType);
+		int _type = int.Parse(this.data.displayGroup);
 		CMD_Mission.MissionType type = (CMD_Mission.MissionType)_type;
 		string path = string.Empty;
 		switch (type)
 		{
 		case CMD_Mission.MissionType.Daily:
-			path = "mission_daily.png";
+			path = "mission_daily";
 			break;
 		case CMD_Mission.MissionType.Total:
-			path = "mission_total.png";
+			path = "mission_total";
 			break;
 		case CMD_Mission.MissionType.Beginner:
-			path = "mission_beginner.png";
+			path = "mission_beginner";
+			break;
+		case CMD_Mission.MissionType.Midrange:
+			path = "mission_midrange";
 			break;
 		}
-		path = ConstValue.APP_ASSET_DOMAIN + "/asset/img/mission/" + path;
-		yield return TextureManager.instance.Load(path, delegate(Texture2D tex)
+		path = "MissionBanner/" + path;
+		yield return AssetDataMng.Instance().LoadObject(path, delegate(UnityEngine.Object obj)
 		{
-			if (tex != null)
+			if (obj != null)
 			{
+				Texture2D mainTexture = obj as Texture2D;
 				this.failedTextLabel.text = string.Empty;
 				this.failedTextLabel.gameObject.SetActive(false);
-				this.bannerTex.mainTexture = tex;
+				this.bannerTex.mainTexture = mainTexture;
 			}
-		}, 30f, true);
+		}, true);
 		yield break;
 	}
 
@@ -125,7 +129,7 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	{
 		if (this.spBadge != null)
 		{
-			int num = int.Parse(this.data.missionType);
+			int num = int.Parse(this.data.displayGroup);
 			CMD_Mission.MissionType type = (CMD_Mission.MissionType)num;
 			CMD_Mission cmd_Mission = (CMD_Mission)base.GetInstanceCMD();
 			if (cmd_Mission.AnyDataNotReceived(type))
@@ -183,7 +187,7 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 			if (magnitude < 40f && !this.isTouchEndFromChild)
 			{
 				this.selectPanelA.SetCellAnim(base.IDX, true);
-				int num = int.Parse(this.data.missionType);
+				int num = int.Parse(this.data.displayGroup);
 				CMD_Mission.MissionType type = (CMD_Mission.MissionType)num;
 				CMD_Mission cmd_Mission = (CMD_Mission)base.GetInstanceCMD();
 				cmd_Mission.OnTouchedMission(type);

@@ -666,7 +666,8 @@ public class CMD_MealExecution : CMD
 	private void HQMeatExec(GameWebAPI.MN_Req_HQMeal.FusionType fusionType)
 	{
 		this.DisableExecBtns();
-		this.isLockClose = true;
+		this.isLockClose = false;
+		this.IsLockClose = true;
 		GameWebAPI.RequestMN_MonsterHQMeal request = new GameWebAPI.RequestMN_MonsterHQMeal
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_HQMeal param)
@@ -809,14 +810,7 @@ public class CMD_MealExecution : CMD
 			};
 			requestMN_MonsterMeal.OnReceived = delegate(GameWebAPI.RespDataMN_MealExec response)
 			{
-				if (response.userMonsterList != null)
-				{
-					DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-				}
-				if (response.userMonster != null)
-				{
-					DataMng.Instance().SetUserMonster(response.userMonster);
-				}
+				DataMng.Instance().SetUserMonster(response.userMonster);
 			};
 			GameWebAPI.RequestMN_MonsterMeal request = requestMN_MonsterMeal;
 			base.StartCoroutine(request.Run(new Action(this.EndExecSuccess), new Action<Exception>(this.EndExecFailed), null));

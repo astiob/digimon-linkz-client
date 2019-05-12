@@ -175,7 +175,8 @@ public class BattleStatePvPRoundStartToRoundEnd : BattleStateRoundStartToRoundEn
 			characterStateControl.SpeedRandomize(base.hierarchyData.onEnableRandomValue);
 			base.stateManager.fraudCheck.FraudCheckOverflowMaxSpeed(characterStateControl);
 		}
-		list = new List<CharacterStateControl>(CharacterStateControl.SortedSpeedLuck(list.ToArray()));
+		CharacterStateControl[] collection2 = CharacterStateControlSorter.SortedSpeedLuck(list.ToArray());
+		list = new List<CharacterStateControl>(collection2);
 		base.battleStateData.currentTurnNumber = 0;
 		base.battleStateData.SetOrderInSortedCharacter(list, -1);
 		if (!base.stateManager.onEnableTutorial)

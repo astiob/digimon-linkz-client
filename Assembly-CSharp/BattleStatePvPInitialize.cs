@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BattleStatePvPInitialize : BattleStateInitialize
 {
-	public BattleStatePvPInitialize(Action OnExit) : base(OnExit)
+	public BattleStatePvPInitialize(Action OnExit, Action<EventState> OnExitGotEvent) : base(OnExit, OnExitGotEvent)
 	{
 	}
 
@@ -77,6 +77,7 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		base.stateManager.uiControl.ApplyDroppedItemHide();
 		base.stateManager.uiControlPvP.ApplyDroppedItemIconHide();
 		base.stateManager.uiControlPvP.ApplySetAlwaysUIObject(false);
+		base.stateManager.uiControlPvP.ApplyAttackTimer(true);
 		base.stateManager.uiControlPvP.RegisterAttackRed();
 		base.stateManager.pvpFunction.InitializeTCPClient();
 		string playerName = base.stateManager.pvpFunction.GetPlayerName();
@@ -88,5 +89,10 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		base.stateManager.uiControlPvP.SetPlayerTitle(playerTitleId);
 		base.stateManager.uiControlPvP.SetEnemyTitle(enemyTitleId);
 		yield break;
+	}
+
+	protected override void DisabledThisState()
+	{
+		base.battleStateData.isEnableBackKeySystem = false;
 	}
 }

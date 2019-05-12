@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BattleStateMultiInitialize : BattleStateInitialize
 {
-	public BattleStateMultiInitialize(Action OnExit) : base(OnExit)
+	public BattleStateMultiInitialize(Action OnExit) : base(OnExit, null)
 	{
 	}
 

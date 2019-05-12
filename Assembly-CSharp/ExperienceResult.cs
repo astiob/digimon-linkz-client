@@ -34,24 +34,24 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private UILabel getExp;
 
-	[Header("取得経験値の文言ラベル")]
 	[SerializeField]
+	[Header("取得経験値の文言ラベル")]
 	private UILabel getExpText;
 
-	[Header("取得クラスタのラベル")]
 	[SerializeField]
+	[Header("取得クラスタのラベル")]
 	private UILabel getCluster;
 
 	[Header("取得クラスタの文言ラベル")]
 	[SerializeField]
 	private UILabel getClusterText;
 
-	[Header("取得友情度【リーダー】のラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】のラベル")]
 	private UILabel getFriendPointForLeader;
 
-	[SerializeField]
 	[Header("取得友情度【リーダー】の文言ラベル")]
+	[SerializeField]
 	private UILabel getFriendPointForLeaderText;
 
 	[SerializeField]

@@ -137,7 +137,6 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 					this.ui.skillSelectUi.widget
 				});
 			}
-			this.ui.skillSelectUi.SetColliderActive(true);
 		}, true));
 		this.battleScreenDetails.Add(BattleScreen.RoundStart, new BattleScreenDetail(delegate()
 		{
@@ -419,35 +418,29 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	private void SetupMonster()
 	{
-		for (int i = 0; i < this.ui.monsterButton.Length; i++)
+		for (int i = 0; i < this.ui.skillSelectUi.monsterButton.Length; i++)
 		{
-			BattleInputUtility.AddEvent(this.ui.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action<int>(this.inputMulti.OnClickMultiMonsterButton), i);
-			BattleInputUtility.AddEvent(this.ui.monsterButton[i].playerMonsterDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressMonsterButton), i);
-			BattleInputUtility.AddEvent(this.ui.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action(base.input.OffPressMonsterButton));
+			BattleInputUtility.AddEvent(this.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action<int>(this.inputMulti.OnClickMultiMonsterButton), i);
+			BattleInputUtility.AddEvent(this.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressMonsterButton), i);
+			BattleInputUtility.AddEvent(this.ui.skillSelectUi.monsterButton[i].playerMonsterDescriptionSwitch.onDisengagePress, new Action(base.input.OffPressMonsterButton));
 		}
 	}
 
 	private void SetupSkill()
 	{
-		for (int i = 0; i < this.ui.skillButton.Length; i++)
+		for (int i = 0; i < this.ui.skillSelectUi.skillButton.Length; i++)
 		{
 			if (i > 0)
 			{
-				BattleInputUtility.AddEvent(this.ui.skillButton[i].skillDescriptionSwitch.onClick, new Action<int>(base.input.OnClickSkillButton), i);
+				this.ui.skillSelectUi.skillButton[i].SetClickCallback(new Action<int>(base.input.OnClickSkillButton), i);
+				this.ui.skillSelectUi.skillButton[i].SetHoldWaitPressCallback(new Action<int>(base.input.OnPressSkillButton), i);
+				this.ui.skillSelectUi.skillButton[i].SetDisengagePressCallback(new Action<int>(base.input.OffPressSkillButton), i);
 			}
 			else
 			{
-				BattleInputUtility.AddEvent(this.ui.skillButton[i].button.onClick, new Action<int>(base.input.OnClickSkillButton), i);
+				this.ui.skillSelectUi.skillButton[i].SetButtonCallback(new Action<int>(base.input.OnClickSkillButton), i);
 			}
-			UITweenEventSystem component = this.ui.skillButton[i].rotationEffect1.gameObject.GetComponent<UITweenEventSystem>();
-			BattleInputUtility.AddEvent(component.onFinished, new Action<int>(base.input.OnSkillButtonRotateAfter), i);
-			component = this.ui.skillButton[i].rotationEffect2.gameObject.GetComponent<UITweenEventSystem>();
-			BattleInputUtility.AddEvent(component.onFinished, new Action<int>(base.input.OnSkillButtonRotateAfter), i);
-			if (i != 0)
-			{
-				BattleInputUtility.AddEvent(this.ui.skillButton[i].skillDescriptionSwitch.onHoldWaitPress, new Action<int>(base.input.OnPressSkillButton), i);
-				BattleInputUtility.AddEvent(this.ui.skillButton[i].skillDescriptionSwitch.onDisengagePress, new Action<int>(base.input.OffPressSkillButton), i);
-			}
+			this.ui.skillSelectUi.skillButton[i].SetRotationEffectCallback(new Action<int>(base.input.OnSkillButtonRotateAfter), i);
 		}
 	}
 
@@ -461,7 +454,7 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	private void SetupAttackTime()
 	{
-		this.ui.attackTime.callBackAction = new Action(base.stateManager.multiFunction.RunAttackAutomatically);
+		this.ui.skillSelectUi.attackTime.callBackAction = new Action(base.stateManager.multiFunction.RunAttackAutomatically);
 	}
 
 	private void SetupEmotion()
@@ -697,7 +690,7 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	public void ShowEmotion(int index, int emotionType, bool isOther = false)
 	{
-		this.ui.emotionSenderMulti.SetEmotion(index, emotionType, isOther);
+		this.ui.emotionSenderMulti.SetEmotion(index, "Emotion_icon_" + (emotionType + 1), isOther);
 	}
 
 	public void HideEmotion()
@@ -788,16 +781,32 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 	public void ApplySkillSelectUI(bool isActive)
 	{
 		NGUITools.SetActiveSelf(this.ui.skillSelectUi.skillButtonRoot, isActive);
-		NGUITools.SetActiveSelf(this.ui.attackTime.gameObject, isActive);
+		NGUITools.SetActiveSelf(this.ui.skillSelectUi.attackTime.gameObject, isActive);
 	}
 
 	public void SetPlayerNumToMonsterButton(int iconIndex, int playerIndex, string playerName)
 	{
-		BattleMonsterButton battleMonsterButton = this.ui.monsterButton[iconIndex];
-		battleMonsterButton.playerNumber.SetSkins(playerIndex + 1);
-		TextReplacerValue replacerValue = new TextReplacerValue(playerName ?? "-");
-		battleMonsterButton.playerNameText.SetValue(0, replacerValue);
-		battleMonsterButton.playerName.SetSkins(playerIndex);
+		BattleMonsterButton battleMonsterButton = this.ui.skillSelectUi.monsterButton[iconIndex];
+		battleMonsterButton.SetPlayerNumber(playerIndex + 1);
+		string text = playerName;
+		if (text.Length > 5)
+		{
+			text = text.Remove(5, playerName.Length - 5);
+			text += "...";
+		}
+		battleMonsterButton.SetPlayerName(text);
+		if (playerIndex == 0)
+		{
+			battleMonsterButton.SetPlayerNameColor(new Color(0.9372549f, 0.03137255f, 0.03137255f));
+		}
+		else if (playerIndex == 1)
+		{
+			battleMonsterButton.SetPlayerNameColor(new Color(0.160784319f, 1f, 0f));
+		}
+		else
+		{
+			battleMonsterButton.SetPlayerNameColor(new Color(0.905882359f, 0.03137255f, 0.0346320346f));
+		}
 	}
 
 	public void HideAllDIalog()

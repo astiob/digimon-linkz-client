@@ -13,6 +13,17 @@ namespace MissionData
 				OnReceived = delegate(GameWebAPI.RespDataMS_MissionInfoLogic response)
 				{
 					this.MissionInfoLogicData = response;
+					foreach (object obj in Enum.GetValues(typeof(Type.DisplayGroup)))
+					{
+						Type.DisplayGroup displayGroup = (Type.DisplayGroup)((int)obj);
+						GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[] array = (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[])typeof(GameWebAPI.RespDataMS_MissionInfoLogic.Result).GetField(displayGroup.ToString()).GetValue(this.MissionInfoLogicData.result);
+						foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission in array)
+						{
+							GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission2 = mission;
+							int num = (int)displayGroup;
+							mission2.displayGroup = num.ToString();
+						}
+					}
 				}
 			};
 			return new APIRequestTask(request, true);

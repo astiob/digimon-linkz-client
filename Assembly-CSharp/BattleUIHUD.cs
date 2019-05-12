@@ -12,24 +12,24 @@ public class BattleUIHUD : UITweener
 	[Header("[マルチバトル用]HP UP用オブジェクト")]
 	public GameObject hpUpObject;
 
-	[SerializeField]
 	[Header("ターン数のラベル")]
+	[SerializeField]
 	private UILabel turnNumber;
 
-	[SerializeField]
 	[Header("[マルチバトル用]AP数")]
+	[SerializeField]
 	public UILabel multiAPNumber;
 
-	[SerializeField]
 	[Header("HPゲージ")]
+	[SerializeField]
 	private UIGaugeManager hpGauge;
 
-	[SerializeField]
 	[Header("APゲージ")]
+	[SerializeField]
 	private UIGaugeManager apGauge;
 
-	[SerializeField]
 	[Header("押しっぱなしのボタン")]
+	[SerializeField]
 	private HoldPressButton holdPressButton;
 
 	[SerializeField]
@@ -40,8 +40,8 @@ public class BattleUIHUD : UITweener
 	[Header("HUDコンポーネントのスキナー")]
 	private UIComponentSkinner hudComponentSkinner;
 
-	[SerializeField]
 	[Header("StatePlateコンポーネントのスキナー")]
+	[SerializeField]
 	private UIComponentSkinner statePlateComponentSkinner;
 
 	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
@@ -56,8 +56,8 @@ public class BattleUIHUD : UITweener
 	[Header("[マルチバトル用]HP UP Rootのコンポーネントのスキナー")]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
-	[SerializeField]
 	[Header("ターン数Tween")]
+	[SerializeField]
 	private UITweener turnNumberTween;
 
 	[SerializeField]
@@ -76,8 +76,8 @@ public class BattleUIHUD : UITweener
 	[Range(0f, 1f)]
 	private float to = 1f;
 
-	[SerializeField]
 	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
+	[SerializeField]
 	private List<UIWidget> viewWidgets = new List<UIWidget>();
 
 	private Dictionary<SufferStateProperty.SufferType, string> iconSpriteNames = new Dictionary<SufferStateProperty.SufferType, string>();
@@ -154,7 +154,7 @@ public class BattleUIHUD : UITweener
 		}
 		this.digimonName.SetValue(0, new TextReplacerValue(characterStatus.name));
 		this.sufferOrderList.Clear();
-		foreach (SufferStateProperty.SufferType item in characterStatus.currentSufferState.sufferOrderList)
+		foreach (SufferStateProperty.SufferType item in characterStatus.currentSufferState.GetSufferOrderList())
 		{
 			this.sufferOrderList.Add(item);
 		}

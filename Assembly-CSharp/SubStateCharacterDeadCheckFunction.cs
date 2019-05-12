@@ -101,6 +101,14 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 			base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(false);
 			base.stateManager.SetBattleScreen(BattleScreen.Continue);
 			SoundPlayer.PlayMenuOpen();
+			if (base.battleStateData.isShowMenuWindow)
+			{
+				base.stateManager.callAction.OnHideMenu();
+				while (base.battleStateData.isShowMenuWindow)
+				{
+					yield return null;
+				}
+			}
 			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(base.battleStateData.enemies);
 			base.battleStateData.isContinueFlag = false;
 			List<CharacterParams> characters = new List<CharacterParams>();

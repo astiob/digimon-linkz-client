@@ -1,4 +1,5 @@
 ﻿using EvolutionRouteMap;
+using Master;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +31,14 @@ namespace EvolutionDiagram
 			{
 				MonsterThumbnail component = base.gameObject.GetComponent<MonsterThumbnail>();
 				component.SetImage(iconMonster.singleData.iconId, iconMonster.groupData.growStep);
+				if (!MonsterDataMng.ExistPicturebook(iconMonster.groupData.monsterCollectionId))
+				{
+					component.SetBottomText(StringMaster.GetString("EvolutionUnkown"));
+				}
+				else
+				{
+					component.ClearBottomText();
+				}
 			}
 		}
 

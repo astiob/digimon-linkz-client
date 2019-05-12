@@ -123,6 +123,13 @@ public sealed class CalculatorUtil
 		return num2 * num;
 	}
 
+	public static int CalcClusterForVersionUp(string baseMonsterId)
+	{
+		int num = 300;
+		int num2 = 450;
+		return num * num2;
+	}
+
 	private static int GetArousalValue(GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monster)
 	{
 		return monster.rare.ToInt32() - 1;

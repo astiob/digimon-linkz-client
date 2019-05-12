@@ -7,8 +7,8 @@ public sealed class StatusPanel : MonoBehaviour
 	[SerializeField]
 	private GameObject switchButton;
 
-	[SerializeField]
 	[Header("ボタンのラベル")]
+	[SerializeField]
 	private UILabel switchButtonLabel;
 
 	[SerializeField]
@@ -60,7 +60,10 @@ public sealed class StatusPanel : MonoBehaviour
 		{
 			this.switchButtonCollider.activeCollider = isEnable;
 		}
-		this.myCollider.activeCollider = isEnable;
+		if (this.myCollider)
+		{
+			this.myCollider.activeCollider = isEnable;
+		}
 	}
 
 	public void InitUI()

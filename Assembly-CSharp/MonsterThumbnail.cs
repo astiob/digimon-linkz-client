@@ -10,6 +10,9 @@ public sealed class MonsterThumbnail : MonoBehaviour
 	[SerializeField]
 	private UISprite frameImage;
 
+	[SerializeField]
+	private UILabel bottomLabel;
+
 	public void Initialize()
 	{
 		UISprite component = base.gameObject.GetComponent<UISprite>();
@@ -46,5 +49,18 @@ public sealed class MonsterThumbnail : MonoBehaviour
 		this.monsterImage.height = height;
 		this.frameImage.width = width;
 		this.frameImage.height = height;
+	}
+
+	public void SetBottomText(string text)
+	{
+	}
+
+	public void SetBottomText(string text, Color color)
+	{
+		this.SetBottomText(text);
+	}
+
+	public void ClearBottomText()
+	{
 	}
 }

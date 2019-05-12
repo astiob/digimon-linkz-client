@@ -168,6 +168,7 @@ public sealed class FarmRoot : MonoBehaviour
 		gameObject2.transform.localEulerAngles = Vector3.zero;
 		this.selectMark = gameObject2.GetComponent<FarmSelectMark>();
 		gameObject2.SetActive(false);
+		FarmCameraControlForCMD.ClearCount();
 	}
 
 	private void OnDestroy()
@@ -184,7 +185,7 @@ public sealed class FarmRoot : MonoBehaviour
 			}
 		}
 		this.buildCompleteEffects.Clear();
-		ServerDateTime.isUpdateServerDateTime = false;
+		FarmCameraControlForCMD.ClearCount();
 	}
 
 	private void Start()

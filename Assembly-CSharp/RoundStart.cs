@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RoundStart : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[SerializeField]
@@ -20,8 +20,8 @@ public class RoundStart : MonoBehaviour
 	[Header("AP UPローカライズ(片方の時)")]
 	protected UILabel onlyApUpLocalize;
 
-	[Header("AP UPローカライズ(両方)")]
 	[SerializeField]
+	[Header("AP UPローカライズ(両方)")]
 	protected UILabel apUpLocalize;
 
 	[Header("HP回復ローカライズ")]

@@ -1,30 +1,35 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EvolutionController : CutsceneControllerBase
 {
-	[Header("キャラクターのスタンド")]
 	[SerializeField]
+	[Header("キャラクターのスタンド")]
 	private GameObject[] charaStand;
 
 	[SerializeField]
 	[Header("スタンドの回転速度")]
 	private float[] standRollSpeed;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private GameObject camera2D;
 
-	[SerializeField]
 	[Header("3Dカメラ")]
+	[SerializeField]
 	private GameObject camera3D_1;
 
 	public float rollSpeed = 1f;
 
 	private Transform TargetPos;
 
-	private Material m;
+	private Material wireMaterial;
+
+	private List<Material[]> materialsListA;
+
+	private List<Material[]> materialsListB;
 
 	private void Start()
 	{
@@ -33,9 +38,10 @@ public class EvolutionController : CutsceneControllerBase
 		this.monsB_instance = base.monsterInstantiater(this.monsB_instance, this.character2Parent, this.character2Params, 1);
 		base.monsPosAdjustment(this.monsterLevelClass2, this.monsB_instance);
 		this.character2Params = this.monsB_instance.GetComponent<CharacterParams>();
-		this.elementsA = base.MaterialKeeper(this.monsA_instance);
-		this.elementsB = base.MaterialKeeper(this.monsB_instance);
-		this.m = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
+		Camera component = this.camera3D_1.GetComponent<Camera>();
+		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
+		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
+		this.wireMaterial = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
 	}
 
 	protected override void UpdateChild()
@@ -49,24 +55,22 @@ public class EvolutionController : CutsceneControllerBase
 
 	public void CharacterA_LineOn()
 	{
-		base.OnWireFrameRenderer(this.monsA_instance, this.m);
+		this.materialsListA = base.OnWireFrameRenderer(this.monsA_instance, this.wireMaterial);
 	}
 
 	public void CharacterB_LineOn()
 	{
-		base.OnWireFrameRenderer(this.monsB_instance, this.m);
+		this.materialsListB = base.OnWireFrameRenderer(this.monsB_instance, this.wireMaterial);
 	}
 
 	public void CharacterA_LineOff()
 	{
-		base.OffWireFrameRenderer(this.monsA_instance);
-		this.monsA_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsA;
+		base.OffWireFrameRenderer(this.monsA_instance, this.materialsListA);
 	}
 
 	public void CharacterB_LineOff()
 	{
-		base.OffWireFrameRenderer(this.monsB_instance);
-		this.monsB_instance.GetComponentInChildren<SkinnedMeshRenderer>().materials = this.elementsB;
+		base.OffWireFrameRenderer(this.monsB_instance, this.materialsListB);
 	}
 
 	private void AttackAnimation()

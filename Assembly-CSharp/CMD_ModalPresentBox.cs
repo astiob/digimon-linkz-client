@@ -16,8 +16,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbSubtitle;
 
-	[SerializeField]
 	[Header("初期メッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -36,8 +36,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnGetAll;
 
-	[SerializeField]
 	[Header("履歴ボタン")]
+	[SerializeField]
 	private GameObject goBtnHistory;
 
 	[SerializeField]
@@ -46,8 +46,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnHistory;
 
-	[Header("リストパーツ")]
 	[SerializeField]
+	[Header("リストパーツ")]
 	private GameObject partListParent;
 
 	[SerializeField]
@@ -339,6 +339,7 @@ public class CMD_ModalPresentBox : CMD
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.DispLimitResultModal), "CMD_ModalMessage") as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("Present-03");
 			cmd_ModalMessage.Info = this.GetPresentCountDescription(this.receivedPresentCountList);
+			cmd_ModalMessage.AdjustSize();
 		}
 		else
 		{
@@ -354,6 +355,7 @@ public class CMD_ModalPresentBox : CMD
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("Present-08");
 			cmd_ModalMessage.Info = StringMaster.GetString("Present-09") + this.GetPresentCountDescription(this.limitPresentCountList);
+			cmd_ModalMessage.AdjustSize();
 		}
 	}
 

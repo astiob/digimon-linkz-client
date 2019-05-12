@@ -8,11 +8,11 @@ public class ItemDropResult
 
 	private DropBoxType _dropBoxType;
 
-	private DropAssetType _dropAssetType;
+	private MasterDataMng.AssetCategory _dropAssetType;
 
 	private int _dropNumber;
 
-	public ItemDropResult(DropBoxType dropBoxType, DropAssetType dropAssetType, int dropNumber)
+	public ItemDropResult(DropBoxType dropBoxType, MasterDataMng.AssetCategory dropAssetType, int dropNumber)
 	{
 		this._isDropped = true;
 		this._dropBoxType = dropBoxType;
@@ -31,7 +31,7 @@ public class ItemDropResult
 	public ItemDropResult(bool isDropped)
 	{
 		this._dropBoxType = DropBoxType.Normal;
-		this._dropAssetType = DropAssetType.Monster;
+		this._dropAssetType = MasterDataMng.AssetCategory.MONSTER;
 		this._dropNumber = 0;
 		this._isDropped = isDropped;
 	}
@@ -52,7 +52,7 @@ public class ItemDropResult
 		}
 	}
 
-	public DropAssetType dropAssetType
+	public MasterDataMng.AssetCategory dropAssetType
 	{
 		get
 		{

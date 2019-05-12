@@ -1,19 +1,25 @@
 ﻿using BattleStateMachineInternal;
 using Enemy.AI;
-using JsonFx.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityExtension;
 
 [Serializable]
 public class CharacterStateControl
 {
 	public const int AttackSkillIndex = 0;
 
+	public const int DeathblowSkillIndex = 1;
+
+	public const int InheritanceSkillIndex1 = 2;
+
+	public const int InheritanceSkillIndex2 = 3;
+
 	public const int DefaultAwakeAp = 3;
 
 	public const int DefaultMaxAp = 5;
+
+	private const int ArousalVersionUpValue = 5;
 
 	public const int DefaultSkillOrder = -1;
 
@@ -115,9 +121,13 @@ public class CharacterStateControl
 
 	private int m_extraInheritanceSkillPower;
 
+	private int m_extraInheritanceSkillPower2;
+
 	private float m_extraDeathblowSkillHitRate;
 
 	private float m_extraInheritanceSkillHitRate;
+
+	private float m_extraInheritanceSkillHitRate2;
 
 	private int m_defaultExtraAttackPower;
 
@@ -166,12 +176,6 @@ public class CharacterStateControl
 	public List<SufferStateProperty> hitSufferList = new List<SufferStateProperty>();
 
 	public bool isMultiAreaRandomDamageSkill;
-
-	private static SkillStatus statusTemp;
-
-	private static AIActionClip actionClipTemp;
-
-	private static SufferStateProperty.SufferType sufferTypeTemp;
 
 	public CharacterStateControl()
 	{
@@ -271,6 +275,14 @@ public class CharacterStateControl
 		}
 	}
 
+	public int extraInheritanceSkillPower2
+	{
+		get
+		{
+			return this.m_extraInheritanceSkillPower2;
+		}
+	}
+
 	public float extraDeathblowSkillHitRate
 	{
 		get
@@ -284,6 +296,14 @@ public class CharacterStateControl
 		get
 		{
 			return this.m_extraInheritanceSkillHitRate;
+		}
+	}
+
+	public float extraInheritanceSkillHitRate2
+	{
+		get
+		{
+			return this.m_extraInheritanceSkillHitRate2;
 		}
 	}
 
@@ -741,7 +761,7 @@ public class CharacterStateControl
 		this.skillOrder = savedCSC.skillOrder;
 		this.myIndex = savedCSC.myIndex;
 		this.isEnemy = savedCSC.isEnemy;
-		this.SetCurrentSufferState(savedCSC.currentSufferState, battleStateData);
+		this.currentSufferState.SetCurrentSufferState(savedCSC.currentSufferState, battleStateData);
 		this.randomedSpeed = savedCSC.randomedSpeed;
 		this.SetChipEffectCount(savedCSC.chipEffectCount);
 		this.SetPotencyChipIdList(savedCSC.potencyChipIdList);
@@ -934,6 +954,14 @@ public class CharacterStateControl
 		}
 	}
 
+	public bool isVersionUp
+	{
+		get
+		{
+			return this.arousal >= 5;
+		}
+	}
+
 	public virtual int GetSkillLength()
 	{
 		return this.skillIds.Length;
@@ -960,120 +988,6 @@ public class CharacterStateControl
 			list2.Add(this.skillStatus[this.SkillIdToIndexOf(list[i])]);
 		}
 		return list2.ToArray();
-	}
-
-	public bool IsInheritanceSkill(SkillStatus status)
-	{
-		List<SkillStatus> list = new List<SkillStatus>(this.skillStatus);
-		int num = list.IndexOf(status);
-		if (num < 0)
-		{
-			global::Debug.LogError("存在しないスキルです (" + status.ToString() + ")");
-			return false;
-		}
-		string value = this.skillIds[num];
-		return this.playerStatus.inheritanceTechniqueId.Equals(value);
-	}
-
-	private string CheckNull(SufferStateProperty ssp)
-	{
-		if (ssp == null || !ssp.isActive)
-		{
-			return string.Empty;
-		}
-		string @params = ssp.GetParams();
-		string strVal = @params + "#" + ((!ssp.isActive) ? "0" : "1");
-		SufferStatePropertyStore value = new SufferStatePropertyStore
-		{
-			strVal = strVal,
-			triggerCharacter = ssp.GetTriggerCharacter()
-		};
-		return JsonWriter.Serialize(value);
-	}
-
-	public HaveSufferStateStore GetCurrentSufferState()
-	{
-		HaveSufferState currentSufferState = this.currentSufferState;
-		HaveSufferStateStore haveSufferStateStore = new HaveSufferStateStore
-		{
-			onPoison = this.CheckNull(currentSufferState.onPoison),
-			onConfusion = this.CheckNull(currentSufferState.onConfusion),
-			onParalysis = this.CheckNull(currentSufferState.onParalysis),
-			onSleep = this.CheckNull(currentSufferState.onSleep),
-			onStun = this.CheckNull(currentSufferState.onStun),
-			onSkillLock = this.CheckNull(currentSufferState.onSkillLock),
-			onAttackUp = this.CheckNull(currentSufferState.onAttackUp),
-			onAttackDown = this.CheckNull(currentSufferState.onAttackDown),
-			onDefenceUp = this.CheckNull(currentSufferState.onDefenceUp),
-			onDefenceDown = this.CheckNull(currentSufferState.onDefenceDown),
-			onSpAttackUp = this.CheckNull(currentSufferState.onSpAttackUp),
-			onSpAttackDown = this.CheckNull(currentSufferState.onSpAttackDown),
-			onSpDefenceUp = this.CheckNull(currentSufferState.onSpDefenceUp),
-			onSpDefenceDown = this.CheckNull(currentSufferState.onSpDefenceDown),
-			onSpeedUp = this.CheckNull(currentSufferState.onSpeedUp),
-			onSpeedDown = this.CheckNull(currentSufferState.onSpeedDown),
-			onCounter = this.CheckNull(currentSufferState.onCounter),
-			onReflection = this.CheckNull(currentSufferState.onReflection),
-			onProtect = this.CheckNull(currentSufferState.onProtect),
-			onPowerCharge = this.CheckNull(currentSufferState.onPowerCharge),
-			onHitRateUp = this.CheckNull(currentSufferState.onHitRateUp),
-			onHitRateDown = this.CheckNull(currentSufferState.onHitRateDown),
-			onSatisfactionRateUp = this.CheckNull(currentSufferState.onSatisfactionRateUp),
-			onSatisfactionRateDown = this.CheckNull(currentSufferState.onSatisfactionRateDown),
-			onTurnBarrier = this.CheckNull(currentSufferState.onTurnBarrier),
-			onCountBarrier = this.CheckNull(currentSufferState.onCountBarrier),
-			onDamageRateUp = this.CheckNull(currentSufferState.onDamageRateUp),
-			onDamageRateDown = this.CheckNull(currentSufferState.onDamageRateDown)
-		};
-		int[] array = new int[currentSufferState.sufferOrderList.Count];
-		int num = 0;
-		foreach (SufferStateProperty.SufferType sufferType in currentSufferState.sufferOrderList)
-		{
-			array[num] = sufferType.ToInteger();
-			num++;
-		}
-		haveSufferStateStore.sufferOrderList = array;
-		return haveSufferStateStore;
-	}
-
-	public void SetCurrentSufferState(HaveSufferStateStore haveSufferStateStore, BattleStateData battleStateData)
-	{
-		HaveSufferState haveSufferState = new HaveSufferState();
-		haveSufferState.onPoison.SetParams(haveSufferStateStore.onPoison, battleStateData);
-		haveSufferState.onConfusion.SetParams(haveSufferStateStore.onConfusion, battleStateData);
-		haveSufferState.onParalysis.SetParams(haveSufferStateStore.onParalysis, battleStateData);
-		haveSufferState.onSleep.SetParams(haveSufferStateStore.onSleep, battleStateData);
-		haveSufferState.onStun.SetParams(haveSufferStateStore.onStun, battleStateData);
-		haveSufferState.onSkillLock.SetParams(haveSufferStateStore.onSkillLock, battleStateData);
-		haveSufferState.onAttackUp.SetParams(haveSufferStateStore.onAttackUp, battleStateData);
-		haveSufferState.onAttackDown.SetParams(haveSufferStateStore.onAttackDown, battleStateData);
-		haveSufferState.onDefenceUp.SetParams(haveSufferStateStore.onDefenceUp, battleStateData);
-		haveSufferState.onDefenceDown.SetParams(haveSufferStateStore.onDefenceDown, battleStateData);
-		haveSufferState.onSpAttackUp.SetParams(haveSufferStateStore.onSpAttackUp, battleStateData);
-		haveSufferState.onSpAttackDown.SetParams(haveSufferStateStore.onSpAttackDown, battleStateData);
-		haveSufferState.onSpDefenceUp.SetParams(haveSufferStateStore.onSpDefenceUp, battleStateData);
-		haveSufferState.onSpDefenceDown.SetParams(haveSufferStateStore.onSpDefenceDown, battleStateData);
-		haveSufferState.onSpeedUp.SetParams(haveSufferStateStore.onSpeedUp, battleStateData);
-		haveSufferState.onSpeedDown.SetParams(haveSufferStateStore.onSpeedDown, battleStateData);
-		haveSufferState.onCounter.SetParams(haveSufferStateStore.onCounter, battleStateData);
-		haveSufferState.onReflection.SetParams(haveSufferStateStore.onReflection, battleStateData);
-		haveSufferState.onProtect.SetParams(haveSufferStateStore.onProtect, battleStateData);
-		haveSufferState.onPowerCharge.SetParams(haveSufferStateStore.onPowerCharge, battleStateData);
-		haveSufferState.onHitRateUp.SetParams(haveSufferStateStore.onHitRateUp, battleStateData);
-		haveSufferState.onHitRateDown.SetParams(haveSufferStateStore.onHitRateDown, battleStateData);
-		haveSufferState.onSatisfactionRateUp.SetParams(haveSufferStateStore.onSatisfactionRateUp, battleStateData);
-		haveSufferState.onSatisfactionRateDown.SetParams(haveSufferStateStore.onSatisfactionRateDown, battleStateData);
-		haveSufferState.onTurnBarrier.SetParams(haveSufferStateStore.onTurnBarrier, battleStateData);
-		haveSufferState.onCountBarrier.SetParams(haveSufferStateStore.onCountBarrier, battleStateData);
-		haveSufferState.onDamageRateUp.SetParams(haveSufferStateStore.onDamageRateUp, battleStateData);
-		haveSufferState.onDamageRateDown.SetParams(haveSufferStateStore.onDamageRateDown, battleStateData);
-		List<SufferStateProperty.SufferType> list = new List<SufferStateProperty.SufferType>();
-		foreach (int item in haveSufferStateStore.sufferOrderList)
-		{
-			list.Add((SufferStateProperty.SufferType)item);
-		}
-		haveSufferState.sufferOrderList = list;
-		this.currentSufferState = haveSufferState;
 	}
 
 	private void SetChipEffectCount(string chiopCount)
@@ -1144,17 +1058,10 @@ public class CharacterStateControl
 		return text;
 	}
 
-	public float hpRemingAmount01
-	{
-		get
-		{
-			return (float)this.hp / (float)this.maxHp;
-		}
-	}
-
 	public bool GetHpRemingAmoutRange(float minRange, float maxRange)
 	{
-		return this.hpRemingAmount01 >= minRange && this.hpRemingAmount01 <= maxRange;
+		float num = (float)this.hp / (float)this.maxHp;
+		return num >= minRange && num <= maxRange;
 	}
 
 	private void StatusInitialize(string attackSkillId)
@@ -1163,23 +1070,17 @@ public class CharacterStateControl
 		this._maxHp = this._characterStatus.maxHp + Mathf.FloorToInt((float)this.defaultMaxHp * this.leaderSkillResult.hpUpPercent);
 		this._currentHp = this._maxHp;
 		this.m_extraMaxHp = this._maxHp;
-		List<string> list;
-		if (PlayerStatus.Match(this._characterStatus))
-		{
-			list = new List<string>(this.playerStatus.skillIds);
-		}
-		else
-		{
-			list = new List<string>(this.enemyStatus.enemyAiPattern.GetAllSkillID());
-			this.ItemDrop();
-		}
+		List<string> list = new List<string>(this._characterStatus.skillIds);
 		if (!list.Contains(attackSkillId))
 		{
 			list.Insert(0, attackSkillId);
 		}
 		this.skillIds = list.ToArray();
 		this.skillStatus = new SkillStatus[this.skillIds.Length];
-		this.InitializeChipEffectCount();
+		if (!PlayerStatus.Match(this._characterStatus))
+		{
+			this.ItemDrop();
+		}
 		if (this._sharedStatus.isShared)
 		{
 			this.ap += 5;
@@ -1188,6 +1089,7 @@ public class CharacterStateControl
 		{
 			this.ap = this.maxAp;
 		}
+		this.InitializeChipEffectCount();
 		this.HateReset();
 		this.SpeedRandomize(false);
 		this.currentSufferState = new HaveSufferState();
@@ -1266,6 +1168,20 @@ public class CharacterStateControl
 					this.m_extraInheritanceSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList2, affectEffectFirst2, this);
 				}
 				this.m_extraInheritanceSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList2, affectEffectFirst2, this);
+			}
+		}
+		if (this.skillStatus.Length > 3)
+		{
+			AffectEffectProperty affectEffectFirst3 = this.skillStatus[3].GetAffectEffectFirst();
+			if (affectEffectFirst3 != null)
+			{
+				List<ExtraEffectStatus> extraEffectStatus3 = BattleStateManager.current.battleStateData.extraEffectStatus;
+				List<ExtraEffectStatus> invocationList3 = ExtraEffectStatus.GetInvocationList(extraEffectStatus3, ChipEffectStatus.EffectTriggerType.Usually);
+				if (affectEffectFirst3.type == AffectEffect.Damage)
+				{
+					this.m_extraInheritanceSkillPower2 = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList3, affectEffectFirst3, this);
+				}
+				this.m_extraInheritanceSkillHitRate2 = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList3, affectEffectFirst3, this);
 			}
 		}
 	}
@@ -1459,7 +1375,10 @@ public class CharacterStateControl
 
 	public void ItemDrop()
 	{
-		this.itemDropResult = this.enemyStatus.itemDropResult;
+		if (!PlayerStatus.Match(this.enemyStatus))
+		{
+			this.itemDropResult = this.enemyStatus.itemDropResult;
+		}
 	}
 
 	public void LeaderInitialize()
@@ -1469,12 +1388,6 @@ public class CharacterStateControl
 			return;
 		}
 		this.HateReset();
-	}
-
-	public bool IsHpLess(int border)
-	{
-		int num = this.hp / this.maxHp * 100;
-		return num < border;
 	}
 
 	public bool isDied
@@ -1497,23 +1410,6 @@ public class CharacterStateControl
 		}
 	}
 
-	public bool isAllApShortness()
-	{
-		for (int i = 0; i < this.skillStatus.Length; i++)
-		{
-			if (!this.isApShortness(i))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public bool isApShortness()
-	{
-		return this.isApShortness(this.isSelectSkill);
-	}
-
 	public bool isApShortness(int index)
 	{
 		if (this.skillStatus.Length <= index)
@@ -1522,41 +1418,6 @@ public class CharacterStateControl
 			return false;
 		}
 		return index != -1 && this.ap < this.skillStatus[index].GetCorrectedAp(this);
-	}
-
-	public bool[] ApShortnesses()
-	{
-		bool[] array = new bool[this.skillStatus.Length];
-		for (int i = 0; i < array.Length; i++)
-		{
-			array[i] = this.isApShortness(i);
-		}
-		return array;
-	}
-
-	public bool isSelectingManualSelectTarget()
-	{
-		return this.targetCharacter != null;
-	}
-
-	public void RandomSelectSkill()
-	{
-		List<int> list = new List<int>();
-		for (int i = 0; i < this.skillStatus.Length; i++)
-		{
-			if (this.ap >= this.skillStatus[this.isSelectSkill].needAp)
-			{
-				list.Add(i);
-			}
-		}
-		if (list.Count > 0)
-		{
-			this.isSelectSkill = list[UnityEngine.Random.Range(0, list.Count)];
-		}
-		else
-		{
-			this.isSelectSkill = 0;
-		}
 	}
 
 	public bool WaveCountInitialize(float hpRevivalLevel)
@@ -1569,11 +1430,6 @@ public class CharacterStateControl
 		}
 		this._currentHp = Mathf.Clamp(this._currentHp + num, 1, this.maxHp);
 		return result;
-	}
-
-	public bool IsMatchLocation(CharacterStateControl c)
-	{
-		return c.myIndex == this.myIndex && c.isEnemy == this.isEnemy;
 	}
 
 	public int GetDifferenceExtraPram()
@@ -1680,6 +1536,32 @@ public class CharacterStateControl
 					return 1;
 				}
 				if (this.m_extraInheritanceSkillHitRate - affectEffectFirst2.hitRate < 0f)
+				{
+					result = -1;
+				}
+			}
+		}
+		if (this.skillStatus.Length > 3)
+		{
+			AffectEffectProperty affectEffectFirst3 = this.skillStatus[3].GetAffectEffectFirst();
+			if (affectEffectFirst3 != null)
+			{
+				if (affectEffectFirst3.type == AffectEffect.Damage)
+				{
+					if (this.m_extraInheritanceSkillPower2 - affectEffectFirst3.power > 0)
+					{
+						return 1;
+					}
+					if (this.m_extraInheritanceSkillPower2 - affectEffectFirst3.power < 0)
+					{
+						result = -1;
+					}
+				}
+				if (this.m_extraInheritanceSkillHitRate2 - affectEffectFirst3.hitRate > 0f)
+				{
+					return 1;
+				}
+				if (this.m_extraInheritanceSkillHitRate2 - affectEffectFirst3.hitRate < 0f)
 				{
 					result = -1;
 				}
@@ -1970,915 +1852,17 @@ public class CharacterStateControl
 		}
 	}
 
-	private static int CompareHpBase(CharacterStateControl x, CharacterStateControl y)
+	public static CharacterStateControl[] GetAliveCharacters(CharacterStateControl[] characterStatus)
 	{
-		if (x == y)
+		List<CharacterStateControl> list = new List<CharacterStateControl>();
+		for (int i = 0; i < characterStatus.Length; i++)
 		{
-			return 0;
-		}
-		if (x.hp > y.hp)
-		{
-			return -1;
-		}
-		if (x.hp < y.hp)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareHpRangeBase(CharacterStateControl x, CharacterStateControl y, float minRange, float maxRange)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		if (!x.GetHpRemingAmoutRange(minRange, maxRange))
-		{
-			return 1;
-		}
-		if (!y.GetHpRemingAmoutRange(minRange, maxRange))
-		{
-			return -1;
-		}
-		return CharacterStateControl.CompareHpBase(x, y);
-	}
-
-	private static int CompareAttackBase(CharacterStateControl x, CharacterStateControl y, bool checkBath = true)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		float num = (float)x.attackPower;
-		float num2 = (float)y.attackPower;
-		if (checkBath)
-		{
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackUp))
+			if (!characterStatus[i].isDied)
 			{
-				num += (float)x.attackPower * x.currentSufferState.onAttackUp.upPercent;
-			}
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackDown))
-			{
-				num -= (float)x.attackPower * x.currentSufferState.onAttackDown.downPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackUp))
-			{
-				num2 += (float)y.attackPower * y.currentSufferState.onAttackUp.upPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackDown))
-			{
-				num2 -= (float)y.attackPower * y.currentSufferState.onAttackDown.downPercent;
+				list.Add(characterStatus[i]);
 			}
 		}
-		num += (float)x.attackPower * x.leaderSkillResult.attackUpPercent;
-		num2 += (float)y.attackPower * y.leaderSkillResult.attackUpPercent;
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareDefenceBase(CharacterStateControl x, CharacterStateControl y, bool checkBath = true)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		float num = (float)x.defencePower;
-		float num2 = (float)y.defencePower;
-		if (checkBath)
-		{
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.DefenceUp))
-			{
-				num += (float)x.defencePower * x.currentSufferState.onDefenceUp.upPercent;
-			}
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.DefenceDown))
-			{
-				num -= (float)x.defencePower * x.currentSufferState.onDefenceDown.downPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.DefenceUp))
-			{
-				num2 += (float)y.defencePower * y.currentSufferState.onDefenceUp.upPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.DefenceDown))
-			{
-				num2 -= (float)y.defencePower * y.currentSufferState.onDefenceDown.downPercent;
-			}
-		}
-		num += (float)x.defencePower * x.leaderSkillResult.defenceUpPercent;
-		num2 += (float)y.defencePower * y.leaderSkillResult.defenceUpPercent;
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareSpecialAttackBase(CharacterStateControl x, CharacterStateControl y, bool checkBath = true)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		float num = (float)x.specialAttackPower;
-		float num2 = (float)y.specialAttackPower;
-		if (checkBath)
-		{
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackUp))
-			{
-				num += (float)x.specialAttackPower * x.currentSufferState.onSpAttackUp.upPercent;
-			}
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackDown))
-			{
-				num -= (float)x.specialAttackPower * x.currentSufferState.onSpAttackDown.downPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackUp))
-			{
-				num2 += (float)y.specialAttackPower * y.currentSufferState.onSpAttackUp.upPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackDown))
-			{
-				num2 -= (float)y.specialAttackPower * y.currentSufferState.onSpAttackDown.downPercent;
-			}
-		}
-		num += (float)x.specialAttackPower * x.leaderSkillResult.specialAttackUpPercent;
-		num2 += (float)y.specialAttackPower * y.leaderSkillResult.specialAttackUpPercent;
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareSpecialDefenceBase(CharacterStateControl x, CharacterStateControl y, bool checkBath = true)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		float num = (float)x.specialDefencePower;
-		float num2 = (float)y.specialDefencePower;
-		if (checkBath)
-		{
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpDefenceUp))
-			{
-				num += (float)x.specialDefencePower * x.currentSufferState.onSpDefenceUp.upPercent;
-			}
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpDefenceDown))
-			{
-				num -= (float)x.specialDefencePower * x.currentSufferState.onSpDefenceDown.downPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpDefenceUp))
-			{
-				num2 += (float)y.specialDefencePower * y.currentSufferState.onSpDefenceUp.upPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpDefenceDown))
-			{
-				num2 -= (float)y.specialDefencePower * y.currentSufferState.onSpDefenceDown.downPercent;
-			}
-		}
-		num += (float)x.specialDefencePower * x.leaderSkillResult.specialDefenceUpPercent;
-		num2 += (float)y.specialDefencePower * y.leaderSkillResult.specialDefenceUpPercent;
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareSpeedBase(CharacterStateControl x, CharacterStateControl y, bool checkRandom = false, bool checkBath = true)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		float num = (float)x.speed;
-		float num2 = (float)y.speed;
-		if (checkRandom)
-		{
-			num = x.randomedSpeed;
-			num2 = y.randomedSpeed;
-		}
-		if (checkBath)
-		{
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
-			{
-				num += (float)x.speed * x.currentSufferState.onSpeedUp.upPercent;
-			}
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
-			{
-				num -= (float)x.speed * x.currentSufferState.onSpeedDown.downPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
-			{
-				num2 += (float)y.speed * y.currentSufferState.onSpeedUp.upPercent;
-			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
-			{
-				num2 -= (float)y.speed * y.currentSufferState.onSpeedDown.downPercent;
-			}
-		}
-		if (!checkRandom)
-		{
-			num += (float)x.speed * x.leaderSkillResult.speedUpPercent;
-			num2 += (float)y.speed * y.leaderSkillResult.speedUpPercent;
-		}
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareHateBase(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int hate = x.hate;
-		int hate2 = y.hate;
-		if (hate > hate2)
-		{
-			return -1;
-		}
-		if (hate < hate2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareLuckBase(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		if (x.luck > y.luck)
-		{
-			return -1;
-		}
-		if (x.luck < y.luck)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareToleranceBase(Strength x, Strength y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		if (x != y)
-		{
-			switch (x)
-			{
-			case Strength.None:
-				if (y == Strength.Strong || y == Strength.Invalid)
-				{
-					return 1;
-				}
-				break;
-			case Strength.Strong:
-				if (y == Strength.Invalid)
-				{
-					return 1;
-				}
-				break;
-			case Strength.Weak:
-				return 1;
-			}
-			return -1;
-		}
-		return 0;
-	}
-
-	private static int CompareToleranceAttributeBase(CharacterStateControl x, CharacterStateControl y, global::Attribute attribute)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		return CharacterStateControl.CompareToleranceBase(x.tolerance.GetAttributeStrength(attribute), y.tolerance.GetAttributeStrength(attribute));
-	}
-
-	private static int CompareToleranceAffectEffectBase(CharacterStateControl x, CharacterStateControl y, AffectEffect affectEffect)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		return CharacterStateControl.CompareToleranceBase(x.tolerance.GetAffectEffectStrength(affectEffect), y.tolerance.GetAffectEffectStrength(affectEffect));
-	}
-
-	private static int CompareAttributeBase(CharacterStateControl x, CharacterStateControl y, global::Attribute attribute)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = 0;
-		int num2 = 0;
-		foreach (SkillStatus skillStatus2 in x.skillStatus)
-		{
-			num += skillStatus2.AttributeMachLevel(attribute);
-		}
-		foreach (SkillStatus skillStatus4 in y.skillStatus)
-		{
-			num2 += skillStatus4.AttributeMachLevel(attribute);
-		}
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareHpRevivalBase(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = 0;
-		int num2 = 0;
-		foreach (SkillStatus skillStatus2 in x.skillStatus)
-		{
-			num += ((!skillStatus2.ThisSkillIsHpRevival) ? 0 : 1);
-		}
-		foreach (SkillStatus skillStatus4 in y.skillStatus)
-		{
-			num2 += ((!skillStatus4.ThisSkillIsHpRevival) ? 0 : 1);
-		}
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareApRangeBase(CharacterStateControl x, CharacterStateControl y, float minValue, float maxValue)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = 0;
-		int num2 = 0;
-		if (minValue <= (float)x.ap && (float)x.ap <= maxValue)
-		{
-			num = x.ap;
-		}
-		if (minValue <= (float)y.ap && (float)y.ap <= maxValue)
-		{
-			num2 = y.ap;
-		}
-		return Mathf.Clamp(num2 - num, -1, 1);
-	}
-
-	private static bool GetApRemingAmoutRange(CharacterStateControl state, float minValue, float maxValue)
-	{
-		return minValue <= (float)state.ap && (float)state.ap <= maxValue;
-	}
-
-	private static int CompareAffectEffectRangeBase(CharacterStateControl x, CharacterStateControl y, int minValue, int maxValue)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = 0;
-		int num2 = 0;
-		foreach (SkillStatus skillStatus2 in x.skillStatus)
-		{
-			List<int> serberAffectEffectList = CharacterStateControl.GetSerberAffectEffectList(skillStatus2);
-			foreach (int num3 in serberAffectEffectList)
-			{
-				if (minValue <= num3 && num3 <= maxValue)
-				{
-					num++;
-					break;
-				}
-			}
-		}
-		foreach (SkillStatus skillStatus4 in y.skillStatus)
-		{
-			List<int> serberAffectEffectList2 = CharacterStateControl.GetSerberAffectEffectList(skillStatus4);
-			foreach (int num4 in serberAffectEffectList2)
-			{
-				if (minValue <= num4 && num4 <= maxValue)
-				{
-					num2++;
-					break;
-				}
-			}
-		}
-		return Mathf.Clamp(num2 - num, -1, 1);
-	}
-
-	private static List<int> GetSerberAffectEffectList(SkillStatus skillStatus)
-	{
-		List<int> list = new List<int>();
-		foreach (AffectEffectProperty affectEffectProperty in skillStatus.affectEffect)
-		{
-			if (affectEffectProperty.type == AffectEffect.HpRevival)
-			{
-				if (affectEffectProperty.powerType == PowerType.Fixable)
-				{
-					list.Add(14);
-				}
-				else
-				{
-					list.Add(35);
-				}
-			}
-			else if (affectEffectProperty.type == AffectEffect.Damage)
-			{
-				if (affectEffectProperty.techniqueType == TechniqueType.Physics)
-				{
-					if (affectEffectProperty.useDrain)
-					{
-						if (affectEffectProperty.powerType == PowerType.Fixable)
-						{
-							list.Add(49);
-						}
-						else
-						{
-							list.Add(36);
-						}
-					}
-					else if (affectEffectProperty.powerType == PowerType.Fixable)
-					{
-						list.Add(47);
-					}
-					else
-					{
-						list.Add(1);
-					}
-				}
-				else if (affectEffectProperty.useDrain)
-				{
-					if (affectEffectProperty.powerType == PowerType.Fixable)
-					{
-						list.Add(50);
-					}
-					else
-					{
-						list.Add(37);
-					}
-				}
-				else if (affectEffectProperty.powerType == PowerType.Fixable)
-				{
-					list.Add(48);
-				}
-				else
-				{
-					list.Add(34);
-				}
-			}
-			else if (affectEffectProperty.type == AffectEffect.Poison)
-			{
-				if (affectEffectProperty.powerType == PowerType.Fixable)
-				{
-					list.Add(23);
-				}
-				else
-				{
-					list.Add(38);
-				}
-			}
-			else if (affectEffectProperty.type == AffectEffect.ApRevival)
-			{
-				if (affectEffectProperty.powerType == PowerType.Fixable)
-				{
-					list.Add(39);
-				}
-				else
-				{
-					list.Add(40);
-				}
-			}
-			else if (affectEffectProperty.type == AffectEffect.ApUp)
-			{
-				if (affectEffectProperty.powerType == PowerType.Fixable)
-				{
-					list.Add(42);
-				}
-				else
-				{
-					list.Add(44);
-				}
-			}
-			else if (affectEffectProperty.type == AffectEffect.ApDown)
-			{
-				if (affectEffectProperty.powerType == PowerType.Fixable)
-				{
-					list.Add(41);
-				}
-				else
-				{
-					list.Add(43);
-				}
-			}
-			else
-			{
-				list.Add((int)(affectEffectProperty.type + 1));
-			}
-		}
-		return list;
-	}
-
-	private static int CompareSufferTypeRangeBase(CharacterStateControl x, CharacterStateControl y, int minValue, int maxValue)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = 0;
-		int num2 = 0;
-		foreach (SufferStateProperty.SufferType sufferType in x.currentSufferState.sufferOrderList)
-		{
-			int num3 = (int)sufferType;
-			if (minValue <= num3 && num3 <= maxValue)
-			{
-				num++;
-			}
-		}
-		foreach (SufferStateProperty.SufferType sufferType2 in y.currentSufferState.sufferOrderList)
-		{
-			int num4 = (int)sufferType2;
-			if (minValue <= num4 && num4 <= maxValue)
-			{
-				num2++;
-			}
-		}
-		return Mathf.Clamp(num2 - num, -1, 1);
-	}
-
-	private static int CompareGenreationStartTimingBase(CharacterStateControl x, CharacterStateControl y, SufferStateProperty.SufferType sufferType)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		SufferStateProperty sufferStateProperty = x.currentSufferState.GetSufferStateProperty(sufferType);
-		SufferStateProperty sufferStateProperty2 = y.currentSufferState.GetSufferStateProperty(sufferType);
-		if (sufferStateProperty.generationStartTiming < sufferStateProperty2.generationStartTiming)
-		{
-			return -1;
-		}
-		if (sufferStateProperty.generationStartTiming > sufferStateProperty2.generationStartTiming)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private static int CompareSpeed(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareSpeedBase(x, y, true, true);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		return RandomExtension.IntPlusMinus();
-	}
-
-	private static int CompareSpeedEnemyPriority(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareSpeedBase(x, y, true, true);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		if (x.isEnemy == y.isEnemy)
-		{
-			return RandomExtension.IntPlusMinus();
-		}
-		if (x.isEnemy)
-		{
-			return -1;
-		}
-		return 1;
-	}
-
-	private static int CompareSpeedLuck(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareSpeedBase(x, y, true, true);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		num = CharacterStateControl.CompareLuckBase(x, y);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		return RandomExtension.IntPlusMinus();
-	}
-
-	private static int CompareHpSpeed(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareHpBase(x, y);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		num = CharacterStateControl.CompareSpeedBase(x, y, false, true);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		return RandomExtension.IntPlusMinus();
-	}
-
-	private static int CompareHate(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareHateBase(x, y);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		return RandomExtension.IntPlusMinus();
-	}
-
-	private static int CompareTargetSelect(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = 0;
-		if (CharacterStateControl.actionClipTemp != null)
-		{
-			switch (CharacterStateControl.actionClipTemp.targetSelectRerefence)
-			{
-			case TargetSelectReference.Hp:
-				num = CharacterStateControl.CompareHpRangeBase(x, y, CharacterStateControl.actionClipTemp.minValue, CharacterStateControl.actionClipTemp.maxValue);
-				break;
-			case TargetSelectReference.Hate:
-				num = CharacterStateControl.CompareHateBase(x, y);
-				break;
-			case TargetSelectReference.Attack:
-				num = CharacterStateControl.CompareAttackBase(x, y, false);
-				break;
-			case TargetSelectReference.Defence:
-				num = CharacterStateControl.CompareDefenceBase(x, y, false);
-				break;
-			case TargetSelectReference.SpecialAttack:
-				num = CharacterStateControl.CompareSpecialAttackBase(x, y, false);
-				break;
-			case TargetSelectReference.SpecialDefence:
-				num = CharacterStateControl.CompareSpecialDefenceBase(x, y, false);
-				break;
-			case TargetSelectReference.Speed:
-				num = CharacterStateControl.CompareSpeedBase(x, y, false, false);
-				break;
-			case TargetSelectReference.Luck:
-				num = CharacterStateControl.CompareLuckBase(x, y);
-				break;
-			case TargetSelectReference.ToleranceNone:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.None);
-				break;
-			case TargetSelectReference.ToleranceRed:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.Red);
-				break;
-			case TargetSelectReference.ToleranceBlue:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.Blue);
-				break;
-			case TargetSelectReference.ToleranceYellow:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.Yellow);
-				break;
-			case TargetSelectReference.ToleranceGreen:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.Green);
-				break;
-			case TargetSelectReference.ToleranceWhite:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.White);
-				break;
-			case TargetSelectReference.ToleranceBlack:
-				num = CharacterStateControl.CompareToleranceAttributeBase(x, y, global::Attribute.Black);
-				break;
-			case TargetSelectReference.TolerancePoison:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.Poison);
-				break;
-			case TargetSelectReference.ToleranceConfusion:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.Confusion);
-				break;
-			case TargetSelectReference.ToleranceParalysis:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.Paralysis);
-				break;
-			case TargetSelectReference.ToleranceSleep:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.Sleep);
-				break;
-			case TargetSelectReference.ToleranceStun:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.Stun);
-				break;
-			case TargetSelectReference.ToleranceSkillLock:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.SkillLock);
-				break;
-			case TargetSelectReference.ToleranceInstantDeath:
-				num = CharacterStateControl.CompareToleranceAffectEffectBase(x, y, AffectEffect.InstantDeath);
-				break;
-			case TargetSelectReference.AttributeNone:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.None);
-				break;
-			case TargetSelectReference.AttributeRed:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.Red);
-				break;
-			case TargetSelectReference.AttributeBlue:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.Blue);
-				break;
-			case TargetSelectReference.AttributeYellow:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.Yellow);
-				break;
-			case TargetSelectReference.AttributeGreen:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.Green);
-				break;
-			case TargetSelectReference.AttributeWhite:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.White);
-				break;
-			case TargetSelectReference.AttributeBlack:
-				num = CharacterStateControl.CompareAttributeBase(x, y, global::Attribute.Black);
-				break;
-			case TargetSelectReference.Ap:
-				num = CharacterStateControl.CompareApRangeBase(x, y, CharacterStateControl.actionClipTemp.minValue, CharacterStateControl.actionClipTemp.maxValue);
-				break;
-			case TargetSelectReference.AffectEffect:
-				num = CharacterStateControl.CompareAffectEffectRangeBase(x, y, (int)CharacterStateControl.actionClipTemp.minValue, (int)CharacterStateControl.actionClipTemp.maxValue);
-				break;
-			case TargetSelectReference.SufferType:
-				num = CharacterStateControl.CompareSufferTypeRangeBase(x, y, (int)CharacterStateControl.actionClipTemp.minValue, (int)CharacterStateControl.actionClipTemp.maxValue);
-				break;
-			}
-			if (CharacterStateControl.actionClipTemp.selectingOrder == SelectingOrder.LowAndHavent)
-			{
-				num *= -1;
-			}
-		}
-		return num;
-	}
-
-	private static bool CheckTargetSelect(CharacterStateControl x)
-	{
-		if (CharacterStateControl.actionClipTemp == null)
-		{
-			return false;
-		}
-		switch (CharacterStateControl.actionClipTemp.targetSelectRerefence)
-		{
-		case TargetSelectReference.Hp:
-			return x.GetHpRemingAmoutRange(CharacterStateControl.actionClipTemp.minValue, CharacterStateControl.actionClipTemp.maxValue);
-		case TargetSelectReference.Hate:
-			return true;
-		case TargetSelectReference.Attack:
-			return true;
-		case TargetSelectReference.Defence:
-			return true;
-		case TargetSelectReference.SpecialAttack:
-			return true;
-		case TargetSelectReference.SpecialDefence:
-			return true;
-		case TargetSelectReference.Speed:
-			return true;
-		case TargetSelectReference.Luck:
-			return true;
-		case TargetSelectReference.ToleranceNone:
-			return true;
-		case TargetSelectReference.ToleranceRed:
-			return true;
-		case TargetSelectReference.ToleranceBlue:
-			return true;
-		case TargetSelectReference.ToleranceYellow:
-			return true;
-		case TargetSelectReference.ToleranceGreen:
-			return true;
-		case TargetSelectReference.ToleranceWhite:
-			return true;
-		case TargetSelectReference.ToleranceBlack:
-			return true;
-		case TargetSelectReference.TolerancePoison:
-			return true;
-		case TargetSelectReference.ToleranceConfusion:
-			return true;
-		case TargetSelectReference.ToleranceParalysis:
-			return true;
-		case TargetSelectReference.ToleranceSleep:
-			return true;
-		case TargetSelectReference.ToleranceStun:
-			return true;
-		case TargetSelectReference.ToleranceSkillLock:
-			return true;
-		case TargetSelectReference.ToleranceInstantDeath:
-			return true;
-		case TargetSelectReference.AttributeNone:
-			return true;
-		case TargetSelectReference.AttributeRed:
-			return true;
-		case TargetSelectReference.AttributeBlue:
-			return true;
-		case TargetSelectReference.AttributeYellow:
-			return true;
-		case TargetSelectReference.AttributeGreen:
-			return true;
-		case TargetSelectReference.AttributeWhite:
-			return true;
-		case TargetSelectReference.AttributeBlack:
-			return true;
-		case TargetSelectReference.Ap:
-			return CharacterStateControl.GetApRemingAmoutRange(x, CharacterStateControl.actionClipTemp.minValue, CharacterStateControl.actionClipTemp.maxValue);
-		case TargetSelectReference.AffectEffect:
-			return true;
-		case TargetSelectReference.SufferType:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	private static int CompareBaseTargetSelect(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareToleranceBase(CharacterStateControl.statusTemp.GetSkillStrength(x.tolerance), CharacterStateControl.statusTemp.GetSkillStrength(y.tolerance));
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		num = -CharacterStateControl.CompareHpBase(x, y);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		return CharacterStateControl.CompareHate(x, y);
-	}
-
-	private static int CompareGenereationStartTiming(CharacterStateControl x, CharacterStateControl y)
-	{
-		if (x == y)
-		{
-			return 0;
-		}
-		int num = CharacterStateControl.CompareGenreationStartTimingBase(x, y, CharacterStateControl.sufferTypeTemp);
-		if (Mathf.Abs(num) == 1)
-		{
-			return num;
-		}
-		return RandomExtension.IntPlusMinus();
+		return list.ToArray();
 	}
 
 	public bool Contains(params CharacterStateControl[] characters)
@@ -2901,86 +1885,6 @@ public class CharacterStateControl
 			list.Add(characterStateControl.CharacterParams);
 		}
 		return list.ToArray();
-	}
-
-	public static CharacterStateControl[] GetAliveCharacters(CharacterStateControl[] characterStatus)
-	{
-		List<CharacterStateControl> list = new List<CharacterStateControl>();
-		for (int i = 0; i < characterStatus.Length; i++)
-		{
-			if (!characterStatus[i].isDied)
-			{
-				list.Add(characterStatus[i]);
-			}
-		}
-		return list.ToArray();
-	}
-
-	public static CharacterStateControl[] SortedSpeed(CharacterStateControl[] characterStatus)
-	{
-		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControl.CompareSpeed));
-		return array;
-	}
-
-	public static CharacterStateControl[] SortedSpeedEnemyPriority(CharacterStateControl[] characterStatus)
-	{
-		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControl.CompareSpeedEnemyPriority));
-		return array;
-	}
-
-	public static CharacterStateControl[] SortedSpeedLuck(CharacterStateControl[] characterStatus)
-	{
-		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControl.CompareSpeedLuck));
-		return array;
-	}
-
-	public static CharacterStateControl[] SortedHpSpeed(CharacterStateControl[] characterStatus)
-	{
-		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControl.CompareHpSpeed));
-		return array;
-	}
-
-	public static CharacterStateControl[] SortedHate(CharacterStateControl[] characterStatus)
-	{
-		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControl.CompareHate));
-		return array;
-	}
-
-	public static CharacterStateControl[] SortedTargetSelect(CharacterStateControl[] characterStatus, SkillStatus skillState, AIActionClip actionClip = null)
-	{
-		List<CharacterStateControl> list = new List<CharacterStateControl>();
-		CharacterStateControl.statusTemp = skillState;
-		CharacterStateControl.actionClipTemp = actionClip;
-		foreach (CharacterStateControl characterStateControl in characterStatus)
-		{
-			if (CharacterStateControl.CheckTargetSelect(characterStateControl))
-			{
-				list.Add(characterStateControl);
-			}
-		}
-		if (list.Count > 0)
-		{
-			list.Sort(new Comparison<CharacterStateControl>(CharacterStateControl.CompareTargetSelect));
-		}
-		else
-		{
-			list = new List<CharacterStateControl>(characterStatus);
-			list.Sort(new Comparison<CharacterStateControl>(CharacterStateControl.CompareBaseTargetSelect));
-		}
-		return list.ToArray();
-	}
-
-	public static CharacterStateControl[] SortedSufferStateGenerateStartTiming(CharacterStateControl[] characterStatus, SufferStateProperty.SufferType sufferType)
-	{
-		CharacterStateControl[] array = characterStatus.Clone() as CharacterStateControl[];
-		CharacterStateControl.sufferTypeTemp = sufferType;
-		Array.Sort<CharacterStateControl>(array, new Comparison<CharacterStateControl>(CharacterStateControl.CompareGenereationStartTiming));
-		return array;
 	}
 
 	public override bool Equals(object obj)

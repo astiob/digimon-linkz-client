@@ -181,10 +181,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public IEnumerator StopHitAnimation(params HitEffectParams[] currentHitEffect)
 	{
-		if (base.isSkipAction)
-		{
-			yield break;
-		}
 		this.StopHitEffectAction(currentHitEffect);
 		foreach (HitEffectParams h in currentHitEffect)
 		{
@@ -196,19 +192,11 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayIdleAnimationUndeadCharactersAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		this.PlayIdleAnimationCharactersAction(CharacterStateControl.GetAliveCharacters(characters));
 	}
 
 	public void PlayIdleAnimationCharactersAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterParams characterParams in CharacterStateControl.ToParams(characters))
 		{
 			if (!characterParams.gameObject.activeSelf)
@@ -325,10 +313,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayIdleAnimationActiveCharacterAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterParams characterParams in CharacterStateControl.ToParams(characters))
 		{
 			if (characterParams.gameObject.activeSelf)
@@ -340,10 +324,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayAnimationCharacterAction(CharacterAnimationType animationType, params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			characterStateControl.CharacterParams.PlayAnimation(animationType, SkillType.Attack, 0, null, null);
@@ -352,10 +332,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlaySmoothAnimationCharacterAction(CharacterAnimationType animationType, params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			characterStateControl.CharacterParams.PlayAnimationSmooth(animationType, SkillType.Attack, 0, null, null);
@@ -364,10 +340,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayDeadAnimationCharacterAction(Action deathEffectPlay, CharacterStateControl character)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		bool flag = base.stateManager.IsLastBattleAndAllDeath();
 		int myIndex = character.myIndex;
 		HitEffectParams hitEffectParams;
@@ -391,10 +363,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void HideDeadCharactersAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			if (characterStateControl.isDied)
@@ -406,10 +374,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void ShowAllCharactersAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			characterStateControl.CharacterParams.gameObject.SetActive(true);
@@ -418,10 +382,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void HideAllCharactersAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			characterStateControl.CharacterParams.gameObject.SetActive(false);
@@ -430,10 +390,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void ShowAliveCharactersAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			characterStateControl.CharacterParams.gameObject.SetActive(!characterStateControl.isDied);
@@ -442,11 +398,7 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void HideAllPreloadEnemiesAction()
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
-		foreach (CharacterParams characterParams in base.battleStateData.preloadEnemiesParams.GetAllObject(false))
+		foreach (CharacterParams characterParams in base.battleStateData.preloadEnemiesParams.GetAllObject())
 		{
 			characterParams.gameObject.SetActive(false);
 		}
@@ -454,10 +406,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public IEnumerator MotionResetAliveCharacterAction(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			yield break;
-		}
 		bool[] charactersActive = new bool[characters.Length];
 		int index = 0;
 		foreach (CharacterStateControl c in characters)
@@ -480,10 +428,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void MotionResetAliveCharacterActionVoid(params CharacterStateControl[] characters)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (CharacterStateControl characterStateControl in characters)
 		{
 			bool activeSelf = characterStateControl.CharacterParams.gameObject.activeSelf;
@@ -501,10 +445,6 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void StopHitEffectAction(params HitEffectParams[] hitEffects)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (HitEffectParams hitEffectParams in hitEffects)
 		{
 			hitEffectParams.StopAnimation();
@@ -513,19 +453,11 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayAlwaysEffectAction(AlwaysEffectParams alwaysEffect, AlwaysEffectState state)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		alwaysEffect.PlayAnimationTrigger(state);
 	}
 
 	public void StopAlwaysEffectAction(params AlwaysEffectParams[] alwaysEffect)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		foreach (AlwaysEffectParams alwaysEffectParams in alwaysEffect)
 		{
 			if (alwaysEffectParams.isActiveAndEnabled)
@@ -537,20 +469,12 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void SetPositionAlwaysEffectAction(AlwaysEffectParams alwaysEffect, CharacterStateControl character, Vector3? offsetPosition = null)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		Vector3 b = (offsetPosition == null) ? Vector3.zero : offsetPosition.Value;
 		alwaysEffect.SetPosition(character.CharacterParams.transform, new Vector3?(character.CharacterParams.dropItemOffsetPosition + b));
 	}
 
 	private void PlayIdleAnimationInternal(CharacterParams c)
 	{
-		if (base.isSkipAction)
-		{
-			return;
-		}
 		if (!c.isActiveAnimation)
 		{
 			c.PlayIdleAnimation();

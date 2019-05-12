@@ -114,16 +114,15 @@ public class PrizeEfcCont : MonoBehaviour
 		{
 			num++;
 		}
+		this.shiningEffect.gameObject.SetActive(false);
 		int num7 = int.Parse(this.Data.monsterMG.growStep);
 		if (num7 == 6 || num7 == 7 || num7 == 9 || num >= this.PERFECT_HIT_NUM)
 		{
-			this.shiningEffect.gameObject.SetActive(false);
 			this.outerLuster.gameObject.SetActive(true);
 			this.innerLuster.gameObject.SetActive(true);
 		}
 		else
 		{
-			this.shiningEffect.gameObject.SetActive(false);
 			this.outerLuster.gameObject.SetActive(false);
 			this.innerLuster.gameObject.SetActive(false);
 		}

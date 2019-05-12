@@ -56,7 +56,5 @@ namespace FarmData
 		public string modelResource;
 
 		public string iconResource;
-
-		public string deleteFlg;
 	}
 }

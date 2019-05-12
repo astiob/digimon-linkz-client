@@ -239,6 +239,7 @@ public sealed class GUIScreenTitle : GUIScreen
 		MasterDataMng.Instance().ReleaseFileIO();
 		GameWebAPI.Instance().SetMasterDataVersion();
 		ClassSingleton<EvolutionData>.Instance.Initialize();
+		VersionUpMaterialData.Initialize();
 		yield break;
 	}
 

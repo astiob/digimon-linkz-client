@@ -193,6 +193,12 @@ public class GUIFace : GUIBase
 		this.ShowCommonDialog(null, "CMD_ModalPresentBox");
 	}
 
+	private void UIInfo()
+	{
+		this.ResetFarmWork();
+		GUIMain.ShowCommonDialog(null, "CMD_NewsALL");
+	}
+
 	private void UIDigivice()
 	{
 		global::Debug.Log("================================================== UIDigivice;");

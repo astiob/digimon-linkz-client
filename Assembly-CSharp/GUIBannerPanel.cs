@@ -63,4 +63,14 @@ public sealed class GUIBannerPanel : GUISelectPanelBSPartsUD
 		base.selectParts.SetActive(false);
 		yield break;
 	}
+
+	public void RefreshNewAlert()
+	{
+		List<GUIListPartBS> partObjs = this.partObjs;
+		foreach (GUIListPartBS guilistPartBS in partObjs)
+		{
+			GUIBannerParts guibannerParts = (GUIBannerParts)guilistPartBS;
+			guibannerParts.SetNew();
+		}
+	}
 }

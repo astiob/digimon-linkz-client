@@ -23,11 +23,15 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 		base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.enemies);
 		this.SetSelectCharacter(this.currentCharacter.myIndex);
 		base.battleStateData.currentSelectCharacterIndex = this.currentCharacter.myIndex;
-		if (base.hierarchyData.onAutoPlay)
+		if (base.hierarchyData.onAutoPlay == 2)
 		{
 			base.stateManager.targetSelect.AutoPlayCharacterAndSkillSelectFunction(this.currentCharacter);
 		}
-		else
+		else if (base.hierarchyData.onAutoPlay == 1)
+		{
+			base.stateManager.targetSelect.AutoPlayCharacterAndAttackSelectFunction(this.currentCharacter);
+		}
+		else if (base.hierarchyData.onAutoPlay == 0)
 		{
 			base.stateManager.callAction.HideMonsterDescription();
 			base.stateManager.callAction.ForceHideSkillDescription();
@@ -65,7 +69,7 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 
 	protected override IEnumerator MainRoutine()
 	{
-		if (base.hierarchyData.onAutoPlay)
+		if (base.hierarchyData.onAutoPlay != 0)
 		{
 			yield return null;
 			yield break;
@@ -94,13 +98,13 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 				base.stateManager.callAction.HideMonsterDescription();
 				base.stateManager.callAction.ForceHideSkillDescription();
 			}
-			if (base.hierarchyData.onAutoPlay)
+			if (base.hierarchyData.onAutoPlay != 0)
 			{
 				break;
 			}
 			if (base.battleStateData.onSkillTrigger)
 			{
-				goto Block_8;
+				goto Block_10;
 			}
 			if (!this.isOutCharacterView || this.lastCharacter == null || this.lastCharacter != this.currentCharacter.targetCharacter || base.battleStateData.commandSelectTweenTargetCamera.isMoving)
 			{
@@ -113,8 +117,15 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			}
 			yield return null;
 		}
-		base.stateManager.targetSelect.AutoPlayCharacterAndSkillSelectFunction(this.currentCharacter);
-		Block_8:
+		if (base.hierarchyData.onAutoPlay == 2)
+		{
+			base.stateManager.targetSelect.AutoPlayCharacterAndSkillSelectFunction(this.currentCharacter);
+		}
+		else if (base.hierarchyData.onAutoPlay == 1)
+		{
+			base.stateManager.targetSelect.AutoPlayCharacterAndAttackSelectFunction(this.currentCharacter);
+		}
+		Block_10:
 		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
 		base.stateManager.uiControl.SetHudCollider(false);
 		yield break;
@@ -143,14 +154,34 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 			base.stateManager.uiControl.ApplyMonsterButtonEnable(i, isSelect, base.battleStateData.playerCharacters[i].isDied);
 		}
 		bool flag = characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock);
-		for (int j = 1; j < characterStateControl.skillStatus.Length; j++)
+		int num;
+		if (characterStateControl.isVersionUp)
 		{
-			bool onEnable = !characterStateControl.isApShortness(j);
-			if (flag)
+			base.stateManager.uiControl.ApplyThreeSkillButtonPosition();
+			num = 4;
+		}
+		else
+		{
+			base.stateManager.uiControl.ApplyTwoSkillButtonPosition();
+			num = 3;
+		}
+		for (int j = 1; j < num; j++)
+		{
+			bool flag2 = j < characterStateControl.skillStatus.Length;
+			base.stateManager.uiControl.ApplySkillButtonColliderActive(j, flag2);
+			if (flag2)
 			{
-				onEnable = false;
+				bool onEnable = !characterStateControl.isApShortness(j);
+				if (flag)
+				{
+					onEnable = false;
+				}
+				base.stateManager.uiControl.ApplySkillButtonData(j, characterStateControl.skillStatus[j], onEnable, flag, characterStateControl);
 			}
-			base.stateManager.uiControl.ApplySkillButtonData(j - 1, characterStateControl.skillStatus[j], onEnable, flag, characterStateControl);
+			else
+			{
+				base.stateManager.uiControl.ApplySkillButtonData(j, new SkillStatus(), false, false, characterStateControl);
+			}
 		}
 	}
 }

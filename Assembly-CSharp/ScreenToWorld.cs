@@ -7,8 +7,8 @@ public class ScreenToWorld : MonoBehaviour
 	[SerializeField]
 	private ScreenToWorld.CONSTRAINT_TYPE type;
 
-	[Header("オフセット(全て＋の値)")]
 	[SerializeField]
+	[Header("オフセット(全て＋の値)")]
 	private Vector2 offset;
 
 	[SerializeField]

@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace CharacterModelUI
 {
-	[RequireComponent(typeof(UIWidget))]
 	[RequireComponent(typeof(BoxCollider))]
+	[RequireComponent(typeof(UIWidget))]
 	public sealed class UI_CharacterModelViewer : UI_CharacterModelTexture
 	{
 		private const float DETAILS_UI_VIEW_POSITION_OFFSET_X = -0.6f;

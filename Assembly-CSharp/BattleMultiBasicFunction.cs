@@ -1,5 +1,4 @@
-﻿using BattleStateMachineInternal;
-using MultiBattle.Tools;
+﻿using MultiBattle.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -194,24 +193,25 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 	{
 		MonsterData monsterData = MultiTools.MakeAndSetMonster(commonMonsterData);
 		string monsterGroupId = monsterData.monsterM.monsterGroupId;
-		int arousal = ServerToBattleUtility.GetArousal(monsterData.monsterM.rare.ToInt32() - 1);
-		int friendshipLevel = ServerToBattleUtility.ServerValueToInt(commonMonsterData.friendship);
-		int hp = ServerToBattleUtility.ServerValueToInt(commonMonsterData.hp);
-		int attackPower = ServerToBattleUtility.ServerValueToInt(commonMonsterData.attack);
-		int defencePower = ServerToBattleUtility.ServerValueToInt(commonMonsterData.defense);
-		int specialAttackPower = ServerToBattleUtility.ServerValueToInt(commonMonsterData.spAttack);
-		int specialDefencePower = ServerToBattleUtility.ServerValueToInt(commonMonsterData.spDefense);
-		int speed = ServerToBattleUtility.ServerValueToInt(commonMonsterData.speed);
-		int maxAttackPower = ServerToBattleUtility.ServerValueToInt(monsterData.monsterM.maxAttack);
-		int maxDefencePower = ServerToBattleUtility.ServerValueToInt(monsterData.monsterM.maxDefense);
-		int maxSpecialAttackPower = ServerToBattleUtility.ServerValueToInt(monsterData.monsterM.maxSpAttack);
-		int maxSpecialDefencePower = ServerToBattleUtility.ServerValueToInt(monsterData.monsterM.maxSpDefense);
-		int maxSpeed = ServerToBattleUtility.ServerValueToInt(monsterData.monsterM.speed);
-		int level = ServerToBattleUtility.ServerValueToInt(commonMonsterData.level);
+		int arousal = monsterData.monsterM.GetArousal();
+		int friendshipLevel = commonMonsterData.friendship.ToInt32();
+		int hp = commonMonsterData.hp.ToInt32();
+		int attackPower = commonMonsterData.attack.ToInt32();
+		int defencePower = commonMonsterData.defense.ToInt32();
+		int specialAttackPower = commonMonsterData.spAttack.ToInt32();
+		int specialDefencePower = commonMonsterData.spDefense.ToInt32();
+		int speed = commonMonsterData.speed.ToInt32();
+		int maxAttackPower = monsterData.monsterM.maxAttack.ToInt32();
+		int maxDefencePower = monsterData.monsterM.maxDefense.ToInt32();
+		int maxSpecialAttackPower = monsterData.monsterM.maxSpAttack.ToInt32();
+		int maxSpecialDefencePower = monsterData.monsterM.maxSpDefense.ToInt32();
+		int maxSpeed = monsterData.monsterM.speed.ToInt32();
+		int level = commonMonsterData.level.ToInt32();
 		string resistanceId = monsterData.monsterM.resistanceId;
-		int luck = ServerToBattleUtility.ServerValueToInt(commonMonsterData.luck);
+		int luck = commonMonsterData.luck.ToInt32();
 		string uniqueSkillId = commonMonsterData.uniqueSkillId;
 		string commonSkillId = commonMonsterData.commonSkillId;
+		string extraCommonSkillId = commonMonsterData.extraCommonSkillId;
 		string text = commonMonsterData.leaderSkillId.Equals("0") ? string.Empty : commonMonsterData.leaderSkillId;
 		string iconId = monsterData.monsterM.iconId;
 		Talent talent = new Talent(commonMonsterData);
@@ -230,7 +230,7 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 				list.Add(item);
 			}
 		}
-		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
+		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, extraCommonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
 		if (!this.cachedSkillStatuses.ContainsKey(uniqueSkillId.Trim()))
 		{
 			this.cachedSkillStatuses.Add(uniqueSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(uniqueSkillId));
@@ -238,6 +238,10 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		if (!this.cachedSkillStatuses.ContainsKey(commonSkillId.Trim()))
 		{
 			this.cachedSkillStatuses.Add(commonSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(commonSkillId));
+		}
+		if (!this.cachedSkillStatuses.ContainsKey(extraCommonSkillId.Trim()))
+		{
+			this.cachedSkillStatuses.Add(extraCommonSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(extraCommonSkillId));
 		}
 		if (!this.cachedLeaderSkillStatuses.ContainsKey(text.Trim()) && !text.Equals(string.Empty))
 		{

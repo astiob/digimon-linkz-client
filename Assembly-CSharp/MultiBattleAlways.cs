@@ -11,20 +11,20 @@ public sealed class MultiBattleAlways : BattleAlways
 	[SerializeField]
 	private UIButton emotionIconButton;
 
-	[Header("右下のメッセージ")]
 	[SerializeField]
+	[Header("右下のメッセージ")]
 	public MultiConnetionMessage connectionMessage;
 
-	[Header("マルチバトルのダイアログ")]
 	[SerializeField]
+	[Header("マルチバトルのダイアログ")]
 	public MultiBattleDialog multiBattleDialog;
 
 	[SerializeField]
 	[Header("共有AP")]
 	public SharedAPMulti sharedAPMulti;
 
-	[SerializeField]
 	[Header("残りターン(右下)")]
+	[SerializeField]
 	public RemainingTurn remainingTurn;
 
 	public void ShowWinnerUI()
@@ -38,7 +38,7 @@ public sealed class MultiBattleAlways : BattleAlways
 		BattleStateManager current = BattleStateManager.current;
 		current.battleUiComponentsMulti.skillSelectUi.gameObject.SetActive(true);
 		current.uiControlMulti.ApplySkillSelectUI(false);
-		BattleMonsterButton[] monsterButton = current.battleUiComponentsMulti.monsterButton;
+		BattleMonsterButton[] monsterButton = current.battleUiComponentsMulti.skillSelectUi.monsterButton;
 		foreach (BattleMonsterButton battleMonsterButton in monsterButton)
 		{
 			Collider[] componentsInChildren = battleMonsterButton.GetComponentsInChildren<Collider>();

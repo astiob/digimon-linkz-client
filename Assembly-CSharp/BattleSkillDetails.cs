@@ -14,9 +14,14 @@ public class BattleSkillDetails : BattleFunctionBase
 		return detailsIndex == 0;
 	}
 
+	public bool IsProtectEnableSkill(AffectEffect affectEffect)
+	{
+		return affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage;
+	}
+
 	public CharacterStateControl[] GetProtectCharacters(CharacterStateControl[] isTargetsStatus, AffectEffectProperty currentSuffer)
 	{
-		if (currentSuffer.type == AffectEffect.Damage || currentSuffer.type == AffectEffect.ReferenceTargetHpRate)
+		if (this.IsProtectEnableSkill(currentSuffer.type))
 		{
 			List<CharacterStateControl> list = new List<CharacterStateControl>();
 			for (int i = 0; i < isTargetsStatus.Length; i++)
@@ -28,7 +33,7 @@ public class BattleSkillDetails : BattleFunctionBase
 			}
 			if (list.Count > 0)
 			{
-				CharacterStateControl[] array = CharacterStateControl.SortedSufferStateGenerateStartTiming(list.ToArray(), SufferStateProperty.SufferType.Protect);
+				CharacterStateControl[] array = CharacterStateControlSorter.SortedSufferStateGenerateStartTiming(list.ToArray(), SufferStateProperty.SufferType.Protect);
 				list.Clear();
 				for (int j = 0; j < isTargetsStatus.Length; j++)
 				{
@@ -61,7 +66,7 @@ public class BattleSkillDetails : BattleFunctionBase
 		list.RemoveAll((CharacterStateControl c) => targetsStatus[0] == c);
 		for (int i = 0; i < list.Count; i++)
 		{
-			if (!list[i].isDied && list[i].currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && !onMissHit[i] && list[i].currentSufferState.onSleep.GetSleepGetupOccurrence(true))
+			if (!list[i].isDied && list[i].currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && !onMissHit[i] && list[i].currentSufferState.onSleep.GetSleepGetupOccurrenceDamage())
 			{
 				list[i].currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
 			}
@@ -126,27 +131,27 @@ public class BattleSkillDetails : BattleFunctionBase
 
 	public void SufferStatusClear(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
 	{
-		if (RandomExtension.Switch(currentSuffer.clearPoisonIncidenceRate, null) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Poison))
+		if (RandomExtension.Switch(currentSuffer.clearPoisonIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Poison))
 		{
 			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Poison);
 		}
-		if (RandomExtension.Switch(currentSuffer.clearConfusionIncidenceRate, null) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Confusion))
+		if (RandomExtension.Switch(currentSuffer.clearConfusionIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Confusion))
 		{
 			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Confusion);
 		}
-		if (RandomExtension.Switch(currentSuffer.clearParalysisIncidenceRate, null) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Paralysis))
+		if (RandomExtension.Switch(currentSuffer.clearParalysisIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Paralysis))
 		{
 			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Paralysis);
 		}
-		if (RandomExtension.Switch(currentSuffer.clearSleepIncidenceRate, null) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep))
+		if (RandomExtension.Switch(currentSuffer.clearSleepIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep))
 		{
 			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
 		}
-		if (RandomExtension.Switch(currentSuffer.clearStunIncidenceRate, null) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Stun))
+		if (RandomExtension.Switch(currentSuffer.clearStunIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Stun))
 		{
 			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Stun);
 		}
-		if (RandomExtension.Switch(currentSuffer.clearSkillLockIncidenceRate, null) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock))
+		if (RandomExtension.Switch(currentSuffer.clearSkillLockIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock))
 		{
 			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SkillLock);
 		}
@@ -207,7 +212,8 @@ public class BattleSkillDetails : BattleFunctionBase
 
 	public void AddSufferStateOthers(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
 	{
-		SufferStateProperty suffer = new SufferStateProperty(currentSuffer);
+		SufferStateProperty suffer = new SufferStateProperty(currentSuffer, base.battleStateData.currentLastGenerateStartTimingSufferState);
 		isTargetsStatus.currentSufferState.SetSufferState(suffer, null);
+		base.battleStateData.currentLastGenerateStartTimingSufferState++;
 	}
 }

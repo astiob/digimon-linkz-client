@@ -4,20 +4,24 @@ using UnityEngine;
 
 public class BattleSkillSelect : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
+	[Header("エモーション送信機能（マルチ）")]
 	[SerializeField]
-	[Header("EmotionSender")]
 	public EmotionSenderMulti emotionSenderMulti;
 
+	[Header("エモーション送信機能（PvP）")]
 	[SerializeField]
+	public EmotionSenderMulti emotionSenderPvP;
+
 	[Header("ボタンオブジェクト")]
+	[SerializeField]
 	public GameObject monsterButtonRoot;
 
-	[SerializeField]
 	[Header("残りターン/マルチバトルのみ")]
+	[SerializeField]
 	public RemainingTurn remainingTurnMiddle;
 
 	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
@@ -32,27 +36,37 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	public UITouchChecker[] touchChecker;
 
-	[SerializeField]
 	[Header("スキル説明1の命中率のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc1HitRateLocalize;
 
-	[SerializeField]
 	[Header("スキル説明2の命中率のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc2HitRateLocalize;
 
-	[SerializeField]
 	[Header("スキル説明1の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc1PowerLocalize;
 
 	[Header("スキル説明2の威力のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc2PowerLocalize;
 
-	[Header("Leftの親")]
 	[SerializeField]
+	[Header("Leftの親")]
 	private Transform leftParent;
 
-	private MonsterButtons monsterButtons;
+	[Header("スキルボタン")]
+	[SerializeField]
+	public BattleSkillBtn[] skillButton;
+
+	[Header("デジモンボタン")]
+	[SerializeField]
+	public BattleMonsterButton[] monsterButton;
+
+	[SerializeField]
+	[Header("アタックタイマー")]
+	public AttackTime attackTime;
 
 	private void Awake()
 	{
@@ -89,8 +103,6 @@ public class BattleSkillSelect : MonoBehaviour
 		transform.SetParent(this.leftParent);
 		transform.localPosition = new Vector3(0f, 92f, 0f);
 		transform.localScale = Vector3.one;
-		this.monsterButtons = this.monsterButtonRoot.GetComponent<MonsterButtons>();
-		global::Debug.Log(this.monsterButtons);
 	}
 
 	private void SetupLocalize()
@@ -109,5 +121,45 @@ public class BattleSkillSelect : MonoBehaviour
 		{
 			this.colliderValues[i].enabled = active;
 		}
+	}
+
+	public void RefleshSkillButton()
+	{
+		foreach (BattleSkillBtn battleSkillBtn in this.skillButton)
+		{
+			battleSkillBtn.Reflesh();
+		}
+	}
+
+	public void ApplySkillButtonRotation(int oldIndex = -1, int newIndex = -1)
+	{
+		if (oldIndex > -1)
+		{
+			this.skillButton[oldIndex].PlayCloseRotationEffect();
+			this.skillButton[oldIndex].SetButtonType(BattleSkillBtn.Type.Off);
+		}
+		if (newIndex > -1)
+		{
+			this.skillButton[newIndex].PlayOpenRotationEffect();
+			this.skillButton[newIndex].SetButtonType(BattleSkillBtn.Type.On);
+		}
+	}
+
+	public void ApplyTwoSkillButtonPosition()
+	{
+		foreach (BattleSkillBtn battleSkillBtn in this.skillButton)
+		{
+			battleSkillBtn.ApplyTwoButtonPosition();
+		}
+		this.skillButton[3].gameObject.SetActive(false);
+	}
+
+	public void ApplyThreeSkillButtonPosition()
+	{
+		foreach (BattleSkillBtn battleSkillBtn in this.skillButton)
+		{
+			battleSkillBtn.ApplyThreeButtonPosition();
+		}
+		this.skillButton[3].gameObject.SetActive(true);
 	}
 }

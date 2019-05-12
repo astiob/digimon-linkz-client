@@ -14,7 +14,10 @@ public class BattleNextBattleOption : MonoBehaviour
 	private string autoButtonOnSpriteName = "Battle_Autobtn_ON";
 
 	[SerializeField]
-	private string autoButtonOffSpriteName = "Battle_Autobtn_OFF";
+	private string autoButtonOffSpriteName = "Battle_Autobtn_ALLOFF";
+
+	[SerializeField]
+	private string autoButtonOnAttackSpriteName = "Battle_Autobtn_OFF";
 
 	[SerializeField]
 	private UISprite autoButtonLoopSprite;
@@ -68,15 +71,19 @@ public class BattleNextBattleOption : MonoBehaviour
 		{
 			this.speedButtonSprite.spriteName = this.speedButtonOffSpriteName;
 		}
-		if (this.battleOptionSettings.auto == 1)
-		{
-			this.autoButtonSprite.spriteName = this.autoButtonOnSpriteName;
-		}
-		else
+		if (this.battleOptionSettings.auto == 0)
 		{
 			this.autoButtonSprite.spriteName = this.autoButtonOffSpriteName;
 			this.autoButtonLoopSprite.enabled = false;
 			this.autoButtonLoopTweenRotation.enabled = false;
+		}
+		else if (this.battleOptionSettings.auto == 1)
+		{
+			this.autoButtonSprite.spriteName = this.autoButtonOnAttackSpriteName;
+		}
+		else if (this.battleOptionSettings.auto == 2)
+		{
+			this.autoButtonSprite.spriteName = this.autoButtonOnSpriteName;
 		}
 	}
 
@@ -98,15 +105,22 @@ public class BattleNextBattleOption : MonoBehaviour
 	{
 		if (this.battleOptionSettings.auto == 0)
 		{
+			this.autoButtonSprite.spriteName = this.autoButtonOnAttackSpriteName;
 			this.battleOptionSettings.auto = 1;
-			this.autoButtonSprite.spriteName = this.autoButtonOnSpriteName;
 			this.autoButtonLoopSprite.enabled = true;
 			this.autoButtonLoopTweenRotation.enabled = true;
 		}
-		else
+		else if (this.battleOptionSettings.auto == 1)
 		{
-			this.battleOptionSettings.auto = 0;
+			this.autoButtonSprite.spriteName = this.autoButtonOnSpriteName;
+			this.battleOptionSettings.auto = 2;
+			this.autoButtonLoopSprite.enabled = true;
+			this.autoButtonLoopTweenRotation.enabled = true;
+		}
+		else if (this.battleOptionSettings.auto == 2)
+		{
 			this.autoButtonSprite.spriteName = this.autoButtonOffSpriteName;
+			this.battleOptionSettings.auto = 0;
 			this.autoButtonLoopSprite.enabled = false;
 			this.autoButtonLoopTweenRotation.enabled = false;
 		}
@@ -125,7 +139,7 @@ public class BattleNextBattleOption : MonoBehaviour
 			PlayerPrefs.SetInt("Battle2xSpeedPlay", optionSettings.speed);
 			flag = true;
 		}
-		if (optionSettings.auto != PlayerPrefs.GetInt("BattleAutoPlay", 0) && BattleNextBattleOption.BattleOption.IsValid(optionSettings.auto))
+		if (optionSettings.auto != PlayerPrefs.GetInt("BattleAutoPlay", 0) && (optionSettings.auto == 0 || optionSettings.auto == 1 || optionSettings.auto == 2))
 		{
 			PlayerPrefs.SetInt("BattleAutoPlay", optionSettings.auto);
 			flag = true;
@@ -139,12 +153,12 @@ public class BattleNextBattleOption : MonoBehaviour
 	public static void ClearBattleMenuSettings()
 	{
 		bool flag = false;
-		if (PlayerPrefs.GetInt("Battle2xSpeedPlay", 0) == 1)
+		if (PlayerPrefs.GetInt("BattleAuto", 0) == 1 && PlayerPrefs.GetInt("Battle2xSpeedPlay", 0) == 1)
 		{
 			PlayerPrefs.SetInt("Battle2xSpeedPlay", 0);
 			flag = true;
 		}
-		if (PlayerPrefs.GetInt("BattleAutoPlay", 0) == 1)
+		if (PlayerPrefs.GetInt("BattleAuto", 0) == 1 && PlayerPrefs.GetInt("BattleAutoPlay", 0) != 0)
 		{
 			PlayerPrefs.SetInt("BattleAutoPlay", 0);
 			flag = true;

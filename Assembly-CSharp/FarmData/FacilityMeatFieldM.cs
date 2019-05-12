@@ -12,7 +12,5 @@ namespace FarmData
 		public string perMeatTime;
 
 		public string maxMeatNum;
-
-		public string deleteFlg;
 	}
 }

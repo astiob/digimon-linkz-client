@@ -2,7 +2,7 @@
 
 public enum LeaderSkillType
 {
-	HpFollowingDamageUp,
+	HpFollowingDamageUp = 1,
 	HpFollowingAttackUp,
 	HpFollowingDefenceUp,
 	HpFollowingSpecialAttackUp,

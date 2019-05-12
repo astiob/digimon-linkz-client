@@ -4,17 +4,20 @@ using UnityEngine;
 [AddComponentMenu("GUI/BillBoardController")]
 public class BillBoardController : MonoBehaviour
 {
-	[SerializeField]
 	[Header("必要ならカメラ設定")]
+	[SerializeField]
 	private Camera cam;
 
-	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]
 	[SerializeField]
+	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]
 	private BillBoardController.AXIS_TYPE type = BillBoardController.AXIS_TYPE.Y;
 
-	[Header("オフセット回転量 (0 90 -90 180 など)")]
 	[SerializeField]
+	[Header("オフセット回転量 (0 90 -90 180 など)")]
 	private float offset;
+
+	[SerializeField]
+	private bool useLateUpdate = true;
 
 	public void SetUp(Camera c)
 	{
@@ -23,7 +26,18 @@ public class BillBoardController : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		this.UpdateBillBoard();
+		if (this.useLateUpdate)
+		{
+			this.UpdateBillBoard();
+		}
+	}
+
+	private void OnWillRenderObject()
+	{
+		if (!this.useLateUpdate)
+		{
+			this.UpdateBillBoard();
+		}
 	}
 
 	private void UpdateBillBoard()

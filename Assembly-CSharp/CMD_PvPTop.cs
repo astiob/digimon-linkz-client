@@ -51,8 +51,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel aggregateLabel;
 
-	[Header("全国バトルボタン")]
 	[SerializeField]
+	[Header("全国バトルボタン")]
 	private GUICollider nationwideCollider;
 
 	[SerializeField]
@@ -119,32 +119,32 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel lbRewardPercentage;
 
-	[SerializeField]
 	[Header("スケジュール")]
+	[SerializeField]
 	private GameObject goTimeSchedule;
 
 	[Header("以下,○回目ラベル(昇順)")]
 	[SerializeField]
 	private UILabel[] spanTimeLabelArray = new UILabel[0];
 
-	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
 	private UILabel[] startTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの'~'ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] fromMarkLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
-	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
-	[SerializeField]
 	[Header("以下,ヘルプの画像パス(表示順)")]
+	[SerializeField]
 	private List<string> helpImagePathList = new List<string>();
 
 	[Header("以下,UIテキスト")]

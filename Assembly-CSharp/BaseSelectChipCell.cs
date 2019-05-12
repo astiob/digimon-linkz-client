@@ -4,12 +4,12 @@ using UnityEngine;
 
 public sealed class BaseSelectChipCell : MonoBehaviour
 {
-	[Header("サムネイルのテクスチャ")]
 	[SerializeField]
+	[Header("サムネイルのテクスチャ")]
 	private UITexture thumbnailTexture;
 
-	[SerializeField]
 	[Header("レア度のスプライト")]
+	[SerializeField]
 	private UISprite rareSprite;
 
 	[SerializeField]

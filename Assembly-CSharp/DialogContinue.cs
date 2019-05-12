@@ -5,8 +5,8 @@ using UnityEngine;
 
 public sealed class DialogContinue : MonoBehaviour
 {
-	[Header("特定商取引ボタン")]
 	[SerializeField]
+	[Header("特定商取引ボタン")]
 	private UIButton specificTradeButton;
 
 	[SerializeField]
@@ -17,52 +17,52 @@ public sealed class DialogContinue : MonoBehaviour
 	[SerializeField]
 	private UIButton revivalButton;
 
-	[SerializeField]
 	[Header("所持デジストーンの数")]
+	[SerializeField]
 	private UILabel digistoneNumLabel;
 
 	[Header("バックグラウンドのスキナー")]
 	[SerializeField]
 	private UIComponentSkinner backgroundSkinner;
 
-	[SerializeField]
 	[Header("コンティニューかショップ切り替えスキナー")]
+	[SerializeField]
 	private UIComponentSkinner revivalOrShowShopButtonSwitch;
 
-	[SerializeField]
 	[Header("デジストーン説明Replacer")]
+	[SerializeField]
 	private UILabel digistoneDescription;
 
-	[SerializeField]
 	[Header("特定商取引ボタンのコライダー")]
+	[SerializeField]
 	private Collider specificTradeCollider;
 
-	[SerializeField]
 	[Header("リタイアボタンのコライダー")]
+	[SerializeField]
 	private Collider retireButtonCollider;
 
-	[SerializeField]
 	[Header("復活ボタンボタンのコライダー")]
+	[SerializeField]
 	private Collider revivalButtonCollider;
 
-	[SerializeField]
 	[Header("UIOpenCloseDialog")]
+	[SerializeField]
 	public UIOpenCloseDialog openCloseDialog;
 
-	[SerializeField]
 	[Header("特定商取引法に基づく表記ローカライズ")]
+	[SerializeField]
 	private UILabel specificTradeLocalize;
 
-	[SerializeField]
 	[Header("諦めるローカライズ")]
+	[SerializeField]
 	private UILabel retireLocalize;
 
 	[SerializeField]
 	[Header("コンティニューのタイトルのローカライズ")]
 	private UILabel continueTitleLocalize;
 
-	[SerializeField]
 	[Header("復活する/ショップへ移動ローカライズ")]
+	[SerializeField]
 	private UITextReplacer revivalOrShopLocalize;
 
 	[Header("復活する/ショップへ移動ローカライズ(マルチのみ)")]
@@ -104,14 +104,7 @@ public sealed class DialogContinue : MonoBehaviour
 			@string = StringMaster.GetString("BattleUI-08");
 		}
 		this.digistoneDescription.text = string.Format(@string, needDigiStone);
-		if (battleStateData.isEnableShopMoveDigistoneZero)
-		{
-			this.revivalOrShowShopButtonSwitch.SetSkins((currentDigistone < needDigiStone) ? 1 : 0);
-		}
-		else
-		{
-			this.revivalOrShowShopButtonSwitch.SetSkins(0);
-		}
+		this.revivalOrShowShopButtonSwitch.SetSkins((currentDigistone < needDigiStone) ? 1 : 0);
 	}
 
 	public void ApplyDigiStoneNumber(int digiStoneNumber)

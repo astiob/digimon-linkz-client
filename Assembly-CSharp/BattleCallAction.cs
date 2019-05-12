@@ -1,8 +1,17 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class BattleCallAction : BattleFunctionBase
 {
+	private int setOnAutoPlay;
+
+	private bool tapAutoPlayNonFlag;
+
+	private bool autoCoroutinePlay;
+
+	private bool initFlag;
+
 	public void SetAttack()
 	{
 		this.SetSkillInternal(0, true);
@@ -48,17 +57,10 @@ public class BattleCallAction : BattleFunctionBase
 
 	private void ShowHideSkillDescriptionInternal(int index = -1)
 	{
-		base.battleStateData.isShowSkillDescription = false;
-		for (int i = 0; i < base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex].skillStatus.Length - 1; i++)
+		for (int i = 0; i < base.stateManager.uiControl.GetSkillButtonLength(); i++)
 		{
-			base.stateManager.uiControl.ApplySkillDescriptionEnable(i, false);
+			base.stateManager.uiControl.ApplySkillDescriptionEnable(i, index == i);
 		}
-		if (index < 0)
-		{
-			return;
-		}
-		base.battleStateData.isShowSkillDescription = true;
-		base.stateManager.uiControl.ApplySkillDescriptionEnable(index, true);
 	}
 
 	private void OnSkillTrigger()
@@ -119,10 +121,56 @@ public class BattleCallAction : BattleFunctionBase
 
 	public void OnAutoPlay()
 	{
-		base.hierarchyData.onAutoPlay = !base.hierarchyData.onAutoPlay;
-		base.stateManager.uiControl.ApplyAutoPlay(base.hierarchyData.onAutoPlay);
-		base.stateManager.sleep.SetSleepOff(base.hierarchyData.onAutoPlay);
+		if (!this.initFlag)
+		{
+			this.setOnAutoPlay = base.hierarchyData.onAutoPlay;
+			this.initFlag = true;
+		}
+		if (this.setOnAutoPlay == 0)
+		{
+			this.tapAutoPlayNonFlag = true;
+		}
+		else
+		{
+			this.tapAutoPlayNonFlag = false;
+		}
+		this.setOnAutoPlay++;
+		if (this.setOnAutoPlay > 2)
+		{
+			this.setOnAutoPlay = 0;
+		}
+		base.stateManager.uiControl.ApplyAutoPlay(this.setOnAutoPlay);
 		SoundPlayer.PlayButtonSelect();
+		if (this.tapAutoPlayNonFlag)
+		{
+			base.StartCoroutine(this.OnAutoPlayWait());
+			if (this.autoCoroutinePlay)
+			{
+				base.StopCoroutine(this.OnAutoPlayWait());
+				this.autoCoroutinePlay = false;
+				base.hierarchyData.onAutoPlay = this.setOnAutoPlay;
+				bool sleepOff = base.hierarchyData.onAutoPlay > 0;
+				base.stateManager.sleep.SetSleepOff(sleepOff);
+			}
+		}
+		else if (!this.autoCoroutinePlay)
+		{
+			base.hierarchyData.onAutoPlay = this.setOnAutoPlay;
+			bool sleepOff2 = base.hierarchyData.onAutoPlay > 0;
+			base.stateManager.sleep.SetSleepOff(sleepOff2);
+		}
+	}
+
+	private IEnumerator OnAutoPlayWait()
+	{
+		yield return null;
+		this.autoCoroutinePlay = true;
+		yield return new WaitForSeconds(0.5f);
+		base.hierarchyData.onAutoPlay = this.setOnAutoPlay;
+		bool sleep = base.hierarchyData.onAutoPlay > 0;
+		base.stateManager.sleep.SetSleepOff(sleep);
+		this.autoCoroutinePlay = false;
+		yield break;
 	}
 
 	public void OnShowMenu()

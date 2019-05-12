@@ -143,7 +143,7 @@ public class HitIcon : MonoBehaviour
 					text = this.GetWeakName(onWeak);
 					index = this.GetWeakFontType(onWeak);
 				}
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.AttackUp:
 			case AffectEffect.AttackDown:
 			case AffectEffect.DefenceUp:
@@ -177,12 +177,12 @@ public class HitIcon : MonoBehaviour
 			case AffectEffect.TurnEvasion:
 			case AffectEffect.CountEvasion:
 				text2 = HitIcon.dictionary[affect];
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.HpRevival:
 				text3 = HitIcon.dictionary[affect];
 				text4 = onDamage.ToString();
 				index = HitIcon.FontType.Drain;
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.Counter:
 			case AffectEffect.Reflection:
 				if (isRecoil)
@@ -191,7 +191,7 @@ public class HitIcon : MonoBehaviour
 				}
 				text3 = HitIcon.dictionary[affect];
 				index = HitIcon.FontType.Crithical;
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.Paralysis:
 			case AffectEffect.Sleep:
 			case AffectEffect.SkillLock:
@@ -199,7 +199,7 @@ public class HitIcon : MonoBehaviour
 			case AffectEffect.Confusion:
 			case AffectEffect.Stun:
 				text2 = HitIcon.dictionary[affect];
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.Poison:
 				if (onDamage > 0)
 				{
@@ -213,7 +213,7 @@ public class HitIcon : MonoBehaviour
 				{
 					text2 = HitIcon.dictionary[affect];
 				}
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.Regenerate:
 				if (onDamage > 0)
 				{
@@ -227,14 +227,17 @@ public class HitIcon : MonoBehaviour
 				{
 					text2 = HitIcon.dictionary[affect];
 				}
-				goto IL_2C2;
+				goto IL_2D7;
 			case AffectEffect.ReferenceTargetHpRate:
 				text4 = onDamage.ToString();
-				goto IL_2C2;
+				goto IL_2D7;
+			case AffectEffect.HpBorderlineDamage:
+				text4 = onDamage.ToString();
+				goto IL_2D7;
 			}
 			NGUITools.SetActiveSelf(base.gameObject, false);
 		}
-		IL_2C2:
+		IL_2D7:
 		HitIcon.Data data = (!flag) ? this.standard : this.gimmick;
 		this.standard.gameObject.SetActive(!flag);
 		this.gimmick.gameObject.SetActive(flag);

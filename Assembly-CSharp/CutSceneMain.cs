@@ -28,6 +28,8 @@ public class CutSceneMain : MonoBehaviour
 
 	private static JogressController csJogressScene;
 
+	private static VersionUPController csVUPController;
+
 	private static GashaController csGachaScene;
 
 	private static InharitanceController csInharitanceScene;
@@ -108,6 +110,22 @@ public class CutSceneMain : MonoBehaviour
 		string text = CutSceneMain.cs_path_bk;
 		switch (text)
 		{
+		case "Cutscenes/VersionUp":
+		{
+			CutSceneMain.csVUPController = CutSceneMain.goCutScene.GetComponent<VersionUPController>();
+			CutSceneMain.csVUPController.EndCallBack = CutSceneMain.cs_endSceneCallBack;
+			int[] array = new int[]
+			{
+				CutSceneMain.cs_umidList_bk0[0],
+				CutSceneMain.cs_umidList_bk0[1]
+			};
+			CutSceneMain.csVUPController.target = array;
+			monsterGroupId = CutSceneMain.cs_umidList_bk0[0].ToString();
+			CutSceneMain.csVUPController.monsterLevelClass1 = int.Parse(MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterGroupId).growStep);
+			monsterGroupId = CutSceneMain.cs_umidList_bk0[1].ToString();
+			CutSceneMain.csVUPController.monsterLevelClass2 = int.Parse(MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterGroupId).growStep);
+			break;
+		}
 		case "Cutscenes/EvolutionUltimate":
 		{
 			CutSceneMain.csEvoUltimateScene = CutSceneMain.goCutScene.GetComponent<EvolutionUltimateController>();
@@ -275,6 +293,7 @@ public class CutSceneMain : MonoBehaviour
 		if (CutSceneMain.cs_startSceneCallBack != null)
 		{
 			CutSceneMain.cs_startSceneCallBack(0);
+			GUIMain.AdjustBarrierZ();
 		}
 		if (CutSceneMain.cs_path_bk == "Cutscenes/dummy_scene")
 		{

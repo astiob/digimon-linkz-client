@@ -8,6 +8,9 @@ public class PicturebookDetailStatus : MonoBehaviour
 	private UILabel monsterNameLabel;
 
 	[SerializeField]
+	private UILabel specificTypeName;
+
+	[SerializeField]
 	private UILabel gradeLabel;
 
 	[SerializeField]
@@ -22,32 +25,33 @@ public class PicturebookDetailStatus : MonoBehaviour
 	[SerializeField]
 	private List<UILabel> skillDescriptionLabelList;
 
-	public void Initialize(string CharaName, string Grade, string Tribe, string Description, List<string> SkillNameList, List<string> SkillDescriptionList)
+	public void Initialize(string charaName, string grade, string tribe, string specificTypeName, string description, List<string> skillNameList, List<string> skillDescriptionList)
 	{
-		this.monsterNameLabel.text = CharaName;
-		this.gradeLabel.text = Grade;
-		this.tribeLabel.text = Tribe;
-		this.monsterDescriptionLabel.text = Description;
+		this.monsterNameLabel.text = charaName;
+		this.specificTypeName.text = specificTypeName;
+		this.gradeLabel.text = grade;
+		this.tribeLabel.text = tribe;
+		this.monsterDescriptionLabel.text = description;
 		for (int i = 0; i < this.skillNameLabelList.Count; i++)
 		{
-			if (i < SkillNameList.Count)
+			if (i < skillNameList.Count)
 			{
-				this.skillNameLabelList[i].text = SkillNameList[i];
+				this.skillNameLabelList[i].text = skillNameList[i];
 			}
 			else
 			{
-				this.skillNameLabelList[i].text = SkillNameList[0];
+				this.skillNameLabelList[i].text = skillNameList[0];
 			}
 		}
 		for (int j = 0; j < this.skillDescriptionLabelList.Count; j++)
 		{
-			if (j < SkillNameList.Count)
+			if (j < skillNameList.Count)
 			{
-				this.skillDescriptionLabelList[j].text = SkillDescriptionList[j];
+				this.skillDescriptionLabelList[j].text = skillDescriptionList[j];
 			}
 			else
 			{
-				this.skillDescriptionLabelList[j].text = SkillDescriptionList[0];
+				this.skillDescriptionLabelList[j].text = skillDescriptionList[0];
 			}
 		}
 		base.transform.gameObject.SetActive(true);

@@ -5,19 +5,15 @@ using UnityEngine;
 
 public sealed class EmotionSenderMulti : MonoBehaviour
 {
-	[Header("受信用の各々のエモーションアイコンのスプライト")]
+	[Header("受信用の各々のエモーションアイコンのスプライト(UIAtlasSkinnerを使わない方)")]
 	[SerializeField]
-	private UIAtlasSkinner[] iconSprites;
-
-	[SerializeField]
-	[Header("受信用の各々のエモーションアイコンのスプライト(PvP用)")]
 	private UISprite[] emotionSprites;
 
 	[NonSerialized]
 	public List<GameObject> iconSpriteParents = new List<GameObject>();
 
-	[Header("送信用アイコンたちが載ってる親")]
 	[SerializeField]
+	[Header("送信用アイコンたちが載ってる親")]
 	private GameObject dialog;
 
 	[SerializeField]
@@ -29,30 +25,31 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 
 	private Action<UIButton> sendEmotionButtonAction;
 
-	private void Initilaize()
+	private void Awake()
 	{
-		if (this.iconSpriteParents.Count == 0)
+		if (this.emotionSprites != null && 0 < this.emotionSprites.Length)
 		{
-			if (this.iconSprites != null && 0 < this.iconSprites.Length)
+			for (int i = 0; i < this.emotionSprites.Length; i++)
 			{
-				for (int i = 0; i < this.iconSprites.Length; i++)
+				if (this.emotionSprites[i])
 				{
-					GameObject spriteParentObject = this.GetSpriteParentObject(this.iconSprites[i].transform);
-					if (null != spriteParentObject)
-					{
-						this.iconSpriteParents.Add(spriteParentObject);
-					}
+					this.emotionSprites[i].gameObject.SetActive(false);
 				}
 			}
-			else if (this.emotionSprites != null && 0 < this.emotionSprites.Length)
+		}
+		NGUITools.SetActiveSelf(this.dialog, false);
+	}
+
+	private void Initilaize()
+	{
+		if (this.iconSpriteParents.Count == 0 && this.emotionSprites != null && 0 < this.emotionSprites.Length)
+		{
+			for (int i = 0; i < this.emotionSprites.Length; i++)
 			{
-				for (int j = 0; j < this.emotionSprites.Length; j++)
+				GameObject spriteParentObject = this.GetSpriteParentObject(this.emotionSprites[i].transform);
+				if (null != spriteParentObject)
 				{
-					GameObject spriteParentObject2 = this.GetSpriteParentObject(this.emotionSprites[j].transform);
-					if (null != spriteParentObject2)
-					{
-						this.iconSpriteParents.Add(spriteParentObject2);
-					}
+					this.iconSpriteParents.Add(spriteParentObject);
 				}
 			}
 		}
@@ -95,12 +92,9 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 		}
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], false);
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], true);
-		UISprite uisprite = this.iconSpriteParents[index].GetComponentInChildren<UISprite>();
-		if (null == uisprite)
-		{
-			uisprite = this.iconSprites[index].GetComponent<UISprite>();
-		}
-		uisprite.spriteName = component.spriteName;
+		UISprite componentInChildren = this.iconSpriteParents[index].GetComponentInChildren<UISprite>();
+		componentInChildren.gameObject.SetActive(true);
+		componentInChildren.spriteName = component.spriteName;
 		if (isOther)
 		{
 			SoundPlayer.PlayBattlePopupOtherEmotionSE();
@@ -114,7 +108,9 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 	{
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], false);
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], true);
+		this.emotionSprites[index].gameObject.SetActive(true);
 		UISprite uisprite = this.emotionSprites[index];
+		uisprite.gameObject.SetActive(true);
 		uisprite.spriteName = spriteName;
 		if (isOther)
 		{

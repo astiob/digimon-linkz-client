@@ -32,12 +32,12 @@ public class CameraSwitcher : MonoBehaviour
 
 	private Camera highCamera;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	private GameObject obj_cam;
 
-	[Header("サブカメラ")]
 	[SerializeField]
+	[Header("サブカメラ")]
 	private GameObject obj_cam2;
 
 	[SerializeField]

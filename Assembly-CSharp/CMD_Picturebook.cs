@@ -138,13 +138,27 @@ public class CMD_Picturebook : CMD
 			if (monsterM[i].GetArousal() == 0)
 			{
 				GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterM[i].monsterGroupId);
-				if ("0" != monsterGroupMasterByMonsterGroupId.monsterCollectionId)
+				if ("0" != monsterGroupMasterByMonsterGroupId.monsterCollectionId && !this.ExistCollectionId(monsterGroupMasterByMonsterGroupId.monsterCollectionId))
 				{
 					this.collectionIconMonsterDataList.Add(this.GetCollectionMonsterIconData(monsterGroupMasterByMonsterGroupId, monsterM[i]));
 				}
 			}
 		}
 		this.collectionIconMonsterDataList.Sort(new Comparison<MonsterData>(CMD_Picturebook.CompareByCollectionId));
+	}
+
+	private bool ExistCollectionId(string collectionId)
+	{
+		bool result = false;
+		for (int i = 0; i < this.collectionIconMonsterDataList.Count; i++)
+		{
+			if (collectionId == this.collectionIconMonsterDataList[i].monsterMG.monsterCollectionId)
+			{
+				result = true;
+				break;
+			}
+		}
+		return result;
 	}
 
 	private static int CompareByCollectionId(MonsterData dataA, MonsterData dataB)

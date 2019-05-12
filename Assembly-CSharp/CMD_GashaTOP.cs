@@ -486,6 +486,7 @@ public class CMD_GashaTOP : CMD
 			}
 			this.ShowAllData(this.activeListPartsIDX);
 			this.ShowCampaign(this.activeListPartsIDX);
+			this.ShowPlayCount(this.activeListPartsIDX);
 			this.rareParts.SetActive(true);
 			if (gashaInfo.IsRare() || gashaInfo.IsLink())
 			{
@@ -587,6 +588,7 @@ public class CMD_GashaTOP : CMD
 		{
 			num3 = int.Parse(result.priceDiscount10);
 		}
+		int num4 = int.Parse(result.totalPlayLimitCount) - int.Parse(result.totalPlayCount);
 		string str = string.Empty;
 		if (result.IsRare() || result.IsRareChip() || result.IsRareTicket())
 		{
@@ -652,6 +654,19 @@ public class CMD_GashaTOP : CMD
 				this.colBTN_TEN.activeCollider = true;
 			}
 		}
+		if (result != null && int.Parse(result.totalPlayLimitCount) > 0)
+		{
+			if (num4 < 1)
+			{
+				this.ngBTN_SINGLE.spriteName = "Common02_Btn_Gray";
+				this.colBTN_SINGLE.activeCollider = false;
+			}
+			if (num4 < 10)
+			{
+				this.ngBTN_TEN.spriteName = "Common02_Btn_Gray";
+				this.colBTN_TEN.activeCollider = false;
+			}
+		}
 	}
 
 	private void ShowCampaign(int idx)
@@ -660,6 +675,8 @@ public class CMD_GashaTOP : CMD
 		{
 			this.goCAMPAIGN_1.SetActive(false);
 			this.goCAMPAIGN_10.SetActive(false);
+			this.lbCAMPAIGN_1.text = string.Empty;
+			this.lbCAMPAIGN_10.text = string.Empty;
 			return;
 		}
 		bool flag = false;
@@ -726,6 +743,7 @@ public class CMD_GashaTOP : CMD
 		if (string.IsNullOrEmpty(result.appealText1) || result.appealText1 == "null")
 		{
 			this.goCAMPAIGN_1.SetActive(false);
+			this.lbCAMPAIGN_1.text = string.Empty;
 		}
 		else
 		{
@@ -735,11 +753,41 @@ public class CMD_GashaTOP : CMD
 		if (string.IsNullOrEmpty(result.appealText10) || result.appealText10 == "null")
 		{
 			this.goCAMPAIGN_10.SetActive(false);
+			this.lbCAMPAIGN_10.text = string.Empty;
 		}
 		else
 		{
 			this.goCAMPAIGN_10.SetActive(true);
 			this.lbCAMPAIGN_10.text = result.appealText10;
+		}
+	}
+
+	private void ShowPlayCount(int idx)
+	{
+		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[idx];
+		int num = int.Parse(result.totalPlayLimitCount);
+		int num2 = num - int.Parse(result.totalPlayCount);
+		if (num2 < 0)
+		{
+			num2 = 0;
+		}
+		if (num > 0)
+		{
+			this.goCAMPAIGN_1.SetActive(true);
+			this.goCAMPAIGN_10.SetActive(true);
+			string @string = StringMaster.GetString("RemainingPlayCount");
+			string text = string.Format(@string, num2 / 1);
+			if (this.lbCAMPAIGN_1.text.Length > 0)
+			{
+				text = text + "\n" + this.lbCAMPAIGN_1.text;
+			}
+			this.lbCAMPAIGN_1.text = text;
+			text = string.Format(@string, num2 / 10);
+			if (this.lbCAMPAIGN_10.text.Length > 0)
+			{
+				text = text + "\n" + this.lbCAMPAIGN_10.text;
+			}
+			this.lbCAMPAIGN_10.text = text;
 		}
 	}
 
@@ -840,6 +888,7 @@ public class CMD_GashaTOP : CMD
 		{
 			this.ShowCampaign(this.activeListPartsIDX);
 		}
+		this.ShowPlayCount(this.activeListPartsIDX);
 		this.ShowPointData();
 	}
 
@@ -1101,6 +1150,53 @@ public class CMD_GashaTOP : CMD
 		GUIFaceIndicator.instance.gameObject.SetActive(value);
 	}
 
+	public static void updateTotalPlayCount(int gachaId, int playCount)
+	{
+		if (CMD_GashaTOP.instance != null && CMD_GashaTOP.instance.gashaList != null)
+		{
+			foreach (GameWebAPI.RespDataGA_GetGachaInfo.Result result in CMD_GashaTOP.instance.gashaList)
+			{
+				if (int.Parse(result.gachaId) == gachaId)
+				{
+					if (result.totalPlayLimitCount == "0")
+					{
+						break;
+					}
+					result.totalPlayCount = (int.Parse(result.totalPlayCount) + playCount).ToString();
+					break;
+				}
+			}
+		}
+	}
+
+	public static void removeExceededGasha()
+	{
+		if (CMD_GashaTOP.instance != null && CMD_GashaTOP.instance.gashaList != null)
+		{
+			bool flag = false;
+			for (int i = CMD_GashaTOP.instance.gashaList.Count - 1; i >= 0; i--)
+			{
+				GameWebAPI.RespDataGA_GetGachaInfo.Result result = CMD_GashaTOP.instance.gashaList[i];
+				if (int.Parse(result.totalPlayLimitCount) > 0 && int.Parse(result.totalPlayLimitCount) <= int.Parse(result.totalPlayCount))
+				{
+					CMD_GashaTOP.instance.activeListPartsIDX = ((CMD_GashaTOP.instance.activeListPartsIDX != i) ? CMD_GashaTOP.instance.activeListPartsIDX : 0);
+					CMD_GashaTOP.instance.gashaList.RemoveAt(i);
+					flag = true;
+				}
+			}
+			if (flag)
+			{
+				CMD_GashaTOP.instance.goListPartsGashaMain_0.SetActive(true);
+				CMD_GashaTOP.instance.csSelectPanelGashaMain.AllBuild(CMD_GashaTOP.instance.gashaList);
+				CMD_GashaTOP.instance.goListPartsGashaMain_0.SetActive(false);
+				if (CMD_GashaTOP.instance.csSelectPanelGashaMain.SetCellAnim(CMD_GashaTOP.instance.activeListPartsIDX))
+				{
+					CMD_GashaTOP.instance.ChangeSelection(CMD_GashaTOP.instance.activeListPartsIDX);
+				}
+			}
+		}
+	}
+
 	private IEnumerator ExecChipAPI()
 	{
 		GameWebAPI.RequestGA_ChipExec request = new GameWebAPI.RequestGA_ChipExec
@@ -1115,12 +1211,13 @@ public class CMD_GashaTOP : CMD
 				this.chipResult = response;
 				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> userChipList = this.GetUserChipList(this.chipResult.userAssetList);
 				ChipDataMng.AddUserChipDataList(userChipList);
+				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
 			}
 		};
 		yield return AppCoroutine.Start(request.RunOneTime(new Action(this.EndExecChipSuccess), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(true);
+			GUIManager.CloseAllCommonDialog(null);
 		}, null), false);
 		yield break;
 	}
@@ -1228,6 +1325,7 @@ public class CMD_GashaTOP : CMD
 			{
 				this.gachaResult = response;
 				DataMng.Instance().AddUserMonsterList(response.userMonsterList);
+				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
 			}
 		};
 		yield return AppCoroutine.Start(request.RunOneTime(delegate()
@@ -1236,7 +1334,7 @@ public class CMD_GashaTOP : CMD
 		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(true);
+			GUIManager.CloseAllCommonDialog(null);
 		}, null), false);
 		yield break;
 	}
@@ -1381,12 +1479,13 @@ public class CMD_GashaTOP : CMD
 			OnReceived = delegate(GameWebAPI.RespDataGA_ExecTicket response)
 			{
 				this.ticketResult = response;
+				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
 			}
 		};
 		yield return AppCoroutine.Start(request.RunOneTime(new Action(this.EndExecTicketSuccess), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-			this.ClosePanel(true);
+			GUIManager.CloseAllCommonDialog(null);
 		}, null), false);
 		yield break;
 	}

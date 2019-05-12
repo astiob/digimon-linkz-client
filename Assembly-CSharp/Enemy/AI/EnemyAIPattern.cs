@@ -13,17 +13,22 @@ namespace Enemy.AI
 		[SerializeField]
 		private List<AIActionPattern> _aiActionPattern = new List<AIActionPattern>();
 
-		public EnemyAIPattern(AICycle aiCycle, params AIActionPattern[] aiActionPattern)
-		{
-			this._aiCycle = aiCycle;
-			this._aiActionPattern = new List<AIActionPattern>(aiActionPattern);
-			this.NormalizeAIPattern();
-		}
-
 		public EnemyAIPattern()
 		{
 			this._aiActionPattern = new List<AIActionPattern>();
 			this._aiActionPattern.Add(new AIActionPattern());
+		}
+
+		public EnemyAIPattern(AICycle aiCycle, params AIActionPattern[] aiActionPattern)
+		{
+			this._aiCycle = aiCycle;
+			this._aiActionPattern = new List<AIActionPattern>(aiActionPattern);
+			float minRange = 0f;
+			for (int i = 0; i < this._aiActionPattern.Count; i++)
+			{
+				this._aiActionPattern[i] = new AIActionPattern(minRange, this._aiActionPattern[i].maxRange, this._aiActionPattern[i].aiActionClip.ToArray());
+				minRange = this._aiActionPattern[i].maxRange;
+			}
 		}
 
 		public AICycle aiCycle
@@ -82,16 +87,6 @@ namespace Enemy.AI
 				}
 			}
 			return this.aiActionPattern[this.aiActionPattern.Count - 1];
-		}
-
-		private void NormalizeAIPattern()
-		{
-			float minRange = 0f;
-			for (int i = 0; i < this._aiActionPattern.Count; i++)
-			{
-				this._aiActionPattern[i] = new AIActionPattern(minRange, this._aiActionPattern[i].maxRange, this._aiActionPattern[i].aiActionClip.ToArray());
-				minRange = this._aiActionPattern[i].maxRange;
-			}
 		}
 
 		public override string ToString()

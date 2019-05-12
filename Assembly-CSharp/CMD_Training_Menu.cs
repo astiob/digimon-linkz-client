@@ -30,9 +30,15 @@ public class CMD_Training_Menu : CMD
 	[SerializeField]
 	private Color colTitle;
 
-	[Header("非アクティブ 【】 色")]
 	[SerializeField]
+	[Header("非アクティブ 【】 色")]
 	private Color colLR;
+
+	[SerializeField]
+	private UISprite spChipList;
+
+	[SerializeField]
+	private UILabel lbChipList;
 
 	public static CMD_Training_Menu instance;
 
@@ -90,6 +96,7 @@ public class CMD_Training_Menu : CMD
 		this.csSelectPanel.initLocation = true;
 		this.csSelectPanel.AllBuild(this.TrainingMenuPartsDataL.Count, true, 1f, 1f, null, null);
 		this.ShowDatas();
+		this.OnClickedChipList(this.spChipList, this.lbChipList);
 	}
 
 	private void MakeData()
@@ -285,25 +292,10 @@ public class CMD_Training_Menu : CMD
 						}
 					};
 					break;
-				case "ChipListTitle":
-					if (chipFactoryCT <= 0)
-					{
-						partsData.col = this.colBase;
-						partsData.labelCol = this.colTitle;
-						partsData.LRCol = this.colLR;
-					}
+				case "VersionUpTitle":
 					partsData.actCallBack = delegate()
 					{
-						if (chipFactoryCT > 0)
-						{
-							CMD_ChipAdministration.Create(null);
-						}
-						else
-						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
-							cmd_ModalMessage.Title = StringMaster.GetString("ChipFactoryMissingAlertTitle");
-							cmd_ModalMessage.Info = StringMaster.GetString("ChipFactoryMissingAlertInfo-3");
-						}
+						GUIMain.ShowCommonDialog(null, "CMD_VersionUP");
 					};
 					break;
 				}
@@ -351,6 +343,36 @@ public class CMD_Training_Menu : CMD
 		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(facilityID, -1);
 		int count = stockFacilityListByfacilityIdAndLevel.Count;
 		return facilityCount + count;
+	}
+
+	private void OnClickedChipList()
+	{
+		int facilityCount = this.GetFacilityCount(25);
+		if (facilityCount > 0)
+		{
+			CMD_ChipAdministration.Create(null);
+		}
+		else
+		{
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage.Title = StringMaster.GetString("ChipFactoryMissingAlertTitle");
+			cmd_ModalMessage.Info = StringMaster.GetString("ChipFactoryMissingAlertInfo-3");
+		}
+	}
+
+	private void OnClickedChipList(UISprite sp, UILabel lb)
+	{
+		int facilityCount = this.GetFacilityCount(25);
+		if (facilityCount > 0)
+		{
+			sp.color = new Color(1f, 1f, 1f, 1f);
+			lb.color = new Color(1f, 1f, 1f, 1f);
+		}
+		else
+		{
+			sp.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+			lb.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+		}
 	}
 
 	protected override void WindowOpened()

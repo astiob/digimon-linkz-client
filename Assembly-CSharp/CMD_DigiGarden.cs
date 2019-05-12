@@ -306,14 +306,7 @@ public class CMD_DigiGarden : CMD
 			};
 			requestMN_MonsterHatching.OnReceived = delegate(GameWebAPI.RespDataMN_BornExec response)
 			{
-				if (response.userMonsterList != null)
-				{
-					DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-				}
-				if (response.userMonster != null)
-				{
-					DataMng.Instance().SetUserMonster(response.userMonster);
-				}
+				DataMng.Instance().SetUserMonster(response.userMonster);
 			};
 			GameWebAPI.RequestMN_MonsterHatching request = requestMN_MonsterHatching;
 			base.StartCoroutine(request.Run(new Action(this.EndBornSuccess), new Action<Exception>(this.EndBornFailed), null));
@@ -472,14 +465,7 @@ public class CMD_DigiGarden : CMD
 		};
 		requestMN_MonsterEvolutionInGarden.OnReceived = delegate(GameWebAPI.RespDataMN_GrowExec response)
 		{
-			if (response.userMonsterList != null)
-			{
-				DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-			}
-			if (response.userMonster != null)
-			{
-				DataMng.Instance().SetUserMonster(response.userMonster);
-			}
+			DataMng.Instance().SetUserMonster(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MonsterEvolutionInGarden request = requestMN_MonsterEvolutionInGarden;
 		base.StartCoroutine(request.Run(new Action(this.EndGrowSuccess), new Action<Exception>(this.EndGrowFailed), null));

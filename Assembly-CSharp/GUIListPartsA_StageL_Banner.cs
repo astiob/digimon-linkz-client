@@ -7,16 +7,16 @@ using UnityEngine;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWのGameObject")]
+	[SerializeField]
 	private GameObject goNEW;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
-	[Header("選択時の背景色")]
 	[SerializeField]
+	[Header("選択時の背景色")]
 	private Color selectedBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -31,8 +31,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
 	[Header("背景のスプライト")]
@@ -51,8 +51,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color openBannerCol;
 
-	[Header("クローズの時の色")]
 	[SerializeField]
+	[Header("クローズの時の色")]
 	private Color closeBannerCol;
 
 	[SerializeField]
@@ -63,8 +63,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("クリアのマークの画像")]
 	[SerializeField]
+	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
 	[SerializeField]

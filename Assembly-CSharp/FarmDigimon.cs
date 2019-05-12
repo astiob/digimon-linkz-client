@@ -255,6 +255,7 @@ public sealed class FarmDigimon : MonoBehaviour
 	private void Update()
 	{
 		this.UpdateOutline();
+		this.SetUpBillBoard();
 	}
 
 	public void StartAction()
@@ -332,7 +333,6 @@ public sealed class FarmDigimon : MonoBehaviour
 		this.actionSubEnumerator = null;
 		this.actionSubCoroutine = null;
 		this.actionState = ((!this.digimon.activeSelf) ? FarmDigimon.ActionState.NONE : FarmDigimon.ActionState.THINKING);
-		this.SetUpBillBoard();
 		yield break;
 	}
 
@@ -642,7 +642,10 @@ public sealed class FarmDigimon : MonoBehaviour
 		if (this.digimon != null && this.farmCamera != null && base.gameObject.activeSelf && !this.isSetUpBillBoard)
 		{
 			CharacterParams component = this.digimon.GetComponent<CharacterParams>();
+			bool activeSelf = component.gameObject.activeSelf;
+			component.gameObject.SetActive(true);
 			component.SetBillBoardCamera(this.farmCamera);
+			component.gameObject.SetActive(activeSelf);
 			this.isSetUpBillBoard = true;
 		}
 	}

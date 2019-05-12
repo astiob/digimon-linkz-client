@@ -7,13 +7,17 @@ using UnityEngine;
 
 public sealed class CMD_Mission : CMD
 {
-	[Header("ミッションリストのタッチ領域")]
 	[SerializeField]
+	[Header("ミッションリストのタッチ領域")]
 	private GUISelectPanelMission missionList;
 
-	[Header("ミッション選択のタッチ領域")]
 	[SerializeField]
+	[Header("ミッション選択のタッチ領域")]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
+
+	[Header("ミッションの段階終了時カットイン演出コントローラ")]
+	[SerializeField]
+	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
 	private GameObject missionListOriginalItem;
@@ -23,6 +27,7 @@ public sealed class CMD_Mission : CMD
 	private List<CMD_Mission.MissionType> missionTypeList = new List<CMD_Mission.MissionType>
 	{
 		CMD_Mission.MissionType.Beginner,
+		CMD_Mission.MissionType.Midrange,
 		CMD_Mission.MissionType.Daily,
 		CMD_Mission.MissionType.Total
 	};
@@ -39,7 +44,7 @@ public sealed class CMD_Mission : CMD
 	{
 		for (int i = 0; i < this.missionAllList.Count; i++)
 		{
-			int num = int.Parse(this.missionAllList[i][0].missionType);
+			int num = int.Parse(this.missionAllList[i][0].displayGroup);
 			if (num == (int)CMD_Mission.nowFocusType)
 			{
 				return this.missionAllList[i][IDX];
@@ -52,7 +57,7 @@ public sealed class CMD_Mission : CMD
 	{
 		for (int i = 0; i < this.missionAllList.Count; i++)
 		{
-			int num = int.Parse(this.missionAllList[i][0].missionType);
+			int num = int.Parse(this.missionAllList[i][0].displayGroup);
 			if (type == (CMD_Mission.MissionType)num)
 			{
 				return this.missionAllList[i];
@@ -78,10 +83,19 @@ public sealed class CMD_Mission : CMD
 			case CMD_Mission.MissionType.Beginner:
 				array = ClassSingleton<MissionWebAPI>.Instance.MissionInfoLogicData.result.beginner;
 				break;
+			case CMD_Mission.MissionType.Midrange:
+				array = ClassSingleton<MissionWebAPI>.Instance.MissionInfoLogicData.result.midrange;
+				break;
 			}
 			if (array != null && array.Length > 0)
 			{
-				Array.Sort<GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission>(array);
+				int[] compNum = new int[]
+				{
+					0,
+					-1,
+					1
+				};
+				array = array.OrderBy((GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission v) => compNum[v.status]).ToArray<GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission>();
 				this.missionAllList.Add(array);
 			}
 		}
@@ -96,7 +110,7 @@ public sealed class CMD_Mission : CMD
 	{
 		for (int i = 0; i < this.missionAllList.Count; i++)
 		{
-			int num = int.Parse(this.missionAllList[i][0].missionType);
+			int num = int.Parse(this.missionAllList[i][0].displayGroup);
 			if (num == (int)type)
 			{
 				return i;
@@ -104,7 +118,7 @@ public sealed class CMD_Mission : CMD
 		}
 		if (this.missionAllList.Count > 0)
 		{
-			CMD_Mission.nowFocusType = (CMD_Mission.MissionType)int.Parse(this.missionAllList[0][0].missionType);
+			CMD_Mission.nowFocusType = (CMD_Mission.MissionType)int.Parse(this.missionAllList[0][0].displayGroup);
 			return 0;
 		}
 		return -1;
@@ -114,7 +128,7 @@ public sealed class CMD_Mission : CMD
 	{
 		for (int i = 0; i < this.missionAllList.Count; i++)
 		{
-			int num = int.Parse(this.missionAllList[i][0].missionType);
+			int num = int.Parse(this.missionAllList[i][0].displayGroup);
 			if (num == (int)type)
 			{
 				isChanged = false;
@@ -123,7 +137,7 @@ public sealed class CMD_Mission : CMD
 		}
 		if (this.missionAllList.Count > 0)
 		{
-			CMD_Mission.MissionType result = (CMD_Mission.MissionType)int.Parse(this.missionAllList[0][0].missionType);
+			CMD_Mission.MissionType result = (CMD_Mission.MissionType)int.Parse(this.missionAllList[0][0].displayGroup);
 			isChanged = true;
 			return result;
 		}
@@ -135,7 +149,7 @@ public sealed class CMD_Mission : CMD
 	{
 		for (int i = 0; i < this.missionAllList.Count; i++)
 		{
-			int num = int.Parse(this.missionAllList[i][0].missionType);
+			int num = int.Parse(this.missionAllList[i][0].displayGroup);
 			if (num == (int)type)
 			{
 				return true;
@@ -275,6 +289,10 @@ public sealed class CMD_Mission : CMD
 		{
 			result = StringMaster.GetString("MissionTitleBeginner");
 		}
+		else if (missionType == CMD_Mission.MissionType.Midrange)
+		{
+			result = StringMaster.GetString("MissionTitleMidrange");
+		}
 		else if (missionType == CMD_Mission.MissionType.Daily)
 		{
 			result = StringMaster.GetString("MissionTitleDaily");
@@ -318,6 +336,7 @@ public sealed class CMD_Mission : CMD
 		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 		GUIFace.SetFacilityShopButtonBadge();
+		PartsMenu.SetMenuButtonAlertBadge();
 		this.CloseAndFarmCamOn(animation);
 		this.missionList.FadeOutAllListParts(null, false);
 		this.missionList.SetHideScrollBarAllWays(true);
@@ -345,79 +364,97 @@ public sealed class CMD_Mission : CMD
 		base.StartCoroutine(task.Run(delegate
 		{
 			RestrictionInput.EndLoad();
-			this.OpenRewardModalMessage();
+			this.OpenRewardModalMessage(missionItem);
 		}, null, null));
 	}
 
-	private void OpenRewardModalMessage()
+	private void OpenRewardModalMessage(MissionItem missionItem)
 	{
 		GameWebAPI.RespDataMS_MissionRewardLogic.Result[] result = ClassSingleton<MissionWebAPI>.Instance.MissionRewardLogicData.result;
-		string arg = string.Empty;
 		int num = 0;
-		string arg2 = string.Empty;
+		List<string> list = new List<string>
+		{
+			StringMaster.GetString("Mission-10")
+		};
 		foreach (GameWebAPI.RespDataMS_MissionRewardLogic.Result result2 in result)
 		{
 			if (result2.viewFlg == "1")
 			{
 				int.TryParse(result2.assetCategoryId, out num);
-				arg = DataMng.Instance().GetAssetTitle(result2.assetCategoryId, result2.assetValue);
-				arg2 = result2.assetNum;
-				break;
+				string assetTitle = DataMng.Instance().GetAssetTitle(result2.assetCategoryId, result2.assetValue);
+				string assetNum = result2.assetNum;
+				list.Add(string.Format(StringMaster.GetString("SystemItemCount"), assetTitle, assetNum));
 			}
 		}
-		string info = string.Format(StringMaster.GetString("Mission-08"), arg, arg2);
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.RunReMissionInfoLogicAPI), "CMD_ModalMessage") as CMD_ModalMessage;
-		cmd_ModalMessage.Title = StringMaster.GetString("Mission-07");
-		cmd_ModalMessage.Info = info;
-	}
-
-	private void RunReMissionInfoLogicAPI(int noop)
-	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		APIRequestTask apirequestTask = ClassSingleton<MissionWebAPI>.Instance.AccessMissionInfoLogicAPI();
-		apirequestTask.Add(DataMng.Instance().RequestMyPageData(false));
-		base.StartCoroutine(apirequestTask.Run(delegate
+		string info = string.Join("\n", list.ToArray());
+		Action<int> action = delegate(int a)
 		{
-			RestrictionInput.EndLoad();
-			int count = this.missionAllList.Count;
-			this.AddAllList();
-			int count2 = this.missionAllList.Count;
-			this.csSelectPanelMissionSelect.RefreshBadge();
-			if (count2 < count)
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			APIRequestTask apirequestTask = ClassSingleton<MissionWebAPI>.Instance.AccessMissionInfoLogicAPI();
+			apirequestTask.Add(DataMng.Instance().RequestMyPageData(false));
+			this.StartCoroutine(apirequestTask.Run(delegate
 			{
-				bool flag = false;
-				CMD_Mission.MissionType missionType = this.SetValidFocusType(CMD_Mission.nowFocusType, ref flag);
-				if (missionType != CMD_Mission.MissionType.INVALID)
+				if (int.Parse(missionItem.missionCategoryId) == 191 || int.Parse(missionItem.missionCategoryId) == 192)
 				{
-					CMD_Mission.nowFocusType = missionType;
-					this.csSelectPanelMissionSelect.ResetColorCurIDX();
-					this.csSelectPanelMissionSelect.RefreshList(this.missionAllList.Count, 1, null, true);
-					int indexByNowFocusType = this.GetIndexByNowFocusType(CMD_Mission.nowFocusType);
-					this.csSelectPanelMissionSelect.FadeOutAllListParts(null, true);
-					this.csSelectPanelMissionSelect.FadeInAllListParts(null);
-					this.csSelectPanelMissionSelect.ResetAnimIDX();
-					this.csSelectPanelMissionSelect.SetCellAnimReserve(indexByNowFocusType, false);
-					this.CreateSelectPanel(CMD_Mission.nowFocusType);
+					PartsUpperCutinController.AnimeType playType = (!(missionItem.lastStepFlg == "1")) ? PartsUpperCutinController.AnimeType.StageClear : PartsUpperCutinController.AnimeType.MissionClear;
+					Loading.Invisible();
+					this.cutinController.PlayAnimator(playType, delegate
+					{
+						this.RunReMissionInfoLogicAPIHelper();
+					});
 				}
 				else
 				{
-					this.csSelectPanelMissionSelect.FadeOutAllListParts(null, true);
-					this.missionList.FadeOutAllListParts(null, true);
+					this.RunReMissionInfoLogicAPIHelper();
 				}
-				if (!this.IsValidFocusType(CMD_Mission.MissionType.Beginner))
-				{
-					this.TutorialBegginerClear();
-				}
+			}, delegate(Exception nop)
+			{
+				RestrictionInput.EndLoad();
+				this.ClosePanel(true);
+			}, null));
+		};
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(action, "CMD_ModalMessage") as CMD_ModalMessage;
+		cmd_ModalMessage.Title = StringMaster.GetString("Mission-07");
+		cmd_ModalMessage.Info = info;
+		cmd_ModalMessage.AdjustSize();
+	}
+
+	private void RunReMissionInfoLogicAPIHelper()
+	{
+		RestrictionInput.EndLoad();
+		this.AddAllList();
+		this.csSelectPanelMissionSelect.RefreshBadge();
+		bool flag = false;
+		CMD_Mission.MissionType missionType = this.SetValidFocusType(CMD_Mission.nowFocusType, ref flag);
+		if (CMD_Mission.nowFocusType != missionType)
+		{
+			if (missionType != CMD_Mission.MissionType.INVALID)
+			{
+				CMD_Mission.nowFocusType = missionType;
+				this.csSelectPanelMissionSelect.ResetColorCurIDX();
+				this.csSelectPanelMissionSelect.RefreshList(this.missionAllList.Count, 1, null, true);
+				int indexByNowFocusType = this.GetIndexByNowFocusType(CMD_Mission.nowFocusType);
+				this.csSelectPanelMissionSelect.FadeOutAllListParts(null, true);
+				this.csSelectPanelMissionSelect.FadeInAllListParts(null);
+				this.csSelectPanelMissionSelect.ResetAnimIDX();
+				this.csSelectPanelMissionSelect.SetCellAnimReserve(indexByNowFocusType, false);
+				this.SetTitle(CMD_Mission.nowFocusType);
+				this.CreateSelectPanel(CMD_Mission.nowFocusType);
 			}
 			else
 			{
-				this.CreateSelectPanel(CMD_Mission.nowFocusType);
+				this.csSelectPanelMissionSelect.FadeOutAllListParts(null, true);
+				this.missionList.FadeOutAllListParts(null, true);
 			}
-		}, delegate(Exception nop)
+			if (!this.IsValidFocusType(CMD_Mission.MissionType.Beginner))
+			{
+				this.TutorialBegginerClear();
+			}
+		}
+		else
 		{
-			RestrictionInput.EndLoad();
-			this.ClosePanel(true);
-		}, null));
+			this.CreateSelectPanel(CMD_Mission.nowFocusType);
+		}
 	}
 
 	public enum MissionType
@@ -426,6 +463,7 @@ public sealed class CMD_Mission : CMD
 		Daily = 1,
 		Total,
 		Beginner,
+		Midrange,
 		COUNT
 	}
 

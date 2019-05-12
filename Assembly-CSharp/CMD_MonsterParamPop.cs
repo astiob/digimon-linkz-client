@@ -23,6 +23,18 @@ public class CMD_MonsterParamPop : CMD
 	private MonsterLearnSkill learnSkill2;
 
 	[SerializeField]
+	private MonsterLeaderSkill ver2LeaderSkill;
+
+	[SerializeField]
+	private MonsterLearnSkill ver2LearnSkill1;
+
+	[SerializeField]
+	private MonsterLearnSkill ver2LearnSkill2;
+
+	[SerializeField]
+	private MonsterLearnSkill ver2LearnSkill3;
+
+	[SerializeField]
 	private MonsterStatusChangeValueList statusChangeValue;
 
 	[SerializeField]
@@ -32,7 +44,16 @@ public class CMD_MonsterParamPop : CMD
 	private List<GameObject> chipObjList;
 
 	[SerializeField]
-	private List<GameObject> statusObjList;
+	private GameObject statusPage;
+
+	[SerializeField]
+	private GameObject skillPage;
+
+	[SerializeField]
+	private GameObject extraSkillPage;
+
+	[SerializeField]
+	private GameObject chipPage;
 
 	[SerializeField]
 	private UILabel hpUpLabel;
@@ -54,20 +75,37 @@ public class CMD_MonsterParamPop : CMD
 
 	private int pageCnt;
 
+	private bool viewExtraSkillPage;
+
 	public void MonsterDataSet(MonsterData mData, DataMng.ExperienceInfo experienceInfo, int chipSlotNum)
 	{
+		this.viewExtraSkillPage = mData.IsVersionUp();
 		this.monsterStatusList.ClearValues();
 		this.monsterStatusList.SetValues(mData, true);
 		this.monsterBasicInfo.ClearMonsterData();
 		this.monsterBasicInfo.SetMonsterData(mData, experienceInfo);
 		this.monsterResistance.ClearValues();
 		this.monsterResistance.SetValues(mData);
-		this.leaderSkill.ClearSkill();
-		this.leaderSkill.SetSkill(mData);
-		this.learnSkill1.ClearSkill();
-		this.learnSkill1.SetSkill(mData);
-		this.learnSkill2.ClearSkill();
-		this.learnSkill2.SetSkill(mData);
+		if (this.viewExtraSkillPage)
+		{
+			this.ver2LeaderSkill.ClearSkill();
+			this.ver2LeaderSkill.SetSkill(mData);
+			this.ver2LearnSkill1.ClearSkill();
+			this.ver2LearnSkill1.SetSkill(mData);
+			this.ver2LearnSkill2.ClearSkill();
+			this.ver2LearnSkill2.SetSkill(mData);
+			this.ver2LearnSkill3.ClearSkill();
+			this.ver2LearnSkill3.SetSkill(mData);
+		}
+		else
+		{
+			this.leaderSkill.ClearSkill();
+			this.leaderSkill.SetSkill(mData);
+			this.learnSkill1.ClearSkill();
+			this.learnSkill1.SetSkill(mData);
+			this.learnSkill2.ClearSkill();
+			this.learnSkill2.SetSkill(mData);
+		}
 		this.SetMedalParameter(this.hpUpLabel, mData.userMonster.hpAbility, mData.Base_HP(int.Parse(mData.userMonster.level)));
 		this.SetMedalParameter(this.attackUpLabel, mData.userMonster.attackAbility, mData.Base_ATK(int.Parse(mData.userMonster.level)));
 		this.SetMedalParameter(this.defenseUpLabel, mData.userMonster.defenseAbility, mData.Base_DEF(int.Parse(mData.userMonster.level)));
@@ -106,15 +144,33 @@ public class CMD_MonsterParamPop : CMD
 	public void PageChange()
 	{
 		this.pageCnt++;
-		if (this.pageCnt >= this.statusObjList.Count)
+		if (this.pageCnt > 2)
 		{
 			this.pageCnt = 0;
 		}
-		for (int i = 0; i < this.statusObjList.Count; i++)
+		this.statusPage.SetActive(false);
+		this.skillPage.SetActive(false);
+		this.extraSkillPage.SetActive(false);
+		this.chipPage.SetActive(false);
+		switch (this.pageCnt)
 		{
-			this.statusObjList[i].SetActive(false);
+		case 0:
+			this.statusPage.SetActive(true);
+			break;
+		case 1:
+			if (this.viewExtraSkillPage)
+			{
+				this.extraSkillPage.SetActive(true);
+			}
+			else
+			{
+				this.skillPage.SetActive(true);
+			}
+			break;
+		case 2:
+			this.chipPage.SetActive(true);
+			break;
 		}
-		this.statusObjList[this.pageCnt].SetActive(true);
 	}
 
 	public void ClosePopup()
@@ -145,5 +201,12 @@ public class CMD_MonsterParamPop : CMD
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
+	}
+
+	private enum PageType
+	{
+		STATUS,
+		SKILL,
+		CHIP
 	}
 }

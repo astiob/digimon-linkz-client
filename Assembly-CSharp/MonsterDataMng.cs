@@ -695,8 +695,22 @@ public class MonsterDataMng : MonoBehaviour
 		case MonsterDataMng.SELECT_TYPE.HAVE_MEDALS:
 			this.monsterDataListBK = this.SelectionMedal(monsterDataList, true);
 			break;
+		case MonsterDataMng.SELECT_TYPE.ALL_VAR2:
+			for (int i = 0; i < monsterDataList.Count; i++)
+			{
+				if (monsterDataList[i].IsVersionUp())
+				{
+					this.monsterDataListBK.Add(monsterDataList[i]);
+				}
+			}
+			break;
 		}
 		return this.monsterDataListBK;
+	}
+
+	public void SetSelectMonsterDataList(List<MonsterData> mdList)
+	{
+		this.monsterDataListBK = mdList;
 	}
 
 	public int SelectMonsterDataListCount(List<MonsterData> monsterDataList, MonsterDataMng.SELECT_TYPE type = MonsterDataMng.SELECT_TYPE.ALL)
@@ -1873,6 +1887,25 @@ public class MonsterDataMng : MonoBehaviour
 		return new APIRequestTask(request, requestRetry);
 	}
 
+	public static bool ExistPicturebook(string collectionId)
+	{
+		if (MonsterDataMng.userPicturebookData == null || MonsterDataMng.userPicturebookData.userCollectionList == null || MonsterDataMng.userPicturebookData.userCollectionList.Length == 0)
+		{
+			return false;
+		}
+		GameWebAPI.RespDataMN_Picturebook.UserCollectionData[] userCollectionList = MonsterDataMng.userPicturebookData.userCollectionList;
+		bool result = false;
+		for (int i = 0; i < userCollectionList.Length; i++)
+		{
+			if (collectionId == userCollectionList[i].monsterCollectionId)
+			{
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
 	public void DispArousal(int rare_i, GameObject goArousal, UISprite spArousal)
 	{
 		if (2 <= rare_i)
@@ -1937,6 +1970,18 @@ public class MonsterDataMng : MonoBehaviour
 		return false;
 	}
 
+	public bool HasVersionUp(List<MonsterData> mdL)
+	{
+		for (int i = 0; i < mdL.Count; i++)
+		{
+			if (mdL[i].IsVersionUp())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void RefreshUserMonsterByUserMonsterList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] umL)
 	{
 		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsterList = DataMng.Instance().RespDataUS_MonsterList.userMonsterList;
@@ -1952,6 +1997,51 @@ public class MonsterDataMng : MonoBehaviour
 		}
 	}
 
+	public void SetIconGrayOut(string trainingType, GUIMonsterIcon.DIMM_LEVEL dimm, Action<MonsterData> touchAction)
+	{
+		for (int i = 0; i < this.monster_icon_list.Count; i++)
+		{
+			if (trainingType == this.monster_icon_list[i].Data.monsterMG.monsterType)
+			{
+				this.monster_icon_list[i].Data.dimmLevel = dimm;
+				this.monster_icon_list[i].DimmLevel = dimm;
+				this.monster_icon_list[i].Data.Lock = this.monster_icon_list[i].Data.userMonster.IsLocked;
+				this.monster_icon_list[i].Lock = this.monster_icon_list[i].Data.userMonster.IsLocked;
+				this.monster_icon_list[i].SetTouchAct_S(touchAction);
+			}
+		}
+	}
+
+	public void SetIconGrayOutEx(string trainingType, GUIMonsterIcon.DIMM_LEVEL dimm, Action<MonsterData> touchAction)
+	{
+		for (int i = 0; i < this.monster_icon_list.Count; i++)
+		{
+			if (trainingType == this.monster_icon_list[i].Data.monsterMG.monsterType && !this.IsDeckMonster(this.monster_icon_list[i].Data.userMonster.userMonsterId))
+			{
+				this.monster_icon_list[i].Data.dimmLevel = dimm;
+				this.monster_icon_list[i].DimmLevel = dimm;
+				this.monster_icon_list[i].Data.Lock = this.monster_icon_list[i].Data.userMonster.IsLocked;
+				this.monster_icon_list[i].Lock = this.monster_icon_list[i].Data.userMonster.IsLocked;
+				this.monster_icon_list[i].SetTouchAct_S(touchAction);
+			}
+		}
+	}
+
+	private bool IsDeckMonster(string userMonsterId)
+	{
+		bool result = false;
+		List<MonsterData> deckMonsterDataList = MonsterDataMng.Instance().GetDeckMonsterDataList(false);
+		for (int i = 0; i < deckMonsterDataList.Count; i++)
+		{
+			if (deckMonsterDataList[i].userMonster.userMonsterId == userMonsterId)
+			{
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
 	public enum SELECT_TYPE
 	{
 		ALL,
@@ -1960,7 +2050,8 @@ public class MonsterDataMng : MonoBehaviour
 		RESEARCH_TARGET,
 		CAN_EVOLVE,
 		ALL_IN_GARDEN,
-		HAVE_MEDALS
+		HAVE_MEDALS,
+		ALL_VAR2
 	}
 
 	public enum SORT_TYPE

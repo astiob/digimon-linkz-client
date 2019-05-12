@@ -13,12 +13,17 @@ public class GUIListNewsParts : GUIListPartBS
 	[SerializeField]
 	private UILabel newsDate;
 
+	[SerializeField]
+	private UISprite presentIcon;
+
 	private bool isTouchEndFromChild;
 
 	[SerializeField]
 	private GameObject newMarker;
 
 	private GameWebAPI.RespDataIN_InfoList.InfoList data;
+
+	public Action callbackClose;
 
 	public GameWebAPI.RespDataIN_InfoList.InfoList Data
 	{
@@ -56,6 +61,8 @@ public class GUIListNewsParts : GUIListPartBS
 		this.newsDetails.text = this.Data.title;
 		this.newsDate.text = this.Data.startDateTime;
 		this.newsDate.text = this.newsDate.text.Remove(16);
+		this.presentIcon.gameObject.SetActive(this.Data.prizeStatus != 0);
+		this.presentIcon.color = ((this.Data.prizeStatus != 2) ? Color.white : Color.gray);
 		if (this.Data.confirmationFlg == 0)
 		{
 			this.newMarker.SetActive(true);
@@ -140,6 +147,10 @@ public class GUIListNewsParts : GUIListPartBS
 		{
 			this.newMarker.SetActive(false);
 			this.data.confirmationFlg = 1;
+		}
+		if (this.callbackClose != null)
+		{
+			this.callbackClose();
 		}
 	}
 }

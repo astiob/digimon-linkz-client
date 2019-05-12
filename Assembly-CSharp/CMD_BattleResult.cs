@@ -34,18 +34,22 @@ public sealed class CMD_BattleResult : CMD
 				{
 					if (state == CMD_BattleResult.State.Experience)
 					{
-						BoxCollider component = base.GetComponent<BoxCollider>();
-						component.enabled = false;
-						if (this.actionEffectFinished != null)
+						DropItemResult dropItemResult = (DropItemResult)this.results[CMD_BattleResult.State.DropItem];
+						this.RefreshMaster(dropItemResult.isUserMonsterRefresh, dropItemResult.isChipMonsterRefresh, delegate
 						{
-							this.actionEffectFinished(this);
-							this.actionEffectFinished = null;
-						}
-						else
-						{
-							SoundMng.Instance().PlaySE("SEInternal/Common/se_107", 0f, false, true, null, -1, 1f);
-							this.ClosePanel(true);
-						}
+							BoxCollider component = base.GetComponent<BoxCollider>();
+							component.enabled = false;
+							if (this.actionEffectFinished != null)
+							{
+								this.actionEffectFinished(this);
+								this.actionEffectFinished = null;
+							}
+							else
+							{
+								SoundMng.Instance().PlaySE("SEInternal/Common/se_107", 0f, false, true, null, -1, 1f);
+								this.ClosePanel(true);
+							}
+						});
 						this.ChangeState(CMD_BattleResult.State.None);
 					}
 				}
@@ -111,6 +115,37 @@ public sealed class CMD_BattleResult : CMD
 	public void SetActionEffectFinished(Action<CMD_BattleResult> completed)
 	{
 		this.actionEffectFinished = completed;
+	}
+
+	private void RefreshMaster(bool isUserMonster, bool isChip, Action callback)
+	{
+		if (!isUserMonster && !isChip)
+		{
+			if (callback != null)
+			{
+				callback();
+			}
+			return;
+		}
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
+		APIRequestTask apirequestTask = new APIRequestTask();
+		if (isUserMonster)
+		{
+			apirequestTask.Add(DataMng.Instance().RequestUserMonster(null, true));
+			apirequestTask.Add(ChipDataMng.RequestAPIMonsterSlotInfoList(true));
+		}
+		if (isChip)
+		{
+			apirequestTask.Add(ChipDataMng.RequestAPIChipList(true));
+		}
+		AppCoroutine.Start(apirequestTask.Run(delegate
+		{
+			RestrictionInput.EndLoad();
+			if (callback != null)
+			{
+				callback();
+			}
+		}, null, null), false);
 	}
 
 	private enum State

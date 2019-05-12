@@ -4,6 +4,8 @@ public sealed class MonsterEggStatusInfo
 {
 	public bool isArousal;
 
+	public bool isReturn;
+
 	public string rare;
 
 	public string luck;

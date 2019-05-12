@@ -41,5 +41,7 @@ namespace TS
 		public const string SECOND_TUTORIAL_MISSION_BEGINNER = "second_tutorial_mission_beginner";
 
 		public const string SECOND_TUTORIAL_ABILITY_UPGRADE = "second_tutorial_ability_upgrade";
+
+		public const string SECOND_TUTORIAL_VERSION_UP = "second_tutorial_version_up";
 	}
 }

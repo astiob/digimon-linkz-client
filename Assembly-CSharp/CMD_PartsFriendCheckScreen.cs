@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class CMD_PartsFriendCheckScreen : CMD
 {
-	public GameObject goMN_ICON;
+	private static GameWebAPI.FriendList data;
 
-	public GameObject goTX_NICKNAME;
+	private static string exp;
 
-	public GameObject goTITLE_ICON;
+	[SerializeField]
+	private GameObject goMN_ICON;
 
-	public GameObject goTX_EXP;
+	[SerializeField]
+	private GameObject goTX_NICKNAME;
 
-	public GameObject goTX_LAST_LOGIN;
+	[SerializeField]
+	private GameObject goTITLE_ICON;
+
+	[SerializeField]
+	private GameObject goTX_EXP;
+
+	[SerializeField]
+	private GameObject goTX_LAST_LOGIN;
 
 	private UILabel ngTX_NICKNAME;
 
@@ -20,13 +29,10 @@ public class CMD_PartsFriendCheckScreen : CMD
 
 	private UILabel ngTX_LAST_LOGIN;
 
-	public GameObject goTX_EXP_2;
+	[SerializeField]
+	private GameObject goTX_EXP_2;
 
 	private UILabel ngTX_EXP_2;
-
-	private static GameWebAPI.FriendList data;
-
-	private static string exp;
 
 	private GameObject goMN_ICON_2;
 
@@ -72,20 +78,10 @@ public class CMD_PartsFriendCheckScreen : CMD
 		base.Show(f, sizeX, sizeY, aT);
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
-	}
-
 	protected override void OnDestroy()
 	{
-		base.OnDestroy();
 		CMD_PartsFriendCheckScreen.data = null;
+		base.OnDestroy();
 	}
 
 	private void ShowParam()
@@ -115,6 +111,7 @@ public class CMD_PartsFriendCheckScreen : CMD
 	private void actMIconLong(MonsterData md)
 	{
 		CMD_FriendTop.instance.OpenFriendProfile();
+		this.ClosePanel(true);
 	}
 
 	private void ShowExp()

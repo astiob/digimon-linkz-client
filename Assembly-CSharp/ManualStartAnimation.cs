@@ -5,8 +5,8 @@ using UnityEngine;
 [AddComponentMenu("Digimon Effects/Tools/Manual Start Animation")]
 public class ManualStartAnimation : MonoBehaviour
 {
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float _startAnimationTime;
 
 	[SerializeField]

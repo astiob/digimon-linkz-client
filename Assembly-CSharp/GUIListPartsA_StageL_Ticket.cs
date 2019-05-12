@@ -9,42 +9,46 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 {
 	[SerializeField]
 	[Header("選択時の背景色")]
-	private Color backgroundColor = Util.convertColor(0f, 100f, 0f, 200f);
+	private Color backgroundColor = Util.convertColor(255f, 200f, 0f, 30f);
 
-	[Header("非選択時の背景色 (有効期限なし) ")]
 	[SerializeField]
-	private Color backgroundColorOff_NoLimit = Util.convertColor(0f, 200f, 0f, 70f);
+	[Header("非選択時の背景色 (有償) ")]
+	private Color backgroundColorOff_Paid = Util.convertColor(180f, 0f, 0f, 230f);
 
-	[Header("非選択時の背景色 (有効期限有り) ")]
+	[Header("非選択時の背景色 (無償・有効期限なし) ")]
 	[SerializeField]
-	private Color backgroundColorOff_Limit = Util.convertColor(0f, 0f, 200f, 70f);
+	private Color backgroundColorOff_NoLimit = Util.convertColor(0f, 0f, 180f, 230f);
+
+	[Header("非選択時の背景色 (無償・有効期限有り) ")]
+	[SerializeField]
+	private Color backgroundColorOff_Limit = Util.convertColor(0f, 180f, 0f, 230f);
 
 	[Header("サムネイル")]
 	[SerializeField]
 	private UITexture ngTICKET_THUMBNAIL;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite background;
 
-	[SerializeField]
 	[Header("チケット名ラベル")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_NAME;
 
-	[Header("チケット数ラベル")]
 	[SerializeField]
+	[Header("チケット数ラベル")]
 	private UILabel ngTXT_TICKET_NUM;
 
-	[SerializeField]
 	[Header("チケット有効期限")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_EXPIRE_TIME;
 
-	[SerializeField]
 	[Header("チケット更新日")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_UPDATE_TIME;
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -64,6 +68,8 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	private List<Color> stateEffectColor = new List<Color>();
 
 	private bool isLimit;
+
+	private bool isFree;
 
 	[SerializeField]
 	private bool useLongDescription;
@@ -132,6 +138,7 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 				this.ngTXT_TICKET_EXPIRE_TIME.text = string.Format(StringMaster.GetString("ExchangeTimeLimit"), StringMaster.GetString("SystemNone"));
 				this.isLimit = false;
 			}
+			this.isFree = (dungeonTicketM.freeFlg == "1");
 			if (this.ngTXT_TICKET_UPDATE_TIME != null)
 			{
 				string arg = string.Empty;
@@ -193,13 +200,20 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 		{
 			this.background.color = this.backgroundColor;
 		}
-		else if (this.isLimit)
+		else if (this.isFree)
 		{
-			this.background.color = this.backgroundColorOff_Limit;
+			if (this.isLimit)
+			{
+				this.background.color = this.backgroundColorOff_Limit;
+			}
+			else
+			{
+				this.background.color = this.backgroundColorOff_NoLimit;
+			}
 		}
 		else
 		{
-			this.background.color = this.backgroundColorOff_NoLimit;
+			this.background.color = this.backgroundColorOff_Paid;
 		}
 	}
 

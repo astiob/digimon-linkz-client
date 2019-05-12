@@ -9,22 +9,6 @@ public class BattleStateMultiFadeOut : BattleStateController
 
 	protected override void EnabledThisState()
 	{
-		if (base.isSkipAction)
-		{
-			if (!base.stateManager.log.battleStopFlag)
-			{
-				base.Destroy(base.battleStateData.commandSelectTweenTargetCamera.gameObject);
-				base.Destroy(base.battleStateData.characterRoot.gameObject);
-				base.Destroy(base.battleStateData.skillEffectRoot.gameObject);
-				base.Destroy(base.battleStateData.stageRoot.gameObject);
-				base.Destroy(base.battleStateData.spawnPointRoot.gameObject);
-				base.Destroy(base.battleStateData.cameraMotionRoot.gameObject);
-				base.Destroy(base.battleStateData.hitEffectRoot.gameObject);
-				base.Destroy(base.battleStateData.alwaysEffectRoot.gameObject);
-				base.stateManager.BattleTrigger();
-			}
-			return;
-		}
 		base.stateManager.uiControl.ApplyFadeOutScreen(base.stateManager.battleScreen);
 		base.stateManager.SetBattleScreen(BattleScreen.Fadeout);
 		base.stateManager.uiControlMulti.HideAllDIalog();

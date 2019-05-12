@@ -7,8 +7,8 @@ public class UIGaugeManager : MonoBehaviour
 	[SerializeField]
 	private UIGaugeManager.GaugeType _gaugeType;
 
-	[Tooltip("ゲージ内部値管理")]
 	[SerializeField]
+	[Tooltip("ゲージ内部値管理")]
 	private UIGaugeManager.ValueType _valueType;
 
 	[SerializeField]

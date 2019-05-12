@@ -1,4 +1,6 @@
-﻿using Evolution;
+﻿using CharacterMiniStatusUI;
+using Evolution;
+using EvolutionRouteMap;
 using Master;
 using System;
 using System.Collections.Generic;
@@ -20,40 +22,16 @@ public sealed class CMD_Evolution : CMD
 	private MonsterBasicInfo monsterBasicInfo;
 
 	[SerializeField]
-	private MonsterResistanceList monsterResistanceList;
-
-	[SerializeField]
-	private MonsterMedalList monsterMedalList;
-
-	[SerializeField]
-	private MonsterStatusList monsterStatusList;
-
-	[SerializeField]
-	private MonsterLeaderSkill monsterLeaderSkill;
-
-	[SerializeField]
-	private MonsterLearnSkill monsterUniqueSkill;
-
-	[SerializeField]
-	private MonsterLearnSkill monsterSuccessionSkill;
+	private UI_MonsterMiniStatus miniStatus;
 
 	[SerializeField]
 	private UILabel ngTXT_CHIP;
 
 	[SerializeField]
-	[Header("キャラクターのステータスPanel")]
-	private StatusPanel statusPanel;
-
 	[Header("各進化先のリンク")]
-	[SerializeField]
 	private GameObject goListParts;
 
 	private GUISelectPanelEvolution csSelectPanelEvolution;
-
-	private int statusPage = 1;
-
-	[SerializeField]
-	private List<GameObject> goStatusPanelPage;
 
 	private GUIMonsterIcon monsterIcon;
 
@@ -73,7 +51,6 @@ public sealed class CMD_Evolution : CMD
 	{
 		base.Awake();
 		CMD_Evolution.instance = this;
-		this.monsterMedalList.SetActive(false);
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -112,18 +89,11 @@ public sealed class CMD_Evolution : CMD
 
 	private void ShowChgInfo()
 	{
-		this.statusPanel.SetEnable(CMD_BaseSelect.DataChg != null);
 		if (CMD_BaseSelect.DataChg != null)
 		{
 			this.chipBaseSelect.SetSelectedCharChg(CMD_BaseSelect.DataChg);
 			this.monsterBasicInfo.SetMonsterData(CMD_BaseSelect.DataChg);
-			this.monsterStatusList.SetValues(CMD_BaseSelect.DataChg, false);
-			this.monsterLeaderSkill.SetSkill(CMD_BaseSelect.DataChg);
-			this.monsterUniqueSkill.SetSkill(CMD_BaseSelect.DataChg);
-			this.monsterSuccessionSkill.SetSkill(CMD_BaseSelect.DataChg);
-			this.monsterMedalList.SetValues(CMD_BaseSelect.DataChg.userMonster);
-			this.monsterResistanceList.SetValues(CMD_BaseSelect.DataChg);
-			this.StatusPageChange(false);
+			this.miniStatus.SetMonsterData(CMD_BaseSelect.DataChg);
 		}
 	}
 
@@ -148,6 +118,7 @@ public sealed class CMD_Evolution : CMD
 			this.goMN_ICON_CHG_2 = this.monsterIcon.gameObject;
 			this.goMN_ICON_CHG_2.SetActive(true);
 			this.monsterIcon.Data = CMD_BaseSelect.DataChg;
+			this.monsterIcon.SetTouchAct_S(new Action<MonsterData>(this.OnPushedBaseMonsterIcon));
 			this.monsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 			UIWidget component = this.goMN_ICON_CHG.GetComponent<UIWidget>();
 			UIWidget component2 = this.goMN_ICON_CHG_2.GetComponent<UIWidget>();
@@ -158,6 +129,11 @@ public sealed class CMD_Evolution : CMD
 		{
 			global::Debug.LogError("ここへは来ない");
 		}
+	}
+
+	private void OnPushedBaseMonsterIcon(MonsterData tappedMonsterData)
+	{
+		this.ClosePanel(true);
 	}
 
 	private void ActMIconLong(MonsterData tappedMonsterData)
@@ -219,14 +195,7 @@ public sealed class CMD_Evolution : CMD
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_EvolutionExec response)
 			{
-				if (response.userMonsterList != null)
-				{
-					DataMng.Instance().SetUserMonsterList(response.userMonsterList);
-				}
-				if (response.userMonster != null)
-				{
-					DataMng.Instance().SetUserMonster(response.userMonster);
-				}
+				DataMng.Instance().SetUserMonster(response.userMonster);
 				if (response.IsFirstUltimaEvolution())
 				{
 					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
@@ -235,12 +204,18 @@ public sealed class CMD_Evolution : CMD
 				{
 					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW;
 				}
+				GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] addMonsterList = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[]
+				{
+					response.userMonster
+				};
+				GameWebAPI.MonsterSlotInfoListLogic request2 = ChipDataMng.RequestAPIMonsterSlotInfo(addMonsterList, null);
+				AppCoroutine.Start(request2.Run(new Action(this.EndEvolveDo), delegate(Exception noop)
+				{
+					RestrictionInput.EndLoad();
+				}, null), false);
 			}
 		};
-		base.StartCoroutine(request.Run(new Action(this.EndEvolveDo), delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-		}, null));
+		AppCoroutine.Start(request.Run(null, null, null), false);
 	}
 
 	private void EndEvolveDo()
@@ -256,11 +231,10 @@ public sealed class CMD_Evolution : CMD
 		monsterDataMng.RefreshMonsterDataList();
 		List<int> umidList = ClassSingleton<EvolutionData>.Instance.EvolvePostProcess(this.evolveDataBK);
 		MonsterData monsterDataByUserMonsterID = monsterDataMng.GetMonsterDataByUserMonsterID(this.evolveDataBK.md.userMonster.userMonsterId, true);
-		monsterDataByUserMonsterID.RefleshNormalChipManagSlot();
 		string path = string.Empty;
 		bool flag = false;
 		int num = int.Parse(monsterDataByUserMonsterID.monsterMG.growStep);
-		if (num == 7)
+		if (num >= 7)
 		{
 			flag = true;
 		}
@@ -268,6 +242,7 @@ public sealed class CMD_Evolution : CMD
 		switch (effectType)
 		{
 		case "1":
+		case "5":
 			if (flag)
 			{
 				path = "Cutscenes/EvolutionUltimate";
@@ -317,39 +292,6 @@ public sealed class CMD_Evolution : CMD
 			GUIMain.ShowCommonDialog(new Action<int>(this.RunRefreshPicturebook), "CMD_CharacterDetailed");
 		});
 		this.ClosePanel(false);
-	}
-
-	public void StatusPageChangeTap()
-	{
-		this.StatusPageChange(true);
-	}
-
-	public void StatusPageChange(bool pageChange)
-	{
-		if (pageChange)
-		{
-			if (this.statusPage < this.goStatusPanelPage.Count)
-			{
-				this.statusPage++;
-			}
-			else
-			{
-				this.statusPage = 1;
-			}
-		}
-		int num = 1;
-		foreach (GameObject gameObject in this.goStatusPanelPage)
-		{
-			if (num == this.statusPage)
-			{
-				gameObject.SetActive(true);
-			}
-			else
-			{
-				gameObject.SetActive(false);
-			}
-			num++;
-		}
 	}
 
 	private void RunRefreshPicturebook(int noop)
@@ -419,12 +361,22 @@ public sealed class CMD_Evolution : CMD
 		}
 	}
 
+	private void OnTouchEvolutionDiagramButton()
+	{
+		MonsterData dataChg = CMD_BaseSelect.DataChg;
+		FarmCameraControlForCMD.ClearRefCT();
+		FarmCameraControlForCMD.On();
+		GUIMain.DestroyAllDialog(null);
+		CMD_EvolutionRouteMap.CreateDialog(null, dataChg);
+	}
+
 	public enum EvolveType
 	{
 		Normal = 1,
 		ModeChange,
 		Jogress,
-		Combine
+		Combine,
+		VersionUp
 	}
 
 	private enum EvolutionReviewStatus

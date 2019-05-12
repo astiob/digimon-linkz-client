@@ -49,6 +49,7 @@ public class GUIScreenHome : GUIScreen
 	protected virtual IEnumerator StartEvent()
 	{
 		yield return base.StartCoroutine(this.CreateHomeData());
+		RestrictionInput.DeleteDisplayObject();
 		TipsLoading.Instance.StopTipsLoad(true);
 		Loading.Invisible();
 		if (!GUIScreenHome.isManualScreenFadeIn)
@@ -126,13 +127,14 @@ public class GUIScreenHome : GUIScreen
 		MonsterDataMng.Instance().InitMonsterGO();
 		this.MissionProcess();
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
-		ClassSingleton<PartsMenuNewsIconAccessor>.Instance.artsMenuNewsIcon.NewsCheck();
+		ClassSingleton<FaceNewsAccessor>.Instance.faceNews.SetBadgeOnly();
 		ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.FrinedListCheck();
 		if (ConstValue.IS_CHAT_OPEN != 1)
 		{
 			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.gameObject.SetActive(false);
 		}
 		GUIFace.SetFacilityShopButtonBadge();
+		PartsMenu.SetMenuButtonAlertBadge();
 		this.DownloadMenuBanner();
 		while (!TextureManager.instance.isLoadSaveData)
 		{

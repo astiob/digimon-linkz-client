@@ -19,8 +19,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
-	[Header("ドロップするアイテムリスト")]
 	[SerializeField]
+	[Header("ドロップするアイテムリスト")]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
 	[SerializeField]
@@ -41,8 +41,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("ポイントコンテンツ・ルート (ボーナス)")]
 	private GameObject goPointContentsROOT;
 
-	[SerializeField]
 	[Header("詳細説明 (ヒナの吹き出し)")]
+	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
 	[Header("ポイント・タイトルのリスト)")]
@@ -64,12 +64,12 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("取得できるクラスタタイトル")]
 	private UILabel getClusterTitleLabel;
 
-	[Header("取得できるクラスタ数")]
 	[SerializeField]
+	[Header("取得できるクラスタ数")]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("消費するスタミナタイトル")]
+	[SerializeField]
 	private UILabel getStaminaTitleLabel;
 
 	[Header("消費するスタミナ")]
@@ -89,8 +89,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private RewardIconRoot rewardIconRoot;
 
-	[Header("初回報酬取得済みカラー")]
 	[SerializeField]
+	[Header("初回報酬取得済みカラー")]
 	private Color clearColor = Color.gray;
 
 	private QuestData.WorldDungeonData d_data;

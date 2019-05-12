@@ -1,4 +1,6 @@
 ﻿using EvolutionDiagram;
+using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +17,9 @@ namespace EvolutionRouteMap
 
 		[SerializeField]
 		private UILabel growStep;
+
+		[SerializeField]
+		private UILabel specificName;
 
 		[SerializeField]
 		private UILabel monsterName;
@@ -36,8 +41,17 @@ namespace EvolutionRouteMap
 			{
 				EvolutionDiagramData.IconMonster iconMonster = routeMapData[listPartsIndex];
 				this.monsterIcon.SetImage(iconMonster.singleData.iconId, iconMonster.groupData.growStep);
+				if (!MonsterDataMng.ExistPicturebook(iconMonster.groupData.monsterCollectionId))
+				{
+					this.monsterIcon.SetBottomText(StringMaster.GetString("EvolutionUnkown"));
+				}
+				else
+				{
+					this.monsterIcon.ClearBottomText();
+				}
 				this.growStep.text = CommonSentenceData.GetGrade(iconMonster.groupData.growStep);
 				this.monsterName.text = iconMonster.groupData.monsterName;
+				this.specificName.text = MonsterSpecificTypeData.GetSpecificTypeName(iconMonster.groupData.monsterStatusId);
 			}
 		}
 

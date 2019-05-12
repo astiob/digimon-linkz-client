@@ -10,8 +10,8 @@ public sealed class GameStringsFont : MonoBehaviour
 
 	private UILabel NGFont;
 
-	[SerializeField]
 	[FormerlySerializedAs("color_")]
+	[SerializeField]
 	private Color _color = new Color(1f, 1f, 1f, 1f);
 
 	private bool first = true;

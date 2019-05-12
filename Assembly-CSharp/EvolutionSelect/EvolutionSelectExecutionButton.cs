@@ -31,8 +31,9 @@ namespace EvolutionSelect
 		private void ShowConfirmExecution(string title, string info)
 		{
 			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.listPartsRoot.OnCloseEvolveDo), "CMD_Confirm") as CMD_Confirm;
+			string monsterName = this.listPartsRoot.Data.md_next.monsterMG.monsterName;
 			cmd_Confirm.Title = title;
-			cmd_Confirm.Info = info;
+			cmd_Confirm.Info = string.Format("{0}\n\n{1}", monsterName, info);
 		}
 
 		private void OnPushedButton()

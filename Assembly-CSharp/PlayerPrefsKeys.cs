@@ -28,6 +28,8 @@ public static class PlayerPrefsKeys
 
 	public const string OPTION_SOUND_VOLUME_SE = "VolumeSE";
 
+	public const string OPTION_AUTO_BATTLE = "BattleAuto";
+
 	public const string GARDEN_NOTICE_MESSAGE = "RESERVED_GARDEN_NOTICE";
 
 	public const string GASHA_ICON_EFFECT_END_TIME = "CaptureUpdateDateTimeArray";
