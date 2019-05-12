@@ -102,14 +102,19 @@ public class PicturebookMonsterIcon : GUIListPartBS
 	{
 		Texture2D texture2D = Resources.Load(resourcePath) as Texture2D;
 		Texture2D texture2D2 = Resources.Load(resourcePath + "_alpha") as Texture2D;
+		string path = assetBundlePath + "_alpha";
 		if (texture2D == null && texture2D2 == null)
 		{
 			Texture2D texture2D3 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, null) as Texture2D;
+			Texture2D monsterAlphaTexture = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(path, null) as Texture2D;
 			if (null != texture2D3)
 			{
 				textureData._monsterTexture = texture2D3;
-				textureData._monsterAlphaTexture = Texture2D.whiteTexture;
 				textureData._isMainTexture = true;
+			}
+			if (null != texture2D3)
+			{
+				textureData._monsterAlphaTexture = monsterAlphaTexture;
 			}
 		}
 		else

@@ -124,6 +124,8 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private ChipSphereLines chipSphereLines;
 
+	private UIWidget character3DTextureWidget;
+
 	[CompilerGenerated]
 	private static Action <>f__mg$cache0;
 
@@ -164,6 +166,19 @@ public sealed class CMD_ChipSphere : CMD
 		base.Show(f, sizeX, sizeY, aT);
 		base.SetTutorialAnyTime("anytime_second_tutorial_chip_equipment");
 		this.Init(ChipDataMng.userChipData);
+	}
+
+	protected override void WindowOpened()
+	{
+		base.WindowOpened();
+		if (this.character3DTextureWidget == null)
+		{
+			this.character3DTextureWidget = this.character3DTexture.GetComponent<UIWidget>();
+		}
+		if (null != this.character3DTextureWidget)
+		{
+			this.character3DTextureWidget.updateAnchors = UIRect.AnchorUpdate.OnStart;
+		}
 	}
 
 	private void Init(GameWebAPI.RespDataCS_ChipListLogic chipListLogic)

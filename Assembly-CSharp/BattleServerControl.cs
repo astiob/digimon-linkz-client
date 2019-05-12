@@ -721,20 +721,57 @@ public class BattleServerControl : BattleFunctionBase
 				EffectNumbers effectNumbers = ServerToBattleUtility.IntToEffectNumbers(convertSkillDetailM[i].targetType);
 				int effect = convertSkillDetailM[i].effect1;
 				int effect2 = convertSkillDetailM[i].effect2;
-				float num = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect3, false);
-				float num2 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect4, false);
-				float num3 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect5, false);
-				float num4 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect6, false);
-				float num5 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect7, false);
-				float num6 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect8, false);
-				float num7 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect9, false);
-				float num8 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect10, false);
-				float num9 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect11, false);
-				float num10 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect12, false);
-				float num11 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect13, false);
-				float num12 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect14, false);
-				float num13 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect15, false);
-				float num14 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect16, false);
+				float num;
+				float num2;
+				float num3;
+				float num4;
+				float num5;
+				float num6;
+				float num7;
+				float num8;
+				float num9;
+				float num10;
+				float num11;
+				float num12;
+				float num13;
+				float num14;
+				float num15;
+				if (convertSkillDetailM[i].toPercentage)
+				{
+					num = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect3, false);
+					num2 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect4, false);
+					num3 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect5, false);
+					num4 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect6, false);
+					num5 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect7, false);
+					num6 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect8, false);
+					num7 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect9, false);
+					num8 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect10, false);
+					num9 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect11, false);
+					num10 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect12, false);
+					num11 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect13, false);
+					num12 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect14, false);
+					num13 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect15, false);
+					num14 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect16, false);
+					num15 = ServerToBattleUtility.PermillionToPercentage(convertSkillDetailM[i].effect17, false);
+				}
+				else
+				{
+					num = (float)convertSkillDetailM[i].effect3;
+					num2 = (float)convertSkillDetailM[i].effect4;
+					num3 = (float)convertSkillDetailM[i].effect5;
+					num4 = (float)convertSkillDetailM[i].effect6;
+					num5 = (float)convertSkillDetailM[i].effect7;
+					num6 = (float)convertSkillDetailM[i].effect8;
+					num7 = (float)convertSkillDetailM[i].effect9;
+					num8 = (float)convertSkillDetailM[i].effect10;
+					num9 = (float)convertSkillDetailM[i].effect11;
+					num10 = (float)convertSkillDetailM[i].effect12;
+					num11 = (float)convertSkillDetailM[i].effect13;
+					num12 = (float)convertSkillDetailM[i].effect14;
+					num13 = (float)convertSkillDetailM[i].effect15;
+					num14 = (float)convertSkillDetailM[i].effect16;
+					num15 = (float)convertSkillDetailM[i].effect17;
+				}
 				bool useDrainAffectEffect = ServerToBattleUtility.GetUseDrainAffectEffect(convertSkillDetailM[i].effectType);
 				PowerType powerType = ServerToBattleUtility.GetPowerType(convertSkillDetailM[i].effectType);
 				TechniqueType techniqueType = ServerToBattleUtility.GetTechniqueType(convertSkillDetailM[i].effectType);
@@ -759,7 +796,8 @@ public class BattleServerControl : BattleFunctionBase
 					num11,
 					num12,
 					num13,
-					num14
+					num14,
+					num15
 				}, useDrainAffectEffect, powerType, techniqueType, attribute, isMissThrough);
 				list.Add(item);
 			}

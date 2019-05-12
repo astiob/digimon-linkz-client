@@ -68,7 +68,7 @@ public class HitIcon : MonoBehaviour
 		base.transform.position = new Vector3(vector.x, vector.y, 0f);
 	}
 
-	public void ApplyShowHitIcon(AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non)
+	public void ApplyShowHitIcon(AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non, AffectEffectProperty affectEffectProperty = null)
 	{
 		this.ApplyHitIconPlayAnimation(onWeak);
 		bool flag = false;
@@ -233,6 +233,15 @@ public class HitIcon : MonoBehaviour
 				return;
 			case AffectEffect.Escape:
 				this.ShowEscape(data);
+				return;
+			case AffectEffect.ChangeToleranceUp:
+				this.ShowAttributeTolerance(data, affectEffectProperty, true);
+				return;
+			case AffectEffect.ChangeToleranceDown:
+				this.ShowAttributeTolerance(data, affectEffectProperty, false);
+				return;
+			case AffectEffect.ClearTolerance:
+				this.ShowClearTolerance(data);
 				return;
 			}
 			NGUITools.SetActiveSelf(base.gameObject, false);
@@ -779,6 +788,64 @@ public class HitIcon : MonoBehaviour
 		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
 		{
 			data.bottomMesh
+		});
+	}
+
+	private void ShowAttributeTolerance(HitIcon.Data data, AffectEffectProperty affectEffectProperty, bool up)
+	{
+		int num = 0;
+		float num2 = 0f;
+		string text = "HitIconAttributeToleranceUp";
+		string text2 = "HitIconStateToleranceUp";
+		string text3 = "HitIconAttributeToleranceDown";
+		string text4 = "HitIconStateToleranceDown";
+		for (int i = 0; i < affectEffectProperty.toleranceValue.Length; i++)
+		{
+			if (affectEffectProperty.toleranceValue[i] > 0f)
+			{
+				num = i;
+				num2 = affectEffectProperty.toleranceValue[i];
+				break;
+			}
+		}
+		if (num2 == 100f)
+		{
+			if (num <= 6)
+			{
+				data.middleMesh.text = this.GetString("HitIconAttributeAbsorption");
+			}
+		}
+		else if (num2 == 101f)
+		{
+			if (num <= 6)
+			{
+				data.middleMesh.text = this.GetString("HitIconInvalidAttribute");
+			}
+			else if (num > 6 && num < 100)
+			{
+				data.middleMesh.text = this.GetString("HitIconInvalidState");
+			}
+		}
+		else if (num <= 6)
+		{
+			data.middleMesh.text = this.GetString((!up) ? text3 : text);
+		}
+		else if (num > 6 && num < 100)
+		{
+			data.middleMesh.text = this.GetString((!up) ? text4 : text2);
+		}
+		this.ChangeFontTexture((!up) ? this.standardEffectFontTexture.blue : this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowClearTolerance(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconClearTolerance");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
 		});
 	}
 

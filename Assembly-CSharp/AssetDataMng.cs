@@ -222,6 +222,93 @@ public class AssetDataMng : MonoBehaviour
 		return @object;
 	}
 
+	private AssetDataMng.FindABInfoResult FindAssetBundleInfo(string path)
+	{
+		string localizedPath = AssetDataMng.GetLocalizedPath(path);
+		AssetDataMng.FindABInfoResult findABInfoResult = this._FindAssetBundleInfo(localizedPath);
+		if (!localizedPath.Equals(path) && findABInfoResult == null)
+		{
+			findABInfoResult = this._FindAssetBundleInfo(path);
+		}
+		return findABInfoResult;
+	}
+
+	private AssetDataMng.FindABInfoResult _FindAssetBundleInfo(string path)
+	{
+		string text = string.Empty;
+		for (int i = 0; i < this.abidList.Count; i++)
+		{
+			if (path.Length > this.abidList[i].abPath.Length && path.StartsWith(this.abidList[i].abPath))
+			{
+				text = path.Substring(this.abidList[i].abPath.Length);
+				List<AssetBundleInfo> assetBundleInfoList = this.abidList[i].assetBundleInfoList;
+				for (int j = 0; j < assetBundleInfoList.Count; j++)
+				{
+					int k;
+					for (k = 0; k < assetBundleInfoList[j].objNameList.Count; k++)
+					{
+						if (text == assetBundleInfoList[j].objNameList[k])
+						{
+							break;
+						}
+					}
+					if (k < assetBundleInfoList[j].objNameList.Count && assetBundleInfoList[j].ContainsPath(text))
+					{
+						return new AssetDataMng.FindABInfoResult
+						{
+							abInfoData = this.abidList[i],
+							objName = text
+						};
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private UnityEngine.Object GetFromCache(string path)
+	{
+		string localizedPath = AssetDataMng.GetLocalizedPath(path);
+		UnityEngine.Object @object = this._GetFromCache(localizedPath);
+		if (!localizedPath.Equals(path) && @object == null)
+		{
+			@object = this._GetFromCache(path);
+		}
+		return @object;
+	}
+
+	private UnityEngine.Object _GetFromCache(string path)
+	{
+		bool flag = AssetDataCacheMng.Instance().IsCacheExist(path);
+		if (flag)
+		{
+			return AssetDataCacheMng.Instance().GetCache(path);
+		}
+		return null;
+	}
+
+	private UnityEngine.Object GetFromInternalResource(string path)
+	{
+		string localizedPath = AssetDataMng.GetLocalizedPath(path);
+		UnityEngine.Object @object = Resources.Load(localizedPath);
+		if (!localizedPath.Equals(path) && @object == null)
+		{
+			@object = Resources.Load(path);
+		}
+		return @object;
+	}
+
+	public static string GetLocalizedPath(string path)
+	{
+		string countryPrefix = CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN);
+		return (!string.IsNullOrEmpty(countryPrefix)) ? string.Format("{0}/{1}", countryPrefix, path) : path;
+	}
+
+	public bool IsIncludedInAssetBundle(string path)
+	{
+		return this._FindAssetBundleInfo(path) != null;
+	}
+
 	public bool AB_Init(Action<int> actCallBack)
 	{
 		if (this.USE_ASSET_BUNDLE == ABPrefabType.None)
@@ -546,5 +633,12 @@ public class AssetDataMng : MonoBehaviour
 	public static string GetWebAssetImagePath()
 	{
 		return ConstValue.APP_ASSET_DOMAIN + "/asset/img";
+	}
+
+	private class FindABInfoResult
+	{
+		public AssetBundleInfoData abInfoData;
+
+		public string objName;
 	}
 }

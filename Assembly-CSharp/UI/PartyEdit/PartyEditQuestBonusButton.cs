@@ -15,6 +15,8 @@ namespace UI.PartyEdit
 
 		private CMD_SPBonusList bonusList;
 
+		private string monsterGroupId;
+
 		private void OnDestroy()
 		{
 			if (null != this.bonusList)
@@ -43,6 +45,7 @@ namespace UI.PartyEdit
 		{
 			if (this.stageBonus != null)
 			{
+				this.monsterGroupId = monsterData.monsterM.monsterGroupId;
 				this.activateStageBonus = new QuestBonusPack
 				{
 					bonusChipIds = QuestBonusFilter.GetActivateBonusChips(monsterData, this.stageBonus.bonusChipIds),
@@ -58,11 +61,40 @@ namespace UI.PartyEdit
 			if (this.activateStageBonus != null && this.activateStageBonus.ExistBonus())
 			{
 				flag = true;
+				this.SetMonsterGroupId();
 			}
 			base.gameObject.SetActive(flag);
 			if (!flag && null != this.bonusList)
 			{
 				this.bonusList.ClosePanel(true);
+			}
+		}
+
+		private void SetMonsterGroupId()
+		{
+			string @string = PlayerPrefs.GetString("BonusMonsterIdList");
+			string[] array = @string.Split(",".ToCharArray());
+			if (array != null && array.Length > 0)
+			{
+				bool flag = false;
+				foreach (string a in array)
+				{
+					if (a == this.monsterGroupId)
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (!flag)
+				{
+					PlayerPrefs.SetString("BonusMonsterIdList", @string + "," + this.monsterGroupId);
+					PlayerPrefs.Save();
+				}
+			}
+			else
+			{
+				PlayerPrefs.SetString("BonusMonsterIdList", this.monsterGroupId.ToString());
+				PlayerPrefs.Save();
 			}
 		}
 	}

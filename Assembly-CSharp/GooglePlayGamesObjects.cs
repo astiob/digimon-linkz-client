@@ -82,6 +82,11 @@ public class GooglePlayGamesObjects : MonoBehaviour
 		this.isOpenMenu = IsEnable;
 	}
 
+	public void enableButton(bool isEneble)
+	{
+		this.googlePlayBtnSprite.gameObject.SetActive(isEneble);
+	}
+
 	private bool Lock()
 	{
 		if (this.isLock)

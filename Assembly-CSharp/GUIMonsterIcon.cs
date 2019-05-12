@@ -429,6 +429,7 @@ public class GUIMonsterIcon : GUIListPartBS
 		bool flag = false;
 		Texture2D texture2D = Resources.Load(resourcePath) as Texture2D;
 		Texture2D texture2D2 = Resources.Load(resourcePath + "_alpha") as Texture2D;
+		string assetBundlePathA = assetBundlePath + "_alpha";
 		if (null != texture2D && null != texture2D2 && !flag)
 		{
 			if (null == iconTexture.material)
@@ -446,10 +447,23 @@ public class GUIMonsterIcon : GUIListPartBS
 			MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, delegate(UnityEngine.Object obj)
 			{
 				Texture2D tex = obj as Texture2D;
+				if (null == iconTexture.material)
+				{
+					Shader iconShader3 = GUIMonsterIcon.GetIconShader();
+					iconTexture.material = new Material(iconShader3);
+				}
 				NGUIUtil.ChangeUITexture(iconTexture, tex, false);
 				if (null != iconTexture.material)
 				{
-					iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
+					Texture2D texture2D5 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePathA, null) as Texture2D;
+					if (texture2D5 != null)
+					{
+						iconTexture.material.SetTexture("_MaskTex", texture2D5);
+					}
+					else
+					{
+						iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
+					}
 				}
 			});
 		}
@@ -459,9 +473,22 @@ public class GUIMonsterIcon : GUIListPartBS
 			if (null != texture2D3)
 			{
 				NGUIUtil.ChangeUITexture(iconTexture, texture2D3, false);
+				if (null == iconTexture.material)
+				{
+					Shader iconShader2 = GUIMonsterIcon.GetIconShader();
+					iconTexture.material = new Material(iconShader2);
+				}
 				if (null != iconTexture.material)
 				{
-					iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
+					Texture2D texture2D4 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePathA, null) as Texture2D;
+					if (texture2D4 != null)
+					{
+						iconTexture.material.SetTexture("_MaskTex", texture2D4);
+					}
+					else
+					{
+						iconTexture.material.SetTexture("_MaskTex", Texture2D.whiteTexture);
+					}
 				}
 			}
 		}

@@ -346,9 +346,9 @@ public class SubStatePlayStageEffect : BattleStateController
 		{
 			characterStateControl2.ClearGutsData();
 		}
-		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountGuard);
-		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountBarrier);
-		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountEvasion);
+		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountGuard, null);
+		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountBarrier, null);
+		this.sufferStatePropertyCounter.UpdateCount(SufferStateProperty.SufferType.CountEvasion, null);
 		yield break;
 	}
 

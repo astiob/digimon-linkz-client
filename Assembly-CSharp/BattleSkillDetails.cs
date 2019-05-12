@@ -250,6 +250,9 @@ public class BattleSkillDetails : BattleFunctionBase
 					this.ApUp(targetCharacter, affectEffectProperty);
 				}
 				break;
+			case AffectEffect.ClearTolerance:
+				this.ClearTolerance(targetCharacter, affectEffectProperty);
+				break;
 			}
 			break;
 		case AffectEffect.HateUp:
@@ -394,5 +397,51 @@ public class BattleSkillDetails : BattleFunctionBase
 		targetCharacter.OnHitDestruct();
 		skillResults.onMissHit = false;
 		return skillResults;
+	}
+
+	private void ClearTolerance(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
+	{
+		Dictionary<SufferStateProperty.SufferType, float> dictionary = null;
+		if (affectEffectProperty.toleranceClearType == 0)
+		{
+			dictionary = new Dictionary<SufferStateProperty.SufferType, float>
+			{
+				{
+					SufferStateProperty.SufferType.ChangeToleranceUp,
+					affectEffectProperty.clearPoisonIncidenceRate
+				},
+				{
+					SufferStateProperty.SufferType.ChangeToleranceDown,
+					affectEffectProperty.clearPoisonIncidenceRate
+				}
+			};
+		}
+		else if (affectEffectProperty.toleranceClearType == 73)
+		{
+			dictionary = new Dictionary<SufferStateProperty.SufferType, float>
+			{
+				{
+					SufferStateProperty.SufferType.ChangeToleranceUp,
+					affectEffectProperty.clearPoisonIncidenceRate
+				}
+			};
+		}
+		else if (affectEffectProperty.toleranceClearType == 74)
+		{
+			dictionary = new Dictionary<SufferStateProperty.SufferType, float>
+			{
+				{
+					SufferStateProperty.SufferType.ChangeToleranceDown,
+					affectEffectProperty.clearPoisonIncidenceRate
+				}
+			};
+		}
+		foreach (KeyValuePair<SufferStateProperty.SufferType, float> keyValuePair in dictionary)
+		{
+			if (RandomExtension.Switch(keyValuePair.Value) && target.currentSufferState.FindSufferState(keyValuePair.Key))
+			{
+				target.currentSufferState.RemoveSufferState(keyValuePair.Key, false);
+			}
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace MissionData
 {
@@ -55,7 +56,31 @@ namespace MissionData
 			{
 				SetSendData = delegate(GameWebAPI.ReqDataUS_MissionRewardLogic param)
 				{
-					param.missionId = missionId;
+					param.missionId = new int[]
+					{
+						missionId
+					};
+				},
+				OnReceived = delegate(GameWebAPI.RespDataMS_MissionRewardLogic response)
+				{
+					this.MissionRewardLogicData = response;
+				}
+			};
+			return new APIRequestTask(request, true);
+		}
+
+		public APIRequestTask AccessMissionRewardLogicAPI(List<MissionItem> missionItem)
+		{
+			int[] missionIds = new int[missionItem.Count];
+			for (int i = 0; i < missionItem.Count; i++)
+			{
+				missionIds[i] = missionItem[i].missionId;
+			}
+			GameWebAPI.MissionRewardLogic request = new GameWebAPI.MissionRewardLogic
+			{
+				SetSendData = delegate(GameWebAPI.ReqDataUS_MissionRewardLogic param)
+				{
+					param.missionId = missionIds;
 				},
 				OnReceived = delegate(GameWebAPI.RespDataMS_MissionRewardLogic response)
 				{

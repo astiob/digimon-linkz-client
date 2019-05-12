@@ -1,4 +1,5 @@
-﻿using Monster;
+﻿using DeviceSafeArea;
+using Monster;
 using System;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace CharacterModelUI
 
 		public bool enableTouch;
 
-		public CharacterCameraView(MonsterData monsterData) : this(monsterData, 1136, 820)
+		public CharacterCameraView(MonsterData monsterData) : this(monsterData, (int)SafeArea.GetDeviceScreenSize().x, (int)SafeArea.GetDeviceScreenSize().y)
 		{
 		}
 

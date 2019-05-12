@@ -82,6 +82,8 @@ public class TutorialUI : MonoBehaviour
 		}
 	}
 
+	public GameObject CommonBackground { get; set; }
+
 	private void OnDestroy()
 	{
 		UnityEngine.Object.Destroy(this.messageWindow);
@@ -94,6 +96,11 @@ public class TutorialUI : MonoBehaviour
 		this.thumbnail = null;
 		UnityEngine.Object.Destroy(this.selectItem);
 		this.selectItem = null;
+		if (this.CommonBackground != null)
+		{
+			UnityEngine.Object.Destroy(this.CommonBackground);
+			this.CommonBackground = null;
+		}
 	}
 
 	public IEnumerator LoadMessageWindow()

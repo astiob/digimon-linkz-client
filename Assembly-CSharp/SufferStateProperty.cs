@@ -19,6 +19,7 @@ public class SufferStateProperty
 	public SufferStateProperty(AffectEffectProperty affectProperty, int lastGenerationStartTiming = 0)
 	{
 		SufferStateProperty.Data data = new SufferStateProperty.Data(affectProperty, lastGenerationStartTiming);
+		this.sufferType = data.sufferType;
 		this.AddSufferStateProperty(data);
 	}
 
@@ -532,7 +533,7 @@ public class SufferStateProperty
 		{
 			foreach (SufferStateProperty.Data data in list)
 			{
-				if (data.isActive && data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
+				if (data.isActive && data.doRoundUpdate && data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
 				{
 					data.currentKeepRound += value;
 					if (data.currentKeepRound < 0)
@@ -549,15 +550,33 @@ public class SufferStateProperty
 	{
 		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
 		{
-			this.AddCurrentKeepCount(list.ToArray(), value);
+			this.AddCurrentKeepCount(list.ToArray(), value, null, null);
 		}
 	}
 
-	public void AddCurrentKeepCount(SufferStateProperty.Data[] datas, int value)
+	public void AddCurrentKeepCount(SufferStateProperty.Data[] datas, int value, SkillStatus skillStatus = null, CharacterStateControl control = null)
 	{
+		bool flag = false;
 		foreach (SufferStateProperty.Data data in datas)
 		{
-			if (data.isActive && data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
+			if (!data.doRoundUpdate)
+			{
+				if ((int)data.toleranceValue[14] == 2)
+				{
+					foreach (AffectEffectProperty affectEffectProperty in skillStatus.affectEffect)
+					{
+						if ((int)data.toleranceValue[(int)affectEffectProperty.attribute] != 0)
+						{
+							flag = true;
+						}
+					}
+				}
+				else
+				{
+					flag = true;
+				}
+			}
+			if (flag && data.isActive && data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
 			{
 				data.currentKeepRound += value;
 				if (data.currentKeepRound <= 0)
@@ -708,7 +727,8 @@ public class SufferStateProperty
 	{
 		None,
 		Not,
-		NotForRevival
+		NotForRevival,
+		TypeMax
 	}
 
 	[Serializable]
@@ -751,7 +771,9 @@ public class SufferStateProperty
 		TurnEvasion,
 		CountEvasion,
 		Escape,
-		InstantDeath
+		InstantDeath,
+		ChangeToleranceUp,
+		ChangeToleranceDown
 	}
 
 	[Serializable]
@@ -839,6 +861,10 @@ public class SufferStateProperty
 		public bool isMiss;
 
 		public SufferStateProperty.RemoveOptionType removeOptionType;
+
+		public float[] toleranceValue;
+
+		public bool doRoundUpdate = true;
 
 		public Data()
 		{
@@ -1160,6 +1186,28 @@ public class SufferStateProperty
 				this.keepRoundNumber = affectProperty.escapeRound;
 				this.currentKeepRound = affectProperty.escapeRound;
 				this.escapeRate = affectProperty.escapeRate;
+				break;
+			case AffectEffect.ChangeToleranceUp:
+				this.sufferType = SufferStateProperty.SufferType.ChangeToleranceUp;
+				this.keepRoundNumber = affectProperty.keepRoundNumber;
+				this.currentKeepRound = affectProperty.keepRoundNumber;
+				this.upPercent = affectProperty.upPercent;
+				this.turnRate = affectProperty.turnRate;
+				this.maxValue = affectProperty.maxValue;
+				this.setType = SufferStateProperty.SetType.Add;
+				this.toleranceValue = affectProperty.toleranceValue;
+				this.doRoundUpdate = (affectProperty.toleranceCountType <= 0);
+				break;
+			case AffectEffect.ChangeToleranceDown:
+				this.sufferType = SufferStateProperty.SufferType.ChangeToleranceDown;
+				this.keepRoundNumber = affectProperty.keepRoundNumber;
+				this.currentKeepRound = affectProperty.keepRoundNumber;
+				this.upPercent = affectProperty.upPercent;
+				this.turnRate = affectProperty.turnRate;
+				this.maxValue = affectProperty.maxValue;
+				this.setType = SufferStateProperty.SetType.Add;
+				this.toleranceValue = affectProperty.toleranceValue;
+				this.doRoundUpdate = (affectProperty.toleranceCountType <= 0);
 				break;
 			}
 		}

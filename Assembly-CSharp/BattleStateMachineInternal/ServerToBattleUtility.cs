@@ -287,6 +287,14 @@ namespace BattleStateMachineInternal
 				return AffectEffect.Nothing;
 			case 71:
 				return AffectEffect.RefHpRateNonAttribute;
+			case 72:
+				return AffectEffect.SkillBranch;
+			case 73:
+				return AffectEffect.ChangeToleranceUp;
+			case 74:
+				return AffectEffect.ChangeToleranceDown;
+			case 75:
+				return AffectEffect.ClearTolerance;
 			default:
 				global::Debug.LogError("AffectEffectの値が不正です. (" + value + ")");
 				return AffectEffect.Damage;

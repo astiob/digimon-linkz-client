@@ -35,6 +35,8 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	[SerializeField]
 	private int shortenNameLength;
 
+	private int shortenNameLengthVal;
+
 	private void Start()
 	{
 		if (this.isUniqueSkill)
@@ -58,9 +60,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	private void SetSkillUI(string skillName, string skillInfo, string skillCost, int skillAttribute)
 	{
 		this.calcShortenNameLength(skillName);
-		if (this.shortenName && skillName.Length > this.shortenNameLength)
+		if (this.shortenName && skillName.Length > this.shortenNameLengthVal)
 		{
-			this.skillName.text = string.Format("{0} ...", skillName.Substring(0, this.shortenNameLength));
+			this.skillName.text = string.Format("{0} ...", skillName.Substring(0, this.shortenNameLengthVal));
 		}
 		else
 		{
@@ -152,5 +154,6 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 
 	private void calcShortenNameLength(string text)
 	{
+		this.shortenNameLengthVal = this.shortenNameLength;
 	}
 }

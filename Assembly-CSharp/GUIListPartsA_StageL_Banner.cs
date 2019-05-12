@@ -216,6 +216,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 			this.ngCloseKey.enabled = false;
 			this.closedTextLabel.transform.parent.gameObject.SetActive(true);
 			this.closedTextLabel.text = StringMaster.GetString("QuestPointRankingClosed");
+			DkLog.W("worldStageData.isViewRanking : " + this.worldStageData.isViewRanking, false);
+			DkLog.W("worldStageData.isCounting : " + this.worldStageData.isCounting, false);
 			bool active = this.worldStageData.isViewRanking && this.worldStageData.isCounting;
 			this.aggregatingLabel.gameObject.SetActive(active);
 			this.aggregatingLabel.text = StringMaster.GetString("QuestPointRankingCounting");

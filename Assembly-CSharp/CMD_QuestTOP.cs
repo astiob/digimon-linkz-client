@@ -118,7 +118,6 @@ public class CMD_QuestTOP : CMD
 			AppCoroutine.Start(this.CloseImmidiate_OpenQuestSelect(1), false);
 			return;
 		}
-		List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(CMD_QuestTOP.AreaData.data.worldAreaId);
 		if (CMD_QuestTOP.AreaData.data.type == "3" || CMD_QuestTOP.AreaData.data.type == "4")
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);

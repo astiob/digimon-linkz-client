@@ -646,13 +646,14 @@ public class BattleStateInitialize : BattleStateController
 			loading();
 			yield return new WaitForEndOfFrame();
 			TimeProfiler.EndProfile();
+			DkLog.W(string.Format("経過時間 : {0} | {1}", TimeProfiler.ElapseTime, function), false);
 		}
 		TimeProfiler.EndTotalProfile();
+		DkLog.W(string.Format("経過時間(total) : {0}", TimeProfiler.TotalElapseTime), false);
 		for (int i = 0; i < base.hierarchyData.usePlayerCharacters.Length; i++)
 		{
 			bool isLeade = i == base.hierarchyData.leaderCharacter;
 			CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[i];
-			Sprite characterThumbnail = base.stateManager.serverControl.GetCharacterThumbnail(characterStateControl.playerStatus.thumbnailId);
 			string resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(characterStateControl.playerStatus.thumbnailId);
 			string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(characterStateControl.playerStatus.thumbnailId);
 			base.stateManager.uiControl.ApplyMonsterButtonIcon(i, characterStateControl, isLeade, resourcePath, monsterIconPathByIconId);

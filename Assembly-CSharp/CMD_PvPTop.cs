@@ -364,6 +364,18 @@ public class CMD_PvPTop : CMD
 			responseStatus = res;
 		}));
 		yield return base.StartCoroutine(task.Run(null, null, null));
+		GameWebAPI.RequestUS_UserStatus requestUS_UserStatus = new GameWebAPI.RequestUS_UserStatus();
+		requestUS_UserStatus.SetSendData = delegate(GameWebAPI.PlayerInfoSendData param)
+		{
+			param.keys = "recovery";
+		};
+		requestUS_UserStatus.OnReceived = delegate(GameWebAPI.RespDataUS_GetPlayerInfo response)
+		{
+			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery = response.playerInfo.recovery;
+			DkLog.W("stamina : " + DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina, false);
+		};
+		GameWebAPI.RequestUS_UserStatus statusrRequest = requestUS_UserStatus;
+		yield return base.StartCoroutine(statusrRequest.Run(null, null, null));
 		bool isSuccess = false;
 		IEnumerator ie = this.SetUserEntryStatus(responseStatus, delegate(bool result, GameWebAPI.RespData_ColosseumUserStatusLogic status)
 		{

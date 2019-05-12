@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 
 public sealed class CMD_Mission : CMD
@@ -21,9 +22,14 @@ public sealed class CMD_Mission : CMD
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
+	private UILabel allGetBtnLable;
+
+	[SerializeField]
 	private GameObject missionListOriginalItem;
 
 	private bool isRebuildRecycle;
+
+	private StringBuilder stringBuilder = new StringBuilder();
 
 	private List<CMD_Mission.MissionType> missionTypeList = new List<CMD_Mission.MissionType>
 	{
@@ -190,6 +196,7 @@ public sealed class CMD_Mission : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		this.allGetBtnLable.text = StringMaster.GetString("Present-12");
 		base.HideDLG();
 		APIRequestTask task = ClassSingleton<MissionWebAPI>.Instance.AccessMissionInfoLogicAPI();
 		base.StartCoroutine(task.Run(delegate
@@ -377,11 +384,23 @@ public sealed class CMD_Mission : CMD
 		base.StartCoroutine(task.Run(delegate
 		{
 			RestrictionInput.EndLoad();
-			this.OpenRewardModalMessage(missionItem);
+			this.OpenRewardModalMessage(missionItem, false);
 		}, null, null));
 	}
 
-	private void OpenRewardModalMessage(MissionItem missionItem)
+	public void RequestMissionRewardLogicAPI(List<MissionItem> missionItem)
+	{
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		APIRequestTask task = ClassSingleton<MissionWebAPI>.Instance.AccessMissionRewardLogicAPI(missionItem);
+		base.StartCoroutine(task.Run(delegate
+		{
+			RestrictionInput.EndLoad();
+			MissionItem missionItem2 = missionItem.Find((MissionItem data) => data.lastStepFlg == "1");
+			this.OpenRewardModalMessage((!(missionItem2 != null)) ? missionItem.First<MissionItem>() : missionItem2, true);
+		}, null, null));
+	}
+
+	private void OpenRewardModalMessage(MissionItem missionItem, bool isAll = false)
 	{
 		GameWebAPI.RespDataMS_MissionRewardLogic.Result[] result = ClassSingleton<MissionWebAPI>.Instance.MissionRewardLogicData.result;
 		int num = 0;
@@ -426,10 +445,14 @@ public sealed class CMD_Mission : CMD
 				this.ClosePanel(true);
 			}, null));
 		};
+		string title = this.GetTitle(CMD_Mission.nowFocusType);
+		this.stringBuilder.Append(title);
+		this.stringBuilder.Append(StringMaster.GetString("MissionClearItemGet"));
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(action, "CMD_ModalMessage", null) as CMD_ModalMessage;
-		cmd_ModalMessage.Title = StringMaster.GetString("Mission-07");
+		cmd_ModalMessage.Title = ((!isAll) ? StringMaster.GetString("Mission-07") : this.stringBuilder.ToString());
 		cmd_ModalMessage.Info = info;
 		cmd_ModalMessage.AdjustSize();
+		this.stringBuilder.Length = 0;
 	}
 
 	private void RunReMissionInfoLogicAPIHelper()
@@ -468,6 +491,46 @@ public sealed class CMD_Mission : CMD
 		{
 			this.CreateSelectPanel(CMD_Mission.nowFocusType);
 		}
+	}
+
+	private void OnClickGetAll()
+	{
+		List<MissionItem> missionStateDataByTypeA = this.GetMissionStateDataByTypeA(CMD_Mission.nowFocusType);
+		if (missionStateDataByTypeA.Count > 0)
+		{
+			this.RequestMissionRewardLogicAPI(missionStateDataByTypeA);
+		}
+		else
+		{
+			string title = this.GetTitle(CMD_Mission.nowFocusType);
+			this.stringBuilder.Append(title);
+			this.stringBuilder.Append(StringMaster.GetString("Mission-09"));
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
+			cmd_ModalMessage.Title = this.stringBuilder.ToString();
+			cmd_ModalMessage.Info = StringMaster.GetString("MissionNotClear");
+			cmd_ModalMessage.AdjustSize();
+			this.stringBuilder.Length = 0;
+		}
+	}
+
+	private List<MissionItem> GetMissionStateDataByTypeA(CMD_Mission.MissionType type)
+	{
+		List<MissionItem> list = new List<MissionItem>();
+		GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[] missionData = this.GetMissionData(CMD_Mission.nowFocusType);
+		foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission in missionData)
+		{
+			if (mission.status == 1)
+			{
+				DkLog.W("data : " + mission.detail.missionDetail, false);
+				list.Add(new MissionItem
+				{
+					missionId = int.Parse(mission.missionId),
+					lastStepFlg = mission.lastStepFlg,
+					missionCategoryId = mission.missionCategoryId
+				});
+			}
+		}
+		return list;
 	}
 
 	public enum MissionType

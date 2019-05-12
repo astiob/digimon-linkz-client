@@ -165,6 +165,18 @@ public class StandardSkillConverter
 		case StandardSkillConverter.AffectEffect.Nothing:
 			result = StandardSkillConverter.ConvertToDamage(subSkillDetails.ToArray());
 			break;
+		case StandardSkillConverter.AffectEffect.SkillBranch:
+			result = StandardSkillConverter.ConvertToSkillBranch(subSkillDetails.ToArray());
+			break;
+		case StandardSkillConverter.AffectEffect.ChangeToleranceUp:
+			result = StandardSkillConverter.ConvertToChangeTolerance(subSkillDetails.ToArray(), true);
+			break;
+		case StandardSkillConverter.AffectEffect.ChangeToleranceDown:
+			result = StandardSkillConverter.ConvertToChangeTolerance(subSkillDetails.ToArray(), false);
+			break;
+		case StandardSkillConverter.AffectEffect.ClearTolerance:
+			result = StandardSkillConverter.ConvertToClearChangeTolerance(subSkillDetails.ToArray());
+			break;
 		default:
 			UnityEngine.Debug.LogError("Not AffectEffect " + affectEffect);
 			break;
@@ -908,6 +920,116 @@ public class StandardSkillConverter
 		};
 	}
 
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToSkillBranch(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		{
+			skillId = skillDetails[0].skillId,
+			subId = skillDetails[0].subId,
+			effectType = skillDetails[0].effectType.ToInt32(),
+			hitRate = skillDetails[0].hitRate.ToInt32(),
+			target = skillDetails[0].target.ToInt32(),
+			targetType = skillDetails[0].targetType.ToInt32(),
+			attribute = skillDetails[0].attribute.ToInt32(),
+			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
+			effect1 = skillDetails[0].effect.ToInt32(),
+			effect2 = skillDetails[0].effect2.ToInt32(),
+			effect3 = skillDetails[0].effect3.ToInt32(),
+			effect4 = skillDetails[0].effect4.ToInt32(),
+			toPercentage = false
+		};
+	}
+
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToChangeTolerance(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails, bool plus)
+	{
+		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM skillDetailM = new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM();
+		skillDetailM.skillId = skillDetails[0].skillId;
+		skillDetailM.subId = skillDetails[0].subId;
+		skillDetailM.effectType = skillDetails[0].effectType.ToInt32();
+		skillDetailM.hitRate = skillDetails[0].hitRate.ToInt32();
+		skillDetailM.target = skillDetails[0].target.ToInt32();
+		skillDetailM.targetType = skillDetails[0].targetType.ToInt32();
+		skillDetailM.attribute = skillDetails[0].attribute.ToInt32();
+		skillDetailM.isMissTrough = skillDetails[0].isMissTrough.ToInt32();
+		skillDetailM.effect17 = skillDetails[0].effect3.ToInt32();
+		if (skillDetailM.effect17 == 0)
+		{
+			skillDetailM.effect1 = skillDetails[0].continuousRound.ToInt32();
+		}
+		else
+		{
+			skillDetailM.effect1 = skillDetails[0].motionCount.ToInt32();
+		}
+		foreach (GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM receiveSkillDetailM in skillDetails)
+		{
+			string effect = receiveSkillDetailM.effect;
+			switch (effect)
+			{
+			case "0":
+				skillDetailM.effect3 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "1":
+				skillDetailM.effect4 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "2":
+				skillDetailM.effect5 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "3":
+				skillDetailM.effect6 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "4":
+				skillDetailM.effect7 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "5":
+				skillDetailM.effect8 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "6":
+				skillDetailM.effect9 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "7":
+				skillDetailM.effect10 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "8":
+				skillDetailM.effect11 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "9":
+				skillDetailM.effect12 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "10":
+				skillDetailM.effect13 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "11":
+				skillDetailM.effect14 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "12":
+				skillDetailM.effect15 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			case "13":
+				skillDetailM.effect16 = ((!plus) ? (receiveSkillDetailM.effect2.ToInt32() * -1) : receiveSkillDetailM.effect2.ToInt32());
+				break;
+			}
+		}
+		skillDetailM.toPercentage = false;
+		return skillDetailM;
+	}
+
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToClearChangeTolerance(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		{
+			skillId = skillDetails[0].skillId,
+			subId = skillDetails[0].subId,
+			effectType = skillDetails[0].effectType.ToInt32(),
+			hitRate = skillDetails[0].hitRate.ToInt32(),
+			target = skillDetails[0].target.ToInt32(),
+			targetType = skillDetails[0].targetType.ToInt32(),
+			attribute = skillDetails[0].attribute.ToInt32(),
+			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
+			effect2 = skillDetails[0].effect2.ToInt32(),
+			effect3 = skillDetails[0].effect.ToInt32()
+		};
+	}
+
 	public enum AffectEffect
 	{
 		PhysicalDamage = 1,
@@ -980,6 +1102,10 @@ public class StandardSkillConverter
 		HpSettingPercentage,
 		Escape,
 		Nothing,
-		RefHpRateNonAttribute
+		RefHpRateNonAttribute,
+		SkillBranch,
+		ChangeToleranceUp,
+		ChangeToleranceDown,
+		ClearTolerance
 	}
 }

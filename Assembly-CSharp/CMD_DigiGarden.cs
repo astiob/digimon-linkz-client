@@ -946,6 +946,7 @@ public sealed class CMD_DigiGarden : CMD
 					int shortenTimeValue = this.GetShortenTimeValue(this.gardenInfoList, monsterData.userMonster.userMonsterId);
 					this.growNeedStone = this.GetCostEvolution(shortenTimeValue, timeSpan);
 				}
+				DkLog.W(string.Format("デジストーン {0} : {1}", DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point, this.growNeedStone), false);
 				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= this.growNeedStone;
 			}
 		}, delegate()

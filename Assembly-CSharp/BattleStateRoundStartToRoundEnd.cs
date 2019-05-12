@@ -162,21 +162,27 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 			}
 			yield break;
 		}
-		List<CharacterStateControl> sortedCharacters = this.GetSortedSpeedCharacerList();
+		Queue<CharacterStateControl> sortedCharacters = this.GetSortedSpeedCharacerList(null);
+		List<CharacterStateControl> sortedCharactersList = sortedCharacters.ToList<CharacterStateControl>();
 		base.battleStateData.apRevival = new int[sortedCharacters.Count];
 		base.stateManager.roundFunction.ResetPlayers();
 		base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(base.battleStateData.GetTotalCharacters());
 		base.battleStateData.enableRotateCam = true;
-		for (int sortedIndex = 0; sortedIndex < sortedCharacters.Count; sortedIndex++)
+		while (sortedCharacters.Count > 0)
 		{
-			if (!sortedCharacters[sortedIndex].isDied)
+			base.battleStateData.currentSelectCharacterState = sortedCharacters.Peek();
+			if (base.battleStateData.currentSelectCharacterState.isDied)
 			{
+				base.battleStateData.currentSelectCharacterState.skillOrder = -1;
+				sortedCharacters.Dequeue();
+			}
+			else
+			{
+				CharacterStateControl sortedCharacter = base.battleStateData.currentSelectCharacterState;
 				base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(this.GetTotalCharacters());
-				sortedCharacters[sortedIndex].InitChipEffectCountForTurn();
-				this.lastCharacter = sortedCharacters[sortedIndex];
-				base.stateManager.fraudCheck.FraudCheckOverflowMaxHp(sortedCharacters[sortedIndex]);
-				CharacterStateControl sortedCharacter = sortedCharacters[sortedIndex];
-				base.battleStateData.currentActiveCharacter = sortedIndex;
+				sortedCharacter.InitChipEffectCountForTurn();
+				this.lastCharacter = sortedCharacter;
+				base.stateManager.fraudCheck.FraudCheckOverflowMaxHp(sortedCharacter);
 				base.SetState(this.subStateWaitForCertainPeriodTimeAction.GetType());
 				while (base.isWaitState)
 				{
@@ -204,7 +210,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 				}
 				base.battleStateData.onSkillTrigger = false;
 				base.stateManager.roundFunction.InitRunSufferFlags();
-				yield return base.stateManager.roundFunction.RunSufferBeforeCommand(sortedCharacters, sortedCharacter);
+				yield return base.stateManager.roundFunction.RunSufferBeforeCommand(sortedCharactersList, sortedCharacter);
 				if (!sortedCharacter.isEnemy)
 				{
 					IEnumerator playerTurnFunction = this.PlayerTurnFunction();
@@ -221,7 +227,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 						yield return null;
 					}
 				}
-				base.stateManager.roundFunction.RunSufferAfterCommand(sortedCharacters, sortedCharacter);
+				base.stateManager.roundFunction.RunSufferAfterCommand(sortedCharactersList, sortedCharacter);
 				if (this.onFreeze || this.lastCharacter.currentSkillStatus.IsNotingAffectEffect())
 				{
 					IEnumerator action = base.stateManager.roundFunction.RunOnFreezAction(sortedCharacter);
@@ -260,12 +266,11 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 					sortedCharacter.isRecommand = false;
 					sortedCharacter.targetCharacter = null;
 					sortedCharacter.isSelectSkill = -1;
-					sortedIndex--;
 				}
 				else
 				{
 					base.battleStateData.currentTurnNumber++;
-					base.battleStateData.SetOrderInSortedCharacter(sortedCharacters, sortedIndex);
+					base.battleStateData.SetOrderInSortedCharacter(sortedCharacters, -1);
 				}
 				base.SetState(this.subStateWaitForCertainPeriodTimeAction.GetType());
 				while (base.isWaitState)
@@ -302,6 +307,12 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 				{
 					yield return null;
 				}
+				if (!sortedCharacter.isRecommand)
+				{
+					base.battleStateData.currentSelectCharacterState.skillOrder = -1;
+					sortedCharacters.Dequeue();
+				}
+				sortedCharacters = this.GetSortedSpeedCharacerList(sortedCharacters.ToArray());
 			}
 		}
 		base.SetState(this.subStateOnHitPoisonDamageFunction.GetType());
@@ -611,24 +622,30 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		return base.battleStateData.GetTotalCharacters();
 	}
 
-	private List<CharacterStateControl> GetSortedSpeedCharacerList()
+	public Queue<CharacterStateControl> GetSortedSpeedCharacerList(CharacterStateControl[] controlers = null)
 	{
-		CharacterStateControl[] totalCharacters = this.GetTotalCharacters();
-		List<CharacterStateControl> list = new List<CharacterStateControl>(totalCharacters);
-		foreach (CharacterStateControl characterStateControl in list)
+		BattleStateData battleStateData = BattleStateManager.current.battleStateData;
+		BattleStateManager current = BattleStateManager.current;
+		BattleStateHierarchyData hierarchyData = BattleStateManager.current.hierarchyData;
+		CharacterStateControl[] collection = (controlers != null) ? controlers : this.GetTotalCharacters();
+		Queue<CharacterStateControl> queue = new Queue<CharacterStateControl>(collection);
+		if (controlers == null)
 		{
-			characterStateControl.SpeedRandomize(base.hierarchyData.onEnableRandomValue);
-			base.stateManager.fraudCheck.FraudCheckOverflowMaxSpeed(characterStateControl);
+			foreach (CharacterStateControl characterStateControl in queue)
+			{
+				characterStateControl.SpeedRandomize(hierarchyData.onEnableRandomValue);
+				current.fraudCheck.FraudCheckOverflowMaxSpeed(characterStateControl);
+			}
 		}
-		CharacterStateControl[] collection = CharacterStateControlSorter.SortedSpeedEnemyPriority(list.ToArray());
-		list = new List<CharacterStateControl>(collection);
-		base.battleStateData.currentTurnNumber = 0;
-		base.battleStateData.SetOrderInSortedCharacter(list, -1);
-		if (!base.stateManager.onEnableTutorial)
+		CharacterStateControl[] collection2 = CharacterStateControlSorter.SortedSpeedEnemyPriority(queue.ToArray());
+		queue = new Queue<CharacterStateControl>(collection2);
+		battleStateData.currentTurnNumber = 0;
+		battleStateData.SetOrderInSortedCharacter(queue, -1);
+		if (!current.onEnableTutorial)
 		{
-			base.hierarchyData.onEnableRandomValue = true;
+			hierarchyData.onEnableRandomValue = true;
 		}
-		return list;
+		return queue;
 	}
 
 	protected virtual void SaveRecoverData()

@@ -105,7 +105,7 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		Vector3[] hitIconPositions = this.GetHitIconPositions(characters);
 		for (int k = 0; k < characters.Count; k++)
 		{
-			HitIcon item = base.stateManager.uiControl.ApplyShowHitIcon(k, hitIconPositions[k], AffectEffect.Regenerate, damage[k], Strength.None, isMiss[k], false, false, false, false, ExtraEffectType.Non, true);
+			HitIcon item = base.stateManager.uiControl.ApplyShowHitIcon(k, hitIconPositions[k], AffectEffect.Regenerate, damage[k], Strength.None, isMiss[k], false, false, false, false, ExtraEffectType.Non, true, null);
 			hitIconlist.Add(item);
 		}
 		base.stateManager.uiControl.ShowCharacterHUDFunction(characters.ToArray());
@@ -221,7 +221,7 @@ public class SubStateOnHitPoisonDamageFunction : BattleStateController
 		Vector3[] hitIconPositions = this.GetHitIconPositions(characters);
 		for (int m = 0; m < characters.Count; m++)
 		{
-			HitIcon item2 = base.stateManager.uiControl.ApplyShowHitIcon(m, hitIconPositions[m], AffectEffect.Poison, damage[m], Strength.None, isMiss[m], false, false, false, false, ExtraEffectType.Non, true);
+			HitIcon item2 = base.stateManager.uiControl.ApplyShowHitIcon(m, hitIconPositions[m], AffectEffect.Poison, damage[m], Strength.None, isMiss[m], false, false, false, false, ExtraEffectType.Non, true, null);
 			hitIconlist.Add(item2);
 		}
 		base.stateManager.uiControl.HideCharacterHUDFunction();

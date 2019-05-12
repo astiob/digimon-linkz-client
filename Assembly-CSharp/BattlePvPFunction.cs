@@ -94,7 +94,8 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		};
 		data.Add("080120", message);
 		int count = 0;
-		while (count < 3)
+		int ReSendCount = ConstValue.PVP_BATTLEEND_JUDGMENTCHECK;
+		while (count < ReSendCount)
 		{
 			this.returnPvPJudgmentCheck = -1;
 			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
@@ -108,9 +109,9 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			}
 			yield return Util.WaitForRealTime(3f);
 			count++;
-			if (count >= 3)
+			if (count >= ReSendCount)
 			{
-				global::Debug.Log(3 + "回試合判定を行いました");
+				global::Debug.Log(ReSendCount + "回試合判定を行いました");
 				break;
 			}
 		}

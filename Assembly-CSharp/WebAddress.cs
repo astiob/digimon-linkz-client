@@ -30,5 +30,7 @@ public class WebAddress
 
 	public static string EXT_ADR_POINT_QUEST_DETAIL = ConstValue.APP_WEB_DOMAIN + "/world/event/WorldEventInfo/?worldEventId={0}";
 
+	public static string EXT_ADR_IMPORTANT = ConstValue.APP_WEB_DOMAIN + "/information/ImportantNotice";
+
 	public static string ADR_HELP = "help/index.html";
 }

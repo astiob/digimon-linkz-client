@@ -670,7 +670,6 @@ public class BattleUIControlBasic : BattleUIControl
 			base.ui.arrowDepthController = this.currentSelectMonster.GetComponent<DepthController>();
 		}
 		Vector3 position2 = base.ui.uiCamera.ViewportToWorldPoint(position);
-		float z = position2.z;
 		position2.Set(position2.x, position2.y, this.currentSelectMonster.transform.position.z);
 		this.currentSelectMonster.transform.position = position2;
 		int widgetManualDepth = 0;
@@ -681,7 +680,7 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.arrowDepthController.SetWidgetManualDepth(widgetManualDepth);
 	}
 
-	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non, bool isHitIcon = true)
+	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non, bool isHitIcon = true, AffectEffectProperty affectEffectProperty = null)
 	{
 		int index2 = 0;
 		for (int i = 0; i < base.ui.hitIconObjectInstanced[index].Count; i++)
@@ -702,7 +701,7 @@ public class BattleUIControlBasic : BattleUIControl
 			DepthController component = hitIcon.GetComponent<DepthController>();
 			component.SetWidgetDepth(index);
 			NGUITools.SetActiveSelf(hitIcon.gameObject, true);
-			hitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType);
+			hitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType, affectEffectProperty);
 		}
 		return hitIcon;
 	}
@@ -938,7 +937,6 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		this.SetActiveCharacterHud(index, true, position);
 		Vector3 position2 = base.ui.uiCamera.ViewportToWorldPoint(position);
-		float z = position2.z;
 		position2.Set(position2.x, position2.y, base.ui.hudObjectInstanced[index].transform.parent.transform.position.z);
 		base.ui.hudObjectInstanced[index].transform.position = position2;
 		base.ui.hudObjectDepthController[index].SetWidgetManualDepth(depth);

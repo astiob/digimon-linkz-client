@@ -11,8 +11,6 @@ public class GUIScreenHome : GUIScreen
 
 	protected GameObject goFARM_ROOT;
 
-	private bool isInfoShowed;
-
 	private bool isStartGuidance;
 
 	public static bool isManualScreenFadeIn;
@@ -322,10 +320,6 @@ public class GUIScreenHome : GUIScreen
 				{
 					yield return null;
 				}
-			}
-			if (0 < showNum)
-			{
-				this.isInfoShowed = true;
 			}
 		}
 		yield break;
