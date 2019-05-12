@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class SkillSelectPvP : MonoBehaviour
 {
-	[Header("モンスターボタン")]
 	[SerializeField]
+	[Header("モンスターボタン")]
 	public GameObject monsterButtonRoot;
 
 	[SerializeField]
@@ -15,23 +15,23 @@ public class SkillSelectPvP : MonoBehaviour
 	[SerializeField]
 	public Collider AttackButtonCollider;
 
-	[SerializeField]
 	[Header("スキルボタン1のコライダー")]
+	[SerializeField]
 	public Collider SkillButton1Collider;
 
 	[Header("スキルボタン2のコライダー")]
 	[SerializeField]
 	public Collider SkillButton2Collider;
 
-	[Header("攻撃ボタンのチェッカー")]
 	[SerializeField]
+	[Header("攻撃ボタンのチェッカー")]
 	public UITouchChecker attackButtonChecker;
 
 	[SerializeField]
 	[Header("スキルボタン1のチェッカー")]
 	public UITouchChecker skillButton1Checker;
 
-	[Header("スキルボタン2のチェッカー")]
 	[SerializeField]
+	[Header("スキルボタン2のチェッカー")]
 	public UITouchChecker skillButton2Checker;
 }

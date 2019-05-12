@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Networking.NetworkSystem;
+using UnityEngine.SceneManagement;
 
 namespace UnityEngine.Networking
 {
@@ -161,6 +162,24 @@ namespace UnityEngine.Networking
 			{
 				this.m_MinPlayers = this.m_MaxPlayers;
 			}
+			if (this.m_LobbyPlayerPrefab != null)
+			{
+				NetworkIdentity component = this.m_LobbyPlayerPrefab.GetComponent<NetworkIdentity>();
+				if (component == null)
+				{
+					this.m_LobbyPlayerPrefab = null;
+					Debug.LogWarning("LobbyPlayer prefab must have a NetworkIdentity component.");
+				}
+			}
+			if (this.m_GamePlayerPrefab != null)
+			{
+				NetworkIdentity component2 = this.m_GamePlayerPrefab.GetComponent<NetworkIdentity>();
+				if (component2 == null)
+				{
+					this.m_GamePlayerPrefab = null;
+					Debug.LogWarning("GamePlayer prefab must have a NetworkIdentity component.");
+				}
+			}
 		}
 
 		private byte FindSlot()
@@ -184,17 +203,18 @@ namespace UnityEngine.Networking
 			{
 				return;
 			}
+			string name = SceneManager.GetSceneAt(0).name;
 			if (LogFilter.logDebug)
 			{
 				Debug.Log(string.Concat(new object[]
 				{
 					"NetworkLobby SceneLoadedForPlayer scene:",
-					Application.loadedLevelName,
+					name,
 					" ",
 					conn
 				}));
 			}
-			if (Application.loadedLevelName == this.m_LobbyScene)
+			if (name == this.m_LobbyScene)
 			{
 				NetworkLobbyManager.PendingPlayer item;
 				item.conn = conn;
@@ -223,25 +243,27 @@ namespace UnityEngine.Networking
 			NetworkServer.ReplacePlayerForConnection(conn, gameObject, playerControllerId);
 		}
 
-		private static bool CheckConnectionIsReadyToBegin(NetworkConnection conn)
+		private static int CheckConnectionIsReadyToBegin(NetworkConnection conn)
 		{
+			int num = 0;
 			foreach (PlayerController playerController in conn.playerControllers)
 			{
 				if (playerController.IsValid)
 				{
 					NetworkLobbyPlayer component = playerController.gameObject.GetComponent<NetworkLobbyPlayer>();
-					if (!component.readyToBegin)
+					if (component.readyToBegin)
 					{
-						return false;
+						num++;
 					}
 				}
 			}
-			return true;
+			return num;
 		}
 
 		public void CheckReadyToBegin()
 		{
-			if (Application.loadedLevelName != this.m_LobbyScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (name != this.m_LobbyScene)
 			{
 				return;
 			}
@@ -250,22 +272,7 @@ namespace UnityEngine.Networking
 			{
 				if (networkConnection != null)
 				{
-					if (!NetworkLobbyManager.CheckConnectionIsReadyToBegin(networkConnection))
-					{
-						return;
-					}
-					num++;
-				}
-			}
-			foreach (NetworkConnection networkConnection2 in NetworkServer.localConnections)
-			{
-				if (networkConnection2 != null)
-				{
-					if (!NetworkLobbyManager.CheckConnectionIsReadyToBegin(networkConnection2))
-					{
-						return;
-					}
-					num++;
+					num += NetworkLobbyManager.CheckConnectionIsReadyToBegin(networkConnection);
 				}
 			}
 			if (this.m_MinPlayers > 0 && num < this.m_MinPlayers)
@@ -329,7 +336,8 @@ namespace UnityEngine.Networking
 				conn.Disconnect();
 				return;
 			}
-			if (Application.loadedLevelName != this.m_LobbyScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (name != this.m_LobbyScene)
 			{
 				conn.Disconnect();
 				return;
@@ -341,12 +349,25 @@ namespace UnityEngine.Networking
 		public override void OnServerDisconnect(NetworkConnection conn)
 		{
 			base.OnServerDisconnect(conn);
+			for (int i = 0; i < this.lobbySlots.Length; i++)
+			{
+				NetworkLobbyPlayer networkLobbyPlayer = this.lobbySlots[i];
+				if (!(networkLobbyPlayer == null))
+				{
+					if (networkLobbyPlayer.connectionToClient == conn)
+					{
+						this.lobbySlots[i] = null;
+						NetworkServer.Destroy(networkLobbyPlayer.gameObject);
+					}
+				}
+			}
 			this.OnLobbyServerDisconnect(conn);
 		}
 
 		public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 		{
-			if (Application.loadedLevelName != this.m_LobbyScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (name != this.m_LobbyScene)
 			{
 				return;
 			}
@@ -503,6 +524,22 @@ namespace UnityEngine.Networking
 
 		public override void OnStartServer()
 		{
+			if (string.IsNullOrEmpty(this.m_LobbyScene))
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkLobbyManager LobbyScene is empty. Set the LobbyScene in the inspector for the NetworkLobbyMangaer");
+				}
+				return;
+			}
+			if (string.IsNullOrEmpty(this.m_PlayScene))
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkLobbyManager PlayScene is empty. Set the PlayScene in the inspector for the NetworkLobbyMangaer");
+				}
+				return;
+			}
 			if (this.lobbySlots.Length == 0)
 			{
 				this.lobbySlots = new NetworkLobbyPlayer[this.maxPlayers];
@@ -577,7 +614,8 @@ namespace UnityEngine.Networking
 
 		public override void OnClientSceneChanged(NetworkConnection conn)
 		{
-			if (Application.loadedLevelName == this.lobbyScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (name == this.m_LobbyScene)
 			{
 				if (this.client.isConnected)
 				{
@@ -711,7 +749,8 @@ namespace UnityEngine.Networking
 			{
 				return;
 			}
-			if (Application.loadedLevelName != this.m_LobbyScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (name != this.m_LobbyScene)
 			{
 				return;
 			}

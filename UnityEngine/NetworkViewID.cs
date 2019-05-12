@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>The NetworkViewID is a unique identifier for a network view instance in a multiplayer game.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	public struct NetworkViewID
 	{
 		private int a;
@@ -14,9 +13,6 @@ namespace UnityEngine
 
 		private int c;
 
-		/// <summary>
-		///   <para>Represents an invalid network view ID.</para>
-		/// </summary>
 		public static NetworkViewID unassigned
 		{
 			get
@@ -82,9 +78,6 @@ namespace UnityEngine
 			return NetworkViewID.Internal_Compare(this, rhs);
 		}
 
-		/// <summary>
-		///   <para>True if instantiated by me.</para>
-		/// </summary>
 		public bool isMine
 		{
 			get
@@ -93,9 +86,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The NetworkPlayer who owns the NetworkView. Could be the server.</para>
-		/// </summary>
 		public NetworkPlayer owner
 		{
 			get
@@ -106,9 +96,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns a formatted string with details on this NetworkViewID.</para>
-		/// </summary>
 		public override string ToString()
 		{
 			return NetworkViewID.Internal_GetString(this);

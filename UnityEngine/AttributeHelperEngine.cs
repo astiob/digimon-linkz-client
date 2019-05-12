@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
 	internal class AttributeHelperEngine
 	{
+		[RequiredByNativeCode]
 		private static Type GetParentTypeDisallowingMultipleInclusion(Type type)
 		{
 			Stack<Type> stack = new Stack<Type>();
@@ -26,6 +28,7 @@ namespace UnityEngine
 			return null;
 		}
 
+		[RequiredByNativeCode]
 		private static Type[] GetRequiredComponents(Type klass)
 		{
 			List<Type> list = null;
@@ -70,6 +73,7 @@ namespace UnityEngine
 			return list.ToArray();
 		}
 
+		[RequiredByNativeCode]
 		private static bool CheckIsEditorScript(Type klass)
 		{
 			while (klass != null && klass != typeof(MonoBehaviour))

@@ -264,8 +264,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.InvalidOperationException">The process's <see cref="P:System.Diagnostics.Process.Id" /> property has not been set.-or- There is no process associated with this <see cref="T:System.Diagnostics.Process" /> object. </exception>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me); set the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property to false to access this property on Windows 98 and Windows Me.</exception>
 		/// <filterpriority>1</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("Process identifier.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public int Id
 		{
 			get
@@ -282,10 +282,10 @@ namespace System.Diagnostics
 		/// <returns>The name of the computer that the associated process is running on.</returns>
 		/// <exception cref="T:System.InvalidOperationException">There is no process associated with this <see cref="T:System.Diagnostics.Process" /> object. </exception>
 		/// <filterpriority>1</filterpriority>
-		[System.ComponentModel.Browsable(false)]
-		[MonitoringDescription("The name of the computer running the process.")]
-		[MonoTODO]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		[MonitoringDescription("The name of the computer running the process.")]
+		[System.ComponentModel.Browsable(false)]
 		public string MachineName
 		{
 			get
@@ -301,8 +301,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.InvalidOperationException">The process <see cref="P:System.Diagnostics.Process.Id" /> is not available.-or- The process has exited. </exception>
 		/// <filterpriority>1</filterpriority>
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-		[MonitoringDescription("The main module of the process.")]
 		[System.ComponentModel.Browsable(false)]
+		[MonitoringDescription("The main module of the process.")]
 		public ProcessModule MainModule
 		{
 			get
@@ -317,9 +317,9 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.NotSupportedException">You are trying to access the <see cref="P:System.Diagnostics.Process.MainWindowHandle" /> property for a process that is running on a remote computer. This property is available only for processes that are running on the local computer.</exception>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me); set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to false to access this property on Windows 98 and Windows Me.</exception>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonoTODO]
 		[MonitoringDescription("The handle of the main window of the process.")]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public IntPtr MainWindowHandle
 		{
 			get
@@ -412,8 +412,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.InvalidOperationException">The process <see cref="P:System.Diagnostics.Process.Id" /> is not available.-or- The process has exited.</exception>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The minimum working set for this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public IntPtr MinWorkingSet
 		{
 			get
@@ -467,9 +467,9 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me); set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to false to access this property on Windows 98 and Windows Me.</exception>
 		/// <exception cref="T:System.ComponentModel.Win32Exception">You are attempting to access the <see cref="P:System.Diagnostics.Process.Modules" /> property for either the system process or the idle process. These processes do not have modules.</exception>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[System.ComponentModel.Browsable(false)]
 		[MonitoringDescription("The modules that are loaded as part of this process.")]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public ProcessModuleCollection Modules
 		{
 			get
@@ -489,10 +489,10 @@ namespace System.Diagnostics
 		/// <returns>The amount of memory, in bytes, the system has allocated for the associated process that cannot be written to the virtual memory paging file.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The number of bytes that are not pageable.")]
 		[MonoTODO]
 		[Obsolete("Use NonpagedSystemMemorySize64")]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public int NonpagedSystemMemorySize
 		{
 			get
@@ -521,9 +521,9 @@ namespace System.Diagnostics
 		/// <returns>The amount of memory, in bytes, the system has allocated for the associated process that can be written to the virtual memory paging file.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
-		[Obsolete("Use PagedSystemMemorySize64")]
-		[MonoTODO]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		[Obsolete("Use PagedSystemMemorySize64")]
 		[MonitoringDescription("The amount of paged system memory in bytes.")]
 		public int PagedSystemMemorySize
 		{
@@ -537,9 +537,9 @@ namespace System.Diagnostics
 		/// <returns>The maximum amount of memory, in bytes, allocated by the associated process that could be written to the virtual memory paging file.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[Obsolete("Use PeakPagedMemorySize64")]
 		[MonoTODO]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The maximum amount of paged memory used by this process.")]
 		public int PeakPagedMemorySize
 		{
@@ -570,8 +570,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
 		[MonitoringDescription("The maximum amount of system memory used by this process.")]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[Obsolete("Use PeakWorkingSet64")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public int PeakWorkingSet
 		{
 			get
@@ -586,9 +586,9 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
 		[MonoTODO]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-		[MonitoringDescription("The number of bytes that are not pageable.")]
 		[ComVisible(false)]
+		[MonitoringDescription("The number of bytes that are not pageable.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public long NonpagedSystemMemorySize64
 		{
 			get
@@ -601,10 +601,10 @@ namespace System.Diagnostics
 		/// <returns>The amount of memory, in bytes, allocated in the virtual memory paging file for the associated process.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
-		[ComVisible(false)]
-		[MonoTODO]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The number of bytes that are paged.")]
+		[MonoTODO]
+		[ComVisible(false)]
 		public long PagedMemorySize64
 		{
 			get
@@ -617,10 +617,10 @@ namespace System.Diagnostics
 		/// <returns>The amount of system memory, in bytes, allocated for the associated process that can be written to the virtual memory paging file.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
-		[MonitoringDescription("The amount of paged system memory in bytes.")]
 		[ComVisible(false)]
+		[MonoTODO]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription("The amount of paged system memory in bytes.")]
 		public long PagedSystemMemorySize64
 		{
 			get
@@ -633,10 +633,10 @@ namespace System.Diagnostics
 		/// <returns>The maximum amount of memory, in bytes, allocated in the virtual memory paging file for the associated process since it was started.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
-		[MonoTODO]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The maximum amount of paged memory used by this process.")]
 		[ComVisible(false)]
+		[MonoTODO]
 		public long PeakPagedMemorySize64
 		{
 			get
@@ -649,9 +649,9 @@ namespace System.Diagnostics
 		/// <returns>The maximum amount of virtual memory, in bytes, allocated for the associated process since it was started.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The maximum amount of virtual memory used by this process.")]
 		[ComVisible(false)]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public long PeakVirtualMemorySize64
 		{
 			get
@@ -665,9 +665,9 @@ namespace System.Diagnostics
 		/// <returns>The maximum amount of physical memory, in bytes, allocated for the associated process since it was started.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
-		[ComVisible(false)]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The maximum amount of system memory used by this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[ComVisible(false)]
 		public long PeakWorkingSet64
 		{
 			get
@@ -684,9 +684,9 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.NotSupportedException">You are attempting to access the <see cref="P:System.Diagnostics.Process.PriorityBoostEnabled" /> property for a process that is running on a remote computer. This property is available only for processes that are running on the local computer. </exception>
 		/// <exception cref="T:System.InvalidOperationException">The process <see cref="P:System.Diagnostics.Process.Id" /> is not available.</exception>
 		/// <filterpriority>1</filterpriority>
-		[MonitoringDescription("Process will be of higher priority while it is actively used.")]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonoTODO]
+		[MonitoringDescription("Process will be of higher priority while it is actively used.")]
 		public bool PriorityBoostEnabled
 		{
 			get
@@ -753,8 +753,8 @@ namespace System.Diagnostics
 		/// <returns>The number of bytes allocated by the associated process that cannot be shared with other processes.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The amount of memory exclusively used by this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[Obsolete("Use PrivateMemorySize64")]
 		public int PrivateMemorySize
 		{
@@ -841,9 +841,9 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.NotSupportedException">You are attempting to access the <see cref="P:System.Diagnostics.Process.ProcessorAffinity" /> property for a process that is running on a remote computer. This property is available only for processes that are running on the local computer. </exception>
 		/// <exception cref="T:System.InvalidOperationException">The process <see cref="P:System.Diagnostics.Process.Id" /> was not available.-or- The process has exited. </exception>
 		/// <filterpriority>2</filterpriority>
+		[MonoTODO]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("Allowed processor that can be used by this process.")]
-		[MonoTODO]
 		public IntPtr ProcessorAffinity
 		{
 			get
@@ -861,8 +861,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.InvalidOperationException">There is no process associated with this <see cref="T:System.Diagnostics.Process" /> object. </exception>
 		/// <exception cref="T:System.NotSupportedException">You are attempting to access the <see cref="P:System.Diagnostics.Process.Responding" /> property for a process that is running on a remote computer. This property is available only for processes that are running on the local computer. </exception>
 		/// <filterpriority>1</filterpriority>
-		[MonoTODO]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
 		[MonitoringDescription("Is this process responsive.")]
 		public bool Responding
 		{
@@ -876,9 +876,9 @@ namespace System.Diagnostics
 		/// <returns>A <see cref="T:System.IO.StreamReader" /> that can be used to read the standard error stream of the application.</returns>
 		/// <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Diagnostics.Process.StandardError" /> stream has not been defined for redirection; ensure <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardError" /> is set to true and <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is set to false.- or - The <see cref="P:System.Diagnostics.Process.StandardError" /> stream has been opened for asynchronous read operations with <see cref="M:System.Diagnostics.Process.BeginErrorReadLine" />. </exception>
 		/// <filterpriority>1</filterpriority>
-		[System.ComponentModel.Browsable(false)]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The standard error stream of this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[System.ComponentModel.Browsable(false)]
 		public StreamReader StandardError
 		{
 			get
@@ -900,9 +900,9 @@ namespace System.Diagnostics
 		/// <returns>A <see cref="T:System.IO.StreamWriter" /> that can be used to write the standard input stream of the application.</returns>
 		/// <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Diagnostics.Process.StandardInput" /> stream has not been defined because <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardInput" /> is set to false. </exception>
 		/// <filterpriority>1</filterpriority>
-		[MonitoringDescription("The standard input stream of this process.")]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[System.ComponentModel.Browsable(false)]
+		[MonitoringDescription("The standard input stream of this process.")]
 		public StreamWriter StandardInput
 		{
 			get
@@ -919,9 +919,9 @@ namespace System.Diagnostics
 		/// <returns>A <see cref="T:System.IO.StreamReader" /> that can be used to read the standard output stream of the application.</returns>
 		/// <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream has not been defined for redirection; ensure <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardOutput" /> is set to true and <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is set to false.- or - The <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream has been opened for asynchronous read operations with <see cref="M:System.Diagnostics.Process.BeginOutputReadLine" />. </exception>
 		/// <filterpriority>1</filterpriority>
-		[System.ComponentModel.Browsable(false)]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The standard output stream of this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[System.ComponentModel.Browsable(false)]
 		public StreamReader StandardOutput
 		{
 			get
@@ -976,8 +976,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.InvalidOperationException">The process has exited.</exception>
 		/// <exception cref="T:System.ComponentModel.Win32Exception">An error occurred in the call to the Windows function.</exception>
 		/// <filterpriority>1</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The time this process started.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public DateTime StartTime
 		{
 			get
@@ -989,9 +989,9 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets the object used to marshal the event handler calls that are issued as a result of a process exit event.</summary>
 		/// <returns>The <see cref="T:System.ComponentModel.ISynchronizeInvoke" /> used to marshal event handler calls that are issued as a result of an <see cref="E:System.Diagnostics.Process.Exited" /> event on the process.</returns>
 		/// <filterpriority>2</filterpriority>
-		[MonitoringDescription("The object that is used to synchronize event handler calls for this process.")]
-		[System.ComponentModel.DefaultValue(null)]
 		[System.ComponentModel.Browsable(false)]
+		[System.ComponentModel.DefaultValue(null)]
+		[MonitoringDescription("The object that is used to synchronize event handler calls for this process.")]
 		public System.ComponentModel.ISynchronizeInvoke SynchronizingObject
 		{
 			get
@@ -1010,9 +1010,9 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me); set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to false to access this property on Windows 98 and Windows Me.</exception>
 		/// <filterpriority>1</filterpriority>
 		[System.ComponentModel.Browsable(false)]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The number of threads of this process.")]
 		[MonoTODO]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public ProcessThreadCollection Threads
 		{
 			get
@@ -1026,8 +1026,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <exception cref="T:System.NotSupportedException">You are attempting to access the <see cref="P:System.Diagnostics.Process.TotalProcessorTime" /> property for a process that is running on a remote computer. This property is available only for processes that are running on the local computer. </exception>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The total CPU time spent for this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public TimeSpan TotalProcessorTime
 		{
 			get
@@ -1041,8 +1041,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <exception cref="T:System.NotSupportedException">You are attempting to access the <see cref="P:System.Diagnostics.Process.UserProcessorTime" /> property for a process that is running on a remote computer. This property is available only for processes that are running on the local computer. </exception>
 		/// <filterpriority>2</filterpriority>
-		[MonitoringDescription("The CPU time spent for this process in user mode.")]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription("The CPU time spent for this process in user mode.")]
 		public TimeSpan UserProcessorTime
 		{
 			get
@@ -1055,9 +1055,9 @@ namespace System.Diagnostics
 		/// <returns>The amount of virtual memory, in bytes, that the associated process has requested.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The amount of virtual memory currently used for this process.")]
 		[Obsolete("Use VirtualMemorySize64")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public int VirtualMemorySize
 		{
 			get
@@ -1071,9 +1071,9 @@ namespace System.Diagnostics
 		/// <returns>The total amount of physical memory the associated process is using, in bytes.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property. </exception>
 		/// <filterpriority>2</filterpriority>
+		[Obsolete("Use WorkingSet64")]
 		[MonitoringDescription("The amount of physical memory currently used for this process.")]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-		[Obsolete("Use WorkingSet64")]
 		public int WorkingSet
 		{
 			get
@@ -1087,9 +1087,9 @@ namespace System.Diagnostics
 		/// <returns>The amount of memory, in bytes, allocated for the associated process that cannot be shared with other processes.</returns>
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
-		[ComVisible(false)]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The amount of memory exclusively used by this process.")]
+		[ComVisible(false)]
 		public long PrivateMemorySize64
 		{
 			get
@@ -1104,8 +1104,8 @@ namespace System.Diagnostics
 		/// <exception cref="T:System.PlatformNotSupportedException">The platform is Windows 98 or Windows Millennium Edition (Windows Me), which does not support this property.</exception>
 		/// <filterpriority>2</filterpriority>
 		[ComVisible(false)]
-		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription("The amount of virtual memory currently used for this process.")]
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public long VirtualMemorySize64
 		{
 			get

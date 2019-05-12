@@ -4,16 +4,13 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.Events
 {
-	/// <summary>
-	///   <para>Abstract base class for UnityEvents.</para>
-	/// </summary>
 	[Serializable]
 	public abstract class UnityEventBase : ISerializationCallbackReceiver
 	{
 		private InvokableCallList m_Calls;
 
-		[FormerlySerializedAs("m_PersistentListeners")]
 		[SerializeField]
+		[FormerlySerializedAs("m_PersistentListeners")]
 		private PersistentCallGroup m_PersistentCalls;
 
 		[SerializeField]
@@ -90,28 +87,17 @@ namespace UnityEngine.Events
 			}
 		}
 
-		/// <summary>
-		///   <para>Get the number of registered persistent listeners.</para>
-		/// </summary>
 		public int GetPersistentEventCount()
 		{
 			return this.m_PersistentCalls.Count;
 		}
 
-		/// <summary>
-		///   <para>Get the target component of the listener at index index.</para>
-		/// </summary>
-		/// <param name="index">Index of the listener to query.</param>
 		public Object GetPersistentTarget(int index)
 		{
 			PersistentCall listener = this.m_PersistentCalls.GetListener(index);
 			return (listener == null) ? null : listener.target;
 		}
 
-		/// <summary>
-		///   <para>Get the target method name of the listener at index index.</para>
-		/// </summary>
-		/// <param name="index">Index of the listener to query.</param>
 		public string GetPersistentMethodName(int index)
 		{
 			PersistentCall listener = this.m_PersistentCalls.GetListener(index);
@@ -133,11 +119,6 @@ namespace UnityEngine.Events
 			}
 		}
 
-		/// <summary>
-		///   <para>Modify the execution state of a persistent listener.</para>
-		/// </summary>
-		/// <param name="index">Index of the listener to query.</param>
-		/// <param name="state">State to set.</param>
 		public void SetPersistentListenerState(int index, UnityEventCallState state)
 		{
 			PersistentCall listener = this.m_PersistentCalls.GetListener(index);
@@ -163,9 +144,6 @@ namespace UnityEngine.Events
 			this.m_Calls.RemoveListener(targetObj, method);
 		}
 
-		/// <summary>
-		///   <para>Remove all listeners from the event.</para>
-		/// </summary>
 		public void RemoveAllListeners()
 		{
 			this.m_Calls.Clear();
@@ -182,12 +160,6 @@ namespace UnityEngine.Events
 			return base.ToString() + " " + base.GetType().FullName;
 		}
 
-		/// <summary>
-		///   <para>Given an object, function name, and a list of argument types; find the method that matches.</para>
-		/// </summary>
-		/// <param name="obj">Object to search for the method.</param>
-		/// <param name="functionName">Function name to search for.</param>
-		/// <param name="argumentTypes">Argument types for the function.</param>
 		public static MethodInfo GetValidMethodInfo(object obj, string functionName, Type[] argumentTypes)
 		{
 			Type type = obj.GetType();

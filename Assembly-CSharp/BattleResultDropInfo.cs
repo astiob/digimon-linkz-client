@@ -7,16 +7,16 @@ public sealed class BattleResultDropInfo : MonoBehaviour
 	[SerializeField]
 	private Color itemGrayOutColor = new Color32(70, 70, 70, byte.MaxValue);
 
-	[SerializeField]
 	[Header("箱のアイコン")]
+	[SerializeField]
 	private UISprite[] boxIcons;
 
-	[SerializeField]
 	[Header("ドロップアイテム")]
+	[SerializeField]
 	private PresentBoxItem[] dropItemItems;
 
-	[SerializeField]
 	[Header("運の文字アイコン")]
+	[SerializeField]
 	private UISprite[] luckIcons;
 
 	[Header("マルチ運プレイヤーアイコン")]

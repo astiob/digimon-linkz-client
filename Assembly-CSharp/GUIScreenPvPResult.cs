@@ -55,7 +55,7 @@ public sealed class GUIScreenPvPResult : GUIScreen
 
 	private void GoToPvPTop()
 	{
-		MonsterDataMng.Instance().GetMonsterDataList(true);
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		MonsterDataMng.Instance().InitMonsterGO();
 		GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePvPTOP), "CMD_PvPTop");
 	}

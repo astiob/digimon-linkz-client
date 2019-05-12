@@ -457,7 +457,15 @@ namespace System.Net.Sockets
 		{
 			this.CheckDisposed();
 			byte[] array = new byte[65536];
-			EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+			EndPoint endPoint;
+			if (this.family == AddressFamily.InterNetwork)
+			{
+				endPoint = new IPEndPoint(IPAddress.Any, 0);
+			}
+			else
+			{
+				endPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+			}
 			int num = this.socket.ReceiveFrom(array, ref endPoint);
 			if (num < array.Length)
 			{

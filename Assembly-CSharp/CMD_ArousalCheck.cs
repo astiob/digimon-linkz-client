@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,8 +16,8 @@ public sealed class CMD_ArousalCheck : CMD
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
 	[Header("警告のメッセージのラベル")]
@@ -47,11 +48,25 @@ public sealed class CMD_ArousalCheck : CMD
 		this.buttonNoLabel.text = StringMaster.GetString("SystemButtonNo");
 	}
 
+	private bool AnyArousalMonster(List<MonsterData> monsterDataList)
+	{
+		bool result = false;
+		for (int i = 0; i < monsterDataList.Count; i++)
+		{
+			if (MonsterStatusData.IsArousal(monsterDataList[i].GetMonsterMaster().Simple.rare))
+			{
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
 	public void SetParams(MonsterData mData, List<MonsterData> partnerDigimons, bool isGrowStepMax)
 	{
 		this.CreateIcon(mData, this.icon.gameObject);
 		this.normalMessageLabel.text = StringMaster.GetString("ArousalConfirmInfo");
-		bool flag = MonsterDataMng.Instance().HasArousal(partnerDigimons);
+		bool flag = this.AnyArousalMonster(partnerDigimons);
 		bool flag2 = MonsterDataMng.Instance().HasChip(partnerDigimons);
 		List<string> list = new List<string>();
 		if (flag)
@@ -80,9 +95,8 @@ public sealed class CMD_ArousalCheck : CMD
 
 	private void CreateIcon(MonsterData md, GameObject goEmpty)
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		Transform transform = goEmpty.transform;
-		GUIMonsterIcon guimonsterIcon = monsterDataMng.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
 		guimonsterIcon.playSelectSE = false;
 		guimonsterIcon.SendMoveToParent = false;
 		guimonsterIcon.CancelTouchEndByMove = false;

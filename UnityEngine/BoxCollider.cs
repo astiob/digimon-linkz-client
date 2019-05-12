@@ -3,14 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>A box-shaped primitive collider.</para>
-	/// </summary>
 	public sealed class BoxCollider : Collider
 	{
-		/// <summary>
-		///   <para>The center of the box, measured in the object's local space.</para>
-		/// </summary>
 		public Vector3 center
 		{
 			get
@@ -33,9 +27,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_center(ref Vector3 value);
 
-		/// <summary>
-		///   <para>The size of the box, measured in the object's local space.</para>
-		/// </summary>
 		public Vector3 size
 		{
 			get

@@ -565,6 +565,23 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		yield break;
 	}
 
+	public IEnumerator SendChatExpulsion(int chatGroupId, string target, Action<int> action = null)
+	{
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		data.Add("810003", new TCPUtil.SocketExpulsion
+		{
+			chatGroupId = chatGroupId,
+			target = target
+		});
+		Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+		yield return null;
+		if (action != null)
+		{
+			action(0);
+		}
+		yield break;
+	}
+
 	public IEnumerator SendSystemMessege(int cgi, string uid, string uname)
 	{
 		while (!Singleton<TCPUtil>.Instance.CheckPrepareTCPServer())
@@ -635,5 +652,12 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		public string msg;
 
 		public int tp;
+	}
+
+	private class SocketExpulsion
+	{
+		public int chatGroupId;
+
+		public string target;
 	}
 }

@@ -4528,7 +4528,12 @@ namespace System.Net.Sockets
 		{
 			if (this.protocol_type == ProtocolType.Udp)
 			{
-				EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+				IPAddress address = IPAddress.Any;
+				if (this.address_family == AddressFamily.InterNetworkV6)
+				{
+					address = IPAddress.IPv6Any;
+				}
+				EndPoint endPoint = new IPEndPoint(address, 0);
 				int num = 0;
 				int result = this.ReceiveFrom_nochecks_exc(buf, offset, size, flags, ref endPoint, false, out num);
 				error = (SocketError)num;

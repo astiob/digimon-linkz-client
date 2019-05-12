@@ -24,16 +24,21 @@ public class BattleInitialize : BattleFunctionBase
 
 	private Dictionary<string, List<HitEffectParams>> hitEffectObject = new Dictionary<string, List<HitEffectParams>>();
 
-	public CharacterStateControl LoadCharacterStateControl(CharacterStatus getStatus, LeaderSkillStatus leaderSkill = null, CharacterDatas leaderCharacter = null, bool isEnemy = false)
+	public void InitializeRoots()
 	{
-		CharacterDatas characterData = base.stateManager.serverControl.GetCharacterData(getStatus.prefabId);
-		Tolerance tolerance = getStatus.tolerance;
-		LeaderSkillStatus myLeaderSkill = null;
-		if (getStatus.GetType() == typeof(PlayerStatus) && ((PlayerStatus)getStatus).isHavingLeaderSkill)
-		{
-			myLeaderSkill = base.stateManager.serverControl.GetLeaderSkillStatus(((PlayerStatus)getStatus).leaderSkillId);
-		}
-		CharacterStateControl characterStateControl = new CharacterStateControl(getStatus, tolerance, characterData, leaderSkill, base.stateManager.publicAttackSkillId, leaderCharacter, myLeaderSkill, isEnemy);
+		base.battleStateData.characterRoot = new GameObject("CharacterRoot").transform;
+		base.battleStateData.skillEffectRoot = new GameObject("SkillEffectRoot").transform;
+		base.battleStateData.alwaysEffectRoot = new GameObject("AlwaysEffectRoot").transform;
+		base.battleStateData.stageRoot = new GameObject("StageRoot").transform;
+		base.battleStateData.spawnPointRoot = new GameObject("SpawnPointRoot").transform;
+		base.battleStateData.cameraMotionRoot = new GameObject("CameraMotionRoot").transform;
+		base.battleStateData.hitEffectRoot = new GameObject("HitEffectRoot").transform;
+		base.battleStateData.BattleInternalResourcesRoot = new GameObject("BattleInternalResourcesRoot").transform;
+	}
+
+	public CharacterStateControl LoadCharacterStateControl(CharacterStatus status, Tolerance tolerance, CharacterDatas datas, SkillStatus[] skillStatuses, LeaderSkillStatus leaderCharacterLeaderSkill, CharacterDatas leaderCharacterData, LeaderSkillStatus myLeaderSkill = null, bool isEnemy = false)
+	{
+		CharacterStateControl characterStateControl = new CharacterStateControl(status, tolerance, datas, skillStatuses, leaderCharacterLeaderSkill, leaderCharacterData, myLeaderSkill, isEnemy);
 		characterStateControl.InitializeAp();
 		return characterStateControl;
 	}
@@ -78,18 +83,6 @@ public class BattleInitialize : BattleFunctionBase
 			"] : 完了"
 		}));
 		yield break;
-	}
-
-	public void InitializeRoots()
-	{
-		base.battleStateData.characterRoot = new GameObject("CharacterRoot").transform;
-		base.battleStateData.skillEffectRoot = new GameObject("SkillEffectRoot").transform;
-		base.battleStateData.alwaysEffectRoot = new GameObject("AlwaysEffectRoot").transform;
-		base.battleStateData.stageRoot = new GameObject("StageRoot").transform;
-		base.battleStateData.spawnPointRoot = new GameObject("SpawnPointRoot").transform;
-		base.battleStateData.cameraMotionRoot = new GameObject("CameraMotionRoot").transform;
-		base.battleStateData.hitEffectRoot = new GameObject("HitEffectRoot").transform;
-		base.battleStateData.BattleInternalResourcesRoot = new GameObject("BattleInternalResourcesRoot").transform;
 	}
 
 	public List<IEnumerator> LoadHitEffectsByFlags(SkillStatus[] skillStatusList)

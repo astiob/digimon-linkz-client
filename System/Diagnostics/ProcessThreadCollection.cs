@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 
 namespace System.Diagnostics
 {
 	/// <summary>Provides a strongly typed collection of <see cref="T:System.Diagnostics.ProcessThread" /> objects.</summary>
 	/// <filterpriority>2</filterpriority>
-	public class ProcessThreadCollection : ProcessThreadCollectionBase
+	public class ProcessThreadCollection : ReadOnlyCollectionBase
 	{
 		/// <summary>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessThreadCollection" /> class, with no associated <see cref="T:System.Diagnostics.ProcessThread" /> instances.</summary>
 		protected ProcessThreadCollection()
@@ -27,11 +28,11 @@ namespace System.Diagnostics
 		/// <returns>A <see cref="T:System.Diagnostics.ProcessThread" /> that indexes the threads in the collection.</returns>
 		/// <param name="index">The zero-based index value of the thread in the collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new ProcessThread this[int index]
+		public ProcessThread this[int index]
 		{
 			get
 			{
-				return base.InnerList[index];
+				return (ProcessThread)base.InnerList[index];
 			}
 		}
 
@@ -39,7 +40,7 @@ namespace System.Diagnostics
 		/// <returns>The zero-based index of the thread in the collection.</returns>
 		/// <param name="thread">The thread to add to the collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new int Add(ProcessThread thread)
+		public int Add(ProcessThread thread)
 		{
 			return base.InnerList.Add(thread);
 		}
@@ -48,7 +49,7 @@ namespace System.Diagnostics
 		/// <returns>true if the thread exists in the collection; otherwise, false.</returns>
 		/// <param name="thread">A <see cref="T:System.Diagnostics.ProcessThread" /> instance that indicates the thread to find in this collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new bool Contains(ProcessThread thread)
+		public bool Contains(ProcessThread thread)
 		{
 			return base.InnerList.Contains(thread);
 		}
@@ -57,7 +58,7 @@ namespace System.Diagnostics
 		/// <param name="array">An array of <see cref="T:System.Diagnostics.ProcessThread" /> instances to add to the collection. </param>
 		/// <param name="index">The location at which to add the new instances. </param>
 		/// <filterpriority>2</filterpriority>
-		public new void CopyTo(ProcessThread[] array, int index)
+		public void CopyTo(ProcessThread[] array, int index)
 		{
 			base.InnerList.CopyTo(array, index);
 		}
@@ -66,7 +67,7 @@ namespace System.Diagnostics
 		/// <returns>The zero-based index that defines the location of the thread within the <see cref="T:System.Diagnostics.ProcessThreadCollection" />.</returns>
 		/// <param name="thread">The <see cref="T:System.Diagnostics.ProcessThread" /> whose index is retrieved. </param>
 		/// <filterpriority>2</filterpriority>
-		public new int IndexOf(ProcessThread thread)
+		public int IndexOf(ProcessThread thread)
 		{
 			return base.InnerList.IndexOf(thread);
 		}
@@ -75,7 +76,7 @@ namespace System.Diagnostics
 		/// <param name="index">The zero-based index indicating the location at which to insert the thread. </param>
 		/// <param name="thread">The thread to insert into the collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new void Insert(int index, ProcessThread thread)
+		public void Insert(int index, ProcessThread thread)
 		{
 			base.InnerList.Insert(index, thread);
 		}
@@ -83,7 +84,7 @@ namespace System.Diagnostics
 		/// <summary>Deletes a process thread from the collection.</summary>
 		/// <param name="thread">The thread to remove from the collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new void Remove(ProcessThread thread)
+		public void Remove(ProcessThread thread)
 		{
 			base.InnerList.Remove(thread);
 		}

@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Base class for AnimationClips and BlendTrees.</para>
-	/// </summary>
 	public class Motion : Object
 	{
 		public extern float averageDuration { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }

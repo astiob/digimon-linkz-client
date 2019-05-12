@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Structure used to get information back from a raycast.</para>
-	/// </summary>
+	[UsedByNativeCode]
 	public struct RaycastHit
 	{
 		private Vector3 m_Point;
@@ -29,9 +28,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_CALL_CalculateRaycastTexCoord(out Vector2 output, Collider col, ref Vector2 uv, ref Vector3 point, int face, int index);
 
-		/// <summary>
-		///   <para>The impact point in world space where the ray hit the collider.</para>
-		/// </summary>
 		public Vector3 point
 		{
 			get
@@ -44,9 +40,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The normal of the surface the ray hit.</para>
-		/// </summary>
 		public Vector3 normal
 		{
 			get
@@ -59,9 +52,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The barycentric coordinate of the triangle we hit.</para>
-		/// </summary>
 		public Vector3 barycentricCoordinate
 		{
 			get
@@ -74,9 +64,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The distance from the ray's origin to the impact point.</para>
-		/// </summary>
 		public float distance
 		{
 			get
@@ -89,9 +76,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The index of the triangle that was hit.</para>
-		/// </summary>
 		public int triangleIndex
 		{
 			get
@@ -100,9 +84,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The uv texture coordinate at the impact point.</para>
-		/// </summary>
 		public Vector2 textureCoord
 		{
 			get
@@ -113,9 +94,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The secondary uv texture coordinate at the impact point.</para>
-		/// </summary>
 		public Vector2 textureCoord2
 		{
 			get
@@ -137,9 +115,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The uv lightmap coordinate at the impact point.</para>
-		/// </summary>
 		public Vector2 lightmapCoord
 		{
 			get
@@ -156,9 +131,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The Collider that was hit.</para>
-		/// </summary>
 		public Collider collider
 		{
 			get
@@ -167,9 +139,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The Rigidbody of the collider that was hit. If the collider is not attached to a rigidbody then it is null.</para>
-		/// </summary>
 		public Rigidbody rigidbody
 		{
 			get
@@ -178,9 +147,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The Transform of the rigidbody or collider that was hit.</para>
-		/// </summary>
 		public Transform transform
 		{
 			get

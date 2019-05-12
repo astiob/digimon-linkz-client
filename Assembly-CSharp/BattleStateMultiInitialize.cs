@@ -23,7 +23,6 @@ public class BattleStateMultiInitialize : BattleStateInitialize
 		{
 			yield return null;
 		}
-		base.stateManager.multiFunction.InitializeMultiAfter();
 		BattleDebug.Log("ロード完了後UI初期化: 完了");
 		base.hierarchyData.on2xSpeedPlay = true;
 		base.stateManager.uiControl.ApplyHideHitIcon();
@@ -31,7 +30,7 @@ public class BattleStateMultiInitialize : BattleStateInitialize
 		base.stateManager.uiControl.ApplyAutoPlay(base.hierarchyData.onAutoPlay);
 		base.stateManager.uiControl.Apply2xPlay(base.hierarchyData.on2xSpeedPlay);
 		base.stateManager.uiControl.ApplyAreaName(base.hierarchyData.areaName);
-		base.stateManager.multiFunction.InitializeTCPClient();
+		base.stateManager.multiFunction.InitializeTCPClient(false);
 		yield break;
 	}
 

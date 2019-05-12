@@ -10,12 +10,12 @@ namespace UnityEngine.UI
 		[FormerlySerializedAs("font")]
 		private Font m_Font;
 
-		[FormerlySerializedAs("fontSize")]
 		[SerializeField]
+		[FormerlySerializedAs("fontSize")]
 		private int m_FontSize;
 
-		[SerializeField]
 		[FormerlySerializedAs("fontStyle")]
+		[SerializeField]
 		private FontStyle m_FontStyle;
 
 		[SerializeField]
@@ -27,12 +27,15 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private int m_MaxSize;
 
-		[FormerlySerializedAs("alignment")]
 		[SerializeField]
+		[FormerlySerializedAs("alignment")]
 		private TextAnchor m_Alignment;
 
 		[SerializeField]
+		private bool m_AlignByGeometry;
+
 		[FormerlySerializedAs("richText")]
+		[SerializeField]
 		private bool m_RichText;
 
 		[SerializeField]
@@ -51,8 +54,8 @@ namespace UnityEngine.UI
 		void ISerializationCallbackReceiver.OnAfterDeserialize()
 		{
 			this.m_FontSize = Mathf.Clamp(this.m_FontSize, 0, 300);
-			this.m_MinSize = Mathf.Clamp(this.m_MinSize, 0, 300);
-			this.m_MaxSize = Mathf.Clamp(this.m_MaxSize, 0, 300);
+			this.m_MinSize = Mathf.Clamp(this.m_MinSize, 0, this.m_FontSize);
+			this.m_MaxSize = Mathf.Clamp(this.m_MaxSize, this.m_FontSize, 300);
 		}
 
 		public static FontData defaultFontData
@@ -70,7 +73,8 @@ namespace UnityEngine.UI
 					m_Alignment = TextAnchor.UpperLeft,
 					m_HorizontalOverflow = HorizontalWrapMode.Wrap,
 					m_VerticalOverflow = VerticalWrapMode.Truncate,
-					m_RichText = true
+					m_RichText = true,
+					m_AlignByGeometry = false
 				};
 			}
 		}
@@ -156,6 +160,18 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_Alignment = value;
+			}
+		}
+
+		public bool alignByGeometry
+		{
+			get
+			{
+				return this.m_AlignByGeometry;
+			}
+			set
+			{
+				this.m_AlignByGeometry = value;
 			}
 		}
 

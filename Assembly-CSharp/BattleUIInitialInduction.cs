@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BattleUIInitialInduction : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
 	[SerializeField]
@@ -25,12 +25,12 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private UIComponentSkinner monitorSkinner;
 
-	[Header("ウィンドウTween")]
 	[SerializeField]
+	[Header("ウィンドウTween")]
 	private UITweener windowTween;
 
-	[Header("モニターTween")]
 	[SerializeField]
+	[Header("モニターTween")]
 	private UITweener monitorTween;
 
 	[SerializeField]

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
@@ -27,6 +28,11 @@ namespace UnityEngine
 		public GUIStyle horizontalScrollbar;
 
 		public GUIStyle verticalScrollbar;
+
+		[RequiredByNativeCode]
+		public GUIScrollGroup()
+		{
+		}
 
 		public override void CalcWidth()
 		{

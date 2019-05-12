@@ -1,24 +1,25 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class CMD_SaleCheck : CMD
 {
-	[Header("サムネイルのアイコン達")]
 	[SerializeField]
+	[Header("サムネイルのアイコン達")]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("取得クラスタのタイトルラベル")]
+	[SerializeField]
 	private UILabel getClusterTitleLabel;
 
-	[Header("取得クラスタのラベル")]
 	[SerializeField]
+	[Header("取得クラスタのラベル")]
 	private UILabel getClusterLabel;
 
 	[Header("基本的なメッセージのラベル")]
@@ -29,8 +30,8 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
+	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
 	[SerializeField]
@@ -54,8 +55,8 @@ public sealed class CMD_SaleCheck : CMD
 		bool flag4 = false;
 		foreach (MonsterData monsterData in selectedMonsterDataList)
 		{
-			bool flag5 = monsterData.IsArousal();
-			bool flag6 = monsterData.IsVersionUp();
+			bool flag5 = MonsterStatusData.IsArousal(monsterData.GetMonsterMaster().Simple.rare);
+			bool flag6 = MonsterStatusData.IsVersionUp(monsterData.GetMonsterMaster().Simple.rare);
 			if (flag6)
 			{
 				flag4 = true;
@@ -79,37 +80,23 @@ public sealed class CMD_SaleCheck : CMD
 		}
 		if (flag2)
 		{
-			GameWebAPI.RespDataMA_GetMonsterGrowStepM.MonsterGrowStepM[] monsterGrowStepM = MasterDataMng.Instance().RespDataMA_MonsterGrowStepM.monsterGrowStepM;
-			string b = ConstValue.GROW_STEP_HIGH.ToString();
-			int i;
-			for (i = 0; i < monsterGrowStepM.Length; i++)
-			{
-				if (monsterGrowStepM[i].monsterGrowStepId == b)
-				{
-					break;
-				}
-			}
-			if (i < monsterGrowStepM.Length)
-			{
-				list.Add(string.Format(StringMaster.GetString("SaleCautionGrowth"), monsterGrowStepM[i].monsterGrowStepName));
-			}
+			string growStep = ConstValue.GROW_STEP_HIGH.ToString();
+			string growStepName = MonsterGrowStepData.GetGrowStepName(growStep);
+			list.Add(string.Format(StringMaster.GetString("SaleCautionGrowth"), growStepName));
 		}
-		if (list.Count >= 2)
+		if (list.Count >= 3)
 		{
-			int num = (this.warningMessageLabel.fontSize + this.warningMessageLabel.spacingY) * (list.Count - 1);
-			this.warningMessageLabel.transform.SetLocalY(this.warningMessageLabel.transform.localPosition.y - (float)(num / 2));
-			this.dialogPlate.transform.SetLocalY(this.dialogPlate.transform.localPosition.y - (float)(num / 2));
-			this.dialogPlate.GetComponent<UIWidget>().height += num;
-			this.btnGroup.transform.SetLocalY(this.btnGroup.transform.localPosition.y - (float)num);
+			int num = (this.warningMessageLabel.fontSize + this.warningMessageLabel.spacingY) * (list.Count - 2);
+			base.GetComponent<UIWidget>().height += num;
 		}
 		this.warningMessageLabel.text = string.Join("\n", list.ToArray());
-		for (int j = 0; j < this.guiMonsterIcons.Length; j++)
+		for (int i = 0; i < this.guiMonsterIcons.Length; i++)
 		{
-			if (selectedMonsterDataList.Count > j)
+			if (selectedMonsterDataList.Count > i)
 			{
-				GUIMonsterIcon guimonsterIcon = this.guiMonsterIcons[j];
-				MonsterData md = selectedMonsterDataList[j];
-				this.CreateIcon(j, md, guimonsterIcon.gameObject);
+				GUIMonsterIcon guimonsterIcon = this.guiMonsterIcons[i];
+				MonsterData md = selectedMonsterDataList[i];
+				this.CreateIcon(i, md, guimonsterIcon.gameObject);
 			}
 		}
 		this.getClusterLabel.text = getCluster;
@@ -141,9 +128,8 @@ public sealed class CMD_SaleCheck : CMD
 
 	private void CreateIcon(int index, MonsterData md, GameObject goEmpty)
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		Transform transform = goEmpty.transform;
-		GUIMonsterIcon guimonsterIcon = monsterDataMng.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
 		guimonsterIcon.playSelectSE = false;
 		guimonsterIcon.SendMoveToParent = false;
 		guimonsterIcon.CancelTouchEndByMove = false;

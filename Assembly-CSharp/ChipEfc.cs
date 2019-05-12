@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ChipEfc : MonoBehaviour
 {
-	[SerializeField]
 	[Header("サムネイル OBJ")]
+	[SerializeField]
 	public GameObject goCHIP_THUMB;
 
 	[SerializeField]
@@ -15,8 +15,8 @@ public class ChipEfc : MonoBehaviour
 	[Header("アニメーション OBJ")]
 	public GameObject goANIM;
 
-	[SerializeField]
 	[Header("パーティクル OBJ")]
+	[SerializeField]
 	public GameObject goPARTICLE;
 
 	[SerializeField]

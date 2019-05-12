@@ -6,14 +6,15 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class UITweenerActivePlay : MonoBehaviour
 {
+	[Header("ONなら終了後、非表示にする")]
 	[SerializeField]
 	private bool autoDisable;
 
 	private List<UITweener> tween;
 
-	private bool allDisabled;
-
 	private bool isActive;
+
+	public bool allDisabled { get; private set; }
 
 	private static int SortedDelayPlusDuration(UITweener x, UITweener y)
 	{
@@ -74,6 +75,7 @@ public class UITweenerActivePlay : MonoBehaviour
 	private void OnEnable()
 	{
 		this.isActive = true;
+		this.allDisabled = false;
 	}
 
 	private void OnDisable()

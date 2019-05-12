@@ -77,7 +77,7 @@ namespace UnityEngine.Networking
 			{
 				if (LogFilter.logWarn)
 				{
-					Debug.LogWarning("Network configuration mismatch detected. The number of networked scripts on the client does not match the number of networked scripts on the server. This could be caused by lazy loading of scripts on the client. This warning can be disabled by the checkbox NetworkManager Script CRC Check.");
+					Debug.LogWarning("Network configuration mismatch detected. The number of networked scripts on the client does not match the number of networked scripts on the server. This could be caused by lazy loading of scripts on the client. This warning can be disabled by the checkbox in NetworkManager Script CRC Check.");
 				}
 				this.Dump(remoteScripts);
 				return false;

@@ -52,14 +52,29 @@ public class BattleInputPvP : BattleInputBasic
 		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
 		base.stateManager.soundPlayer.SetPauseVolume(false);
 		SoundPlayer.PlayButtonEnter();
+		base.StartCoroutine(this.SendRetire());
+	}
+
+	private IEnumerator SendRetire()
+	{
 		base.stateManager.uiControl.SetTouchEnable(false);
-		Action onFinishedClose = delegate()
+		IEnumerator sendRetire = base.stateManager.pvpFunction.SendRetire();
+		while (sendRetire.MoveNext())
+		{
+			yield return null;
+		}
+		base.stateManager.uiControl.SetTouchEnable(true);
+		Action onFinished = delegate()
 		{
 			base.battleStateData.isShowRetireWindow = false;
-			base.stateManager.events.CallRetireEvent();
-			base.stateManager.uiControlPvP.HideSkillSelectUI();
 		};
-		base.StartCoroutine(this.WaitOpenPvPCloseDialog(false, base.ui.dialogRetire.gameObject, base.ui.dialogRetire.openCloseDialog, onFinishedClose));
+		IEnumerator wait = this.WaitOpenPvPCloseDialog(false, base.ui.dialogRetire.gameObject, base.ui.dialogRetire.openCloseDialog, onFinished);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		yield break;
 	}
 
 	private IEnumerator WaitOpenPvPCloseDialog(bool isOpen, GameObject dialogObject, UIOpenCloseDialog openCloseDialog, Action onFinishedClose = null)

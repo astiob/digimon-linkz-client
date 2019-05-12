@@ -70,18 +70,6 @@ public class PvPBattleState : BattleStateMainController
 		{
 			base.SetState(typeof(BattleStatePvPBattleEnd));
 		}));
-		base.AddState(new BattleStatePvPRetire(delegate()
-		{
-			base.SetState(typeof(BattleStatePvPBattleEnd));
-		}, delegate(EventState eventState)
-		{
-			base.stateManager.pvpFunction.FinishTCP();
-			if (eventState == EventState.ConnectionError)
-			{
-				ClassSingleton<MultiBattleData>.Instance.BattleResult = 4;
-			}
-			base.SetState(typeof(BattleStatePvPBattleEnd));
-		}));
 		base.AddState(new BattleStatePvPBattleEnd(delegate()
 		{
 			if (ClassSingleton<MultiBattleData>.Instance.BattleResult == 1)
@@ -106,11 +94,10 @@ public class PvPBattleState : BattleStateMainController
 
 	private void ExitGotEvent(EventState eventState)
 	{
-		base.stateManager.pvpFunction.FinishTCP();
 		if (eventState == EventState.Retire)
 		{
 			ClassSingleton<MultiBattleData>.Instance.BattleResult = 4;
-			base.SetState(typeof(BattleStatePvPRetire));
+			base.SetState(typeof(BattleStatePvPBattleEnd));
 		}
 		else if (eventState == EventState.ConnectionError)
 		{

@@ -27,8 +27,8 @@ public sealed class ChipSphereLines : MonoBehaviour
 	[SerializeField]
 	private UISprite middleToLeft;
 
-	[SerializeField]
 	[Header("中から右の光るライン")]
+	[SerializeField]
 	private UISprite middleToRight;
 
 	[Header("左の下から上の光るライン")]
@@ -47,8 +47,8 @@ public sealed class ChipSphereLines : MonoBehaviour
 	[SerializeField]
 	private UISprite upMiddleToRight;
 
-	[Header("レアキャプチャ限定ライン")]
 	[SerializeField]
+	[Header("レアキャプチャ限定ライン")]
 	private GameObject[] rareOnlyLines;
 
 	public void OpenMiddleToRightUp(ChipSphereLines.LineType lineType)

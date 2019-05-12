@@ -310,18 +310,9 @@ public class FarmObject : MonoBehaviour
 						bool isSuccess = response.result == 1;
 					}
 				};
-				bool isRefreshMonsterData = false;
-				FacilityM data = FarmDataManager.GetFacilityMaster(this.facilityID);
-				if (data.levelUpFlg == "1")
-				{
-					isRefreshMonsterData = true;
-				}
 				yield return base.StartCoroutine(request.Run(delegate()
 				{
-					if (!isRefreshMonsterData)
-					{
-						RestrictionInput.EndLoad();
-					}
+					RestrictionInput.EndLoad();
 					if (isSuccess)
 					{
 						userFacility.completeTime = null;
@@ -331,15 +322,6 @@ public class FarmObject : MonoBehaviour
 						isEventBuild = true;
 					}
 				}, null, null));
-				if (isRefreshMonsterData)
-				{
-					APIRequestTask task = DataMng.Instance().RequestUserMonster(null, true);
-					yield return base.StartCoroutine(task.Run(delegate
-					{
-						MonsterDataMng.Instance().RefreshMonsterDataList();
-						RestrictionInput.EndLoad();
-					}, null, null));
-				}
 				this.isFacilityBuildCompleteRequesting = false;
 			}
 		}

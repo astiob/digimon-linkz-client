@@ -66,7 +66,7 @@ public class StageGimmick
 		{
 			xx,
 			yy
-		}).Where(<>__TranspIdent2 => <>__TranspIdent2.xx.worldDungeonExtraEffectId == <>__TranspIdent2.yy).Select(<>__TranspIdent2 => <>__TranspIdent2.xx);
+		}).Where(<>__TranspIdent1 => <>__TranspIdent1.xx.worldDungeonExtraEffectId == <>__TranspIdent1.yy).Select(<>__TranspIdent1 => <>__TranspIdent1.xx);
 		return source.ToList<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM>();
 	}
 
@@ -83,11 +83,6 @@ public class StageGimmick
 	public bool IsMatch(string StageID, string DungeonID, MonsterData MonsterData)
 	{
 		return this.IsMatch(this.GetExtraEffectIDList(StageID, DungeonID), MonsterData);
-	}
-
-	private bool IsMatchTargetType(GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM ExtraEffectData, ExtraEffectUtil.TargetType TargetType)
-	{
-		return ExtraEffectData.targetType == TargetType.ToInteger().ToString();
 	}
 
 	public void ZeroClear()

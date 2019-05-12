@@ -3,19 +3,50 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Parent class for joints to connect Rigidbody2D objects.</para>
-	/// </summary>
 	public class Joint2D : Behaviour
 	{
-		/// <summary>
-		///   <para>The Rigidbody2D object to which the other end of the joint is attached (ie, the object without the joint component).</para>
-		/// </summary>
 		public extern Rigidbody2D connectedBody { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>Should rigid bodies connected with this joint collide?</para>
-		/// </summary>
 		public extern bool enableCollision { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
+
+		public extern float breakForce { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
+
+		public extern float breakTorque { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
+
+		public Vector2 reactionForce
+		{
+			get
+			{
+				return this.GetReactionForce(Time.fixedDeltaTime);
+			}
+		}
+
+		public float reactionTorque
+		{
+			get
+			{
+				return this.GetReactionTorque(Time.fixedDeltaTime);
+			}
+		}
+
+		public Vector2 GetReactionForce(float timeStep)
+		{
+			Vector2 result;
+			Joint2D.Joint2D_CUSTOM_INTERNAL_GetReactionForce(this, timeStep, out result);
+			return result;
+		}
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Joint2D_CUSTOM_INTERNAL_GetReactionForce(Joint2D joint, float timeStep, out Vector2 value);
+
+		public float GetReactionTorque(float timeStep)
+		{
+			return Joint2D.INTERNAL_CALL_GetReactionTorque(this, timeStep);
+		}
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern float INTERNAL_CALL_GetReactionTorque(Joint2D self, float timeStep);
 	}
 }

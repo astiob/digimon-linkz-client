@@ -1,16 +1,15 @@
 ﻿using Master;
+using Monster;
+using MonsterList.HouseGarden;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public sealed class CMD_FarewellListRun : CMD
 {
 	private const int FAREWELL_LIMIT = 10;
-
-	private readonly string eggFlagString = "1";
-
-	private List<MonsterData> selectedMonsterDataList;
 
 	[SerializeField]
 	private List<GameObject> goMN_ICON_LIST;
@@ -43,8 +42,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GameObject goBT_SELL;
 
-	[Header("お別れの実行のボタンのラベル")]
 	[SerializeField]
+	[Header("お別れの実行のボタンのラベル")]
 	private UILabelEx cellBtnLabel;
 
 	[SerializeField]
@@ -78,11 +77,9 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private UILabel cautionLabel;
 
-	private MonsterData selectedMonsterData;
+	private BtnSort sortButton;
 
 	private bool isOfflineModeFlag;
-
-	private List<MonsterData> deckMDList;
 
 	private GameObject goSelectPanelMonsterIcon;
 
@@ -90,20 +87,35 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private int chip_bak;
 
-	private List<MonsterData> data_matL = new List<MonsterData>();
+	private List<MonsterData> sellMonsterList;
+
+	private List<MonsterData> targetMonsterList;
+
+	private HouseGardenIconGrayOut iconGrayOut;
+
+	private HouseGardenMonsterList monsterList;
+
+	private bool isReceived;
 
 	public static CMD_FarewellListRun.MODE Mode { private get; set; }
 
 	protected override void Awake()
 	{
 		base.Awake();
+		this.sellMonsterList = new List<MonsterData>();
+		this.isReceived = false;
+		this.iconGrayOut = new HouseGardenIconGrayOut();
+		this.iconGrayOut.SetNormalAction(new Action<MonsterData>(this.ActMIconShort), new Action<MonsterData>(this.ActMIconLong));
+		this.iconGrayOut.SetSelectedAction(new Action<MonsterData>(this.ActMIconS_Remove), new Action<MonsterData>(this.ActMIconLong));
+		this.iconGrayOut.SetBlockAction(null, new Action<MonsterData>(this.ActMIconLong));
+		this.monsterList = new HouseGardenMonsterList();
+		this.monsterList.Initialize(ClassSingleton<MonsterUserDataMng>.Instance.GetDeckUserMonsterList(), ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList(), this.sellMonsterList, this.iconGrayOut);
 		for (int i = 0; i < this.goMN_ICON_LIST.Count; i++)
 		{
 			this.goMN_ICON_LIST[i].SetActive(false);
 		}
 		this.ngTX_MN_HAVE = this.goTX_MN_HAVE.GetComponent<UILabel>();
 		this.ngTX_CHIP_GET = this.goTX_CHIP_GET.GetComponent<UILabel>();
-		PartyUtil.ActMIconShort = new Action<MonsterData>(this.ActMIconShort);
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -121,11 +133,6 @@ public sealed class CMD_FarewellListRun : CMD
 	{
 		base.Update();
 		this.UpdateChipGet();
-	}
-
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
 	}
 
 	protected override void WindowClosed()
@@ -166,7 +173,7 @@ public sealed class CMD_FarewellListRun : CMD
 	private void OnTouchSell()
 	{
 		CMD_SaleCheck cmd_SaleCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSale), "CMD_SaleCheck") as CMD_SaleCheck;
-		cmd_SaleCheck.SetParams(this.data_matL, this.ngTX_CHIP_GET.text);
+		cmd_SaleCheck.SetParams(this.sellMonsterList, this.ngTX_CHIP_GET.text);
 	}
 
 	private void OnCloseSale(int idx)
@@ -175,10 +182,10 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
 			GameWebAPI.MN_Req_Sale req = new GameWebAPI.MN_Req_Sale();
-			req.saleMonsterDataList = new GameWebAPI.MN_Req_Sale.SaleMonsterDataList[this.data_matL.Count];
-			for (int i = 0; i < this.data_matL.Count; i++)
+			req.saleMonsterDataList = new GameWebAPI.MN_Req_Sale.SaleMonsterDataList[this.sellMonsterList.Count];
+			for (int i = 0; i < this.sellMonsterList.Count; i++)
 			{
-				int userMonsterId = int.Parse(this.data_matL[i].userMonster.userMonsterId);
+				int userMonsterId = int.Parse(this.sellMonsterList[i].userMonster.userMonsterId);
 				GameWebAPI.MN_Req_Sale.SaleMonsterDataList saleMonsterDataList = new GameWebAPI.MN_Req_Sale.SaleMonsterDataList();
 				saleMonsterDataList.userMonsterId = userMonsterId;
 				req.saleMonsterDataList[i] = saleMonsterDataList;
@@ -199,6 +206,14 @@ public sealed class CMD_FarewellListRun : CMD
 			base.StartCoroutine(request.Run(delegate()
 			{
 				RestrictionInput.EndLoad();
+				if (response.itemRecovered == 1)
+				{
+					this.isReceived = true;
+					string @string = StringMaster.GetString("SellRecoverItem");
+					CMD_ModalMessageNoBtn cmd_ModalMessageNoBtn = GUIMain.ShowCommonDialog(null, "CMD_ModalMessageNoBtn") as CMD_ModalMessageNoBtn;
+					cmd_ModalMessageNoBtn.SetParam(@string);
+					cmd_ModalMessageNoBtn.AdjustSize();
+				}
 				this.EndSale(response);
 			}, delegate(Exception noop)
 			{
@@ -209,26 +224,22 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void EndSale(GameWebAPI.RespDataMN_SaleExec response)
 	{
-		int[] array = new int[this.data_matL.Count];
-		for (int i = 0; i < this.data_matL.Count; i++)
-		{
-			array[i] = int.Parse(this.data_matL[i].userMonster.userMonsterId);
-		}
-		DataMng.Instance().DeleteUserMonsterList(array);
-		MonsterDataMng.Instance().RefreshMonsterDataList();
+		string[] userMonsterIdList = this.sellMonsterList.Select((MonsterData x) => x.userMonster.userMonsterId).ToArray<string>();
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
+		ChipDataMng.DeleteEquipChip(userMonsterIdList);
+		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		this.InitMonsterList(false);
+		this.sellMonsterList.Clear();
+		this.monsterList.SetGrayOutBlockMonster();
 		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL)
 		{
-			this.SetDimParty(true);
+			this.monsterList.SetGrayOutPartyUsed();
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
-			this.SetDimEgg(true);
-			this.SetDimGrowing(true);
+			this.monsterList.SetGrayOutGrowing(this.targetMonsterList);
 		}
-		this.CheckDimPartners(true);
-		MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
-		this.data_matL = new List<MonsterData>();
 		this.ShowHaveMonster();
 		int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
 		int num2 = num + this.chip_bak;
@@ -250,22 +261,19 @@ public sealed class CMD_FarewellListRun : CMD
 			base.PartsTitle.SetTitle(StringMaster.GetString("SystemList"));
 			this.goBT_SELL.SetActive(false);
 			this.goBT_SELL_CHIP.SetActive(false);
-			this.CheckDimPartners(false);
+			this.sellMonsterList.Clear();
+			this.monsterList.ClearGrayOutBlockMonster();
 			if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SHOW)
 			{
-				this.SetDimParty(false);
+				this.monsterList.ClearGrayOutPartyUsed();
 			}
 			else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN)
 			{
-				this.SetDimEgg(true);
-				this.SetDimGrowing(true);
+				this.monsterList.SetGrayOutGrowing(this.targetMonsterList);
 			}
-			this.ReleaseAllMat();
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
-			this.ReleaseSelectedMonsterData();
 			this.showBtnSprite.spriteName = "Common02_Btn_BaseON";
 			this.showBtnCollider.activeCollider = true;
 			this.showBtnLabel.color = Color.white;
@@ -275,26 +283,23 @@ public sealed class CMD_FarewellListRun : CMD
 			base.PartsTitle.SetTitle(StringMaster.GetString("SaleTitle"));
 			this.goBT_SELL.SetActive(true);
 			this.goBT_SELL_CHIP.SetActive(true);
-			this.CheckDimPartners(true);
+			this.monsterList.SetGrayOutBlockMonster();
 			if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL)
 			{
-				this.SetDimParty(true);
+				this.monsterList.SetGrayOutPartyUsed();
 			}
 			else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 			{
-				this.SetDimEgg(true);
-				this.SetDimGrowing(true);
+				this.monsterList.SetGrayOutGrowing(this.targetMonsterList);
 			}
-			this.ReleaseAllMat();
 			this.BTSeleOn();
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 		}
 	}
 
 	private void BTSeleOn()
 	{
 		UISprite component = this.goBT_SELL.GetComponent<UISprite>();
-		if (this.data_matL.Count > 0)
+		if (this.sellMonsterList.Count > 0)
 		{
 			this.goBT_SELL.GetComponent<GUICollider>().activeCollider = true;
 			component.spriteName = "Common02_Btn_Red";
@@ -341,12 +346,12 @@ public sealed class CMD_FarewellListRun : CMD
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		monsterDataMng.ClearSortMessAll();
 		monsterDataMng.ClearLevelMessAll();
-		List<MonsterData> list = monsterDataMng.GetMonsterDataList(false);
-		this.ngTX_MN_HAVE_ADULT.text = MonsterDataMng.Instance().SelectMonsterDataListCount(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN).ToString();
-		int num = MonsterDataMng.Instance().SelectMonsterDataListCount(list, MonsterDataMng.SELECT_TYPE.ALL_IN_GARDEN);
-		this.ngTX_MN_HAVE_CHILD.text = num.ToString();
-		this.growingNum = MonsterDataMng.Instance().SelectMonsterDataListCount(list, MonsterDataMng.SELECT_TYPE.GROWING_IN_GARDEN);
-		if ((CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL) && num == 0)
+		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
+		this.ngTX_MN_HAVE_ADULT.text = this.GetDigiHouseMonsterNum(list).ToString();
+		int gerdenMonsterNum = this.GetGerdenMonsterNum(list);
+		this.ngTX_MN_HAVE_CHILD.text = gerdenMonsterNum.ToString();
+		this.growingNum = this.GetGardenGrowingMonsterNum(list);
+		if ((CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL) && gerdenMonsterNum == 0)
 		{
 			this.cautionLabel.gameObject.SetActive(true);
 			this.cautionLabel.text = StringMaster.GetString("Garden-02");
@@ -355,52 +360,80 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			this.cautionLabel.gameObject.SetActive(false);
 		}
-		list = monsterDataMng.SelectMonsterDataList(list, (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL) ? MonsterDataMng.SELECT_TYPE.ALL_IN_GARDEN : MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = monsterDataMng.SortMDList(list, false);
+		if (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN && CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL)
+		{
+			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		}
+		else
+		{
+			list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_IN_GARDEN);
+		}
+		monsterDataMng.SortMDList(list);
+		monsterDataMng.SetSortLSMessage();
 		this.csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
 		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
 		monsterDataMng.SetSelectOffAll();
 		monsterDataMng.ClearDimmMessAll();
+		monsterDataMng.SetLockIcon();
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
+		this.csSelectPanelMonsterIcon.SetCheckEnablePushAction(null);
+		this.targetMonsterList = list;
+		list = MonsterDataMng.Instance().SelectionMDList(list);
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
 		this.csSelectPanelMonsterIcon.ScrollBarPosX = 458f;
 		this.csSelectPanelMonsterIcon.ScrollBarBGPosX = 458f;
+		BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
+		this.sortButton = componentsInChildren[0];
+		this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);
+		this.sortButton.SortTargetMonsterList = this.targetMonsterList;
+	}
+
+	private void OnChangeSortSetting()
+	{
+		MonsterDataMng.Instance().SortMDList(this.targetMonsterList);
+		MonsterDataMng.Instance().SetSortLSMessage();
+		List<MonsterData> dts = MonsterDataMng.Instance().SelectionMDList(this.targetMonsterList);
+		this.csSelectPanelMonsterIcon.ReAllBuild(dts);
+		this.monsterList.SetGrayOutBlockMonster();
+		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL)
+		{
+			this.monsterList.SetGrayOutPartyUsed();
+			this.monsterList.SetSellMonsterList();
+		}
+		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
+		{
+			this.monsterList.SetGrayOutGrowing(this.targetMonsterList);
+			this.monsterList.SetSellMonsterList();
+		}
 	}
 
 	private void ActMIconShort(MonsterData tappedMonsterData)
 	{
 		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SHOW)
 		{
-			this.ReleaseSelectedMonsterData();
-			this.selectedMonsterData = tappedMonsterData;
-			CMD_CharacterDetailed.DataChg = tappedMonsterData;
 			this.ShowMonsterDetailForList(tappedMonsterData);
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
-			if (this.data_matL.Count < 10)
+			if (this.sellMonsterList.Count < 10)
 			{
-				this.data_matL.Add(tappedMonsterData);
-				tappedMonsterData.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
-				tappedMonsterData.selectNum = 0;
-				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(tappedMonsterData);
-				monsterCS_ByMonsterData.DimmLevel = tappedMonsterData.dimmLevel;
-				monsterCS_ByMonsterData.SelectNum = tappedMonsterData.selectNum;
-				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
-				this.RefreshSelectedInMonsterList();
-				this.BTSeleOn();
-				if (this.data_matL.Count == 10)
+				this.sellMonsterList.Add(tappedMonsterData);
+				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
+				this.iconGrayOut.SetSellMonster(icon, this.sellMonsterList.Count);
+				if (this.sellMonsterList.Count == 10)
 				{
-					this.SetOtherDimIcon(true);
+					this.SetGrayOutNotSelectedIcon();
 				}
+				this.BTSeleOn();
 			}
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN)
 		{
-			this.selectedMonsterData = tappedMonsterData;
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.CallbackConfirmMove), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(delegate(int selectButtonIndex)
+			{
+				this.CallbackConfirmMove(selectButtonIndex, tappedMonsterData);
+			}, "CMD_Confirm") as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("Garden-03");
 			cmd_Confirm.Info = StringMaster.GetString("Garden-04");
 			cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonYes");
@@ -408,7 +441,7 @@ public sealed class CMD_FarewellListRun : CMD
 		}
 	}
 
-	private void CallbackConfirmMove(int selectButtonIndex)
+	private void CallbackConfirmMove(int selectButtonIndex, MonsterData monster)
 	{
 		if (selectButtonIndex == 0)
 		{
@@ -420,29 +453,24 @@ public sealed class CMD_FarewellListRun : CMD
 				}
 				else
 				{
-					base.StartCoroutine(this.MoveDigiGarden());
+					base.StartCoroutine(this.MoveDigiGarden(monster));
 				}
 			}
 			else
 			{
-				this.selectedMonsterData = null;
 				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("Garden-03");
 				cmd_ModalMessage.Info = StringMaster.GetString("GardenGrowMax");
 			}
 		}
-		else
-		{
-			this.selectedMonsterData = null;
-		}
 	}
 
-	private IEnumerator MoveDigiGarden()
+	private IEnumerator MoveDigiGarden(MonsterData monster)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-		yield return base.StartCoroutine(this.RequestMoveDigiGarden(false).Run(delegate
+		APIRequestTask task = this.RequestMoveDigiGarden(monster);
+		yield return base.StartCoroutine(task.Run(delegate
 		{
-			this.selectedMonsterData = null;
 			base.SetCloseAction(delegate(int index)
 			{
 				if (CMD_DigiGarden.instance == null)
@@ -461,38 +489,40 @@ public sealed class CMD_FarewellListRun : CMD
 				else
 				{
 					CMD_DigiGarden.instance.DestroyRender3DRT();
-					MonsterDataMng.Instance().RefreshMonsterDataList();
+					ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 					CMD_DigiGarden.instance.InitMonsterList(true);
 				}
 			});
+			RestrictionInput.EndLoad();
+			this.ClosePanel(true);
 		}, delegate(Exception nop)
 		{
 			if (null != CMD_DigiGarden.instance && CMD_DigiGarden.instance.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
 			{
-				base.SetCloseAction(delegate(int index)
+				base.SetCloseAction(delegate(int noop)
 				{
 					CMD_DigiGarden.instance.ClosePanel(true);
 				});
 			}
+			RestrictionInput.EndLoad();
+			this.ClosePanel(true);
 		}, null));
-		RestrictionInput.EndLoad();
-		this.ClosePanel(true);
 		yield break;
 	}
 
-	private APIRequestTask RequestMoveDigiGarden(bool requestRetry = true)
+	private APIRequestTask RequestMoveDigiGarden(MonsterData monster)
 	{
 		GameWebAPI.RequestMN_MoveDigiGarden requestMN_MoveDigiGarden = new GameWebAPI.RequestMN_MoveDigiGarden();
 		requestMN_MoveDigiGarden.SetSendData = delegate(GameWebAPI.MN_Req_MoveDigiGarden param)
 		{
-			param.userMonsterId = this.selectedMonsterData.userMonster.userMonsterId;
+			param.userMonsterId = monster.userMonster.userMonsterId;
 		};
 		requestMN_MoveDigiGarden.OnReceived = delegate(GameWebAPI.RespDataMN_MoveDigiGarden response)
 		{
-			DataMng.Instance().SetUserMonster(response.userMonster);
+			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MoveDigiGarden request = requestMN_MoveDigiGarden;
-		return new APIRequestTask(request, requestRetry);
+		return new APIRequestTask(request, false);
 	}
 
 	private IEnumerator OpenDigiGarden(CMD waitCloseWindow)
@@ -507,42 +537,38 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void OfflineMoveDigiGarden()
 	{
-		List<MonsterData> selectMonsterDataList = MonsterDataMng.Instance().GetSelectMonsterDataList();
-		foreach (MonsterData monsterData in selectMonsterDataList)
+		for (int i = 0; i < this.targetMonsterList.Count; i++)
 		{
-			monsterData.userMonster.growEndDate = ServerDateTime.Now.ToString();
+			this.targetMonsterList[i].userMonster.growEndDate = ServerDateTime.Now.ToString();
 		}
 		CMD_DigiGarden.instance.InitMonsterList(true);
 		this.ClosePanel(true);
 	}
 
-	private void ActMIconS_Remove(MonsterData md)
+	private void ActMIconS_Remove(MonsterData tappedMonster)
 	{
-		for (int i = 0; i < this.data_matL.Count; i++)
+		if (this.sellMonsterList.Contains(tappedMonster))
 		{
-			if (this.data_matL[i] == md)
-			{
-				this.data_matL.RemoveAt(i);
-				break;
-			}
+			this.sellMonsterList.Remove(tappedMonster);
 		}
-		this.SetOtherDimIcon(false);
-		md.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.ACTIVE;
-		md.selectNum = -1;
-		GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(md);
-		monsterCS_ByMonsterData.DimmLevel = md.dimmLevel;
-		monsterCS_ByMonsterData.SelectNum = md.selectNum;
-		monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
-		this.RefreshSelectedInMonsterList();
+		this.ClearGrayOutNotSelectedIcon();
+		GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonster);
+		this.iconGrayOut.CancelSell(icon);
+		for (int i = 0; i < this.sellMonsterList.Count; i++)
+		{
+			icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.sellMonsterList[i]);
+			icon.SelectNum = i + 1;
+		}
 		this.BTSeleOn();
-		MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
 	}
 
 	private void ShowMonsterDetailForList(MonsterData monsterData)
 	{
+		CMD_CharacterDetailed.DataChg = monsterData;
 		GUIMain.ShowCommonDialog(delegate(int i)
 		{
-			PartyUtil.SetLock(monsterData, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+			icon.Lock = monsterData.userMonster.IsLocked;
 		}, "CMD_CharacterDetailed");
 	}
 
@@ -552,153 +578,23 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			return;
 		}
-		CMD_CharacterDetailed.DataChg = tappedMonsterData;
 		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SHOW || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN)
 		{
 			this.ShowMonsterDetailForList(tappedMonsterData);
-			return;
-		}
-		bool flag = false;
-		bool isCheckDim = true;
-		if (this.selectedMonsterDataList != null && this.selectedMonsterDataList.Count != 0)
-		{
-			foreach (MonsterData monsterData in this.selectedMonsterDataList)
-			{
-				if (monsterData == tappedMonsterData)
-				{
-					flag = true;
-					isCheckDim = false;
-				}
-			}
-		}
-		List<MonsterData> deckMonsterDataList = MonsterDataMng.Instance().GetDeckMonsterDataList(false);
-		foreach (MonsterData monsterData2 in deckMonsterDataList)
-		{
-			if (monsterData2 == tappedMonsterData)
-			{
-				isCheckDim = false;
-			}
-		}
-		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
-		{
-			PartyUtil.SetLock(tappedMonsterData, isCheckDim);
-			this.SetDimEgg(true);
-			this.SetDimGrowing(true);
-			if (this.data_matL.Count == 10)
-			{
-				this.SetOtherDimIcon(true);
-			}
-			if (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.SELL && CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL)
-			{
-				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
-			}
-			else
-			{
-				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
-			}
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
-		if (flag)
-		{
-			cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Farewell;
-		}
-	}
-
-	private void ReleaseSelectedMonsterData()
-	{
-		if (this.selectedMonsterData != null)
-		{
-			PartyUtil.SetDimIcon(false, this.selectedMonsterData, string.Empty, false);
-		}
-	}
-
-	private void ReleaseAllMat()
-	{
-		for (int i = this.data_matL.Count - 1; i >= 0; i--)
-		{
-			MonsterData monsterData = this.data_matL[i];
-			monsterData.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.ACTIVE;
-			monsterData.selectNum = -1;
-			GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(monsterData);
-			monsterCS_ByMonsterData.DimmLevel = monsterData.dimmLevel;
-			monsterCS_ByMonsterData.SelectNum = monsterData.selectNum;
-			monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
-			this.data_matL.RemoveAt(i);
-		}
-	}
-
-	private void SetDimParty(bool flg)
-	{
-		this.deckMDList = MonsterDataMng.Instance().GetDeckMonsterDataList(false);
-		foreach (MonsterData deckMonsterData in this.deckMDList)
-		{
-			if (flg)
-			{
-				PartyUtil.SetDimIcon(true, deckMonsterData, StringMaster.GetString("CharaIcon-04"), false);
-			}
-			else
-			{
-				PartyUtil.SetDimIcon(false, deckMonsterData, string.Empty, false);
-			}
-		}
-	}
-
-	private void SetDimEgg(bool flg)
-	{
-		List<MonsterData> selectMonsterDataList = MonsterDataMng.Instance().GetSelectMonsterDataList();
-		foreach (MonsterData monsterData in selectMonsterDataList)
-		{
-			if (monsterData.userMonster.eggFlg == this.eggFlagString)
-			{
-				PartyUtil.SetDimIcon(flg, monsterData, StringMaster.GetString("CharaIcon-03"), false);
-			}
-		}
-	}
-
-	private void SetDimGrowing(bool flg)
-	{
-		List<MonsterData> selectMonsterDataList = MonsterDataMng.Instance().GetSelectMonsterDataList();
-		foreach (MonsterData monsterData in selectMonsterDataList)
-		{
-			if (!string.IsNullOrEmpty(monsterData.userMonster.growEndDate))
-			{
-				PartyUtil.SetDimIcon(flg, monsterData, StringMaster.GetString("CharaIcon-03"), false);
-			}
-		}
-	}
-
-	private void CheckDimPartners(bool isDim)
-	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		if (isDim)
-		{
-			List<MonsterData> monsterDataList = monsterDataMng.GetMonsterDataList(false);
-			foreach (MonsterData monsterData in monsterDataList)
-			{
-				if (monsterData.userMonster.IsLocked)
-				{
-					PartyUtil.SetDimIcon(true, monsterData, string.Empty, true);
-				}
-			}
 		}
 		else
 		{
-			List<MonsterData> monsterDataList2 = monsterDataMng.GetMonsterDataList(false);
-			foreach (MonsterData deckMonsterData in monsterDataList2)
+			CMD_CharacterDetailed.DataChg = tappedMonsterData;
+			CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
 			{
-				PartyUtil.SetDimIcon(false, deckMonsterData, string.Empty, false);
+				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
+				this.monsterList.SetGrayOutReturnDetailed(icon, tappedMonsterData, 10 <= this.sellMonsterList.Count);
+			}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+			if (this.sellMonsterList.Contains(tappedMonsterData))
+			{
+				cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Farewell;
 			}
 		}
-	}
-
-	private void RefreshSelectedInMonsterList()
-	{
-		this.selectedMonsterDataList = new List<MonsterData>();
-		int snum = 1;
-		for (int i = 0; i < this.data_matL.Count; i++)
-		{
-			this.selectedMonsterDataList.Add(this.data_matL[i]);
-		}
-		MonsterDataMng.Instance().SetSelectByMonsterDataList(this.selectedMonsterDataList, snum, true);
 	}
 
 	private void UpdateChipGet()
@@ -709,25 +605,18 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private int CalcChipGet()
 	{
-		if (this.data_matL == null)
-		{
-			return 0;
-		}
 		int num = 0;
-		for (int i = 0; i < this.data_matL.Count; i++)
+		for (int i = 0; i < this.sellMonsterList.Count; i++)
 		{
-			num += this.data_matL[i].Now_Price(-1);
+			num += this.sellMonsterList[i].GetPriceValue();
 		}
-		for (int j = 0; j < this.data_matL.Count; j++)
+		for (int j = 0; j < this.sellMonsterList.Count; j++)
 		{
-			if (this.data_matL[j].userMonsterSlotInfo != null && this.data_matL[j].userMonsterSlotInfo.equip != null)
+			foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip in this.sellMonsterList[j].GetSlotEquip())
 			{
-				foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip2 in this.data_matL[j].userMonsterSlotInfo.equip)
-				{
-					GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipDataByUserChipId = ChipDataMng.GetUserChipDataByUserChipId(equip2.userChipId);
-					GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(userChipDataByUserChipId.chipId.ToString());
-					num += chipMainData.GetSellPrice();
-				}
+				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(equip.userChipId);
+				GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(userChip.chipId.ToString());
+				num += chipMainData.GetSellPrice();
 			}
 		}
 		return num;
@@ -735,10 +624,9 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void ShowHaveMonster()
 	{
-		List<MonsterData> selectMonsterDataList = MonsterDataMng.Instance().GetSelectMonsterDataList();
-		int num = selectMonsterDataList.Count;
+		int num = this.targetMonsterList.Count;
 		int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.unitLimitMax);
-		this.growingNum = MonsterDataMng.Instance().SelectMonsterDataListCount(selectMonsterDataList, MonsterDataMng.SELECT_TYPE.GROWING_IN_GARDEN);
+		this.growingNum = this.GetGardenGrowingMonsterNum(this.targetMonsterList);
 		if (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN && CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
 			this.ngTX_MN_HAVE_ADULT.text = num.ToString();
@@ -752,29 +640,94 @@ public sealed class CMD_FarewellListRun : CMD
 		this.ngTX_MN_HAVE.text = string.Format(StringMaster.GetString("SystemFraction"), num.ToString(), num2.ToString());
 	}
 
-	private void SetOtherDimIcon(bool isDim)
+	private void SetGrayOutNotSelectedIcon()
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		List<MonsterData> monsterDataList = monsterDataMng.GetMonsterDataList(false);
-		foreach (MonsterData monsterData in monsterDataList)
+		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL)
 		{
-			if (!this.data_matL.Contains(monsterData) && (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.SELL || !this.deckMDList.Contains(monsterData)) && (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL || string.IsNullOrEmpty(monsterData.userMonster.growEndDate)) && (CMD_FarewellListRun.Mode != CMD_FarewellListRun.MODE.GARDEN_SELL || !(monsterData.userMonster.eggFlg == this.eggFlagString)))
-			{
-				if (monsterData.userMonster.IsLocked)
-				{
-					PartyUtil.SetDimIcon(true, monsterData, string.Empty, monsterData.Lock);
-				}
-				else
-				{
-					PartyUtil.SetDimIcon(isDim, monsterData, string.Empty, monsterData.Lock);
-				}
-			}
+			this.monsterList.SetGrayOutNotSelectedIconHouse();
+		}
+		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
+		{
+			this.monsterList.SetGrayOutNotSelectedIconGarden();
+		}
+	}
+
+	private void ClearGrayOutNotSelectedIcon()
+	{
+		if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL)
+		{
+			this.monsterList.ClearGrayOutNotSelectedIconHouse();
+		}
+		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
+		{
+			this.monsterList.ClearGrayOutNotSelectedIconGarden();
 		}
 	}
 
 	public void SetOfflineMode(bool isOfflineMode)
 	{
 		this.isOfflineModeFlag = isOfflineMode;
+	}
+
+	private int GetDigiHouseMonsterNum(List<MonsterData> monsterDataList)
+	{
+		int num = 0;
+		for (int i = 0; i < monsterDataList.Count; i++)
+		{
+			int growStep = (int)MonsterGrowStepData.ToGrowStep(monsterDataList[i].monsterMG.growStep);
+			if (!MonsterGrowStepData.IsGardenDigimonScope(growStep))
+			{
+				num++;
+			}
+		}
+		return num;
+	}
+
+	private int GetGerdenMonsterNum(List<MonsterData> monsterDataList)
+	{
+		int num = 0;
+		for (int i = 0; i < monsterDataList.Count; i++)
+		{
+			int growStep = (int)MonsterGrowStepData.ToGrowStep(monsterDataList[i].monsterMG.growStep);
+			if (MonsterGrowStepData.IsGardenDigimonScope(growStep))
+			{
+				num++;
+			}
+		}
+		return num;
+	}
+
+	private int GetGardenGrowingMonsterNum(List<MonsterData> monsterDataList)
+	{
+		int num = 0;
+		for (int i = 0; i < monsterDataList.Count; i++)
+		{
+			int growStep = (int)MonsterGrowStepData.ToGrowStep(monsterDataList[i].monsterMG.growStep);
+			if (MonsterGrowStepData.IsGardenDigimonScope(growStep) && (monsterDataList[i].userMonster.IsEgg() || monsterDataList[i].userMonster.IsGrowing()))
+			{
+				num++;
+			}
+		}
+		return num;
+	}
+
+	public override void ClosePanel(bool animation = true)
+	{
+		if (this.isReceived)
+		{
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			APIRequestTask task = DataMng.Instance().RequestMyPageData(false);
+			base.StartCoroutine(task.Run(delegate
+			{
+				ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
+				RestrictionInput.EndLoad();
+				this.ClosePanel(animation);
+			}, null, null));
+		}
+		else
+		{
+			base.ClosePanel(animation);
+		}
 	}
 
 	public enum MODE

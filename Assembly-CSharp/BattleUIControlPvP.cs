@@ -282,6 +282,11 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		}
 	}
 
+	public bool IsAlreadyOpen()
+	{
+		return this.battleDialog.IsAlreadyOpen();
+	}
+
 	public void HideAlertDialog()
 	{
 		this.battleDialog.SetSkin(0);

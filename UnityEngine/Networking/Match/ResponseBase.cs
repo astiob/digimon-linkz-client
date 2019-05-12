@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace UnityEngine.Networking.Match
 {
-	/// <summary>
-	///   <para>A response object base.</para>
-	/// </summary>
 	public abstract class ResponseBase
 	{
 		public abstract void Parse(object obj);

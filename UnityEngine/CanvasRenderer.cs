@@ -4,15 +4,8 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>A component that will render to the screen after all normal rendering has completed when attached to a Canvas. Designed for GUI application.</para>
-	/// </summary>
 	public sealed class CanvasRenderer : Component
 	{
-		/// <summary>
-		///   <para>Set the color of the renderer. Will be multiplied with the UIVertex color and the Canvas color.</para>
-		/// </summary>
-		/// <param name="color">Renderer multiply color.</param>
 		public void SetColor(Color color)
 		{
 			CanvasRenderer.INTERNAL_CALL_SetColor(this, ref color);
@@ -22,31 +15,25 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_CALL_SetColor(CanvasRenderer self, ref Color color);
 
-		/// <summary>
-		///   <para>Get the current color of the renderer.</para>
-		/// </summary>
+		public Color GetColor()
+		{
+			Color result;
+			CanvasRenderer.INTERNAL_CALL_GetColor(this, out result);
+			return result;
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		public extern Color GetColor();
+		private static extern void INTERNAL_CALL_GetColor(CanvasRenderer self, out Color value);
 
-		/// <summary>
-		///   <para>Get the current alpha of the renderer.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern float GetAlpha();
 
-		/// <summary>
-		///   <para>Set the alpha of the renderer. Will be multiplied with the UIVertex alpha and the Canvas alpha.</para>
-		/// </summary>
-		/// <param name="alpha">Alpha.</param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void SetAlpha(float alpha);
 
-		/// <summary>
-		///   <para>Is the UIRenderer a mask component.</para>
-		/// </summary>
 		[Obsolete("isMask is no longer supported. See EnableClipping for vertex clipping configuration")]
 		public extern bool isMask { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
@@ -56,11 +43,6 @@ namespace UnityEngine
 			this.SetVertices(vertices.ToArray(), vertices.Count);
 		}
 
-		/// <summary>
-		///   <para>Set the vertices for the UIRenderer.</para>
-		/// </summary>
-		/// <param name="vertices">Array of vertices to set.</param>
-		/// <param name="size">Number of vertices to set.</param>
 		[Obsolete("UI System now uses meshes. Generate a mesh and use 'SetMesh' instead")]
 		public void SetVertices(UIVertex[] vertices, int size)
 		{
@@ -101,10 +83,6 @@ namespace UnityEngine
 			Object.DestroyImmediate(mesh);
 		}
 
-		/// <summary>
-		///   <para>Enables rect clipping on the CanvasRendered. Geometry outside of the specified rect will be clipped (not rendered).</para>
-		/// </summary>
-		/// <param name="rect"></param>
 		public void EnableRectClipping(Rect rect)
 		{
 			CanvasRenderer.INTERNAL_CALL_EnableRectClipping(this, ref rect);
@@ -114,47 +92,20 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_CALL_EnableRectClipping(CanvasRenderer self, ref Rect rect);
 
-		/// <summary>
-		///   <para>Disables rectangle clipping for this CanvasRenderer.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void DisableRectClipping();
 
-		/// <summary>
-		///   <para>True if rect clipping has been enabled on this renderer.
-		/// See Also: CanvasRenderer.EnableRectClipping, CanvasRenderer.DisableRectClipping.</para>
-		/// </summary>
 		public extern bool hasRectClipping { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
-		/// <summary>
-		///   <para>Enable 'render stack' pop draw call.</para>
-		/// </summary>
 		public extern bool hasPopInstruction { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>The number of materials usable by this renderer.</para>
-		/// </summary>
 		public extern int materialCount { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>Set the material for the canvas renderer. If a texture is specified then it will be used as the 'MainTex' instead of the material's 'MainTex'.
-		/// See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
-		/// </summary>
-		/// <param name="material">Material for rendering.</param>
-		/// <param name="texture">Material texture overide.</param>
-		/// <param name="index">Material index.</param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void SetMaterial(Material material, int index);
 
-		/// <summary>
-		///   <para>Set the material for the canvas renderer. If a texture is specified then it will be used as the 'MainTex' instead of the material's 'MainTex'.
-		/// See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
-		/// </summary>
-		/// <param name="material">Material for rendering.</param>
-		/// <param name="texture">Material texture overide.</param>
-		/// <param name="index">Material index.</param>
 		public void SetMaterial(Material material, Texture texture)
 		{
 			this.materialCount = Math.Max(1, this.materialCount);
@@ -162,70 +113,33 @@ namespace UnityEngine
 			this.SetTexture(texture);
 		}
 
-		/// <summary>
-		///   <para>Gets the current Material assigned to the CanvasRenderer.</para>
-		/// </summary>
-		/// <param name="index">The material index to retrieve (0 if this parameter is omitted).</param>
-		/// <returns>
-		///   <para>Result.</para>
-		/// </returns>
 		public Material GetMaterial()
 		{
 			return this.GetMaterial(0);
 		}
 
-		/// <summary>
-		///   <para>Gets the current Material assigned to the CanvasRenderer.</para>
-		/// </summary>
-		/// <param name="index">The material index to retrieve (0 if this parameter is omitted).</param>
-		/// <returns>
-		///   <para>Result.</para>
-		/// </returns>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern Material GetMaterial(int index);
 
-		/// <summary>
-		///   <para>The number of materials usable by this renderer. Used internally for masking.</para>
-		/// </summary>
 		public extern int popMaterialCount { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>Set the material for the canvas renderer. Used internally for masking.</para>
-		/// </summary>
-		/// <param name="material"></param>
-		/// <param name="index"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void SetPopMaterial(Material material, int index);
 
-		/// <summary>
-		///   <para>Gets the current Material assigned to the CanvasRenderer. Used internally for masking.</para>
-		/// </summary>
-		/// <param name="index"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern Material GetPopMaterial(int index);
 
-		/// <summary>
-		///   <para>Sets the texture used by this renderer's material.</para>
-		/// </summary>
-		/// <param name="texture"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void SetTexture(Texture texture);
 
-		/// <summary>
-		///   <para>Sets the Mesh used by this renderer.</para>
-		/// </summary>
-		/// <param name="mesh"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void SetMesh(Mesh mesh);
 
-		/// <summary>
-		///   <para>Remove all cached vertices.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void Clear();
@@ -258,24 +172,12 @@ namespace UnityEngine
 			CanvasRenderer.SplitUIVertexStreamsInternal(verts, positions, colors, uv0S, uv1S, normals, tangents);
 		}
 
-		/// <summary>
-		///   <para>Depth of the renderer realative to the parent canvas.</para>
-		/// </summary>
 		public extern int relativeDepth { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
-		/// <summary>
-		///   <para>Indicates whether geometry emitted by this rendered is ignored.</para>
-		/// </summary>
 		public extern bool cull { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>Depth of the renderer realitive to the root canvas.</para>
-		/// </summary>
 		public extern int absoluteDepth { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
-		/// <summary>
-		///   <para>True if any change has occured that would invalidate the positions of generated geometry.</para>
-		/// </summary>
 		public extern bool hasMoved { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 	}
 }

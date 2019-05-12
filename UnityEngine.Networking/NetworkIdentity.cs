@@ -50,6 +50,8 @@ namespace UnityEngine.Networking
 
 		private static NetworkWriter s_UpdateWriter = new NetworkWriter();
 
+		public static NetworkIdentity.ClientAuthorityCallback clientAuthorityCallback;
+
 		public bool isClient
 		{
 			get
@@ -159,6 +161,10 @@ namespace UnityEngine.Networking
 
 		internal void ForceAuthority(bool authority)
 		{
+			if (this.m_HasAuthority == authority)
+			{
+				return;
+			}
 			this.m_HasAuthority = authority;
 			if (authority)
 			{
@@ -229,9 +235,21 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		internal static void AddNetworkId(uint id)
+		{
+			if (id >= NetworkIdentity.s_NextNetworkId)
+			{
+				NetworkIdentity.s_NextNetworkId = id + 1u;
+			}
+		}
+
 		internal void SetNetworkInstanceId(NetworkInstanceId newNetId)
 		{
 			this.m_NetId = newNetId;
+			if (newNetId.Value == 0u)
+			{
+				this.m_IsServer = false;
+			}
 		}
 
 		public void ForceSceneId(int newSceneId)
@@ -254,6 +272,10 @@ namespace UnityEngine.Networking
 		internal void SetNotLocalPlayer()
 		{
 			this.m_IsLocalPlayer = false;
+			if (NetworkServer.active && NetworkServer.localClientActive)
+			{
+				return;
+			}
 			this.m_HasAuthority = false;
 		}
 
@@ -268,13 +290,13 @@ namespace UnityEngine.Networking
 
 		private void OnDestroy()
 		{
-			if (this.m_IsServer)
+			if (this.m_IsServer && NetworkServer.active)
 			{
 				NetworkServer.Destroy(base.gameObject);
 			}
 		}
 
-		internal void OnStartServer()
+		internal void OnStartServer(bool allowNonZeroNetId)
 		{
 			if (this.m_IsServer)
 			{
@@ -295,50 +317,52 @@ namespace UnityEngine.Networking
 			if (this.netId.IsEmpty())
 			{
 				this.m_NetId = NetworkIdentity.GetNextNetworkId();
-				if (LogFilter.logDev)
+			}
+			else if (!allowNonZeroNetId)
+			{
+				if (LogFilter.logError)
 				{
-					Debug.Log(string.Concat(new object[]
+					Debug.LogError(string.Concat(new object[]
 					{
-						"OnStartServer ",
-						base.gameObject,
-						" GUID:",
-						this.netId
+						"Object has non-zero netId ",
+						this.netId,
+						" for ",
+						base.gameObject
 					}));
-				}
-				NetworkServer.instance.SetLocalObjectOnServer(this.netId, base.gameObject);
-				for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
-				{
-					NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
-					try
-					{
-						networkBehaviour.OnStartServer();
-					}
-					catch (Exception ex)
-					{
-						Debug.LogError("Exception in OnStartServer:" + ex.Message + " " + ex.StackTrace);
-					}
-				}
-				if (NetworkClient.active && NetworkServer.localClientActive)
-				{
-					ClientScene.SetLocalObject(this.netId, base.gameObject);
-					this.OnStartClient();
-				}
-				if (this.m_HasAuthority)
-				{
-					this.OnStartAuthority();
 				}
 				return;
 			}
-			if (LogFilter.logError)
+			if (LogFilter.logDev)
 			{
-				Debug.LogError(string.Concat(new object[]
+				Debug.Log(string.Concat(new object[]
 				{
-					"Object has non-zero netId ",
-					this.netId,
-					" for ",
+					"OnStartServer ",
 					base.gameObject,
-					" !!1"
+					" GUID:",
+					this.netId
 				}));
+			}
+			NetworkServer.instance.SetLocalObjectOnServer(this.netId, base.gameObject);
+			for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
+			{
+				NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
+				try
+				{
+					networkBehaviour.OnStartServer();
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError("Exception in OnStartServer:" + ex.Message + " " + ex.StackTrace);
+				}
+			}
+			if (NetworkClient.active && NetworkServer.localClientActive)
+			{
+				ClientScene.SetLocalObject(this.netId, base.gameObject);
+				this.OnStartClient();
+			}
+			if (this.m_HasAuthority)
+			{
+				this.OnStartAuthority();
 			}
 		}
 
@@ -453,32 +477,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		internal void HandleSyncEvent(int cmdHash, NetworkReader reader)
-		{
-			if (base.gameObject == null)
-			{
-				if (LogFilter.logWarn)
-				{
-					Debug.LogWarning(string.Concat(new object[]
-					{
-						"SyncEvent [",
-						NetworkBehaviour.GetCmdHashHandlerName(cmdHash),
-						"] received for deleted object ",
-						this.netId
-					}));
-				}
-				return;
-			}
-			for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
-			{
-				NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
-				if (networkBehaviour.InvokeSyncEvent(cmdHash, reader))
-				{
-					break;
-				}
-			}
-		}
-
 		internal void HandleClientAuthority(bool authority)
 		{
 			if (!this.localPlayerAuthority)
@@ -492,30 +490,155 @@ namespace UnityEngine.Networking
 			this.ForceAuthority(authority);
 		}
 
+		private bool GetInvokeComponent(int cmdHash, Type invokeClass, out NetworkBehaviour invokeComponent)
+		{
+			NetworkBehaviour networkBehaviour = null;
+			for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
+			{
+				NetworkBehaviour networkBehaviour2 = this.m_NetworkBehaviours[i];
+				if (networkBehaviour2.GetType() == invokeClass || networkBehaviour2.GetType().IsSubclassOf(invokeClass))
+				{
+					networkBehaviour = networkBehaviour2;
+					break;
+				}
+			}
+			if (networkBehaviour == null)
+			{
+				string cmdHashHandlerName = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logError)
+				{
+					Debug.LogError(string.Concat(new object[]
+					{
+						"Found no behaviour for incoming [",
+						cmdHashHandlerName,
+						"] on ",
+						base.gameObject,
+						",  the server and client should have the same NetworkBehaviour instances [netId=",
+						this.netId,
+						"]."
+					}));
+				}
+				invokeComponent = null;
+				return false;
+			}
+			invokeComponent = networkBehaviour;
+			return true;
+		}
+
+		internal void HandleSyncEvent(int cmdHash, NetworkReader reader)
+		{
+			if (base.gameObject == null)
+			{
+				string cmdHashHandlerName = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logWarn)
+				{
+					Debug.LogWarning(string.Concat(new object[]
+					{
+						"SyncEvent [",
+						cmdHashHandlerName,
+						"] received for deleted object [netId=",
+						this.netId,
+						"]"
+					}));
+				}
+				return;
+			}
+			Type invokeClass;
+			NetworkBehaviour.CmdDelegate cmdDelegate;
+			if (!NetworkBehaviour.GetInvokerForHashSyncEvent(cmdHash, out invokeClass, out cmdDelegate))
+			{
+				string cmdHashHandlerName2 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logError)
+				{
+					Debug.LogError(string.Concat(new object[]
+					{
+						"Found no receiver for incoming [",
+						cmdHashHandlerName2,
+						"] on ",
+						base.gameObject,
+						",  the server and client should have the same NetworkBehaviour instances [netId=",
+						this.netId,
+						"]."
+					}));
+				}
+				return;
+			}
+			NetworkBehaviour obj;
+			if (!this.GetInvokeComponent(cmdHash, invokeClass, out obj))
+			{
+				string cmdHashHandlerName3 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logWarn)
+				{
+					Debug.LogWarning(string.Concat(new object[]
+					{
+						"SyncEvent [",
+						cmdHashHandlerName3,
+						"] handler not found [netId=",
+						this.netId,
+						"]"
+					}));
+				}
+				return;
+			}
+			cmdDelegate(obj, reader);
+		}
+
 		internal void HandleSyncList(int cmdHash, NetworkReader reader)
 		{
 			if (base.gameObject == null)
 			{
+				string cmdHashHandlerName = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
 				if (LogFilter.logWarn)
 				{
 					Debug.LogWarning(string.Concat(new object[]
 					{
 						"SyncList [",
-						NetworkBehaviour.GetCmdHashHandlerName(cmdHash),
-						"] received for deleted object ",
-						this.netId
+						cmdHashHandlerName,
+						"] received for deleted object [netId=",
+						this.netId,
+						"]"
 					}));
 				}
 				return;
 			}
-			for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
+			Type invokeClass;
+			NetworkBehaviour.CmdDelegate cmdDelegate;
+			if (!NetworkBehaviour.GetInvokerForHashSyncList(cmdHash, out invokeClass, out cmdDelegate))
 			{
-				NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
-				if (networkBehaviour.InvokeSyncList(cmdHash, reader))
+				string cmdHashHandlerName2 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logError)
 				{
-					break;
+					Debug.LogError(string.Concat(new object[]
+					{
+						"Found no receiver for incoming [",
+						cmdHashHandlerName2,
+						"] on ",
+						base.gameObject,
+						",  the server and client should have the same NetworkBehaviour instances [netId=",
+						this.netId,
+						"]."
+					}));
 				}
+				return;
 			}
+			NetworkBehaviour obj;
+			if (!this.GetInvokeComponent(cmdHash, invokeClass, out obj))
+			{
+				string cmdHashHandlerName3 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logWarn)
+				{
+					Debug.LogWarning(string.Concat(new object[]
+					{
+						"SyncList [",
+						cmdHashHandlerName3,
+						"] handler not found [netId=",
+						this.netId,
+						"]"
+					}));
+				}
+				return;
+			}
+			cmdDelegate(obj, reader);
 		}
 
 		internal void HandleCommand(int cmdHash, NetworkReader reader)
@@ -536,24 +659,16 @@ namespace UnityEngine.Networking
 				}
 				return;
 			}
-			bool flag = false;
-			for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
-			{
-				NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
-				if (networkBehaviour.InvokeCommand(cmdHash, reader))
-				{
-					flag = true;
-					break;
-				}
-			}
-			if (!flag)
+			Type invokeClass;
+			NetworkBehaviour.CmdDelegate cmdDelegate;
+			if (!NetworkBehaviour.GetInvokerForHashCommand(cmdHash, out invokeClass, out cmdDelegate))
 			{
 				string cmdHashHandlerName2 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
 				if (LogFilter.logError)
 				{
 					Debug.LogError(string.Concat(new object[]
 					{
-						"Found no receiver for incoming command [",
+						"Found no receiver for incoming [",
 						cmdHashHandlerName2,
 						"] on ",
 						base.gameObject,
@@ -562,59 +677,84 @@ namespace UnityEngine.Networking
 						"]."
 					}));
 				}
+				return;
 			}
+			NetworkBehaviour obj;
+			if (!this.GetInvokeComponent(cmdHash, invokeClass, out obj))
+			{
+				string cmdHashHandlerName3 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logWarn)
+				{
+					Debug.LogWarning(string.Concat(new object[]
+					{
+						"Command [",
+						cmdHashHandlerName3,
+						"] handler not found [netId=",
+						this.netId,
+						"]"
+					}));
+				}
+				return;
+			}
+			cmdDelegate(obj, reader);
 		}
 
 		internal void HandleRPC(int cmdHash, NetworkReader reader)
 		{
 			if (base.gameObject == null)
 			{
+				string cmdHashHandlerName = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
 				if (LogFilter.logWarn)
 				{
 					Debug.LogWarning(string.Concat(new object[]
 					{
 						"ClientRpc [",
-						NetworkBehaviour.GetCmdHashHandlerName(cmdHash),
-						"] received for deleted object ",
-						this.netId
+						cmdHashHandlerName,
+						"] received for deleted object [netId=",
+						this.netId,
+						"]"
 					}));
 				}
 				return;
 			}
-			if (this.m_NetworkBehaviours.Length == 0)
+			Type invokeClass;
+			NetworkBehaviour.CmdDelegate cmdDelegate;
+			if (!NetworkBehaviour.GetInvokerForHashClientRpc(cmdHash, out invokeClass, out cmdDelegate))
 			{
-				if (LogFilter.logWarn)
+				string cmdHashHandlerName2 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logError)
 				{
-					Debug.LogWarning("No receiver found for ClientRpc [" + NetworkBehaviour.GetCmdHashHandlerName(cmdHash) + "]. Does the script with the function inherit NetworkBehaviour?");
+					Debug.LogError(string.Concat(new object[]
+					{
+						"Found no receiver for incoming [",
+						cmdHashHandlerName2,
+						"] on ",
+						base.gameObject,
+						",  the server and client should have the same NetworkBehaviour instances [netId=",
+						this.netId,
+						"]."
+					}));
 				}
 				return;
 			}
-			for (int i = 0; i < this.m_NetworkBehaviours.Length; i++)
+			NetworkBehaviour obj;
+			if (!this.GetInvokeComponent(cmdHash, invokeClass, out obj))
 			{
-				NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
-				if (networkBehaviour.InvokeRPC(cmdHash, reader))
+				string cmdHashHandlerName3 = NetworkBehaviour.GetCmdHashHandlerName(cmdHash);
+				if (LogFilter.logWarn)
 				{
-					return;
+					Debug.LogWarning(string.Concat(new object[]
+					{
+						"ClientRpc [",
+						cmdHashHandlerName3,
+						"] handler not found [netId=",
+						this.netId,
+						"]"
+					}));
 				}
+				return;
 			}
-			string text = NetworkBehaviour.GetInvoker(cmdHash);
-			if (text == null)
-			{
-				text = "[unknown:" + cmdHash + "]";
-			}
-			if (LogFilter.logWarn)
-			{
-				Debug.LogWarning(string.Concat(new object[]
-				{
-					"Failed to invoke RPC ",
-					text,
-					"(",
-					cmdHash,
-					") on netID ",
-					this.netId
-				}));
-			}
-			NetworkBehaviour.DumpInvokers();
+			cmdDelegate(obj, reader);
 		}
 
 		internal void UNetUpdate()
@@ -655,15 +795,13 @@ namespace UnityEngine.Networking
 								networkBehaviour2.ClearAllDirtyBits();
 								flag = true;
 							}
-							if (NetworkIdentity.s_UpdateWriter.Position - position > (short)NetworkServer.maxPacketSize)
+							if (NetworkIdentity.s_UpdateWriter.Position - position > (short)NetworkServer.maxPacketSize && LogFilter.logWarn)
 							{
 								Debug.LogWarning(string.Concat(new object[]
 								{
 									"Large state update of ",
 									(int)(NetworkIdentity.s_UpdateWriter.Position - position),
-									" bytes (max is ",
-									NetworkServer.maxPacketSize,
-									" for netId:",
+									" bytes for netId:",
 									this.netId,
 									" from script:",
 									networkBehaviour2
@@ -697,6 +835,7 @@ namespace UnityEngine.Networking
 		{
 			this.m_IsLocalPlayer = true;
 			this.m_PlayerId = localPlayerControllerId;
+			bool hasAuthority = this.m_HasAuthority;
 			if (this.localPlayerAuthority)
 			{
 				this.m_HasAuthority = true;
@@ -705,7 +844,7 @@ namespace UnityEngine.Networking
 			{
 				NetworkBehaviour networkBehaviour = this.m_NetworkBehaviours[i];
 				networkBehaviour.OnStartLocalPlayer();
-				if (this.localPlayerAuthority)
+				if (this.localPlayerAuthority && !hasAuthority)
 				{
 					networkBehaviour.OnStartAuthority();
 				}
@@ -752,6 +891,10 @@ namespace UnityEngine.Networking
 		{
 			if (this.m_Observers == null)
 			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("AddObserver for " + base.gameObject + " observer list is null");
+				}
 				return;
 			}
 			if (this.m_ObserverConnections.Contains(conn.connectionId))
@@ -952,6 +1095,10 @@ namespace UnityEngine.Networking
 				netId = this.netId,
 				authority = false
 			});
+			if (NetworkIdentity.clientAuthorityCallback != null)
+			{
+				NetworkIdentity.clientAuthorityCallback(conn, this, false);
+			}
 			return true;
 		}
 
@@ -997,6 +1144,10 @@ namespace UnityEngine.Networking
 				netId = this.netId,
 				authority = true
 			});
+			if (NetworkIdentity.clientAuthorityCallback != null)
+			{
+				NetworkIdentity.clientAuthorityCallback(conn, this, true);
+			}
 			return true;
 		}
 
@@ -1006,5 +1157,7 @@ namespace UnityEngine.Networking
 			NetworkClient.UpdateClients();
 			NetworkManager.UpdateScene();
 		}
+
+		public delegate void ClientAuthorityCallback(NetworkConnection conn, NetworkIdentity uv, bool authorityState);
 	}
 }

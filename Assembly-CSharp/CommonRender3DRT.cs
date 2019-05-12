@@ -197,6 +197,7 @@ public class CommonRender3DRT : MonoBehaviour
 		this.goChara.transform.localPosition = characterLocalPosition;
 		Quaternion localRotation = Quaternion.Euler(0f, characterLocalEulerAngleY, 0f);
 		this.goChara.transform.localRotation = localRotation;
+		this.rotY = characterLocalEulerAngleY;
 		this.smrList = CommonRender3DRT.GetCompoSMR(this.goChara);
 		if (this.smrList != null)
 		{

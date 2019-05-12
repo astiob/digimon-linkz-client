@@ -651,6 +651,14 @@ public class ConstValue
 		}
 	}
 
+	public static int PVP_MAX_RANK
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_MAX_RANK;
+		}
+	}
+
 	public static int PVP_MAX_ATTACK_TIME
 	{
 		get
@@ -816,6 +824,14 @@ public class ConstValue
 		get
 		{
 			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ABILITY_INHERITRATE_ULTIMATE;
+		}
+	}
+
+	public static int PLAYLIMIT_USE_COUNT
+	{
+		get
+		{
+			return 1;
 		}
 	}
 

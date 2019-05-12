@@ -78,6 +78,10 @@ namespace UnityEngine.Networking
 				}
 				return;
 			}
+			if (!component.isServer)
+			{
+				return;
+			}
 			NetworkWriter networkWriter = new NetworkWriter();
 			networkWriter.StartMessage(9);
 			networkWriter.Write(component.netId);
@@ -86,7 +90,7 @@ namespace UnityEngine.Networking
 			networkWriter.WritePackedUInt32((uint)itemIndex);
 			this.SerializeItem(networkWriter, item);
 			networkWriter.FinishMessage();
-			NetworkServer.SendWriterToReady(component.gameObject, networkWriter, 0);
+			NetworkServer.SendWriterToReady(component.gameObject, networkWriter, this.m_Behaviour.GetNetworkChannel());
 			if (this.m_Behaviour.isServer && this.m_Behaviour.isClient && this.m_Callback != null)
 			{
 				this.m_Callback(op, itemIndex);
@@ -198,8 +202,13 @@ namespace UnityEngine.Networking
 			}
 			set
 			{
+				T t = this.m_Objects[i];
+				bool flag = !t.Equals(value);
 				this.m_Objects[i] = value;
-				this.SendMsg(SyncList<T>.Operation.OP_SET, i, value);
+				if (flag)
+				{
+					this.SendMsg(SyncList<T>.Operation.OP_SET, i, value);
+				}
 			}
 		}
 

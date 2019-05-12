@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Position, size, anchor and pivot information for a rectangle.</para>
-	/// </summary>
 	public sealed class RectTransform : Transform
 	{
 		public static event RectTransform.ReapplyDrivenProperties reapplyDrivenProperties;
 
-		/// <summary>
-		///   <para>The calculated rectangle in the local space of the Transform.</para>
-		/// </summary>
 		public Rect rect
 		{
 			get
@@ -27,9 +22,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_get_rect(out Rect value);
 
-		/// <summary>
-		///   <para>The normalized position in the parent RectTransform that the lower left corner is anchored to.</para>
-		/// </summary>
 		public Vector2 anchorMin
 		{
 			get
@@ -52,9 +44,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_anchorMin(ref Vector2 value);
 
-		/// <summary>
-		///   <para>The normalized position in the parent RectTransform that the upper right corner is anchored to.</para>
-		/// </summary>
 		public Vector2 anchorMax
 		{
 			get
@@ -77,9 +66,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_anchorMax(ref Vector2 value);
 
-		/// <summary>
-		///   <para>The 3D position of the pivot of this RectTransform relative to the anchor reference point.</para>
-		/// </summary>
 		public Vector3 anchoredPosition3D
 		{
 			get
@@ -96,9 +82,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The position of the pivot of this RectTransform relative to the anchor reference point.</para>
-		/// </summary>
 		public Vector2 anchoredPosition
 		{
 			get
@@ -121,9 +104,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_anchoredPosition(ref Vector2 value);
 
-		/// <summary>
-		///   <para>The size of this RectTransform relative to the distances between the anchors.</para>
-		/// </summary>
 		public Vector2 sizeDelta
 		{
 			get
@@ -146,9 +126,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_sizeDelta(ref Vector2 value);
 
-		/// <summary>
-		///   <para>The normalized position in this RectTransform that it rotates around.</para>
-		/// </summary>
 		public Vector2 pivot
 		{
 			get
@@ -175,6 +152,7 @@ namespace UnityEngine
 
 		internal extern DrivenTransformProperties drivenProperties { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
+		[RequiredByNativeCode]
 		internal static void SendReapplyDrivenProperties(RectTransform driven)
 		{
 			if (RectTransform.reapplyDrivenProperties != null)
@@ -183,10 +161,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Get the corners of the calculated rectangle in the local space of its Transform.</para>
-		/// </summary>
-		/// <param name="fourCornersArray">Array that corners should be filled into.</param>
 		public void GetLocalCorners(Vector3[] fourCornersArray)
 		{
 			if (fourCornersArray == null || fourCornersArray.Length < 4)
@@ -205,10 +179,6 @@ namespace UnityEngine
 			fourCornersArray[3] = new Vector3(xMax, y, 0f);
 		}
 
-		/// <summary>
-		///   <para>Get the corners of the calculated rectangle in world space.</para>
-		/// </summary>
-		/// <param name="fourCornersArray">Array that corners should be filled into.</param>
 		public void GetWorldCorners(Vector3[] fourCornersArray)
 		{
 			if (fourCornersArray == null || fourCornersArray.Length < 4)
@@ -242,9 +212,6 @@ namespace UnityEngine
 			return rect;
 		}
 
-		/// <summary>
-		///   <para>The offset of the lower left corner of the rectangle relative to the lower left anchor.</para>
-		/// </summary>
 		public Vector2 offsetMin
 		{
 			get
@@ -259,9 +226,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The offset of the upper right corner of the rectangle relative to the upper right anchor.</para>
-		/// </summary>
 		public Vector2 offsetMax
 		{
 			get
@@ -312,48 +276,20 @@ namespace UnityEngine
 			return rectTransform.rect.size;
 		}
 
-		/// <summary>
-		///   <para>Enum used to specify one edge of a rectangle.</para>
-		/// </summary>
 		public enum Edge
 		{
-			/// <summary>
-			///   <para>The left edge.</para>
-			/// </summary>
 			Left,
-			/// <summary>
-			///   <para>The right edge.</para>
-			/// </summary>
 			Right,
-			/// <summary>
-			///   <para>The top edge.</para>
-			/// </summary>
 			Top,
-			/// <summary>
-			///   <para>The bottom edge.</para>
-			/// </summary>
 			Bottom
 		}
 
-		/// <summary>
-		///   <para>An axis that can be horizontal or vertical.</para>
-		/// </summary>
 		public enum Axis
 		{
-			/// <summary>
-			///   <para>Horizontal.</para>
-			/// </summary>
 			Horizontal,
-			/// <summary>
-			///   <para>Vertical.</para>
-			/// </summary>
 			Vertical
 		}
 
-		/// <summary>
-		///   <para>Delegate used for the reapplyDrivenProperties event.</para>
-		/// </summary>
-		/// <param name="driven"></param>
 		public delegate void ReapplyDrivenProperties(RectTransform driven);
 	}
 }

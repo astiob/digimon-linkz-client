@@ -43,22 +43,19 @@ namespace UnityEngine.UI
 
 		public static Transform FindRootSortOverrideCanvas(Transform start)
 		{
-			Transform transform = start;
-			Transform result = null;
-			while (transform != null)
+			List<Canvas> list = ListPool<Canvas>.Get();
+			start.GetComponentsInParent<Canvas>(false, list);
+			Canvas canvas = null;
+			for (int i = 0; i < list.Count; i++)
 			{
-				Canvas component = transform.GetComponent<Canvas>();
-				if (component != null && component.overrideSorting)
+				canvas = list[i];
+				if (canvas.overrideSorting)
 				{
-					return transform;
+					break;
 				}
-				if (component != null)
-				{
-					result = transform;
-				}
-				transform = transform.parent;
 			}
-			return result;
+			ListPool<Canvas>.Release(list);
+			return (!(canvas != null)) ? null : canvas.transform;
 		}
 
 		public static int GetStencilDepth(Transform transform, Transform stopAfter)
@@ -69,13 +66,13 @@ namespace UnityEngine.UI
 				return num;
 			}
 			Transform parent = transform.parent;
-			List<Component> list = ListPool<Component>.Get();
+			List<Mask> list = ListPool<Mask>.Get();
 			while (parent != null)
 			{
-				parent.GetComponents(typeof(Mask), list);
+				parent.GetComponents<Mask>(list);
 				for (int i = 0; i < list.Count; i++)
 				{
-					if (list[i] != null && ((Mask)list[i]).IsActive() && ((Mask)list[i]).graphic.IsActive())
+					if (list[i] != null && list[i].IsActive() && list[i].graphic != null && list[i].graphic.IsActive())
 					{
 						num++;
 						break;
@@ -87,60 +84,27 @@ namespace UnityEngine.UI
 				}
 				parent = parent.parent;
 			}
-			ListPool<Component>.Release(list);
+			ListPool<Mask>.Release(list);
 			return num;
 		}
 
 		public static RectMask2D GetRectMaskForClippable(IClippable transform)
 		{
-			Transform parent = transform.rectTransform.parent;
-			List<Component> list = ListPool<Component>.Get();
-			while (parent != null)
+			List<RectMask2D> list = ListPool<RectMask2D>.Get();
+			RectMask2D result = null;
+			transform.rectTransform.GetComponentsInParent<RectMask2D>(false, list);
+			if (list.Count > 0)
 			{
-				parent.GetComponents(typeof(RectMask2D), list);
-				for (int i = 0; i < list.Count; i++)
-				{
-					if (list[i] != null && ((RectMask2D)list[i]).IsActive())
-					{
-						RectMask2D result = (RectMask2D)list[i];
-						ListPool<Component>.Release(list);
-						return result;
-					}
-				}
-				Canvas component = parent.GetComponent<Canvas>();
-				if (component)
-				{
-					break;
-				}
-				parent = parent.parent;
+				result = list[0];
 			}
-			ListPool<Component>.Release(list);
-			return null;
+			ListPool<RectMask2D>.Release(list);
+			return result;
 		}
 
 		public static void GetRectMasksForClip(RectMask2D clipper, List<RectMask2D> masks)
 		{
 			masks.Clear();
-			Transform transform = clipper.transform;
-			List<Component> list = ListPool<Component>.Get();
-			while (transform != null)
-			{
-				transform.GetComponents(typeof(RectMask2D), list);
-				for (int i = 0; i < list.Count; i++)
-				{
-					if (list[i] != null && ((RectMask2D)list[i]).IsActive())
-					{
-						masks.Add((RectMask2D)list[i]);
-					}
-				}
-				Canvas component = transform.GetComponent<Canvas>();
-				if (component)
-				{
-					break;
-				}
-				transform = transform.parent;
-			}
-			ListPool<Component>.Release(list);
+			clipper.transform.GetComponentsInParent<RectMask2D>(false, masks);
 		}
 	}
 }

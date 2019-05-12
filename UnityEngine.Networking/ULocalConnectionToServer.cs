@@ -31,7 +31,10 @@ namespace UnityEngine.Networking
 		{
 			if (numBytes <= 0)
 			{
-				Debug.LogError("LocalConnection:SendBytes cannot send zero bytes");
+				if (LogFilter.logError)
+				{
+					Debug.LogError("LocalConnection:SendBytes cannot send zero bytes");
+				}
 				return false;
 			}
 			return this.m_LocalServer.InvokeBytes(this, bytes, numBytes, channelId);

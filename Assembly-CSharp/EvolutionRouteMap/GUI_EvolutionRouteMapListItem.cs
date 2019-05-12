@@ -1,6 +1,9 @@
 ﻿using EvolutionDiagram;
 using Master;
 using Monster;
+using MonsterIcon;
+using MonsterIconExtensions;
+using Picturebook;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,9 +16,6 @@ namespace EvolutionRouteMap
 		private GUI_EvolutionRouteMapList listRoot;
 
 		[SerializeField]
-		private MonsterThumbnail monsterIcon;
-
-		[SerializeField]
 		private UILabel growStep;
 
 		[SerializeField]
@@ -23,6 +23,32 @@ namespace EvolutionRouteMap
 
 		[SerializeField]
 		private UILabel monsterName;
+
+		[SerializeField]
+		private MonsterIcon monsterIcon;
+
+		[SerializeField]
+		private Vector2 iconPosition;
+
+		[SerializeField]
+		private int iconSize;
+
+		[SerializeField]
+		private Color iconTextColor;
+
+		private void Initialize()
+		{
+			this.playSelectSE = true;
+			this.touchBehavior = GUICollider.TouchBehavior.None;
+			UIWidget component = this.listRoot.GetComponent<UIWidget>();
+			int depth = component.depth;
+			this.monsterIcon = this.listRoot.GetMonsterIconObject();
+			this.monsterIcon.Initialize(base.transform, this.iconSize, depth);
+			this.monsterIcon.Message.SetSortTextColor(this.iconTextColor);
+			GameObject rootObject = this.monsterIcon.GetRootObject();
+			rootObject.transform.localPosition = new Vector3(this.iconPosition.x, this.iconPosition.y, 0f);
+			base.InitializeInputEvent();
+		}
 
 		private void OnPushed()
 		{
@@ -40,18 +66,18 @@ namespace EvolutionRouteMap
 			if (routeMapData != null && listPartsIndex < routeMapData.Count && routeMapData[listPartsIndex] != null)
 			{
 				EvolutionDiagramData.IconMonster iconMonster = routeMapData[listPartsIndex];
-				this.monsterIcon.SetImage(iconMonster.singleData.iconId, iconMonster.groupData.growStep);
-				if (!MonsterDataMng.ExistPicturebook(iconMonster.groupData.monsterCollectionId))
+				this.monsterIcon.SetMonsterImage(iconMonster.master);
+				if (!MonsterPicturebookData.ExistPicturebook(iconMonster.master.Group.monsterCollectionId))
 				{
-					this.monsterIcon.SetBottomText(StringMaster.GetString("EvolutionUnkown"));
+					this.monsterIcon.Message.SetSortText(StringMaster.GetString("EvolutionUnkown"));
 				}
 				else
 				{
-					this.monsterIcon.ClearBottomText();
+					this.monsterIcon.Message.ClearSortText();
 				}
-				this.growStep.text = CommonSentenceData.GetGrade(iconMonster.groupData.growStep);
-				this.monsterName.text = iconMonster.groupData.monsterName;
-				this.specificName.text = MonsterSpecificTypeData.GetSpecificTypeName(iconMonster.groupData.monsterStatusId);
+				this.growStep.text = MonsterGrowStepData.GetGrowStepName(iconMonster.master.Group.growStep);
+				this.monsterName.text = iconMonster.master.Group.monsterName;
+				this.specificName.text = MonsterSpecificTypeData.GetSpecificTypeName(iconMonster.master.Group.monsterStatusId);
 			}
 		}
 
@@ -61,9 +87,7 @@ namespace EvolutionRouteMap
 			{
 				base.gameObject.SetActive(true);
 			}
-			this.playSelectSE = true;
-			this.touchBehavior = GUICollider.TouchBehavior.None;
-			this.monsterIcon.Initialize();
+			this.Initialize();
 		}
 	}
 }

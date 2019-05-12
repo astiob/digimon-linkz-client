@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Text;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
+	[UsedByNativeCode]
 	internal sealed class _AndroidJNIHelper
 	{
 		public static IntPtr CreateJavaProxy(int delegateHandle, AndroidJavaProxy proxy)
@@ -53,7 +55,7 @@ namespace UnityEngine
 				{
 					array[num].l = IntPtr.Zero;
 				}
-				else if (obj.GetType().IsPrimitive)
+				else if (AndroidReflection.IsPrimitive(obj.GetType()))
 				{
 					if (obj is int)
 					{
@@ -259,7 +261,7 @@ namespace UnityEngine
 			{
 				return null;
 			}
-			if (obj.GetType().IsPrimitive)
+			if (AndroidReflection.IsPrimitive(obj.GetType()))
 			{
 				if (obj is int)
 				{
@@ -368,7 +370,7 @@ namespace UnityEngine
 		public static IntPtr ConvertToJNIArray(Array array)
 		{
 			Type elementType = array.GetType().GetElementType();
-			if (elementType.IsPrimitive)
+			if (AndroidReflection.IsPrimitive(elementType))
 			{
 				if (elementType == typeof(int))
 				{
@@ -462,7 +464,7 @@ namespace UnityEngine
 		public static ArrayType ConvertFromJNIArray<ArrayType>(IntPtr array)
 		{
 			Type elementType = typeof(ArrayType).GetElementType();
-			if (elementType.IsPrimitive)
+			if (AndroidReflection.IsPrimitive(elementType))
 			{
 				if (elementType == typeof(int))
 				{
@@ -630,7 +632,7 @@ namespace UnityEngine
 				return "Ljava/lang/Object;";
 			}
 			Type type = (!(obj is Type)) ? obj.GetType() : ((Type)obj);
-			if (type.IsPrimitive)
+			if (AndroidReflection.IsPrimitive(type))
 			{
 				if (type.Equals(typeof(int)))
 				{
@@ -697,7 +699,7 @@ namespace UnityEngine
 						return "L" + androidJavaObject3.Call<string>("getName", new object[0]) + ";";
 					}
 				}
-				if (!typeof(Array).IsAssignableFrom(type))
+				if (!AndroidReflection.IsAssignableFrom(typeof(Array), type))
 				{
 					throw new Exception(string.Concat(new object[]
 					{

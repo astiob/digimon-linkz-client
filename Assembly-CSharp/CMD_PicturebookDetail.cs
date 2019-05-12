@@ -131,8 +131,8 @@ public class CMD_PicturebookDetail : CMD
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("PicturebookTitle"));
 		string monsterName = CMD_PicturebookDetail.displayMonsterData.monsterMG.monsterName;
-		string monsterGrowStepName = CMD_PicturebookDetail.displayMonsterData.growStepM.monsterGrowStepName;
-		string monsterTribeName = CMD_PicturebookDetail.displayMonsterData.tribeM.monsterTribeName;
+		string growStepName = MonsterGrowStepData.GetGrowStepName(CMD_PicturebookDetail.displayMonsterData.monsterMG.growStep);
+		string tribeName = MonsterTribeData.GetTribeName(CMD_PicturebookDetail.displayMonsterData.monsterMG.tribe);
 		string description = CMD_PicturebookDetail.displayMonsterData.monsterMG.description;
 		List<string> list = new List<string>();
 		List<string> list2 = new List<string>();
@@ -152,13 +152,13 @@ public class CMD_PicturebookDetail : CMD
 		default:
 			list.Add(string.Empty);
 			list2.Add(string.Empty);
-			this.oneSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, specificTypeName, description, list, list2);
+			this.oneSkillStatus.Initialize(monsterName, growStepName, tribeName, specificTypeName, description, list, list2);
 			break;
 		case 1:
-			this.oneSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, specificTypeName, description, list, list2);
+			this.oneSkillStatus.Initialize(monsterName, growStepName, tribeName, specificTypeName, description, list, list2);
 			break;
 		case 2:
-			this.twoSkillStatus.Initialize(monsterName, monsterGrowStepName, monsterTribeName, specificTypeName, description, list, list2);
+			this.twoSkillStatus.Initialize(monsterName, growStepName, tribeName, specificTypeName, description, list, list2);
 			break;
 		}
 	}
@@ -167,8 +167,8 @@ public class CMD_PicturebookDetail : CMD
 	{
 		GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DRT", null);
 		this.render3DRT = gameObject.GetComponent<CommonRender3DRT>();
-		string monsterCharaPathByMonsterData = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterData(CMD_PicturebookDetail.displayMonsterData);
-		this.render3DRT.LoadChara(monsterCharaPathByMonsterData, 0f, 10000f, -0.65f, 1.1f, true);
+		string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(CMD_PicturebookDetail.displayMonsterData.monsterM.monsterGroupId);
+		this.render3DRT.LoadChara(monsterCharaPathByMonsterGroupId, 0f, 10000f, -0.65f, 1.1f, true);
 		this.renderTex = this.render3DRT.SetRenderTarget(1136, 820, 16);
 		this.modelUiTex.mainTexture = this.renderTex;
 		this.monsterParam = this.render3DRT.transform.GetComponentInChildren<CharacterParams>();

@@ -490,7 +490,16 @@ public class AssetBundleMng : MonoBehaviour
 		int m;
 		for (m = 0; m < abiList.Count; m++)
 		{
-			if (objName.CompareTo(abiList[m].startName) >= 0 && objName.CompareTo(abiList[m].endName) <= 0)
+			bool flag = false;
+			for (int i = 0; i < abiList[m].objNameList.Count; i++)
+			{
+				if (objName == abiList[m].objNameList[i])
+				{
+					flag = true;
+					break;
+				}
+			}
+			if (flag)
 			{
 				this.DownLoad_OneAssetBundleData(abid.name, abid.ver, abid.abPath, abiList[m], delegate(AssetBundle ab, AB_DownLoadInfo abdlI)
 				{
@@ -515,7 +524,16 @@ public class AssetBundleMng : MonoBehaviour
 		int i;
 		for (i = 0; i < assetBundleInfoList.Count; i++)
 		{
-			if (objName.CompareTo(assetBundleInfoList[i].startName) >= 0 && objName.CompareTo(assetBundleInfoList[i].endName) <= 0)
+			bool flag = false;
+			for (int j = 0; j < assetBundleInfoList[i].objNameList.Count; j++)
+			{
+				if (objName == assetBundleInfoList[i].objNameList[j])
+				{
+					flag = true;
+					break;
+				}
+			}
+			if (flag)
 			{
 				AB_DownLoadInfo abdlI = this.DownLoad_OneAssetBundleData(abid.name, abid.ver, abid.abPath, assetBundleInfoList[i], null, false);
 				return this.FindObjectAndUnloadAB(abdlI, assetBundleInfoList[i], objName);

@@ -1,4 +1,5 @@
 ﻿using FarmData;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -276,7 +277,7 @@ public class GameWebAPI : WebAPI
 			{
 				get
 				{
-					return this.userId.ToInt32();
+					return int.Parse(this.userId);
 				}
 			}
 		}
@@ -650,6 +651,8 @@ public class GameWebAPI : WebAPI
 	public sealed class RespDataMN_SaleExec : WebAPI.ResponseData
 	{
 		public int result;
+
+		public int itemRecovered;
 	}
 
 	public sealed class RequestFA_MN_PicturebookExec : RequestTypeBase<GameWebAPI.MN_Req_Picturebook, GameWebAPI.RespDataMN_Picturebook>
@@ -675,6 +678,8 @@ public class GameWebAPI : WebAPI
 
 		public sealed class UserCollectionData
 		{
+			public const string HAVE_STATUS = "1";
+
 			public string monsterCollectionId;
 
 			public string collectionStatus;
@@ -1590,6 +1595,11 @@ public class GameWebAPI : WebAPI
 				return "1" == this.eggFlg;
 			}
 
+			public bool IsGrowing()
+			{
+				return !string.IsNullOrEmpty(this.growEndDate);
+			}
+
 			public bool IsLocked
 			{
 				get
@@ -2364,26 +2374,28 @@ public class GameWebAPI : WebAPI
 
 	public sealed class PR_Req_PrizeReceiveIds : WebAPI.SendBaseData
 	{
-		public const int RECEIVE_TYPE_PAGE = 1;
-
 		public const int RECEIVE_TYPE_ID_LIST = 2;
 
-		public const int RECEIVE_TYPE_CATEGORY_LIST = 3;
-
 		public int receiveType;
-
-		public string page;
 
 		public string[] receiveIds;
 	}
 
 	public sealed class RespDataPR_PrizeReceiveIds : WebAPI.ResponseData
 	{
+		public const int RESULT_ERROR_PRESENT_IS_EXPIRED = 90;
+
+		public const int RESULT_ERROR_PRESENT_NOT_FOUND = 91;
+
+		public const int RESULT_ERROR_INVALID_RECEIVE_TYPE = 92;
+
 		public string[] prizeReceiveIds;
 
 		public int isWarning;
 
 		public string[] warningData;
+
+		public int resultCode;
 	}
 
 	public sealed class RequestPR_PrizeReceiveHistory : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataPR_PrizeReceiveHistory>
@@ -2513,11 +2525,31 @@ public class GameWebAPI : WebAPI
 	{
 		public int resultCode;
 
-		public GameWebAPI.ColosseumReward[] rewardList;
+		public Dictionary<string, GameWebAPI.ColosseumReward[]> rewardList;
+
+		public Dictionary<string, GameWebAPI.ColosseumReward[]> interimRewardList;
 
 		public bool ExistReward()
 		{
 			return 1 == this.resultCode;
+		}
+
+		public int maxRewardListKey()
+		{
+			if (this.rewardList != null)
+			{
+				return this.rewardList.Keys.Max((string n) => int.Parse(n));
+			}
+			return 0;
+		}
+
+		public int maxInterimRewardListKey()
+		{
+			if (this.interimRewardList != null)
+			{
+				return this.interimRewardList.Keys.Max((string n) => int.Parse(n));
+			}
+			return 0;
 		}
 	}
 
@@ -2548,9 +2580,25 @@ public class GameWebAPI : WebAPI
 
 		public int pointToNextRank;
 
-		public GameWebAPI.RespDataCL_Ranking.RankingData[] rankingMember;
+		private GameWebAPI.RespDataCL_Ranking.RankingData[] _rankingMember;
 
 		public int resultCode;
+
+		public GameWebAPI.RespDataCL_Ranking.RankingData[] rankingMember
+		{
+			get
+			{
+				return this._rankingMember;
+			}
+			set
+			{
+				this._rankingMember = value;
+				if (this._rankingMember == null)
+				{
+					this._rankingMember = new GameWebAPI.RespDataCL_Ranking.RankingData[0];
+				}
+			}
+		}
 
 		public class RankingData
 		{
@@ -2796,6 +2844,8 @@ public class GameWebAPI : WebAPI
 			public int assetNum;
 
 			public int everyTimeFlg;
+
+			public string exValue;
 		}
 
 		public class OptionDrop
@@ -3042,6 +3092,8 @@ public class GameWebAPI : WebAPI
 		public GameWebAPI.RespData_AreaEventResult.Point point;
 
 		public GameWebAPI.RespData_AreaEventResult.Reward[] reward;
+
+		public GameWebAPI.RespData_AreaEventResult.Reward[] nextReward;
 
 		public sealed class Point
 		{
@@ -3674,6 +3726,11 @@ public class GameWebAPI : WebAPI
 			public int userChipId;
 
 			public int userMonsterId;
+
+			public bool IsUse()
+			{
+				return 0 != this.userMonsterId;
+			}
 		}
 	}
 
@@ -3798,16 +3855,7 @@ public class GameWebAPI : WebAPI
 
 		public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo[] slotInfo;
 
-		public sealed class SlotInfo
-		{
-			public int userMonsterId;
-
-			public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip[] equip;
-
-			public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage manage;
-		}
-
-		public sealed class Equip
+		public class Equip
 		{
 			public int dispNum;
 
@@ -3825,6 +3873,15 @@ public class GameWebAPI : WebAPI
 			public int maxSlotNum;
 
 			public int maxExtraSlotNum;
+		}
+
+		public sealed class SlotInfo
+		{
+			public int userMonsterId;
+
+			public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip[] equip;
+
+			public GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage manage;
 		}
 
 		public enum TYPE
@@ -4169,7 +4226,7 @@ public class GameWebAPI : WebAPI
 
 			public int GetArousal()
 			{
-				return this.rare.ToInt32() - 1;
+				return int.Parse(this.rare) - 1;
 			}
 		}
 	}
@@ -4192,6 +4249,8 @@ public class GameWebAPI : WebAPI
 		{
 			public string monsterGroupId;
 
+			public string modelId;
+
 			public string monsterCollectionId;
 
 			public string monsterName;
@@ -4209,14 +4268,6 @@ public class GameWebAPI : WebAPI
 			public string monsterType;
 
 			public string leaderSkillId;
-
-			public string size;
-
-			public string shadowSize;
-
-			public string focusPointX;
-
-			public string focusPointY;
 
 			public string partyCharaPosX;
 
@@ -4846,18 +4897,18 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestMonsterFixidMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_MonsterFixidM>
+	public sealed class RequestMonsterFixedMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_MonsterFixedM>
 	{
-		public RequestMonsterFixidMaster()
+		public RequestMonsterFixedMaster()
 		{
 			this.apiId = "990116";
 		}
 	}
 
 	[Serializable]
-	public sealed class RespDataMA_MonsterFixidM : WebAPI.ResponseData
+	public sealed class RespDataMA_MonsterFixedM : WebAPI.ResponseData
 	{
-		public MonsterFixidM[] monsterFixedValueM;
+		public MonsterFixedM[] monsterFixedValueM;
 	}
 
 	public sealed class RequestMA_AbilityUpgradeMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_AbilityUpgradeM>
@@ -6046,6 +6097,14 @@ public class GameWebAPI : WebAPI
 				}
 			}
 
+			public string pvpMaxRank
+			{
+				set
+				{
+					this.PVP_MAX_RANK = int.Parse(value);
+				}
+			}
+
 			public string pvpMaxAttackTime
 			{
 				set
@@ -6083,6 +6142,54 @@ public class GameWebAPI : WebAPI
 				set
 				{
 					this.PVP_BATTLE_ENEMY_RECOVER_TIME = int.Parse(value);
+				}
+			}
+
+			public string pvpBattleActionLog
+			{
+				set
+				{
+					this.PVP_BATTLE_ACTION_LOG = int.Parse(value);
+				}
+			}
+
+			public string pvpActionLogRetryTime
+			{
+				set
+				{
+					this.PVP_ACTION_LOG_RETRY_TIME = int.Parse(value);
+				}
+			}
+
+			public string pvpActionLogRetryCount
+			{
+				set
+				{
+					this.PVP_ACTION_LOG_RETRY_COUNT = int.Parse(value);
+				}
+			}
+
+			public string pvpPartySelectTime
+			{
+				set
+				{
+					this.PVP_PARTY_SELECT_TIME = int.Parse(value);
+				}
+			}
+
+			public string pvpSelectDataRetryCount
+			{
+				set
+				{
+					this.PVP_SELECT_DATA_RETRY_COUNT = int.Parse(value);
+				}
+			}
+
+			public string pvpSelectDataRetryTime
+			{
+				set
+				{
+					this.PVP_SELECT_DATA_RETRY_TIME = int.Parse(value);
 				}
 			}
 
@@ -6412,6 +6519,8 @@ public class GameWebAPI : WebAPI
 
 			public string CHAT_NOTIFICATION_INTERVAL_TIME { get; private set; }
 
+			public int PVP_MAX_RANK { get; private set; }
+
 			public int PVP_MAX_ATTACK_TIME { get; private set; }
 
 			public int PVP_HURRYUP_ATTACK_TIME { get; private set; }
@@ -6421,6 +6530,18 @@ public class GameWebAPI : WebAPI
 			public int PVP_BATTLE_TIMEOUT_TIME { get; private set; }
 
 			public int PVP_BATTLE_ENEMY_RECOVER_TIME { get; private set; }
+
+			public int PVP_BATTLE_ACTION_LOG { get; private set; }
+
+			public int PVP_ACTION_LOG_RETRY_TIME { get; private set; }
+
+			public int PVP_ACTION_LOG_RETRY_COUNT { get; private set; }
+
+			public int PVP_SELECT_DATA_RETRY_TIME { get; private set; }
+
+			public int PVP_SELECT_DATA_RETRY_COUNT { get; private set; }
+
+			public int PVP_PARTY_SELECT_TIME { get; private set; }
 
 			public int MULTI_MAX_ATTACK_TIME { get; private set; }
 
@@ -6818,6 +6939,8 @@ public class GameWebAPI : WebAPI
 			public string assetValue;
 
 			public string assetNum;
+
+			public string exValue;
 
 			public string everyTimeFlg;
 		}
@@ -7274,6 +7397,8 @@ public class GameWebAPI : WebAPI
 
 			public string point;
 
+			public string loopFlg;
+
 			public string assetCategoryId;
 
 			public string assetValue;
@@ -7466,6 +7591,56 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
+	public sealed class RequestDataMA_WorldDungeonAdventureSceneMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster>
+	{
+		public RequestDataMA_WorldDungeonAdventureSceneMaster()
+		{
+			this.apiId = "990912";
+		}
+	}
+
+	[Serializable]
+	public sealed class RespDataMA_WorldDungeonAdventureSceneMaster : WebAPI.ResponseData
+	{
+		public GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene[] worldDungeonAdventureSceneM;
+
+		[Serializable]
+		public class WorldDungeonAdventureScene
+		{
+			public string worldDungeonId = string.Empty;
+
+			public string adventureId = string.Empty;
+
+			public string adventureTrigger = string.Empty;
+
+			public string adventureTriggerValue = string.Empty;
+
+			public string adventureValue = string.Empty;
+		}
+	}
+
+	public sealed class RequestDataMA_MonsterIntegrationGroupMaster : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster>
+	{
+		public RequestDataMA_MonsterIntegrationGroupMaster()
+		{
+			this.apiId = "990122";
+		}
+	}
+
+	[Serializable]
+	public sealed class RespDataMA_MonsterIntegrationGroupMaster : WebAPI.ResponseData
+	{
+		public GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] monsterIntegrationGroupM;
+
+		[Serializable]
+		public class MonsterIntegrationGroup
+		{
+			public string monsterIntegrationId = string.Empty;
+
+			public string monsterId = string.Empty;
+		}
+	}
+
 	public class ResponseData_ChatGroupList : WebAPI.ResponseData
 	{
 		public GameWebAPI.ResponseData_ChatGroupList.lists[] groupList;
@@ -7527,6 +7702,8 @@ public class GameWebAPI : WebAPI
 
 		public GameWebAPI.ResponseData_ChatUserList.respUserList[] requestList;
 
+		public int resultCode;
+
 		public class respUserList
 		{
 			public string chatMemberInviteId;
@@ -7571,6 +7748,10 @@ public class GameWebAPI : WebAPI
 		public string createTime;
 
 		public GameWebAPI.Common_MessageData.respUserInfo userInfo;
+
+		public string target;
+
+		public string resultCode;
 
 		public class respUserInfo
 		{
@@ -7662,17 +7843,15 @@ public class GameWebAPI : WebAPI
 
 		public int[] chipIdList;
 
-		private int BLANK_CHIP_SLOT = -1;
-
 		public Common_MonsterData()
 		{
 		}
 
-		public Common_MonsterData(global::MonsterData monsterData) : this(monsterData.userMonster, monsterData.userMonsterSlotInfo)
+		public Common_MonsterData(global::MonsterData monsterData) : this(monsterData.userMonster, monsterData.GetChipEquip())
 		{
 		}
 
-		public Common_MonsterData(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster, GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo slotInfo)
+		public Common_MonsterData(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster, MonsterChipEquipData equip)
 		{
 			this.userMonsterId = userMonster.userMonsterId;
 			this.userId = userMonster.userId;
@@ -7712,21 +7891,9 @@ public class GameWebAPI : WebAPI
 			this.tranceResistance = userMonster.tranceResistance;
 			this.tranceStatusAilment = userMonster.tranceStatusAilment;
 			this.speed = userMonster.speed;
-			if (slotInfo != null && slotInfo.equip != null)
+			if (equip != null)
 			{
-				this.chipIdList = new int[slotInfo.equip.Length];
-				for (int i = 0; i < slotInfo.equip.Length; i++)
-				{
-					if (slotInfo.equip[i] != null)
-					{
-						GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipDataByUserChipId = ChipDataMng.GetUserChipDataByUserChipId(slotInfo.equip[i].userChipId);
-						this.chipIdList[i] = userChipDataByUserChipId.chipId;
-					}
-					else
-					{
-						this.chipIdList[i] = this.BLANK_CHIP_SLOT;
-					}
-				}
+				this.chipIdList = equip.GetChipIdList();
 			}
 		}
 
@@ -7840,16 +8007,16 @@ public class GameWebAPI : WebAPI
 
 		public global::MonsterData ToMonsterData()
 		{
-			global::MonsterData monsterData = new global::MonsterData();
-			monsterData.DuplicateUserMonster(this.ToUserMonsterList());
-			monsterData.monsterM = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(this.monsterId);
-			monsterData.monsterMG = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterData.monsterM.monsterGroupId);
-			monsterData.InitSkillInfo();
-			monsterData.InitResistanceInfo();
-			monsterData.InitGrowStepInfo();
-			monsterData.InitTribeInfo();
-			monsterData.InitChipInfo();
-			monsterData.SetChipIdList(this.chipIdList);
+			global::MonsterData monsterData = new global::MonsterData(this.ToUserMonsterList());
+			monsterData.CreateEmptyChipEquip();
+			if (!(DataMng.Instance().RespDataCM_Login.playerInfo.userId != monsterData.GetMonster().userId))
+			{
+				this.SetChipIdList();
+			}
+			if (this.chipIdList != null && 0 < this.chipIdList.Length)
+			{
+				monsterData.SetChipIdList(this.chipIdList);
+			}
 			return monsterData;
 		}
 	}
@@ -8283,6 +8450,8 @@ public class GameWebAPI : WebAPI
 				public string worldDungeonRewardId;
 
 				public int everyTimeFlg;
+
+				public string exValue;
 			}
 
 			public class LuckDrop : GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward
@@ -8630,6 +8799,8 @@ public class GameWebAPI : WebAPI
 	public class RespData_ChatResignGroupLogic : WebAPI.ResponseData
 	{
 		public int result;
+
+		public int resultCode;
 	}
 
 	public class ChatResignGroupLogic : RequestTypeBase<GameWebAPI.ReqData_ChatResignGroupLogic, GameWebAPI.RespData_ChatResignGroupLogic>
@@ -8652,6 +8823,8 @@ public class GameWebAPI : WebAPI
 	public class RespData_ChatNewMessageHistoryLogic : WebAPI.ResponseData
 	{
 		public GameWebAPI.RespData_ChatNewMessageHistoryLogic.Result[] result;
+
+		public int resultCode;
 
 		public class Result : GameWebAPI.Common_MessageData
 		{
@@ -8723,6 +8896,8 @@ public class GameWebAPI : WebAPI
 		public class respMember
 		{
 			public GameWebAPI.RespData_ChatWholeGroupMemberList.respMember.respMemberList[] memberList;
+
+			public int resultCode;
 
 			public class respMemberList
 			{
@@ -8931,6 +9106,8 @@ public class GameWebAPI : WebAPI
 
 	public class ReqData_ColosseumDeckInfoLogic : WebAPI.SendBaseData
 	{
+		public string target;
+
 		public int isMockBattle;
 	}
 
@@ -8964,9 +9141,11 @@ public class GameWebAPI : WebAPI
 
 	public class ReqData_ColosseumDeckEditLogic : WebAPI.SendBaseData
 	{
-		public int deckNum;
+		public string[] userMonsterIdList;
 
 		public int isMockBattle;
+
+		public int deckNum;
 	}
 
 	public class RespData_ColosseumDeckEditLogic : WebAPI.ResponseData
@@ -9003,9 +9182,13 @@ public class GameWebAPI : WebAPI
 	{
 		public int resultCode;
 
+		public GameWebAPI.ColosseumUserStatus userStatus;
+
+		public GameWebAPI.RespData_ColosseumUserStatusLogic.ColosseumBattleRecord battleRecord;
+
 		public string penalty;
 
-		public GameWebAPI.ColosseumUserStatus userStatus;
+		public string noticeCode;
 
 		public int mockBattleStatus;
 
@@ -9063,6 +9246,13 @@ public class GameWebAPI : WebAPI
 			SUCCESS,
 			BATTLE_INTERRUPTION
 		}
+
+		public class ColosseumBattleRecord
+		{
+			public int count;
+
+			public int winPercent;
+		}
 	}
 
 	public class ColosseumUserStatusLogic : RequestTypeBase<GameWebAPI.ReqData_ColosseumUserStatusLogic, GameWebAPI.RespData_ColosseumUserStatusLogic>
@@ -9112,6 +9302,8 @@ public class GameWebAPI : WebAPI
 
 		public int isFirstRankUp;
 
+		public GameWebAPI.RespData_ColosseumBattleEndLogic.ColosseumBattleRecord battleRecord;
+
 		public class Reward
 		{
 			public int assetCategoryId;
@@ -9119,6 +9311,13 @@ public class GameWebAPI : WebAPI
 			public int assetNum;
 
 			public int assetValue;
+		}
+
+		public class ColosseumBattleRecord
+		{
+			public int count;
+
+			public int winPercent;
 		}
 	}
 
@@ -9160,6 +9359,26 @@ public class GameWebAPI : WebAPI
 		public ColosseumPrepareStatusLogic()
 		{
 			this.apiId = "080113";
+		}
+	}
+
+	public class ReqData_ColosseumBattleActionLog : WebAPI.SendBaseData
+	{
+		public string action;
+
+		public int isMockBattle;
+	}
+
+	public class RespData_ColosseumBattleActionLog : WebAPI.ResponseData
+	{
+		public int resultCode;
+	}
+
+	public class ColosseumBattleActionLog : RequestTypeBase<GameWebAPI.ReqData_ColosseumBattleActionLog, GameWebAPI.RespData_ColosseumBattleActionLog>
+	{
+		public ColosseumBattleActionLog()
+		{
+			this.apiId = "080114";
 		}
 	}
 

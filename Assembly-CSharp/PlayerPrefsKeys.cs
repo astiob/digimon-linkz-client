@@ -51,4 +51,6 @@ public static class PlayerPrefsKeys
 	public const string BATTLE_AUTO_PLAY_FLAG = "BattleAutoPlay";
 
 	public const string CLEAR_BACKUP_MISSION_FLAG = "ClearBackupMission";
+
+	public const string COLOSSEUM_TOP_NOTICE_CODE = "ColosseumTopNoticeCode";
 }

@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -115,8 +116,8 @@ public class PrizeEfcCont : MonoBehaviour
 			num++;
 		}
 		this.shiningEffect.gameObject.SetActive(false);
-		int num7 = int.Parse(this.Data.monsterMG.growStep);
-		if (num7 == 6 || num7 == 7 || num7 == 9 || num >= this.PERFECT_HIT_NUM)
+		int growStep = int.Parse(this.Data.monsterMG.growStep);
+		if (MonsterGrowStepData.IsPerfectScope(growStep) || MonsterGrowStepData.IsUltimateScope(growStep) || num >= this.PERFECT_HIT_NUM)
 		{
 			this.outerLuster.gameObject.SetActive(true);
 			this.innerLuster.gameObject.SetActive(true);

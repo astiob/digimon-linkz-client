@@ -1,7 +1,8 @@
 ﻿using System;
+using UI.MonsterInfoParts;
 using UnityEngine;
 
-public abstract class GUIListPartsWrapper : GUIListPartBS
+public abstract class GUIListPartsWrapper : MonsterIconTouchEventUD
 {
 	[SerializeField]
 	protected Vector2 partsSize;

@@ -11,16 +11,16 @@ namespace UnityEngine.Events
 		[FormerlySerializedAs("instance")]
 		private Object m_Target;
 
-		[FormerlySerializedAs("methodName")]
 		[SerializeField]
+		[FormerlySerializedAs("methodName")]
 		private string m_MethodName;
 
 		[SerializeField]
 		[FormerlySerializedAs("mode")]
 		private PersistentListenerMode m_Mode;
 
-		[SerializeField]
 		[FormerlySerializedAs("arguments")]
+		[SerializeField]
 		private ArgumentCache m_Arguments = new ArgumentCache();
 
 		[FormerlySerializedAs("enabled")]

@@ -2,30 +2,13 @@
 using Master;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleUIControlMulti : BattleUIControlMultiBasic
 {
 	private MultiBattleDialog _battleDialog;
 
-	private AnimatorFinishEventTrigger apUpHudAnimCallback;
-
-	private List<Action> apUpHudActions = new List<Action>();
-
 	private BattleUIMultiX2PlayButton multiX2PlayButton;
-
-	public bool isPlayingSharedAp
-	{
-		get
-		{
-			return this.ui.sharedApMulti.isPlayingSharedAp;
-		}
-		set
-		{
-			this.ui.sharedApMulti.isPlayingSharedAp = value;
-		}
-	}
 
 	protected BattleInputMulti inputMulti
 	{
@@ -165,13 +148,6 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 			{
 				this.ui.turnAction.widget
 			});
-			if (!this.ui.skillSelectUi.gameObject.activeInHierarchy)
-			{
-				BattleScreenDetail.ActiveObjects(new UIWidget[]
-				{
-					this.ui.skillSelectUi.widget
-				});
-			}
 		}, true));
 		this.battleScreenDetails.Add(BattleScreen.EnemyTurnAction, new BattleScreenDetail(delegate()
 		{
@@ -351,17 +327,6 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		this.ui.fadeoutUi.FadeIn(Color.black, 0f);
 	}
 
-	public override void ApplyCharacterHudContent(int index, CharacterStateControl characterStatus = null)
-	{
-		base.ApplyCharacterHudContent(index, characterStatus);
-		this.RefreshSharedAP(false);
-		if (!characterStatus.isEnemy)
-		{
-			int pnnum = base.stateManager.multiFunction.GetPNNum(index);
-			this.ui.hudObjectInstanced[index].SetPnNo(pnnum);
-		}
-	}
-
 	public override IEnumerator AfterInitializeUI()
 	{
 		base.stateManager.uiControl.AfterInitializeUIBefore();
@@ -467,14 +432,12 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	private void SetupSharedAP()
 	{
-		this.ui.sharedApMulti = (this.ui.battleAlwaysUi as MultiBattleAlways).sharedAPMulti;
-		int num = 9;
-		SharedStatus sharedStatus = new SharedStatus(num, this.ui.sharedApMulti);
-		this.ui.sharedApMulti.APNum = num;
+		int sharedAp = 9;
+		SharedStatus sharedStatus = new SharedStatus(sharedAp);
 		sharedStatus.SetStatic();
 		CharacterStateControl[] playerCharacters = base.battleStateData.playerCharacters;
 		SharedStatus.SetAllStaticStatus(playerCharacters);
-		this.HideSharedAP();
+		this.ui.sharedAP = (this.ui.battleAlwaysUi as MultiBattleAlways).sharedAP;
 	}
 
 	private void SetupRemaining()
@@ -514,59 +477,43 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	public void ApplyHUDRecoverMulti(int index, bool isRevivalAp = false, bool isRevivalHp = false, int apNum = 0)
 	{
-		UIComponentSkinner hudApSkinner = base.stateManager.battleUiComponents.hudObjectInstanced[index].apUpRootComponentSkinner;
-		UIComponentSkinner hudHpSkinner = base.stateManager.battleUiComponents.hudObjectInstanced[index].hpUpRootComponentSkinner;
-		UILabel apNumLabel = base.stateManager.battleUiComponents.hudObjectInstanced[index].multiAPNumber;
+		UIComponentSkinner apUpRootComponentSkinner = base.stateManager.battleUiComponents.hudObjectInstanced[index].apUpRootComponentSkinner;
+		UIComponentSkinner hpUpRootComponentSkinner = base.stateManager.battleUiComponents.hudObjectInstanced[index].hpUpRootComponentSkinner;
+		UILabel multiAPNumber = base.stateManager.battleUiComponents.hudObjectInstanced[index].multiAPNumber;
 		GameObject hudApObj = base.stateManager.battleUiComponents.hudObjectInstanced[index].apUpObject;
 		GameObject hudHpObj = base.stateManager.battleUiComponents.hudObjectInstanced[index].hpUpObject;
-		this.apUpHudAnimCallback = hudApObj.GetComponent<AnimatorFinishEventTrigger>();
-		AnimatorFinishEventTrigger component = hudHpObj.GetComponent<AnimatorFinishEventTrigger>();
-		this.apUpHudAnimCallback.OnFinishAnimation = delegate(string str)
+		AnimatorFinishEventTrigger component = hudApObj.GetComponent<AnimatorFinishEventTrigger>();
+		AnimatorFinishEventTrigger component2 = hudHpObj.GetComponent<AnimatorFinishEventTrigger>();
+		component.OnFinishAnimation = delegate(string str)
 		{
 			NGUITools.SetActiveSelf(hudApObj, false);
 		};
-		component.OnFinishAnimation = delegate(string str)
+		component2.OnFinishAnimation = delegate(string str)
 		{
 			NGUITools.SetActiveSelf(hudHpObj, false);
 		};
-		hudApSkinner.SetSkins(0);
-		hudHpSkinner.SetSkins(0);
+		apUpRootComponentSkinner.SetSkins(0);
+		hpUpRootComponentSkinner.SetSkins(0);
 		if (isRevivalAp)
 		{
-			this.apUpHudActions.Add(delegate
+			apUpRootComponentSkinner.SetSkins(1);
+			if (apNum > 0)
 			{
-				hudApSkinner.SetSkins(1);
-				if (apNum > 0)
-				{
-					apNumLabel.text = string.Format("AP+{0}", apNum);
-				}
-				else
-				{
-					apNumLabel.text = string.Empty;
-				}
-				if (!isRevivalHp)
-				{
-					this.isPlayingSharedAp = false;
-				}
-			});
+				multiAPNumber.text = string.Format("AP+{0}", apNum);
+			}
 		}
 		if (isRevivalHp)
 		{
-			if (isRevivalAp)
-			{
-				this.ui.sharedApMulti.HpUpHudActions.Add(delegate
-				{
-					NGUITools.SetActiveSelf(hudApObj, false);
-					hudHpSkinner.SetSkins(1);
-					this.isPlayingSharedAp = false;
-				});
-			}
-			else
-			{
-				hudHpSkinner.SetSkins(1);
-				this.isPlayingSharedAp = false;
-			}
+			hpUpRootComponentSkinner.SetSkins(1);
 		}
+	}
+
+	public void HideHUDRecoverMulti(int index)
+	{
+		GameObject apUpObject = base.stateManager.battleUiComponents.hudObjectInstanced[index].apUpObject;
+		GameObject hpUpObject = base.stateManager.battleUiComponents.hudObjectInstanced[index].hpUpObject;
+		NGUITools.SetActiveSelf(apUpObject, false);
+		NGUITools.SetActiveSelf(hpUpObject, false);
 	}
 
 	public void HideMenu()
@@ -690,7 +637,7 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	public void ShowEmotion(int index, int emotionType, bool isOther = false)
 	{
-		this.ui.emotionSenderMulti.SetEmotion(index, "Emotion_icon_" + (emotionType + 1), isOther);
+		this.ui.emotionSenderMulti.SetEmotion(index, emotionType, isOther);
 	}
 
 	public void HideEmotion()
@@ -700,13 +647,12 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	public void ShowSharedAP()
 	{
-		NGUITools.SetActiveSelf(this.ui.sharedApMulti.gameObject, true);
-		this.ui.sharedApMulti.RefreshNumLabel();
+		this.ui.sharedAP.gameObject.SetActive(true);
 	}
 
 	public void HideSharedAP()
 	{
-		NGUITools.SetActiveSelf(this.ui.sharedApMulti.gameObject, false);
+		this.ui.sharedAP.gameObject.SetActive(false);
 	}
 
 	public void StartSharedAPAnimation()
@@ -714,57 +660,19 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		CharacterStateControl currentSelectCharacterState = base.battleStateData.currentSelectCharacterState;
 		if (currentSelectCharacterState.IsSelectedSkill)
 		{
-			this.ui.sharedApMulti.PlayActiveAnim(currentSelectCharacterState.currentSkillStatus.needAp);
+			this.ui.sharedAP.PlaySelectAnimation(currentSelectCharacterState.currentSkillStatus.needAp);
 		}
 	}
 
 	public void StopSharedAPAnimation()
 	{
-		this.ui.sharedApMulti.StopActiveAnim();
+		this.ui.sharedAP.StopSelectAnimation();
 	}
 
-	public void RefreshSharedAP(bool isSpeedyReflesh = false)
+	public void PlayApUpAnimations(Action callback = null)
 	{
-		this.ui.sharedApMulti.Refresh(!isSpeedyReflesh);
-	}
-
-	public void InitializeSharedAp()
-	{
-		this.ui.sharedApMulti.Initialize();
-		this.ui.sharedApMulti.time = base.stateManager.time;
-		this.ui.sharedApMulti.gameObject.SetActive(true);
-		this.ui.sharedApMulti.Refresh(false);
-	}
-
-	public void HideAllDots()
-	{
-		this.ui.sharedApMulti.HideAllDots();
-	}
-
-	public void APEffectCallBackMulti(HitEffectParams hitEffectParams)
-	{
-		Action<string> tempFinishAction = this.apUpHudAnimCallback.OnFinishAnimation;
-		this.apUpHudAnimCallback.OnFinishAnimation = delegate(string str)
-		{
-			tempFinishAction(str);
-			this.ui.sharedApMulti.PlayApUpAnimations();
-		};
-		base.StartCoroutine(this.APEffectCallbackCoroutine(hitEffectParams));
-	}
-
-	private IEnumerator APEffectCallbackCoroutine(HitEffectParams hitEffectParams)
-	{
-		while (hitEffectParams.isPlaying)
-		{
-			yield return false;
-		}
-		foreach (Action apUpHudAction in this.apUpHudActions)
-		{
-			apUpHudAction();
-		}
-		this.apUpHudActions.Clear();
-		yield return false;
-		yield break;
+		int sharedAp = SharedStatus.currentSharedStatus.sharedAp;
+		this.ui.sharedAP.Play(sharedAp, callback);
 	}
 
 	public void ResetHUD(params CharacterStateControl[] characters)
@@ -805,8 +713,9 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		}
 		else
 		{
-			battleMonsterButton.SetPlayerNameColor(new Color(0.905882359f, 0.03137255f, 0.0346320346f));
+			battleMonsterButton.SetPlayerNameColor(new Color(0.905882359f, 0.03137255f, 0.905882359f));
 		}
+		this.ui.hudObjectInstanced[iconIndex].SetPnNo(playerIndex);
 	}
 
 	public void HideAllDIalog()

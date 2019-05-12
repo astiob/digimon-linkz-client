@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Colosseum.DeckUI;
+using Master;
 using MultiBattle.Tools;
 using Quest;
 using System;
@@ -9,15 +10,15 @@ using UnityEngine;
 
 public class CMD_PvPFriend : CMD
 {
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partFriendParent;
 
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[Header("デフォルトメッセージ")]
 	[SerializeField]
+	[Header("デフォルトメッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -228,8 +229,7 @@ public class CMD_PvPFriend : CMD
 			global::Debug.Log("対戦相手UserCode: " + this.pvpMockTargetUserCode);
 			ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode = this.pvpMockTargetUserCode;
 			ClassSingleton<QuestData>.Instance.SelectDungeon = null;
-			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
-			GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
+			CMD_ColosseumDeck.Create(CMD_ColosseumDeck.Mode.FROM_COLOSSEUM_TOP);
 		}
 	}
 }

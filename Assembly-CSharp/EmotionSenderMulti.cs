@@ -5,15 +5,15 @@ using UnityEngine;
 
 public sealed class EmotionSenderMulti : MonoBehaviour
 {
-	[Header("受信用の各々のエモーションアイコンのスプライト(UIAtlasSkinnerを使わない方)")]
 	[SerializeField]
+	[Header("受信用の各々のエモーションアイコンのスプライト(UIAtlasSkinnerを使わない方)")]
 	private UISprite[] emotionSprites;
 
 	[NonSerialized]
 	public List<GameObject> iconSpriteParents = new List<GameObject>();
 
-	[SerializeField]
 	[Header("送信用アイコンたちが載ってる親")]
+	[SerializeField]
 	private GameObject dialog;
 
 	[SerializeField]
@@ -92,9 +92,9 @@ public sealed class EmotionSenderMulti : MonoBehaviour
 		}
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], false);
 		NGUITools.SetActiveSelf(this.iconSpriteParents[index], true);
-		UISprite componentInChildren = this.iconSpriteParents[index].GetComponentInChildren<UISprite>();
-		componentInChildren.gameObject.SetActive(true);
-		componentInChildren.spriteName = component.spriteName;
+		UISprite uisprite = this.iconSpriteParents[index].GetComponentsInChildren<UISprite>(true)[0];
+		uisprite.gameObject.SetActive(true);
+		uisprite.spriteName = component.spriteName;
 		if (isOther)
 		{
 			SoundPlayer.PlayBattlePopupOtherEmotionSE();

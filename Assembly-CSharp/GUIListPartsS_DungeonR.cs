@@ -18,40 +18,40 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("ステージ数用のラベル")]
 	private UILabel ngTXT_STAGE;
 
-	[SerializeField]
 	[Header("ステージ名用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAGE_NAME;
 
 	[SerializeField]
 	[Header("消費スタミナ用のラベル")]
 	private UILabel ngTXT_STAMINA;
 
-	[SerializeField]
 	[Header("残回数 ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_TICKET_LEFT;
 
-	[Header("ノーコン ラベル")]
 	[SerializeField]
+	[Header("ノーコン ラベル")]
 	public UILabel ngTXT_NO_CONTINUE;
 
 	[Header("ソロとマルチができるステージ色")]
 	[SerializeField]
 	private Color colorNormalStage;
 
-	[SerializeField]
 	[Header("マルチ専用のステージ色")]
+	[SerializeField]
 	private Color colorMultiStage;
 
-	[SerializeField]
 	[Header("ソロ専用のステージ色")]
+	[SerializeField]
 	private Color colorSoloStage;
 
 	[Header("イベント用のステージ背景色")]
 	[SerializeField]
 	private Color colorEventStageBackground;
 
-	[Header("####ソロとマルチステージ名装飾色")]
 	[SerializeField]
+	[Header("####ソロとマルチステージ名装飾色")]
 	private Color colorSoloMultiStageNameOutline;
 
 	[SerializeField]
@@ -70,8 +70,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private UISprite backgroundBord;
 
-	[SerializeField]
 	[Header("背景色のパーツ（ライン）")]
+	[SerializeField]
 	private UITexture backgroundLine;
 
 	[SerializeField]
@@ -82,8 +82,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
 	[SerializeField]
@@ -94,8 +94,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

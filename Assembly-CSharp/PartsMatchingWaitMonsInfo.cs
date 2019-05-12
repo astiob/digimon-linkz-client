@@ -27,10 +27,10 @@ public class PartsMatchingWaitMonsInfo : MonoBehaviour
 		GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DPartyRT", null);
 		this.csRender3DPartyRT = gameObject.GetComponent<CommonRender3DPartyRT>();
 		List<string> list = new List<string>();
-		foreach (MonsterData md in this.mdList)
+		foreach (MonsterData monsterData in this.mdList)
 		{
-			string monsterCharaPathByMonsterData = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterData(md);
-			list.Add(monsterCharaPathByMonsterData);
+			string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterData.monsterM.monsterGroupId);
+			list.Add(monsterCharaPathByMonsterGroupId);
 		}
 		this.csRender3DPartyRT.LoadCharas(list, this.v3Chara.x, this.v3Chara.y);
 		this.renderTex = this.csRender3DPartyRT.SetRenderTarget(1136, 820, 16);

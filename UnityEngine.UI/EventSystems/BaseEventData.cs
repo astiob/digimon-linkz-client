@@ -2,33 +2,13 @@
 
 namespace UnityEngine.EventSystems
 {
-	public class BaseEventData
+	public class BaseEventData : AbstractEventData
 	{
 		private readonly EventSystem m_EventSystem;
-
-		private bool m_Used;
 
 		public BaseEventData(EventSystem eventSystem)
 		{
 			this.m_EventSystem = eventSystem;
-		}
-
-		public void Reset()
-		{
-			this.m_Used = false;
-		}
-
-		public void Use()
-		{
-			this.m_Used = true;
-		}
-
-		public bool used
-		{
-			get
-			{
-				return this.m_Used;
-			}
 		}
 
 		public BaseInputModule currentInputModule

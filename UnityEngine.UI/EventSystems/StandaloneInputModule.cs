@@ -156,7 +156,7 @@ namespace UnityEngine.EventSystems
 
 		public override bool IsModuleSupported()
 		{
-			return this.m_ForceModuleActive || Input.mousePresent;
+			return this.m_ForceModuleActive || Input.mousePresent || Input.touchSupported;
 		}
 
 		public override bool ShouldActivateModule()
@@ -166,12 +166,17 @@ namespace UnityEngine.EventSystems
 				return false;
 			}
 			bool flag = this.m_ForceModuleActive;
-			Input.GetButtonDown(this.m_SubmitButton);
+			flag |= Input.GetButtonDown(this.m_SubmitButton);
 			flag |= Input.GetButtonDown(this.m_CancelButton);
 			flag |= !Mathf.Approximately(Input.GetAxisRaw(this.m_HorizontalAxis), 0f);
 			flag |= !Mathf.Approximately(Input.GetAxisRaw(this.m_VerticalAxis), 0f);
 			flag |= ((this.m_MousePosition - this.m_LastMousePosition).sqrMagnitude > 0f);
-			return flag | Input.GetMouseButtonDown(0);
+			flag |= Input.GetMouseButtonDown(0);
+			if (Input.touchCount > 0)
+			{
+				flag = true;
+			}
+			return flag;
 		}
 
 		public override void ActivateModule()
@@ -207,7 +212,115 @@ namespace UnityEngine.EventSystems
 					this.SendSubmitEventToSelectedObject();
 				}
 			}
-			this.ProcessMouseEvent();
+			if (!this.ProcessTouchEvents())
+			{
+				this.ProcessMouseEvent();
+			}
+		}
+
+		private bool ProcessTouchEvents()
+		{
+			for (int i = 0; i < Input.touchCount; i++)
+			{
+				Touch touch = Input.GetTouch(i);
+				if (touch.type != TouchType.Indirect)
+				{
+					bool pressed;
+					bool flag;
+					PointerEventData touchPointerEventData = base.GetTouchPointerEventData(touch, out pressed, out flag);
+					this.ProcessTouchPress(touchPointerEventData, pressed, flag);
+					if (!flag)
+					{
+						this.ProcessMove(touchPointerEventData);
+						this.ProcessDrag(touchPointerEventData);
+					}
+					else
+					{
+						base.RemovePointerData(touchPointerEventData);
+					}
+				}
+			}
+			return Input.touchCount > 0;
+		}
+
+		private void ProcessTouchPress(PointerEventData pointerEvent, bool pressed, bool released)
+		{
+			GameObject gameObject = pointerEvent.pointerCurrentRaycast.gameObject;
+			if (pressed)
+			{
+				pointerEvent.eligibleForClick = true;
+				pointerEvent.delta = Vector2.zero;
+				pointerEvent.dragging = false;
+				pointerEvent.useDragThreshold = true;
+				pointerEvent.pressPosition = pointerEvent.position;
+				pointerEvent.pointerPressRaycast = pointerEvent.pointerCurrentRaycast;
+				base.DeselectIfSelectionChanged(gameObject, pointerEvent);
+				if (pointerEvent.pointerEnter != gameObject)
+				{
+					base.HandlePointerExitAndEnter(pointerEvent, gameObject);
+					pointerEvent.pointerEnter = gameObject;
+				}
+				GameObject gameObject2 = ExecuteEvents.ExecuteHierarchy<IPointerDownHandler>(gameObject, pointerEvent, ExecuteEvents.pointerDownHandler);
+				if (gameObject2 == null)
+				{
+					gameObject2 = ExecuteEvents.GetEventHandler<IPointerClickHandler>(gameObject);
+				}
+				float unscaledTime = Time.unscaledTime;
+				if (gameObject2 == pointerEvent.lastPress)
+				{
+					float num = unscaledTime - pointerEvent.clickTime;
+					if (num < 0.3f)
+					{
+						pointerEvent.clickCount++;
+					}
+					else
+					{
+						pointerEvent.clickCount = 1;
+					}
+					pointerEvent.clickTime = unscaledTime;
+				}
+				else
+				{
+					pointerEvent.clickCount = 1;
+				}
+				pointerEvent.pointerPress = gameObject2;
+				pointerEvent.rawPointerPress = gameObject;
+				pointerEvent.clickTime = unscaledTime;
+				pointerEvent.pointerDrag = ExecuteEvents.GetEventHandler<IDragHandler>(gameObject);
+				if (pointerEvent.pointerDrag != null)
+				{
+					ExecuteEvents.Execute<IInitializePotentialDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.initializePotentialDrag);
+				}
+			}
+			if (released)
+			{
+				ExecuteEvents.Execute<IPointerUpHandler>(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerUpHandler);
+				GameObject eventHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(gameObject);
+				if (pointerEvent.pointerPress == eventHandler && pointerEvent.eligibleForClick)
+				{
+					ExecuteEvents.Execute<IPointerClickHandler>(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerClickHandler);
+				}
+				else if (pointerEvent.pointerDrag != null && pointerEvent.dragging)
+				{
+					ExecuteEvents.ExecuteHierarchy<IDropHandler>(gameObject, pointerEvent, ExecuteEvents.dropHandler);
+				}
+				pointerEvent.eligibleForClick = false;
+				pointerEvent.pointerPress = null;
+				pointerEvent.rawPointerPress = null;
+				if (pointerEvent.pointerDrag != null && pointerEvent.dragging)
+				{
+					ExecuteEvents.Execute<IEndDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.endDragHandler);
+				}
+				pointerEvent.dragging = false;
+				pointerEvent.pointerDrag = null;
+				if (pointerEvent.pointerDrag != null)
+				{
+					ExecuteEvents.Execute<IEndDragHandler>(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.endDragHandler);
+				}
+				pointerEvent.pointerDrag = null;
+				ExecuteEvents.ExecuteHierarchy<IPointerExitHandler>(pointerEvent.pointerEnter, pointerEvent, ExecuteEvents.pointerExitHandler);
+				pointerEvent.pointerEnter = null;
+			}
 		}
 
 		protected bool SendSubmitEventToSelectedObject()
@@ -285,14 +398,21 @@ namespace UnityEngine.EventSystems
 				return false;
 			}
 			AxisEventData axisEventData = this.GetAxisEventData(rawMoveVector.x, rawMoveVector.y, 0.6f);
-			ExecuteEvents.Execute<IMoveHandler>(base.eventSystem.currentSelectedGameObject, axisEventData, ExecuteEvents.moveHandler);
-			if (!flag2)
+			if (axisEventData.moveDir != MoveDirection.None)
+			{
+				ExecuteEvents.Execute<IMoveHandler>(base.eventSystem.currentSelectedGameObject, axisEventData, ExecuteEvents.moveHandler);
+				if (!flag2)
+				{
+					this.m_ConsecutiveMoveCount = 0;
+				}
+				this.m_ConsecutiveMoveCount++;
+				this.m_PrevActionTime = unscaledTime;
+				this.m_LastMoveVector = rawMoveVector;
+			}
+			else
 			{
 				this.m_ConsecutiveMoveCount = 0;
 			}
-			this.m_ConsecutiveMoveCount++;
-			this.m_PrevActionTime = unscaledTime;
-			this.m_LastMoveVector = rawMoveVector;
 			return axisEventData.used;
 		}
 

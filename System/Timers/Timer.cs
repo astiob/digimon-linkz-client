@@ -5,8 +5,8 @@ using System.Threading;
 namespace System.Timers
 {
 	/// <summary>Generates recurring events in an application.</summary>
-	[System.ComponentModel.DefaultProperty("Interval")]
 	[System.ComponentModel.DefaultEvent("Elapsed")]
+	[System.ComponentModel.DefaultProperty("Interval")]
 	public class Timer : System.ComponentModel.Component, System.ComponentModel.ISupportInitialize
 	{
 		private double interval;
@@ -45,8 +45,8 @@ namespace System.Timers
 		/// <summary>Gets or sets a value indicating whether the <see cref="T:System.Timers.Timer" /> should raise the <see cref="E:System.Timers.Timer.Elapsed" /> event each time the specified interval elapses or only after the first time it elapses.</summary>
 		/// <returns>true if the <see cref="T:System.Timers.Timer" /> should raise the <see cref="E:System.Timers.Timer.Elapsed" /> event each time the interval elapses; false if it should raise the <see cref="E:System.Timers.Timer.Elapsed" /> event only once, after the first time the interval elapses. The default is true.</returns>
 		[System.ComponentModel.Category("Behavior")]
-		[TimersDescription("Indicates whether the timer will be restarted when it is enabled.")]
 		[System.ComponentModel.DefaultValue(true)]
+		[TimersDescription("Indicates whether the timer will be restarted when it is enabled.")]
 		public bool AutoReset
 		{
 			get
@@ -63,9 +63,9 @@ namespace System.Timers
 		/// <returns>true if the <see cref="T:System.Timers.Timer" /> should raise the <see cref="E:System.Timers.Timer.Elapsed" /> event; otherwise, false. The default is false.</returns>
 		/// <exception cref="T:System.ObjectDisposedException">This property cannot be set because the timer has been disposed.</exception>
 		/// <exception cref="T:System.ArgumentException">The <see cref="P:System.Timers.Timer.Interval" /> property was set to a value greater than <see cref="F:System.Int32.MaxValue" /> before the timer was enabled.  </exception>
+		[System.ComponentModel.Category("Behavior")]
 		[TimersDescription("Indicates whether the timer is enabled to fire events at a defined interval.")]
 		[System.ComponentModel.DefaultValue(false)]
-		[System.ComponentModel.Category("Behavior")]
 		public bool Enabled
 		{
 			get
@@ -103,10 +103,10 @@ namespace System.Timers
 		/// <summary>Gets or sets the interval at which to raise the <see cref="E:System.Timers.Timer.Elapsed" /> event.</summary>
 		/// <returns>The time, in milliseconds, between <see cref="E:System.Timers.Timer.Elapsed" /> events. The value must be greater than zero, and less than or equal to <see cref="F:System.Int32.MaxValue" />. The default is 100 milliseconds.</returns>
 		/// <exception cref="T:System.ArgumentException">The interval is less than or equal to zero.-or-The interval is greater than <see cref="F:System.Int32.MaxValue" />, and the timer is currently enabled. (If the timer is not currently enabled, no exception is thrown until it becomes enabled.)  </exception>
-		[TimersDescription("The number of milliseconds between timer events.")]
-		[System.ComponentModel.Category("Behavior")]
 		[System.ComponentModel.DefaultValue(100)]
+		[System.ComponentModel.Category("Behavior")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
+		[TimersDescription("The number of milliseconds between timer events.")]
 		public double Interval
 		{
 			get
@@ -147,9 +147,9 @@ namespace System.Timers
 
 		/// <summary>Gets or sets the object used to marshal event-handler calls that are issued when an interval has elapsed.</summary>
 		/// <returns>The <see cref="T:System.ComponentModel.ISynchronizeInvoke" /> representing the object used to marshal the event-handler calls that are issued when an interval has elapsed. The default is null.</returns>
-		[TimersDescription("The object used to marshal the event handler calls issued when an interval has elapsed.")]
 		[System.ComponentModel.DefaultValue(null)]
 		[System.ComponentModel.Browsable(false)]
+		[TimersDescription("The object used to marshal the event handler calls issued when an interval has elapsed.")]
 		public System.ComponentModel.ISynchronizeInvoke SynchronizingObject
 		{
 			get

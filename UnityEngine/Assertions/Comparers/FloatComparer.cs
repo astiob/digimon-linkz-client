@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace UnityEngine.Assertions.Comparers
 {
-	internal class FloatComparer : IEqualityComparer<float>
+	public class FloatComparer : IEqualityComparer<float>
 	{
-		internal const float k_Epsilon = 1E-05f;
+		public const float kEpsilon = 1E-05f;
 
 		private readonly float m_Error;
 

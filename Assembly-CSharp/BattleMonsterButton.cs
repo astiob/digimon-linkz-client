@@ -1,4 +1,4 @@
-﻿using Master;
+﻿using Monster;
 using System;
 using UnityEngine;
 
@@ -18,8 +18,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[SerializeField]
 	private UISprite leaderIcon;
 
-	[Header("プレイヤー名ラベル")]
 	[SerializeField]
+	[Header("プレイヤー名ラベル")]
 	private UILabel playerNameLabel;
 
 	[Header("プレイヤー名板")]
@@ -30,8 +30,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[Header("プレイヤー番号アイコン")]
 	private UISprite playerNumberIcon;
 
-	[SerializeField]
 	[Header("覚醒度アイコン")]
+	[SerializeField]
 	private UISprite arousalIcon;
 
 	[Header("フレーム")]
@@ -41,7 +41,7 @@ public class BattleMonsterButton : MonoBehaviour
 	public void ApplyMonsterButtonIcon(Sprite image, CharacterStateControl characterStatus, bool isLeader)
 	{
 		this.monsterIcon.sprite2D = image;
-		this.frame.SetEvolutionStep(characterStatus.evolutionStep);
+		this.frame.SetEvolutionStep(characterStatus.characterDatas.growStep);
 		this.SetArousal(characterStatus.arousal);
 		this.ApplyLeaderIcon(isLeader);
 	}
@@ -117,35 +117,40 @@ public class BattleMonsterButton : MonoBehaviour
 		[SerializeField]
 		private Material[] materials;
 
-		[SerializeField]
 		[Header("アトラス（通常、死亡時の順）")]
+		[SerializeField]
 		private UIAtlas[] uiAtlases;
 
-		public void SetEvolutionStep(EvolutionStep evolutionStep)
+		public void SetEvolutionStep(GrowStep growStep)
 		{
-			if (GrowStep.GROWING.ConverBattleInt() == (int)evolutionStep)
+			switch (growStep)
 			{
+			case GrowStep.GROWING:
+			case GrowStep.HYBRID_GROWING:
 				this.baseFrame.spriteName = "Common02_Thumbnail_waku2";
 				this.bgFrame.spriteName = "Common02_Thumbnail_bg2";
 				this.flashFrame.spriteName = "Common02_Thumbnail_bg2";
-			}
-			else if (GrowStep.RIPE.ConverBattleInt() == (int)evolutionStep || GrowStep.ARMOR_1.ConverBattleInt() == (int)evolutionStep)
-			{
+				break;
+			case GrowStep.RIPE:
+			case GrowStep.ARMOR_1:
+			case GrowStep.HYBRID_RIPE:
 				this.baseFrame.spriteName = "Common02_Thumbnail_waku3";
 				this.bgFrame.spriteName = "Common02_Thumbnail_bg3";
 				this.flashFrame.spriteName = "Common02_Thumbnail_bg3";
-			}
-			else if (GrowStep.PERFECT.ConverBattleInt() == (int)evolutionStep)
-			{
+				break;
+			case GrowStep.PERFECT:
+			case GrowStep.HYBRID_PERFECT:
 				this.baseFrame.spriteName = "Common02_Thumbnail_waku4";
 				this.bgFrame.spriteName = "Common02_Thumbnail_bg4";
 				this.flashFrame.spriteName = "Common02_Thumbnail_bg4";
-			}
-			else if (GrowStep.ULTIMATE.ConverBattleInt() == (int)evolutionStep || GrowStep.ARMOR_2.ConverBattleInt() == (int)evolutionStep)
-			{
+				break;
+			case GrowStep.ULTIMATE:
+			case GrowStep.ARMOR_2:
+			case GrowStep.HYBRID_ULTIMATE:
 				this.baseFrame.spriteName = "Common02_Thumbnail_waku5";
 				this.bgFrame.spriteName = "Common02_Thumbnail_bg5";
 				this.flashFrame.spriteName = "Common02_Thumbnail_bg5";
+				break;
 			}
 		}
 

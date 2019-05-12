@@ -7,12 +7,12 @@ using UnityEngine;
 
 public class CMD_DeckList : CMD
 {
-	[SerializeField]
 	[Header("ベース用チップ装備")]
+	[SerializeField]
 	private ChipBaseSelect baseChipBaseSelect;
 
-	[SerializeField]
 	[Header("パートナー用チップ装備")]
+	[SerializeField]
 	private ChipBaseSelect partnerChipBaseSelect;
 
 	[SerializeField]
@@ -152,6 +152,8 @@ public class CMD_DeckList : CMD
 	[SerializeField]
 	private List<GameObject> goStatusPanelPage;
 
+	private BtnSort sortButton;
+
 	private GameObject goSelectPanelMonsterIcon;
 
 	private GUISelectPanelMonsterIcon csSelectPanelMonsterIcon;
@@ -170,13 +172,13 @@ public class CMD_DeckList : CMD
 
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
 
+	private List<MonsterData> targetMonsterList;
+
 	private GameObject goMN_ICON_NOW_2;
 
 	private int depth_MN_ICON_NOW_2;
 
-	private List<MonsterData> mdSelectList;
-
-	public static MonsterData OriginMonsterData { get; set; }
+	public static MonsterData SelectMonsterData { get; set; }
 
 	private MonsterData DataChg { get; set; }
 
@@ -196,7 +198,6 @@ public class CMD_DeckList : CMD
 	{
 		base.Awake();
 		CMD_DeckList.instance = this;
-		PartyUtil.ActMIconShort = new Action<MonsterData>(this.ActMIconShort);
 		this.nowMonsterMedalList.SetActive(false);
 		this.changeMonsterMedalList.SetActive(false);
 		for (int i = 0; i < this.goMN_ICON_LIST.Count; i++)
@@ -264,7 +265,7 @@ public class CMD_DeckList : CMD
 
 	protected override void WindowClosed()
 	{
-		CMD_DeckList.OriginMonsterData = null;
+		CMD_DeckList.SelectMonsterData = null;
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		if (monsterDataMng != null)
 		{
@@ -287,28 +288,28 @@ public class CMD_DeckList : CMD
 
 	private void ShowNowInfo()
 	{
-		if (CMD_DeckList.OriginMonsterData != null)
+		if (CMD_DeckList.SelectMonsterData != null)
 		{
-			this.baseChipBaseSelect.SetSelectedCharChg(CMD_DeckList.OriginMonsterData);
-			this.nowMonsterBasicInfo.SetMonsterData(CMD_DeckList.OriginMonsterData);
-			this.nowMonsterStatusList.SetValues(CMD_DeckList.OriginMonsterData, this.effectArray);
-			this.nowMonsterMedalList.SetValues(CMD_DeckList.OriginMonsterData.userMonster);
-			this.nowMonsterLeaderSkill.SetSkill(CMD_DeckList.OriginMonsterData);
-			this.nowMonsterUniqueSkill.SetSkill(CMD_DeckList.OriginMonsterData);
-			this.detailedNowMonsterUniqueSkill.SetSkill(CMD_DeckList.OriginMonsterData);
-			this.nowMonsterSuccessionSkill.SetSkill(CMD_DeckList.OriginMonsterData);
-			this.detailedNowMonsterSuccessionSkill.SetSkill(CMD_DeckList.OriginMonsterData);
+			this.baseChipBaseSelect.SetSelectedCharChg(CMD_DeckList.SelectMonsterData);
+			this.nowMonsterBasicInfo.SetMonsterData(CMD_DeckList.SelectMonsterData);
+			this.nowMonsterStatusList.SetValues(CMD_DeckList.SelectMonsterData, this.effectArray);
+			this.nowMonsterMedalList.SetValues(CMD_DeckList.SelectMonsterData.userMonster);
+			this.nowMonsterLeaderSkill.SetSkill(CMD_DeckList.SelectMonsterData);
+			this.nowMonsterUniqueSkill.SetSkill(CMD_DeckList.SelectMonsterData);
+			this.detailedNowMonsterUniqueSkill.SetSkill(CMD_DeckList.SelectMonsterData);
+			this.nowMonsterSuccessionSkill.SetSkill(CMD_DeckList.SelectMonsterData);
+			this.detailedNowMonsterSuccessionSkill.SetSkill(CMD_DeckList.SelectMonsterData);
 			this.nowMonsterSuccessionSkillGrayReady.SetActive(false);
 			this.nowMonsterSuccessionSkillAvailable.SetActive(false);
 			this.nowMonsterSuccessionSkillGrayNA.SetActive(false);
 			this.detailedNowMonsterSuccessionSkillGrayReady.SetActive(false);
 			this.detailedNowMonsterSuccessionSkillAvailable.SetActive(false);
 			this.detailedNowMonsterSuccessionSkillGrayNA.SetActive(false);
-			this.nowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.OriginMonsterData);
-			this.detailedNowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.OriginMonsterData);
-			if (CMD_DeckList.OriginMonsterData.IsVersionUp())
+			this.nowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.SelectMonsterData);
+			this.detailedNowMonsterSuccessionSkill2.SetSkill(CMD_DeckList.SelectMonsterData);
+			if (MonsterStatusData.IsVersionUp(CMD_DeckList.SelectMonsterData.GetMonsterMaster().Simple.rare))
 			{
-				if (CMD_DeckList.OriginMonsterData.commonSkillM2 == null)
+				if (CMD_DeckList.SelectMonsterData.commonSkillM2 == null)
 				{
 					this.nowMonsterSuccessionSkillGrayReady.SetActive(true);
 					this.detailedNowMonsterSuccessionSkillGrayReady.SetActive(true);
@@ -324,7 +325,7 @@ public class CMD_DeckList : CMD
 				this.nowMonsterSuccessionSkillGrayNA.SetActive(true);
 				this.detailedNowMonsterSuccessionSkillGrayNA.SetActive(true);
 			}
-			this.nowMonsterResistanceList.SetValues(CMD_DeckList.OriginMonsterData);
+			this.nowMonsterResistanceList.SetValues(CMD_DeckList.SelectMonsterData);
 		}
 		else
 		{
@@ -355,7 +356,7 @@ public class CMD_DeckList : CMD
 			this.detailedChangeMonsterSuccessionSkillGrayNA.SetActive(false);
 			this.changeMonsterSuccessionSkill2.SetSkill(this.DataChg);
 			this.detailedChangeMonsterSuccessionSkill2.SetSkill(this.DataChg);
-			if (this.DataChg.IsVersionUp())
+			if (MonsterStatusData.IsVersionUp(this.DataChg.GetMonsterMaster().Simple.rare))
 			{
 				if (this.DataChg.commonSkillM2 == null)
 				{
@@ -400,13 +401,13 @@ public class CMD_DeckList : CMD
 
 	private void SetSelectedChar()
 	{
-		if (CMD_DeckList.OriginMonsterData != null)
+		if (CMD_DeckList.SelectMonsterData != null)
 		{
 			Transform transform = this.goMN_ICON_NOW.transform;
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(CMD_DeckList.OriginMonsterData, transform.localScale, transform.localPosition, transform.parent, true, false);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(CMD_DeckList.SelectMonsterData, transform.localScale, transform.localPosition, transform.parent, true, false);
 			this.goMN_ICON_NOW_2 = guimonsterIcon.gameObject;
 			this.goMN_ICON_NOW_2.SetActive(true);
-			guimonsterIcon.Data = CMD_DeckList.OriginMonsterData;
+			guimonsterIcon.Data = CMD_DeckList.SelectMonsterData;
 			guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 			UIWidget component = this.goMN_ICON_NOW.GetComponent<UIWidget>();
 			UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
@@ -417,7 +418,7 @@ public class CMD_DeckList : CMD
 				component3.AddWidgetDepth(guimonsterIcon.transform, add);
 			}
 			this.goMN_ICON_NOW.SetActive(false);
-			guimonsterIcon.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(CMD_DeckList.OriginMonsterData, this.effectArray);
+			guimonsterIcon.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(CMD_DeckList.SelectMonsterData, this.effectArray);
 		}
 	}
 
@@ -446,49 +447,61 @@ public class CMD_DeckList : CMD
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		monsterDataMng.ClearSortMessAll();
 		monsterDataMng.ClearLevelMessAll();
-		List<MonsterData> list = monsterDataMng.GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = MonsterDataMng.Instance().SortMDList(list, false);
+		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		MonsterDataMng.Instance().SortMDList(list);
 		this.csSelectPanelMonsterIcon.initLocation = true;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-		if (CMD_MultiRecruitPartyWait.Instance != null)
-		{
-			this.mdSelectList = list;
-		}
-		else
-		{
-			this.mdSelectList = CMD_PartyEdit.instance.GetSelectedMD();
-		}
 		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
 		monsterDataMng.SetSelectOffAll();
 		monsterDataMng.ClearDimmMessAll();
-		monsterDataMng.SetDimmByMonsterDataList(this.mdSelectList, GUIMonsterIcon.DIMM_LEVEL.DISABLE, CMD_DeckList.OriginMonsterData);
+		if (CMD_MultiRecruitPartyWait.Instance != null)
+		{
+			this.SetDimmByMonsterDataList(list, CMD_DeckList.SelectMonsterData);
+		}
+		else
+		{
+			this.SetDimmByMonsterDataList(CMD_PartyEdit.instance.GetSelectedMD(), CMD_DeckList.SelectMonsterData);
+		}
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
+		this.csSelectPanelMonsterIcon.SetCheckEnablePushAction(new Func<MonsterData, bool>(this.CheckEnablePush));
+		this.targetMonsterList = list;
+		list = MonsterDataMng.Instance().SelectionMDList(list);
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
 		if (this.sortieLimitList != null)
 		{
 			this.csSelectPanelMonsterIcon.SetIconSortieLimitParts(this.sortieLimitList);
 		}
+		BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
+		this.sortButton = componentsInChildren[0];
+		this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);
+		this.sortButton.SortTargetMonsterList = this.targetMonsterList;
+	}
+
+	private void OnChangeSortSetting()
+	{
+		MonsterDataMng.Instance().SortMDList(this.targetMonsterList);
+		MonsterDataMng.Instance().SetSortLSMessage();
+		List<MonsterData> dts = MonsterDataMng.Instance().SelectionMDList(this.targetMonsterList);
+		this.csSelectPanelMonsterIcon.ReAllBuild(dts);
 	}
 
 	private void ActMIconShort(MonsterData tappedMonsterData)
 	{
 		if (this.DataChg != null)
 		{
-			PartyUtil.SetDimIcon(false, this.DataChg, string.Empty, false);
-			for (int i = 0; i < this.mdSelectList.Count; i++)
-			{
-				if (this.DataChg == this.mdSelectList[i])
-				{
-					this.DataChg.dimmMess = string.Empty;
-					MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.DataChg).DimmMess = string.Empty;
-				}
-			}
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.DataChg);
+			icon.DimmMess = string.Empty;
+			icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
+			icon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
 		}
 		this.DataChg = tappedMonsterData;
-		PartyUtil.SetDimIcon(true, this.DataChg, StringMaster.GetString("SystemSelect"), false);
 		if (this.DataChg != null)
 		{
+			GUIMonsterIcon icon2 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.DataChg);
+			icon2.DimmMess = StringMaster.GetString("SystemSelect");
+			icon2.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.DISABLE);
+			icon2.SetTouchAct_S(null);
 			this.SetSelectedCharChg();
 			this.SelectButtonActive(true);
 		}
@@ -503,7 +516,7 @@ public class CMD_DeckList : CMD
 				UnityEngine.Object.DestroyImmediate(this.goMN_ICON_CHG_2);
 			}
 			Transform transform = this.goMN_ICON_CHG.transform;
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.DataChg, transform.localScale, transform.localPosition, transform.parent, true, false);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(this.DataChg, transform.localScale, transform.localPosition, transform.parent, true, false);
 			this.goMN_ICON_CHG_2 = guimonsterIcon.gameObject;
 			this.goMN_ICON_CHG_2.SetActive(true);
 			guimonsterIcon.Data = this.DataChg;
@@ -527,15 +540,10 @@ public class CMD_DeckList : CMD
 	{
 		if (this.DataChg != null)
 		{
-			PartyUtil.SetDimIcon(false, this.DataChg, string.Empty, false);
-			for (int i = 0; i < this.mdSelectList.Count; i++)
-			{
-				if (this.DataChg == this.mdSelectList[i])
-				{
-					this.DataChg.dimmMess = string.Empty;
-					MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.DataChg).DimmMess = string.Empty;
-				}
-			}
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.DataChg);
+			icon.DimmMess = string.Empty;
+			icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
+			icon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
 		}
 		this.DataChg = null;
 		if (this.goMN_ICON_CHG_2 != null)
@@ -552,7 +560,8 @@ public class CMD_DeckList : CMD
 		CMD_CharacterDetailed.DataChg = md;
 		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
 		{
-			PartyUtil.SetLock(md, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
+			icon.Lock = md.userMonster.IsLocked;
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		cmd_CharacterDetailed.DisableEvolutionButton();
 		if (CMD_MultiRecruitPartyWait.Instance != null)
@@ -601,9 +610,6 @@ public class CMD_DeckList : CMD
 
 	private void ShowHaveMonster()
 	{
-		int count = MonsterDataMng.Instance().GetSelectMonsterDataList().Count;
-		int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.unitLimitMax);
-		this.ngTX_MN_HAVE.text = string.Format(StringMaster.GetString("SystemFraction"), count.ToString(), num.ToString());
 	}
 
 	private void SelectButtonActive(bool selected)
@@ -687,5 +693,28 @@ public class CMD_DeckList : CMD
 	public void OnSwitchSkillPanelBtn()
 	{
 		this.switchDetailSkillPanel(!this.goDetailedSkillPanel.activeSelf);
+	}
+
+	private void SetDimmByMonsterDataList(List<MonsterData> mdlist, MonsterData selectMonster)
+	{
+		for (int i = 0; i < mdlist.Count; i++)
+		{
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(mdlist[i]);
+			if (null != icon && selectMonster.userMonster.userMonsterId == mdlist[i].userMonster.userMonsterId)
+			{
+				icon.DimmMess = StringMaster.GetString("CharaIcon-04");
+				icon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.DISABLE);
+			}
+		}
+	}
+
+	private bool CheckEnablePush(MonsterData monsterData)
+	{
+		bool result = false;
+		if (CMD_DeckList.SelectMonsterData.userMonster.userMonsterId != monsterData.userMonster.userMonsterId)
+		{
+			result = true;
+		}
+		return result;
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using MultiBattle.Tools;
 using Quest;
 using System;
@@ -145,7 +146,7 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.ownerMonsterId);
 			if (monsterData != null)
 			{
-				GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.goMasterIcon.transform.localScale, this.goMasterIcon.transform.localPosition, this.goMasterIcon.transform.parent, true, false);
+				GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.goMasterIcon.transform.localScale, this.goMasterIcon.transform.localPosition, this.goMasterIcon.transform.parent, true, false);
 				UIWidget component = base.gameObject.GetComponent<UIWidget>();
 				if (component != null)
 				{
@@ -176,7 +177,7 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 				}, StringMaster.GetString("Recruit-04"), StringMaster.GetString("Recruit-05"), AlertManager.ButtonActionType.Close, false);
 				return;
 			}
-			if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+			if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
 			{
 				if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
 				{
@@ -196,6 +197,7 @@ public class GUIListMultiRecruitListParts : GUIListPartBS
 							}
 						}
 						ClassSingleton<QuestData>.Instance.SelectDungeon = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(this.data.worldDungeonId);
+						DataMng.Instance().GetResultUtilData().SetLastDngReq(this.data.worldDungeonId, "-1", "-1");
 						GameWebAPI.MultiRoomJoin multiRoomJoin = new GameWebAPI.MultiRoomJoin();
 						multiRoomJoin.SetSendData = delegate(GameWebAPI.ReqData_MultiRoomJoin param)
 						{

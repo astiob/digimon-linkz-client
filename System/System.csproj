@@ -235,12 +235,10 @@
     <Compile Include="Diagnostics\Process.cs" />
     <Compile Include="Diagnostics\ProcessModule.cs" />
     <Compile Include="Diagnostics\ProcessModuleCollection.cs" />
-    <Compile Include="Diagnostics\ProcessModuleCollectionBase.cs" />
     <Compile Include="Diagnostics\ProcessPriorityClass.cs" />
     <Compile Include="Diagnostics\ProcessStartInfo.cs" />
     <Compile Include="Diagnostics\ProcessThread.cs" />
     <Compile Include="Diagnostics\ProcessThreadCollection.cs" />
-    <Compile Include="Diagnostics\ProcessThreadCollectionBase.cs" />
     <Compile Include="Diagnostics\ProcessWindowStyle.cs" />
     <Compile Include="Diagnostics\SourceFilter.cs" />
     <Compile Include="Diagnostics\SourceLevels.cs" />

@@ -126,6 +126,30 @@ namespace UnityEngine.Networking
 			this.m_LocalObjects.Clear();
 		}
 
+		internal static void RegisterPrefab(GameObject prefab, NetworkHash128 newAssetId)
+		{
+			NetworkIdentity component = prefab.GetComponent<NetworkIdentity>();
+			if (component)
+			{
+				component.SetDynamicAssetId(newAssetId);
+				if (LogFilter.logDebug)
+				{
+					Debug.Log(string.Concat(new object[]
+					{
+						"Registering prefab '",
+						prefab.name,
+						"' as asset:",
+						component.assetId
+					}));
+				}
+				NetworkScene.s_GuidToPrefab[component.assetId] = prefab;
+			}
+			else if (LogFilter.logError)
+			{
+				Debug.LogError("Could not register '" + prefab.name + "' since it contains no NetworkIdentity component");
+			}
+		}
+
 		internal static void RegisterPrefab(GameObject prefab)
 		{
 			NetworkIdentity component = prefab.GetComponent<NetworkIdentity>();

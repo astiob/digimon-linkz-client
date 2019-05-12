@@ -6,9 +6,6 @@ using UnityEngine.Internal;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Helper class to generate form data to post to web servers using the WWW class.</para>
-	/// </summary>
 	public sealed class WWWForm
 	{
 		private List<byte[]> formData;
@@ -23,9 +20,6 @@ namespace UnityEngine
 
 		private bool containsFiles;
 
-		/// <summary>
-		///   <para>Creates an empty WWWForm object.</para>
-		/// </summary>
 		public WWWForm()
 		{
 			this.formData = new List<byte[]>();
@@ -48,12 +42,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Add a simple field to the form.</para>
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="value"></param>
-		/// <param name="e"></param>
 		[ExcludeFromDocs]
 		public void AddField(string fieldName, string value)
 		{
@@ -61,12 +49,6 @@ namespace UnityEngine
 			this.AddField(fieldName, value, utf);
 		}
 
-		/// <summary>
-		///   <para>Add a simple field to the form.</para>
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="value"></param>
-		/// <param name="e"></param>
 		public void AddField(string fieldName, string value, [DefaultValue("System.Text.Encoding.UTF8")] Encoding e)
 		{
 			this.fieldNames.Add(fieldName);
@@ -75,23 +57,11 @@ namespace UnityEngine
 			this.types.Add("text/plain; charset=\"" + e.WebName + "\"");
 		}
 
-		/// <summary>
-		///   <para>Adds a simple field to the form.</para>
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="i"></param>
 		public void AddField(string fieldName, int i)
 		{
 			this.AddField(fieldName, i.ToString());
 		}
 
-		/// <summary>
-		///   <para>Add binary data to the form.</para>
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="contents"></param>
-		/// <param name="fileName"></param>
-		/// <param name="mimeType"></param>
 		[ExcludeFromDocs]
 		public void AddBinaryData(string fieldName, byte[] contents, string fileName)
 		{
@@ -99,13 +69,6 @@ namespace UnityEngine
 			this.AddBinaryData(fieldName, contents, fileName, mimeType);
 		}
 
-		/// <summary>
-		///   <para>Add binary data to the form.</para>
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="contents"></param>
-		/// <param name="fileName"></param>
-		/// <param name="mimeType"></param>
 		[ExcludeFromDocs]
 		public void AddBinaryData(string fieldName, byte[] contents)
 		{
@@ -114,13 +77,6 @@ namespace UnityEngine
 			this.AddBinaryData(fieldName, contents, fileName, mimeType);
 		}
 
-		/// <summary>
-		///   <para>Add binary data to the form.</para>
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="contents"></param>
-		/// <param name="fileName"></param>
-		/// <param name="mimeType"></param>
 		public void AddBinaryData(string fieldName, byte[] contents, [DefaultValue("null")] string fileName, [DefaultValue("null")] string mimeType)
 		{
 			this.containsFiles = true;
@@ -146,9 +102,6 @@ namespace UnityEngine
 			this.types.Add(mimeType);
 		}
 
-		/// <summary>
-		///   <para>(Read Only) Returns the correct request headers for posting the form using the WWW class.</para>
-		/// </summary>
 		public Dictionary<string, string> headers
 		{
 			get
@@ -166,9 +119,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>(Read Only) The raw data to pass as the POST request body when sending the form.</para>
-		/// </summary>
 		public byte[] data
 		{
 			get

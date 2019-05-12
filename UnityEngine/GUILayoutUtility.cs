@@ -6,9 +6,6 @@ using UnityEngineInternal;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Utility functions for implementing and extending the GUILayout class.</para>
-	/// </summary>
 	public class GUILayoutUtility
 	{
 		private static readonly Dictionary<int, GUILayoutUtility.LayoutCache> s_StoredLayouts = new Dictionary<int, GUILayoutUtility.LayoutCache>();
@@ -247,33 +244,11 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle for displaying some contents with a specific style.</para>
-		/// </summary>
-		/// <param name="content">The content to make room for displaying.</param>
-		/// <param name="style">The GUIStyle to layout for.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>A rectangle that is large enough to contain content when rendered in style.</para>
-		/// </returns>
 		public static Rect GetRect(GUIContent content, GUIStyle style)
 		{
 			return GUILayoutUtility.DoGetRect(content, style, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle for displaying some contents with a specific style.</para>
-		/// </summary>
-		/// <param name="content">The content to make room for displaying.</param>
-		/// <param name="style">The GUIStyle to layout for.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>A rectangle that is large enough to contain content when rendered in style.</para>
-		/// </returns>
 		public static Rect GetRect(GUIContent content, GUIStyle style, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetRect(content, style, options);
@@ -291,7 +266,23 @@ namespace UnityEngine
 				}
 				else
 				{
-					Vector2 vector = style.CalcSize(content);
+					Vector2 constraints = new Vector2(0f, 0f);
+					if (options != null)
+					{
+						foreach (GUILayoutOption guilayoutOption in options)
+						{
+							switch (guilayoutOption.type)
+							{
+							case GUILayoutOption.Type.maxWidth:
+								constraints.x = (float)guilayoutOption.value;
+								break;
+							case GUILayoutOption.Type.maxHeight:
+								constraints.y = (float)guilayoutOption.value;
+								break;
+							}
+						}
+					}
+					Vector2 vector = style.CalcSizeWithConstraints(content, constraints);
 					GUILayoutUtility.current.topLevel.Add(new GUILayoutEntry(vector.x, vector.x, vector.y, vector.y, style, options));
 				}
 				return GUILayoutUtility.kDummyRect;
@@ -303,145 +294,41 @@ namespace UnityEngine
 			return GUILayoutUtility.kDummyRect;
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a fixed content area.</para>
-		/// </summary>
-		/// <param name="width">The width of the area you want.</param>
-		/// <param name="height">The height of the area you want.</param>
-		/// <param name="style">An optional GUIStyle to layout for. If specified, the style's padding value will be added to your sizes &amp; its margin value will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rectanlge to put your control in.</para>
-		/// </returns>
 		public static Rect GetRect(float width, float height)
 		{
 			return GUILayoutUtility.DoGetRect(width, width, height, height, GUIStyle.none, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a fixed content area.</para>
-		/// </summary>
-		/// <param name="width">The width of the area you want.</param>
-		/// <param name="height">The height of the area you want.</param>
-		/// <param name="style">An optional GUIStyle to layout for. If specified, the style's padding value will be added to your sizes &amp; its margin value will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rectanlge to put your control in.</para>
-		/// </returns>
 		public static Rect GetRect(float width, float height, GUIStyle style)
 		{
 			return GUILayoutUtility.DoGetRect(width, width, height, height, style, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a fixed content area.</para>
-		/// </summary>
-		/// <param name="width">The width of the area you want.</param>
-		/// <param name="height">The height of the area you want.</param>
-		/// <param name="style">An optional GUIStyle to layout for. If specified, the style's padding value will be added to your sizes &amp; its margin value will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rectanlge to put your control in.</para>
-		/// </returns>
 		public static Rect GetRect(float width, float height, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetRect(width, width, height, height, GUIStyle.none, options);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a fixed content area.</para>
-		/// </summary>
-		/// <param name="width">The width of the area you want.</param>
-		/// <param name="height">The height of the area you want.</param>
-		/// <param name="style">An optional GUIStyle to layout for. If specified, the style's padding value will be added to your sizes &amp; its margin value will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rectanlge to put your control in.</para>
-		/// </returns>
 		public static Rect GetRect(float width, float height, GUIStyle style, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetRect(width, width, height, height, style, options);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a flexible rect.</para>
-		/// </summary>
-		/// <param name="minWidth">The minimum width of the area passed back.</param>
-		/// <param name="maxWidth">The maximum width of the area passed back.</param>
-		/// <param name="minHeight">The minimum width of the area passed back.</param>
-		/// <param name="maxHeight">The maximum width of the area passed back.</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes requested &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>A rectangle with size between minWidth &amp; maxWidth on both axes.</para>
-		/// </returns>
 		public static Rect GetRect(float minWidth, float maxWidth, float minHeight, float maxHeight)
 		{
 			return GUILayoutUtility.DoGetRect(minWidth, maxWidth, minHeight, maxHeight, GUIStyle.none, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a flexible rect.</para>
-		/// </summary>
-		/// <param name="minWidth">The minimum width of the area passed back.</param>
-		/// <param name="maxWidth">The maximum width of the area passed back.</param>
-		/// <param name="minHeight">The minimum width of the area passed back.</param>
-		/// <param name="maxHeight">The maximum width of the area passed back.</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes requested &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>A rectangle with size between minWidth &amp; maxWidth on both axes.</para>
-		/// </returns>
 		public static Rect GetRect(float minWidth, float maxWidth, float minHeight, float maxHeight, GUIStyle style)
 		{
 			return GUILayoutUtility.DoGetRect(minWidth, maxWidth, minHeight, maxHeight, style, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a flexible rect.</para>
-		/// </summary>
-		/// <param name="minWidth">The minimum width of the area passed back.</param>
-		/// <param name="maxWidth">The maximum width of the area passed back.</param>
-		/// <param name="minHeight">The minimum width of the area passed back.</param>
-		/// <param name="maxHeight">The maximum width of the area passed back.</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes requested &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>A rectangle with size between minWidth &amp; maxWidth on both axes.</para>
-		/// </returns>
 		public static Rect GetRect(float minWidth, float maxWidth, float minHeight, float maxHeight, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetRect(minWidth, maxWidth, minHeight, maxHeight, GUIStyle.none, options);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a flexible rect.</para>
-		/// </summary>
-		/// <param name="minWidth">The minimum width of the area passed back.</param>
-		/// <param name="maxWidth">The maximum width of the area passed back.</param>
-		/// <param name="minHeight">The minimum width of the area passed back.</param>
-		/// <param name="maxHeight">The maximum width of the area passed back.</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes requested &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>A rectangle with size between minWidth &amp; maxWidth on both axes.</para>
-		/// </returns>
 		public static Rect GetRect(float minWidth, float maxWidth, float minHeight, float maxHeight, GUIStyle style, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetRect(minWidth, maxWidth, minHeight, maxHeight, style, options);
@@ -462,12 +349,6 @@ namespace UnityEngine
 			return GUILayoutUtility.kDummyRect;
 		}
 
-		/// <summary>
-		///   <para>Get the rectangle last used by GUILayout for a control.</para>
-		/// </summary>
-		/// <returns>
-		///   <para>The last used rectangle.</para>
-		/// </returns>
 		public static Rect GetLastRect()
 		{
 			EventType type = Event.current.type;
@@ -482,65 +363,21 @@ namespace UnityEngine
 			return GUILayoutUtility.kDummyRect;
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a specific aspect ratio.</para>
-		/// </summary>
-		/// <param name="aspect">The aspect ratio of the element (width / height).</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes of the returned rectangle &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rect for the control.</para>
-		/// </returns>
 		public static Rect GetAspectRect(float aspect)
 		{
 			return GUILayoutUtility.DoGetAspectRect(aspect, GUIStyle.none, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a specific aspect ratio.</para>
-		/// </summary>
-		/// <param name="aspect">The aspect ratio of the element (width / height).</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes of the returned rectangle &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rect for the control.</para>
-		/// </returns>
 		public static Rect GetAspectRect(float aspect, GUIStyle style)
 		{
 			return GUILayoutUtility.DoGetAspectRect(aspect, style, null);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a specific aspect ratio.</para>
-		/// </summary>
-		/// <param name="aspect">The aspect ratio of the element (width / height).</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes of the returned rectangle &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rect for the control.</para>
-		/// </returns>
 		public static Rect GetAspectRect(float aspect, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetAspectRect(aspect, GUIStyle.none, options);
 		}
 
-		/// <summary>
-		///   <para>Reserve layout space for a rectangle with a specific aspect ratio.</para>
-		/// </summary>
-		/// <param name="aspect">The aspect ratio of the element (width / height).</param>
-		/// <param name="style">An optional style. If specified, the style's padding value will be added to the sizes of the returned rectangle &amp; the style's margin values will be used for spacing.</param>
-		/// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.&lt;br&gt;
-		/// See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, 
-		/// GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
-		/// <returns>
-		///   <para>The rect for the control.</para>
-		/// </returns>
 		public static Rect GetAspectRect(float aspect, GUIStyle style, params GUILayoutOption[] options)
 		{
 			return GUILayoutUtility.DoGetAspectRect(aspect, GUIStyle.none, options);
@@ -574,9 +411,16 @@ namespace UnityEngine
 			}
 		}
 
+		private static Rect Internal_GetWindowRect(int windowID)
+		{
+			Rect result;
+			GUILayoutUtility.INTERNAL_CALL_Internal_GetWindowRect(windowID, out result);
+			return result;
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Rect Internal_GetWindowRect(int windowID);
+		private static extern void INTERNAL_CALL_Internal_GetWindowRect(int windowID, out Rect value);
 
 		private static void Internal_MoveWindow(int windowID, Rect r)
 		{
@@ -587,9 +431,16 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_CALL_Internal_MoveWindow(int windowID, ref Rect r);
 
+		internal static Rect GetWindowsBounds()
+		{
+			Rect result;
+			GUILayoutUtility.INTERNAL_CALL_GetWindowsBounds(out result);
+			return result;
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		internal static extern Rect GetWindowsBounds();
+		private static extern void INTERNAL_CALL_GetWindowsBounds(out Rect value);
 
 		internal sealed class LayoutCache
 		{

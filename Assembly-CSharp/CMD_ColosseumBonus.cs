@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public sealed class CMD_ColosseumBonus : CMD
 {
 	[SerializeField]
 	private UILabel messageLabel;
+
+	[SerializeField]
+	private TextMeshPro titleTextMeshPro;
 
 	[SerializeField]
 	private GameObject rollInnerCircle;
@@ -53,11 +57,12 @@ public sealed class CMD_ColosseumBonus : CMD
 		}
 	}
 
-	public void SetReward()
+	public void SetReward(string title)
 	{
 		RewardIconRoot rewardIconRoot = this.rewardIconRootList[this.rewardList.Length - 1];
 		rewardIconRoot.SetRewardList(this.rewardList);
 		this.messageLabel.text = rewardIconRoot.itemName;
+		this.titleTextMeshPro.text = title;
 		this.isInitialized = true;
 	}
 }

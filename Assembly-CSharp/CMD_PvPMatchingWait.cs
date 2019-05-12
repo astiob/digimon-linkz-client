@@ -1,4 +1,6 @@
-﻿using Master;
+﻿using Colosseum;
+using Master;
+using Monster;
 using MultiBattle.Tools;
 using PvP;
 using System;
@@ -21,6 +23,8 @@ public class CMD_PvPMatchingWait : CMD
 
 	private MultiBattleData.PvPUserData[] pvpUserDatas;
 
+	private string[] mySelectIndexIdList = new string[3];
+
 	private string worldDungeonId;
 
 	private int isMockBattle;
@@ -33,34 +37,46 @@ public class CMD_PvPMatchingWait : CMD
 
 	private bool isShowAlert;
 
+	private int selectPartyRetryCount;
+
 	private GameWebAPI.ColosseumUserStatus colosseumUserStatus;
+
+	private IEnumerator pvpEnemyOnlineCheck;
+
+	private int pvpEnemyOnlineStatus;
+
+	private bool IsPvPOnlineCheck;
+
+	private List<int> TCPSendUserIdList = new List<int>();
+
+	private bool pvpDataRetry;
 
 	[SerializeField]
 	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[Header("取り消しボタンスプライト")]
 	[SerializeField]
+	[Header("取り消しボタンスプライト")]
 	private UISprite spCancelBtn;
 
-	[SerializeField]
 	[Header("取り消しボタンラベル")]
+	[SerializeField]
 	private UILabel lbCancelBtn;
 
 	[SerializeField]
 	[Header("モンスター表示")]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
-	[SerializeField]
 	[Header("マッチング中アニメオブジェクト")]
+	[SerializeField]
 	private GameObject goMatchingNowAnim;
 
-	[Header("マッチング完了アニメオブジェクト")]
 	[SerializeField]
+	[Header("マッチング完了アニメオブジェクト")]
 	private GameObject goMatchingEndAnim;
 
-	[Header("マッチング完了エフェクト")]
 	[SerializeField]
+	[Header("マッチング完了エフェクト")]
 	private Animator MatchingEffectAnimator;
 
 	[SerializeField]
@@ -78,13 +94,25 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private float transferWait;
 
+	[Header("３対選択画面")]
+	[SerializeField]
+	private PVPPartySelect3 partySelect;
+
 	[SerializeField]
 	[Header("演出チェック用")]
 	private bool debugAnimation;
 
 	private Coroutine matchingFinishAnimation;
 
-	private PvPVersusInfo versusInfo;
+	private PvPVersusInfo6Icon versusInfo;
+
+	private List<MonsterData> enemyMonsterDataList = new List<MonsterData>();
+
+	private bool myMonsterDataSendCheck;
+
+	private bool enemyMonsterDataGetCheck;
+
+	private bool myPartyDataSendCheck;
 
 	public int deckNum { get; set; }
 
@@ -182,6 +210,7 @@ public class CMD_PvPMatchingWait : CMD
 			};
 			colosseumUserStatusLogic.OnReceived = delegate(GameWebAPI.RespData_ColosseumUserStatusLogic resData)
 			{
+				PvPUtility.SetPvPTopNoticeCode(resData);
 				this.colosseumUserStatus = resData.userStatus;
 			};
 			GameWebAPI.ColosseumUserStatusLogic request = colosseumUserStatusLogic;
@@ -192,12 +221,26 @@ public class CMD_PvPMatchingWait : CMD
 		}
 		if (isOpen)
 		{
+			List<MonsterData> monsterDeckList = ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList();
+			string[] idList = new string[6];
+			for (int i = 0; i < 6; i++)
+			{
+				if (monsterDeckList[i] != null)
+				{
+					idList[i] = monsterDeckList[i].GetMonster().userMonsterId;
+				}
+				else
+				{
+					idList[i] = "0";
+				}
+			}
 			GameWebAPI.ColosseumDeckEditLogic request2 = new GameWebAPI.ColosseumDeckEditLogic
 			{
 				SetSendData = delegate(GameWebAPI.ReqData_ColosseumDeckEditLogic param)
 				{
 					param.deckNum = this.deckNum;
 					param.isMockBattle = this.isMockBattle;
+					param.userMonsterIdList = idList;
 				},
 				OnReceived = new Action<GameWebAPI.RespData_ColosseumDeckEditLogic>(this.AfterColosseumDeckEdit)
 			};
@@ -210,7 +253,10 @@ public class CMD_PvPMatchingWait : CMD
 		{
 			this.DispErrorModal(StringMaster.GetString("ColosseumCloseTime"), StringMaster.GetString("ColosseumGoTop"), false);
 		}
-		CMD_PartyEdit.instance.ReloadAllCharacters(false);
+		if (CMD_PartyEdit.instance != null)
+		{
+			CMD_PartyEdit.instance.ReloadAllCharacters(false);
+		}
 		this.CharacterShow();
 		yield break;
 	}
@@ -234,12 +280,13 @@ public class CMD_PvPMatchingWait : CMD
 
 	private void CharacterShow()
 	{
-		GameWebAPI.RespDataMN_GetDeckList.DeckList deckList = DataMng.Instance().RespDataMN_DeckList.deckList[this.deckNum - 1];
+		List<MonsterData> colosseumDeckUserMonsterList = ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList();
 		List<MonsterData> list = new List<MonsterData>();
-		foreach (GameWebAPI.RespDataMN_GetDeckList.MonsterList monsterList2 in deckList.monsterList)
+		for (int i = 0; i < 3; i++)
 		{
-			MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(monsterList2.userMonsterId, false);
-			list.Add(monsterDataByUserMonsterID);
+			MonsterData item = colosseumDeckUserMonsterList[UnityEngine.Random.Range(0, colosseumDeckUserMonsterList.Count)];
+			list.Add(item);
+			colosseumDeckUserMonsterList.Remove(item);
 		}
 		this.monsInfo.mdList = list;
 		this.monsInfo.ShowGUI();
@@ -335,9 +382,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_291;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map35 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map33 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map35 = new Dictionary<string, int>(9)
+							CMD_PvPMatchingWait.<>f__switch$map33 = new Dictionary<string, int>(9)
 							{
 								{
 									"0",
@@ -378,7 +425,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map35.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map33.TryGetValue(text, out num))
 						{
 							goto IL_291;
 						}
@@ -443,10 +490,30 @@ public class CMD_PvPMatchingWait : CMD
 				}
 			}
 		}
-		else if (arg.ContainsKey("080108") && !this.isReadyBattle)
+		else if (arg.ContainsKey("080108"))
 		{
-			this.OnRecievedBattleStart(arg);
+			if (!this.isReadyBattle)
+			{
+				this.OnRecievedBattleStart(arg);
+			}
 		}
+		else if (arg.ContainsKey("enemyData"))
+		{
+			this.OnRecievedBattlePvPEnemyData(arg);
+		}
+		else if (arg.ContainsKey("enemyDataReceive"))
+		{
+			this.OnRecievedEnemySendData();
+		}
+		else if (arg.ContainsKey("080110"))
+		{
+			this.OnRecievedOnlineCheck(arg["080110"]);
+		}
+	}
+
+	private void OnRecievedEnemySendData()
+	{
+		this.myMonsterDataSendCheck = true;
 	}
 
 	private void OnRecievedBattleStart(Dictionary<string, object> packet)
@@ -465,9 +532,9 @@ public class CMD_PvPMatchingWait : CMD
 						{
 							goto IL_13D;
 						}
-						if (CMD_PvPMatchingWait.<>f__switch$map36 == null)
+						if (CMD_PvPMatchingWait.<>f__switch$map34 == null)
 						{
-							CMD_PvPMatchingWait.<>f__switch$map36 = new Dictionary<string, int>(3)
+							CMD_PvPMatchingWait.<>f__switch$map34 = new Dictionary<string, int>(3)
 							{
 								{
 									"1",
@@ -484,7 +551,7 @@ public class CMD_PvPMatchingWait : CMD
 							};
 						}
 						int num;
-						if (!CMD_PvPMatchingWait.<>f__switch$map36.TryGetValue(text, out num))
+						if (!CMD_PvPMatchingWait.<>f__switch$map34.TryGetValue(text, out num))
 						{
 							goto IL_13D;
 						}
@@ -517,6 +584,65 @@ public class CMD_PvPMatchingWait : CMD
 					}
 				}
 			}
+		}
+	}
+
+	private void OnRecievedBattlePvPEnemyData(Dictionary<string, object> packet)
+	{
+		foreach (KeyValuePair<string, object> keyValuePair in packet)
+		{
+			Dictionary<object, object> dictionary = keyValuePair.Value as Dictionary<object, object>;
+			if (dictionary != null)
+			{
+				foreach (KeyValuePair<object, object> keyValuePair2 in dictionary)
+				{
+					Dictionary<object, object> dictionary2 = keyValuePair2.Value as Dictionary<object, object>;
+					if (dictionary2 != null)
+					{
+						foreach (KeyValuePair<object, object> keyValuePair3 in dictionary2)
+						{
+							if (keyValuePair3.Key.Equals("indexId"))
+							{
+								List<object> list = keyValuePair3.Value as List<object>;
+								List<string> list2 = new List<string>();
+								for (int i = 0; i < list.Count; i++)
+								{
+									list2.Add(list[i] as string);
+								}
+								GameWebAPI.Common_MonsterData[] array = new GameWebAPI.Common_MonsterData[3];
+								for (int j = 0; j < array.Length; j++)
+								{
+									array[j] = this.pvpUserDatas[1].monsterData[int.Parse(list2[j])];
+								}
+								this.pvpUserDatas[1].monsterData = array;
+								if (this.pvpUserDatas[1].monsterData.Length == 3)
+								{
+									this.enemyMonsterDataGetCheck = true;
+									this.SendPvPEnemyDataReceive();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void OnRecievedOnlineCheck(object messageObj)
+	{
+		int valueByKey = MultiTools.GetValueByKey<int>(messageObj, "resultCode");
+		global::Debug.LogFormat("[対戦相手のオンラインステータスチェック（080110）]result_code:{0}", new object[]
+		{
+			valueByKey
+		});
+		this.pvpEnemyOnlineStatus = valueByKey;
+		if (valueByKey == 0)
+		{
+			this.IsPvPOnlineCheck = true;
+		}
+		else if (valueByKey == 1)
+		{
+			this.IsPvPOnlineCheck = true;
 		}
 	}
 
@@ -582,14 +708,13 @@ public class CMD_PvPMatchingWait : CMD
 	{
 		MultiBattleData.PvPUserData pvPUserData = new MultiBattleData.PvPUserData();
 		pvPUserData.userStatus = this.colosseumUserStatus;
-		pvPUserData.monsterData = new GameWebAPI.Common_MonsterData[3];
+		pvPUserData.monsterData = new GameWebAPI.Common_MonsterData[6];
 		pvPUserData.isOwner = this.isOwner;
-		GameWebAPI.RespDataMN_GetDeckList.MonsterList[] monsterList = DataMng.Instance().RespDataMN_DeckList.deckList[this.deckNum - 1].monsterList;
-		foreach (GameWebAPI.RespDataMN_GetDeckList.MonsterList monsterList2 in monsterList)
+		List<MonsterData> colosseumDeckUserMonsterList = ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList();
+		for (int i = 0; i < colosseumDeckUserMonsterList.Count; i++)
 		{
-			MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(monsterList2.userMonsterId, false);
-			GameWebAPI.Common_MonsterData common_MonsterData = new GameWebAPI.Common_MonsterData(monsterDataByUserMonsterID);
-			pvPUserData.monsterData[int.Parse(monsterList2.position) - 1] = common_MonsterData;
+			GameWebAPI.Common_MonsterData common_MonsterData = new GameWebAPI.Common_MonsterData(colosseumDeckUserMonsterList[i]);
+			pvPUserData.monsterData[i] = common_MonsterData;
 		}
 		this.pvpUserDatas[0] = pvPUserData;
 	}
@@ -597,9 +722,10 @@ public class CMD_PvPMatchingWait : CMD
 	private IEnumerator SetEnemyData(Action<bool> callback)
 	{
 		MultiBattleData.PvPUserData pvpEnemyData = new MultiBattleData.PvPUserData();
-		pvpEnemyData.monsterData = new GameWebAPI.Common_MonsterData[3];
+		pvpEnemyData.monsterData = new GameWebAPI.Common_MonsterData[6];
 		GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode resultCode_GetColosseumUserStatus = GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.SUCCESS;
 		GameWebAPI.RespData_ColosseumDeckInfoLogic.ResultCode resultCode_GetColosseumDeckInfo = GameWebAPI.RespData_ColosseumDeckInfoLogic.ResultCode.SUCCESS;
+		this.TCPSendUserIdList.Clear();
 		GameWebAPI.ColosseumUserStatusLogic usRequest = new GameWebAPI.ColosseumUserStatusLogic
 		{
 			SetSendData = delegate(GameWebAPI.ReqData_ColosseumUserStatusLogic param)
@@ -609,8 +735,10 @@ public class CMD_PvPMatchingWait : CMD
 			},
 			OnReceived = delegate(GameWebAPI.RespData_ColosseumUserStatusLogic response)
 			{
+				PvPUtility.SetPvPTopNoticeCode(response);
 				pvpEnemyData.userStatus = response.userStatus;
 				resultCode_GetColosseumUserStatus = response.GetResultCodeEnum;
+				this.TCPSendUserIdList.Add(int.Parse(response.userStatus.userId));
 			}
 		};
 		yield return base.StartCoroutine(usRequest.Run(null, null, null));
@@ -646,6 +774,11 @@ public class CMD_PvPMatchingWait : CMD
 			yield break;
 		}
 		yield return base.StartCoroutine(this.GetEnemyChip(pvpEnemyData));
+		for (int i = 0; i < pvpEnemyData.monsterData.Length; i++)
+		{
+			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(pvpEnemyData.monsterData[i].monsterId);
+			this.enemyMonsterDataList.Add(monsterData);
+		}
 		this.pvpUserDatas[1] = pvpEnemyData;
 		global::Debug.Log("対戦相手の情報取得に成功しました。対戦相手は " + pvpEnemyData.userStatus.nickname + " です");
 		yield break;
@@ -662,7 +795,10 @@ public class CMD_PvPMatchingWait : CMD
 				{
 					pvpEnemyData.monsterData[0].userMonsterId.ToInt32(),
 					pvpEnemyData.monsterData[1].userMonsterId.ToInt32(),
-					pvpEnemyData.monsterData[2].userMonsterId.ToInt32()
+					pvpEnemyData.monsterData[2].userMonsterId.ToInt32(),
+					pvpEnemyData.monsterData[3].userMonsterId.ToInt32(),
+					pvpEnemyData.monsterData[4].userMonsterId.ToInt32(),
+					pvpEnemyData.monsterData[5].userMonsterId.ToInt32()
 				};
 			},
 			OnReceived = delegate(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic response)
@@ -798,7 +934,6 @@ public class CMD_PvPMatchingWait : CMD
 			{
 				this.SetCloseAction(delegate(int i)
 				{
-					CMD_PartyEdit.instance.ClosePanel(false);
 				});
 			}
 			Singleton<TCPUtil>.Instance.TCPDisConnect(false);
@@ -823,6 +958,7 @@ public class CMD_PvPMatchingWait : CMD
 			GameWebAPI.RespData_ColosseumUserStatusLogic responseStatus = null;
 			APIRequestTask task = PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, delegate(GameWebAPI.RespData_ColosseumUserStatusLogic res)
 			{
+				PvPUtility.SetPvPTopNoticeCode(res);
 				responseStatus = res;
 			});
 			yield return base.StartCoroutine(task.Run(null, null, null));
@@ -833,10 +969,13 @@ public class CMD_PvPMatchingWait : CMD
 			{
 				GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleResult result = PvPUtility.GetBattleResult(responseStatus.GetResultCodeEnum);
 				task = PvPUtility.RequestColosseumBattleEnd(result, GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleMode.NORMAL_BATTLE);
-				task.Add(PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, null));
+				task.Add(PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, delegate(GameWebAPI.RespData_ColosseumUserStatusLogic res)
+				{
+					PvPUtility.SetPvPTopNoticeCode(res);
+				}));
 				yield return base.StartCoroutine(task.Run(null, null, null));
 				Singleton<TCPUtil>.Instance.TCPDisConnect(false);
-				goto IL_16C;
+				goto IL_188;
 			}
 			}
 			this.SendTCPPvPMatching(false);
@@ -845,7 +984,7 @@ public class CMD_PvPMatchingWait : CMD
 			{
 				yield return null;
 			}
-			IL_16C:
+			IL_188:
 			MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		}
 		if (onFinished != null)
@@ -899,7 +1038,7 @@ public class CMD_PvPMatchingWait : CMD
 		yield return waitTime;
 		if (null == this.versusInfo)
 		{
-			this.versusInfo = PvPVersusInfo.CreateInstance(Singleton<GUIMain>.Instance.transform);
+			this.versusInfo = PvPVersusInfo6Icon.CreateInstance(Singleton<GUIMain>.Instance.transform);
 			this.versusInfo.SetTitle(this.isMockBattle);
 			this.versusInfo.SetUserInfo(ClassSingleton<MultiBattleData>.Instance.PvPUserDatas);
 			this.versusInfo.SetActionAnimationEnd(delegate
@@ -912,8 +1051,46 @@ public class CMD_PvPMatchingWait : CMD
 
 	private IEnumerator OnFinishedMatchingAnimation(PvPMatchingFinishAnimation animationController)
 	{
+		if (this.partySelect == null)
+		{
+			this.partySelect = PVPPartySelect3.CreateInstance(Singleton<GUIMain>.Instance.transform);
+			List<MonsterData> allMdList = ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList();
+			this.partySelect.SetData(this);
+			this.partySelect.SetMonsterData(allMdList, this.enemyMonsterDataList);
+			this.partySelect.gameObject.SetActive(true);
+		}
+		else
+		{
+			List<MonsterData> allMdList2 = ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList();
+			this.partySelect.Init();
+			this.partySelect.SetData(this);
+			this.partySelect.SetMonsterData(allMdList2, this.enemyMonsterDataList);
+			this.partySelect.gameObject.SetActive(true);
+		}
+		yield return base.StartCoroutine(this.SelectBattleParty());
+		while (!this.pvpDataRetry)
+		{
+			yield return null;
+			if (this.pvpEnemyOnlineCheck != null)
+			{
+				yield return base.StartCoroutine(this.pvpEnemyOnlineCheck);
+				if (this.pvpEnemyOnlineStatus == 0)
+				{
+					GameWebAPI.Common_MonsterData[] pvpEnemyListData = new GameWebAPI.Common_MonsterData[3];
+					for (int i = 0; i < pvpEnemyListData.Length; i++)
+					{
+						pvpEnemyListData[i] = this.pvpUserDatas[1].monsterData[i];
+					}
+					this.pvpUserDatas[1].monsterData = pvpEnemyListData;
+				}
+				this.pvpDataRetry = true;
+				MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			}
+		}
 		yield return base.StartCoroutine(animationController.DeleteTransferEffect());
 		this.versusInfo.SetBackground(this.background);
+		this.versusInfo.gameObject.SetActive(true);
+		this.versusInfo.AnimaObjectActiveSet(false);
 		base.SetCloseAction(new Action<int>(this.ChangeScene));
 		this.useCMDAnim = false;
 		while (this.isShowAlert)
@@ -925,7 +1102,159 @@ public class CMD_PvPMatchingWait : CMD
 			CMD_PvPTop.Instance.IsToBattle = true;
 		}
 		GUIManager.CloseAllCommonDialog(null);
+		this.partySelect.gameObject.SetActive(false);
 		yield break;
+	}
+
+	private IEnumerator SelectBattleParty()
+	{
+		this.versusInfo.gameObject.SetActive(false);
+		this.spCancelBtn.gameObject.SetActive(false);
+		bool waitSendData = false;
+		bool retry = false;
+		this.pvpEnemyOnlineCheck = null;
+		float timer = 0f;
+		for (;;)
+		{
+			if (this.myPartyDataSendCheck)
+			{
+				if (this.myMonsterDataSendCheck && this.enemyMonsterDataGetCheck)
+				{
+					break;
+				}
+				timer += Time.deltaTime * 1f;
+				if (timer >= (float)MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_SELECT_DATA_RETRY_TIME)
+				{
+					goto Block_4;
+				}
+				yield return null;
+			}
+			else
+			{
+				yield return null;
+			}
+		}
+		waitSendData = false;
+		retry = false;
+		this.pvpDataRetry = true;
+		goto IL_1E0;
+		Block_4:
+		if (this.selectPartyRetryCount >= MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_SELECT_DATA_RETRY_COUNT)
+		{
+			this.pvpDataRetry = true;
+			waitSendData = true;
+			retry = false;
+		}
+		else
+		{
+			this.pvpDataRetry = false;
+			retry = true;
+			this.selectPartyRetryCount++;
+			if (!this.myMonsterDataSendCheck)
+			{
+				this.myPartyDataSendCheck = false;
+				this.TCPPvPEnemyData();
+			}
+			base.StartCoroutine(this.SelectBattleParty());
+		}
+		IL_1E0:
+		if (retry)
+		{
+			yield break;
+		}
+		if (waitSendData)
+		{
+			this.pvpEnemyOnlineCheck = this.PvPOnlineCheck();
+		}
+		yield break;
+	}
+
+	private IEnumerator PvPOnlineCheck()
+	{
+		IEnumerator judge = this.SendPvPOnlineCheck();
+		while (judge.MoveNext())
+		{
+			object obj = judge.Current;
+			yield return obj;
+		}
+		yield break;
+	}
+
+	public IEnumerator SendPvPOnlineCheck()
+	{
+		float sendingWaitingTerm = 2f;
+		this.IsPvPOnlineCheck = false;
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		PvPOnlineCheck message = new PvPOnlineCheck
+		{
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
+		};
+		data.Add("080110", message);
+		int checkCount = 0;
+		for (;;)
+		{
+			checkCount++;
+			if (this.IsPvPOnlineCheck || Singleton<TCPUtil>.Instance == null)
+			{
+				break;
+			}
+			if (checkCount > MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_SELECT_DATA_RETRY_COUNT)
+			{
+				goto Block_2;
+			}
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			IEnumerator wait = Util.WaitForRealTime(sendingWaitingTerm);
+			while (wait.MoveNext())
+			{
+				object obj = wait.Current;
+				yield return obj;
+			}
+		}
+		yield break;
+		Block_2:
+		yield break;
+		yield break;
+	}
+
+	public void SendPvPEnemyData(string[] indexIdList)
+	{
+		List<MonsterData> colosseumDeckUserMonsterList = ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList();
+		GameWebAPI.Common_MonsterData[] array = new GameWebAPI.Common_MonsterData[3];
+		ColosseumData.LastUseMonsterList = new MonsterData[3];
+		this.mySelectIndexIdList = indexIdList;
+		for (int i = 0; i < array.Length; i++)
+		{
+			MonsterData monsterData = colosseumDeckUserMonsterList[int.Parse(this.mySelectIndexIdList[i])];
+			ColosseumData.LastUseMonsterList[i] = monsterData;
+			GameWebAPI.Common_MonsterData common_MonsterData = new GameWebAPI.Common_MonsterData(monsterData);
+			array[i] = common_MonsterData;
+		}
+		this.pvpUserDatas[0].monsterData = array;
+		this.TCPPvPEnemyData();
+		this.myPartyDataSendCheck = true;
+		MultiTools.DispLoading(true, RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
+	}
+
+	private void TCPPvPEnemyData()
+	{
+		PvPEnemyData message = new PvPEnemyData
+		{
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.PvPEnemyData, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			indexId = this.mySelectIndexIdList
+		};
+		Singleton<TCPUtil>.Instance.SendMessageForTarget(TCPMessageType.PvPEnemyData, message, this.TCPSendUserIdList, "enemyData");
+		this.myPartyDataSendCheck = true;
+	}
+
+	private void SendPvPEnemyDataReceive()
+	{
+		PvPEnemyDataReceive message = new PvPEnemyDataReceive
+		{
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.PvPEnemyDataReceive, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			resultCode = "1"
+		};
+		Singleton<TCPUtil>.Instance.SendMessageForTarget(TCPMessageType.PvPEnemyDataReceive, message, this.TCPSendUserIdList, "enemyDataReceive");
 	}
 
 	private void ChangeScene(int noop)

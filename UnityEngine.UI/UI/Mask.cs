@@ -5,17 +5,17 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[RequireComponent(typeof(RectTransform))]
 	[DisallowMultipleComponent]
-	[AddComponentMenu("UI/Mask", 13)]
+	[RequireComponent(typeof(RectTransform))]
 	[ExecuteInEditMode]
+	[AddComponentMenu("UI/Mask", 13)]
 	public class Mask : UIBehaviour, ICanvasRaycastFilter, IMaterialModifier
 	{
 		[NonSerialized]
 		private RectTransform m_RectTransform;
 
-		[SerializeField]
 		[FormerlySerializedAs("m_ShowGraphic")]
+		[SerializeField]
 		private bool m_ShowMaskGraphic = true;
 
 		[NonSerialized]
@@ -122,7 +122,7 @@ namespace UnityEngine.UI
 
 		public virtual Material GetModifiedMaterial(Material baseMaterial)
 		{
-			if (this.graphic == null)
+			if (this.graphic == null || !base.isActiveAndEnabled)
 			{
 				return baseMaterial;
 			}

@@ -1,10 +1,9 @@
 ﻿using System;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>A single keyframe that can be injected into an animation curve.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	public struct Keyframe
 	{
 		private float m_Time;
@@ -15,11 +14,6 @@ namespace UnityEngine
 
 		private float m_OutTangent;
 
-		/// <summary>
-		///   <para>Create a keyframe.</para>
-		/// </summary>
-		/// <param name="time"></param>
-		/// <param name="value"></param>
 		public Keyframe(float time, float value)
 		{
 			this.m_Time = time;
@@ -28,13 +22,6 @@ namespace UnityEngine
 			this.m_OutTangent = 0f;
 		}
 
-		/// <summary>
-		///   <para>Create a keyframe.</para>
-		/// </summary>
-		/// <param name="time"></param>
-		/// <param name="value"></param>
-		/// <param name="inTangent"></param>
-		/// <param name="outTangent"></param>
 		public Keyframe(float time, float value, float inTangent, float outTangent)
 		{
 			this.m_Time = time;
@@ -43,9 +30,6 @@ namespace UnityEngine
 			this.m_OutTangent = outTangent;
 		}
 
-		/// <summary>
-		///   <para>The time of the keyframe.</para>
-		/// </summary>
 		public float time
 		{
 			get
@@ -58,9 +42,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The value of the curve at keyframe.</para>
-		/// </summary>
 		public float value
 		{
 			get
@@ -73,9 +54,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Describes the tangent when approaching this point from the previous point in the curve.</para>
-		/// </summary>
 		public float inTangent
 		{
 			get
@@ -88,9 +66,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Describes the tangent when leaving this point towards the next point in the curve.</para>
-		/// </summary>
 		public float outTangent
 		{
 			get

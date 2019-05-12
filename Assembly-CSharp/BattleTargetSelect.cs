@@ -140,8 +140,7 @@ public class BattleTargetSelect : BattleFunctionBase
 	{
 		for (int i = 0; i < base.battleStateData.maxCharacterLength; i++)
 		{
-			base.stateManager.uiControl.ApplyManualSelectTarget(i, false, Strength.None);
-			base.stateManager.uiControl.ApplyTargetToleranceIcon(i, false, Strength.None);
+			base.stateManager.uiControl.ApplyManualSelectTarget(i, false, null);
 		}
 	}
 
@@ -278,15 +277,12 @@ public class BattleTargetSelect : BattleFunctionBase
 	private void ShowTargetIcon(int index, CharacterStateControl target, SkillStatus skillStatus)
 	{
 		base.stateManager.uiControl.SetManualSelectTarget(index, true, target, skillStatus);
-		base.stateManager.uiControl.SetTargetToleranceIcon(index, true, target, skillStatus);
 		base.stateManager.uiControl.SetManualSelectTargetReposition(index, target);
-		base.stateManager.uiControl.SetTargetToleranceIconReposition(index, target);
 	}
 
 	private void HideTargetIcon(int index)
 	{
 		base.stateManager.uiControl.SetManualSelectTarget(index, false, null, null);
-		base.stateManager.uiControl.SetTargetToleranceIcon(index, false, null, null);
 	}
 
 	private int GetCurrentTargettingCharacter(EffectTarget target)

@@ -40,7 +40,7 @@ public class LeaderSkillResult
 	{
 		get
 		{
-			return this._characterStateControl.species == this._leaderCharacterData.species;
+			return this._characterStateControl.characterDatas.tribe == this._leaderCharacterData.tribe;
 		}
 	}
 

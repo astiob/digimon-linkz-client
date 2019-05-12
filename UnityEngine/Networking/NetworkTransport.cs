@@ -8,16 +8,26 @@ using UnityEngine.Networking.Types;
 
 namespace UnityEngine.Networking
 {
-	/// <summary>
-	///   <para>Low level (transport layer) API.</para>
-	/// </summary>
 	public sealed class NetworkTransport
 	{
 		private NetworkTransport()
 		{
 		}
 
-		public static int ConnectEndPoint(int hostId, EndPoint xboxOneEndPoint, int exceptionConnectionId, out byte error)
+		internal static bool DoesEndPointUsePlatformProtocols(EndPoint endPoint)
+		{
+			if (endPoint.GetType().FullName == "UnityEngine.PS4.SceEndPoint")
+			{
+				SocketAddress socketAddress = endPoint.Serialize();
+				if (socketAddress[8] != 0 || socketAddress[9] != 0)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static int ConnectEndPoint(int hostId, EndPoint endPoint, int exceptionConnectionId, out byte error)
 		{
 			error = 0;
 			byte[] array = new byte[]
@@ -27,54 +37,80 @@ namespace UnityEngine.Networking
 				19,
 				246
 			};
-			if (xboxOneEndPoint == null)
+			if (endPoint == null)
 			{
 				throw new NullReferenceException("Null EndPoint provided");
 			}
-			if (xboxOneEndPoint.GetType().FullName != "UnityEngine.XboxOne.XboxOneEndPoint")
+			if (endPoint.GetType().FullName != "UnityEngine.XboxOne.XboxOneEndPoint" && endPoint.GetType().FullName != "UnityEngine.PS4.SceEndPoint")
 			{
-				throw new ArgumentException("Endpoint of type XboxOneEndPoint required");
+				throw new ArgumentException("Endpoint of type XboxOneEndPoint or SceEndPoint  required");
 			}
-			if (xboxOneEndPoint.AddressFamily != AddressFamily.InterNetworkV6)
+			if (endPoint.GetType().FullName == "UnityEngine.XboxOne.XboxOneEndPoint")
 			{
-				throw new ArgumentException("XboxOneEndPoint has an invalid family");
+				if (endPoint.AddressFamily != AddressFamily.InterNetworkV6)
+				{
+					throw new ArgumentException("XboxOneEndPoint has an invalid family");
+				}
+				SocketAddress socketAddress = endPoint.Serialize();
+				if (socketAddress.Size != 14)
+				{
+					throw new ArgumentException("XboxOneEndPoint has an invalid size");
+				}
+				if (socketAddress[0] != 0 || socketAddress[1] != 0)
+				{
+					throw new ArgumentException("XboxOneEndPoint has an invalid family signature");
+				}
+				if (socketAddress[2] != array[0] || socketAddress[3] != array[1] || socketAddress[4] != array[2] || socketAddress[5] != array[3])
+				{
+					throw new ArgumentException("XboxOneEndPoint has an invalid signature");
+				}
+				byte[] array2 = new byte[8];
+				for (int i = 0; i < array2.Length; i++)
+				{
+					array2[i] = socketAddress[6 + i];
+				}
+				IntPtr intPtr = new IntPtr(BitConverter.ToInt64(array2, 0));
+				if (intPtr == IntPtr.Zero)
+				{
+					throw new ArgumentException("XboxOneEndPoint has an invalid SOCKET_STORAGE pointer");
+				}
+				byte[] array3 = new byte[2];
+				Marshal.Copy(intPtr, array3, 0, array3.Length);
+				AddressFamily addressFamily = (AddressFamily)(((int)array3[1] << 8) + (int)array3[0]);
+				if (addressFamily != AddressFamily.InterNetworkV6)
+				{
+					throw new ArgumentException("XboxOneEndPoint has corrupt or invalid SOCKET_STORAGE pointer");
+				}
+				return NetworkTransport.Internal_ConnectEndPoint(hostId, intPtr, 128, exceptionConnectionId, out error);
 			}
-			SocketAddress socketAddress = xboxOneEndPoint.Serialize();
-			if (socketAddress.Size != 14)
+			else
 			{
-				throw new ArgumentException("XboxOneEndPoint has an invalid size");
+				SocketAddress socketAddress2 = endPoint.Serialize();
+				if (socketAddress2.Size != 16)
+				{
+					throw new ArgumentException("EndPoint has an invalid size");
+				}
+				if ((int)socketAddress2[0] != socketAddress2.Size)
+				{
+					throw new ArgumentException("EndPoint has an invalid size value");
+				}
+				if (socketAddress2[1] != 2)
+				{
+					throw new ArgumentException("EndPoint has an invalid family value");
+				}
+				byte[] array4 = new byte[16];
+				for (int j = 0; j < array4.Length; j++)
+				{
+					array4[j] = socketAddress2[j];
+				}
+				IntPtr intPtr2 = Marshal.AllocHGlobal(array4.Length);
+				Marshal.Copy(array4, 0, intPtr2, array4.Length);
+				int result = NetworkTransport.Internal_ConnectEndPoint(hostId, intPtr2, 16, exceptionConnectionId, out error);
+				Marshal.FreeHGlobal(intPtr2);
+				return result;
 			}
-			if (socketAddress[0] != 0 || socketAddress[1] != 0)
-			{
-				throw new ArgumentException("XboxOneEndPoint has an invalid family signature");
-			}
-			if (socketAddress[2] != array[0] || socketAddress[3] != array[1] || socketAddress[4] != array[2] || socketAddress[5] != array[3])
-			{
-				throw new ArgumentException("XboxOneEndPoint has an invalid signature");
-			}
-			byte[] array2 = new byte[8];
-			for (int i = 0; i < array2.Length; i++)
-			{
-				array2[i] = socketAddress[6 + i];
-			}
-			IntPtr intPtr = new IntPtr(BitConverter.ToInt64(array2, 0));
-			if (intPtr == IntPtr.Zero)
-			{
-				throw new ArgumentException("XboxOneEndPoint has an invalid SOCKET_STORAGE pointer");
-			}
-			byte[] array3 = new byte[2];
-			Marshal.Copy(intPtr, array3, 0, array3.Length);
-			AddressFamily addressFamily = (AddressFamily)(((int)array3[1] << 8) + (int)array3[0]);
-			if (addressFamily != AddressFamily.InterNetworkV6)
-			{
-				throw new ArgumentException("XboxOneEndPoint has corrupt or invalid SOCKET_STORAGE pointer");
-			}
-			return NetworkTransport.Internal_ConnectEndPoint(hostId, intPtr, 128, exceptionConnectionId, out error);
 		}
 
-		/// <summary>
-		///   <para>First function which should be called before any other NetworkTransport function.</para>
-		/// </summary>
 		public static void Init()
 		{
 			NetworkTransport.InitWithNoParameters();
@@ -93,20 +129,10 @@ namespace UnityEngine.Networking
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void InitWithParameters(GlobalConfigInternal config);
 
-		/// <summary>
-		///   <para>Shutdown the transport layer, after calling this function no any other function can be called.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void Shutdown();
 
-		/// <summary>
-		///   <para>The UNet spawning system uses assetIds to identify how spawn remote objects. This function allows you to get the assetId for the prefab associated with an object.</para>
-		/// </summary>
-		/// <param name="go">Target game object to get asset Id for.</param>
-		/// <returns>
-		///   <para>The assetId of the game object's prefab.</para>
-		/// </returns>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern string GetAssetId(GameObject go);
@@ -140,16 +166,10 @@ namespace UnityEngine.Networking
 			return NetworkTransport.ConnectToNetworkPeer(hostId, address, port, exceptionConnectionId, relaySlotId, network, source, node, 0, 0f, out error);
 		}
 
-		/// <summary>
-		///   <para>Return value of messages waiting for reading.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern int GetCurrentIncomingMessageAmount();
 
-		/// <summary>
-		///   <para>Return total message amount waiting for sending.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern int GetCurrentOutgoingMessageAmount();
@@ -175,12 +195,6 @@ namespace UnityEngine.Networking
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern int GetRemotePacketReceivedRate(int hostId, int connectionId, out byte error);
 
-		/// <summary>
-		///   <para>Function returns time spent on network io operations in micro seconds.</para>
-		/// </summary>
-		/// <returns>
-		///   <para>Time in micro seconds.</para>
-		/// </returns>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern int GetNetIOTimeuS();
@@ -198,9 +212,6 @@ namespace UnityEngine.Networking
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern string GetConnectionInfo(int hostId, int connectionId, out int port, out ulong network, out ushort dstNode, out byte error);
 
-		/// <summary>
-		///   <para>Get UNET timestamp which can be added to message for further definitions of packet delaying.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern int GetNetworkTimestamp();
@@ -249,16 +260,6 @@ namespace UnityEngine.Networking
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern int AddWsHostWrapperWithoutIp(HostTopologyInternal topologyInt, int port);
 
-		/// <summary>
-		///   <para>Created web socket host. 
-		/// This function is supported only for Editor (Win, Linux, Mac) and StandalonePlayers (Win, Linux, Mac) 
-		/// Topology is used to define how many client can connect, and how many messages should be preallocated in send and receive pool, all other parameters are ignored.</para>
-		/// </summary>
-		/// <param name="port">Listening tcp port.</param>
-		/// <param name="topology">Topology.</param>
-		/// <returns>
-		///   <para>Web socket host id.</para>
-		/// </returns>
 		[ExcludeFromDocs]
 		public static int AddWebsocketHost(HostTopology topology, int port)
 		{
@@ -302,15 +303,6 @@ namespace UnityEngine.Networking
 			return NetworkTransport.AddHost(topology, port, ip);
 		}
 
-		/// <summary>
-		///   <para>Will create a host (open socket) with given topology and optionally port and IP.</para>
-		/// </summary>
-		/// <param name="topology">The host topology for this host.</param>
-		/// <param name="port">Bind to specific port, if 0 is selected the port will chosen by OS.</param>
-		/// <param name="ip">Bind to specific IP address.</param>
-		/// <returns>
-		///   <para>Returns host ID just created.</para>
-		/// </returns>
 		public static int AddHost(HostTopology topology, [DefaultValue("0")] int port, [DefaultValue("null")] string ip)
 		{
 			if (topology == null)
@@ -339,17 +331,6 @@ namespace UnityEngine.Networking
 			return NetworkTransport.AddHostWithSimulator(topology, minTimeout, maxTimeout, port, ip);
 		}
 
-		/// <summary>
-		///   <para>Create a host (open socket) and configure them to simulate internet latency (works on editor and development build only).</para>
-		/// </summary>
-		/// <param name="topology">The host topology for this host.</param>
-		/// <param name="minTimeout">Minimum simulated delay.</param>
-		/// <param name="maxTimeout">Maximum simulated delay.</param>
-		/// <param name="port">Bind to specific port, if 0 is selected the port will chosen by OS.</param>
-		/// <param name="ip">Bind to specific IP address.</param>
-		/// <returns>
-		///   <para>Returns host ID just created.</para>
-		/// </returns>
 		public static int AddHostWithSimulator(HostTopology topology, int minTimeout, int maxTimeout, [DefaultValue("0")] int port, [DefaultValue("null")] string ip)
 		{
 			if (topology == null)
@@ -363,17 +344,10 @@ namespace UnityEngine.Networking
 			return NetworkTransport.AddHostWrapper(new HostTopologyInternal(topology), ip, port, minTimeout, maxTimeout);
 		}
 
-		/// <summary>
-		///   <para>Close opened socket, close all connection belonging this socket.</para>
-		/// </summary>
-		/// <param name="hostId">If of opened udp socket.</param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern bool RemoveHost(int hostId);
 
-		/// <summary>
-		///   <para>Obsolete, will be removed.</para>
-		/// </summary>
 		public static extern bool IsStarted { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
 		[WrapperlessIcall]
@@ -421,19 +395,10 @@ namespace UnityEngine.Networking
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern bool StartBroadcastDiscovery(int hostId, int broadcastPort, int key, int version, int subversion, byte[] buffer, int size, int timeout, out byte error);
 
-		/// <summary>
-		///   <para>Stop sending broadcast discovery message.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void StopBroadcastDiscovery();
 
-		/// <summary>
-		///   <para>Check if broadcastdiscovery sender works.</para>
-		/// </summary>
-		/// <returns>
-		///   <para>True if it works.</para>
-		/// </returns>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern bool IsBroadcastDiscoveryRunning();

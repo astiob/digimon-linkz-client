@@ -2,13 +2,12 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine.Internal;
+using UnityEngine.Scripting;
 using UnityEngineInternal;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Base class for all objects Unity can reference.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	[StructLayout(LayoutKind.Sequential)]
 	public class Object
 	{
@@ -29,20 +28,10 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern Object INTERNAL_CALL_Internal_InstantiateSingle(Object data, ref Vector3 pos, ref Quaternion rot);
 
-		/// <summary>
-		///   <para>Removes a gameobject, component or asset.</para>
-		/// </summary>
-		/// <param name="obj">The object to destroy.</param>
-		/// <param name="t">The optional amount of time to delay before destroying the object.</param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void Destroy(Object obj, [DefaultValue("0.0F")] float t);
 
-		/// <summary>
-		///   <para>Removes a gameobject, component or asset.</para>
-		/// </summary>
-		/// <param name="obj">The object to destroy.</param>
-		/// <param name="t">The optional amount of time to delay before destroying the object.</param>
 		[ExcludeFromDocs]
 		public static void Destroy(Object obj)
 		{
@@ -50,20 +39,10 @@ namespace UnityEngine
 			Object.Destroy(obj, t);
 		}
 
-		/// <summary>
-		///   <para>Destroys the object obj immediately. You are strongly recommended to use Destroy instead.</para>
-		/// </summary>
-		/// <param name="obj">Object to be destroyed.</param>
-		/// <param name="allowDestroyingAssets">Set to true to allow assets to be destoyed.</param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void DestroyImmediate(Object obj, [DefaultValue("false")] bool allowDestroyingAssets);
 
-		/// <summary>
-		///   <para>Destroys the object obj immediately. You are strongly recommended to use Destroy instead.</para>
-		/// </summary>
-		/// <param name="obj">Object to be destroyed.</param>
-		/// <param name="allowDestroyingAssets">Set to true to allow assets to be destoyed.</param>
 		[ExcludeFromDocs]
 		public static void DestroyImmediate(Object obj)
 		{
@@ -71,34 +50,17 @@ namespace UnityEngine
 			Object.DestroyImmediate(obj, allowDestroyingAssets);
 		}
 
-		/// <summary>
-		///   <para>Returns a list of all active loaded objects of Type type.</para>
-		/// </summary>
-		/// <param name="type">The type of object to find.</param>
-		/// <returns>
-		///   <para>The array of objects found matching the type specified.</para>
-		/// </returns>
 		[TypeInferenceRule(TypeInferenceRules.ArrayOfTypeReferencedByFirstArgument)]
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern Object[] FindObjectsOfType(Type type);
 
-		/// <summary>
-		///   <para>The name of the object.</para>
-		/// </summary>
 		public extern string name { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>Makes the object target not be destroyed automatically when loading a new scene.</para>
-		/// </summary>
-		/// <param name="target"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void DontDestroyOnLoad(Object target);
 
-		/// <summary>
-		///   <para>Should the object be hidden, saved with the scene or modifiable by the user?</para>
-		/// </summary>
 		public extern HideFlags hideFlags { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
 		[WrapperlessIcall]
@@ -117,34 +79,17 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern Object[] FindSceneObjectsOfType(Type type);
 
-		/// <summary>
-		///   <para>Returns a list of all active and inactive loaded objects of Type type, including assets.</para>
-		/// </summary>
-		/// <param name="type">The type of object or asset to find.</param>
-		/// <returns>
-		///   <para>The array of objects and assets found matching the type specified.</para>
-		/// </returns>
 		[WrapperlessIcall]
 		[Obsolete("use Resources.FindObjectsOfTypeAll instead.")]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern Object[] FindObjectsOfTypeIncludingAssets(Type type);
 
-		/// <summary>
-		///   <para>Returns a list of all active and inactive loaded objects of Type type.</para>
-		/// </summary>
-		/// <param name="type">The type of object to find.</param>
-		/// <returns>
-		///   <para>The array of objects found matching the type specified.</para>
-		/// </returns>
 		[Obsolete("Please use Resources.FindObjectsOfTypeAll instead")]
 		public static Object[] FindObjectsOfTypeAll(Type type)
 		{
 			return Resources.FindObjectsOfTypeAll(type);
 		}
 
-		/// <summary>
-		///   <para>Returns the name of the game object.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public override extern string ToString();
@@ -187,9 +132,6 @@ namespace UnityEngine
 			return o.GetCachedPtr() != IntPtr.Zero;
 		}
 
-		/// <summary>
-		///   <para>Returns the instance id of the object.</para>
-		/// </summary>
 		public int GetInstanceID()
 		{
 			return this.m_InstanceID;
@@ -200,12 +142,6 @@ namespace UnityEngine
 			return this.m_CachedPtr;
 		}
 
-		/// <summary>
-		///   <para>Clones the object original and returns the clone.</para>
-		/// </summary>
-		/// <param name="original">An existing object that you want to make a copy of.</param>
-		/// <param name="position">Position for the new object.</param>
-		/// <param name="rotation">Orientation of the new object.</param>
 		[TypeInferenceRule(TypeInferenceRules.TypeOfFirstArgument)]
 		public static Object Instantiate(Object original, Vector3 position, Quaternion rotation)
 		{
@@ -213,12 +149,6 @@ namespace UnityEngine
 			return Object.Internal_InstantiateSingle(original, position, rotation);
 		}
 
-		/// <summary>
-		///   <para>Clones the object original and returns the clone.</para>
-		/// </summary>
-		/// <param name="original">An existing object that you want to make a copy of.</param>
-		/// <param name="position">Position for the new object.</param>
-		/// <param name="rotation">Orientation of the new object.</param>
 		[TypeInferenceRule(TypeInferenceRules.TypeOfFirstArgument)]
 		public static Object Instantiate(Object original)
 		{
@@ -245,10 +175,6 @@ namespace UnityEngine
 			return Resources.ConvertObjects<T>(Object.FindObjectsOfType(typeof(T)));
 		}
 
-		/// <summary>
-		///   <para>Returns the first active loaded object of Type type.</para>
-		/// </summary>
-		/// <param name="type"></param>
 		[TypeInferenceRule(TypeInferenceRules.TypeReferencedByFirstArgument)]
 		public static Object FindObjectOfType(Type type)
 		{

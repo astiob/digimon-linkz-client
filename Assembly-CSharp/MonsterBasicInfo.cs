@@ -78,8 +78,8 @@ public class MonsterBasicInfo : MonoBehaviour
 		{
 			this.monsterName.text = monsterData.monsterMG.monsterName;
 		}
-		this.growName.text = monsterData.growStepM.monsterGrowStepName;
-		this.tribeName.text = monsterData.tribeM.monsterTribeName;
+		this.growName.text = MonsterGrowStepData.GetGrowStepName(monsterData.monsterMG.growStep);
+		this.tribeName.text = MonsterTribeData.GetTribeName(monsterData.monsterMG.tribe);
 		if (this.arousalUI.exist)
 		{
 			this.SetArousal(monsterData.monsterM.rare.ToInt32());

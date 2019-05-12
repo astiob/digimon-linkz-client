@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+[AddComponentMenu("NGUI/Interaction/Scroll View")]
 [ExecuteInEditMode]
 [RequireComponent(typeof(UIPanel))]
-[AddComponentMenu("NGUI/Interaction/Scroll View")]
 public class UIScrollView : MonoBehaviour
 {
 	public static BetterList<UIScrollView> list = new BetterList<UIScrollView>();
@@ -44,8 +44,8 @@ public class UIScrollView : MonoBehaviour
 
 	public UIScrollView.OnDragNotification onStoppedMoving;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector3 scale = new Vector3(1f, 0f, 0f);
 
 	[HideInInspector]

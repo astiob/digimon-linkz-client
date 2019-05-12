@@ -9,20 +9,20 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
-	[SerializeField]
 	[Header("スキルボタンが3つのときの位置")]
+	[SerializeField]
 	private Vector3 threeButtonPosition = Vector3.zero;
 
 	[Header("ボタン")]
 	[SerializeField]
 	private UIButton button;
 
-	[Header("スキル名")]
 	[SerializeField]
+	[Header("スキル名")]
 	private UILabel skillName;
 
-	[SerializeField]
 	[Header("スキル説明")]
+	[SerializeField]
 	private UILabel skillDescription;
 
 	[SerializeField]
@@ -33,40 +33,36 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("命中率")]
 	private UILabel hitRate;
 
-	[Header("威力")]
 	[SerializeField]
+	[Header("威力")]
 	private UILabel power;
 
-	[SerializeField]
-	[Header("スキナー")]
-	private UIComponentSkinner skillButtonMode;
-
-	[SerializeField]
 	[Header("Tweener1（開く）")]
+	[SerializeField]
 	private UITweener rotationEffect1;
 
-	[SerializeField]
 	[Header("Tweener2（閉じる）")]
+	[SerializeField]
 	private UITweener rotationEffect2;
 
-	[Header("Collider")]
 	[SerializeField]
+	[Header("Collider")]
 	private Collider colliderValue;
 
-	[Header("HoldPress")]
 	[SerializeField]
+	[Header("HoldPress")]
 	private HoldPressButton skillDescriptionSwitch;
 
 	[SerializeField]
 	[Header("属性アイコン")]
 	private UISprite attributeSprite;
 
-	[SerializeField]
 	[Header("スキル説明UIのルート")]
+	[SerializeField]
 	private GameObject skillDescriptionRoot;
 
-	[SerializeField]
 	[Header("スキルロックアイコン")]
+	[SerializeField]
 	private UISprite skillLockSprite;
 
 	[Header("スキルONボタン")]
@@ -77,8 +73,8 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private GameObject offSkillButton;
 
-	[Header("スキルボタンスプライト")]
 	[SerializeField]
+	[Header("スキルボタンスプライト")]
 	private UISprite skillButtonSprite;
 
 	private SkillType skillType;
@@ -86,16 +82,16 @@ public class BattleSkillBtn : MonoBehaviour
 	public void ApplySkillButtonData(SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl selectCharacter)
 	{
 		this.skillType = skills.skillType;
-		int skillPowerCorrectionValue = skills.power;
+		int num = skills.GetPowerFirst(selectCharacter);
 		float value = skills.hitRate;
 		AffectEffectProperty affectEffectFirst = skills.GetAffectEffectFirst();
 		if (affectEffectFirst != null)
 		{
 			List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
-			List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
-			if (affectEffectFirst.type == AffectEffect.Damage)
+			List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
+			if (AffectEffectProperty.IsDamage(affectEffectFirst.type))
 			{
-				skillPowerCorrectionValue = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst, selectCharacter);
+				num = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst, selectCharacter);
 			}
 			value = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectFirst, selectCharacter);
 			value = Mathf.Clamp01(value);
@@ -103,7 +99,7 @@ public class BattleSkillBtn : MonoBehaviour
 		this.skillName.text = skills.name;
 		this.skillDescription.text = skills.description;
 		this.hitRate.text = value.ToString("p0");
-		this.power.text = skillPowerCorrectionValue.ToString();
+		this.power.text = num.ToString();
 		int correctedAp = skills.GetCorrectedAp(selectCharacter);
 		if (correctedAp <= selectCharacter.ap)
 		{

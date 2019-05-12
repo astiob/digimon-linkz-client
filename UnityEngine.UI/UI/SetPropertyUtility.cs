@@ -14,6 +14,16 @@ namespace UnityEngine.UI
 			return true;
 		}
 
+		public static bool SetEquatableStruct<T>(ref T currentValue, T newValue) where T : IEquatable<T>
+		{
+			if (currentValue.Equals(newValue))
+			{
+				return false;
+			}
+			currentValue = newValue;
+			return true;
+		}
+
 		public static bool SetStruct<T>(ref T currentValue, T newValue) where T : struct
 		{
 			if (currentValue.Equals(newValue))

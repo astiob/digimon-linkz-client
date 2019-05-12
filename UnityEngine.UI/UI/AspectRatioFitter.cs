@@ -3,9 +3,9 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
-	[AddComponentMenu("Layout/Aspect Ratio Fitter", 142)]
-	[RequireComponent(typeof(RectTransform))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(RectTransform))]
+	[AddComponentMenu("Layout/Aspect Ratio Fitter", 142)]
 	public class AspectRatioFitter : UIBehaviour, ILayoutController, ILayoutSelfController
 	{
 		[SerializeField]

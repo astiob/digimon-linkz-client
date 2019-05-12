@@ -279,11 +279,25 @@ public class CMD_MultiRecruitSettingModal : CMD
 
 	private IEnumerator CreateMultiRecruitRoom()
 	{
+		GameWebAPI.WD_Req_DngStart last_dng_req = DataMng.Instance().GetResultUtilData().GetLastDngReq();
+		int worldDungeonId;
+		if (CMD_QuestTOP.instance != null)
+		{
+			worldDungeonId = int.Parse(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
+		}
+		else if (last_dng_req != null)
+		{
+			worldDungeonId = int.Parse(last_dng_req.dungeonId);
+		}
+		else
+		{
+			global::Debug.LogError("====================================== CMD_MultiRecruitSettingModal worldDungeonId");
+		}
 		GameWebAPI.MultiRoomCreate request = new GameWebAPI.MultiRoomCreate
 		{
 			SetSendData = delegate(GameWebAPI.ReqData_MultiRoomCreate param)
 			{
-				param.worldDungeonId = int.Parse(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
+				param.worldDungeonId = worldDungeonId;
 				param.moodType = CMD_MultiRecruitSettingModal.selectedMoodType;
 				param.announceType = CMD_MultiRecruitSettingModal.selectedPublishedType;
 				param.introduction = this.recruitMessageInput.value;

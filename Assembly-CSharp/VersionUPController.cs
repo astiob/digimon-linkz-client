@@ -9,16 +9,16 @@ public class VersionUPController : CutsceneControllerBase
 	[Header("キャラクターのスタンド")]
 	private GameObject[] charaStand;
 
-	[Header("スタンドの回転速度")]
 	[SerializeField]
+	[Header("スタンドの回転速度")]
 	private float[] standRollSpeed;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private GameObject camera2D;
 
-	[SerializeField]
 	[Header("3Dカメラ")]
+	[SerializeField]
 	private GameObject camera3D_1;
 
 	public float rollSpeed = 1f;
@@ -44,7 +44,7 @@ public class VersionUPController : CutsceneControllerBase
 		CutsceneControllerBase.SetBillBoardCamera(this.monsA_instance, component);
 		CutsceneControllerBase.SetBillBoardCamera(this.monsB_instance, component);
 		this.wireMaterial = new Material(Shader.Find("Unlit/UnlitAlphaWithFade"));
-		SoundMng.Instance().PlaySE("SEInternal/Farm/se_222", 0f, false, true, null, -1, 1f);
+		base.PlaySE("SE/Farm/se_222", true);
 	}
 
 	protected override void UpdateChild()

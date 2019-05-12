@@ -10,8 +10,8 @@ using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[Header("エリア名 ステージ名")]
 	[SerializeField]
+	[Header("エリア名 ステージ名")]
 	private UILabel lbAreaName;
 
 	[SerializeField]
@@ -34,8 +34,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_PASSWORD_EXP;
 
-	[Header("フレンドボタン")]
 	[SerializeField]
+	[Header("フレンドボタン")]
 	private GameObject goBTN_FRIEND;
 
 	[Header("チャットボタン")]
@@ -46,8 +46,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_ST_EXCHANGE;
 
-	[SerializeField]
 	[Header("準備完了ボタン")]
+	[SerializeField]
 	private UILabel lbTXT_BTN_READY;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private BoxCollider coBTN_READY;
 
-	[SerializeField]
 	[Header("決定ボタン")]
+	[SerializeField]
 	private GameObject goBTN_DECIDE;
 
 	[SerializeField]
@@ -74,12 +74,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[Header("エモーション処理")]
 	[SerializeField]
+	[Header("エモーション処理")]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[Header("エモーションコンポーネント")]
 	[SerializeField]
+	[Header("エモーションコンポーネント")]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]
@@ -277,7 +277,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			this.roomInfo = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo;
 			this.memberList.AddRange(CMD_MultiRecruitPartyWait.roomJoinData.multiRoomMemberList);
 		}
-		for (int k = this.memberList.Count; k < 3; k++)
+		for (int j = this.memberList.Count; j < 3; j++)
 		{
 			this.memberList.Add(null);
 		}
@@ -289,13 +289,6 @@ public class CMD_MultiRecruitPartyWait : CMD
 		{
 			if (<>__AnonType.v != null)
 			{
-				if (<>__AnonType.v.userId == this.myUserId)
-				{
-					foreach (GameWebAPI.Common_MonsterData common_MonsterData in <>__AnonType.v.userMonsterList)
-					{
-						common_MonsterData.SetChipIdList();
-					}
-				}
 				MonsterData item = <>__AnonType.v.userMonsterList[0].ToMonsterData();
 				this.monsterDataList.Add(item);
 				if (<>__AnonType.i == 0)
@@ -475,6 +468,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 		DataMng.Instance().WD_ReqDngResult.clear = 0;
 		DataMng.Instance().RespData_WorldMultiStartInfo = data;
 		ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId = this.myUserId;
+		ClassSingleton<MultiBattleData>.Instance.MaxAttackTime = ConstValue.MULTI_MAX_ATTACK_TIME;
+		ClassSingleton<MultiBattleData>.Instance.HurryUpAttackTime = ConstValue.MULTI_HURRYUP_ATTACK_TIME;
 		MultiUser[] array = new MultiUser[3];
 		if (data.memberPatternId > 0)
 		{
@@ -503,21 +498,39 @@ public class CMD_MultiRecruitPartyWait : CMD
 			}
 		}
 		ClassSingleton<MultiBattleData>.Instance.MultiUsers = array;
-		ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = new string[3];
-		for (int j = 0; j < this.monsterDataList.Count; j++)
+		List<MultiUser> list = array.ToList<MultiUser>();
+		MultiUser item2 = array.FirstOrDefault((MultiUser item) => item.isOwner);
+		int num = 3 - list.Count;
+		for (int j = 0; j < num; j++)
 		{
-			ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[j] = this.monsterDataList[j].userMonster.userMonsterId;
+			list.Add(item2);
+		}
+		ClassSingleton<MultiBattleData>.Instance.PvPUserDatas = new MultiBattleData.PvPUserData[list.Count<MultiUser>()];
+		for (int k = 0; k < list.Count<MultiUser>(); k++)
+		{
+			MultiBattleData.PvPUserData pvPUserData = new MultiBattleData.PvPUserData();
+			pvPUserData.isOwner = list[k].isOwner;
+			pvPUserData.userStatus = new GameWebAPI.ColosseumUserStatus();
+			pvPUserData.userStatus.userId = list[k].userId;
+			pvPUserData.userStatus.nickname = list[k].userName;
+			pvPUserData.monsterData = null;
+			ClassSingleton<MultiBattleData>.Instance.PvPUserDatas[k] = pvPUserData;
+		}
+		ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = new string[3];
+		for (int l = 0; l < this.monsterDataList.Count; l++)
+		{
+			ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[l] = this.monsterDataList[l].userMonster.userMonsterId;
 		}
 		if (this.memberList.Where((GameWebAPI.Common_MultiMemberList user) => user == null).Count<GameWebAPI.Common_MultiMemberList>() > 0)
 		{
 			global::Debug.Log("最大人数未満での出発になるためサーバデータとチェックします");
 			string[] array2 = new string[3];
 			bool flag = false;
-			int num = 0;
+			int num2 = 0;
 			GameWebAPI.RespData_WorldMultiStartInfo.Party[] party = data.party;
-			for (int k = 0; k < party.Length; k++)
+			for (int m = 0; m < party.Length; m++)
 			{
-				GameWebAPI.RespData_WorldMultiStartInfo.Party party2 = party[k];
+				GameWebAPI.RespData_WorldMultiStartInfo.Party party2 = party[m];
 				foreach (GameWebAPI.Common_MonsterData monster in party2.userMonsters)
 				{
 					if (ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds.Where((string ids) => ids == monster.userMonsterId).Count<string>() == 0)
@@ -525,8 +538,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 						global::Debug.Log("サーバとローカルでユーザ情報に差異が生じました");
 						flag = true;
 					}
-					array2[num] = monster.userMonsterId;
-					num++;
+					array2[num2] = monster.userMonsterId;
+					num2++;
 				}
 			}
 			if (flag)
@@ -560,6 +573,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 		if (CMD_ChatTop.instance != null)
 		{
 			CMD_ChatTop.instance.ClosePanel(false);
+		}
+		GameObject dialog = GUIManager.GetDialog("CMD_BattleNextChoice");
+		if (dialog != null)
+		{
+			CMD_BattleNextChoice component = dialog.GetComponent<CMD_BattleNextChoice>();
+			component.ClosePanel(false);
 		}
 		FarmCameraControlForCMD.On();
 		global::Debug.Log("バトルシーンのロードを開始します");
@@ -1155,7 +1174,20 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		Dictionary<string, object> dictionary = new Dictionary<string, object>();
 		List<BattleStartConfirm.userData> umis = new List<BattleStartConfirm.userData>();
-		int userDungeonTicketId = (CMD_QuestTOP.instance.StageDataBk.dungeon.userDungeonTicketId != null) ? int.Parse(CMD_QuestTOP.instance.StageDataBk.dungeon.userDungeonTicketId) : 0;
+		GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
+		int userDungeonTicketId = -1;
+		if (CMD_QuestTOP.instance != null)
+		{
+			userDungeonTicketId = ((CMD_QuestTOP.instance.StageDataBk.dungeon.userDungeonTicketId != null) ? int.Parse(CMD_QuestTOP.instance.StageDataBk.dungeon.userDungeonTicketId) : 0);
+		}
+		else if (lastDngReq != null)
+		{
+			userDungeonTicketId = ((lastDngReq.userDungeonTicketId != null) ? int.Parse(lastDngReq.userDungeonTicketId) : 0);
+		}
+		else
+		{
+			global::Debug.LogError("====================================== CMD_MultiRecruitPartyWait userDungeonTicketId");
+		}
 		BattleStartConfirm battleStartConfirm = new BattleStartConfirm
 		{
 			ri = int.Parse(this.roomInfo.multiRoomId),

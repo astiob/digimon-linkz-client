@@ -215,7 +215,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetFacilityDetail(GUISelectPanelFacility listUI, FacilityM[] facilityData)
 	{
-		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey359 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey359();
+		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey378 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey378();
 		<SetFacilityDetail>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>();
 		if (<SetFacilityDetail>c__AnonStorey.items == null)
 		{
@@ -249,21 +249,21 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetNewIcon(GUISelectPanelFacility listUI)
 	{
-		CMD_FacilityShop.<SetNewIcon>c__AnonStorey35B <SetNewIcon>c__AnonStorey35B = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey35B();
-		<SetNewIcon>c__AnonStorey35B.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
-		if (<SetNewIcon>c__AnonStorey35B.items == null)
+		CMD_FacilityShop.<SetNewIcon>c__AnonStorey37A <SetNewIcon>c__AnonStorey37A = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey37A();
+		<SetNewIcon>c__AnonStorey37A.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
+		if (<SetNewIcon>c__AnonStorey37A.items == null)
 		{
 			return;
 		}
 		int i;
-		for (i = 0; i < <SetNewIcon>c__AnonStorey35B.items.Length; i++)
+		for (i = 0; i < <SetNewIcon>c__AnonStorey37A.items.Length; i++)
 		{
 			bool newIcon = false;
 			if (this.newFacilityItemList != null)
 			{
-				newIcon = this.newFacilityItemList.Any((int id) => id == <SetNewIcon>c__AnonStorey35B.items[i].facilityID);
+				newIcon = this.newFacilityItemList.Any((int id) => id == <SetNewIcon>c__AnonStorey37A.items[i].facilityID);
 			}
-			<SetNewIcon>c__AnonStorey35B.items[i].SetNewIcon(newIcon);
+			<SetNewIcon>c__AnonStorey37A.items[i].SetNewIcon(newIcon);
 		}
 		this.newFacilityItemList = null;
 	}

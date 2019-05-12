@@ -1,5 +1,6 @@
 ﻿using Evolution;
 using Master;
+using Picturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ public sealed class MasterDataMng : MonoBehaviour
 		this.CreateMasterData<MA_FacilityMaster>();
 		this.CreateMasterData<MA_FacilityKeyMaster>();
 		this.CreateMasterData<MA_FacilityUpgradeMaster>();
-		this.CreateMasterData<MA_MonsterFixidMaster>();
+		this.CreateMasterData<MA_MonsterFixedMaster>();
 		this.CreateMasterData<MA_FacilityMeatFieldMaster>();
 		this.CreateMasterData<MA_FacilityChipMaster>();
 		this.CreateMasterData<MA_FacilityWarehouseMaster>();
@@ -93,6 +94,8 @@ public sealed class MasterDataMng : MonoBehaviour
 		this.CreateMasterData<MA_MonsterSpecificTypeMaster>();
 		this.CreateMasterData<MA_MonsterStatusAilmentMaster>();
 		this.CreateMasterData<MA_MonsterStatusAilmentGroupMaster>();
+		this.CreateMasterData<MA_WorldDungeonAdventureSceneMaster>();
+		this.CreateMasterData<MA_MonsterIntegrationGroupMaster>();
 	}
 
 	private void CreateMasterData<MasterT>() where MasterT : MasterBase, new()
@@ -550,12 +553,38 @@ public sealed class MasterDataMng : MonoBehaviour
 		}
 	}
 
+	public GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster ResponseWorldDungeonAdventureSceneMaster
+	{
+		get
+		{
+			MA_WorldDungeonAdventureSceneMaster ma_WorldDungeonAdventureSceneMaster = this.GetMaster(MasterId.WORLD_DUNGEON_ADVENTURE_SCENE) as MA_WorldDungeonAdventureSceneMaster;
+			return ma_WorldDungeonAdventureSceneMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster ResponseMonsterIntegrationGroupMaster
+	{
+		get
+		{
+			MA_MonsterIntegrationGroupMaster ma_MonsterIntegrationGroupMaster = this.GetMaster(MasterId.MONSTER_INTEGRATION_GROUP) as MA_MonsterIntegrationGroupMaster;
+			return ma_MonsterIntegrationGroupMaster.GetMasterData();
+		}
+	}
+
+	public GameWebAPI.RespDataMA_MonsterFixedM ResponseMonsterFixedMaster
+	{
+		get
+		{
+			MA_MonsterFixedMaster ma_MonsterFixedMaster = this.GetMaster(MasterId.MONSTER_FIXED) as MA_MonsterFixedMaster;
+			return ma_MonsterFixedMaster.GetMasterData();
+		}
+	}
+
 	public void ClearCache()
 	{
 		AlertMaster.ClearCache();
 		StringMaster.ClearCache();
 		EvolutionMaterialData.ClearCache();
-		CommonSentenceData.ClearCache();
 		ChipDataMng.ClearCache();
 		TitleDataMng.ClearCache();
 		DataMng.Instance().StageGimmick.ZeroClear();
@@ -564,6 +593,7 @@ public sealed class MasterDataMng : MonoBehaviour
 		{
 			array[i].ClearData();
 		}
+		MonsterPicturebookData.Initialize();
 	}
 
 	public void InitialFileIO()

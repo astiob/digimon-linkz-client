@@ -12,8 +12,8 @@ namespace UnityEngine.EventSystems
 
 		private BaseInputModule m_CurrentInputModule;
 
-		[SerializeField]
 		[FormerlySerializedAs("m_Selected")]
+		[SerializeField]
 		private GameObject m_FirstSelected;
 
 		[SerializeField]

@@ -868,26 +868,18 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.dialogContinue.ApplyDigiStoneNumber(digiStoneNumber);
 	}
 
-	public void ApplyManualSelectTarget(int index, bool isShow, Strength iconType = Strength.None)
+	public void ApplyManualSelectTarget(int index, bool isShow, Strength[] iconTypes = null)
 	{
 		ManualSelectTarget manualSelectTarget = base.ui.manualSelectTargetObjectInstanced[index];
-		manualSelectTarget.SetActive(isShow);
-		if (!isShow)
-		{
-			return;
-		}
-		manualSelectTarget.SetToleranceTarget(iconType);
-	}
-
-	public void ApplyTargetToleranceIcon(int index, bool isShow, Strength iconType = Strength.None)
-	{
 		ToleranceIcon toleranceIcon = base.ui.toleranceIconObjectInstanced[index];
+		manualSelectTarget.SetActive(isShow);
 		toleranceIcon.SetActive(isShow);
 		if (!isShow)
 		{
 			return;
 		}
-		toleranceIcon.SetToleranceIcon(iconType);
+		manualSelectTarget.SetToleranceTarget(iconTypes);
+		toleranceIcon.SetToleranceIcon(iconTypes);
 	}
 
 	public void ApplyCharacterHudBoss(int index, bool isBoss)
@@ -906,23 +898,17 @@ public class BattleUIControlBasic : BattleUIControl
 	private void ApplyManualSelectTargetReposition(int index, Vector3 position)
 	{
 		ManualSelectTarget manualSelectTarget = base.ui.manualSelectTargetObjectInstanced[index];
-		if (!manualSelectTarget.gameObject.activeInHierarchy)
+		if (manualSelectTarget.gameObject.activeInHierarchy)
 		{
-			return;
+			Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
+			manualSelectTarget.transform.position = new Vector3(vector.x, vector.y, manualSelectTarget.transform.parent.transform.position.z);
 		}
-		Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
-		manualSelectTarget.transform.position = new Vector3(vector.x, vector.y, manualSelectTarget.transform.parent.transform.position.z);
-	}
-
-	private void ApplyTargetToleranceIconReposition(int index, Vector3 position)
-	{
 		ToleranceIcon toleranceIcon = base.ui.toleranceIconObjectInstanced[index];
-		if (!toleranceIcon.gameObject.activeInHierarchy)
+		if (toleranceIcon.gameObject.activeInHierarchy)
 		{
-			return;
+			Vector3 vector2 = base.ui.uiCamera.ViewportToWorldPoint(position);
+			toleranceIcon.transform.position = new Vector3(vector2.x, vector2.y, toleranceIcon.transform.parent.transform.position.z);
 		}
-		Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
-		toleranceIcon.transform.position = new Vector3(vector.x, vector.y, toleranceIcon.transform.parent.transform.position.z);
 	}
 
 	private void ApplyCharacterHudPosition(int index, bool isShow, Vector3 position)
@@ -1183,32 +1169,16 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		if (!isShow)
 		{
-			this.ApplyManualSelectTarget(index, isShow, Strength.None);
+			this.ApplyManualSelectTarget(index, isShow, null);
 			return;
 		}
-		Strength skillStrength = skill.GetSkillStrength(character.tolerance);
-		this.ApplyManualSelectTarget(index, isShow, skillStrength);
+		Strength[] skillStrengthList = skill.GetSkillStrengthList(character.tolerance);
+		this.ApplyManualSelectTarget(index, isShow, skillStrengthList);
 	}
 
 	public void SetManualSelectTargetReposition(int index, CharacterStateControl character = null)
 	{
 		this.ApplyManualSelectTargetReposition(index, this.GetCharacterCenterPosition2DFunction(character));
-	}
-
-	public void SetTargetToleranceIcon(int index, bool isShow = false, CharacterStateControl character = null, SkillStatus skill = null)
-	{
-		if (!isShow)
-		{
-			this.ApplyTargetToleranceIcon(index, isShow, Strength.None);
-			return;
-		}
-		Strength skillStrength = skill.GetSkillStrength(character.tolerance);
-		this.ApplyTargetToleranceIcon(index, isShow, skillStrength);
-	}
-
-	public void SetTargetToleranceIconReposition(int index, CharacterStateControl character = null)
-	{
-		this.ApplyTargetToleranceIconReposition(index, this.GetCharacterCenterPosition2DFunction(character));
 	}
 
 	public void SetHudCollider(bool enable)
@@ -1419,19 +1389,5 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		int widgetDepth = int.MaxValue - Mathf.RoundToInt(z * 1E+07f);
 		d.SetWidgetDepth(widgetDepth);
-	}
-
-	public static int GetEvolutionStepSetTextReplacer(EvolutionStep evolutionStep)
-	{
-		if (evolutionStep != EvolutionStep.AmorPhase2)
-		{
-			return (int)evolutionStep;
-		}
-		return 6;
-	}
-
-	public static int GetSpeciesSetTextReplacer(Species species)
-	{
-		return (int)species;
 	}
 }

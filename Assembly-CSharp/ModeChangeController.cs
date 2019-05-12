@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class ModeChangeController : CutsceneControllerBase
 {
-	[SerializeField]
 	[Header("キャラクターのスタンド")]
+	[SerializeField]
 	private GameObject[] charaStand;
 
-	[SerializeField]
 	[Header("スタンドの回転速度")]
+	[SerializeField]
 	private float[] standRollSpeed;
 
 	[SerializeField]
 	[Header("UIカメラ")]
 	private GameObject camera2D;
 
-	[Header("3Dカメラ")]
 	[SerializeField]
+	[Header("3Dカメラ")]
 	private GameObject camera3D_1;
 
 	[Header("スフィア")]
@@ -29,20 +29,20 @@ public class ModeChangeController : CutsceneControllerBase
 	[SerializeField]
 	private float[] sphereSpeed;
 
-	[Header("青いデジタルなマテリアル")]
 	[SerializeField]
+	[Header("青いデジタルなマテリアル")]
 	private Material afterConversionMaterialA;
 
-	[SerializeField]
 	[Header("黄色いデジタルなマテリアル")]
+	[SerializeField]
 	private Material afterConversionMaterialB;
 
-	[SerializeField]
 	[Header("カメラの回転速度")]
+	[SerializeField]
 	private float cameraRollSpeed;
 
-	[Header("カメラの親")]
 	[SerializeField]
+	[Header("カメラの親")]
 	private GameObject cameraRollObject;
 
 	private bool cameraRollFlag;

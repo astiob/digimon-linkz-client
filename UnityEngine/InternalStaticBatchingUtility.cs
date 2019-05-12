@@ -65,57 +65,64 @@ namespace UnityEngine
 								Material[] array = meshFilter.GetComponent<Renderer>().sharedMaterials;
 								if (!array.Any((Material m) => m != null && m.shader != null && m.shader.disableBatching != DisableBatchingType.False))
 								{
-									if (num + meshFilter.sharedMesh.vertexCount > 64000)
+									int vertexCount = sharedMesh.vertexCount;
+									if (vertexCount != 0)
 									{
-										InternalStaticBatchingUtility.MakeBatch(list, list2, list3, staticBatchRootTransform, batchIndex++);
-										list.Clear();
-										list2.Clear();
-										list3.Clear();
-										num = 0;
-									}
-									MeshSubsetCombineUtility.MeshInstance item = default(MeshSubsetCombineUtility.MeshInstance);
-									item.meshInstanceID = sharedMesh.GetInstanceID();
-									item.rendererInstanceID = component.GetInstanceID();
-									MeshRenderer meshRenderer = component as MeshRenderer;
-									if (meshRenderer != null && meshRenderer.additionalVertexStreams != null)
-									{
-										item.additionalVertexStreamsMeshInstanceID = meshRenderer.additionalVertexStreams.GetInstanceID();
-									}
-									item.transform = lhs * meshFilter.transform.localToWorldMatrix;
-									item.lightmapScaleOffset = component.lightmapScaleOffset;
-									item.realtimeLightmapScaleOffset = component.realtimeLightmapScaleOffset;
-									list.Add(item);
-									if (array.Length > sharedMesh.subMeshCount)
-									{
-										Debug.LogWarning(string.Concat(new object[]
+										MeshRenderer meshRenderer = component as MeshRenderer;
+										if (!(meshRenderer != null) || !(meshRenderer.additionalVertexStreams != null) || vertexCount == meshRenderer.additionalVertexStreams.vertexCount)
 										{
-											"Mesh has more materials (",
-											array.Length,
-											") than subsets (",
-											sharedMesh.subMeshCount,
-											")"
-										}), meshFilter.GetComponent<Renderer>());
-										Material[] array2 = new Material[sharedMesh.subMeshCount];
-										for (int j = 0; j < sharedMesh.subMeshCount; j++)
-										{
-											array2[j] = meshFilter.GetComponent<Renderer>().sharedMaterials[j];
+											if (num + vertexCount > 64000)
+											{
+												InternalStaticBatchingUtility.MakeBatch(list, list2, list3, staticBatchRootTransform, batchIndex++);
+												list.Clear();
+												list2.Clear();
+												list3.Clear();
+												num = 0;
+											}
+											MeshSubsetCombineUtility.MeshInstance item = default(MeshSubsetCombineUtility.MeshInstance);
+											item.meshInstanceID = sharedMesh.GetInstanceID();
+											item.rendererInstanceID = component.GetInstanceID();
+											if (meshRenderer != null && meshRenderer.additionalVertexStreams != null)
+											{
+												item.additionalVertexStreamsMeshInstanceID = meshRenderer.additionalVertexStreams.GetInstanceID();
+											}
+											item.transform = lhs * meshFilter.transform.localToWorldMatrix;
+											item.lightmapScaleOffset = component.lightmapScaleOffset;
+											item.realtimeLightmapScaleOffset = component.realtimeLightmapScaleOffset;
+											list.Add(item);
+											if (array.Length > sharedMesh.subMeshCount)
+											{
+												Debug.LogWarning(string.Concat(new object[]
+												{
+													"Mesh has more materials (",
+													array.Length,
+													") than subsets (",
+													sharedMesh.subMeshCount,
+													")"
+												}), meshFilter.GetComponent<Renderer>());
+												Material[] array2 = new Material[sharedMesh.subMeshCount];
+												for (int j = 0; j < sharedMesh.subMeshCount; j++)
+												{
+													array2[j] = meshFilter.GetComponent<Renderer>().sharedMaterials[j];
+												}
+												meshFilter.GetComponent<Renderer>().sharedMaterials = array2;
+												array = array2;
+											}
+											for (int k = 0; k < Math.Min(array.Length, sharedMesh.subMeshCount); k++)
+											{
+												list2.Add(new MeshSubsetCombineUtility.SubMeshInstance
+												{
+													meshInstanceID = meshFilter.sharedMesh.GetInstanceID(),
+													vertexOffset = num,
+													subMeshIndex = k,
+													gameObjectInstanceID = gameObject.GetInstanceID(),
+													transform = item.transform
+												});
+												list3.Add(gameObject);
+											}
+											num += sharedMesh.vertexCount;
 										}
-										meshFilter.GetComponent<Renderer>().sharedMaterials = array2;
-										array = array2;
 									}
-									for (int k = 0; k < Math.Min(array.Length, sharedMesh.subMeshCount); k++)
-									{
-										list2.Add(new MeshSubsetCombineUtility.SubMeshInstance
-										{
-											meshInstanceID = meshFilter.sharedMesh.GetInstanceID(),
-											vertexOffset = num,
-											subMeshIndex = k,
-											gameObjectInstanceID = gameObject.GetInstanceID(),
-											transform = item.transform
-										});
-										list3.Add(gameObject);
-									}
-									num += sharedMesh.vertexCount;
 								}
 							}
 						}

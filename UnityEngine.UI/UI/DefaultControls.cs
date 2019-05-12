@@ -329,7 +329,6 @@ namespace UnityEngine.UI
 			image4.type = Image.Type.Sliced;
 			Text text2 = gameObject2.AddComponent<Text>();
 			DefaultControls.SetDefaultTextValues(text2);
-			text2.text = "Option A";
 			text2.alignment = TextAnchor.MiddleLeft;
 			Image image5 = gameObject3.AddComponent<Image>();
 			image5.sprite = resources.dropdown;
@@ -356,6 +355,7 @@ namespace UnityEngine.UI
 			{
 				text = "Option C"
 			});
+			dropdown.RefreshShownValue();
 			RectTransform component3 = gameObject2.GetComponent<RectTransform>();
 			component3.anchorMin = Vector2.zero;
 			component3.anchorMax = Vector2.one;

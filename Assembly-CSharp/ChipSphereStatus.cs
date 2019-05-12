@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ChipSphereStatus : MonoBehaviour
 {
-	[Header("MenuType")]
 	[SerializeField]
+	[Header("MenuType")]
 	private CMD_ChipSphere.MenuType myMenuType;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private UITexture chipTexture;
 
-	[Header("アイコンの個数/名前/進化段階名")]
 	[SerializeField]
+	[Header("アイコンの個数/名前/進化段階名")]
 	private UILabel chipNameLabel;
 
 	[Header("右下のメッセージ")]
@@ -40,8 +40,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private UILabel reinforcementButtonLabel;
 
-	[Header("ボタンのスプライト")]
 	[SerializeField]
+	[Header("ボタンのスプライト")]
 	private UISprite buttonSprite;
 
 	[SerializeField]
@@ -52,8 +52,8 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private BoxCollider buttonCollider;
 
-	[SerializeField]
 	[Header("強化ボタンのコライダー")]
+	[SerializeField]
 	private BoxCollider reinforcementButtonCollider;
 
 	private Color defaultButtonLabelEffectColor;

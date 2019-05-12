@@ -22,23 +22,13 @@ public class EnemyStatus : CharacterStatus
 	[NonSerialized]
 	private List<ItemDropResult> _itemDropResult = new List<ItemDropResult>();
 
-	public EnemyStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, EnemyAIPattern enemyAiPattern, int getChip, int getExp, EnemyDropItemPattern dropItemPattern, int[] chipIdList) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, tolerance, chipIdList)
-	{
-		this._enemyAiPattern = enemyAiPattern;
-		this._getChip = getChip;
-		this._getExp = getExp;
-		this._dropItemPattern = dropItemPattern;
-		this._itemDropResult = new List<ItemDropResult>();
-	}
-
-	public EnemyStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, EnemyAIPattern enemyAiPattern, int getChip, int getExp, List<ItemDropResult> itemDropResult, int[] chipIdList) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, tolerance, chipIdList)
+	public EnemyStatus(string prefabId, string groupId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, Tolerance tolerance, EnemyAIPattern enemyAiPattern, int getChip, int getExp, List<ItemDropResult> itemDropResult, string[] skillIds, int[] chipIdList, string[] monsterIntegrationIds) : base(prefabId, groupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, tolerance, skillIds, chipIdList, monsterIntegrationIds)
 	{
 		this._enemyAiPattern = enemyAiPattern;
 		this._getChip = getChip;
 		this._getExp = getExp;
 		this._dropItemPattern = new EnemyDropItemPattern(new DropAssetPattern[0]);
 		this._itemDropResult = itemDropResult;
-		base.skillIds = this._enemyAiPattern.GetAllSkillID();
 	}
 
 	public EnemyStatus()

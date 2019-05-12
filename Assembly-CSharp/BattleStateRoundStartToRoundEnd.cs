@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BattleStateRoundStartToRoundEnd : BattleStateController
 {
@@ -136,6 +137,17 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			character2.InitializeSpecialCorrectionStatus();
 		}
+		if (base.battleStateData.currentRoundNumber <= 1)
+		{
+			foreach (CharacterStateControl character3 in base.battleStateData.playerCharacters)
+			{
+				character3.InitChipEffectCountForWave();
+			}
+			foreach (CharacterStateControl character4 in base.battleStateData.enemies)
+			{
+				character4.InitChipEffectCountForWave();
+			}
+		}
 		base.SetState(this.subStateRoundStartAction.GetType());
 		while (base.isWaitState)
 		{
@@ -150,6 +162,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			if (!sortedCharacters[sortedIndex].isDied)
 			{
+				sortedCharacters[sortedIndex].InitChipEffectCountForTurn();
 				this.lastCharacter = sortedCharacters[sortedIndex];
 				base.stateManager.fraudCheck.FraudCheckOverflowMaxHp(sortedCharacters[sortedIndex]);
 				base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(sortedCharacters.ToArray());
@@ -160,7 +173,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 				{
 					yield return null;
 				}
-				sortedCharacter.OnChipTrigger(ChipEffectStatus.EffectTriggerType.TurnStarted, false);
+				sortedCharacter.OnChipTrigger(EffectStatusBase.EffectTriggerType.TurnStarted, false);
 				base.SetState(this.subStatePlayChipEffect.GetType());
 				while (base.isWaitState)
 				{
@@ -236,7 +249,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 				{
 					yield return null;
 				}
-				sortedCharacter.OnChipTrigger(ChipEffectStatus.EffectTriggerType.TurnEnd, false);
+				sortedCharacter.OnChipTrigger(EffectStatusBase.EffectTriggerType.TurnEnd, false);
 				base.SetState(this.subStatePlayChipEffect.GetType());
 				while (base.isWaitState)
 				{
@@ -249,13 +262,13 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 				}
 			}
 		}
-		foreach (CharacterStateControl character3 in base.battleStateData.playerCharacters)
+		foreach (CharacterStateControl character5 in base.battleStateData.playerCharacters)
 		{
-			character3.OnChipTrigger(ChipEffectStatus.EffectTriggerType.RoundEnd, false);
+			character5.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundEnd, false);
 		}
-		foreach (CharacterStateControl character4 in base.battleStateData.enemies)
+		foreach (CharacterStateControl character6 in base.battleStateData.enemies)
 		{
-			character4.OnChipTrigger(ChipEffectStatus.EffectTriggerType.RoundEnd, false);
+			character6.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundEnd, false);
 		}
 		base.SetState(this.subStatePlayChipEffect.GetType());
 		while (base.isWaitState)
@@ -267,7 +280,7 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			yield return null;
 		}
-		base.battleStateData.reqestStageEffectTriggerList.Add(ChipEffectStatus.EffectTriggerType.RoundEnd);
+		base.battleStateData.reqestStageEffectTriggerList.Add(EffectStatusBase.EffectTriggerType.RoundEnd);
 		base.SetState(typeof(SubStatePlayStageEffect));
 		while (base.isWaitState)
 		{
@@ -326,6 +339,49 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 
 	protected virtual IEnumerator SkillFunction()
 	{
+		base.stateManager.SetBattleScreen(BattleScreen.RoundActions);
+		base.stateManager.uiControl.ApplyTurnActionBarSwipeout(false);
+		foreach (CharacterStateControl character in base.battleStateData.playerCharacters)
+		{
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.AttackHit, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillStartedApMax, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.AttackCommandedTarget, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillSpecies, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillTargetSpecies, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillAttribute, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillRecieveAttribute, false);
+		}
+		foreach (CharacterStateControl character2 in base.battleStateData.enemies)
+		{
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.AttackHit, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillStartedApMax, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.AttackCommandedTarget, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillSpecies, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillTargetSpecies, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillAttribute, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillRecieveAttribute, false);
+		}
+		CharacterStateControl[] totalCharacters = base.stateManager.battleStateData.GetTotalCharacters();
+		if (totalCharacters.Where((CharacterStateControl item) => item.stagingChipIdList.Count > 0).Any<CharacterStateControl>())
+		{
+			base.stateManager.cameraControl.PlayTweenCameraMotion(base.battleStateData.commandSelectTweenTargetCamera, null);
+			base.stateManager.cameraControl.SetCameraLengthAction(base.battleStateData.commandSelectTweenTargetCamera);
+		}
+		base.SetState(this.subStateWaitForCertainPeriodTimeAction.GetType());
+		while (base.isWaitState)
+		{
+			yield return null;
+		}
+		base.SetState(this.subStatePlayChipEffect.GetType());
+		while (base.isWaitState)
+		{
+			yield return null;
+		}
+		IEnumerator skillStart = this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillStart);
+		while (skillStart.MoveNext())
+		{
+			yield return null;
+		}
 		if (this.lastCharacter.isEnemy)
 		{
 			BattleWave batteWave = base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber];
@@ -338,7 +394,6 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		{
 			this.lastCharacter.currentSkillStatus.OnAttackUseAttackerAp(this.lastCharacter);
 		}
-		base.stateManager.SetBattleScreen(BattleScreen.RoundActions);
 		if (this.lastCharacter.currentSkillStatus.skillType == SkillType.Attack)
 		{
 			base.battleStateData.isInvocationEffectPlaying = true;
@@ -370,6 +425,25 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 		}
 		base.battleStateData.isConfusionAttack = false;
 		this.isSkillEnd = true;
+		CharacterStateControl[] playerCharacters = base.stateManager.battleStateData.playerCharacters.Where((CharacterStateControl item) => !item.isDied && item.stagingChipIdList.Count > 0).ToArray<CharacterStateControl>();
+		CharacterStateControl[] enemies = base.stateManager.battleStateData.enemies.Where((CharacterStateControl item) => !item.isDied && item.stagingChipIdList.Count > 0).ToArray<CharacterStateControl>();
+		if (playerCharacters.Count<CharacterStateControl>() + enemies.Count<CharacterStateControl>() > 1)
+		{
+			base.stateManager.cameraControl.PlayTweenCameraMotion(base.battleStateData.commandSelectTweenTargetCamera, null);
+			base.stateManager.cameraControl.SetCameraLengthAction(base.battleStateData.commandSelectTweenTargetCamera);
+		}
+		else if (playerCharacters.Count<CharacterStateControl>() == 1)
+		{
+			string cameraKey = "skillF";
+			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, playerCharacters[0]);
+			base.stateManager.cameraControl.SetTime(cameraKey, 1f);
+		}
+		else if (enemies.Count<CharacterStateControl>() == 1)
+		{
+			string cameraKey2 = "skillF";
+			base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey2, enemies[0]);
+			base.stateManager.cameraControl.SetTime(cameraKey2, 1f);
+		}
 		base.SetState(this.subStateWaitForCertainPeriodTimeAction.GetType());
 		while (base.isWaitState)
 		{
@@ -381,6 +455,22 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 			yield return null;
 		}
 		base.stateManager.uiControl.ApplySkillName(false, string.Empty, null);
+		IEnumerator skillEnd = this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillEnd);
+		while (skillEnd.MoveNext())
+		{
+			yield return null;
+		}
+		yield break;
+	}
+
+	private IEnumerator PlayAdventureScene(BattleAdventureSceneManager.TriggerType triggerType)
+	{
+		base.stateManager.battleAdventureSceneManager.OnTrigger(triggerType);
+		IEnumerator update = base.stateManager.battleAdventureSceneManager.Update();
+		while (update.MoveNext())
+		{
+			yield return null;
+		}
 		yield break;
 	}
 
@@ -393,11 +483,11 @@ public class BattleStateRoundStartToRoundEnd : BattleStateController
 	{
 		foreach (CharacterStateControl character in base.battleStateData.playerCharacters)
 		{
-			character.OnChipTrigger(ChipEffectStatus.EffectTriggerType.WaveEnd, false);
+			character.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveEnd, false);
 		}
 		foreach (CharacterStateControl character2 in base.battleStateData.enemies)
 		{
-			character2.OnChipTrigger(ChipEffectStatus.EffectTriggerType.WaveEnd, false);
+			character2.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveEnd, false);
 		}
 		base.SetState(this.subStatePlayChipEffect.GetType());
 		while (base.isWaitState)

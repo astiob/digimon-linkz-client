@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,7 +48,7 @@ public sealed class FarmDigimon : MonoBehaviour
 
 	private MonsterData monsterData;
 
-	private MonsterData beforeMonsterData;
+	private string beforeFriendship;
 
 	public bool IsFriendShipUp = true;
 
@@ -497,12 +498,11 @@ public sealed class FarmDigimon : MonoBehaviour
 		{
 			if ((this.memoryNextTime - ServerDateTime.Now).TotalSeconds <= 0.0 && this.memoryNextTime != DateTime.MinValue)
 			{
-				int maxFriendship = CommonSentenceData.MaxFriendshipValue(this.monsterData.monsterMG.growStep);
+				int maxFriendship = MonsterFriendshipData.GetFriendshipMaxValue(this.monsterData.monsterMG.growStep);
 				int friendshipInt = int.Parse(this.monsterData.userMonster.friendship);
 				if (friendshipInt < maxFriendship)
 				{
-					this.beforeMonsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.monsterData.userMonster.monsterId);
-					this.beforeMonsterData.DuplicateUserMonster(this.monsterData.userMonster);
+					this.beforeFriendship = this.monsterData.userMonster.friendship;
 					this.UpFriendStatus();
 				}
 				else
@@ -551,8 +551,7 @@ public sealed class FarmDigimon : MonoBehaviour
 			{
 				if (this.digimonFriendShip.userMonster != null)
 				{
-					DataMng.Instance().SetUserMonster(this.digimonFriendShip.userMonster);
-					this.monsterData.DuplicateUserMonster(this.digimonFriendShip.userMonster);
+					ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(this.digimonFriendShip.userMonster);
 				}
 				base.StartCoroutine(this.PopFriendshipUpStatus());
 			}
@@ -580,11 +579,6 @@ public sealed class FarmDigimon : MonoBehaviour
 			friendship = value.ToString();
 		}
 		this.monsterData.userMonster.friendship = friendship;
-		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster = DataMng.Instance().GetUserMonster(this.userMonsterID);
-		if (userMonster != null)
-		{
-			userMonster.friendship = friendship;
-		}
 	}
 
 	private IEnumerator PopFriendshipUpStatus()
@@ -593,7 +587,7 @@ public sealed class FarmDigimon : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP") as CMD_FriendshipStatusUP;
 		cd.SetData(this.monsterData);
-		cd.SetChangeData(this.beforeMonsterData);
+		cd.SetChangeData(this.monsterData.userMonster.monsterId, this.beforeFriendship);
 		yield break;
 	}
 

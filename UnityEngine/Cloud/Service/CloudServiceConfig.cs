@@ -8,6 +8,12 @@ namespace UnityEngine.Cloud.Service
 	{
 		private int m_MaxNumberOfEventInGroup;
 
+		private int m_ArchivedSessionExpiryTimeInSec;
+
+		private int m_MaxContinuousRequest;
+
+		private int m_MaxContinuousRequestTimeoutInSec;
+
 		private string m_SessionHeaderName;
 
 		private string m_EventsHeaderName;
@@ -25,6 +31,42 @@ namespace UnityEngine.Cloud.Service
 			set
 			{
 				this.m_MaxNumberOfEventInGroup = value;
+			}
+		}
+
+		public int archivedSessionExpiryTimeInSec
+		{
+			get
+			{
+				return this.m_ArchivedSessionExpiryTimeInSec;
+			}
+			set
+			{
+				this.m_ArchivedSessionExpiryTimeInSec = value;
+			}
+		}
+
+		public int maxContinuousRequest
+		{
+			get
+			{
+				return this.m_MaxContinuousRequest;
+			}
+			set
+			{
+				this.m_MaxContinuousRequest = value;
+			}
+		}
+
+		public int maxContinuousRequestTimeoutInSec
+		{
+			get
+			{
+				return this.m_MaxContinuousRequestTimeoutInSec;
+			}
+			set
+			{
+				this.m_MaxContinuousRequestTimeoutInSec = value;
 			}
 		}
 

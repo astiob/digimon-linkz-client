@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,12 +50,12 @@ public sealed class SortieLimitList : MonoBehaviour
 		{
 			if (num < this.tribeList.Length)
 			{
-				string tribe = CommonSentenceData.GetTribe(limitList[i].tribe);
-				if (!list.Contains(tribe))
+				string tribeName = MonsterTribeData.GetTribeName(limitList[i].tribe);
+				if (!list.Contains(tribeName))
 				{
-					list.Add(tribe);
+					list.Add(tribeName);
 					this.tribeList[num].gameObject.SetActive(true);
-					this.tribeList[num].SetText(tribe);
+					this.tribeList[num].SetText(tribeName);
 					num++;
 				}
 			}
@@ -67,15 +68,15 @@ public sealed class SortieLimitList : MonoBehaviour
 		int num = 0;
 		for (int i = 0; i < limitList.Count; i++)
 		{
-			string grade = CommonSentenceData.GetGrade(limitList[i].growStep);
-			if (!list.Contains(grade))
+			string growStepName = MonsterGrowStepData.GetGrowStepName(limitList[i].growStep);
+			if (!list.Contains(growStepName))
 			{
 				SortieLimitListItem growStepListItem = this.GetGrowStepListItem();
 				if (null != growStepListItem)
 				{
-					list.Add(grade);
+					list.Add(growStepName);
 					growStepListItem.gameObject.SetActive(true);
-					growStepListItem.SetText(grade);
+					growStepListItem.SetText(growStepName);
 					num++;
 				}
 			}

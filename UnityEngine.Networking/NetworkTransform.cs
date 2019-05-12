@@ -337,6 +337,11 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		public override void OnStartServer()
+		{
+			this.m_LastClientSyncTime = 0f;
+		}
+
 		public override bool OnSerialize(NetworkWriter writer, bool initialState)
 		{
 			if (!initialState)

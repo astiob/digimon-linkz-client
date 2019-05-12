@@ -14,12 +14,12 @@ public class CustomUISpriteAnimation : MonoBehaviour
 	[SerializeField]
 	protected string mPrefix = string.Empty;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected bool mLoop = true;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mSnap = true;
 
 	protected UISprite mSprite;

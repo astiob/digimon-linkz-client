@@ -6,6 +6,8 @@ namespace UnityEngine.UI
 	[AddComponentMenu("UI/Effects/Shadow", 14)]
 	public class Shadow : BaseMeshEffect
 	{
+		private const float kMaxEffectDistance = 600f;
+
 		[SerializeField]
 		private Color m_EffectColor = new Color(0f, 0f, 0f, 0.5f);
 
@@ -89,7 +91,7 @@ namespace UnityEngine.UI
 
 		protected void ApplyShadowZeroAlloc(List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
 		{
-			int num = verts.Count * 2;
+			int num = verts.Count + end - start;
 			if (verts.Capacity < num)
 			{
 				verts.Capacity = num;
@@ -114,11 +116,6 @@ namespace UnityEngine.UI
 
 		protected void ApplyShadow(List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
 		{
-			int num = verts.Count * 2;
-			if (verts.Capacity < num)
-			{
-				verts.Capacity = num;
-			}
 			this.ApplyShadowZeroAlloc(verts, color, start, end, x, y);
 		}
 

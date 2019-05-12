@@ -27,6 +27,8 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 
 	private Vector3 vScl_bak;
 
+	private Func<MonsterData, bool> actionCheckEnablePush;
+
 	public CMD_BaseSelect.BASE_TYPE BaseType { private get; set; }
 
 	protected override void Awake()
@@ -145,7 +147,6 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 				monsterCS_ByMonsterData.SetTouchAct_S(null);
 			}
 		}
-		monsterDataList = MonsterDataMng.Instance().SelectionMDList(monsterDataList);
 		MonsterDataMng.Instance().PushBackAllMonsterPrefab();
 		base.InitScrollBar();
 		base.SetSelectPanelParam();
@@ -204,7 +205,7 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 			monsterCS_ByMonsterData2.SetTouchAct_L(actL);
 			if (!rebuild || monsterCS_ByMonsterData2.GetTouchAct_S() == null)
 			{
-				if (monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.ACTIVE || monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE)
+				if (this.IsEnablePush(monsterData))
 				{
 					monsterCS_ByMonsterData2.SetTouchAct_S(actS);
 				}
@@ -212,21 +213,6 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 				{
 					monsterCS_ByMonsterData2.SetTouchAct_S(null);
 				}
-			}
-			monsterCS_ByMonsterData2.DimmLevel = monsterData.dimmLevel;
-			monsterCS_ByMonsterData2.SelectNum = monsterData.selectNum;
-			monsterCS_ByMonsterData2.DimmMess = monsterData.dimmMess;
-			if (this.BaseType == CMD_BaseSelect.BASE_TYPE.EVOLVE)
-			{
-			}
-			monsterCS_ByMonsterData2.New = monsterData.New;
-			monsterData.Lock = monsterData.userMonster.IsLocked;
-			monsterCS_ByMonsterData2.Lock = monsterData.Lock;
-			if (this.BaseType == CMD_BaseSelect.BASE_TYPE.MEAL && monsterData.IsLevelMax())
-			{
-				monsterCS_ByMonsterData2.DimmLevel = GUIMonsterIcon.DIMM_LEVEL.DISABLE;
-				monsterCS_ByMonsterData2.Lock = monsterData.userMonster.IsLocked;
-				monsterCS_ByMonsterData2.SetTouchAct_S(null);
 			}
 			num3++;
 			if (num3 % this.PARTS_CT_MN == 0)
@@ -258,13 +244,26 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 				MonsterData data = guimonsterIcon.Data;
 				if (data != null && !ClassSingleton<QuestData>.Instance.CheckSortieLimit(limitList, data.monsterMG.tribe, data.monsterMG.growStep))
 				{
-					data.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.DISABLE;
-					data.dimmMess = StringMaster.GetString("PartySortieLimitNG");
 					guimonsterIcon.SetCenterText(StringMaster.GetString("PartySortieLimitNG"), GUIMonsterIcon.DimmMessColorType.SORTIE_LIMIT);
 					guimonsterIcon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.DISABLE);
 					guimonsterIcon.SetTouchAct_S(null);
 				}
 			}
 		}
+	}
+
+	public bool IsEnablePush(MonsterData monsterData)
+	{
+		bool result = true;
+		if (this.actionCheckEnablePush != null)
+		{
+			result = this.actionCheckEnablePush(monsterData);
+		}
+		return result;
+	}
+
+	public void SetCheckEnablePushAction(Func<MonsterData, bool> action)
+	{
+		this.actionCheckEnablePush = action;
 	}
 }

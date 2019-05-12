@@ -22,16 +22,16 @@ public class CMD_Training_Menu : CMD
 	[SerializeField]
 	private GUISelectPanelViewPartsUD csSelectPanel;
 
-	[Header("非アクティブ ベース 色")]
 	[SerializeField]
+	[Header("非アクティブ ベース 色")]
 	private Color colBase;
 
-	[Header("非アクティブ タイトル 色")]
 	[SerializeField]
+	[Header("非アクティブ タイトル 色")]
 	private Color colTitle;
 
-	[SerializeField]
 	[Header("非アクティブ 【】 色")]
+	[SerializeField]
 	private Color colLR;
 
 	[SerializeField]

@@ -8,7 +8,7 @@ namespace MultiBattle.Tools
 	{
 		public static MonsterData MakeAndSetMonster(GameWebAPI.Common_MonsterData monsterData)
 		{
-			return monsterData.ToMonsterData();
+			return new MonsterData(monsterData.ToUserMonsterList());
 		}
 
 		public static void DispLoading(bool isLoading, RestrictionInput.LoadType loadType = RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON)

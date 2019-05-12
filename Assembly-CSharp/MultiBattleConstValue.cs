@@ -14,6 +14,10 @@ public static class MultiBattleConstValue
 
 	public const string TCP_KEY_FAILED_PLAYER = "800012";
 
+	public const string TCP_KEY_PVP_ENEMY = "enemyData";
+
+	public const string TCP_KEY_PVP_ENEMY_RECEIVE = "enemyDataReceive";
+
 	public const string TCP_KEY_MULTI_BATTLE_RESUME = "820106";
 
 	public const string TCP_KEY_PVP_BATTLE_START = "080108";

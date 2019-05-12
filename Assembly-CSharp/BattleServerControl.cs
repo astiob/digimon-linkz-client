@@ -2,6 +2,8 @@
 using Enemy.AI;
 using Enemy.DropItem;
 using Master;
+using Monster;
+using MultiBattle.Tools;
 using Quest;
 using System;
 using System.Collections;
@@ -13,43 +15,22 @@ using UnityExtension;
 
 public class BattleServerControl : BattleFunctionBase
 {
-	public Dictionary<int, PlayerStatus> _cachedPlayerStatus = new Dictionary<int, PlayerStatus>();
-
-	public Dictionary<int, EnemyStatus> _cachedEnemyStatus = new Dictionary<int, EnemyStatus>();
-
-	public Dictionary<string, CharacterDatas> _cachedCharacterDatas = new Dictionary<string, CharacterDatas>();
-
-	public Dictionary<string, SkillStatus> _cachedSkillStatus = new Dictionary<string, SkillStatus>();
-
-	public Dictionary<string, LeaderSkillStatus> _cachedLeaderSkillStatus = new Dictionary<string, LeaderSkillStatus>();
-
-	public Dictionary<string, GameWebAPI.RespDataMA_GetSkillM.SkillM> _cachedLeaderSkillM = new Dictionary<string, GameWebAPI.RespDataMA_GetSkillM.SkillM>();
-
-	public Dictionary<string, Tolerance> _cachedTolerance = new Dictionary<string, Tolerance>();
-
-	public Dictionary<string, ExtraEffectStatus> _cachedExtraEffectStatus = new Dictionary<string, ExtraEffectStatus>();
-
-	public GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM _cachedWorldDungeonM;
-
-	public string _startId;
-
-	public string[] _userMonsterId;
-
 	public override void BattleAwakeInitialize()
 	{
 	}
 
 	public override void BattleTriggerInitialize()
 	{
+		this.InitBattleAdventureSceneManager();
 		if (base.onServerConnect)
 		{
 			if (base.stateManager.battleMode == BattleMode.PvP)
 			{
-				base.stateManager.pvpFunction.GetBattleData();
+				this.GetPvPBattleData();
 			}
 			else if (base.stateManager.battleMode == BattleMode.Multi)
 			{
-				base.stateManager.multiFunction.GetBattleData();
+				this.GetMultiBattleData();
 			}
 			else
 			{
@@ -58,20 +39,46 @@ public class BattleServerControl : BattleFunctionBase
 		}
 	}
 
-	public void GetBattleData()
+	private void InitBattleAdventureSceneManager()
+	{
+		if (base.onServerConnect)
+		{
+			GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene[] worldDungeonAdventureScenes = null;
+			GameWebAPI.RespDataMA_WorldDungeonAdventureSceneMaster.WorldDungeonAdventureScene[] worldDungeonAdventureSceneM = MasterDataMng.Instance().ResponseWorldDungeonAdventureSceneMaster.worldDungeonAdventureSceneM;
+			if (worldDungeonAdventureSceneM != null)
+			{
+				string text = string.Empty;
+				if (base.stateManager.battleMode == BattleMode.Multi)
+				{
+					text = DataMng.Instance().RespData_WorldMultiStartInfo.worldDungeonId;
+				}
+				else if (base.stateManager.battleMode == BattleMode.PvP)
+				{
+					text = ClassSingleton<MultiBattleData>.Instance.PvPField.worldDungeonId;
+				}
+				else
+				{
+					text = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart.worldDungeonId;
+				}
+			}
+			base.stateManager.battleAdventureSceneManager = new BattleAdventureSceneManager(worldDungeonAdventureScenes);
+		}
+		else
+		{
+			base.stateManager.battleAdventureSceneManager = new BattleAdventureSceneManager(null);
+		}
+	}
+
+	private void GetBattleData()
 	{
 		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
-		GameWebAPI.WD_Req_DngResult wd_ReqDngResult = DataMng.Instance().WD_ReqDngResult;
-		this._startId = respDataWD_DungeonStart.startId;
-		wd_ReqDngResult.startId = this._startId;
-		wd_ReqDngResult.dungeonId = respDataWD_DungeonStart.worldDungeonId;
-		this._cachedSkillStatus.Add(base.stateManager.publicAttackSkillId.Trim(), this.SkillMToSkillStatus(base.stateManager.publicAttackSkillId));
-		this._userMonsterId = respDataWD_DungeonStart.deck.userMonsterIds;
-		base.hierarchyData.usePlayerCharactersId = new string[this._userMonsterId.Length];
-		for (int i = 0; i < base.hierarchyData.usePlayerCharactersId.Length; i++)
+		DataMng.Instance().WD_ReqDngResult.startId = respDataWD_DungeonStart.startId;
+		DataMng.Instance().WD_ReqDngResult.dungeonId = respDataWD_DungeonStart.worldDungeonId;
+		base.hierarchyData.startId = respDataWD_DungeonStart.startId;
+		base.hierarchyData.usePlayerCharacters = new PlayerStatus[respDataWD_DungeonStart.deck.userMonsterIds.Length];
+		for (int i = 0; i < base.hierarchyData.usePlayerCharacters.Length; i++)
 		{
-			base.hierarchyData.usePlayerCharactersId[i] = i.ToString();
-			this._cachedPlayerStatus.Add(i, this.DeckToPlayerStatus(respDataWD_DungeonStart.deck.userMonsterIds[i]));
+			base.hierarchyData.usePlayerCharacters[i] = this.DeckToPlayerStatus(respDataWD_DungeonStart.deck.userMonsterIds[i]);
 		}
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.GetWorldDungeonM(respDataWD_DungeonStart.worldDungeonId);
 		base.hierarchyData.useStageId = worldDungeonM.background;
@@ -87,14 +94,17 @@ public class BattleServerControl : BattleFunctionBase
 				break;
 			}
 		}
-		base.hierarchyData.extraEffectsId = this.SetWorldDungeonExtraEffect(respDataWD_DungeonStart.worldDungeonId);
+		this.InitExtraEffectStatus(respDataWD_DungeonStart.worldDungeonId);
 		base.hierarchyData.battleNum = worldDungeonM.battleNum;
-		base.hierarchyData.batteWaves = this.DungeonFloorToBattleWave(respDataWD_DungeonStart.dungeonFloor, respDataWD_DungeonStart.worldDungeonId);
+		base.hierarchyData.batteWaves = this.DungeonFloorToBattleWave(respDataWD_DungeonStart.dungeonFloor, worldDungeonM);
 		base.hierarchyData.digiStoneNumber = DataMng.Instance().GetStone();
 		base.battleStateData.beforeConfirmDigiStoneNumber = base.hierarchyData.digiStoneNumber;
 		base.hierarchyData.isPossibleContinue = (int.Parse(worldDungeonM.canContinue) == 1);
-		string[] array2 = new string[this._cachedLeaderSkillM.Keys.Count];
-		this._cachedLeaderSkillM.Keys.CopyTo(array2, 0);
+		this.InitialIntroduction();
+	}
+
+	private void InitialIntroduction()
+	{
 		base.hierarchyData.useInitialIntroduction = DataMng.Instance().IsBattleFailShowDungeon;
 		base.hierarchyData.initialIntroductionIndex = 0;
 		if (PlayerPrefs.HasKey("BATTLE_LOSE_COUNT"))
@@ -121,27 +131,95 @@ public class BattleServerControl : BattleFunctionBase
 		base.hierarchyData.initialIntroductionMessage = list2.ToArray();
 	}
 
-	public void SetBattleResult(DataMng.ClearFlag onClearBattle, bool[] characterAliveFlags, bool isRetire, int[][] enemyAliveList)
+	private void GetMultiBattleData()
 	{
-		DataMng.Instance().SetClearFlag(onClearBattle);
-		DataMng.Instance().SetAliveFlag(characterAliveFlags);
-		DataMng.Instance().SetEnemyAliveFlag(enemyAliveList);
-		DataMng.Instance().AddStone(base.battleStateData.beforeConfirmDigiStoneNumber - DataMng.Instance().GetStone());
-		if (!isRetire && onClearBattle != DataMng.ClearFlag.Win)
+		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
+		DataMng.Instance().WD_ReqDngResult.startId = respData_WorldMultiStartInfo.startId;
+		DataMng.Instance().WD_ReqDngResult.dungeonId = respData_WorldMultiStartInfo.worldDungeonId;
+		base.hierarchyData.startId = respData_WorldMultiStartInfo.startId;
+		int num = 3;
+		string[] playerUserMonsterIds = ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds;
+		base.hierarchyData.usePlayerCharacters = new PlayerStatus[num];
+		for (int i = 0; i < respData_WorldMultiStartInfo.party.Length; i++)
 		{
-			if (!base.hierarchyData.useInitialIntroduction)
+			GameWebAPI.RespData_WorldMultiStartInfo.Party party = respData_WorldMultiStartInfo.party[i];
+			for (int j = 0; j < party.userMonsters.Length; j++)
 			{
-				return;
+				for (int k = 0; k < num; k++)
+				{
+					GameWebAPI.Common_MonsterData common_MonsterData = party.userMonsters[j];
+					if (playerUserMonsterIds[k] == common_MonsterData.userMonsterId)
+					{
+						base.hierarchyData.usePlayerCharacters[k] = this.ConvertAPIParamsToPlayerStatus(common_MonsterData);
+					}
+				}
 			}
-			PlayerPrefs.SetInt("BATTLE_LOSE_COUNT", Mathf.Clamp(base.hierarchyData.initialIntroductionIndex + 1, 0, base.hierarchyData.maxInitialIntroductionIndex + 1));
-			PlayerPrefs.Save();
 		}
+		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.GetWorldDungeonM(respData_WorldMultiStartInfo.worldDungeonId);
+		base.hierarchyData.useStageId = worldDungeonM.background;
+		base.hierarchyData.areaName = worldDungeonM.name;
+		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
+		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
+		{
+			if (worldDungeonM.worldStageId == worldStageM2.worldStageId)
+			{
+				base.hierarchyData.areaId = worldStageM2.worldAreaId.ToInt32();
+				break;
+			}
+		}
+		this.InitExtraEffectStatus(worldDungeonM.worldDungeonId);
+		base.hierarchyData.isPossibleContinue = (int.Parse(worldDungeonM.canContinue) == 1);
+		base.hierarchyData.battleNum = worldDungeonM.battleNum;
+		base.hierarchyData.batteWaves = this.DungeonFloorToBattleWave(respData_WorldMultiStartInfo.dungeonFloor, worldDungeonM);
+		base.hierarchyData.digiStoneNumber = DataMng.Instance().GetStone();
+		base.battleStateData.beforeConfirmDigiStoneNumber = base.hierarchyData.digiStoneNumber;
+		base.hierarchyData.playerPursuitPercentage = ServerToBattleUtility.PermillionToPercentage(respData_WorldMultiStartInfo.criticalRate.partyCriticalRate);
+		base.hierarchyData.enemyPursuitPercentage = ServerToBattleUtility.PermillionToPercentage(respData_WorldMultiStartInfo.criticalRate.enemyCriticalRate);
 	}
 
-	public BattleWave[] DungeonFloorToBattleWave(GameWebAPI.RespDataWD_DungeonStart.DungeonFloor[] floor, string worldDungeonId)
+	private void GetPvPBattleData()
 	{
-		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.GetWorldDungeonM(worldDungeonId);
-		GameWebAPI.RespDataWD_DungeonStart.DungeonFloor dungeonFloor = null;
+		MultiBattleData.PvPUserData pvPUserData = null;
+		foreach (MultiBattleData.PvPUserData pvPUserData2 in ClassSingleton<MultiBattleData>.Instance.PvPUserDatas)
+		{
+			bool flag = pvPUserData2.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId;
+			if (flag)
+			{
+				pvPUserData = pvPUserData2;
+				break;
+			}
+		}
+		base.hierarchyData.usePlayerCharacters = new PlayerStatus[3];
+		for (int j = 0; j < base.hierarchyData.usePlayerCharacters.Length; j++)
+		{
+			base.hierarchyData.usePlayerCharacters[j] = this.ConvertAPIParamsToPlayerStatus(pvPUserData.monsterData[j]);
+		}
+		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.GetWorldDungeonM(ClassSingleton<MultiBattleData>.Instance.PvPField.worldDungeonId);
+		base.hierarchyData.useStageId = worldDungeonM.background;
+		base.hierarchyData.areaName = worldDungeonM.name;
+		base.hierarchyData.limitRound = int.Parse(worldDungeonM.limitRound);
+		base.hierarchyData.speedClearRound = int.Parse(worldDungeonM.speedClearRound);
+		GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+		foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
+		{
+			if (worldDungeonM.worldStageId == worldStageM2.worldStageId)
+			{
+				base.hierarchyData.areaId = worldStageM2.worldAreaId.ToInt32();
+				break;
+			}
+		}
+		base.hierarchyData.isPossibleContinue = (int.Parse(worldDungeonM.canContinue) == 1);
+		this.InitExtraEffectStatus(worldDungeonM.worldDungeonId);
+		base.hierarchyData.battleNum = worldDungeonM.battleNum;
+		base.hierarchyData.batteWaves = this.DungeonFloorToBattleWave(worldDungeonM);
+		base.hierarchyData.digiStoneNumber = DataMng.Instance().GetStone();
+		base.battleStateData.beforeConfirmDigiStoneNumber = base.stateManager.hierarchyData.digiStoneNumber;
+	}
+
+	private BattleWave[] DungeonFloorToBattleWave(GameWebAPI.RespDataWD_DungeonStart.DungeonFloor[] floor, GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM)
+	{
 		BattleWave[] array = new BattleWave[floor.Length];
 		for (int i = 0; i < array.Length; i++)
 		{
@@ -152,18 +230,17 @@ public class BattleServerControl : BattleFunctionBase
 			battleWave.useEnemiesId = new string[floor[i].enemy.Length];
 			battleWave.enemiesBossFlag = new bool[battleWave.useEnemiesId.Length];
 			battleWave.enemiesInfinityApFlag = new bool[battleWave.useEnemiesId.Length];
+			battleWave.enemyStatuses = new EnemyStatus[battleWave.useEnemiesId.Length];
 			for (int j = 0; j < battleWave.useEnemiesId.Length; j++)
 			{
-				battleWave.useEnemiesId[j] = (i * 10 + j).ToString();
+				int num = i * 10 + j;
+				battleWave.useEnemiesId[j] = num.ToString();
 				EnemyType type = (EnemyType)floor[i].enemy[j].type;
 				battleWave.enemiesBossFlag[j] = this.CheckBossFlag(type);
 				battleWave.enemiesInfinityApFlag[j] = this.CheckInfinityAp(type);
-				this._cachedEnemyStatus.Add(i * 10 + j, this.EnemyToEnemyStatus(floor[i].enemy[j]));
+				battleWave.enemyStatuses[j] = this.EnemyToEnemyStatus(floor[i].enemy[j]);
 			}
-			if (dungeonFloor != null)
-			{
-				battleWave.hpRevivalPercentage = ServerToBattleUtility.PermillionToPercentage(dungeonFloor.healingRate);
-			}
+			battleWave.hpRevivalPercentage = ServerToBattleUtility.PermillionToPercentage(floor[i].healingRate);
 			if (BoolExtension.AllMachValue(false, battleWave.enemiesBossFlag))
 			{
 				battleWave.bgmId = worldDungeonM.bgm;
@@ -175,7 +252,46 @@ public class BattleServerControl : BattleFunctionBase
 				battleWave.changedBgmId = worldDungeonM.exBossBgm;
 			}
 			array[i] = battleWave;
-			dungeonFloor = floor[i];
+		}
+		return array;
+	}
+
+	private BattleWave[] DungeonFloorToBattleWave(GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM)
+	{
+		MultiBattleData.PvPUserData pvPUserData = null;
+		foreach (MultiBattleData.PvPUserData pvPUserData2 in ClassSingleton<MultiBattleData>.Instance.PvPUserDatas)
+		{
+			if (!(pvPUserData2.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId))
+			{
+				pvPUserData = pvPUserData2;
+				break;
+			}
+		}
+		BattleWave[] array = new BattleWave[1];
+		for (int j = 0; j < array.Length; j++)
+		{
+			BattleWave battleWave = new BattleWave();
+			battleWave.useEnemiesId = new string[pvPUserData.monsterData.Length];
+			battleWave.enemiesBossFlag = new bool[battleWave.useEnemiesId.Length];
+			battleWave.enemyStatuses = new CharacterStatus[battleWave.useEnemiesId.Length];
+			for (int k = 0; k < pvPUserData.monsterData.Length; k++)
+			{
+				int num = (j + 1) * 10 + k;
+				battleWave.useEnemiesId[k] = num.ToString();
+				battleWave.enemiesBossFlag[k] = false;
+				battleWave.enemyStatuses[k] = this.ConvertAPIParamsToPlayerStatus(pvPUserData.monsterData[k]);
+			}
+			if (BoolExtension.AllMachValue(false, battleWave.enemiesBossFlag))
+			{
+				battleWave.bgmId = worldDungeonM.bgm;
+			}
+			else
+			{
+				battleWave.bgmId = worldDungeonM.bossBgm;
+				battleWave.bgmChangeHpPercentage = ServerToBattleUtility.PermillionToPercentage(worldDungeonM.exBossBgmCondition);
+				battleWave.changedBgmId = worldDungeonM.exBossBgm;
+			}
+			array[j] = battleWave;
 		}
 		return array;
 	}
@@ -193,75 +309,129 @@ public class BattleServerControl : BattleFunctionBase
 	private PlayerStatus DeckToPlayerStatus(string userMonsterId)
 	{
 		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
-		string monsterGroupId = monsterDataByUserMonsterID.monsterM.monsterGroupId;
-		int arousal = monsterDataByUserMonsterID.monsterM.GetArousal();
-		int friendshipLevel = monsterDataByUserMonsterID.userMonster.friendship.ToInt32();
-		int hp = monsterDataByUserMonsterID.userMonster.hp.ToInt32();
-		int attackPower = monsterDataByUserMonsterID.userMonster.attack.ToInt32();
-		int defencePower = monsterDataByUserMonsterID.userMonster.defense.ToInt32();
-		int specialAttackPower = monsterDataByUserMonsterID.userMonster.spAttack.ToInt32();
-		int specialDefencePower = monsterDataByUserMonsterID.userMonster.spDefense.ToInt32();
-		int speed = monsterDataByUserMonsterID.userMonster.speed.ToInt32();
-		int maxAttackPower = monsterDataByUserMonsterID.monsterM.maxAttack.ToInt32();
-		int maxDefencePower = monsterDataByUserMonsterID.monsterM.maxDefense.ToInt32();
-		int maxSpecialAttackPower = monsterDataByUserMonsterID.monsterM.maxSpAttack.ToInt32();
-		int maxSpecialDefencePower = monsterDataByUserMonsterID.monsterM.maxSpDefense.ToInt32();
-		int maxSpeed = monsterDataByUserMonsterID.monsterM.speed.ToInt32();
-		int level = monsterDataByUserMonsterID.userMonster.level.ToInt32();
-		string resistanceId = monsterDataByUserMonsterID.monsterM.resistanceId;
-		int luck = monsterDataByUserMonsterID.userMonster.luck.ToInt32();
-		string uniqueSkillId = monsterDataByUserMonsterID.userMonster.uniqueSkillId;
-		string commonSkillId = monsterDataByUserMonsterID.userMonster.commonSkillId;
-		string extraCommonSkillId = monsterDataByUserMonsterID.userMonster.extraCommonSkillId;
-		string text = monsterDataByUserMonsterID.userMonster.leaderSkillId.Equals("0") ? string.Empty : monsterDataByUserMonsterID.userMonster.leaderSkillId;
-		string iconId = monsterDataByUserMonsterID.monsterM.iconId;
-		Talent talent = new Talent(monsterDataByUserMonsterID.userMonster);
-		FriendshipStatus friendshipStatus = new FriendshipStatus(friendshipLevel, maxAttackPower, maxDefencePower, maxSpecialAttackPower, maxSpecialDefencePower, maxSpeed);
-		if (!this._cachedTolerance.ContainsKey(resistanceId.Trim()))
-		{
-			this._cachedTolerance.Add(resistanceId.Trim(), this.ResistanceToTolerance(resistanceId));
-		}
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = monsterDataByUserMonsterID.AddResistanceFromMultipleTranceData();
-		Tolerance tolerance = this.ResistanceToTolerance(data);
 		List<int> list = new List<int>();
-		if (monsterDataByUserMonsterID.userMonsterSlotInfo != null && monsterDataByUserMonsterID.userMonsterSlotInfo.equip != null)
+		GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip[] slotEquip = monsterDataByUserMonsterID.GetSlotEquip();
+		foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip in slotEquip)
 		{
-			foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip2 in monsterDataByUserMonsterID.userMonsterSlotInfo.equip)
+			GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(equip.userChipId);
+			list.Add(userChip.chipId);
+		}
+		return this.ConvertMonsterDataToPlayerStatus(userMonsterId, monsterDataByUserMonsterID, list);
+	}
+
+	private PlayerStatus ConvertAPIParamsToPlayerStatus(GameWebAPI.Common_MonsterData commonMonsterData)
+	{
+		MonsterData monsterData = MultiTools.MakeAndSetMonster(commonMonsterData);
+		List<int> list = new List<int>();
+		if (commonMonsterData.chipIdList != null && commonMonsterData.chipIdList.Length > 0)
+		{
+			foreach (int item in commonMonsterData.chipIdList)
 			{
-				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipDataByUserChipId = ChipDataMng.GetUserChipDataByUserChipId(equip2.userChipId);
-				list.Add(userChipDataByUserChipId.chipId);
+				list.Add(item);
 			}
 		}
-		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, extraCommonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
-		if (!this._cachedSkillStatus.ContainsKey(uniqueSkillId.Trim()))
+		return this.ConvertMonsterDataToPlayerStatus(commonMonsterData.userMonsterId, monsterData, list);
+	}
+
+	private PlayerStatus ConvertMonsterDataToPlayerStatus(string userMonsterId, MonsterData monsterData, List<int> chipIdList)
+	{
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterData.monsterM.monsterGroupId);
+		string monsterId = monsterData.monsterM.monsterId;
+		string monsterGroupId = monsterGroupMasterByMonsterGroupId.monsterGroupId;
+		string monsterGroupId2 = monsterData.monsterM.monsterGroupId;
+		int arousal = monsterData.monsterM.GetArousal();
+		int friendshipLevel = monsterData.userMonster.friendship.ToInt32();
+		int hp = monsterData.userMonster.hp.ToInt32();
+		int attackPower = monsterData.userMonster.attack.ToInt32();
+		int defencePower = monsterData.userMonster.defense.ToInt32();
+		int specialAttackPower = monsterData.userMonster.spAttack.ToInt32();
+		int specialDefencePower = monsterData.userMonster.spDefense.ToInt32();
+		int speed = monsterData.userMonster.speed.ToInt32();
+		int maxAttackPower = monsterData.monsterM.maxAttack.ToInt32();
+		int maxDefencePower = monsterData.monsterM.maxDefense.ToInt32();
+		int maxSpecialAttackPower = monsterData.monsterM.maxSpAttack.ToInt32();
+		int maxSpecialDefencePower = monsterData.monsterM.maxSpDefense.ToInt32();
+		int maxSpeed = monsterData.monsterM.speed.ToInt32();
+		int level = monsterData.userMonster.level.ToInt32();
+		int luck = monsterData.userMonster.luck.ToInt32();
+		string text = monsterData.userMonster.leaderSkillId.Equals("0") ? string.Empty : monsterData.userMonster.leaderSkillId;
+		string iconId = monsterData.monsterM.iconId;
+		Talent talent = new Talent(monsterData.userMonster);
+		FriendshipStatus friendshipStatus = new FriendshipStatus(friendshipLevel, maxAttackPower, maxDefencePower, maxSpecialAttackPower, maxSpecialDefencePower, maxSpeed);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(monsterData.monsterM.resistanceId);
+		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
+		Tolerance tolerance = ServerToBattleUtility.ResistanceToTolerance(data);
+		List<string> list = new List<string>();
+		if (!string.IsNullOrEmpty(base.stateManager.publicAttackSkillId))
 		{
-			this._cachedSkillStatus.Add(uniqueSkillId.Trim(), this.SkillMToSkillStatus(uniqueSkillId));
+			SkillStatus skillStatus = this.SkillMToSkillStatus(base.stateManager.publicAttackSkillId);
+			if (skillStatus != null)
+			{
+				list.Add(base.stateManager.publicAttackSkillId);
+				base.hierarchyData.AddSkillStatus(base.stateManager.publicAttackSkillId, skillStatus);
+			}
 		}
-		if (!this._cachedSkillStatus.ContainsKey(commonSkillId.Trim()))
+		if (!string.IsNullOrEmpty(monsterData.userMonster.uniqueSkillId))
 		{
-			this._cachedSkillStatus.Add(commonSkillId.Trim(), this.SkillMToSkillStatus(commonSkillId));
+			SkillStatus skillStatus2 = this.SkillMToSkillStatus(monsterData.userMonster.uniqueSkillId);
+			if (skillStatus2 != null)
+			{
+				list.Add(monsterData.userMonster.uniqueSkillId);
+				base.hierarchyData.AddSkillStatus(monsterData.userMonster.uniqueSkillId, skillStatus2);
+			}
 		}
-		if (!string.IsNullOrEmpty(extraCommonSkillId) && !this._cachedSkillStatus.ContainsKey(extraCommonSkillId.Trim()))
+		if (!string.IsNullOrEmpty(monsterData.userMonster.commonSkillId))
 		{
-			this._cachedSkillStatus.Add(extraCommonSkillId.Trim(), this.SkillMToSkillStatus(extraCommonSkillId));
+			SkillStatus skillStatus3 = this.SkillMToSkillStatus(monsterData.userMonster.commonSkillId);
+			if (skillStatus3 != null)
+			{
+				list.Add(monsterData.userMonster.commonSkillId);
+				base.hierarchyData.AddSkillStatus(monsterData.userMonster.commonSkillId, skillStatus3);
+			}
 		}
-		if (!this._cachedLeaderSkillStatus.ContainsKey(text.Trim()) && !text.Equals(string.Empty))
+		if (!string.IsNullOrEmpty(monsterData.userMonster.extraCommonSkillId))
 		{
-			GameWebAPI.RespDataMA_GetSkillM.SkillM value;
-			this._cachedLeaderSkillStatus.Add(text.Trim(), this.SkillMToLeaderSkillStatus(text, out value));
-			this._cachedLeaderSkillM.Add(text.Trim(), value);
+			SkillStatus skillStatus4 = this.SkillMToSkillStatus(monsterData.userMonster.extraCommonSkillId);
+			if (skillStatus4 != null)
+			{
+				list.Add(monsterData.userMonster.extraCommonSkillId);
+				base.hierarchyData.AddSkillStatus(monsterData.userMonster.extraCommonSkillId, skillStatus4);
+			}
 		}
-		if (!this._cachedCharacterDatas.ContainsKey(monsterGroupId.Trim()))
+		foreach (int num in chipIdList)
 		{
-			this._cachedCharacterDatas.Add(monsterGroupId.Trim(), this.MonsterMToCharacterData(monsterGroupId));
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(num.ToString());
+			if (chipEffectData != null)
+			{
+				foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipEffectData)
+				{
+					int num2 = chipEffect.effectType.ToInt32();
+					string effectValue = chipEffect.effectValue;
+					if (num2 == 60 || num2 == 61 || (num2 == 56 && num2 > 0))
+					{
+						SkillStatus skillStatus5 = base.stateManager.serverControl.SkillMToSkillStatus(effectValue);
+						base.hierarchyData.AddSkillStatus(skillStatus5.skillId, skillStatus5);
+					}
+				}
+			}
 		}
+		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
+		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] source = responseMonsterIntegrationGroupMaster.monsterIntegrationGroupM.Where((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterId == monsterId).ToArray<GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup>();
+		string[] monsterIntegrationIds = source.Select((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterIntegrationId).ToArray<string>();
+		PlayerStatus result = new PlayerStatus(userMonsterId, monsterGroupId2, monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, tolerance, luck, text, iconId, talent, arousal, friendshipStatus, list.ToArray(), chipIdList.ToArray(), monsterIntegrationIds);
+		base.hierarchyData.AddLeaderSkillStatus(text, this.SkillMToLeaderSkillStatus(text));
+		base.hierarchyData.AddCharacterDatas(monsterGroupId, this.MonsterMToCharacterData(monsterGroupId));
 		return result;
 	}
 
 	private EnemyStatus EnemyToEnemyStatus(GameWebAPI.RespDataWD_DungeonStart.Enemy enemy)
 	{
 		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(enemy.monsterId);
-		string monsterGroupId = monsterMasterByMonsterId.monsterGroupId;
+		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
+		string monsterId = monsterMasterByMonsterId.monsterId;
+		string monsterGroupId = monsterGroupMasterByMonsterGroupId.monsterGroupId;
+		string modelId = monsterGroupMasterByMonsterGroupId.modelId;
 		int hp = enemy.hp;
 		int attack = enemy.attack;
 		int defense = enemy.defense;
@@ -269,8 +439,8 @@ public class BattleServerControl : BattleFunctionBase
 		int spDefense = enemy.spDefense;
 		int speed = enemy.speed;
 		int level = enemy.level;
-		string resistanceId = enemy.resistanceId;
 		Tolerance tolerance = this.ResistanceToTolerance(enemy.resistanceId);
+		string empty = string.Empty;
 		if (enemy.ai == null || enemy.ai.Length <= 0)
 		{
 			global::Debug.LogError("enemy.aiのマスタがおかしいです.");
@@ -279,6 +449,7 @@ public class BattleServerControl : BattleFunctionBase
 		AICycle aicycle = ServerToBattleUtility.IntToAICycle(enemy.ai[0].type);
 		List<AIActionClip> list = new List<AIActionClip>();
 		List<AIActionPattern> list2 = new List<AIActionPattern>();
+		List<SkillStatus> list3 = new List<SkillStatus>();
 		for (int i = 0; i < enemy.ai.Length; i++)
 		{
 			int num = (aicycle != AICycle.fixableRotation) ? 0 : (enemy.ai[i].priority - 1);
@@ -295,11 +466,8 @@ public class BattleServerControl : BattleFunctionBase
 			{
 				num2 = 0f;
 			}
-			if (!this._cachedSkillStatus.ContainsKey(skillId.Trim()))
-			{
-				this._cachedSkillStatus.Add(skillId.Trim(), this.SkillMToSkillStatus(skillId));
-			}
-			AIActionClip item = new AIActionClip(targetSelectReference, selectingOrder, minValue, maxValue, num2, maxRange2, skillId);
+			list3.Add(this.SkillMToSkillStatus(skillId));
+			AIActionClip item5 = new AIActionClip(targetSelectReference, selectingOrder, minValue, maxValue, num2, maxRange2, skillId);
 			bool flag = false;
 			if (i < enemy.ai.Length - 1)
 			{
@@ -319,17 +487,17 @@ public class BattleServerControl : BattleFunctionBase
 			{
 				flag = true;
 			}
-			list.Add(item);
+			list.Add(item5);
 			if (flag)
 			{
 				list2.Add(new AIActionPattern(minRange, maxRange, list.ToArray()));
 				list.Clear();
 			}
 		}
-		EnemyAIPattern enemyAiPattern = new EnemyAIPattern(aicycle, list2.ToArray());
+		EnemyAIPattern enemyAIPattern = new EnemyAIPattern(aicycle, list2.ToArray());
 		int fixedMoney = enemy.fixedMoney;
 		int fixedExp = enemy.fixedExp;
-		List<ItemDropResult> list3 = new List<ItemDropResult>();
+		List<ItemDropResult> list4 = new List<ItemDropResult>();
 		if (enemy.drop != null)
 		{
 			foreach (GameWebAPI.RespDataWD_DungeonStart.Drop drop2 in enemy.drop)
@@ -338,33 +506,64 @@ public class BattleServerControl : BattleFunctionBase
 				MasterDataMng.AssetCategory dropAssetType = (MasterDataMng.AssetCategory)drop2.assetCategoryId.ToInt32();
 				int assetNum = drop2.assetNum;
 				ItemDropResult item2 = new ItemDropResult(dropBoxType, dropAssetType, assetNum);
-				list3.Add(item2);
+				list4.Add(item2);
 			}
 		}
 		else
 		{
 			ItemDropResult item3 = new ItemDropResult(false);
-			list3.Add(item3);
+			list4.Add(item3);
 		}
-		int[] chipIdList = enemy.chipIdList;
+		List<string> list5 = new List<string>();
+		list5.Add(base.stateManager.publicAttackSkillId);
+		foreach (string item4 in enemyAIPattern.GetAllSkillID())
+		{
+			if (!list5.Contains(item4))
+			{
+				list5.Add(item4);
+			}
+		}
+		int[] array = enemy.chipIdList;
 		if (enemy.chipIdList == null)
 		{
-			chipIdList = new int[0];
+			array = new int[0];
 		}
-		EnemyStatus result = new EnemyStatus(monsterGroupId, hp, attack, defense, spAttack, spDefense, speed, level, resistanceId, tolerance, enemyAiPattern, fixedMoney, fixedExp, list3, chipIdList);
-		if (!this._cachedTolerance.ContainsKey(resistanceId.Trim()))
+		foreach (int num3 in array)
 		{
-			this._cachedTolerance.Add(resistanceId.Trim(), this.ResistanceToTolerance(resistanceId));
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(num3.ToString());
+			if (chipEffectData != null)
+			{
+				foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipEffectData)
+				{
+					int num4 = chipEffect.effectType.ToInt32();
+					string effectValue = chipEffect.effectValue;
+					if (num4 == 60 || num4 == 61 || (num4 == 56 && num4 > 0))
+					{
+						SkillStatus skillStatus = base.stateManager.serverControl.SkillMToSkillStatus(effectValue);
+						base.hierarchyData.AddSkillStatus(skillStatus.skillId, skillStatus);
+					}
+				}
+			}
 		}
-		if (!this._cachedCharacterDatas.ContainsKey(monsterGroupId.Trim()))
+		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
+		GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] source = responseMonsterIntegrationGroupMaster.monsterIntegrationGroupM.Where((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterId == monsterId).ToArray<GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup>();
+		string[] monsterIntegrationIds = source.Select((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterIntegrationId).ToArray<string>();
+		EnemyStatus result = new EnemyStatus(modelId, monsterGroupId, hp, attack, defense, spAttack, spDefense, speed, level, tolerance, enemyAIPattern, fixedMoney, fixedExp, list4, list5.ToArray(), array, monsterIntegrationIds);
+		base.hierarchyData.AddLeaderSkillStatus(empty, this.SkillMToLeaderSkillStatus(empty));
+		foreach (SkillStatus skillStatus2 in list3)
 		{
-			this._cachedCharacterDatas.Add(monsterGroupId.Trim(), this.MonsterMToCharacterData(monsterGroupId));
+			base.hierarchyData.AddSkillStatus(skillStatus2.skillId, skillStatus2);
 		}
+		base.hierarchyData.AddCharacterDatas(monsterGroupId, this.MonsterMToCharacterData(monsterGroupId));
 		return result;
 	}
 
-	public SkillStatus SkillMToSkillStatus(string skillId)
+	private SkillStatus SkillMToSkillStatus(string skillId)
 	{
+		if (!base.onServerConnect)
+		{
+			return ResourcesPath.GetSkillStatus(skillId);
+		}
 		if (string.IsNullOrEmpty(skillId))
 		{
 			return null;
@@ -394,7 +593,7 @@ public class BattleServerControl : BattleFunctionBase
 							break;
 						}
 					}
-					return new SkillStatus(attackEffect, soundEffect, skillType, name, description, target, effectNumbers, needAp, affectEffectPropertyList.ToArray());
+					return new SkillStatus(skillId, attackEffect, soundEffect, skillType, name, description, target, effectNumbers, needAp, affectEffectPropertyList.ToArray());
 				}
 			}
 		}
@@ -402,11 +601,14 @@ public class BattleServerControl : BattleFunctionBase
 		return null;
 	}
 
-	public LeaderSkillStatus SkillMToLeaderSkillStatus(string leaderSkillId, out GameWebAPI.RespDataMA_GetSkillM.SkillM leaderSkillM)
+	private LeaderSkillStatus SkillMToLeaderSkillStatus(string leaderSkillId)
 	{
+		if (string.IsNullOrEmpty(leaderSkillId))
+		{
+			return null;
+		}
 		GameWebAPI.RespDataMA_GetSkillM.SkillM[] skillM = MasterDataMng.Instance().RespDataMA_SkillM.skillM;
 		LeaderSkillStatus leaderSkillStatus = null;
-		leaderSkillM = null;
 		for (int i = 0; i < skillM.Length; i++)
 		{
 			if (ServerToBattleUtility.GetIsLeaderSkill(skillM[i].type))
@@ -416,7 +618,6 @@ public class BattleServerControl : BattleFunctionBase
 					string name = skillM[i].name;
 					string description = skillM[i].description;
 					GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] convertSkillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.convertSkillDetailM;
-					leaderSkillM = skillM[i];
 					for (int j = 0; j < convertSkillDetailM.Length; j++)
 					{
 						if (leaderSkillId.Equals(convertSkillDetailM[j].skillId))
@@ -453,89 +654,61 @@ public class BattleServerControl : BattleFunctionBase
 		return leaderSkillStatus;
 	}
 
-	public CharacterDatas MonsterMToCharacterData(string monsterGroupId)
+	private CharacterDatas MonsterMToCharacterData(string monsterGroupId)
 	{
 		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterGroupId);
 		string monsterName = monsterGroupMasterByMonsterGroupId.monsterName;
-		Species species = ServerToBattleUtility.IntToSpecies(monsterGroupMasterByMonsterGroupId.tribe);
-		EvolutionStep evolutionStep = ServerToBattleUtility.IntToEvolutionStep(monsterGroupMasterByMonsterGroupId.growStep);
+		string tribe = monsterGroupMasterByMonsterGroupId.tribe;
+		GrowStep growStep = MonsterGrowStepData.ToGrowStep(monsterGroupMasterByMonsterGroupId.growStep);
 		string monsterStatusId = monsterGroupMasterByMonsterGroupId.monsterStatusId;
-		return new CharacterDatas(monsterName, species, evolutionStep, monsterStatusId);
+		return new CharacterDatas(monsterName, tribe, growStep, monsterStatusId);
 	}
 
-	public Tolerance ResistanceToTolerance(string resistanceId)
+	private Tolerance ResistanceToTolerance(string resistanceId)
 	{
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM[] monsterResistanceM = MasterDataMng.Instance().RespDataMA_MonsterResistanceM.monsterResistanceM;
-		Tolerance tolerance = null;
+		Tolerance result = null;
 		for (int i = 0; i < monsterResistanceM.Length; i++)
 		{
 			if (monsterResistanceM[i].monsterResistanceId.Equals(resistanceId))
 			{
-				Strength noneValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].none);
-				Strength redValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].fire);
-				Strength blueValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].water);
-				Strength yellowValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].thunder);
-				Strength greenValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].nature);
-				Strength whiteValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].light);
-				Strength blackValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].dark);
-				Strength poisonValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].poison);
-				Strength confusionValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].confusion);
-				Strength paralysisValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].paralysis);
-				Strength sleepValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].sleep);
-				Strength stunValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].stun);
-				Strength skillLockValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].skillLock);
-				Strength instantDeathValue = ServerToBattleUtility.IntToStrength(monsterResistanceM[i].death);
-				tolerance = new Tolerance(noneValue, redValue, blueValue, yellowValue, greenValue, whiteValue, blackValue, poisonValue, confusionValue, paralysisValue, sleepValue, stunValue, skillLockValue, instantDeathValue);
-				break;
+				result = ServerToBattleUtility.ResistanceToTolerance(monsterResistanceM[i]);
 			}
 		}
-		if (tolerance == null)
-		{
-			global::Debug.LogError("Toleranceの生成に失敗しました. (" + resistanceId + ")");
-			return null;
-		}
-		return tolerance;
+		return result;
 	}
 
-	public Tolerance ResistanceToTolerance(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data)
-	{
-		Strength noneValue = ServerToBattleUtility.IntToStrength(data.none);
-		Strength redValue = ServerToBattleUtility.IntToStrength(data.fire);
-		Strength blueValue = ServerToBattleUtility.IntToStrength(data.water);
-		Strength yellowValue = ServerToBattleUtility.IntToStrength(data.thunder);
-		Strength greenValue = ServerToBattleUtility.IntToStrength(data.nature);
-		Strength whiteValue = ServerToBattleUtility.IntToStrength(data.light);
-		Strength blackValue = ServerToBattleUtility.IntToStrength(data.dark);
-		Strength poisonValue = ServerToBattleUtility.IntToStrength(data.poison);
-		Strength confusionValue = ServerToBattleUtility.IntToStrength(data.confusion);
-		Strength paralysisValue = ServerToBattleUtility.IntToStrength(data.paralysis);
-		Strength sleepValue = ServerToBattleUtility.IntToStrength(data.sleep);
-		Strength stunValue = ServerToBattleUtility.IntToStrength(data.stun);
-		Strength skillLockValue = ServerToBattleUtility.IntToStrength(data.skillLock);
-		Strength instantDeathValue = ServerToBattleUtility.IntToStrength(data.death);
-		return new Tolerance(noneValue, redValue, blueValue, yellowValue, greenValue, whiteValue, blackValue, poisonValue, confusionValue, paralysisValue, sleepValue, stunValue, skillLockValue, instantDeathValue);
-	}
-
-	public string[] SetWorldDungeonExtraEffect(string dungeonId)
+	private void InitExtraEffectStatus(string dungeonId)
 	{
 		IEnumerable<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> enumerable = MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectM.worldDungeonExtraEffectM.SelectMany((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM x) => MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectManageM.worldDungeonExtraEffectManageM, (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM x, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM y) => new
 		{
 			x,
 			y
 		}).Where(<>__TranspIdent0 => <>__TranspIdent0.x.worldDungeonExtraEffectId == <>__TranspIdent0.y.worldDungeonExtraEffectId && <>__TranspIdent0.y.worldDungeonId == dungeonId).Select(<>__TranspIdent0 => <>__TranspIdent0.x);
-		this._cachedExtraEffectStatus.Clear();
-		int num = 0;
-		string[] array = new string[enumerable.Count<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM>()];
+		List<ExtraEffectStatus> list = new List<ExtraEffectStatus>();
 		foreach (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM worldDungeonExtraEffectM in enumerable)
 		{
-			this._cachedExtraEffectStatus.Add(num.ToString(), new ExtraEffectStatus(worldDungeonExtraEffectM));
-			array[num] = num.ToString();
-			num++;
+			list.Add(new ExtraEffectStatus(worldDungeonExtraEffectM));
 		}
-		return array;
+		base.battleStateData.extraEffectStatus.AddRange(list);
+		foreach (ExtraEffectStatus extraEffectStatus in list)
+		{
+			EffectStatusBase.ExtraEffectType effectType = (EffectStatusBase.ExtraEffectType)extraEffectStatus.EffectType;
+			if (effectType == EffectStatusBase.ExtraEffectType.Skill)
+			{
+				string skillId = extraEffectStatus.EffectValue.ToString();
+				SkillStatus skillStatus = base.stateManager.serverControl.SkillMToSkillStatus(skillId);
+				base.hierarchyData.AddSkillStatus(skillStatus.skillId, skillStatus);
+			}
+		}
 	}
 
 	public List<AffectEffectProperty> GetAffectEffectPropertyList(string skillId)
+	{
+		return BattleServerControl.GetAffectEffectPropertyListForUtil(skillId);
+	}
+
+	public static List<AffectEffectProperty> GetAffectEffectPropertyListForUtil(string skillId)
 	{
 		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM[] convertSkillDetailM = MasterDataMng.Instance().RespDataMA_SkillDetailM.convertSkillDetailM;
 		List<AffectEffectProperty> list = new List<AffectEffectProperty>();
@@ -581,81 +754,17 @@ public class BattleServerControl : BattleFunctionBase
 		return list;
 	}
 
-	public GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM GetWorldDungeonM(string worldDungeonId)
+	private GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM GetWorldDungeonM(string worldDungeonId)
 	{
-		if (this._cachedWorldDungeonM == null || !this._cachedWorldDungeonM.worldDungeonId.Equals(worldDungeonId))
+		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
+		for (int i = 0; i < worldDungeonM.Length; i++)
 		{
-			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
-			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM cachedWorldDungeonM = null;
-			for (int i = 0; i < worldDungeonM.Length; i++)
+			if (worldDungeonM[i].worldDungeonId.Equals(worldDungeonId))
 			{
-				if (worldDungeonM[i].worldDungeonId.Equals(worldDungeonId))
-				{
-					cachedWorldDungeonM = worldDungeonM[i];
-					break;
-				}
-			}
-			this._cachedWorldDungeonM = cachedWorldDungeonM;
-		}
-		return this._cachedWorldDungeonM;
-	}
-
-	public IEnumerator CharacterRevivalBeforeFunction(params int[] playerIndex)
-	{
-		if (base.stateManager.onEnableTutorial)
-		{
-			yield return true;
-			yield break;
-		}
-		if (base.onServerConnect)
-		{
-			int[] continueCharacters = new int[playerIndex.Length];
-			for (int i = 0; i < continueCharacters.Length; i++)
-			{
-				continueCharacters[i] = int.Parse(this._userMonsterId[playerIndex[i]]);
-			}
-			bool getResult = false;
-			bool outResult = false;
-			if (base.stateManager.battleMode == BattleMode.Multi)
-			{
-				yield return ClassSingleton<QuestData>.Instance.DungeonContinueMulti(int.Parse(this._startId), base.battleStateData.currentWaveNumberGUI, base.battleStateData.currentRoundNumber, continueCharacters, delegate(bool result)
-				{
-					getResult = true;
-					outResult = result;
-				});
-			}
-			else
-			{
-				yield return ClassSingleton<QuestData>.Instance.DungeonContinue(int.Parse(this._startId), base.battleStateData.currentWaveNumberGUI, base.battleStateData.currentRoundNumber, continueCharacters, delegate(bool result)
-				{
-					getResult = true;
-					outResult = result;
-				});
-			}
-			while (!getResult)
-			{
-				yield return null;
-			}
-			if (outResult)
-			{
-				int minusCalcedStone = playerIndex.Length + ((playerIndex.Length != base.battleStateData.playerCharacters.Length) ? 0 : 2);
-				DataMng.Instance().AddStone(-minusCalcedStone);
-				base.battleStateData.beforeConfirmDigiStoneNumber = DataMng.Instance().GetStone();
-				yield return true;
-			}
-			else
-			{
-				global::Debug.LogError("復活に失敗しました.");
-				yield return false;
+				return worldDungeonM[i];
 			}
 		}
-		else
-		{
-			int minus = playerIndex.Length + ((playerIndex.Length != base.battleStateData.playerCharacters.Length) ? 0 : 2);
-			base.battleStateData.beforeConfirmDigiStoneNumber -= minus;
-			yield return true;
-		}
-		yield break;
+		return null;
 	}
 
 	public IEnumerator ContinueBuyDigistoneFunction(bool isContinue)
@@ -723,43 +832,6 @@ public class BattleServerControl : BattleFunctionBase
 		yield break;
 	}
 
-	public void SetLoadingImage(bool isShow)
-	{
-		if (base.onServerConnect)
-		{
-			if (isShow)
-			{
-				if (!Loading.IsShow())
-				{
-					RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-					TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.QuestToSoloBattle, false);
-				}
-			}
-			else
-			{
-				TipsLoading.Instance.StopTipsLoad(false);
-				RestrictionInput.DeleteDisplayObject();
-				RestrictionInput.EndLoad();
-			}
-		}
-	}
-
-	public void ApplyShowSpecificTrade()
-	{
-		if (base.onServerConnect)
-		{
-			base.stateManager.uiControl.ApplySpecificTrade(true);
-			Action<int> action = delegate(int x)
-			{
-				base.stateManager.callAction.OnHideSpecificTrade();
-			};
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(action, "CMDWebWindow");
-			((CMDWebWindow)commonDialog).TitleText = StringMaster.GetString("ShopRule-02");
-			((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_TRADE;
-			base.battleStateData.isShowSpecificTrade = true;
-		}
-	}
-
 	public GameObject GetCharacterPrefab(string id)
 	{
 		if (!base.onServerConnect)
@@ -778,75 +850,6 @@ public class BattleServerControl : BattleFunctionBase
 		return null;
 	}
 
-	public PlayerStatus GetPlayerStatus(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetPlayerStatus(id);
-		}
-		int key;
-		if (!int.TryParse(id, out key))
-		{
-			global::Debug.LogErrorFormat("{0}というキャラクターデータのidは正しくありません.正しいマスターを入れてください.", new object[]
-			{
-				id
-			});
-			return null;
-		}
-		PlayerStatus result;
-		if (this._cachedPlayerStatus.TryGetValue(key, out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("キャラクターデータ(PlayerStatus)が見つかりません. (" + id + ")");
-		return null;
-	}
-
-	public EnemyStatus GetEnemyStatus(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetEnemyStatus(id);
-		}
-		EnemyStatus result;
-		if (this._cachedEnemyStatus.TryGetValue(int.Parse(id), out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("キャラクターデータ(EnemyStatus)が見つかりません. (" + id + ")");
-		return null;
-	}
-
-	public Tolerance GetToleranceStatus(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetToleranceStatus(id);
-		}
-		Tolerance result;
-		if (this._cachedTolerance.TryGetValue(id.Trim(), out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("耐性データが見つかりません. (" + id + ")");
-		return null;
-	}
-
-	public ExtraEffectStatus GetExtraEffectStatus(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetExtraEffectStatus(id);
-		}
-		ExtraEffectStatus result;
-		if (this._cachedExtraEffectStatus.TryGetValue(id.Trim(), out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("エリア効果データが見つかりません. (" + id + ")");
-		return null;
-	}
-
 	public Sprite GetCharacterThumbnail(string id)
 	{
 		if (!base.onServerConnect)
@@ -854,7 +857,7 @@ public class BattleServerControl : BattleFunctionBase
 			return ResourcesPath.GetCharacterThumbnail(id);
 		}
 		BattleDebug.Log("----- モンスターアイコンAB単体取得 id[" + id + "]: 開始");
-		string monsterIconPathByIconId = MonsterDataMng.Instance().GetMonsterIconPathByIconId(id);
+		string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(id);
 		Texture2D texture2D = AssetDataMng.Instance().LoadObject(monsterIconPathByIconId, null, true) as Texture2D;
 		Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, (float)texture2D.width, (float)texture2D.height), new Vector2(0.5f, 0.5f));
 		if (sprite != null)
@@ -863,21 +866,6 @@ public class BattleServerControl : BattleFunctionBase
 			return sprite;
 		}
 		global::Debug.LogError("キャラクターサムネイルデータが見つかりません. (" + id + ")");
-		return null;
-	}
-
-	public CharacterDatas GetCharacterData(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetCharacterData(id);
-		}
-		CharacterDatas result;
-		if (this._cachedCharacterDatas.TryGetValue(id.Trim(), out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("キャラクターデータ(CharacterDatas)が見つかりません. (" + id + ")");
 		return null;
 	}
 
@@ -914,36 +902,6 @@ public class BattleServerControl : BattleFunctionBase
 			return gameObject;
 		}
 		global::Debug.LogError("PassiveEffectが見つかりません. (" + id + ")");
-		return null;
-	}
-
-	public SkillStatus GetSkillStatus(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetSkillStatus(id);
-		}
-		SkillStatus result;
-		if (this._cachedSkillStatus.TryGetValue(id.Trim(), out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("スキルステータスデータが見つかりません. (" + id + ")");
-		return null;
-	}
-
-	public LeaderSkillStatus GetLeaderSkillStatus(string id)
-	{
-		if (!base.onServerConnect)
-		{
-			return ResourcesPath.GetLeaderSkillStatus(id);
-		}
-		LeaderSkillStatus result;
-		if (this._cachedLeaderSkillStatus.TryGetValue(id.Trim(), out result))
-		{
-			return result;
-		}
-		global::Debug.LogError("リーダースキルステータスデータが見つかりません. (" + id + ")");
 		return null;
 	}
 

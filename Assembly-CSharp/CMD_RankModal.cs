@@ -60,9 +60,25 @@ public class CMD_RankModal : CMD
 	public void Initialize(List<GUIListPartsRank.RankData> RankDataList, int UserRankID, int UserScore, bool IsAggregate)
 	{
 		this.guiSelectPanelRank.selectParts = this.guiListPartsRank.gameObject;
+		List<GUIListPartsRank.RankData> list = new List<GUIListPartsRank.RankData>();
+		foreach (GUIListPartsRank.RankData rankData in RankDataList)
+		{
+			if (rankData.id <= 4)
+			{
+				if (rankData.id == 4)
+				{
+					rankData.groupedId = 0;
+				}
+				else
+				{
+					rankData.groupedId = rankData.id;
+				}
+				list.Add(rankData);
+			}
+		}
 		this.guiListPartsRank.gameObject.SetActive(true);
 		this.guiSelectPanelRank.initLocation = true;
-		Vector3 vector = this.guiSelectPanelRank.AllBuild(RankDataList);
+		Vector3 vector = this.guiSelectPanelRank.AllBuild(list);
 		this.guiListPartsRank.gameObject.SetActive(false);
 		if (0 < RankDataList.Count)
 		{
@@ -71,11 +87,11 @@ public class CMD_RankModal : CMD
 			position.x += num;
 			this.guiSelectPanelRank.transform.position = position;
 		}
-		foreach (GUIListPartsRank.RankData rankData in RankDataList)
+		foreach (GUIListPartsRank.RankData rankData2 in RankDataList)
 		{
-			if (rankData.id == UserRankID)
+			if (rankData2.id == UserRankID)
 			{
-				this.rankSprite.spriteName = "Rank_" + rankData.id.ToString();
+				this.rankSprite.spriteName = "Rank_" + rankData2.id.ToString();
 			}
 		}
 		this.pointLabel.text = ((!IsAggregate) ? UserScore.ToString() : StringMaster.GetString("PvpAggregate"));

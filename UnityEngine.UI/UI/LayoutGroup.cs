@@ -5,16 +5,16 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[ExecuteInEditMode]
-	[DisallowMultipleComponent]
 	[RequireComponent(typeof(RectTransform))]
+	[DisallowMultipleComponent]
+	[ExecuteInEditMode]
 	public abstract class LayoutGroup : UIBehaviour, ILayoutElement, ILayoutController, ILayoutGroup
 	{
 		[SerializeField]
 		protected RectOffset m_Padding = new RectOffset();
 
-		[FormerlySerializedAs("m_Alignment")]
 		[SerializeField]
+		[FormerlySerializedAs("m_Alignment")]
 		protected TextAnchor m_ChildAlignment;
 
 		[NonSerialized]

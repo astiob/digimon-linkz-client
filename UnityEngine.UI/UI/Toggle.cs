@@ -5,8 +5,8 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("UI/Toggle", 31)]
+	[RequireComponent(typeof(RectTransform))]
 	public class Toggle : Selectable, IEventSystemHandler, IPointerClickHandler, ISubmitHandler, ICanvasElement
 	{
 		public Toggle.ToggleTransition toggleTransition = Toggle.ToggleTransition.Fade;
@@ -18,9 +18,9 @@ namespace UnityEngine.UI
 
 		public Toggle.ToggleEvent onValueChanged = new Toggle.ToggleEvent();
 
-		[Tooltip("Is the toggle currently on or off?")]
-		[FormerlySerializedAs("m_IsActive")]
 		[SerializeField]
+		[FormerlySerializedAs("m_IsActive")]
+		[Tooltip("Is the toggle currently on or off?")]
 		private bool m_IsOn;
 
 		protected Toggle()

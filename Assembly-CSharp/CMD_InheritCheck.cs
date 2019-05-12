@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +14,12 @@ public sealed class CMD_InheritCheck : CMD
 	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
 
-	[SerializeField]
 	[Header("消費クラスタのラベル")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[Header("警告のメッセージのラベル")]
@@ -50,8 +51,8 @@ public sealed class CMD_InheritCheck : CMD
 		bool flag4 = false;
 		foreach (MonsterData monsterData in selectedMonsterDataList)
 		{
-			bool flag5 = monsterData.IsArousal();
-			bool flag6 = monsterData.IsVersionUp();
+			bool flag5 = MonsterStatusData.IsArousal(monsterData.GetMonsterMaster().Simple.rare);
+			bool flag6 = MonsterStatusData.IsVersionUp(monsterData.GetMonsterMaster().Simple.rare);
 			if (flag6)
 			{
 				flag4 = true;
@@ -75,20 +76,9 @@ public sealed class CMD_InheritCheck : CMD
 		}
 		if (flag2)
 		{
-			GameWebAPI.RespDataMA_GetMonsterGrowStepM.MonsterGrowStepM[] monsterGrowStepM = MasterDataMng.Instance().RespDataMA_MonsterGrowStepM.monsterGrowStepM;
-			string b = ConstValue.GROW_STEP_HIGH.ToString();
-			int i;
-			for (i = 0; i < monsterGrowStepM.Length; i++)
-			{
-				if (monsterGrowStepM[i].monsterGrowStepId == b)
-				{
-					break;
-				}
-			}
-			if (i < monsterGrowStepM.Length)
-			{
-				list.Add(string.Format(StringMaster.GetString("SuccessionCautionGrowth"), monsterGrowStepM[i].monsterGrowStepName));
-			}
+			string growStep = ConstValue.GROW_STEP_HIGH.ToString();
+			string growStepName = MonsterGrowStepData.GetGrowStepName(growStep);
+			list.Add(string.Format(StringMaster.GetString("SuccessionCautionGrowth"), growStepName));
 		}
 		if (list.Count >= 2)
 		{

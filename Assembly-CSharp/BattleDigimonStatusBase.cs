@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using UnityEngine;
 
@@ -84,14 +85,19 @@ public class BattleDigimonStatusBase : MonoBehaviour
 
 	protected void SetupEvolutionStep(CharacterStateControl characterStatus)
 	{
-		int evolutionStepSetTextReplacer = BattleUIControlBasic.GetEvolutionStepSetTextReplacer(characterStatus.evolutionStep);
-		this.evolutionStep.text = CommonSentenceData.GetGrade((evolutionStepSetTextReplacer + 2).ToString());
+		if (MonsterDataMng.Instance() != null)
+		{
+			string growStep = MonsterGrowStepData.ToGrowStepString(characterStatus.characterDatas.growStep);
+			this.evolutionStep.text = MonsterGrowStepData.GetGrowStepName(growStep);
+		}
 	}
 
 	protected void SetupSpecies(CharacterStateControl characterStatus)
 	{
-		int speciesSetTextReplacer = BattleUIControlBasic.GetSpeciesSetTextReplacer(characterStatus.species);
-		this.species.text = CommonSentenceData.GetTribe(speciesSetTextReplacer.ToString());
+		if (MonsterDataMng.Instance() != null)
+		{
+			this.species.text = MonsterTribeData.GetTribeName(characterStatus.characterDatas.tribe);
+		}
 	}
 
 	[Serializable]

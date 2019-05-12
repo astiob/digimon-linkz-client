@@ -29,5 +29,8 @@ public enum TCPMessageType
 	Targat,
 	RevivalCancel,
 	ConnectionRecover,
-	LeaderChange
+	LeaderChange,
+	AdventureScene,
+	PvPEnemyData,
+	PvPEnemyDataReceive
 }

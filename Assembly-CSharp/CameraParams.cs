@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.CameraParams.Internal;
 using UnityEngine.Serialization;
 
-[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Camera Params")]
+[DisallowMultipleComponent]
 public class CameraParams : MonoBehaviour
 {
 	public static CameraParams current;
@@ -16,25 +16,25 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private CameraParams.CameraType _cameraType;
 
-	[FormerlySerializedAs("rootPosition")]
 	[SerializeField]
+	[FormerlySerializedAs("rootPosition")]
 	private CameraParams.RootPosition _rootPosition;
 
-	[FormerlySerializedAs("useAnimation")]
 	[SerializeField]
+	[FormerlySerializedAs("useAnimation")]
 	private bool _useAnimation = true;
 
-	[FormerlySerializedAs("isLoopAnimation")]
 	[SerializeField]
+	[FormerlySerializedAs("isLoopAnimation")]
 	private bool _onLoopAnimation;
 
-	[FormerlySerializedAs("fieldOfView")]
 	[SerializeField]
 	[Range(1f, 179f)]
+	[FormerlySerializedAs("fieldOfView")]
 	private float _fieldOfView = 60f;
 
-	[FormerlySerializedAs("cameraAnimation")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraAnimation")]
 	private Animation _cameraAnimation;
 
 	[SerializeField]
@@ -45,16 +45,16 @@ public class CameraParams : MonoBehaviour
 	[FormerlySerializedAs("endTime")]
 	private float _endTime = 3f;
 
-	[FormerlySerializedAs("cameraTarget")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraTarget")]
 	private Transform _cameraTarget;
 
-	[FormerlySerializedAs("cameraLookTarget")]
 	[SerializeField]
+	[FormerlySerializedAs("cameraLookTarget")]
 	private Transform _cameraLookTarget;
 
-	[FormerlySerializedAs("onPossibleInverse")]
 	[SerializeField]
+	[FormerlySerializedAs("onPossibleInverse")]
 	private bool _onPossibleInverse;
 
 	[SerializeField]
@@ -287,6 +287,46 @@ public class CameraParams : MonoBehaviour
 		this.indexSelector = base.GetComponentInChildren<CameraTargetIndexSelector>();
 	}
 
+	private void LateUpdate()
+	{
+		if (!this.isCameraUpdate)
+		{
+			return;
+		}
+		if (this._previousTargetIndex != this._cameraTargetIndex)
+		{
+			this.cameraPositonDummy.SetParent(this.currentTargetValue.cameraTarget);
+			this._previousTargetIndex = this._cameraTargetIndex;
+		}
+		this.currentTargetValue.ApplyController();
+		this.cameraPositonDummy.position = this.cameraTarget.position;
+		this.cameraPositonDummy.localPosition += this.shakePosition;
+		if (this.cameraType == CameraParams.CameraType.targetCamera)
+		{
+			this.cameraPositonDummy.LookAt(this.cameraLookTarget.position);
+		}
+		else
+		{
+			this.cameraPositonDummy.rotation = this.cameraTarget.rotation;
+		}
+		this.cameraPositonDummy.Translate(this.cameraPositonDummy.forward * this.cameraWorldDifference, Space.World);
+		if (this.currentTargetCamera != null && this.isFollowUp)
+		{
+			this.cameraTransform = this.currentTargetCamera.transform;
+			this.cameraTransform.position = this.cameraPositonDummy.position;
+			this.cameraTransform.rotation = this.cameraPositonDummy.rotation;
+			this.currentTargetCamera.fieldOfView = this.fieldOfView;
+		}
+		if (this._postEffectController != null)
+		{
+			this._postEffectController.ManualUpdate();
+		}
+		else if (CameraPostEffect.current != null)
+		{
+			CameraPostEffect.current.Off();
+		}
+	}
+
 	public void GetPostEffectController(CameraPostEffect postEffect)
 	{
 		this._postEffectController = base.GetComponentInChildren<CameraPostEffectController>();
@@ -323,7 +363,7 @@ public class CameraParams : MonoBehaviour
 		base.StartCoroutine(this.currentPlayAnimationCorutine);
 	}
 
-	public IEnumerator PlayCameraAnimationCorutine(Vector3 targetRootPosition, Vector3 targetRootRotation, bool onInverse, bool onClampAnimation)
+	private IEnumerator PlayCameraAnimationCorutine(Vector3 targetRootPosition, Vector3 targetRootRotation, bool onInverse, bool onClampAnimation)
 	{
 		this.isPlaying = true;
 		this.isCameraUpdate = false;
@@ -417,52 +457,7 @@ public class CameraParams : MonoBehaviour
 		yield break;
 	}
 
-	private void CameraUpdate()
-	{
-		if (!this.isCameraUpdate)
-		{
-			return;
-		}
-		if (this._previousTargetIndex != this._cameraTargetIndex)
-		{
-			this.cameraPositonDummy.SetParent(this.currentTargetValue.cameraTarget);
-			this._previousTargetIndex = this._cameraTargetIndex;
-		}
-		this.currentTargetValue.ApplyController();
-		this.cameraPositonDummy.position = this.cameraTarget.position;
-		if (this.cameraType == CameraParams.CameraType.targetCamera)
-		{
-			this.cameraPositonDummy.LookAt(this.cameraLookTarget.position);
-		}
-		else
-		{
-			this.cameraPositonDummy.rotation = this.cameraTarget.rotation;
-		}
-		this.cameraPositonDummy.localPosition += this.shakePosition;
-		this.cameraPositonDummy.Translate(this.cameraPositonDummy.forward * this.cameraWorldDifference, Space.World);
-		if (this.currentTargetCamera != null && this.isFollowUp)
-		{
-			this.cameraTransform = this.currentTargetCamera.transform;
-			this.cameraTransform.position = this.cameraPositonDummy.position;
-			this.cameraTransform.rotation = this.cameraPositonDummy.rotation;
-			this.currentTargetCamera.fieldOfView = this.fieldOfView;
-		}
-		if (this._postEffectController != null)
-		{
-			this._postEffectController.ManualUpdate();
-		}
-		else if (CameraPostEffect.current != null)
-		{
-			CameraPostEffect.current.Off();
-		}
-	}
-
-	private void LateUpdate()
-	{
-		this.CameraUpdate();
-	}
-
-	public IEnumerator PlayCameraAnimationCorutine(CharacterParams characterParams, bool onInverse, bool onClampAnimation)
+	private IEnumerator PlayCameraAnimationCorutine(CharacterParams characterParams, bool onInverse, bool onClampAnimation)
 	{
 		IEnumerator playCameraAnimationCorutine;
 		if (characterParams == null)
@@ -492,6 +487,12 @@ public class CameraParams : MonoBehaviour
 		yield break;
 	}
 
+	public void StopCameraAnimation()
+	{
+		this.StopCameraAnimationInternal();
+		base.gameObject.SetActive(false);
+	}
+
 	private void StopCameraAnimationInternal()
 	{
 		this.StopCameraShake();
@@ -508,13 +509,6 @@ public class CameraParams : MonoBehaviour
 			this.isCameraUpdate = false;
 			this.isPlaying = false;
 		}
-	}
-
-	public void StopCameraAnimation()
-	{
-		this.StopCameraAnimationInternal();
-		this.ResetShakePosition();
-		base.gameObject.SetActive(false);
 	}
 
 	public void PlayCameraShake()
@@ -581,8 +575,8 @@ public class CameraParams : MonoBehaviour
 		[SerializeField]
 		private CameraParams.CameraType _cameraType;
 
-		[SerializeField]
 		[Range(1f, 179f)]
+		[SerializeField]
 		private float _fieldOfView = 60f;
 
 		[SerializeField]

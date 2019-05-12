@@ -16,8 +16,8 @@ namespace System.Diagnostics
 		/// <summary>Gets the base priority of the thread.</summary>
 		/// <returns>The base priority of the thread, which the operating system computes by combining the process priority class with the priority level of the associated thread.</returns>
 		/// <filterpriority>2</filterpriority>
-		[MonitoringDescription("The base priority of this thread.")]
 		[MonoTODO]
+		[MonitoringDescription("The base priority of this thread.")]
 		public int BasePriority
 		{
 			get
@@ -181,8 +181,8 @@ namespace System.Diagnostics
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[MonitoringDescription("The time this thread was started.")]
 		[MonoTODO]
+		[MonitoringDescription("The time this thread was started.")]
 		public DateTime StartTime
 		{
 			get
@@ -218,8 +218,8 @@ namespace System.Diagnostics
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[MonitoringDescription("The total amount of CPU time used.")]
 		[MonoTODO]
+		[MonitoringDescription("The total amount of CPU time used.")]
 		public TimeSpan TotalProcessorTime
 		{
 			get

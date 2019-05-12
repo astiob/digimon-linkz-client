@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Colosseum;
+using Master;
 using MultiBattle.Tools;
 using Quest;
 using System;
@@ -19,60 +20,60 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject loseLogo;
 
-	[Header("スキップ用Winのロゴ")]
 	[SerializeField]
+	[Header("スキップ用Winのロゴ")]
 	private GameObject winLogoForSkip;
 
 	[Header("獲得クラスタ表示ルート")]
 	[SerializeField]
 	private GameObject acquisitionRoot;
 
-	[SerializeField]
 	[Header("DP表示ルート")]
+	[SerializeField]
 	private GameObject dpRoot;
 
-	[SerializeField]
 	[Header("ランク表示用スプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
-	[Header("獲得クラスタ数値ラベル")]
 	[SerializeField]
+	[Header("獲得クラスタ数値ラベル")]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("変動DP数値ラベル")]
+	[SerializeField]
 	private UILabel fluctuateDpLabel;
 
 	[Header("現在のDP数値ラベル")]
 	[SerializeField]
 	private UILabel currentDpLabel;
 
-	[SerializeField]
 	[Header("通算勝利数のラベル")]
+	[SerializeField]
 	private UILabel totalWinNum;
 
-	[SerializeField]
 	[Header("次のランクアップまでの勝利数ラベル")]
+	[SerializeField]
 	private UILabel nextRankupWinNum;
 
 	[SerializeField]
 	[Header("ランクアップ用オブジェクト")]
 	private GameObject gaugeUp;
 
-	[SerializeField]
 	[Header("ランクダウン用オブジェクト")]
+	[SerializeField]
 	private GameObject gaugeDown;
 
-	[Header("ランクアップ用エフェクト")]
 	[SerializeField]
+	[Header("ランクアップ用エフェクト")]
 	private GameObject rankUpEffect;
 
 	[SerializeField]
 	[Header("ランクダウン用エフェクト")]
 	private GameObject rankDownEffect;
 
-	[SerializeField]
 	[Header("TAP NEXTのオブジェクト")]
+	[SerializeField]
 	private GameObject tapNext;
 
 	[Header("加算DPのTween")]
@@ -84,8 +85,6 @@ public sealed class CMD_PvPBattleResult : CMD
 	[Header("カウントアップするときのラベルの色")]
 	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
-
-	private GameWebAPI.RespDataMN_GetDeckList.DeckList deckData;
 
 	private GUIMonsterIcon[] digimonIcons;
 
@@ -125,8 +124,6 @@ public sealed class CMD_PvPBattleResult : CMD
 
 	protected override void Awake()
 	{
-		int num = int.Parse(DataMng.Instance().RespDataMN_DeckList.selectDeckNum) - 1;
-		this.deckData = DataMng.Instance().RespDataMN_DeckList.deckList[num];
 		base.Awake();
 		this.InitInfo();
 		this.HideItems();
@@ -156,9 +153,13 @@ public sealed class CMD_PvPBattleResult : CMD
 			this.nowTotalWin = this.previousUserStatus.winTotal;
 		}
 		this.totalWinNum.text = string.Format(StringMaster.GetString("MyColosseumTotalWinNum"), this.nowTotalWin.ToString());
-		if (colosseumRank2.nextRankId == "0")
+		if (this.isMockBattle)
 		{
-			this.nextRankupWinNum.text = StringMaster.GetString("ColosseumRankMax");
+			this.nextRankupWinNum.text = string.Empty;
+		}
+		else if (this.pvpResultData.battleRecord != null)
+		{
+			this.nextRankupWinNum.text = string.Format(StringMaster.GetString("ColosseumRankAGroup"), this.pvpResultData.battleRecord.count, this.pvpResultData.battleRecord.winPercent);
 		}
 		else
 		{
@@ -217,13 +218,10 @@ public sealed class CMD_PvPBattleResult : CMD
 	{
 		GUIMonsterIcon[] componentsInChildren = base.GetComponentsInChildren<GUIMonsterIcon>();
 		this.digimonIcons = new GUIMonsterIcon[componentsInChildren.Length];
-		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsterList = DataMng.Instance().RespDataUS_MonsterList.userMonsterList;
-		for (int i = 0; i < this.deckData.monsterList.Length; i++)
+		for (int i = 0; i < ColosseumData.LastUseMonsterList.Length; i++)
 		{
-			GameWebAPI.RespDataMN_GetDeckList.MonsterList deckDigimon = this.deckData.monsterList[i];
-			GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterList2 = userMonsterList.SingleOrDefault((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == deckDigimon.userMonsterId);
-			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(userMonsterList2.monsterId);
-			this.digimonIcons[i] = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, componentsInChildren[i].transform.localScale, componentsInChildren[i].transform.localPosition, base.transform, true, false);
+			MonsterData monsterData = ColosseumData.LastUseMonsterList[i];
+			this.digimonIcons[i] = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, componentsInChildren[i].transform.localScale, componentsInChildren[i].transform.localPosition, base.transform, true, false);
 			this.digimonIcons[i].name = "DigimonIcon" + i;
 			this.digimonIcons[i].activeCollider = false;
 		}
@@ -336,10 +334,14 @@ public sealed class CMD_PvPBattleResult : CMD
 				this.DpTotalCoroutine = base.StartCoroutine(this.UpdateTotalDpCount(addDpNum));
 				yield return this.DpTotalCoroutine;
 			}
-			GameWebAPI.RespDataMA_ColosseumRankM.ColosseumRank currentRank = this.rankDataDict[this.previousUserStatus.colosseumRankId.ToString()];
-			if (int.Parse(currentRank.maxScore) + 1 - this.nowTotalWin == 0)
+			if (this.pvpResultData.colosseumRankId > this.previousUserStatus.colosseumRankId)
 			{
 				this.RankUpCoroutine = base.StartCoroutine(this.PlayRankUp());
+				yield return this.RankUpCoroutine;
+			}
+			else if (this.pvpResultData.colosseumRankId < this.previousUserStatus.colosseumRankId)
+			{
+				this.RankUpCoroutine = base.StartCoroutine(this.PlayRankDown());
 				yield return this.RankUpCoroutine;
 			}
 		}
@@ -444,6 +446,24 @@ public sealed class CMD_PvPBattleResult : CMD
 		component.Play(fullPathHash, 0, 0f);
 	}
 
+	private IEnumerator PlayRankDown()
+	{
+		this.rankSprite.spriteName = MultiTools.GetPvPRankSpriteName(this.pvpResultData.colosseumRankId);
+		SoundMng.Instance().PlaySE("SEInternal/Farm/se_219", 0f, false, true, null, -1, 1f);
+		this.PlayRankDownEffect();
+		yield return new WaitForSeconds(1f);
+		yield break;
+	}
+
+	private void PlayRankDownEffect()
+	{
+		NGUITools.SetActiveSelf(this.rankDownEffect, true);
+		Animator component = this.rankDownEffect.GetComponent<Animator>();
+		component.enabled = true;
+		int fullPathHash = component.GetCurrentAnimatorStateInfo(0).fullPathHash;
+		component.Play(fullPathHash, 0, 0f);
+	}
+
 	private void DispTapNextButton()
 	{
 		this.currentSkipSuccess = CMD_PvPBattleResult.SKIP_SUCCESS.End;
@@ -483,6 +503,10 @@ public sealed class CMD_PvPBattleResult : CMD
 			if (this.multiBattleData.BattleResult == 1)
 			{
 				cmd_FirstClear.SetWinRewardTitle();
+			}
+			else
+			{
+				cmd_FirstClear.SetTitleHide();
 			}
 		}
 	}
@@ -548,9 +572,18 @@ public sealed class CMD_PvPBattleResult : CMD
 
 	private void SkipPlayCountDp()
 	{
-		base.StopCoroutine(this.DpCoroutine);
-		base.StopCoroutine(this.DpSubCoroutine);
-		base.StopCoroutine(this.DpTotalCoroutine);
+		if (this.DpCoroutine != null)
+		{
+			base.StopCoroutine(this.DpCoroutine);
+		}
+		if (this.DpSubCoroutine != null)
+		{
+			base.StopCoroutine(this.DpSubCoroutine);
+		}
+		if (this.DpTotalCoroutine != null)
+		{
+			base.StopCoroutine(this.DpTotalCoroutine);
+		}
 		if (this.RankUpCoroutine != null)
 		{
 			base.StopCoroutine(this.RankUpCoroutine);
@@ -569,10 +602,13 @@ public sealed class CMD_PvPBattleResult : CMD
 
 	private void SkipDpCount()
 	{
-		GameWebAPI.RespDataMA_ColosseumRankM.ColosseumRank colosseumRank = this.rankDataDict[this.previousUserStatus.colosseumRankId.ToString()];
-		if (int.Parse(colosseumRank.maxScore) + 1 - this.nowTotalWin == 0)
+		if (this.pvpResultData.colosseumRankId > this.previousUserStatus.colosseumRankId)
 		{
 			base.StartCoroutine(this.PlayRankUp());
+		}
+		else if (this.pvpResultData.colosseumRankId < this.previousUserStatus.colosseumRankId)
+		{
+			base.StartCoroutine(this.PlayRankDown());
 		}
 		this.currentDpLabel.text = this.pvpResultData.score.ToString();
 		this.currentSkipSuccess = CMD_PvPBattleResult.SKIP_SUCCESS.End;

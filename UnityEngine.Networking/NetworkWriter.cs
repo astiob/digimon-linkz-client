@@ -274,11 +274,27 @@ namespace UnityEngine.Networking
 
 		public void Write(byte[] buffer, int count)
 		{
+			if (count > 65535)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkWriter Write: buffer is too large (" + count + ") bytes. The maximum buffer size is 64K bytes.");
+				}
+				return;
+			}
 			this.m_Buffer.WriteBytes(buffer, (ushort)count);
 		}
 
 		public void Write(byte[] buffer, int offset, int count)
 		{
+			if (count > 65535)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkWriter Write: buffer is too large (" + count + ") bytes. The maximum buffer size is 64K bytes.");
+				}
+				return;
+			}
 			this.m_Buffer.WriteBytesAtOffset(buffer, (ushort)offset, (ushort)count);
 		}
 
@@ -287,6 +303,14 @@ namespace UnityEngine.Networking
 			if (buffer == null || count == 0)
 			{
 				this.Write(0);
+				return;
+			}
+			if (count > 65535)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkWriter WriteBytesAndSize: buffer is too large (" + count + ") bytes. The maximum buffer size is 64K bytes.");
+				}
 				return;
 			}
 			this.Write((ushort)count);
@@ -298,6 +322,14 @@ namespace UnityEngine.Networking
 			if (buffer == null)
 			{
 				this.Write(0);
+				return;
+			}
+			if (buffer.Length > 65535)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkWriter WriteBytes: buffer is too large (" + buffer.Length + ") bytes. The maximum buffer size is 64K bytes.");
+				}
 				return;
 			}
 			this.Write((ushort)buffer.Length);

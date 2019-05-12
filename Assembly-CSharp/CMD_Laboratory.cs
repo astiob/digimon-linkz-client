@@ -1,4 +1,6 @@
-﻿using Master;
+﻿using Evolution;
+using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -92,7 +94,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 			DataMng.Instance().RespDataMN_LaboExec = response;
 			if (response.userMonster != null)
 			{
-				DataMng.Instance().AddUserMonster(response.userMonster);
+				ClassSingleton<MonsterUserDataMng>.Instance.AddUserMonsterData(response.userMonster);
 			}
 		};
 		GameWebAPI.RequestMN_MonsterCombination request = requestMN_MonsterCombination;
@@ -108,22 +110,22 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override void EndSuccess()
 	{
-		bool flag = int.Parse(this.baseDigimon.userMonster.friendship) >= int.Parse(this.baseDigimon.growStepM.maxFriendship);
-		bool isAwakening = int.Parse(this.baseDigimon.userMonster.friendship) == CommonSentenceData.MaxFriendshipValue(this.baseDigimon.monsterMG.growStep);
+		int num = int.Parse(this.baseDigimon.userMonster.friendship);
+		int friendshipMaxValue = MonsterFriendshipData.GetFriendshipMaxValue(this.baseDigimon.monsterMG.growStep);
+		bool flag = num >= friendshipMaxValue;
+		bool isAwakening = num == friendshipMaxValue;
 		bool hasChip = this.ResetChipAfterExec();
-		int[] umidL = new int[]
+		string[] userMonsterIdList = new string[]
 		{
-			int.Parse(this.baseDigimon.userMonster.userMonsterId),
-			int.Parse(this.partnerDigimon.userMonster.userMonsterId)
+			this.baseDigimon.userMonster.userMonsterId,
+			this.partnerDigimon.userMonster.userMonsterId
 		};
-		DataMng.Instance().DeleteUserMonsterList(umidL);
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Laboratory();
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.RefreshMonsterDataList();
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterData = this.GetUserMonsterData();
-		string userMonsterId = userMonsterData.userMonsterId;
-		MonsterData monsterDataByUserMonsterID = monsterDataMng.GetMonsterDataByUserMonsterID(userMonsterId, false);
-		string eggTypeFromMD = MonsterDataMng.Instance().GetEggTypeFromMD(monsterDataByUserMonsterID);
+		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterData.userMonsterId, false);
+		string eggType = ClassSingleton<EvolutionData>.Instance.GetEggType(monsterDataByUserMonsterID.userMonster.monsterEvolutionRouteId);
 		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
 		int item2 = int.Parse(this.partnerDigimon.monsterM.monsterGroupId);
 		List<int> umidList = new List<int>
@@ -134,7 +136,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		{
 			item2
 		};
-		list.Add(int.Parse(eggTypeFromMD));
+		list.Add(int.Parse(eggType));
 		int rareNum = 0;
 		if (flag)
 		{
@@ -254,8 +256,8 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override bool CanEnter()
 	{
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.GROWING_IN_GARDEN);
+		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.GROWING_IN_GARDEN);
 		return list.Count < ConstValue.MAX_CHILD_MONSTER;
 	}
 
@@ -267,9 +269,9 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	protected override bool CanSelectMonster(int idx)
 	{
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		List<MonsterData> list = monsterDataMng.GetMonsterDataList(false);
-		list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.RESEARCH_TARGET);
-		list = monsterDataMng.SortMDList(list, false);
+		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
+		list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.RESEARCH_TARGET);
+		monsterDataMng.SortMDList(list);
 		return list.Count > 1;
 	}
 
@@ -311,15 +313,15 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		MonsterEggStatusInfo monsterEggStatusInfo = new MonsterEggStatusInfo();
 		monsterEggStatusInfo.rare = baseData.monsterM.rare;
 		int num = int.Parse(baseData.userMonster.friendship);
-		int num2 = CommonSentenceData.MaxFriendshipValue(baseData.monsterMG.growStep);
-		int num3 = monsterEggStatusInfo.rare.ToInt32();
+		int friendshipMaxValue = MonsterFriendshipData.GetFriendshipMaxValue(baseData.monsterMG.growStep);
+		int num2 = monsterEggStatusInfo.rare.ToInt32();
 		monsterEggStatusInfo.isArousal = false;
 		monsterEggStatusInfo.isReturn = false;
-		if (num3 >= 6)
+		if (num2 >= 6)
 		{
 			monsterEggStatusInfo.isReturn = true;
 		}
-		else if (num == num2 && num3 < 5)
+		else if (num == friendshipMaxValue && num2 < 5)
 		{
 			monsterEggStatusInfo.isArousal = true;
 		}

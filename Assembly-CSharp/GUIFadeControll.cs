@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GUIFadeControll : MonoBehaviour
 {
@@ -184,7 +185,7 @@ public class GUIFadeControll : MonoBehaviour
 		}
 		if (GUIFadeControll.APLoadName != string.Empty)
 		{
-			Application.LoadLevel(GUIFadeControll.APLoadName);
+			SceneManager.LoadScene(GUIFadeControll.APLoadName);
 		}
 		if (GUIFadeControll.LoadGUIName != string.Empty)
 		{

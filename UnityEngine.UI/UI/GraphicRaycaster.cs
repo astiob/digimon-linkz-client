@@ -5,18 +5,18 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
-	[AddComponentMenu("Event/Graphic Raycaster")]
 	[RequireComponent(typeof(Canvas))]
+	[AddComponentMenu("Event/Graphic Raycaster")]
 	public class GraphicRaycaster : BaseRaycaster
 	{
 		protected const int kNoEventMaskSet = -1;
 
-		[SerializeField]
 		[FormerlySerializedAs("ignoreReversedGraphics")]
+		[SerializeField]
 		private bool m_IgnoreReversedGraphics = true;
 
-		[FormerlySerializedAs("blockingObjects")]
 		[SerializeField]
+		[FormerlySerializedAs("blockingObjects")]
 		private GraphicRaycaster.BlockingObjects m_BlockingObjects;
 
 		[SerializeField]
@@ -104,7 +104,9 @@ namespace UnityEngine.UI
 			Vector2 vector;
 			if (this.eventCamera == null)
 			{
-				vector = new Vector2(eventData.position.x / (float)Screen.width, eventData.position.y / (float)Screen.height);
+				float num = (float)Screen.width;
+				float num2 = (float)Screen.height;
+				vector = new Vector2(eventData.position.x / num, eventData.position.y / num2);
 			}
 			else
 			{
@@ -114,7 +116,7 @@ namespace UnityEngine.UI
 			{
 				return;
 			}
-			float num = float.MaxValue;
+			float num3 = float.MaxValue;
 			Ray ray = default(Ray);
 			if (this.eventCamera != null)
 			{
@@ -122,22 +124,22 @@ namespace UnityEngine.UI
 			}
 			if (this.canvas.renderMode != RenderMode.ScreenSpaceOverlay && this.blockingObjects != GraphicRaycaster.BlockingObjects.None)
 			{
-				float num2 = 100f;
+				float num4 = 100f;
 				if (this.eventCamera != null)
 				{
-					num2 = this.eventCamera.farClipPlane - this.eventCamera.nearClipPlane;
+					num4 = this.eventCamera.farClipPlane - this.eventCamera.nearClipPlane;
 				}
 				RaycastHit raycastHit;
-				if ((this.blockingObjects == GraphicRaycaster.BlockingObjects.ThreeD || this.blockingObjects == GraphicRaycaster.BlockingObjects.All) && Physics.Raycast(ray, out raycastHit, num2, this.m_BlockingMask))
+				if ((this.blockingObjects == GraphicRaycaster.BlockingObjects.ThreeD || this.blockingObjects == GraphicRaycaster.BlockingObjects.All) && Physics.Raycast(ray, out raycastHit, num4, this.m_BlockingMask))
 				{
-					num = raycastHit.distance;
+					num3 = raycastHit.distance;
 				}
 				if (this.blockingObjects == GraphicRaycaster.BlockingObjects.TwoD || this.blockingObjects == GraphicRaycaster.BlockingObjects.All)
 				{
-					RaycastHit2D raycastHit2D = Physics2D.Raycast(ray.origin, ray.direction, num2, this.m_BlockingMask);
+					RaycastHit2D raycastHit2D = Physics2D.Raycast(ray.origin, ray.direction, num4, this.m_BlockingMask);
 					if (raycastHit2D.collider != null)
 					{
-						num = raycastHit2D.fraction * num2;
+						num3 = raycastHit2D.fraction * num4;
 					}
 				}
 			}
@@ -163,28 +165,28 @@ namespace UnityEngine.UI
 				}
 				if (flag)
 				{
-					float num3;
+					float num5;
 					if (this.eventCamera == null || this.canvas.renderMode == RenderMode.ScreenSpaceOverlay)
 					{
-						num3 = 0f;
+						num5 = 0f;
 					}
 					else
 					{
 						Transform transform = gameObject.transform;
 						Vector3 forward = transform.forward;
-						num3 = Vector3.Dot(forward, transform.position - ray.origin) / Vector3.Dot(forward, ray.direction);
-						if (num3 < 0f)
+						num5 = Vector3.Dot(forward, transform.position - ray.origin) / Vector3.Dot(forward, ray.direction);
+						if (num5 < 0f)
 						{
-							goto IL_3CF;
+							goto IL_3DA;
 						}
 					}
-					if (num3 < num)
+					if (num5 < num3)
 					{
 						RaycastResult item = new RaycastResult
 						{
 							gameObject = gameObject,
 							module = this,
-							distance = num3,
+							distance = num5,
 							screenPosition = eventData.position,
 							index = (float)resultAppendList.Count,
 							depth = this.m_RaycastResults[i].depth,
@@ -194,7 +196,7 @@ namespace UnityEngine.UI
 						resultAppendList.Add(item);
 					}
 				}
-				IL_3CF:;
+				IL_3DA:;
 			}
 		}
 

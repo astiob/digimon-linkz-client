@@ -1,5 +1,7 @@
-﻿using FarmData;
+﻿using Evolution;
+using FarmData;
 using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Linq;
@@ -200,6 +202,10 @@ public class ExchangeItem : GUIListPartBS
 		{
 			num = 100;
 		}
+		else if (num > this.exchangeInfoData.remainCount && int.Parse(this.exchangeInfoData.limitNum) != 0)
+		{
+			num = this.exchangeInfoData.remainCount;
+		}
 		return num;
 	}
 
@@ -274,7 +280,7 @@ public class ExchangeItem : GUIListPartBS
 			this.viewIcon.gameObject.SetActive(false);
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(exchangeInfo.assetValue);
 			this.exchangeDetailName = monsterData.monsterMG.monsterName;
-			this.micon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, new Vector3(1f, 1f, 1f), new Vector3(-165f, 25f, 0f), this.iconRoot.transform, true, false);
+			this.micon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, new Vector3(1f, 1f, 1f), new Vector3(-165f, 25f, 0f), this.iconRoot.transform, true, false);
 			UIWidget component2 = base.gameObject.GetComponent<UIWidget>();
 			if (component2 != null)
 			{
@@ -290,20 +296,20 @@ public class ExchangeItem : GUIListPartBS
 			{
 				component4.enabled = false;
 			}
-			goto IL_592;
+			goto IL_58D;
 		}
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			text = "Common02_LB_Stone";
 			this.exchangeDetailName = text2;
-			goto IL_592;
+			goto IL_58D;
 		case MasterDataMng.AssetCategory.LINK_POINT:
 			text = "Common02_LB_Link";
 			this.exchangeDetailName = text2;
-			goto IL_592;
+			goto IL_58D;
 		case MasterDataMng.AssetCategory.TIP:
 			text = "Common02_LB_Chip";
 			this.exchangeDetailName = text2;
-			goto IL_592;
+			goto IL_58D;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(exchangeInfo.assetValue);
@@ -315,22 +321,22 @@ public class ExchangeItem : GUIListPartBS
 				string largeImagePath = itemM.GetLargeImagePath();
 				NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, largeImagePath, false);
 			}
-			goto IL_592;
+			goto IL_58D;
 		}
 		case MasterDataMng.AssetCategory.MEAT:
 			text = "Common02_item_meat";
 			this.exchangeDetailName = text2;
-			goto IL_592;
+			goto IL_58D;
 		case MasterDataMng.AssetCategory.SOUL:
 		{
 			this.exchangeDetailName = text2;
 			GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(exchangeInfo.assetValue);
 			value = soul.soulName;
 			this.viewIconTexture.gameObject.SetActive(true);
-			string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(exchangeInfo.assetValue);
+			string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(exchangeInfo.assetValue);
 			NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, evolveItemIconPathByID, false);
 			this.viewIcon.gameObject.SetActive(false);
-			goto IL_592;
+			goto IL_58D;
 		}
 		case MasterDataMng.AssetCategory.FACILITY_KEY:
 		{
@@ -345,7 +351,7 @@ public class ExchangeItem : GUIListPartBS
 			{
 				this.exchangeDetailName = facilityKeyMaster.facilityKeyName;
 			}
-			goto IL_592;
+			goto IL_58D;
 		}
 		case MasterDataMng.AssetCategory.CHIP:
 		{
@@ -353,7 +359,7 @@ public class ExchangeItem : GUIListPartBS
 			ChipDataMng.MakePrefabByChipData(chipMainData, this.viewIcon.gameObject, this.viewIcon.gameObject.transform.localPosition, this.viewIcon.gameObject.transform.localScale, null, 128, 128, false);
 			this.exchangeDetailName = chipMainData.name;
 			this.viewIcon.gameObject.SetActive(false);
-			goto IL_592;
+			goto IL_58D;
 		}
 		case MasterDataMng.AssetCategory.DUNGEON_TICKET:
 		{
@@ -366,12 +372,12 @@ public class ExchangeItem : GUIListPartBS
 				NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, dungeonTicketM.img, false);
 				this.exchangeDetailName = dungeonTicketM.name;
 			}
-			goto IL_592;
+			goto IL_58D;
 		}
 		}
 		text = string.Empty;
 		this.exchangeDetailName = StringMaster.GetString("Present-10");
-		IL_592:
+		IL_58D:
 		if (!string.IsNullOrEmpty(text) && assetCategory2 != MasterDataMng.AssetCategory.MONSTER)
 		{
 			this.viewIcon.spriteName = text;
@@ -445,7 +451,7 @@ public class ExchangeItem : GUIListPartBS
 		case MasterDataMng.AssetCategory.SOUL:
 		{
 			this.exchangeViewTexture.gameObject.SetActive(true);
-			string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(exchangeInfo.item.assetValue);
+			string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(exchangeInfo.item.assetValue);
 			NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, evolveItemIconPathByID, false);
 			goto IL_2BB;
 		}
@@ -576,47 +582,45 @@ public class ExchangeItem : GUIListPartBS
 		switch (assetCategory)
 		{
 		case MasterDataMng.AssetCategory.MONSTER:
-		{
-			MonsterFixidM[] array = FarmDataManager.monsterFixidMaster.ToArray();
-			if (this.exchangeInfoData.monsterFixedValueId == null || array.Length == 0)
+			if (!string.IsNullOrEmpty(this.exchangeInfoData.monsterFixedValueId))
 			{
-				return;
+				MonsterFixedM fixedValues = MonsterFixedData.GetMonsterFixedMaster(this.exchangeInfoData.monsterFixedValueId);
+				if (fixedValues != null)
+				{
+					CMD_MonsterParamPop cmd_MonsterParamPop = GUIMain.ShowCommonDialog(null, "CMD_MonsterParamPop") as CMD_MonsterParamPop;
+					MonsterData digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.exchangeInfoData.assetValue);
+					GameWebAPI.RespDataMA_GetSkillM.SkillM[] skillM = MasterDataMng.Instance().RespDataMA_SkillM.skillM;
+					GameWebAPI.RespDataMA_GetSkillM.SkillM skillM2 = skillM.FirstOrDefault((GameWebAPI.RespDataMA_GetSkillM.SkillM x) => x.skillGroupId == digimonData.monsterM.skillGroupId && x.skillGroupSubId == fixedValues.defaultSkillGroupSubId);
+					if (int.Parse(fixedValues.level) > int.Parse(digimonData.monsterM.maxLevel))
+					{
+						fixedValues.level = digimonData.monsterM.maxLevel;
+					}
+					int lvMAXExperienceInfo = DataMng.Instance().GetLvMAXExperienceInfo(int.Parse(fixedValues.level));
+					DataMng.ExperienceInfo experienceInfo = DataMng.Instance().GetExperienceInfo(lvMAXExperienceInfo);
+					digimonData.userMonster.luck = fixedValues.luck;
+					digimonData.userMonster.friendship = "0";
+					digimonData.userMonster.level = fixedValues.level;
+					digimonData.userMonster.hpAbility = fixedValues.hpAbility;
+					digimonData.userMonster.hpAbilityFlg = fixedValues.hpAbilityFlg.ToString();
+					digimonData.userMonster.attackAbility = fixedValues.attackAbility;
+					digimonData.userMonster.attackAbilityFlg = fixedValues.attackAbilityFlg.ToString();
+					digimonData.userMonster.defenseAbility = fixedValues.defenseAbility;
+					digimonData.userMonster.defenseAbilityFlg = fixedValues.defenseAbilityFlg.ToString();
+					digimonData.userMonster.spAttackAbility = fixedValues.spAttackAbility;
+					digimonData.userMonster.spAttackAbilityFlg = fixedValues.spAttackAbilityFlg.ToString();
+					digimonData.userMonster.spDefenseAbility = fixedValues.spDefenseAbility;
+					digimonData.userMonster.spDefenseAbilityFlg = fixedValues.spDefenseAbilityFlg.ToString();
+					digimonData.userMonster.speedAbility = fixedValues.speedAbility;
+					digimonData.userMonster.speedAbilityFlg = fixedValues.speedAbilityFlg.ToString();
+					digimonData.userMonster.commonSkillId = fixedValues.commonSkillId;
+					digimonData.userMonster.leaderSkillId = fixedValues.leaderSkillId;
+					digimonData.userMonster.defaultSkillGroupSubId = fixedValues.defaultSkillGroupSubId;
+					digimonData.userMonster.uniqueSkillId = skillM2.skillId;
+					digimonData.InitSkillInfo();
+					cmd_MonsterParamPop.MonsterDataSet(digimonData, experienceInfo, int.Parse(this.exchangeInfoData.maxExtraSlotNum));
+				}
 			}
-			MonsterFixidM monsterFixid = array.FirstOrDefault((MonsterFixidM x) => int.Parse(x.monsterFixedValueId) == int.Parse(this.exchangeInfoData.monsterFixedValueId));
-			CMD_MonsterParamPop cmd_MonsterParamPop = GUIMain.ShowCommonDialog(null, "CMD_MonsterParamPop") as CMD_MonsterParamPop;
-			MonsterData digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.exchangeInfoData.assetValue);
-			digimonData.InitChipInfo();
-			GameWebAPI.RespDataMA_GetSkillM.SkillM[] skillM = MasterDataMng.Instance().RespDataMA_SkillM.skillM;
-			GameWebAPI.RespDataMA_GetSkillM.SkillM skillM2 = skillM.FirstOrDefault((GameWebAPI.RespDataMA_GetSkillM.SkillM x) => x.skillGroupId == digimonData.monsterM.skillGroupId && x.skillGroupSubId == monsterFixid.defaultSkillGroupSubId);
-			if (int.Parse(monsterFixid.level) > int.Parse(digimonData.monsterM.maxLevel))
-			{
-				monsterFixid.level = digimonData.monsterM.maxLevel;
-			}
-			int lvMAXExperienceInfo = DataMng.Instance().GetLvMAXExperienceInfo(int.Parse(monsterFixid.level));
-			DataMng.ExperienceInfo experienceInfo = DataMng.Instance().GetExperienceInfo(lvMAXExperienceInfo);
-			digimonData.userMonster.luck = monsterFixid.luck;
-			digimonData.userMonster.friendship = "0";
-			digimonData.userMonster.level = monsterFixid.level;
-			digimonData.userMonster.hpAbility = monsterFixid.hpAbility;
-			digimonData.userMonster.hpAbilityFlg = monsterFixid.hpAbilityFlg.ToString();
-			digimonData.userMonster.attackAbility = monsterFixid.attackAbility;
-			digimonData.userMonster.attackAbilityFlg = monsterFixid.attackAbilityFlg.ToString();
-			digimonData.userMonster.defenseAbility = monsterFixid.defenseAbility;
-			digimonData.userMonster.defenseAbilityFlg = monsterFixid.defenseAbilityFlg.ToString();
-			digimonData.userMonster.spAttackAbility = monsterFixid.spAttackAbility;
-			digimonData.userMonster.spAttackAbilityFlg = monsterFixid.spAttackAbilityFlg.ToString();
-			digimonData.userMonster.spDefenseAbility = monsterFixid.spDefenseAbility;
-			digimonData.userMonster.spDefenseAbilityFlg = monsterFixid.spDefenseAbilityFlg.ToString();
-			digimonData.userMonster.speedAbility = monsterFixid.speedAbility;
-			digimonData.userMonster.speedAbilityFlg = monsterFixid.speedAbilityFlg.ToString();
-			digimonData.userMonster.commonSkillId = monsterFixid.commonSkillId;
-			digimonData.userMonster.leaderSkillId = monsterFixid.leaderSkillId;
-			digimonData.userMonster.defaultSkillGroupSubId = monsterFixid.defaultSkillGroupSubId;
-			digimonData.userMonster.uniqueSkillId = skillM2.skillId;
-			digimonData.InitSkillInfo();
-			cmd_MonsterParamPop.MonsterDataSet(digimonData, experienceInfo, int.Parse(this.exchangeInfoData.maxExtraSlotNum));
 			break;
-		}
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			CMD_QuestItemPOP.Create(assetCategory2);
 			break;

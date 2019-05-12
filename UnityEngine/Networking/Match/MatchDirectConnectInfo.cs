@@ -4,24 +4,12 @@ using UnityEngine.Networking.Types;
 
 namespace UnityEngine.Networking.Match
 {
-	/// <summary>
-	///   <para>Class describing a client in a network match.</para>
-	/// </summary>
 	public class MatchDirectConnectInfo : ResponseBase
 	{
-		/// <summary>
-		///   <para>NodeID of the client described in this direct connect info.</para>
-		/// </summary>
 		public NodeID nodeId { get; set; }
 
-		/// <summary>
-		///   <para>Public address the client described by this class provided.</para>
-		/// </summary>
 		public string publicAddress { get; set; }
 
-		/// <summary>
-		///   <para>Private address the client described by this class provided.</para>
-		/// </summary>
 		public string privateAddress { get; set; }
 
 		public override string ToString()

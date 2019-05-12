@@ -22,8 +22,8 @@ public class UIDragObject : MonoBehaviour
 	[SerializeField]
 	protected Vector3 scale = new Vector3(1f, 1f, 0f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float scrollWheelFactor;
 
 	private Plane mPlane;

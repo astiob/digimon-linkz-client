@@ -4,9 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine.Experimental.Director
 {
-	/// <summary>
-	///   <para>Playable that plays an AnimationClip. Can be used as an input to an AnimationPlayable.</para>
-	/// </summary>
 	public sealed class AnimationClipPlayable : AnimationPlayable
 	{
 		public AnimationClipPlayable(AnimationClip clip) : base(false)
@@ -19,9 +16,6 @@ namespace UnityEngine.Experimental.Director
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void InstantiateEnginePlayable(AnimationClip clip);
 
-		/// <summary>
-		///   <para>AnimationClip played by this playable.</para>
-		/// </summary>
 		public extern AnimationClip clip { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
 		public override int AddInput(AnimationPlayable source)
@@ -60,9 +54,6 @@ namespace UnityEngine.Experimental.Director
 			return false;
 		}
 
-		/// <summary>
-		///   <para>The speed at which the AnimationClip is played.</para>
-		/// </summary>
 		public extern float speed { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 	}
 }

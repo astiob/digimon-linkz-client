@@ -13,8 +13,8 @@ public class JogressController : CutsceneControllerBase
 	[Header("進化後デジモンの親")]
 	private GameObject character3Parent;
 
-	[Header("キャラクターのスタンド")]
 	[SerializeField]
+	[Header("キャラクターのスタンド")]
 	private GameObject[] charaStand;
 
 	[Header("スタンドの回転速度")]
@@ -29,8 +29,8 @@ public class JogressController : CutsceneControllerBase
 	[Header("UIカメラ")]
 	private GameObject camera2D;
 
-	[Header("3Dカメラ")]
 	[SerializeField]
+	[Header("3Dカメラ")]
 	private GameObject camera3D_1;
 
 	[SerializeField]

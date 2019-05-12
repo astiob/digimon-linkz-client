@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</ProjectGuid>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnityEngine</RootNamespace>
@@ -45,7 +45,6 @@
     <Compile Include="Advertisements\UnityAdsDelegate.cs" />
     <Compile Include="Advertisements\UnityAdsInternal.cs" />
     <Compile Include="Advertisements\UnityAdsManager.cs" />
-    <Compile Include="AdvertisingIdentifierCallback.cs" />
     <Compile Include="Analytics\UnityAnalyticsManager.cs" />
     <Compile Include="AnchoredJoint2D.cs" />
     <Compile Include="AndroidActivityIndicatorStyle.cs" />
@@ -140,6 +139,7 @@
     <Compile Include="Bounds.cs" />
     <Compile Include="BoxCollider.cs" />
     <Compile Include="BoxCollider2D.cs" />
+    <Compile Include="BuoyancyEffector2D.cs" />
     <Compile Include="CacheIndex.cs" />
     <Compile Include="Caching.cs" />
     <Compile Include="Camera.cs" />
@@ -184,6 +184,8 @@
     <Compile Include="ConfigurableJoint.cs" />
     <Compile Include="ConfigurableJointMotion.cs" />
     <Compile Include="ConnectionTesterStatus.cs" />
+    <Compile Include="Connect\UnityAnalyticsSettings.cs" />
+    <Compile Include="Connect\UnityPurchasingSettings.cs" />
     <Compile Include="ConstantForce.cs" />
     <Compile Include="ConstantForce2D.cs" />
     <Compile Include="ConstructorSafeAttribute.cs" />
@@ -209,7 +211,10 @@
     <Compile Include="Cursor.cs" />
     <Compile Include="CursorLockMode.cs" />
     <Compile Include="CursorMode.cs" />
+    <Compile Include="CustomYieldInstruction.cs" />
     <Compile Include="Debug.cs" />
+    <Compile Include="DebugLogHandler.cs" />
+    <Compile Include="DelayedAttribute.cs" />
     <Compile Include="DepthTextureMode.cs" />
     <Compile Include="DetailPrototype.cs" />
     <Compile Include="DetailRenderMode.cs" />
@@ -282,6 +287,7 @@
     <Compile Include="FilterMode.cs" />
     <Compile Include="FingerDoF.cs" />
     <Compile Include="FixedJoint.cs" />
+    <Compile Include="FixedJoint2D.cs" />
     <Compile Include="Flare.cs" />
     <Compile Include="FlareLayer.cs" />
     <Compile Include="FocusType.cs" />
@@ -290,6 +296,7 @@
     <Compile Include="FontStyle.cs" />
     <Compile Include="ForceMode.cs" />
     <Compile Include="ForceMode2D.cs" />
+    <Compile Include="FrictionJoint2D.cs" />
     <Compile Include="FullScreenMovieControlMode.cs" />
     <Compile Include="FullScreenMovieScalingMode.cs" />
     <Compile Include="GameObject.cs" />
@@ -318,6 +325,7 @@
     <Compile Include="GUIStateObjects.cs" />
     <Compile Include="GUIStyle.cs" />
     <Compile Include="GUIStyleState.cs" />
+    <Compile Include="GUITargetAttribute.cs" />
     <Compile Include="GUIText.cs" />
     <Compile Include="GUITexture.cs" />
     <Compile Include="GUIUtility.cs" />
@@ -340,14 +348,17 @@
     <Compile Include="HumanDescription.cs" />
     <Compile Include="HumanLimit.cs" />
     <Compile Include="HumanParameter.cs" />
+    <Compile Include="HumanPose.cs" />
+    <Compile Include="HumanPoseHandler.cs" />
     <Compile Include="HumanTrait.cs" />
     <Compile Include="ICanvasRaycastFilter.cs" />
     <Compile Include="IL2CPPStructAlignmentAttribute.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="ILogHandler.cs" />
     <Compile Include="ImageEffectOpaque.cs" />
     <Compile Include="ImageEffectTransformsToLDR.cs" />
     <Compile Include="ImagePosition.cs" />
     <Compile Include="IMECompositionMode.cs" />
-    <Compile Include="ImplementedInActionScriptAttribute.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InternalDrawTextureArguments.cs" />
     <Compile Include="InternalEmitParticleArguments.cs" />
@@ -394,6 +405,7 @@
     <Compile Include="JointSpring.cs" />
     <Compile Include="JointSuspension2D.cs" />
     <Compile Include="JointTranslationLimits2D.cs" />
+    <Compile Include="JsonUtility.cs" />
     <Compile Include="jvalue.cs" />
     <Compile Include="KeyCode.cs" />
     <Compile Include="Keyframe.cs" />
@@ -417,8 +429,8 @@
     <Compile Include="LOD.cs" />
     <Compile Include="LODFadeMode.cs" />
     <Compile Include="LODGroup.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="LogType.cs" />
-    <Compile Include="MarshallOnlyFirstField.cs" />
     <Compile Include="MasterServer.cs" />
     <Compile Include="MasterServerEvent.cs" />
     <Compile Include="MatchTargetWeightMask.cs" />
@@ -501,9 +513,6 @@
     <Compile Include="NetworkStateSynchronization.cs" />
     <Compile Include="NetworkView.cs" />
     <Compile Include="NetworkViewID.cs" />
-    <Compile Include="NotConvertedAttribute.cs" />
-    <Compile Include="NotFlashValidatedAttribute.cs" />
-    <Compile Include="NotRenamedAttribute.cs" />
     <Compile Include="NPOTSupport.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="ObstacleAvoidanceType.cs" />
@@ -520,10 +529,23 @@
     <Compile Include="ParticleRenderer.cs" />
     <Compile Include="ParticleRenderMode.cs" />
     <Compile Include="ParticleSystem.cs" />
+    <Compile Include="ParticleSystemAnimationType.cs" />
+    <Compile Include="ParticleSystemCollisionMode.cs" />
+    <Compile Include="ParticleSystemCollisionQuality.cs" />
+    <Compile Include="ParticleSystemCollisionType.cs" />
+    <Compile Include="ParticleSystemCurveMode.cs" />
+    <Compile Include="ParticleSystemEmissionType.cs" />
     <Compile Include="ParticleSystemExtensionsImpl.cs" />
+    <Compile Include="ParticleSystemGradientMode.cs" />
+    <Compile Include="ParticleSystemInheritVelocityMode.cs" />
+    <Compile Include="ParticleSystemMeshShapeType.cs" />
     <Compile Include="ParticleSystemRenderer.cs" />
     <Compile Include="ParticleSystemRenderMode.cs" />
+    <Compile Include="ParticleSystemRenderSpace.cs" />
+    <Compile Include="ParticleSystemScalingMode.cs" />
+    <Compile Include="ParticleSystemShapeType.cs" />
     <Compile Include="ParticleSystemSimulationSpace.cs" />
+    <Compile Include="ParticleSystemSortMode.cs" />
     <Compile Include="PhysicMaterial.cs" />
     <Compile Include="PhysicMaterialCombine.cs" />
     <Compile Include="Physics.cs" />
@@ -568,6 +590,7 @@
     <Compile Include="RectTransform.cs" />
     <Compile Include="RectTransformUtility.cs" />
     <Compile Include="ReflectionProbe.cs" />
+    <Compile Include="RelativeJoint2D.cs" />
     <Compile Include="RenderBuffer.cs" />
     <Compile Include="RenderBufferHelper.cs" />
     <Compile Include="Renderer.cs" />
@@ -576,6 +599,8 @@
     <Compile Include="Rendering\BlendMode.cs" />
     <Compile Include="Rendering\BlendOp.cs" />
     <Compile Include="Rendering\BuiltinRenderTextureType.cs" />
+    <Compile Include="Rendering\BuiltinShaderMode.cs" />
+    <Compile Include="Rendering\BuiltinShaderType.cs" />
     <Compile Include="Rendering\CameraEvent.cs" />
     <Compile Include="Rendering\ColorWriteMask.cs" />
     <Compile Include="Rendering\CommandBuffer.cs" />
@@ -583,6 +608,7 @@
     <Compile Include="Rendering\CullMode.cs" />
     <Compile Include="Rendering\DefaultReflectionMode.cs" />
     <Compile Include="Rendering\GraphicsDeviceType.cs" />
+    <Compile Include="Rendering\GraphicsSettings.cs" />
     <Compile Include="Rendering\LightEvent.cs" />
     <Compile Include="Rendering\OpaqueSortMode.cs" />
     <Compile Include="Rendering\PassType.cs" />
@@ -598,6 +624,7 @@
     <Compile Include="Rendering\RenderBufferStoreAction.cs" />
     <Compile Include="Rendering\RenderTargetIdentifier.cs" />
     <Compile Include="Rendering\ShadowCastingMode.cs" />
+    <Compile Include="Rendering\ShadowSamplingMode.cs" />
     <Compile Include="Rendering\SphericalHarmonicsL2.cs" />
     <Compile Include="Rendering\StencilOp.cs" />
     <Compile Include="RenderMode.cs" />
@@ -618,6 +645,7 @@
     <Compile Include="RigidbodyInterpolation2D.cs" />
     <Compile Include="RigidbodySleepMode2D.cs" />
     <Compile Include="RotationDriveMode.cs" />
+    <Compile Include="RotationOrder.cs" />
     <Compile Include="RPC.cs" />
     <Compile Include="RPCMode.cs" />
     <Compile Include="RuntimeAnimatorController.cs" />
@@ -626,10 +654,15 @@
     <Compile Include="RuntimePlatform.cs" />
     <Compile Include="RuntimeUndo.cs" />
     <Compile Include="ScaleMode.cs" />
+    <Compile Include="SceneManagement\LoadSceneMode.cs" />
+    <Compile Include="SceneManagement\Scene.cs" />
+    <Compile Include="SceneManagement\SceneManager.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="ScreenOrientation.cs" />
     <Compile Include="ScriptableObject.cs" />
     <Compile Include="Scripting\PreserveAttribute.cs" />
+    <Compile Include="Scripting\RequiredByNativeCodeAttribute.cs" />
+    <Compile Include="Scripting\UsedByNativeCodeAttribute.cs" />
     <Compile Include="ScrollWaitDefinitions.cs" />
     <Compile Include="Security.cs" />
     <Compile Include="SelectionBaseAttribute.cs" />
@@ -706,6 +739,7 @@
     <Compile Include="SystemClock.cs" />
     <Compile Include="SystemInfo.cs" />
     <Compile Include="SystemLanguage.cs" />
+    <Compile Include="TargetJoint2D.cs" />
     <Compile Include="Terrain.cs" />
     <Compile Include="TerrainChangedFlags.cs" />
     <Compile Include="TerrainCollider.cs" />
@@ -735,6 +769,7 @@
     <Compile Include="TouchScreenKeyboard.cs" />
     <Compile Include="TouchScreenKeyboardType.cs" />
     <Compile Include="TouchScreenKeyboard_InternalConstructorHelperArguments.cs" />
+    <Compile Include="TouchType.cs" />
     <Compile Include="TrackedReference.cs" />
     <Compile Include="TrailRenderer.cs" />
     <Compile Include="Transform.cs" />
@@ -778,6 +813,8 @@
     <Compile Include="WaitForEndOfFrame.cs" />
     <Compile Include="WaitForFixedUpdate.cs" />
     <Compile Include="WaitForSeconds.cs" />
+    <Compile Include="WaitUntil.cs" />
+    <Compile Include="WaitWhile.cs" />
     <Compile Include="WeakListenerBindings.cs" />
     <Compile Include="WebCamDevice.cs" />
     <Compile Include="WebCamFlags.cs" />

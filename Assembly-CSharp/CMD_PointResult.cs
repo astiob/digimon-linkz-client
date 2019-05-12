@@ -198,14 +198,14 @@ public sealed class CMD_PointResult : CMD
 	{
 		UIWidget component = base.gameObject.GetComponent<UIWidget>();
 		this.bonusPartPos.gameObject.GetComponent<UIWidget>().depth = component.depth + 10;
-		this.dataPageNum = (this.eventResult.point.bonusPoint.Length - 1) / 5;
-		if ((this.eventResult.point.bonusPoint.Length - 1) % 5 != 0 && this.eventResult.point.bonusPoint.Length > 5)
-		{
-			this.dataPageNum++;
-		}
-		else if (this.eventResult.point.bonusPoint.Length - 1 < 5)
+		int num = this.eventResult.point.bonusPoint.Length - 1;
+		if (num < 5)
 		{
 			this.dataPageNum = 1;
+		}
+		else
+		{
+			this.dataPageNum = Mathf.CeilToInt((float)num / 5f);
 		}
 		for (int i = 0; i < this.eventResult.point.bonusPoint.Length - 1; i++)
 		{
@@ -235,13 +235,17 @@ public sealed class CMD_PointResult : CMD
 	private void ReSetPoint()
 	{
 		this.dataViewConter++;
-		for (int i = 1; i <= 5; i++)
+		int num = this.eventResult.point.bonusPoint.Length - 1;
+		for (int i = 0; i < 5; i++)
 		{
-			if (i + this.dataViewConter * 5 >= this.eventResult.point.bonusPoint.Length)
+			int num2 = this.dataViewConter * 5 + i;
+			if (num2 >= num)
 			{
 				break;
 			}
-			this.pointBonusList[i - 1].LabelDataSet(this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[i + this.dataViewConter * 5].eventPointBonusId), string.Format("{0}", this.eventResult.point.bonusPoint[i + this.dataViewConter * 5].point));
+			string bonusDetailMessage = this.GetBonusDetailMessage(this.eventResult.point.bonusPoint[num2 + 1].eventPointBonusId);
+			string pointText = string.Format("{0}", this.eventResult.point.bonusPoint[num2 + 1].point);
+			this.pointBonusList[i].LabelDataSet(bonusDetailMessage, pointText);
 		}
 	}
 
@@ -259,7 +263,7 @@ public sealed class CMD_PointResult : CMD
 			this.pointBonusList[i].gameObject.SetActive(true);
 			this.pointBonusList[i].BonusLabelFadeIn(null);
 		}
-		if (this.eventResult.point.bonusPoint.Length > 6)
+		if (this.dataViewConter < this.dataPageNum - 1)
 		{
 			yield return new WaitForSeconds(0.5f);
 			for (int j = 0; j < this.pointBonusList.Count; j++)
@@ -280,14 +284,21 @@ public sealed class CMD_PointResult : CMD
 
 	private IEnumerator ViewBonusPointReStartAnima()
 	{
-		for (int i = 0; i < this.eventResult.point.bonusPoint.Length % (6 * this.dataViewConter); i++)
+		int bonusPointLength = this.eventResult.point.bonusPoint.Length - 1;
+		for (int i = 0; i < 5; i++)
 		{
+			int totalIndex = 5 * this.dataViewConter + i;
+			if (totalIndex >= bonusPointLength)
+			{
+				break;
+			}
 			yield return new WaitForSeconds(0.5f);
 			this.pointBonusList[i].gameObject.SetActive(true);
 			this.pointBonusList[i].BonusLabelFadeIn(null);
 		}
-		if (this.eventResult.point.bonusPoint.Length > 6 + 5 * this.dataViewConter)
+		if (this.dataViewConter < this.dataPageNum - 1)
 		{
+			yield return new WaitForSeconds(0.5f);
 			for (int j = 0; j < this.pointBonusList.Count; j++)
 			{
 				this.pointBonusList[j].gameObject.SetActive(false);
@@ -395,18 +406,17 @@ public sealed class CMD_PointResult : CMD
 	private void DispNextItem()
 	{
 		this.currentProccess = CMD_PointResult.Proccess.NextItem;
-		string worldDungeonId = (DataMng.Instance().RespData_WorldMultiStartInfo != null) ? DataMng.Instance().RespData_WorldMultiStartInfo.worldDungeonId : DataMng.Instance().WD_ReqDngResult.dungeonId;
-		List<GameWebAPI.RespDataMA_EventPointAchieveRewardM.EventPointAchieveReward> nextReward = this.GetNextReward(this.eventResult.point.eventPoint, this.GetWorldEventId(worldDungeonId));
-		if (nextReward == null || nextReward.Count<GameWebAPI.RespDataMA_EventPointAchieveRewardM.EventPointAchieveReward>() == 0)
+		List<GameWebAPI.RespData_AreaEventResult.Reward> list = (this.eventResult.nextReward != null) ? new List<GameWebAPI.RespData_AreaEventResult.Reward>(this.eventResult.nextReward) : null;
+		if (list == null || list.Count<GameWebAPI.RespData_AreaEventResult.Reward>() == 0)
 		{
 			this.OnFinishedDispNextItem();
 			return;
 		}
 		this.nextItemRoot.SetActive(true);
 		this.nextItemRoot.GetComponent<EffectAnimatorEventTime>().SetEvent(0, new Action(this.OnFinishedDispNextItem));
-		int num = (nextReward.Count <= 0) ? 0 : (int.Parse(nextReward[0].point) - this.eventResult.point.eventPoint);
+		int num = (list.Count <= 0) ? 0 : (int.Parse(list[0].point) - this.eventResult.point.eventPoint);
 		this.nextItemPointText.text = string.Format(StringMaster.GetString("BattleResult-14"), num);
-		this.SetNextItemInfo(nextReward);
+		this.SetNextItemInfo(list);
 	}
 
 	private string GetWorldEventId(string worldDungeonId)
@@ -448,7 +458,7 @@ public sealed class CMD_PointResult : CMD
 		return list2;
 	}
 
-	private void SetNextItemInfo(List<GameWebAPI.RespDataMA_EventPointAchieveRewardM.EventPointAchieveReward> nextRewardList)
+	private void SetNextItemInfo(List<GameWebAPI.RespData_AreaEventResult.Reward> nextRewardList)
 	{
 		this.nextItemRewardInfo[3].gameObject.SetActive(false);
 		if (nextRewardList.Count == 0)
@@ -592,6 +602,10 @@ public sealed class CMD_PointResult : CMD
 		SoundMng.Instance().TryPlaySE("SEInternal/Common/se_107", 0f, false, true, null, -1);
 		this.bonusChange = true;
 		this.dataViewConter++;
+		if (this.dataViewConter > this.dataPageNum - 1)
+		{
+			this.dataViewConter = 0;
+		}
 		this.bonusCoroutine = this.BonusChangeFadeOut();
 		base.StartCoroutine(this.bonusCoroutine);
 	}

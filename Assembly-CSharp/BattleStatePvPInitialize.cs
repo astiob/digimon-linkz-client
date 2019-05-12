@@ -58,11 +58,6 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		yield break;
 	}
 
-	protected override CharacterStatus GetEnemyStatus(string id)
-	{
-		return base.stateManager.serverControl.GetPlayerStatus(id);
-	}
-
 	protected override IEnumerator LoadAfterInitializeUI()
 	{
 		BattleDebug.Log("ロード完了後UI初期化: 開始");
@@ -79,7 +74,7 @@ public class BattleStatePvPInitialize : BattleStateInitialize
 		base.stateManager.uiControlPvP.ApplySetAlwaysUIObject(false);
 		base.stateManager.uiControlPvP.ApplyAttackTimer(true);
 		base.stateManager.uiControlPvP.RegisterAttackRed();
-		base.stateManager.pvpFunction.InitializeTCPClient();
+		base.stateManager.pvpFunction.InitializeTCPClient(false);
 		string playerName = base.stateManager.pvpFunction.GetPlayerName();
 		string enemyName = base.stateManager.pvpFunction.GetEnemyName();
 		base.stateManager.uiControlPvP.SetPlayerName(playerName);

@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class BattleMenu : MonoBehaviour
 {
-	[Header("DialogHelpのBG")]
 	[SerializeField]
+	[Header("DialogHelpのBG")]
 	private UIWidget helpBGWidget;
 
 	[Header("DialogMENUのBG")]
 	[SerializeField]
 	private UIWidget menuBGWidget;
 
-	[Header("MenuDialog")]
 	[SerializeField]
+	[Header("MenuDialog")]
 	private MenuDialog menuDialog;
 
-	[Header("DialogHelpのGameObject")]
 	[SerializeField]
+	[Header("DialogHelpのGameObject")]
 	public GameObject helpDialogGO;
 
-	[SerializeField]
 	[Header("Menu/PanelのTransform")]
+	[SerializeField]
 	public Transform menuPanelTransform;
 
 	public MenuDialog SetupMenu(Transform parent)

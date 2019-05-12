@@ -16,16 +16,16 @@ public class RoundStart : MonoBehaviour
 	[SerializeField]
 	protected UILabel roundLocalize;
 
-	[SerializeField]
 	[Header("AP UPローカライズ(片方の時)")]
+	[SerializeField]
 	protected UILabel onlyApUpLocalize;
 
 	[SerializeField]
 	[Header("AP UPローカライズ(両方)")]
 	protected UILabel apUpLocalize;
 
-	[Header("HP回復ローカライズ")]
 	[SerializeField]
+	[Header("HP回復ローカライズ")]
 	protected UILabel hpRecoverLocalize;
 
 	private void Awake()

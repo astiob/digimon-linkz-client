@@ -3,30 +3,14 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Class for generating random data.</para>
-	/// </summary>
 	public sealed class Random
 	{
-		/// <summary>
-		///   <para>Sets the seed for the random number generator.</para>
-		/// </summary>
 		public static extern int seed { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
-		/// <summary>
-		///   <para>Returns a random float number between and min [inclusive] and max [inclusive] (Read Only).</para>
-		/// </summary>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern float Range(float min, float max);
 
-		/// <summary>
-		///   <para>Returns a random integer number between min [inclusive] and max [exclusive] (Read Only).</para>
-		/// </summary>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
 		public static int Range(int min, int max)
 		{
 			return Random.RandomRangeInt(min, max);
@@ -36,14 +20,8 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern int RandomRangeInt(int min, int max);
 
-		/// <summary>
-		///   <para>Returns a random number between 0.0 [inclusive] and 1.0 [inclusive] (Read Only).</para>
-		/// </summary>
 		public static extern float value { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
-		/// <summary>
-		///   <para>Returns a random point inside a sphere with radius 1 (Read Only).</para>
-		/// </summary>
 		public static Vector3 insideUnitSphere
 		{
 			get
@@ -62,9 +40,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void GetRandomUnitCircle(out Vector2 output);
 
-		/// <summary>
-		///   <para>Returns a random point inside a circle with radius 1 (Read Only).</para>
-		/// </summary>
 		public static Vector2 insideUnitCircle
 		{
 			get
@@ -75,9 +50,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns a random point on the surface of a sphere with radius 1 (Read Only).</para>
-		/// </summary>
 		public static Vector3 onUnitSphere
 		{
 			get
@@ -92,9 +64,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_get_onUnitSphere(out Vector3 value);
 
-		/// <summary>
-		///   <para>Returns a random rotation (Read Only).</para>
-		/// </summary>
 		public static Quaternion rotation
 		{
 			get
@@ -109,9 +78,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_get_rotation(out Quaternion value);
 
-		/// <summary>
-		///   <para>Returns a random rotation with uniform distribution (Read Only).</para>
-		/// </summary>
 		public static Quaternion rotationUniform
 		{
 			get
@@ -136,6 +102,36 @@ namespace UnityEngine
 		public static int RandomRange(int min, int max)
 		{
 			return Random.Range(min, max);
+		}
+
+		public static Color ColorHSV()
+		{
+			return Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f, 1f, 1f);
+		}
+
+		public static Color ColorHSV(float hueMin, float hueMax)
+		{
+			return Random.ColorHSV(hueMin, hueMax, 0f, 1f, 0f, 1f, 1f, 1f);
+		}
+
+		public static Color ColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax)
+		{
+			return Random.ColorHSV(hueMin, hueMax, saturationMin, saturationMax, 0f, 1f, 1f, 1f);
+		}
+
+		public static Color ColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax, float valueMin, float valueMax)
+		{
+			return Random.ColorHSV(hueMin, hueMax, saturationMin, saturationMax, valueMin, valueMax, 1f, 1f);
+		}
+
+		public static Color ColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax, float valueMin, float valueMax, float alphaMin, float alphaMax)
+		{
+			float h = Mathf.Lerp(hueMin, hueMax, Random.value);
+			float s = Mathf.Lerp(saturationMin, saturationMax, Random.value);
+			float v = Mathf.Lerp(valueMin, valueMax, Random.value);
+			Color result = Color.HSVToRGB(h, s, v, true);
+			result.a = Mathf.Lerp(alphaMin, alphaMax, Random.value);
+			return result;
 		}
 	}
 }

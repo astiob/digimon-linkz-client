@@ -11,7 +11,7 @@ public sealed class CMD_ModalMessage : CMD
 	private UILabel ngTX_EXP;
 
 	[SerializeField]
-	private UILabel ngTX_BTN;
+	private UILabelEx ngTX_BTN;
 
 	public static CMD_ModalMessage Create(string title, string info, Action<int> onCloseAction = null)
 	{
@@ -77,7 +77,6 @@ public sealed class CMD_ModalMessage : CMD
 
 	private void Start()
 	{
-		this.ngTX_BTN.text = StringMaster.GetString("SystemButtonClose");
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -107,7 +106,6 @@ public sealed class CMD_ModalMessage : CMD
 		{
 			'\n'
 		}).Length;
-		global::Debug.Log(num);
 		if (num >= 5)
 		{
 			int num2 = (component.fontSize + component.spacingY) * (num - 4);

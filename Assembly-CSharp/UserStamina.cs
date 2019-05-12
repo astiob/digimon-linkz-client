@@ -33,7 +33,7 @@ public sealed class UserStamina : MonoBehaviour
 		this.SetStaminaDetails();
 		if (0 < this.countDown && this.countDownCoroutine == null)
 		{
-			this.countDownCoroutine = base.StartCoroutine(this.UpdateRecoverTime());
+			this.countDownCoroutine = AppCoroutine.Start(this.UpdateRecoverTime(), false);
 		}
 	}
 

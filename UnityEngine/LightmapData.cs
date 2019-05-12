@@ -3,9 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Data of a lightmap.</para>
-	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class LightmapData
 	{
@@ -13,9 +10,6 @@ namespace UnityEngine
 
 		internal Texture2D m_Dir;
 
-		/// <summary>
-		///   <para>Lightmap storing the full incoming light.</para>
-		/// </summary>
 		public Texture2D lightmapFar
 		{
 			get
@@ -28,9 +22,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Lightmap storing only the indirect incoming light.</para>
-		/// </summary>
 		public Texture2D lightmapNear
 		{
 			get

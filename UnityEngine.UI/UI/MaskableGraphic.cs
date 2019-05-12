@@ -89,12 +89,17 @@ namespace UnityEngine.UI
 			{
 				return;
 			}
-			bool flag = !validRect || !clipRect.Overlaps(this.canvasRect);
-			bool flag2 = base.canvasRenderer.cull != flag;
-			base.canvasRenderer.cull = flag;
-			if (flag2)
+			bool cull = !validRect || !clipRect.Overlaps(this.canvasRect, true);
+			this.UpdateCull(cull);
+		}
+
+		private void UpdateCull(bool cull)
+		{
+			bool flag = base.canvasRenderer.cull != cull;
+			base.canvasRenderer.cull = cull;
+			if (flag)
 			{
-				this.m_OnCullStateChanged.Invoke(flag);
+				this.m_OnCullStateChanged.Invoke(cull);
 				this.SetVerticesDirty();
 			}
 		}
@@ -117,6 +122,10 @@ namespace UnityEngine.UI
 			this.m_ShouldRecalculateStencil = true;
 			this.UpdateClipParent();
 			this.SetMaterialDirty();
+			if (base.GetComponent<Mask>() != null)
+			{
+				MaskUtilities.NotifyStencilStateChanged(this);
+			}
 		}
 
 		protected override void OnDisable()
@@ -127,11 +136,19 @@ namespace UnityEngine.UI
 			this.UpdateClipParent();
 			StencilMaterial.Remove(this.m_MaskMaterial);
 			this.m_MaskMaterial = null;
+			if (base.GetComponent<Mask>() != null)
+			{
+				MaskUtilities.NotifyStencilStateChanged(this);
+			}
 		}
 
 		protected override void OnTransformParentChanged()
 		{
 			base.OnTransformParentChanged();
+			if (!base.isActiveAndEnabled)
+			{
+				return;
+			}
 			this.m_ShouldRecalculateStencil = true;
 			this.UpdateClipParent();
 			this.SetMaterialDirty();
@@ -145,6 +162,10 @@ namespace UnityEngine.UI
 		protected override void OnCanvasHierarchyChanged()
 		{
 			base.OnCanvasHierarchyChanged();
+			if (!base.isActiveAndEnabled)
+			{
+				return;
+			}
 			this.m_ShouldRecalculateStencil = true;
 			this.UpdateClipParent();
 			this.SetMaterialDirty();
@@ -172,6 +193,7 @@ namespace UnityEngine.UI
 			if (rectMask2D != this.m_ParentMask && this.m_ParentMask != null)
 			{
 				this.m_ParentMask.RemoveClippable(this);
+				this.UpdateCull(false);
 			}
 			if (rectMask2D != null)
 			{

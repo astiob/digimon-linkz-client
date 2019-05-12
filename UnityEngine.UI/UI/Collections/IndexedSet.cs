@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Collections
 {
-	internal class IndexedSet<T> : IList<T>, IEnumerable, ICollection<T>, IEnumerable<T>
+	internal class IndexedSet<T> : IEnumerable, IList<T>, ICollection<T>, IEnumerable<T>
 	{
 		private readonly List<T> m_List = new List<T>();
 
@@ -17,12 +17,19 @@ namespace UnityEngine.UI.Collections
 
 		public void Add(T item)
 		{
+			this.m_List.Add(item);
+			this.m_Dictionary.Add(item, this.m_List.Count - 1);
+		}
+
+		public bool AddUnique(T item)
+		{
 			if (this.m_Dictionary.ContainsKey(item))
 			{
-				return;
+				return false;
 			}
 			this.m_List.Add(item);
 			this.m_Dictionary.Add(item, this.m_List.Count - 1);
+			return true;
 		}
 
 		public bool Remove(T item)

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Defines how GUI looks and behaves.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	[ExecuteInEditMode]
 	[Serializable]
 	public sealed class GUISkin : ScriptableObject
@@ -98,9 +97,6 @@ namespace UnityEngine
 			this.Apply();
 		}
 
-		/// <summary>
-		///   <para>The default font to use for all styles.</para>
-		/// </summary>
 		public Font font
 		{
 			get
@@ -118,9 +114,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for GUI.Box controls.</para>
-		/// </summary>
 		public GUIStyle box
 		{
 			get
@@ -134,9 +127,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for GUI.Label controls.</para>
-		/// </summary>
 		public GUIStyle label
 		{
 			get
@@ -150,9 +140,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for GUI.TextField controls.</para>
-		/// </summary>
 		public GUIStyle textField
 		{
 			get
@@ -166,9 +153,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for GUI.TextArea controls.</para>
-		/// </summary>
 		public GUIStyle textArea
 		{
 			get
@@ -182,9 +166,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for GUI.Button controls.</para>
-		/// </summary>
 		public GUIStyle button
 		{
 			get
@@ -198,9 +179,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for GUI.Toggle controls.</para>
-		/// </summary>
 		public GUIStyle toggle
 		{
 			get
@@ -214,9 +192,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for Window controls (SA GUI.Window).</para>
-		/// </summary>
 		public GUIStyle window
 		{
 			get
@@ -230,9 +205,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the background part of GUI.HorizontalSlider controls.</para>
-		/// </summary>
 		public GUIStyle horizontalSlider
 		{
 			get
@@ -246,9 +218,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the thumb that is dragged in GUI.HorizontalSlider controls.</para>
-		/// </summary>
 		public GUIStyle horizontalSliderThumb
 		{
 			get
@@ -262,9 +231,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the background part of GUI.VerticalSlider controls.</para>
-		/// </summary>
 		public GUIStyle verticalSlider
 		{
 			get
@@ -278,9 +244,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the thumb that is dragged in GUI.VerticalSlider controls.</para>
-		/// </summary>
 		public GUIStyle verticalSliderThumb
 		{
 			get
@@ -294,9 +257,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the background part of GUI.HorizontalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle horizontalScrollbar
 		{
 			get
@@ -310,9 +270,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the thumb that is dragged in GUI.HorizontalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle horizontalScrollbarThumb
 		{
 			get
@@ -326,9 +283,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the left button on GUI.HorizontalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle horizontalScrollbarLeftButton
 		{
 			get
@@ -342,9 +296,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the right button on GUI.HorizontalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle horizontalScrollbarRightButton
 		{
 			get
@@ -358,9 +309,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the background part of GUI.VerticalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle verticalScrollbar
 		{
 			get
@@ -374,9 +322,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the thumb that is dragged in GUI.VerticalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle verticalScrollbarThumb
 		{
 			get
@@ -390,9 +335,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the up button on GUI.VerticalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle verticalScrollbarUpButton
 		{
 			get
@@ -406,9 +348,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the down button on GUI.VerticalScrollbar controls.</para>
-		/// </summary>
 		public GUIStyle verticalScrollbarDownButton
 		{
 			get
@@ -422,9 +361,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Style used by default for the background of ScrollView controls (see GUI.BeginScrollView).</para>
-		/// </summary>
 		public GUIStyle scrollView
 		{
 			get
@@ -438,9 +374,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Array of GUI styles for specific needs.</para>
-		/// </summary>
 		public GUIStyle[] customStyles
 		{
 			get
@@ -454,9 +387,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Generic settings for how controls should behave with this skin.</para>
-		/// </summary>
 		public GUISettings settings
 		{
 			get
@@ -623,10 +553,6 @@ namespace UnityEngine
 			GUISkin.error.normal.textColor = Color.red;
 		}
 
-		/// <summary>
-		///   <para>Get a named GUIStyle.</para>
-		/// </summary>
-		/// <param name="styleName"></param>
 		public GUIStyle GetStyle(string styleName)
 		{
 			GUIStyle guistyle = this.FindStyle(styleName);
@@ -646,10 +572,6 @@ namespace UnityEngine
 			return GUISkin.error;
 		}
 
-		/// <summary>
-		///   <para>Try to search for a GUIStyle. This functions returns NULL and does not give an error.</para>
-		/// </summary>
-		/// <param name="styleName"></param>
 		public GUIStyle FindStyle(string styleName)
 		{
 			if (this == null)

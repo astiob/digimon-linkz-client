@@ -1,5 +1,6 @@
 ﻿using Ability;
 using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -96,7 +97,7 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 				{
 					this.IsSuccsessAbilityUpgrade_bk = ClassSingleton<AbilityData>.Instance.IsSuccsessAbilityUpgrade(this.baseDigimon.userMonster, response.userMonster);
 					this.updatedUserMonster_bk = response.userMonster;
-					DataMng.Instance().SetUserMonster(response.userMonster);
+					ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 				}
 			}
 		};
@@ -114,11 +115,13 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 	{
 		bool isSuccess = this.IsSuccsessAbilityUpgrade_bk;
 		bool hasChip = this.ResetChipAfterExec();
-		int[] umidL = new int[]
+		string[] userMonsterIdList = new string[]
 		{
-			int.Parse(this.partnerDigimon.userMonster.userMonsterId)
+			this.partnerDigimon.userMonster.userMonsterId
 		};
-		DataMng.Instance().DeleteUserMonsterList(umidL);
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
+		ChipDataMng.DeleteEquipChip(userMonsterIdList);
+		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Laboratory();
 		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
 		int item2 = int.Parse(this.partnerDigimon.monsterM.monsterGroupId);
@@ -130,7 +133,7 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		{
 			item2
 		};
-		MonsterDataMng.Instance().RefreshMonsterDataList();
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		Loading.Invisible();
 		CutSceneMain.FadeReqCutScene("Cutscenes/MedalInherit", new Action<int>(base.StartCutSceneCallBack), delegate(int index)
 		{
@@ -240,9 +243,9 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 
 	protected override bool CanEnter()
 	{
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.HAVE_MEDALS);
+		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.HAVE_MEDALS);
 		return list.Count > 0;
 	}
 
@@ -253,9 +256,9 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 
 	protected override bool CanSelectMonster(int idx)
 	{
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.HAVE_MEDALS);
+		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.HAVE_MEDALS);
 		if (idx == 0)
 		{
 			return list.Count > 0;

@@ -28,7 +28,8 @@ public class CMD_FriendshipStatusUP : CMD
 		CMD_CharacterDetailed.DataChg = monsterData;
 		GUIMain.ShowCommonDialog(delegate(int noop)
 		{
-			PartyUtil.SetLock(monsterData, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+			icon.Lock = monsterData.userMonster.IsLocked;
 		}, "CMD_CharacterDetailed");
 	}
 
@@ -39,7 +40,7 @@ public class CMD_FriendshipStatusUP : CMD
 		this.monsterStatusList.SetValues(monsterData, false);
 		this.monsterMedalList.SetValues(monsterData.userMonster);
 		Transform transform = this.goMN_ICON_NOW.transform;
-		GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, transform.localScale, transform.localPosition, transform.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, transform.localScale, transform.localPosition, transform.parent, true, false);
 		guimonsterIcon.Data = monsterData;
 		guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 		UIWidget component = this.goMN_ICON_NOW.GetComponent<UIWidget>();
@@ -53,21 +54,23 @@ public class CMD_FriendshipStatusUP : CMD
 		this.goMN_ICON_NOW.SetActive(false);
 	}
 
-	public void SetChangeData(MonsterData beforeMonsterData)
+	public void SetChangeData(string monsterId, string friendship)
 	{
 		StatusValue values = this.monsterStatusList.GetValues();
 		int num = values.friendship / ConstValue.RIZE_CONDITION_FRENDSHIPSTATUS;
-		int num2 = beforeMonsterData.userMonster.friendship.ToInt32();
+		int num2 = friendship.ToInt32();
 		int num3 = num2 / ConstValue.RIZE_CONDITION_FRENDSHIPSTATUS;
 		int bonusStep = num - num3;
+		MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(monsterId);
+		StatusValue friendshipBonusValue = MonsterFriendshipData.GetFriendshipBonusValue(monsterMasterByMonsterId.Simple, bonusStep);
 		StatusValue beforeStatus = new StatusValue
 		{
-			hp = values.hp - beforeMonsterData.GetFriendshipBonusHP(bonusStep),
-			attack = values.attack - beforeMonsterData.GetFriendshipBonusAttack(bonusStep),
-			defense = values.defense - beforeMonsterData.GetFriendshipBonusDefense(bonusStep),
-			magicAttack = values.magicAttack - beforeMonsterData.GetFriendshipBonusSpAttack(bonusStep),
-			magicDefense = values.magicDefense - beforeMonsterData.GetFriendshipBonusSpDefense(bonusStep),
-			speed = values.speed - beforeMonsterData.GetFriendshipBonusSpeed(bonusStep),
+			hp = values.hp - friendshipBonusValue.hp,
+			attack = values.attack - friendshipBonusValue.attack,
+			defense = values.defense - friendshipBonusValue.defense,
+			magicAttack = values.magicAttack - friendshipBonusValue.magicAttack,
+			magicDefense = values.magicDefense - friendshipBonusValue.magicDefense,
+			speed = values.speed - friendshipBonusValue.speed,
 			luck = values.luck,
 			friendship = num2
 		};

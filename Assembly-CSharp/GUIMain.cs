@@ -1,4 +1,5 @@
-﻿using Quest;
+﻿using MonsterIcon;
+using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -164,6 +165,14 @@ public class GUIMain : Singleton<GUIMain>
 	private void Start()
 	{
 		Loading.Initialize(base.transform);
+		GameObject gameObject = new GameObject("MonsterIconPartsPool");
+		Transform transform = gameObject.transform;
+		transform.parent = base.transform;
+		transform.localScale = Vector3.one;
+		transform.localPosition = new Vector3(2000f, 2000f, 0f);
+		MonsterIconPartsPool partsPool = gameObject.AddComponent<MonsterIconPartsPool>();
+		gameObject.SetActive(false);
+		MonsterIconFactory.SetPartsPool(partsPool);
 	}
 
 	private void UpdateVSS()
@@ -492,6 +501,7 @@ public class GUIMain : Singleton<GUIMain>
 		}
 		MonsterDataMng.Instance().PushBackAllMonsterPrefab();
 		MonsterDataMng.Instance().DestroyAllMonsterData();
+		ClassSingleton<GUIMonsterIconList>.Instance.AllDelete();
 		GUIMain.DestroyAllDialog(null);
 		GUIMain.onFadeBlackLoadScene = null;
 		FarmSceneryCache.ClearCache();
@@ -582,6 +592,8 @@ public class GUIMain : Singleton<GUIMain>
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		BattleStateManager.onAutoServerConnect = true;
 		ServerDateTime.isUpdateServerDateTime = false;
+		ClassSingleton<PlayLimit>.Instance.UseTicketNumCont();
+		ClassSingleton<PlayLimit>.Instance.UsePlayLimitNumCont();
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
 		Resources.UnloadUnusedAssets();
 	}
@@ -614,9 +626,9 @@ public class GUIMain : Singleton<GUIMain>
 		string screenName2 = screenName;
 		if (screenName2 != null)
 		{
-			if (GUIMain.<>f__switch$map1C == null)
+			if (GUIMain.<>f__switch$map1A == null)
 			{
-				GUIMain.<>f__switch$map1C = new Dictionary<string, int>(3)
+				GUIMain.<>f__switch$map1A = new Dictionary<string, int>(3)
 				{
 					{
 						"UIResult",
@@ -633,7 +645,7 @@ public class GUIMain : Singleton<GUIMain>
 				};
 			}
 			int num;
-			if (GUIMain.<>f__switch$map1C.TryGetValue(screenName2, out num))
+			if (GUIMain.<>f__switch$map1A.TryGetValue(screenName2, out num))
 			{
 				if (num == 0)
 				{
@@ -668,9 +680,9 @@ public class GUIMain : Singleton<GUIMain>
 			string screenName3 = screenName;
 			if (screenName3 != null)
 			{
-				if (GUIMain.<>f__switch$map1E == null)
+				if (GUIMain.<>f__switch$map1C == null)
 				{
-					GUIMain.<>f__switch$map1E = new Dictionary<string, int>(1)
+					GUIMain.<>f__switch$map1C = new Dictionary<string, int>(1)
 					{
 						{
 							"UIPvPResult",
@@ -679,7 +691,7 @@ public class GUIMain : Singleton<GUIMain>
 					};
 				}
 				int num2;
-				if (GUIMain.<>f__switch$map1E.TryGetValue(screenName3, out num2))
+				if (GUIMain.<>f__switch$map1C.TryGetValue(screenName3, out num2))
 				{
 					if (num2 == 0)
 					{
@@ -750,9 +762,9 @@ public class GUIMain : Singleton<GUIMain>
 		string screenName2 = screenName;
 		if (screenName2 != null)
 		{
-			if (GUIMain.<>f__switch$map1F == null)
+			if (GUIMain.<>f__switch$map1D == null)
 			{
-				GUIMain.<>f__switch$map1F = new Dictionary<string, int>(3)
+				GUIMain.<>f__switch$map1D = new Dictionary<string, int>(3)
 				{
 					{
 						"UIResult",
@@ -769,7 +781,7 @@ public class GUIMain : Singleton<GUIMain>
 				};
 			}
 			int num;
-			if (GUIMain.<>f__switch$map1F.TryGetValue(screenName2, out num))
+			if (GUIMain.<>f__switch$map1D.TryGetValue(screenName2, out num))
 			{
 				if (num == 0)
 				{

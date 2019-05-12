@@ -9,7 +9,11 @@ public class SubStateWaitAllPlayers : BattleStateController
 
 	protected override void EnabledThisState()
 	{
-		base.stateManager.multiBasicFunction.OnSkillTrigger();
+		if (base.battleMode == BattleMode.PvP)
+		{
+			NGUITools.SetActiveSelf(base.stateManager.battleUiComponents.skillSelectUi.gameObject, false);
+		}
+		base.battleStateData.isPossibleTargetSelect = false;
 		base.stateManager.uiControlMultiBasic.HideLoading();
 		base.stateManager.uiControlMultiBasic.ShowLoading(false);
 	}

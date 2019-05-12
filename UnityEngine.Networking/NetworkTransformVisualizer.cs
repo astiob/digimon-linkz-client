@@ -3,10 +3,10 @@ using System.ComponentModel;
 
 namespace UnityEngine.Networking
 {
-	[RequireComponent(typeof(NetworkTransform))]
 	[AddComponentMenu("Network/NetworkTransformVisualizer")]
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	[DisallowMultipleComponent]
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[RequireComponent(typeof(NetworkTransform))]
 	public class NetworkTransformVisualizer : NetworkBehaviour
 	{
 		[SerializeField]

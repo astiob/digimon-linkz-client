@@ -4,14 +4,14 @@ using UnityEngine.Serialization;
 namespace UnityEngine.UI
 {
 	[Serializable]
-	public struct ColorBlock
+	public struct ColorBlock : IEquatable<ColorBlock>
 	{
 		[FormerlySerializedAs("normalColor")]
 		[SerializeField]
 		private Color m_NormalColor;
 
-		[SerializeField]
 		[FormerlySerializedAs("m_SelectedColor")]
+		[SerializeField]
 		[FormerlySerializedAs("highlightedColor")]
 		private Color m_HighlightedColor;
 
@@ -117,6 +117,31 @@ namespace UnityEngine.UI
 					fadeDuration = 0.1f
 				};
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is ColorBlock && this.Equals((ColorBlock)obj);
+		}
+
+		public bool Equals(ColorBlock other)
+		{
+			return this.normalColor == other.normalColor && this.highlightedColor == other.highlightedColor && this.pressedColor == other.pressedColor && this.disabledColor == other.disabledColor && this.colorMultiplier == other.colorMultiplier && this.fadeDuration == other.fadeDuration;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public static bool operator ==(ColorBlock point1, ColorBlock point2)
+		{
+			return point1.Equals(point2);
+		}
+
+		public static bool operator !=(ColorBlock point1, ColorBlock point2)
+		{
+			return !point1.Equals(point2);
 		}
 	}
 }

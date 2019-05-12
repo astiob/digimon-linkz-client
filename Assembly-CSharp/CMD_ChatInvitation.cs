@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using WebAPIRequest;
 
 public class CMD_ChatInvitation : CMD
 {
@@ -657,5 +658,49 @@ public class CMD_ChatInvitation : CMD
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatInvitation-02");
 		}
+	}
+
+	public void PushedExpulsionDecision(GameWebAPI.ResponseData_ChatUserList.respUserList data)
+	{
+		base.StartCoroutine(Singleton<TCPUtil>.Instance.SendChatExpulsion(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, data.userId, delegate(int nop)
+		{
+			string mes = string.Format(StringMaster.GetString("ChatMemberKick"), data.userInfo.nickname);
+			string @string = StringMaster.GetString("ChatMemberKickTitle");
+			string string2 = StringMaster.GetString("ChatMemberKickText");
+			this.SendChatMemberKick(mes, @string, string2);
+		}));
+	}
+
+	private void SendChatMemberKick(string mes, string title, string info)
+	{
+		Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, mes, DataMng.Instance().UserName, delegate(int nop)
+		{
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
+			{
+				this.ClosePanel(true);
+			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage.Title = title;
+			cmd_ModalMessage.Info = info;
+		});
+	}
+
+	private void UpdateJoinGroupData()
+	{
+		RequestList requestList = new RequestList();
+		GameWebAPI.UserChatGroupList userChatGroupList = new GameWebAPI.UserChatGroupList();
+		userChatGroupList.OnReceived = delegate(GameWebAPI.RespData_UserChatGroupList response)
+		{
+			ClassSingleton<ChatData>.Instance.CurrentChatInfo.joinGroupData = response;
+		};
+		RequestBase addRequest = userChatGroupList;
+		requestList.AddRequest(addRequest);
+		base.StartCoroutine(requestList.RunOneTime(delegate()
+		{
+			RestrictionInput.EndLoad();
+			ClassSingleton<ChatData>.Instance.UpdateMaxJoinState();
+		}, delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null));
 	}
 }

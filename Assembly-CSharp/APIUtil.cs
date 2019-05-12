@@ -1,5 +1,7 @@
-﻿using FarmData;
+﻿using Colosseum.DeckUI;
+using FarmData;
 using Master;
+using Monster;
 using Neptune.Common;
 using Neptune.OAuth;
 using Quest;
@@ -290,7 +292,8 @@ public sealed class APIUtil : MonoBehaviour
 		{
 			OnReceived = new Action<GameWebAPI.RespDataTL_GetUserTitleList>(this.OnRecievedUserTitleList)
 		});
-		if (DataMng.Instance().RespDataUS_MonsterList == null || DataMng.Instance().RespDataUS_MonsterList.userMonsterList == null || DataMng.Instance().RespDataUS_MonsterList.userMonsterList.Length == 0)
+		requestList.AddRequest(ColosseumDeckWeb.Request());
+		if (ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() == 0)
 		{
 			requestList.AddRequest(new GameWebAPI.RequestMonsterList
 			{
@@ -478,7 +481,11 @@ public sealed class APIUtil : MonoBehaviour
 
 	private void OnRecievedMonsterSlotInfo(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic responseData)
 	{
-		MonsterDataMng.Instance().userMonsterSlotInfoListLogic = responseData;
+		if (responseData != null)
+		{
+			ChipDataMng.GetUserChipSlotData().SetMonsterSlotList(responseData.slotInfo);
+		}
+		ClassSingleton<MonsterUserDataMng>.Instance.RefreshMonsterSlot();
 	}
 
 	private void OnRecievedMyPage(GameWebAPI.RespDataMP_MyPage responseData)
@@ -508,7 +515,7 @@ public sealed class APIUtil : MonoBehaviour
 
 	private void OnRecievedUserMonster(GameWebAPI.RespDataUS_GetMonsterList responseData)
 	{
-		DataMng.Instance().RespDataUS_MonsterList = responseData;
+		ClassSingleton<MonsterUserDataMng>.Instance.SetUserMonsterData(responseData.userMonsterList);
 	}
 
 	private void OnRecievedUserSoulData(GameWebAPI.RespDataUS_GetSoulInfo responseData)

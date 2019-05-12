@@ -10,8 +10,8 @@ public class UIAtlasSkinner : UISpriteSkinnerBase
 	[SerializeField]
 	private List<UIAtlas> _atlas = new List<UIAtlas>();
 
-	[FormerlySerializedAs("spriteName")]
 	[SerializeField]
+	[FormerlySerializedAs("spriteName")]
 	private List<string> _spriteName = new List<string>();
 
 	public List<UIAtlas> atlas

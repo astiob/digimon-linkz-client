@@ -49,24 +49,27 @@ public sealed class MonsterMedalList : MonoBehaviour
 	public void SetActive(bool isActive)
 	{
 		this.hpIcon.gameObject.SetActive(isActive);
-		this.FixAlpha(this.hpIcon, 1f);
 		this.attackIcon.gameObject.SetActive(isActive);
-		this.FixAlpha(this.attackIcon, 1f);
 		this.defenseIcon.gameObject.SetActive(isActive);
-		this.FixAlpha(this.defenseIcon, 1f);
 		this.magicAttackIcon.gameObject.SetActive(isActive);
-		this.FixAlpha(this.magicAttackIcon, 1f);
 		this.magicDefenseIcon.gameObject.SetActive(isActive);
-		this.FixAlpha(this.magicDefenseIcon, 1f);
 		this.speedIcon.gameObject.SetActive(isActive);
-		this.FixAlpha(this.speedIcon, 1f);
+		if (isActive)
+		{
+			this.ResetMedalColor(this.hpIcon);
+			this.ResetMedalColor(this.attackIcon);
+			this.ResetMedalColor(this.defenseIcon);
+			this.ResetMedalColor(this.magicAttackIcon);
+			this.ResetMedalColor(this.magicDefenseIcon);
+			this.ResetMedalColor(this.speedIcon);
+		}
 	}
 
-	private void FixAlpha(UIWidget wdg, float alpha = 1f)
+	private void ResetMedalColor(UIWidget widget)
 	{
-		Color color = wdg.color;
-		color.a = alpha;
-		wdg.color = color;
+		Color color = widget.color;
+		color.a = 1f;
+		widget.color = color;
 	}
 
 	public void SetValues(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterData)
@@ -79,14 +82,14 @@ public sealed class MonsterMedalList : MonoBehaviour
 		this.SetMedalIcon(userMonsterData.speedAbilityFlg, userMonsterData.speedAbility, this.speedIcon);
 	}
 
-	public void SetValues(Talent userMonsterData)
+	public void SetValues(Talent monsterMedale)
 	{
-		this.SetMedalIcon(userMonsterData.hpAbilityFlg, userMonsterData.hpAbility, this.hpIcon);
-		this.SetMedalIcon(userMonsterData.attackAbilityFlg, userMonsterData.attackAbility, this.attackIcon);
-		this.SetMedalIcon(userMonsterData.defenseAbilityFlg, userMonsterData.defenseAbility, this.defenseIcon);
-		this.SetMedalIcon(userMonsterData.spAttackAbilityFlg, userMonsterData.spAttackAbility, this.magicAttackIcon);
-		this.SetMedalIcon(userMonsterData.spDefenseAbilityFlg, userMonsterData.spDefenseAbility, this.magicDefenseIcon);
-		this.SetMedalIcon(userMonsterData.speedAbilityFlg, userMonsterData.speedAbility, this.speedIcon);
+		this.SetMedalIcon(monsterMedale.hpAbilityFlg, monsterMedale.hpAbility, this.hpIcon);
+		this.SetMedalIcon(monsterMedale.attackAbilityFlg, monsterMedale.attackAbility, this.attackIcon);
+		this.SetMedalIcon(monsterMedale.defenseAbilityFlg, monsterMedale.defenseAbility, this.defenseIcon);
+		this.SetMedalIcon(monsterMedale.spAttackAbilityFlg, monsterMedale.spAttackAbility, this.magicAttackIcon);
+		this.SetMedalIcon(monsterMedale.spDefenseAbilityFlg, monsterMedale.spDefenseAbility, this.magicDefenseIcon);
+		this.SetMedalIcon(monsterMedale.speedAbilityFlg, monsterMedale.speedAbility, this.speedIcon);
 	}
 
 	private void SetMedalIcon(string medalType, string medalPercentage, UISprite iconSprite)

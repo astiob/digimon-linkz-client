@@ -1,5 +1,7 @@
 ﻿using Master;
+using Monster;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class MonsterResistanceList : MonoBehaviour
@@ -102,7 +104,9 @@ public sealed class MonsterResistanceList : MonoBehaviour
 
 	public void SetValues(MonsterData monsterData)
 	{
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = monsterData.AddResistanceFromMultipleTranceData();
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(monsterData.monsterM.resistanceId);
+		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
 		this.SetValues(values);
 	}
 

@@ -2,15 +2,12 @@
 using Quest;
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 namespace NextChoice
 {
 	public sealed class NextChoiceReplay
 	{
-		private GUIScreenResult screenResult;
-
 		private CMD_BattleNextChoice nextChoiceWindow;
 
 		private CMD_ChangePOP_STONE confirmDialogRecoverStamina;
@@ -20,16 +17,15 @@ namespace NextChoice
 		public NextChoiceReplay(CMD_BattleNextChoice cmdNextChoice)
 		{
 			this.nextChoiceWindow = cmdNextChoice;
-			this.screenResult = cmdNextChoice.screenResult;
 		}
 
 		private bool CheckStamina()
 		{
-			GameWebAPI.RespDataWD_DungeonStart dungeonStartInfo = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
-			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM.SingleOrDefault((GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM x) => x.worldDungeonId == dungeonStartInfo.worldDungeonId);
-			int num = int.Parse(worldDungeonM.needStamina);
+			GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonMaster = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(lastDngReq.dungeonId);
+			int num = int.Parse(worldDungeonMaster.needStamina);
 			GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
-			GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown, worldDungeonM.worldStageId);
+			GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown, worldDungeonMaster.worldStageId);
 			if (campaign != null)
 			{
 				float num2 = (float)num;
@@ -110,14 +106,35 @@ namespace NextChoice
 			if (selectButtonIndex == 0)
 			{
 				this.shopBeforeStoneNum = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-				GUIMain.ShowCommonDialog(new Action<int>(this.EndShop), "CMD_Shop");
+				CMD_Shop cmd = GUIMain.ShowCommonDialog(null, "CMD_Shop") as CMD_Shop;
+				cmd.PartsTitle.SetReturnAct(delegate(int _i_)
+				{
+					cmd.SetCloseAction(delegate(int x)
+					{
+						this.EndShop(0);
+					});
+					cmd.ClosePanel(true);
+				});
+				cmd.PartsTitle.DisableReturnBtn(false);
+				cmd.PartsTitle.SetCloseAct(delegate(int _i_)
+				{
+					GameObject dialog = GUIManager.GetDialog("CMD_BattleNextChoice");
+					if (dialog != null)
+					{
+						CMD_BattleNextChoice component = dialog.GetComponent<CMD_BattleNextChoice>();
+						component.ClosePanel(false);
+					}
+					cmd.SetCloseAction(delegate(int x)
+					{
+						CMD_BattleNextChoice.GoToFarm();
+					});
+					cmd.ClosePanel(true);
+				});
 			}
 		}
 
 		private void EndShop(int noop)
 		{
-			CMD_BattleNextChoice cmd_BattleNextChoice = GUIMain.ShowCommonDialog(null, "CMD_BattleNextChoice") as CMD_BattleNextChoice;
-			cmd_BattleNextChoice.screenResult = this.screenResult;
 			if (this.shopBeforeStoneNum < DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point)
 			{
 				this.Start();

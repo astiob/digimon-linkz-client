@@ -95,6 +95,18 @@ public class PartsTitleBase : UtilForCMD
 		}
 	}
 
+	public void DisableReturnBtn(bool flg = true)
+	{
+		if (flg)
+		{
+			this.colBTN_RETURN.gameObject.SetActive(false);
+		}
+		else
+		{
+			this.colBTN_RETURN.gameObject.SetActive(true);
+		}
+	}
+
 	public override void SetParamToCMD()
 	{
 		CMD cs = base.FindParentCMD();

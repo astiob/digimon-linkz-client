@@ -1,4 +1,5 @@
-﻿using Quest;
+﻿using Monster;
+using Quest;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,8 @@ public sealed class CMD_BattleResult : CMD
 
 	private Action<CMD_BattleResult> actionEffectFinished;
 
-	[SerializeField]
 	[Header("ドロップアイテム結果")]
+	[SerializeField]
 	private DropItemResult dropItemResult;
 
 	[Header("経験値結果")]
@@ -131,7 +132,14 @@ public sealed class CMD_BattleResult : CMD
 		APIRequestTask apirequestTask = new APIRequestTask();
 		if (isUserMonster)
 		{
-			apirequestTask.Add(DataMng.Instance().RequestUserMonster(null, true));
+			ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
+			GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
+			requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
+			{
+				ClassSingleton<MonsterUserDataMng>.Instance.SetUserMonsterData(response.userMonsterList);
+			};
+			GameWebAPI.RequestMonsterList request = requestMonsterList;
+			apirequestTask.Add(new APIRequestTask(request, true));
 			apirequestTask.Add(ChipDataMng.RequestAPIMonsterSlotInfoList(true));
 		}
 		if (isChip)
@@ -140,6 +148,7 @@ public sealed class CMD_BattleResult : CMD
 		}
 		AppCoroutine.Start(apirequestTask.Run(delegate
 		{
+			ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 			RestrictionInput.EndLoad();
 			if (callback != null)
 			{

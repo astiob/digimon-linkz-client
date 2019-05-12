@@ -155,8 +155,8 @@ public class PropertyReference
 		return text + ".[property]";
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public object Get()
 	{
 		if (this.mProperty == null && this.mField == null && this.isValid)
@@ -238,8 +238,8 @@ public class PropertyReference
 		return false;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private bool Cache()
 	{
 		if (this.mTarget != null && !string.IsNullOrEmpty(this.mName))

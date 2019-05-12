@@ -1,5 +1,6 @@
 ﻿using DigiChat.Tools;
 using Master;
+using Monster;
 using Quest;
 using System;
 using System.Collections.Generic;
@@ -224,7 +225,7 @@ public class GUIListChatLogParts : GUIListPartBS
 				MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.thumbMid);
 				if (monsterData != null)
 				{
-					GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.ngMONSTER_ICON.transform.localScale, this.ngMONSTER_ICON.transform.localPosition, this.ngMONSTER_ICON.transform.parent, true, true);
+					GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.ngMONSTER_ICON.transform.localScale, this.ngMONSTER_ICON.transform.localPosition, this.ngMONSTER_ICON.transform.parent, true, true);
 					guimonsterIcon.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 					{
 						this.OnThumbnailClicked();
@@ -305,7 +306,7 @@ public class GUIListChatLogParts : GUIListPartBS
 		{
 			CMD_ChatWindow.instance.SetCloseAction(delegate(int close)
 			{
-				if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+				if (!Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
 				{
 					if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
 					{
@@ -323,6 +324,7 @@ public class GUIListChatLogParts : GUIListPartBS
 							}
 						}
 						ClassSingleton<QuestData>.Instance.SelectDungeon = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(this.multiWorldDungeonId);
+						DataMng.Instance().GetResultUtilData().SetLastDngReq(this.multiWorldDungeonId, "-1", "-1");
 						GameWebAPI.MultiRoomJoin multiRoomJoin = new GameWebAPI.MultiRoomJoin();
 						multiRoomJoin.SetSendData = delegate(GameWebAPI.ReqData_MultiRoomJoin param)
 						{

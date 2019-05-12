@@ -1,5 +1,6 @@
 ﻿using Evolution;
 using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -95,7 +96,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 				if (response.userMonster != null)
 				{
 					this.updatedUserMonster_bk = response.userMonster;
-					DataMng.Instance().AddUserMonster(response.userMonster);
+					ClassSingleton<MonsterUserDataMng>.Instance.AddUserMonsterData(response.userMonster);
 				}
 			}
 		};
@@ -115,13 +116,15 @@ public class CMD_VersionUP : CMD_PairSelectBase
 		int item = int.Parse(this.baseDigimon.monsterM.monsterGroupId);
 		this.DeleteUsedSoul();
 		List<int> umidList = VersionUpMaterialData.VersionUpPostProcess(this.medList_cache[0]);
-		int[] umidL = new int[]
+		string[] userMonsterIdList = new string[]
 		{
-			int.Parse(this.baseDigimon.userMonster.userMonsterId)
+			this.baseDigimon.userMonster.userMonsterId
 		};
-		DataMng.Instance().DeleteUserMonsterList(umidL);
-		MonsterDataMng.Instance().RefreshMonsterDataList();
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
+		ChipDataMng.DeleteEquipChip(userMonsterIdList);
+		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Laboratory();
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.updatedUserMonster_bk.userMonsterId, true);
 		int item2 = int.Parse(monsterDataByUserMonsterID.monsterM.monsterGroupId);
 		List<int> umidList2 = new List<int>
@@ -243,10 +246,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 
 	protected override bool CanEnter()
 	{
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = this.SelectionVersionUP(list, true);
-		return list.Count > 0;
+		return 0 < this.GetCountCanVersionUpMonster();
 	}
 
 	protected override string GetInfoCannotEnter()
@@ -254,16 +254,16 @@ public class CMD_VersionUP : CMD_PairSelectBase
 		return StringMaster.GetString("VersionUpCannotVersionUp");
 	}
 
-	protected override bool CanSelectMonster(int idx)
+	protected override bool CanSelectMonster(int noop)
 	{
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = this.SelectionVersionUP(list, true);
-		if (idx == 0)
-		{
-			return list.Count > 0;
-		}
-		return idx != 1 || (list.Count > 0 && (this.baseDigimon == null || list.Count != 1 || !(list[0].userMonster.userMonsterId == this.baseDigimon.userMonster.userMonsterId)));
+		return 0 < this.GetCountCanVersionUpMonster();
+	}
+
+	private int GetCountCanVersionUpMonster()
+	{
+		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
+		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterFilterType.CAN_VERSION_UP);
+		return list.Count;
 	}
 
 	protected override void OpenCanNotSelectMonsterPop()
@@ -343,21 +343,21 @@ public class CMD_VersionUP : CMD_PairSelectBase
 	private void DeleteUsedSoul()
 	{
 		List<EvolutionData.MonsterEvolveItem> itemList = this.medList_cache[0].itemList;
-		string soulId = string.Empty;
+		string materialId = string.Empty;
 		for (int i = 0; i < itemList.Count; i++)
 		{
 			VersionUpItem versionUpItem = this.verUpItemList[i];
 			if (versionUpItem.AlmightySoulData != null)
 			{
-				soulId = versionUpItem.AlmightySoulData.soulM.soulId;
+				materialId = versionUpItem.AlmightySoulData.soulM.soulId;
 			}
 			else if (versionUpItem.baseSoulData != null)
 			{
-				soulId = versionUpItem.baseSoulData.soulM.soulId;
+				materialId = versionUpItem.baseSoulData.soulM.soulId;
 			}
-			GameWebAPI.UserSoulData userSoulDataBySID = MonsterDataMng.Instance().GetUserSoulDataBySID(soulId);
-			int num = int.Parse(userSoulDataBySID.num);
-			userSoulDataBySID.num = (num - versionUpItem.NeedNum).ToString();
+			GameWebAPI.UserSoulData userEvolutionMaterial = EvolutionMaterialData.GetUserEvolutionMaterial(materialId);
+			int num = int.Parse(userEvolutionMaterial.num);
+			userEvolutionMaterial.num = (num - versionUpItem.NeedNum).ToString();
 		}
 	}
 
@@ -375,28 +375,6 @@ public class CMD_VersionUP : CMD_PairSelectBase
 
 	protected override void AddButton()
 	{
-	}
-
-	private List<MonsterData> SelectionVersionUP(List<MonsterData> mdList, bool isPossession = true)
-	{
-		List<MonsterData> list = new List<MonsterData>();
-		for (int i = 0; i < mdList.Count; i++)
-		{
-			bool flag = mdList[i].CanVersionUp();
-			if (flag)
-			{
-				List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> monsterVersionUpList = ClassSingleton<EvolutionData>.Instance.GetMonsterVersionUpList(mdList[i].monsterM.monsterId);
-				if (monsterVersionUpList.Count <= 0)
-				{
-					flag = false;
-				}
-			}
-			if (flag == isPossession)
-			{
-				list.Add(mdList[i]);
-			}
-		}
-		return list;
 	}
 
 	private void ShowItemIcon()
@@ -424,7 +402,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 				vupItem.baseSoulData.haveNum = itemList[i].haveNum;
 				vupItem.baseSoulData.curUsedNum = 0;
 				vupItem.NeedNum = itemList[i].need_num;
-				string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(soulId);
+				string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(soulId);
 				if (vupItem.baseSoulData.haveNum < vupItem.NeedNum)
 				{
 					HaveSoulData almightySoulData = null;
@@ -433,7 +411,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 					{
 						vupItem.AlmightySoulData = almightySoulData;
 						vupItem.AlmightySoulData.curUsedNum += vupItem.NeedNum;
-						evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(vupItem.AlmightySoulData.soulM.soulId);
+						evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(vupItem.AlmightySoulData.soulM.soulId);
 					}
 				}
 				Vector3 localScale = vupItem.gameObject.transform.localScale;
@@ -544,7 +522,6 @@ public class CMD_VersionUP : CMD_PairSelectBase
 			texIcon.mainTexture = mainTexture;
 			if (this.medList_cache.Count > 0)
 			{
-				List<EvolutionData.MonsterEvolveItem> itemList = this.medList_cache[0].itemList;
 				if (vupItem.AlmightySoulData != null || vupItem.baseSoulData.haveNum >= vupItem.NeedNum)
 				{
 					texIcon.color = new Color(1f, 1f, 1f, 1f);
@@ -589,17 +566,17 @@ public class CMD_VersionUP : CMD_PairSelectBase
 
 	private void ActCallBackDropItem(VersionUpItem vupItem)
 	{
-		string sid = string.Empty;
+		string soulId = string.Empty;
 		if (vupItem.AlmightySoulData != null)
 		{
-			sid = vupItem.AlmightySoulData.soulM.soulId;
+			soulId = vupItem.AlmightySoulData.soulM.soulId;
 		}
 		else
 		{
-			sid = vupItem.baseSoulData.soulM.soulId;
+			soulId = vupItem.baseSoulData.soulM.soulId;
 		}
-		GameWebAPI.RespDataMA_GetSoulM.SoulM soulMasterBySoulId = MonsterDataMng.Instance().GetSoulMasterBySoulId(sid);
-		CMD_QuestItemPOP.Create(soulMasterBySoulId);
+		GameWebAPI.RespDataMA_GetSoulM.SoulM soulMaster = ClassSingleton<EvolutionData>.Instance.GetSoulMaster(soulId);
+		CMD_QuestItemPOP.Create(soulMaster);
 	}
 
 	private void OnTouchedEvoltionItemListBtn()
@@ -693,7 +670,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 		{
 			selectedVersionUpItem.lbNum.text = string.Format(StringMaster.GetString("EvolutionEnoughFraction"), haveNum, needNum);
 		}
-		string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(id);
+		string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(id);
 		Vector3 localScale = selectedVersionUpItem.gameObject.transform.localScale;
 		selectedVersionUpItem.gameObject.transform.localScale = Vector2.zero;
 		this.LoadObjectASync(evolveItemIconPathByID, selectedVersionUpItem, localScale);

@@ -1,4 +1,5 @@
-﻿using Quest;
+﻿using Monster;
+using Quest;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -61,7 +62,8 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 
 	protected override void SetSelectedCharChg(MonsterData monsterData)
 	{
-		int[] chipIdList = monsterData.GetChipIdList();
+		MonsterChipEquipData chipEquip = monsterData.GetChipEquip();
+		int[] chipIdList = chipEquip.GetChipIdList();
 		this.chipBaseSelect.SetSelectedCharChg(chipIdList, false, 0);
 	}
 
@@ -69,7 +71,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 	{
 		CMD_MultiRecruitPartyWait.Instance.ClearStExchange();
 		this.baseMonster = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(base.Data.userMonster.userMonsterId, false);
-		CMD_DeckList.OriginMonsterData = this.baseMonster;
+		CMD_DeckList.SelectMonsterData = this.baseMonster;
 		CMD_DeckList cmd_DeckList = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedDeckList), "CMD_DeckList") as CMD_DeckList;
 		cmd_DeckList.PartsTitle.DisableCloseBtn(true);
 		cmd_DeckList.PPMI_Instance = this;
@@ -84,7 +86,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 
 	private void OnClosedDeckList(int noop)
 	{
-		if (CMD_DeckList.OriginMonsterData.userMonster.userMonsterId != base.Data.userMonster.userMonsterId)
+		if (CMD_DeckList.SelectMonsterData.userMonster.userMonsterId != base.Data.userMonster.userMonsterId)
 		{
 			if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
 			{

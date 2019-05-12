@@ -1,24 +1,24 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/NGUI Slider")]
+[ExecuteInEditMode]
 public class UISlider : UIProgressBar
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Transform foreground;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float rawValue = 1f;
 
 	[HideInInspector]
 	[SerializeField]
 	private UISlider.Direction direction = UISlider.Direction.Upgraded;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mInverted;
 
 	public bool isColliderEnabled

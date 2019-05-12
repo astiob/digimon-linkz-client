@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Master;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -290,6 +291,10 @@ public class BattleCallAction : BattleFunctionBase
 
 	public void OnShowSpecificTrade()
 	{
+		if (!base.onServerConnect)
+		{
+			return;
+		}
 		if (base.battleStateData.isShowSpecificTrade)
 		{
 			return;
@@ -299,7 +304,15 @@ public class BattleCallAction : BattleFunctionBase
 			return;
 		}
 		SoundPlayer.PlayButtonEnter();
-		base.stateManager.serverControl.ApplyShowSpecificTrade();
+		base.stateManager.uiControl.ApplySpecificTrade(true);
+		Action<int> action = delegate(int x)
+		{
+			base.stateManager.callAction.OnHideSpecificTrade();
+		};
+		CommonDialog commonDialog = GUIMain.ShowCommonDialog(action, "CMDWebWindow");
+		((CMDWebWindow)commonDialog).TitleText = StringMaster.GetString("ShopRule-02");
+		((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_TRADE;
+		base.battleStateData.isShowSpecificTrade = true;
 	}
 
 	public void OnHideSpecificTrade()

@@ -2,6 +2,8 @@
 using Evolution;
 using EvolutionRouteMap;
 using Master;
+using Monster;
+using Picturebook;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,8 +29,8 @@ public sealed class CMD_Evolution : CMD
 	[SerializeField]
 	private UILabel ngTXT_CHIP;
 
-	[SerializeField]
 	[Header("各進化先のリンク")]
+	[SerializeField]
 	private GameObject goListParts;
 
 	private GUISelectPanelEvolution csSelectPanelEvolution;
@@ -110,24 +112,18 @@ public sealed class CMD_Evolution : CMD
 		{
 			if (this.goMN_ICON_CHG_2 != null)
 			{
-				UnityEngine.Object.DestroyImmediate(this.goMN_ICON_CHG_2);
+				UnityEngine.Object.Destroy(this.goMN_ICON_CHG_2);
 			}
 			Transform transform = this.goMN_ICON_CHG.transform;
-			this.monsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(CMD_BaseSelect.DataChg, transform.localScale, transform.localPosition, transform.parent, true, false);
-			this.monsterIcon.Lock = CMD_BaseSelect.DataChg.userMonster.IsLocked;
+			this.monsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(CMD_BaseSelect.DataChg, transform.localScale, transform.localPosition, transform.parent, true, false);
 			this.goMN_ICON_CHG_2 = this.monsterIcon.gameObject;
 			this.goMN_ICON_CHG_2.SetActive(true);
-			this.monsterIcon.Data = CMD_BaseSelect.DataChg;
 			this.monsterIcon.SetTouchAct_S(new Action<MonsterData>(this.OnPushedBaseMonsterIcon));
 			this.monsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 			UIWidget component = this.goMN_ICON_CHG.GetComponent<UIWidget>();
 			UIWidget component2 = this.goMN_ICON_CHG_2.GetComponent<UIWidget>();
 			GUIManager.AddWidgetDepth(this.goMN_ICON_CHG_2.transform, component.depth - component2.depth);
 			this.goMN_ICON_CHG.SetActive(false);
-		}
-		else
-		{
-			global::Debug.LogError("ここへは来ない");
 		}
 	}
 
@@ -141,7 +137,8 @@ public sealed class CMD_Evolution : CMD
 		CMD_CharacterDetailed.DataChg = tappedMonsterData;
 		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
 		{
-			PartyUtil.SetLock(tappedMonsterData, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
+			icon.Lock = tappedMonsterData.userMonster.IsLocked;
 			if (this.monsterIcon != null)
 			{
 				this.monsterIcon.Lock = CMD_BaseSelect.DataChg.userMonster.IsLocked;
@@ -195,7 +192,7 @@ public sealed class CMD_Evolution : CMD
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_EvolutionExec response)
 			{
-				DataMng.Instance().SetUserMonster(response.userMonster);
+				ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 				if (response.IsFirstUltimaEvolution())
 				{
 					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
@@ -208,7 +205,7 @@ public sealed class CMD_Evolution : CMD
 				{
 					response.userMonster
 				};
-				GameWebAPI.MonsterSlotInfoListLogic request2 = ChipDataMng.RequestAPIMonsterSlotInfo(addMonsterList, null);
+				GameWebAPI.MonsterSlotInfoListLogic request2 = ChipDataMng.RequestAPIMonsterSlotInfo(addMonsterList);
 				AppCoroutine.Start(request2.Run(new Action(this.EndEvolveDo), delegate(Exception noop)
 				{
 					RestrictionInput.EndLoad();
@@ -224,17 +221,16 @@ public sealed class CMD_Evolution : CMD
 		{
 			GooglePlayGamesTool.Instance.Evolution();
 		}
-		string evolutionType = this.evolveDataBK.md.GetEvolutionType(this.evolveDataBK.md_next.userMonster.monsterId);
+		string evolutionType = ClassSingleton<EvolutionData>.Instance.GetEvolutionEffectType(this.evolveDataBK.md.userMonster.monsterId, this.evolveDataBK.md_next.userMonster.monsterId);
 		DataMng.Instance().US_PlayerInfoSubChipNum(this.execClusterNum);
 		this.UpdateClusterNum();
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.RefreshMonsterDataList();
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		List<int> umidList = ClassSingleton<EvolutionData>.Instance.EvolvePostProcess(this.evolveDataBK);
-		MonsterData monsterDataByUserMonsterID = monsterDataMng.GetMonsterDataByUserMonsterID(this.evolveDataBK.md.userMonster.userMonsterId, true);
+		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.evolveDataBK.md.userMonster.userMonsterId, true);
 		string path = string.Empty;
 		bool flag = false;
-		int num = int.Parse(monsterDataByUserMonsterID.monsterMG.growStep);
-		if (num >= 7)
+		int growStep = int.Parse(monsterDataByUserMonsterID.monsterMG.growStep);
+		if (MonsterGrowStepData.IsUltimateScope(growStep))
 		{
 			flag = true;
 		}
@@ -274,6 +270,10 @@ public sealed class CMD_Evolution : CMD
 		{
 			this.ShowCompletedCutin(evolutionType);
 		}, umidList2, umidList, 2, 1, 0.5f, 0.5f);
+		if (!MonsterPicturebookData.ExistPicturebook(monsterDataByUserMonsterID.GetMonsterMaster().Group.monsterCollectionId))
+		{
+			MonsterPicturebookData.AddPictureBook(monsterDataByUserMonsterID.GetMonsterMaster().Group.monsterCollectionId);
+		}
 	}
 
 	private void StartCutSceneCallBack(int i)
@@ -296,13 +296,6 @@ public sealed class CMD_Evolution : CMD
 
 	private void RunRefreshPicturebook(int noop)
 	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		APIRequestTask picturebookData = MonsterDataMng.Instance().GetPicturebookData(DataMng.Instance().RespDataCM_Login.playerInfo.userId, false);
-		AppCoroutine.Start(picturebookData.Run(new Action(RestrictionInput.EndLoad), delegate(Exception nop)
-		{
-			RestrictionInput.EndLoad();
-			CMD_BaseSelect.instance.ClosePanel(true);
-		}, null), false);
 	}
 
 	private void ShowCompletedCutin(string evolutionType)
@@ -367,7 +360,7 @@ public sealed class CMD_Evolution : CMD
 		FarmCameraControlForCMD.ClearRefCT();
 		FarmCameraControlForCMD.On();
 		GUIMain.DestroyAllDialog(null);
-		CMD_EvolutionRouteMap.CreateDialog(null, dataChg);
+		CMD_EvolutionRouteMap.CreateDialog(null, dataChg.GetMonsterMaster());
 	}
 
 	public enum EvolveType

@@ -95,7 +95,7 @@ namespace Evolution
 				string assetValue = evolutionMaterial.GetAssetValue(i);
 				string assetNum = evolutionMaterial.GetAssetNum(i);
 				int num = assetNum.ToInt32();
-				GameWebAPI.UserSoulData userSoulDataBySID = MonsterDataMng.Instance().GetUserSoulDataBySID(assetValue);
+				GameWebAPI.UserSoulData userSoulDataBySID = VersionUpMaterialData.GetUserSoulDataBySID(assetValue);
 				int num2 = userSoulDataBySID.num.ToInt32();
 				if (num > num2)
 				{
@@ -141,8 +141,7 @@ namespace Evolution
 			}
 			else
 			{
-				monsterData.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
-				monsterIcon.DimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
+				monsterIcon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE);
 				if (isOnlyDim)
 				{
 					return;
@@ -164,6 +163,18 @@ namespace Evolution
 			int item = int.Parse(monsterGroupId);
 			list.Add(item);
 			return list;
+		}
+
+		private static GameWebAPI.UserSoulData GetUserSoulDataBySID(string soulId)
+		{
+			GameWebAPI.UserSoulData userSoulData = EvolutionMaterialData.GetUserEvolutionMaterial(soulId);
+			if (userSoulData == null)
+			{
+				userSoulData = new GameWebAPI.UserSoulData();
+				userSoulData.soulId = soulId;
+				userSoulData.num = "0";
+			}
+			return userSoulData;
 		}
 	}
 }

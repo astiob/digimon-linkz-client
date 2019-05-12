@@ -2,9 +2,6 @@
 
 namespace UnityEngine.Experimental.Director
 {
-	/// <summary>
-	///   <para>This structure contains the frame information a Playable receives in Playable.PrepareFrame.</para>
-	/// </summary>
 	public struct FrameData
 	{
 		internal int m_UpdateId;
@@ -15,9 +12,6 @@ namespace UnityEngine.Experimental.Director
 
 		internal double m_TimeScale;
 
-		/// <summary>
-		///   <para>Frame update counter. Can be used to know when to initialize your Playable (when updateid is 0).</para>
-		/// </summary>
 		public int updateId
 		{
 			get
@@ -26,9 +20,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Current time at the start of the frame.</para>
-		/// </summary>
 		public float time
 		{
 			get
@@ -37,9 +28,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Last frame's start time.</para>
-		/// </summary>
 		public float lastTime
 		{
 			get
@@ -48,9 +36,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Time difference between this frame and the preceding frame.</para>
-		/// </summary>
 		public float deltaTime
 		{
 			get
@@ -59,9 +44,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Time speed multiplier. 1 is normal speed, 0 is stopped.</para>
-		/// </summary>
 		public float timeScale
 		{
 			get
@@ -70,9 +52,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Current time at the start of the frame in double precision.</para>
-		/// </summary>
 		public double dTime
 		{
 			get
@@ -81,9 +60,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Time difference between this frame and the preceding frame in double precision.</para>
-		/// </summary>
 		public double dLastTime
 		{
 			get
@@ -92,9 +68,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Time difference between this frame and the preceding frame in double precision.</para>
-		/// </summary>
 		public double dDeltaTime
 		{
 			get
@@ -103,9 +76,6 @@ namespace UnityEngine.Experimental.Director
 			}
 		}
 
-		/// <summary>
-		///   <para>Time speed multiplier in double precision.</para>
-		/// </summary>
 		public double dtimeScale
 		{
 			get

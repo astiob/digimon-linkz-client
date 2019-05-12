@@ -266,21 +266,19 @@ public class PushNotice : MonoBehaviour, NpPush.INpPushListener
 		this.ResetGardenPushNotice();
 	}
 
-	public void SyncGardenPushNoticeData()
+	public void SyncGardenPushNoticeData(List<MonsterData> mds)
 	{
 		this.gardenDataList.Clear();
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		list = MonsterDataMng.Instance().SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.GROWING_IN_GARDEN);
-		if (list.Count == 0)
+		if (mds.Count == 0)
 		{
 			return;
 		}
-		list = MonsterDataMng.Instance().SortMDList(list, false);
-		foreach (MonsterData monsterData in list)
+		foreach (MonsterData monsterData in mds)
 		{
-			if (!(monsterData.userMonster.eggFlg == "1"))
+			if (!monsterData.userMonster.IsEgg())
 			{
-				this.gardenDataList.Add(new PushNotice.GardenPushNoticeData(monsterData.userMonster.userMonsterId, DateTime.Parse(monsterData.userMonster.growEndDate)));
+				PushNotice.GardenPushNoticeData item = new PushNotice.GardenPushNoticeData(monsterData.userMonster.userMonsterId, DateTime.Parse(monsterData.userMonster.growEndDate));
+				this.gardenDataList.Add(item);
 			}
 		}
 		this.SortGardenPushNoticeData();

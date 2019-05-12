@@ -1,13 +1,14 @@
 ﻿using Master;
+using Monster;
+using MonsterList.StrengthenChara;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public sealed class CMD_ReinforcementTOP : CMD
 {
-	private List<MonsterData> selectedMonsterDataList;
-
 	[SerializeField]
 	private GameObject goMN_ICON_CHG;
 
@@ -29,16 +30,16 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private UILabel ngTX_LEV_S_PLUS;
 
-	[SerializeField]
 	[Header("チップ部分")]
+	[SerializeField]
 	private ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
 	[Header("所持クラスタ")]
 	private UILabel possessionClusterLabel;
 
-	[SerializeField]
 	[Header("消費クラスタ")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -47,8 +48,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private GUICollider clBTN_DECIDE;
 
-	[Header("決定ラベル")]
 	[SerializeField]
+	[Header("決定ラベル")]
 	private UILabelEx decideLabel;
 
 	[SerializeField]
@@ -56,6 +57,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 
 	[SerializeField]
 	private UILabel luckUpChance;
+
+	private BtnSort sortButton;
 
 	private GUIMonsterIcon leftLargeMonsterIcon;
 
@@ -65,28 +68,45 @@ public sealed class CMD_ReinforcementTOP : CMD
 
 	private int useClusterBK;
 
-	private List<MonsterData> deckMDList;
-
 	private CMD_CharacterDetailed charaDetail;
 
-	private MonsterData oldMonsterData;
+	private List<MonsterData> targetMonsterList;
 
-	private int oldLevel;
+	private List<MonsterData> partnerMonsterList;
 
-	private int upLuck;
+	private List<GUIMonsterIcon> partnerIconList;
 
-	private MonsterData baseDigimon;
+	private StrengthenCharaIconGrayOut iconGrayOut;
 
-	private List<MonsterData> partnerDigimons = new List<MonsterData>();
+	private StrengthenCharaMonsterList monsterList;
+
+	private GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList oldUserMonster;
+
+	private MonsterData baseDigimon { get; set; }
+
+	private bool IsMaxPartner
+	{
+		get
+		{
+			return this.partnerMonsterList.Count >= 5;
+		}
+	}
 
 	protected override void Awake()
 	{
 		base.Awake();
+		this.partnerIconList = new List<GUIMonsterIcon>();
+		this.partnerMonsterList = new List<MonsterData>();
+		this.iconGrayOut = new StrengthenCharaIconGrayOut();
+		this.iconGrayOut.SetNormalAction(new Action<MonsterData>(this.ActMIconShort), new Action<MonsterData>(this.ActMIconLong));
+		this.iconGrayOut.SetSelectedAction(new Action<MonsterData>(this.ActMIconS_Remove), new Action<MonsterData>(this.ActMIconLong));
+		this.iconGrayOut.SetBlockAction(null, new Action<MonsterData>(this.ActMIconLong));
+		this.monsterList = new StrengthenCharaMonsterList();
+		this.monsterList.Initialize(ClassSingleton<MonsterUserDataMng>.Instance.GetDeckUserMonsterList(), ClassSingleton<MonsterUserDataMng>.Instance.GetColosseumDeckUserMonsterList(), this.partnerMonsterList, this.iconGrayOut);
 		for (int i = 0; i < this.goMN_ICON_LIST.Count; i++)
 		{
 			this.goMN_ICON_LIST[i].SetActive(false);
 		}
-		PartyUtil.ActMIconShort = new Action<MonsterData>(this.ActMIconShort);
 		this.chipBaseSelect.ClearChipIcons();
 	}
 
@@ -208,8 +228,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 		string text2 = this.ngTX_LEV_S_CHG.text;
 		string text3 = this.ngTX_LEV_S_AFTER.text;
 		string text4 = this.ngTX_LEV_S_PLUS.text;
-		bool isLevelMax = this.baseDigimon.IsLevelMax();
-		cmd_StrengthenCheck.SetParams(this.partnerDigimons, text, text2, text3, text4, isLevelMax);
+		bool isLevelMax = MonsterStatusData.IsLevelMax(this.baseDigimon.userMonster.monsterId, this.baseDigimon.userMonster.level);
+		cmd_StrengthenCheck.SetParams(this.partnerMonsterList, text, text2, text3, text4, isLevelMax);
 	}
 
 	private void OnCloseReinforce(int idx)
@@ -246,12 +266,12 @@ public sealed class CMD_ReinforcementTOP : CMD
 			RestrictionInput.EndLoad();
 			return;
 		}
-		int[] mat = new int[this.partnerDigimons.Count];
-		for (int i = 0; i < this.partnerDigimons.Count; i++)
+		int[] mat = new int[this.partnerMonsterList.Count];
+		for (int i = 0; i < this.partnerMonsterList.Count; i++)
 		{
-			mat[i] = int.Parse(this.partnerDigimons[i].userMonster.userMonsterId);
+			mat[i] = int.Parse(this.partnerMonsterList[i].userMonster.userMonsterId);
 		}
-		this.useClusterBK = CalculatorUtil.CalcClusterForReinforcement(this.partnerDigimons);
+		this.useClusterBK = this.CalcClusterForReinforcement(this.GetReinforcementCost(this.partnerMonsterList));
 		GameWebAPI.RequestMN_MonsterFusion requestMN_MonsterFusion = new GameWebAPI.RequestMN_MonsterFusion();
 		requestMN_MonsterFusion.SetSendData = delegate(GameWebAPI.MN_Req_Fusion param)
 		{
@@ -260,9 +280,10 @@ public sealed class CMD_ReinforcementTOP : CMD
 		};
 		requestMN_MonsterFusion.OnReceived = delegate(GameWebAPI.RespDataMN_FusionExec response)
 		{
-			DataMng.Instance().SetUserMonster(response.userMonster);
+			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MonsterFusion request = requestMN_MonsterFusion;
+		this.oldUserMonster = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList(this.baseDigimon.userMonster);
 		base.StartCoroutine(request.Run(new Action(this.EndReinforce), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
@@ -271,107 +292,55 @@ public sealed class CMD_ReinforcementTOP : CMD
 
 	private void EndReinforce()
 	{
-		int[] array = new int[this.partnerDigimons.Count];
-		for (int i = 0; i < this.partnerDigimons.Count; i++)
-		{
-			array[i] = int.Parse(this.partnerDigimons[i].userMonster.userMonsterId);
-		}
-		DataMng.Instance().DeleteUserMonsterList(array);
+		string[] userMonsterIdList = this.partnerMonsterList.Select((MonsterData x) => x.userMonster.userMonsterId).ToArray<string>();
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
+		ChipDataMng.DeleteEquipChip(userMonsterIdList);
+		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		GooglePlayGamesTool.Instance.Reinforce();
 		List<int> list = new List<int>();
 		list.Add(int.Parse(this.baseDigimon.monsterM.monsterGroupId));
 		List<int> list2 = new List<int>();
-		for (int i = 0; i < this.partnerDigimons.Count; i++)
+		for (int i = 0; i < this.partnerMonsterList.Count; i++)
 		{
-			list2.Add(int.Parse(this.partnerDigimons[i].monsterM.monsterGroupId));
+			list2.Add(int.Parse(this.partnerMonsterList[i].monsterM.monsterGroupId));
 		}
-		this.oldMonsterData = new MonsterData();
-		this.oldMonsterData.userMonster = this.baseDigimon.GetDuplicateUserMonster(this.baseDigimon.userMonster);
-		this.oldMonsterData.monsterM = this.baseDigimon.monsterM;
-		this.oldLevel = int.Parse(this.baseDigimon.userMonster.level);
-		CutSceneMain.Mons_BeforeLevel = this.oldLevel;
-		int num = int.Parse(this.baseDigimon.userMonster.luck);
-		int num2 = int.Parse(this.baseDigimon.userMonster.ex);
-		bool flag = this.baseDigimon.IsLevelMax();
-		MonsterDataMng.Instance().RefreshMonsterDataList();
+		CutSceneMain.Mons_BeforeLevel = int.Parse(this.oldUserMonster.level);
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		this.InitMonsterList(false);
-		int num3 = int.Parse(this.baseDigimon.userMonster.luck);
-		this.upLuck = num3 - num;
-		int num4;
-		if (flag)
-		{
-			num4 = num2;
-		}
-		else
-		{
-			num4 = int.Parse(this.baseDigimon.userMonster.ex);
-		}
-		GameWebAPI.RespDataMA_GetMonsterExperienceM.MonsterExperienceM[] monsterExperienceM = MasterDataMng.Instance().RespDataMA_MonsterExperienceM.monsterExperienceM;
-		GameWebAPI.RespDataMA_GetMonsterExperienceM.MonsterExperienceM monsterExperienceM2 = null;
-		List<int> list3 = new List<int>();
-		for (int i = 0; i < monsterExperienceM.Length; i++)
-		{
-			int num5 = int.Parse(monsterExperienceM[i].level);
-			if (num5 > CutSceneMain.Mons_BeforeLevel)
-			{
-				int num6 = int.Parse(monsterExperienceM[i].experienceNum);
-				if (num6 > num4)
-				{
-					list3.Add(num6);
-					break;
-				}
-				list3.Add(num6);
-			}
-			else
-			{
-				monsterExperienceM2 = monsterExperienceM[i];
-			}
-		}
-		int[] array2 = new int[list3.Count + 1];
-		array2[0] = int.Parse(monsterExperienceM2.experienceNum);
-		for (int i = 0; i < list3.Count; i++)
-		{
-			array2[i + 1] = list3[i];
-		}
-		global::Debug.Log("================================================= EX_OFS_000 = " + (num2 - int.Parse(monsterExperienceM2.experienceNum)).ToString());
-		global::Debug.Log("================================================= EX_BEFORE_000 = " + num2.ToString());
-		global::Debug.Log("================================================= EX_AFTER_000 = " + num4.ToString());
+		int num = int.Parse(this.baseDigimon.userMonster.luck);
+		int luckDiff = num - int.Parse(this.oldUserMonster.luck);
 		Loading.Invisible();
 		CutSceneMain.FadeReqCutScene("Cutscenes/Training", new Action<int>(this.StartCutSceneCallBack), delegate(int index)
 		{
 			CutSceneMain.FadeReqCutSceneEnd();
 		}, delegate(int index)
 		{
-			this.charaDetail.ShowByReinforcement(this.baseDigimon.userMonster.ex, this.oldMonsterData, this.oldLevel, this.upLuck);
+			AppCoroutine.Start(this.charaDetail.StartReinforcementEffect(this.baseDigimon.userMonster.ex, this.oldUserMonster, luckDiff), false);
 			RestrictionInput.EndLoad();
 		}, list, list2, 2, 1, 0.5f, 0.5f);
 	}
 
-	private void StartCutSceneCallBack(int i)
+	private void StartCutSceneCallBack(int noop)
 	{
-		this.baseDigimon.csMIcon.Data = this.baseDigimon;
-		this.baseDigimon.csMIcon.DimmLevel = GUIMonsterIcon.DIMM_LEVEL.ACTIVE;
-		this.baseDigimon.csMIcon.SelectNum = -1;
-		GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
-		monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
-		this.baseDigimon.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.DISABLE;
-		monsterCS_ByMonsterData.DimmLevel = this.baseDigimon.dimmLevel;
-		this.baseDigimon.selectNum = 0;
-		monsterCS_ByMonsterData.SelectNum = this.baseDigimon.selectNum;
-		for (int j = 0; j < this.partnerDigimons.Count; j++)
+		this.leftLargeMonsterIcon.Data = this.baseDigimon;
+		GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.baseDigimon);
+		this.iconGrayOut.SetSelect(icon);
+		for (int i = 0; i < this.partnerMonsterList.Count; i++)
 		{
-			UnityEngine.Object.DestroyImmediate(this.partnerDigimons[j].csMIcon.gameObject);
-			this.goMN_ICON_MAT_LIST[j].SetActive(true);
+			UnityEngine.Object.Destroy(this.partnerIconList[i].gameObject);
+			this.goMN_ICON_MAT_LIST[i].SetActive(true);
 		}
-		this.partnerDigimons = new List<MonsterData>();
+		this.partnerMonsterList.Clear();
+		this.partnerIconList.Clear();
 		DataMng.Instance().US_PlayerInfoSubChipNum(this.useClusterBK);
 		this.UpdateClusterNum();
 		GUIPlayerStatus.RefreshParams_S(false);
 		this.ShowChgInfo();
-		this.SetDimParty(true);
+		this.monsterList.SetIconGrayOutUserMonsterList(this.baseDigimon);
+		this.monsterList.SetGrayOutIconPartyUsed(this.baseDigimon);
+		this.SetLuckChanceDescript();
 		this.CalcAndShowLevelChange();
 		this.BtnCont();
-		this.SetLockIcon();
 		this.charaDetail = this.ShowDetail(this.baseDigimon);
 	}
 
@@ -395,7 +364,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		int num = 0;
 		string text = string.Empty;
 		string text2 = string.Empty;
-		if (this.baseDigimon != null && this.baseDigimon.IsLevelMax())
+		if (this.baseDigimon != null && MonsterStatusData.IsLevelMax(this.baseDigimon.userMonster.monsterId, this.baseDigimon.userMonster.level))
 		{
 			text = this.baseDigimon.userMonster.level;
 			text2 = this.baseDigimon.userMonster.level;
@@ -417,7 +386,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 			{
 				num3 = campaign.rate.ToFloat();
 			}
-			float num4 = (float)MonsterDataMng.Instance().GetAddExpFromMonsterDataList(this.partnerDigimons) * num3;
+			float num4 = (float)this.GetAddExpFromMonsterDataList(this.partnerMonsterList) * num3;
 			DataMng dataMng = DataMng.Instance();
 			DataMng.ExperienceInfo experienceInfo2 = dataMng.GetExperienceInfo(num2);
 			DataMng.ExperienceInfo experienceInfo3 = dataMng.GetExperienceInfo(num2 + (int)num4);
@@ -450,7 +419,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		this.ngTX_LEV_S_AFTER.text = text2;
 		this.ngTX_LEV_S_PLUS.text = string.Format(StringMaster.GetString("SystemPlusCount"), num.ToString());
 		string gamemoney = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney;
-		int num6 = CalculatorUtil.CalcClusterForReinforcement(this.partnerDigimons);
+		int num6 = this.CalcClusterForReinforcement(this.GetReinforcementCost(this.partnerMonsterList));
 		this.useClusterLabel.text = StringFormat.Cluster(num6);
 		if (num6 > gamemoney.ToInt32OrDefault(0))
 		{
@@ -482,17 +451,40 @@ public sealed class CMD_ReinforcementTOP : CMD
 		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		monsterDataMng.ClearSortMessAll();
 		monsterDataMng.ClearLevelMessAll();
-		List<MonsterData> list = monsterDataMng.GetMonsterDataList(false);
-		list = monsterDataMng.SelectMonsterDataList(list, MonsterDataMng.SELECT_TYPE.ALL_OUT_GARDEN);
-		list = monsterDataMng.SortMDList(list, false);
-		this.csSelectPanelMonsterIcon.initLocation = initLoc;
-		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
+		List<MonsterData> list = monsterDataMng.GetMonsterDataList();
+		list = monsterDataMng.SelectMonsterDataList(list, MonsterFilterType.ALL_OUT_GARDEN);
+		monsterDataMng.SortMDList(list);
+		monsterDataMng.SetSortLSMessage();
 		monsterDataMng.SetDimmAll(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
 		monsterDataMng.SetSelectOffAll();
 		monsterDataMng.ClearDimmMessAll();
+		monsterDataMng.SetLockIcon();
+		this.monsterList.SetIconGrayOutUserMonsterList(this.baseDigimon);
+		this.SetLuckChanceDescript();
+		this.csSelectPanelMonsterIcon.SetCheckEnablePushAction(null);
 		this.csSelectPanelMonsterIcon.useLocationRecord = true;
+		this.targetMonsterList = list;
+		list = MonsterDataMng.Instance().SelectionMDList(list);
+		this.csSelectPanelMonsterIcon.initLocation = initLoc;
+		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
-		this.deckMDList = MonsterDataMng.Instance().GetDeckMonsterDataList(false);
+		BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
+		this.sortButton = componentsInChildren[0];
+		this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);
+		this.sortButton.SortTargetMonsterList = this.targetMonsterList;
+	}
+
+	private void OnChangeSortSetting()
+	{
+		MonsterDataMng.Instance().SortMDList(this.targetMonsterList);
+		MonsterDataMng.Instance().SetSortLSMessage();
+		List<MonsterData> dts = MonsterDataMng.Instance().SelectionMDList(this.targetMonsterList);
+		this.csSelectPanelMonsterIcon.ReAllBuild(dts);
+		if (this.baseDigimon != null)
+		{
+			this.monsterList.SetIconGrayOutUserMonsterList(this.baseDigimon);
+			this.monsterList.SetGrayOutIconPartyUsed(this.baseDigimon);
+		}
 	}
 
 	private void ActMIconLong(MonsterData monsterData)
@@ -503,112 +495,51 @@ public sealed class CMD_ReinforcementTOP : CMD
 	private CMD_CharacterDetailed ShowDetail(MonsterData tappedMonsterData)
 	{
 		CMD_CharacterDetailed.DataChg = tappedMonsterData;
-		bool flag = false;
-		bool isCheckDim = true;
-		if (this.selectedMonsterDataList == null || this.selectedMonsterDataList.Count == 0)
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int noop)
 		{
-			isCheckDim = false;
-		}
-		else
-		{
-			foreach (MonsterData monsterData in this.selectedMonsterDataList)
+			if (this.baseDigimon != null)
 			{
-				if (monsterData == tappedMonsterData && monsterData != this.baseDigimon)
+				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
+				this.monsterList.LockIconReturnDetailed(icon, tappedMonsterData, this.baseDigimon);
+				if (tappedMonsterData == this.baseDigimon)
 				{
-					flag = true;
-				}
-				if (monsterData == tappedMonsterData)
-				{
-					isCheckDim = false;
-				}
-			}
-		}
-		foreach (MonsterData monsterData2 in this.deckMDList)
-		{
-			if (monsterData2 == tappedMonsterData)
-			{
-				isCheckDim = false;
-			}
-		}
-		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
-		{
-			PartyUtil.SetLock(tappedMonsterData, isCheckDim);
-			if (tappedMonsterData == this.baseDigimon)
-			{
-				this.leftLargeMonsterIcon.Lock = tappedMonsterData.userMonster.IsLocked;
-			}
-			if (this.baseDigimon != null && this.IsMaxPartner)
-			{
-				this.SetOtherDimIcon(true);
-			}
-			if (this.baseDigimon == null)
-			{
-				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
-			}
-			else
-			{
-				MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
-				if ("1" == this.baseDigimon.monsterMG.monsterType)
-				{
-					GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
-					monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+					this.leftLargeMonsterIcon.Lock = tappedMonsterData.userMonster.IsLocked;
 				}
 			}
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
-		if (flag)
+		if (this.partnerMonsterList.Contains(tappedMonsterData))
 		{
 			cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Reinforcement;
 		}
 		return cmd_CharacterDetailed;
 	}
 
-	private bool IsMaxPartner
-	{
-		get
-		{
-			return this.partnerDigimons.Count >= 5;
-		}
-	}
-
 	private void ActMIconShort(MonsterData md)
 	{
 		if (this.baseDigimon == null)
 		{
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
+			this.iconGrayOut.SetSelect(icon);
 			this.baseDigimon = md;
 			this.leftLargeMonsterIcon = this.CreateIcon(this.baseDigimon, this.goMN_ICON_CHG);
-			this.baseDigimon.csMIcon = this.leftLargeMonsterIcon;
-			this.leftLargeMonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
 			this.ShowChgInfo();
-			this.SetDimParty(true);
+			this.monsterList.SetIconGrayOutUserMonsterList(this.baseDigimon);
+			this.monsterList.SetGrayOutIconPartyUsed(this.baseDigimon);
+			this.SetLuckChanceDescript();
 		}
 		else if (!this.IsMaxPartner)
 		{
-			this.partnerDigimons.Add(md);
-			int index = this.partnerDigimons.Count - 1;
-			GUIMonsterIcon guimonsterIcon = this.CreateIcon(this.partnerDigimons[index], this.goMN_ICON_MAT_LIST[index]);
-			this.partnerDigimons[index].csMIcon = guimonsterIcon;
-			guimonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+			GameObject goEmpty = this.goMN_ICON_MAT_LIST[this.partnerIconList.Count];
+			this.partnerIconList.Add(this.CreateIcon(md, goEmpty));
+			this.partnerMonsterList.Add(md);
+			GUIMonsterIcon icon2 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
+			this.iconGrayOut.SetSelectPartner(icon2, this.partnerMonsterList.Count);
 		}
 		if (this.IsMaxPartner)
 		{
-			this.SetOtherDimIcon(true);
-		}
-		this.SetLockIcon();
-		if (this.baseDigimon == null)
-		{
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
-		}
-		else
-		{
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
-			if ("1" == this.baseDigimon.monsterMG.monsterType)
-			{
-				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
-				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
-			}
+			this.monsterList.BlockNotSelectIcon(this.baseDigimon);
 		}
 		this.CalcAndShowLevelChange();
-		this.RefreshSelectedInMonsterList();
 		this.BtnCont();
 		this.SetLuckChanceDescript();
 	}
@@ -617,105 +548,48 @@ public sealed class CMD_ReinforcementTOP : CMD
 	{
 		if (md == this.baseDigimon)
 		{
-			this.DeleteIcon(this.baseDigimon, this.goMN_ICON_CHG);
 			this.baseDigimon = null;
+			UnityEngine.Object.Destroy(this.leftLargeMonsterIcon.gameObject);
+			this.leftLargeMonsterIcon = null;
+			this.goMN_ICON_CHG.SetActive(true);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
+			this.iconGrayOut.CancelSelect(icon);
 			this.ShowChgInfo();
-			this.SetDimParty(false);
+			this.monsterList.ClearGrayOutIconPartyUsed();
 		}
 		else
 		{
-			for (int i = 0; i < this.partnerDigimons.Count; i++)
+			for (int i = 0; i < this.partnerMonsterList.Count; i++)
 			{
-				if (this.partnerDigimons[i] == md)
+				if (this.partnerMonsterList[i] == md)
 				{
-					this.DeleteIcon(this.partnerDigimons[i], this.goMN_ICON_MAT_LIST[i]);
-					this.partnerDigimons.RemoveAt(i);
+					UnityEngine.Object.Destroy(this.partnerIconList[i].gameObject);
+					this.partnerIconList.RemoveAt(i);
+					this.goMN_ICON_MAT_LIST[i].SetActive(true);
+					GUIMonsterIcon icon2 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
+					this.iconGrayOut.CancelSelect(icon2);
+					this.partnerMonsterList.RemoveAt(i);
 					this.ShiftPartnerIcon(i);
+					break;
 				}
 			}
-		}
-		this.SetOtherDimIcon(false);
-		this.SetLockIcon();
-		if (this.baseDigimon == null)
-		{
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.ACTIVE, new Action<MonsterData>(this.ActMIconShort));
-		}
-		else
-		{
-			MonsterDataMng.Instance().SetIconGrayOut("1", GUIMonsterIcon.DIMM_LEVEL.DISABLE, null);
-			if ("1" == this.baseDigimon.monsterMG.monsterType)
+			for (int j = 0; j < this.partnerMonsterList.Count; j++)
 			{
-				GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(this.baseDigimon);
-				monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
+				GUIMonsterIcon icon3 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(this.partnerMonsterList[j]);
+				icon3.SelectNum = j + 1;
 			}
 		}
-		this.CalcAndShowLevelChange();
-		this.RefreshSelectedInMonsterList();
-		this.BtnCont();
+		this.monsterList.SetIconGrayOutUserMonsterList(this.baseDigimon);
 		this.SetLuckChanceDescript();
-	}
-
-	private void SetDimParty(bool isDim)
-	{
-		for (int i = 0; i < this.deckMDList.Count; i++)
-		{
-			MonsterData monsterData = this.deckMDList[i];
-			if (isDim)
-			{
-				if (monsterData != this.baseDigimon)
-				{
-					PartyUtil.SetDimIcon(true, monsterData, StringMaster.GetString("CharaIcon-04"), false);
-				}
-			}
-			else
-			{
-				PartyUtil.SetDimIcon(false, monsterData, string.Empty, false);
-			}
-		}
-	}
-
-	private void SetOtherDimIcon(bool isDim)
-	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		List<MonsterData> monsterDataList = monsterDataMng.GetMonsterDataList(false);
-		foreach (MonsterData monsterData in monsterDataList)
-		{
-			if (monsterData != this.baseDigimon && !this.partnerDigimons.Contains(monsterData) && !this.deckMDList.Contains(monsterData))
-			{
-				PartyUtil.SetDimIcon(isDim, monsterData, string.Empty, monsterData.Lock);
-			}
-		}
-	}
-
-	private void SetLockIcon()
-	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		List<MonsterData> monsterDataList = monsterDataMng.GetMonsterDataList(false);
-		foreach (MonsterData monsterData in monsterDataList)
-		{
-			if (monsterData != this.baseDigimon && !this.partnerDigimons.Contains(monsterData) && !this.deckMDList.Contains(monsterData))
-			{
-				if (this.baseDigimon != null && monsterData.userMonster.IsLocked)
-				{
-					PartyUtil.SetDimIcon(true, monsterData, string.Empty, monsterData.Lock);
-				}
-			}
-		}
+		this.CalcAndShowLevelChange();
+		this.BtnCont();
 	}
 
 	private GUIMonsterIcon CreateIcon(MonsterData md, GameObject goEmpty)
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		Transform transform = goEmpty.transform;
-		GUIMonsterIcon guimonsterIcon = monsterDataMng.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
-		guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
-		md.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.DISABLE;
-		md.selectNum = 0;
-		GUIMonsterIcon monsterCS_ByMonsterData = monsterDataMng.GetMonsterCS_ByMonsterData(md);
-		monsterCS_ByMonsterData.DimmLevel = md.dimmLevel;
-		monsterCS_ByMonsterData.SelectNum = md.selectNum;
-		monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
-		guimonsterIcon.Lock = md.userMonster.IsLocked;
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
+		this.iconGrayOut.SelectIcon(guimonsterIcon);
 		UIWidget component = goEmpty.GetComponent<UIWidget>();
 		UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
 		if (component != null && component2 != null)
@@ -728,24 +602,12 @@ public sealed class CMD_ReinforcementTOP : CMD
 		return guimonsterIcon;
 	}
 
-	private void DeleteIcon(MonsterData md, GameObject goEmpty)
-	{
-		UnityEngine.Object.DestroyImmediate(md.csMIcon.gameObject);
-		goEmpty.SetActive(true);
-		md.dimmLevel = GUIMonsterIcon.DIMM_LEVEL.ACTIVE;
-		md.selectNum = -1;
-		GUIMonsterIcon monsterCS_ByMonsterData = MonsterDataMng.Instance().GetMonsterCS_ByMonsterData(md);
-		monsterCS_ByMonsterData.DimmLevel = md.dimmLevel;
-		monsterCS_ByMonsterData.SelectNum = md.selectNum;
-		monsterCS_ByMonsterData.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
-	}
-
-	private void ShiftPartnerIcon(int idx)
+	private void ShiftPartnerIcon(int index)
 	{
 		int i;
-		for (i = 0; i < this.partnerDigimons.Count; i++)
+		for (i = 0; i < this.partnerMonsterList.Count; i++)
 		{
-			this.partnerDigimons[i].csMIcon.gameObject.transform.localPosition = this.goMN_ICON_MAT_LIST[i].transform.localPosition;
+			this.partnerIconList[i].gameObject.transform.localPosition = this.goMN_ICON_MAT_LIST[i].transform.localPosition;
 			this.goMN_ICON_MAT_LIST[i].SetActive(false);
 		}
 		while (i < this.goMN_ICON_MAT_LIST.Count)
@@ -753,26 +615,6 @@ public sealed class CMD_ReinforcementTOP : CMD
 			this.goMN_ICON_MAT_LIST[i].SetActive(true);
 			i++;
 		}
-	}
-
-	private void RefreshSelectedInMonsterList()
-	{
-		this.selectedMonsterDataList = new List<MonsterData>();
-		int snum;
-		if (this.baseDigimon != null)
-		{
-			this.selectedMonsterDataList.Add(this.baseDigimon);
-			snum = 0;
-		}
-		else
-		{
-			snum = 1;
-		}
-		for (int i = 0; i < this.partnerDigimons.Count; i++)
-		{
-			this.selectedMonsterDataList.Add(this.partnerDigimons[i]);
-		}
-		MonsterDataMng.Instance().SetSelectByMonsterDataList(this.selectedMonsterDataList, snum, true);
 	}
 
 	public void UpdateClusterNum()
@@ -783,9 +625,9 @@ public sealed class CMD_ReinforcementTOP : CMD
 	private void BtnCont()
 	{
 		bool flag = false;
-		if (this.baseDigimon != null && this.partnerDigimons.Count > 0)
+		if (this.baseDigimon != null && this.partnerMonsterList.Count > 0)
 		{
-			int num = CalculatorUtil.CalcClusterForReinforcement(this.partnerDigimons);
+			int num = this.CalcClusterForReinforcement(this.GetReinforcementCost(this.partnerMonsterList));
 			int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
 			if (num <= num2)
 			{
@@ -806,6 +648,44 @@ public sealed class CMD_ReinforcementTOP : CMD
 		}
 	}
 
+	private int GetAddExpFromMonsterDataList(List<MonsterData> mdL)
+	{
+		int num = 0;
+		for (int i = 0; i < mdL.Count; i++)
+		{
+			int num2 = int.Parse(mdL[i].userMonster.level) - 1;
+			int num3 = int.Parse(mdL[i].monsterM.fusionExp);
+			int num4 = int.Parse(mdL[i].monsterM.fusionExpRise);
+			num += num3 + num4 * num2;
+		}
+		return num;
+	}
+
+	private int CalcClusterForReinforcement(float cost)
+	{
+		GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
+		GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.TrainCostDown, false);
+		float num = 1f;
+		if (campaign != null)
+		{
+			num = campaign.rate.ToFloat();
+		}
+		return Mathf.FloorToInt(cost * num);
+	}
+
+	private float GetReinforcementCost(List<MonsterData> mdL)
+	{
+		float num = 0f;
+		for (int i = 0; i < mdL.Count; i++)
+		{
+			int num2 = int.Parse(mdL[i].userMonster.level) - 1;
+			int num3 = int.Parse(mdL[i].monsterM.fusionExp);
+			int num4 = int.Parse(mdL[i].monsterM.fusionExpRise);
+			num += ((float)(num3 + num4 * num2) + 70f) * ConstValue.REINFORCEMENT_COEFFICIENT;
+		}
+		return num;
+	}
+
 	private void SetLuckChanceDescript()
 	{
 		this.luckUpChance.text = string.Empty;
@@ -815,12 +695,12 @@ public sealed class CMD_ReinforcementTOP : CMD
 			{
 				this.luckUpChance.text = StringMaster.GetString("ReinforcementLuckMax");
 			}
-			else if (0 < this.partnerDigimons.Count)
+			else if (0 < this.partnerMonsterList.Count)
 			{
-				string[] array = new string[this.partnerDigimons.Count];
-				for (int i = 0; i < this.partnerDigimons.Count; i++)
+				string[] array = new string[this.partnerMonsterList.Count];
+				for (int i = 0; i < this.partnerMonsterList.Count; i++)
 				{
-					array[i] = this.partnerDigimons[i].monsterMG.tribe;
+					array[i] = this.partnerMonsterList[i].monsterMG.tribe;
 				}
 				if (this.CheckLuckUpChance(this.baseDigimon.monsterMG.tribe, array))
 				{
@@ -859,22 +739,22 @@ public sealed class CMD_ReinforcementTOP : CMD
 		{
 			if (partnerTribeList[i] == baseTribe)
 			{
-				switch (int.Parse(partnerGrowStepList[i]))
+				int growStep = int.Parse(partnerGrowStepList[i]);
+				if (MonsterGrowStepData.IsGrowingScope(growStep))
 				{
-				case 4:
 					num = Mathf.Max(num, 7);
-					break;
-				case 5:
-				case 8:
+				}
+				else if (MonsterGrowStepData.IsRipeScope(growStep))
+				{
 					num = Mathf.Max(num, 20);
-					break;
-				case 6:
+				}
+				else if (MonsterGrowStepData.IsPerfectScope(growStep))
+				{
 					num = Mathf.Max(num, 50);
-					break;
-				case 7:
-				case 9:
+				}
+				else if (MonsterGrowStepData.IsUltimateScope(growStep))
+				{
 					num = Mathf.Max(num, 100);
-					break;
 				}
 			}
 		}

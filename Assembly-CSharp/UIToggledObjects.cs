@@ -13,8 +13,8 @@ public class UIToggledObjects : MonoBehaviour
 	[HideInInspector]
 	private GameObject target;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private bool inverse;
 
 	private void Awake()

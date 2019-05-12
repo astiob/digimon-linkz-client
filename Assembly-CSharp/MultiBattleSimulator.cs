@@ -45,7 +45,6 @@ public class MultiBattleSimulator : BattleSimulator
 		MultiBattleData instance = ClassSingleton<MultiBattleData>.Instance;
 		instance.IsSimulator = true;
 		instance.MyPlayerUserId = this.myPlayerUserId;
-		instance.MultiUsers = this.multiUsers;
 		if (this.maxAttackTime <= 2)
 		{
 			global::Debug.LogError("Attack待ちMAX時間(maxAttackTime)が2以下ですが宜しいですか?");

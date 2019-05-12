@@ -7,8 +7,8 @@ public class CMD_MissionItemList : CMD
 	[SerializeField]
 	private UILabel lbTitle;
 
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partListParent;
 
 	[SerializeField]

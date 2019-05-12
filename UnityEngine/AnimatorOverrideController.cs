@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine.Internal;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Interface to control AnimatorOverrideController.</para>
-	/// </summary>
 	public sealed class AnimatorOverrideController : RuntimeAnimatorController
 	{
 		public AnimatorOverrideController()
@@ -18,9 +16,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_CreateAnimationSet([Writable] AnimatorOverrideController self);
 
-		/// <summary>
-		///   <para>The Controller that the AnimatorOverrideController overrides.</para>
-		/// </summary>
 		public extern RuntimeAnimatorController runtimeAnimatorController { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 
 		public AnimationClip this[string name]
@@ -61,11 +56,19 @@ namespace UnityEngine
 
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern void Internal_SetClip(AnimationClip originalClip, AnimationClip overrideClip);
+		private extern void Internal_SetClip(AnimationClip originalClip, AnimationClip overrideClip, [DefaultValue("true")] bool notify);
 
-		/// <summary>
-		///   <para>Returns the list of orignal clip from the controller and their override clip.</para>
-		/// </summary>
+		[ExcludeFromDocs]
+		private void Internal_SetClip(AnimationClip originalClip, AnimationClip overrideClip)
+		{
+			bool notify = true;
+			this.Internal_SetClip(originalClip, overrideClip, notify);
+		}
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private extern void Internal_SetDirty();
+
 		public AnimationClipPair[] clips
 		{
 			get
@@ -91,8 +94,9 @@ namespace UnityEngine
 			{
 				for (int i = 0; i < value.Length; i++)
 				{
-					this.Internal_SetClip(value[i].originalClip, value[i].overrideClip);
+					this.Internal_SetClip(value[i].originalClip, value[i].overrideClip, false);
 				}
+				this.Internal_SetDirty();
 			}
 		}
 

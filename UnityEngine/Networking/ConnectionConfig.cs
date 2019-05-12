@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace UnityEngine.Networking
 {
-	/// <summary>
-	///   <para>This class defines parameters of connection between two peers, this definition includes various timeouts and sizes as well as channel configuration.</para>
-	/// </summary>
 	[Serializable]
 	public class ConnectionConfig
 	{
@@ -63,12 +60,11 @@ namespace UnityEngine.Networking
 		private bool m_IsAcksLong;
 
 		[SerializeField]
+		private bool m_UsePlatformSpecificProtocols;
+
+		[SerializeField]
 		internal List<ChannelQOS> m_Channels = new List<ChannelQOS>();
 
-		/// <summary>
-		///   <para>Will create default connection config or will copy them from another.</para>
-		/// </summary>
-		/// <param name="config">Connection config.</param>
 		public ConnectionConfig()
 		{
 			this.m_PacketSize = 1500;
@@ -88,12 +84,9 @@ namespace UnityEngine.Networking
 			this.m_MaxCombinedReliableMessageCount = 10;
 			this.m_MaxSentMessageQueueSize = 128;
 			this.m_IsAcksLong = false;
+			this.m_UsePlatformSpecificProtocols = false;
 		}
 
-		/// <summary>
-		///   <para>Will create default connection config or will copy them from another.</para>
-		/// </summary>
-		/// <param name="config">Connection config.</param>
 		public ConnectionConfig(ConnectionConfig config)
 		{
 			if (config == null)
@@ -117,16 +110,13 @@ namespace UnityEngine.Networking
 			this.m_MaxCombinedReliableMessageCount = config.m_MaxCombinedReliableMessageCount;
 			this.m_MaxSentMessageQueueSize = config.m_MaxSentMessageQueueSize;
 			this.m_IsAcksLong = config.m_IsAcksLong;
+			this.m_UsePlatformSpecificProtocols = config.m_UsePlatformSpecificProtocols;
 			foreach (ChannelQOS channel in config.m_Channels)
 			{
 				this.m_Channels.Add(new ChannelQOS(channel));
 			}
 		}
 
-		/// <summary>
-		///   <para>Validate parameters of connection config. Will throw exceptions if parameters are incorrect.</para>
-		/// </summary>
-		/// <param name="config"></param>
 		public static void Validate(ConnectionConfig config)
 		{
 			if (config.m_PacketSize < 128)
@@ -143,9 +133,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>What is a maximum packet size (in Bytes) (including payload and all header). Packet can contain multiple messages inside.</para>
-		/// </summary>
 		public ushort PacketSize
 		{
 			get
@@ -158,9 +145,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>What should be maximum fragment size (in Bytes) for fragmented messages.</para>
-		/// </summary>
 		public ushort FragmentSize
 		{
 			get
@@ -173,9 +157,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Minimum timeout (in ms) which library will wait before it will resend reliable message.</para>
-		/// </summary>
 		public uint ResendTimeout
 		{
 			get
@@ -188,9 +169,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>How long (in ms) library will wait before it will consider connection as disconnected.</para>
-		/// </summary>
 		public uint DisconnectTimeout
 		{
 			get
@@ -203,9 +181,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Timeout in ms which library will wait before it will send another connection request.</para>
-		/// </summary>
 		public uint ConnectTimeout
 		{
 			get
@@ -218,9 +193,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Minimal send update timeout (in ms) for connection. this timeout could be increased by library if flow control will required.</para>
-		/// </summary>
 		public uint MinUpdateTimeout
 		{
 			get
@@ -237,9 +209,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Timeout in ms between control protocol messages.</para>
-		/// </summary>
 		public uint PingTimeout
 		{
 			get
@@ -252,9 +221,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Timeout in ms for control messages which library will use before it will accumulate statistics.</para>
-		/// </summary>
 		public uint ReducedPingTimeout
 		{
 			get
@@ -267,9 +233,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Defines timeout in ms after that message with AllCost deliver qos will force resend without acknowledgement waiting.</para>
-		/// </summary>
 		public uint AllCostTimeout
 		{
 			get
@@ -282,9 +245,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>How many (in %) packet need to be dropped due network condition before library will throttle send rate.</para>
-		/// </summary>
 		public byte NetworkDropThreshold
 		{
 			get
@@ -297,9 +257,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>How many (in %) packet need to be dropped due lack of internal bufferes before library will throttle send rate.</para>
-		/// </summary>
 		public byte OverflowDropThreshold
 		{
 			get
@@ -312,9 +269,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>How many attempt library will get before it will consider the connection as disconnected.</para>
-		/// </summary>
 		public byte MaxConnectionAttempt
 		{
 			get
@@ -327,9 +281,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>How long in ms receiver will wait before it will force send acknowledgements back without waiting any payload.</para>
-		/// </summary>
 		public uint AckDelay
 		{
 			get
@@ -342,9 +293,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Maximum size of reliable message which library will consider as small and will try to combine in one "array of messages" message.</para>
-		/// </summary>
 		public ushort MaxCombinedReliableMessageSize
 		{
 			get
@@ -357,9 +305,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Maximum amount of small reliable messages which will combine in one "array of messages". Useful if you are going to send a lot of small reliable messages.</para>
-		/// </summary>
 		public ushort MaxCombinedReliableMessageCount
 		{
 			get
@@ -372,9 +317,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Defines maximum messages which will wait for sending before user will receive error on Send() call.</para>
-		/// </summary>
 		public ushort MaxSentMessageQueueSize
 		{
 			get
@@ -387,9 +329,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>If it is true, connection will use 64 bit mask to acknowledge received reliable messages.</para>
-		/// </summary>
 		public bool IsAcksLong
 		{
 			get
@@ -402,9 +341,22 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Return amount of channels for current configuration.</para>
-		/// </summary>
+		public bool UsePlatformSpecificProtocols
+		{
+			get
+			{
+				return this.m_UsePlatformSpecificProtocols;
+			}
+			set
+			{
+				if (value && Application.platform != RuntimePlatform.PS4)
+				{
+					throw new ArgumentOutOfRangeException("Platform specific protocols are not supported on this platform");
+				}
+				this.m_UsePlatformSpecificProtocols = value;
+			}
+		}
+
 		public int ChannelCount
 		{
 			get
@@ -413,13 +365,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para></para>
-		/// </summary>
-		/// <param name="value">Add new channel to configuration.</param>
-		/// <returns>
-		///   <para>Channel id, user can use this id to send message via this channel.</para>
-		/// </returns>
 		public byte AddChannel(QosType value)
 		{
 			if (this.m_Channels.Count > 255)
@@ -435,13 +380,6 @@ namespace UnityEngine.Networking
 			return (byte)(this.m_Channels.Count - 1);
 		}
 
-		/// <summary>
-		///   <para>Return the QoS set for the given channel or throw an out of range exception.</para>
-		/// </summary>
-		/// <param name="idx">Index in array.</param>
-		/// <returns>
-		///   <para>Channel QoS.</para>
-		/// </returns>
 		public QosType GetChannel(byte idx)
 		{
 			if ((int)idx >= this.m_Channels.Count)
@@ -451,9 +389,6 @@ namespace UnityEngine.Networking
 			return this.m_Channels[(int)idx].QOS;
 		}
 
-		/// <summary>
-		///   <para>Allow access to channels list.</para>
-		/// </summary>
 		public List<ChannelQOS> Channels
 		{
 			get

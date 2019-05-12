@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -57,8 +58,6 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	private UISprite spLOCK;
 
-	private bool _lock;
-
 	private MonsterData data;
 
 	private Action<MonsterData> actTouchShort;
@@ -113,36 +112,15 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	private Color dimmMessEffectColorSortieLimit = new Color(0.235294119f, 0.117647059f, 0.117647059f, 0.784313738f);
 
-	public GUIMonsterIcon.DIMM_LEVEL DimmLevel
-	{
-		get
-		{
-			return this.dimm_level;
-		}
-		set
-		{
-			if (this.dimm_level != value)
-			{
-				this.dimm_level = value;
-				switch (this.dimm_level)
-				{
-				case GUIMonsterIcon.DIMM_LEVEL.ACTIVE:
-					GUIManager.SetColorAll(base.transform, this.colAct);
-					break;
-				case GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE:
-					GUIManager.SetColorAll(base.transform, this.colNon);
-					break;
-				case GUIMonsterIcon.DIMM_LEVEL.DISABLE:
-					GUIManager.SetColorAll(base.transform, this.colDis);
-					break;
-				}
-				if (this.goSELECT_BASE.activeSelf)
-				{
-					this.spSELECT_BASE.color = this.colAct;
-				}
-			}
-		}
-	}
+	private static GameObject goMONSTER_ICON_BAK_ROOT;
+
+	private static GameObject goMONSTER_ICON_M;
+
+	private readonly Color LEVEL_NORMAL_COLOR = new Color(1f, 1f, 1f, 1f);
+
+	private readonly Color MAX_LEVEL_COLOR = new Color(1f, 0.9411765f, 0f, 1f);
+
+	private readonly Color NONE_LEVEL_COLOR = new Color(1f, 1f, 1f, 1f);
 
 	public int SelectNum
 	{
@@ -275,20 +253,11 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	public bool Lock
 	{
-		get
-		{
-			return this._lock;
-		}
 		set
 		{
-			this._lock = value;
-			if (this.goLOCK != null)
+			if (this.goLOCK != null && this.goLOCK.activeSelf != value)
 			{
-				this.goLOCK.SetActive(this._lock);
-				if (this._lock)
-				{
-					this.spLOCK.color = Color.white;
-				}
+				this.goLOCK.SetActive(value);
 			}
 		}
 	}
@@ -389,11 +358,10 @@ public class GUIMonsterIcon : GUIListPartBS
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
-		int rare_i = int.Parse(this.data.monsterM.rare);
 		this.SetThumbnailMonster(this.txCHAR, this.data, this.ReadTexByASync);
-		MonsterDataMng.Instance().DispArousal(rare_i, this.goArousal, this.spArousal);
+		GUIMonsterIcon.DispArousal(this.data.monsterM.rare, this.goArousal, this.spArousal);
 		int growStep = int.Parse(this.data.monsterMG.growStep);
-		GUIMonsterIcon.SetThumbnailFrame(this.spBASE, this.spFRAME, (GrowStep)growStep);
+		GUIMonsterIcon.SetThumbnailFrame(this.spBASE, this.spFRAME, growStep);
 		if (!this._gimmick && this.goGimmick != null)
 		{
 			this.goGimmick.SetActive(false);
@@ -422,8 +390,8 @@ public class GUIMonsterIcon : GUIListPartBS
 			iconTexture.transform.gameObject.SetActive(true);
 			if (!iconMonsterData.userMonster.IsEgg())
 			{
-				assetBundlePath = MonsterDataMng.Instance().GetMonsterIconPathByMonsterData(iconMonsterData);
-				resourcePath = MonsterDataMng.Instance().InternalGetMonsterIconPathByMonsterData(iconMonsterData);
+				assetBundlePath = GUIMonsterIcon.GetMonsterIconPathByIconId(iconMonsterData.monsterM.iconId);
+				resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(iconMonsterData.monsterM.iconId);
 			}
 			else
 			{
@@ -438,8 +406,8 @@ public class GUIMonsterIcon : GUIListPartBS
 						break;
 					}
 				}
-				assetBundlePath = MonsterDataMng.Instance().GetMonsterIconPathByIconId(iconId);
-				resourcePath = MonsterDataMng.Instance().InternalGetMonsterIconPathByIconId(iconId);
+				assetBundlePath = GUIMonsterIcon.GetMonsterIconPathByIconId(iconId);
+				resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(iconId);
 			}
 			GUIMonsterIcon.SetTextureMonsterParts(iconTexture, resourcePath, assetBundlePath, isLoadASync);
 		}
@@ -484,50 +452,37 @@ public class GUIMonsterIcon : GUIListPartBS
 		}
 	}
 
-	public static void SetThumbnailFrame(UISprite background, UISprite frame, GrowStep growStep)
+	public static void SetThumbnailFrame(UISprite background, UISprite frame, int growStep)
 	{
-		switch (growStep)
+		if (MonsterGrowStepData.IsEggScope(growStep) || MonsterGrowStepData.IsChild1Scope(growStep) || MonsterGrowStepData.IsChild2Scope(growStep))
 		{
-		case GrowStep.EGG:
 			background.spriteName = "Common02_Thumbnail_bg1";
 			frame.spriteName = "Common02_Thumbnail_waku1";
-			break;
-		case GrowStep.CHILD_1:
-			background.spriteName = "Common02_Thumbnail_bg1";
-			frame.spriteName = "Common02_Thumbnail_waku1";
-			break;
-		case GrowStep.CHILD_2:
-			background.spriteName = "Common02_Thumbnail_bg1";
-			frame.spriteName = "Common02_Thumbnail_waku1";
-			break;
-		case GrowStep.GROWING:
+		}
+		else if (MonsterGrowStepData.IsGrowingScope(growStep))
+		{
 			background.spriteName = "Common02_Thumbnail_bg2";
 			frame.spriteName = "Common02_Thumbnail_waku2";
-			break;
-		case GrowStep.RIPE:
+		}
+		else if (MonsterGrowStepData.IsRipeScope(growStep))
+		{
 			background.spriteName = "Common02_Thumbnail_bg3";
 			frame.spriteName = "Common02_Thumbnail_waku3";
-			break;
-		case GrowStep.PERFECT:
+		}
+		else if (MonsterGrowStepData.IsPerfectScope(growStep))
+		{
 			background.spriteName = "Common02_Thumbnail_bg4";
 			frame.spriteName = "Common02_Thumbnail_waku4";
-			break;
-		case GrowStep.ULTIMATE:
+		}
+		else if (MonsterGrowStepData.IsUltimateScope(growStep))
+		{
 			background.spriteName = "Common02_Thumbnail_bg5";
 			frame.spriteName = "Common02_Thumbnail_waku5";
-			break;
-		case GrowStep.ARMOR_1:
-			background.spriteName = "Common02_Thumbnail_bg3";
-			frame.spriteName = "Common02_Thumbnail_waku3";
-			break;
-		case GrowStep.ARMOR_2:
-			background.spriteName = "Common02_Thumbnail_bg5";
-			frame.spriteName = "Common02_Thumbnail_waku5";
-			break;
-		default:
+		}
+		else
+		{
 			background.spriteName = "Common02_Thumbnail_Question";
 			frame.spriteName = "Common02_Thumbnail_wakuQ";
-			break;
 		}
 	}
 
@@ -663,22 +618,279 @@ public class GUIMonsterIcon : GUIListPartBS
 
 	public void SetGrayout(GUIMonsterIcon.DIMM_LEVEL type)
 	{
-		this.dimm_level = type;
+		if (this.dimm_level != type)
+		{
+			this.dimm_level = type;
+			switch (type)
+			{
+			case GUIMonsterIcon.DIMM_LEVEL.ACTIVE:
+				GUIManager.SetColorAll(base.transform, this.colAct);
+				break;
+			case GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE:
+				GUIManager.SetColorAll(base.transform, this.colNon);
+				break;
+			case GUIMonsterIcon.DIMM_LEVEL.DISABLE:
+				GUIManager.SetColorAll(base.transform, this.colDis);
+				break;
+			}
+			if (null != this.spLOCK)
+			{
+				this.spLOCK.color = Color.white;
+			}
+			if (this.goSELECT_BASE.activeSelf)
+			{
+				this.spSELECT_BASE.color = this.colAct;
+			}
+		}
+	}
+
+	public static void InitMonsterGO(Transform parent)
+	{
+		if (GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT != null)
+		{
+			UnityEngine.Object.Destroy(GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT);
+		}
+		GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT = new GameObject();
+		GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT.name = "MONSTER_ICON_BAK_ROOT";
+		GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT.transform.parent = parent;
+		GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT.transform.localScale = new Vector3(1f, 1f, 1f);
+		GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT.transform.localPosition = new Vector3(2000f, 2000f, 0f);
+		GUIMonsterIcon.goMONSTER_ICON_M = GUIManager.LoadCommonGUI("ListParts/ListPartsThumbnail", GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT);
+		GUIMonsterIcon.goMONSTER_ICON_M.transform.localScale = new Vector3(1f, 1f, 1f);
+		GUIMonsterIcon.goMONSTER_ICON_M.SetActive(false);
+	}
+
+	public void PushBack(float offsetX, float offsetY)
+	{
+		Transform transform = base.transform;
+		transform.parent = GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT.transform;
+		transform.localScale = Vector3.one;
+		transform.localPosition = new Vector3(offsetX, offsetY, -10f);
+		this.ResetDepthToOriginal();
+		base.gameObject.SetActive(false);
+	}
+
+	public void RefreshPrefabByMonsterData(MonsterData monsterData)
+	{
+		this.ReadTexByASync = true;
+		this.data = monsterData;
+		this.ShowGUI();
+		this.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
+		this.SelectNum = -1;
+		this.DimmMess = string.Empty;
+		this.SortMess = string.Empty;
+		if (monsterData != null && monsterData.userMonster != null)
+		{
+			this.Lock = monsterData.userMonster.IsLocked;
+		}
+	}
+
+	public void SetMessageLevel()
+	{
+		MonsterData monsterData = this.Data;
+		if (monsterData.userMonster.IsEgg())
+		{
+			this.LevelMess = string.Format(StringMaster.GetString("CharaIconLv"), StringMaster.GetString("CharaStatus-01"));
+			this.SetLevelMessageColor(this.NONE_LEVEL_COLOR);
+		}
+		else
+		{
+			int num = int.Parse(monsterData.userMonster.level);
+			int num2 = int.Parse(monsterData.monsterM.maxLevel);
+			if (num >= num2)
+			{
+				this.LevelMess = string.Format(StringMaster.GetString("CharaIconLv"), StringMaster.GetString("CharaStatus-18"));
+				this.SetLevelMessageColor(this.MAX_LEVEL_COLOR);
+			}
+			else
+			{
+				this.LevelMess = string.Format(StringMaster.GetString("CharaIconLv"), monsterData.userMonster.level);
+				this.SetLevelMessageColor(this.LEVEL_NORMAL_COLOR);
+			}
+		}
+	}
+
+	public void SetMonsterSortMessage(string value)
+	{
+		MonsterData monsterData = this.Data;
+		if (monsterData.userMonster.IsEgg())
+		{
+			this.SortMess = StringMaster.GetString("CharaStatus-01");
+		}
+		else
+		{
+			this.SortMess = value;
+		}
+	}
+
+	public static GUIMonsterIcon MakePrefabByMonsterData(MonsterData monsterData, Vector3 vScl, Vector3 vPos, Transform parent = null, bool initIconState = true, bool readTexByASync = false)
+	{
+		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(GUIMonsterIcon.goMONSTER_ICON_M);
+		gameObject.SetActive(true);
+		Transform transform = gameObject.transform;
+		if (parent == null)
+		{
+			transform.parent = GUIMonsterIcon.goMONSTER_ICON_BAK_ROOT.transform;
+		}
+		else
+		{
+			transform.parent = parent;
+		}
+		transform.localScale = vScl;
+		transform.localPosition = vPos;
+		GUIMonsterIcon component = gameObject.GetComponent<GUIMonsterIcon>();
+		component.ReadTexByASync = readTexByASync;
+		component.data = monsterData;
+		component.ShowGUI();
+		if (initIconState)
+		{
+			component.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.ACTIVE);
+			component.SelectNum = -1;
+			component.DimmMess = string.Empty;
+			component.SortMess = string.Empty;
+			if (monsterData != null && monsterData.userMonster != null)
+			{
+				component.Lock = monsterData.userMonster.IsLocked;
+			}
+		}
+		return component;
+	}
+
+	public static GUIMonsterIcon MakeQuestionPrefab(Vector3 vScl, Vector3 vPos, int depth, Transform parent)
+	{
+		GameObject gameObject = GUIManager.LoadCommonGUI("ListParts/ListPartsThumbnail", null);
+		gameObject.SetActive(true);
+		GUIMonsterIcon component = gameObject.GetComponent<GUIMonsterIcon>();
+		component.transform.parent = parent;
+		component.transform.localScale = vScl;
+		component.transform.localPosition = vPos;
+		DepthController.SetWidgetDepth_2(component.transform, depth);
+		component.SetQuestionIcon();
+		return component;
+	}
+
+	public void SetQuestionIcon()
+	{
+		base.ShowGUI();
+		this.txCHAR.gameObject.SetActive(false);
+		this.goArousal.SetActive(false);
+		this.spBASE.spriteName = "Common02_Thumbnail_Question";
+		this.spFRAME.spriteName = "Common02_Thumbnail_wakuQ";
+		if (this.goGimmick != null)
+		{
+			this.goGimmick.SetActive(false);
+		}
+	}
+
+	public void SetMonsterIcon(string iconId, string arousal, string growStep)
+	{
+		base.ShowGUI();
+		this.txCHAR.transform.gameObject.SetActive(true);
+		string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(iconId);
+		string resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(iconId);
+		GUIMonsterIcon.SetTextureMonsterParts(this.txCHAR, resourcePath, monsterIconPathByIconId, this.ReadTexByASync);
+		GUIMonsterIcon.DispArousal(arousal, this.goArousal, this.spArousal);
+		int growStep2 = int.Parse(growStep);
+		GUIMonsterIcon.SetThumbnailFrame(this.spBASE, this.spFRAME, growStep2);
+		if (!this._gimmick && this.goGimmick != null)
+		{
+			this.goGimmick.SetActive(false);
+		}
+	}
+
+	public void ClearMonsterData()
+	{
+		this.data = null;
+	}
+
+	public void SetEvolutionMonsterIcon(bool canEvoluve, bool onlyGrayOut)
+	{
+		this.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
+		if (canEvoluve)
+		{
+			if (!onlyGrayOut)
+			{
+				this.SortMess = StringMaster.GetString("CharaIcon-01");
+				this.SetSortMessageColor(ConstValue.DIGIMON_YELLOW);
+			}
+		}
+		else
+		{
+			this.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE);
+			if (!onlyGrayOut)
+			{
+				this.SortMess = StringMaster.GetString("CharaIcon-02");
+				this.SetSortMessageColor(ConstValue.DIGIMON_BLUE);
+			}
+		}
+	}
+
+	public void SetVersionUpMonsterIcon(bool canVersionUp, bool onlyGrayOut)
+	{
+		this.SetSortMessageColor(ConstValue.DIGIMON_GREEN);
+		if (canVersionUp)
+		{
+			if (!onlyGrayOut)
+			{
+				this.SortMess = StringMaster.GetString("CharaIcon-05");
+				this.SetSortMessageColor(ConstValue.DIGIMON_YELLOW);
+			}
+		}
+		else
+		{
+			this.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE);
+			if (!onlyGrayOut)
+			{
+				this.SortMess = StringMaster.GetString("CharaIcon-06");
+				this.SetSortMessageColor(ConstValue.DIGIMON_BLUE);
+			}
+		}
+	}
+
+	public static bool GetIconGrayOutType(MonsterSortType type)
+	{
+		bool result = true;
 		switch (type)
 		{
-		case GUIMonsterIcon.DIMM_LEVEL.ACTIVE:
-			GUIManager.SetColorAll(base.transform, this.colAct);
-			break;
-		case GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE:
-			GUIManager.SetColorAll(base.transform, this.colNon);
-			break;
-		case GUIMonsterIcon.DIMM_LEVEL.DISABLE:
-			GUIManager.SetColorAll(base.transform, this.colDis);
+		case MonsterSortType.DATE:
+		case MonsterSortType.LEVEL:
+			result = false;
 			break;
 		}
-		if (this.goSELECT_BASE.activeSelf)
+		return result;
+	}
+
+	public static string GetMonsterIconPathByIconId(string iconId)
+	{
+		return "CharacterThumbnail/" + iconId + "/thumb";
+	}
+
+	public static string InternalGetMonsterIconPathByIconId(string iconId)
+	{
+		return "CharacterThumbnailInternal/" + iconId + "/thumb";
+	}
+
+	public static void DispArousal(string arousal, GameObject goArousal, UISprite spArousal)
+	{
+		if (MonsterStatusData.IsArousal(arousal))
 		{
-			this.spSELECT_BASE.color = this.colAct;
+			if (!goArousal.activeSelf)
+			{
+				goArousal.SetActive(true);
+			}
+			spArousal.spriteName = MonsterDetailUtil.GetArousalSpriteName(int.Parse(arousal));
+		}
+		else if (goArousal.activeSelf)
+		{
+			goArousal.SetActive(false);
+		}
+	}
+
+	public void SetLock()
+	{
+		if (this.Data != null && this.Data.userMonster != null)
+		{
+			this.Lock = this.Data.userMonster.IsLocked;
 		}
 	}
 

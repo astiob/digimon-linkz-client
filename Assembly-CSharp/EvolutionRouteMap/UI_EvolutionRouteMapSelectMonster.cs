@@ -1,6 +1,9 @@
 ﻿using EvolutionDiagram;
 using Master;
 using Monster;
+using MonsterIcon;
+using MonsterIconExtensions;
+using Picturebook;
 using System;
 using UnityEngine;
 
@@ -12,7 +15,13 @@ namespace EvolutionRouteMap
 		private CMD_EvolutionRouteMap dialogRoot;
 
 		[SerializeField]
-		private MonsterThumbnail monsterIcon;
+		private int iconSize;
+
+		[SerializeField]
+		private Vector2 iconPosition;
+
+		[SerializeField]
+		private Color iconTextColor;
 
 		[SerializeField]
 		private MonsterBasicInfo basicInfo;
@@ -20,22 +29,24 @@ namespace EvolutionRouteMap
 		[SerializeField]
 		private GameObject noticeLabel;
 
+		private MonsterIcon monsterIcon;
+
 		private void SetMonsterInfo(EvolutionDiagramData.IconMonster selectMonster)
 		{
-			this.monsterIcon.SetImage(selectMonster.singleData.iconId, selectMonster.groupData.growStep);
-			if (!MonsterDataMng.ExistPicturebook(selectMonster.groupData.monsterCollectionId))
+			this.monsterIcon.SetMonsterImage(selectMonster.master);
+			if (!MonsterPicturebookData.ExistPicturebook(selectMonster.master.Group.monsterCollectionId))
 			{
-				this.monsterIcon.SetBottomText(StringMaster.GetString("EvolutionUnkown"));
+				this.monsterIcon.Message.SetSortText(StringMaster.GetString("EvolutionUnkown"));
 			}
 			else
 			{
-				this.monsterIcon.ClearBottomText();
+				this.monsterIcon.Message.ClearSortText();
 			}
-			if (MonsterArousalData.IsVersionUp(selectMonster.singleData.rare))
+			if (MonsterArousalData.IsVersionUp(selectMonster.master.Simple.rare))
 			{
 				this.noticeLabel.SetActive(true);
 			}
-			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(selectMonster.singleData.monsterId);
+			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(selectMonster.master.Simple.monsterId);
 			this.basicInfo.SetMonsterData(monsterData);
 		}
 
@@ -46,7 +57,13 @@ namespace EvolutionRouteMap
 
 		public void Initialize()
 		{
-			this.monsterIcon.Initialize();
+			UIWidget component = base.GetComponent<UIWidget>();
+			int depth = component.depth;
+			this.monsterIcon = this.dialogRoot.GetMonsterIconObject();
+			this.monsterIcon.Initialize(base.transform, this.iconSize, depth);
+			this.monsterIcon.Message.SetSortTextColor(this.iconTextColor);
+			GameObject rootObject = this.monsterIcon.GetRootObject();
+			rootObject.transform.localPosition = new Vector3(this.iconPosition.x, this.iconPosition.y, 0f);
 		}
 
 		public void OnChangeMonster(EvolutionDiagramData.IconMonster selectMonster)

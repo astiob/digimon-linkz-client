@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -130,8 +131,6 @@ public class CMD_MealExecution : CMD
 
 	private int updateExCT;
 
-	private static MonsterData data_chg;
-
 	private bool IsLockClose
 	{
 		get
@@ -164,17 +163,7 @@ public class CMD_MealExecution : CMD
 		}
 	}
 
-	public static MonsterData DataChg
-	{
-		get
-		{
-			return CMD_MealExecution.data_chg;
-		}
-		set
-		{
-			CMD_MealExecution.data_chg = value;
-		}
-	}
+	public static MonsterData DataChg { get; set; }
 
 	public static Action UpdateParamCallback { private get; set; }
 
@@ -189,7 +178,7 @@ public class CMD_MealExecution : CMD
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		CMD_MealExecution.data_chg = null;
+		CMD_MealExecution.DataChg = null;
 		if (this.csRender3DRT != null)
 		{
 			UnityEngine.Object.DestroyImmediate(this.csRender3DRT.gameObject);
@@ -227,7 +216,10 @@ public class CMD_MealExecution : CMD
 		base.StartCoroutine(this.PlayGiftMeatAnimation(delegate
 		{
 			DataMng.Instance().US_PlayerInfoSubMeatNum(CMD_MealExecution.execMeatNum_bk);
-			MonsterDataMng.Instance().ChangeLevelMD_and_DM(CMD_MealExecution.monsterdata_bk, CMD_MealExecution.last_exp_info_bk);
+			MonsterUserData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(CMD_MealExecution.monsterdata_bk.userMonster.userMonsterId);
+			GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList monster = userMonster.GetMonster();
+			monster.ex = CMD_MealExecution.last_exp_info_bk.exp.ToString();
+			monster.level = CMD_MealExecution.last_exp_info_bk.lev.ToString();
 			CMD_MealExecution.monsterdata_bk = null;
 			this.execMeatNum = 0;
 			this.consumptionScheduleNum.text = "0";
@@ -243,7 +235,7 @@ public class CMD_MealExecution : CMD
 				this.meatNumUpButtonCollider.activeCollider = true;
 			}
 			DataMng.ExperienceInfo expInfo = this.GetExpInfo();
-			if (expInfo.lev >= int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel))
+			if (expInfo.lev >= int.Parse(CMD_MealExecution.DataChg.monsterM.maxLevel))
 			{
 				this.meatNumUpButtonSprite.spriteName = "Common02_Meal_UP_G";
 				this.meatNumUpButtonCollider.activeCollider = false;
@@ -303,7 +295,7 @@ public class CMD_MealExecution : CMD
 
 	private void ShowChgInfo()
 	{
-		if (CMD_MealExecution.data_chg != null)
+		if (CMD_MealExecution.DataChg != null)
 		{
 			this.ShowCharacter();
 			this.SetStatus();
@@ -317,8 +309,8 @@ public class CMD_MealExecution : CMD
 		this.ngTargetTex = this.goTargetTex.GetComponent<UITexture>();
 		GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DRT", null);
 		this.csRender3DRT = gameObject.GetComponent<CommonRender3DRT>();
-		string monsterCharaPathByMonsterData = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterData(CMD_MealExecution.data_chg);
-		this.csRender3DRT.LoadChara(monsterCharaPathByMonsterData, 0f, 4000f, -0.65f, 1.1f, true);
+		string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(CMD_MealExecution.DataChg.monsterM.monsterGroupId);
+		this.csRender3DRT.LoadChara(monsterCharaPathByMonsterGroupId, 0f, 4000f, -0.65f, 1.1f, true);
 		this.renderTex = this.csRender3DRT.SetRenderTarget(1136, 820, 16);
 		this.ngTargetTex.mainTexture = this.renderTex;
 		this.charaParams = this.csRender3DRT.transform.GetComponentInChildren<CharacterParams>();
@@ -327,11 +319,11 @@ public class CMD_MealExecution : CMD
 	private void SetStatus()
 	{
 		DataMng.ExperienceInfo expInfo = this.GetExpInfo();
-		this.statusAnime.Initialize(CMD_MealExecution.data_chg, expInfo.lev);
-		this.monsterBasicInfo.SetMonsterData(CMD_MealExecution.data_chg, expInfo);
-		this.monsterStatusList.SetValues(CMD_MealExecution.data_chg, false);
-		this.monsterResistanceList.SetValues(CMD_MealExecution.data_chg);
-		this.monsterMedalList.SetValues(CMD_MealExecution.data_chg.userMonster);
+		this.statusAnime.Initialize(CMD_MealExecution.DataChg.userMonster, expInfo.lev);
+		this.monsterBasicInfo.SetMonsterData(CMD_MealExecution.DataChg, expInfo);
+		this.monsterStatusList.SetValues(CMD_MealExecution.DataChg, false);
+		this.monsterResistanceList.SetValues(CMD_MealExecution.DataChg);
+		this.monsterMedalList.SetValues(CMD_MealExecution.DataChg.userMonster);
 		int nowMeatNum = this.GetNowMeatNum();
 		this.ngTX_MEAT.text = nowMeatNum.ToString();
 		int userItemNumByItemId = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(50001);
@@ -424,7 +416,7 @@ public class CMD_MealExecution : CMD
 				this.consumptionLevelUpCount += expInfo.lev - lev;
 				this.statusAnime.Displaylevel += expInfo.lev - lev;
 				this.consumptionLevelUpLabel.text = string.Format(StringMaster.GetString("MealLvUp"), this.consumptionLevelUpCount);
-				if (expInfo.lev >= int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel))
+				if (expInfo.lev >= int.Parse(CMD_MealExecution.DataChg.monsterM.maxLevel))
 				{
 					this.meatNumUpButtonSprite.spriteName = "Common02_Meal_UP_G";
 					this.meatNumUpButtonCollider.activeCollider = false;
@@ -445,7 +437,7 @@ public class CMD_MealExecution : CMD
 				}
 			}
 		}
-		this.monsterBasicInfo.UpdateExpGauge(CMD_MealExecution.data_chg, expInfo);
+		this.monsterBasicInfo.UpdateExpGauge(CMD_MealExecution.DataChg, expInfo);
 		this.consumptionScheduleNum.text = this.execMeatNum.ToString();
 		if (this.CheckMeat() || this.execMeatNum == 0)
 		{
@@ -470,7 +462,7 @@ public class CMD_MealExecution : CMD
 		{
 			DataMng.ExperienceInfo expInfo = this.GetExpInfo();
 			int lev = expInfo.lev;
-			if (lev > int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel))
+			if (lev > int.Parse(CMD_MealExecution.DataChg.monsterM.maxLevel))
 			{
 				flag = false;
 			}
@@ -492,7 +484,7 @@ public class CMD_MealExecution : CMD
 	private void InitBtnHQMeat()
 	{
 		int userItemNumByItemId = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(50001);
-		if (int.Parse(CMD_MealExecution.data_chg.userMonster.level) < int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel) && !this.dontExec)
+		if (int.Parse(CMD_MealExecution.DataChg.userMonster.level) < int.Parse(CMD_MealExecution.DataChg.monsterM.maxLevel) && !this.dontExec)
 		{
 			if (userItemNumByItemId > 0)
 			{
@@ -535,7 +527,7 @@ public class CMD_MealExecution : CMD
 	private void UpdateExecute()
 	{
 		DataMng.ExperienceInfo expInfo = this.GetExpInfo();
-		if ((expInfo.lev >= int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel) || this.execMeatNum == 0) && this.updateExCT != 0)
+		if ((expInfo.lev >= int.Parse(CMD_MealExecution.DataChg.monsterM.maxLevel) || this.execMeatNum == 0) && this.updateExCT != 0)
 		{
 			this.meatNumUpButtonCollider.isTouching = false;
 			this.meatNumDownButtonCollider.isTouching = false;
@@ -582,7 +574,7 @@ public class CMD_MealExecution : CMD
 			}
 		}
 		float num2 = (float)DataMng.Instance().GetExpFromMeat(this.execMeatNum) * num;
-		int exp = int.Parse(CMD_MealExecution.data_chg.userMonster.ex) + (int)num2;
+		int exp = int.Parse(CMD_MealExecution.DataChg.userMonster.ex) + (int)num2;
 		return DataMng.Instance().GetExperienceInfo(exp);
 	}
 
@@ -603,7 +595,7 @@ public class CMD_MealExecution : CMD
 			{
 				CMD_MealExecution.last_exp_info_bk = this.GetExpInfo();
 				CMD_MealExecution.execMeatNum_bk = this.execMeatNum;
-				CMD_MealExecution.monsterdata_bk = CMD_MealExecution.data_chg;
+				CMD_MealExecution.monsterdata_bk = CMD_MealExecution.DataChg;
 				if (this.actionLevelUp != null)
 				{
 					this.actionLevelUp();
@@ -672,7 +664,7 @@ public class CMD_MealExecution : CMD
 		{
 			SetSendData = delegate(GameWebAPI.MN_Req_HQMeal param)
 			{
-				param.baseMonster = int.Parse(CMD_MealExecution.data_chg.userMonster.userMonsterId);
+				param.baseMonster = int.Parse(CMD_MealExecution.DataChg.userMonster.userMonsterId);
 				param.fusionType = (int)fusionType;
 			},
 			OnReceived = delegate(GameWebAPI.RespDataMN_HQMealExec resData)
@@ -687,23 +679,23 @@ public class CMD_MealExecution : CMD
 					{
 						DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= ConstValue.BUY_HQMEAT_DIGISTONE_NUM;
 					}
-					if (int.Parse(CMD_MealExecution.data_chg.userMonster.level) < int.Parse(resData.userMonster.level))
+					if (int.Parse(CMD_MealExecution.DataChg.userMonster.level) < int.Parse(resData.userMonster.level))
 					{
-						this.consumptionLevelUpLabel.text = string.Format(StringMaster.GetString("MealLvUp"), int.Parse(resData.userMonster.level) - int.Parse(CMD_MealExecution.data_chg.userMonster.level));
+						this.consumptionLevelUpLabel.text = string.Format(StringMaster.GetString("MealLvUp"), int.Parse(resData.userMonster.level) - int.Parse(CMD_MealExecution.DataChg.userMonster.level));
 					}
-					DataMng.Instance().SetUserMonster(resData.userMonster);
+					ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(resData.userMonster);
 					CMD_MealExecution.last_exp_info_bk = new DataMng.ExperienceInfo
 					{
 						exp = int.Parse(resData.userMonster.ex),
 						lev = int.Parse(resData.userMonster.level)
 					};
-					CMD_MealExecution.monsterdata_bk = CMD_MealExecution.data_chg;
+					CMD_MealExecution.monsterdata_bk = CMD_MealExecution.DataChg;
 					this.clBtnExec.activeCollider = false;
 					this.spriteBtnExec.spriteName = "Common02_Btn_Gray";
 					this.labelBtnExec.color = Color.gray;
 					CMD_MealExecution.execMeatNum_bk = 0;
 					this.isExecHQMeat = true;
-					this.statusAnime.Displaylevel = int.Parse(CMD_MealExecution.data_chg.monsterM.maxLevel);
+					this.statusAnime.Displaylevel = int.Parse(CMD_MealExecution.DataChg.monsterM.maxLevel);
 					NGUIUtil.ChangeUITextureFromFile(this.meat.txMeat, "UITexture/Common02_Meal_Meat2", false);
 				}
 			}
@@ -764,7 +756,7 @@ public class CMD_MealExecution : CMD
 	{
 		CMD_MealExecution.last_exp_info_bk = this.GetExpInfo();
 		CMD_MealExecution.execMeatNum_bk = this.execMeatNum;
-		CMD_MealExecution.monsterdata_bk = CMD_MealExecution.data_chg;
+		CMD_MealExecution.monsterdata_bk = CMD_MealExecution.DataChg;
 		if (CMD_MealExecution.execMeatNum_bk <= 0)
 		{
 			return;
@@ -805,12 +797,12 @@ public class CMD_MealExecution : CMD
 			GameWebAPI.RequestMN_MonsterMeal requestMN_MonsterMeal = new GameWebAPI.RequestMN_MonsterMeal();
 			requestMN_MonsterMeal.SetSendData = delegate(GameWebAPI.MN_Req_Meal param)
 			{
-				param.mealMonster = int.Parse(CMD_MealExecution.data_chg.userMonster.userMonsterId);
+				param.mealMonster = int.Parse(CMD_MealExecution.DataChg.userMonster.userMonsterId);
 				param.meatNum = this.execMeatNum;
 			};
 			requestMN_MonsterMeal.OnReceived = delegate(GameWebAPI.RespDataMN_MealExec response)
 			{
-				DataMng.Instance().SetUserMonster(response.userMonster);
+				ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 			};
 			GameWebAPI.RequestMN_MonsterMeal request = requestMN_MonsterMeal;
 			base.StartCoroutine(request.Run(new Action(this.EndExecSuccess), new Action<Exception>(this.EndExecFailed), null));

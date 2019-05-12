@@ -1,92 +1,51 @@
 ﻿using BattleStateMachineInternal;
+using Master;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class HitIcon : MonoBehaviour
 {
-	private const string MISS_NAME = "Battle_text_MISS";
-
-	private const string WEAK_NAME = "Battle_text_Preeminent";
-
-	private const string STRONG_NAME = "Battle_text_Half";
-
-	private const string DRAIN_NAME = "Battle_text_Drain";
-
-	private const string CRITICAL_NAME = "Battle_text_CRITICAL";
-
-	private const string INVALID_NAME = "Battle_text_Invalid";
-
+	[Header("アニメーション 通常 有利 不利 の順")]
 	[SerializeField]
 	private UITweener[] tween;
 
+	[Header("通常のUI")]
 	[SerializeField]
 	private HitIcon.Data standard = new HitIcon.Data();
 
 	[SerializeField]
+	[Header("ステージ効果用のUI")]
 	private HitIcon.Data gimmick = new HitIcon.Data();
 
+	[Header("耐性結果を表示するフォントテクスチャ")]
 	[SerializeField]
-	private List<UIFont> fontList = new List<UIFont>();
+	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
-	private static Dictionary<AffectEffect, string> dictionary;
+	[SerializeField]
+	[Header("通常効果を表示するフォントテクスチャ")]
+	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
+
+	[Header("ステージ効果を表示するフォントテクスチャ")]
+	[SerializeField]
+	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
+
+	private MaterialPropertyBlock materialPropertyBlock;
+
+	private static Dictionary<string, string> dictionary = new Dictionary<string, string>();
+
+	[SerializeField]
+	[Header("ステージ効果上昇UI")]
+	private UISprite upSprite;
+
+	[SerializeField]
+	[Header("ステージ効果減少UI")]
+	private UISprite downSprite;
 
 	private void Awake()
 	{
-		if (HitIcon.dictionary == null)
-		{
-			HitIcon.dictionary = new Dictionary<AffectEffect, string>();
-			HitIcon.dictionary.Add(AffectEffect.Damage, string.Empty);
-			HitIcon.dictionary.Add(AffectEffect.AttackUp, "Battle_text_ATKUP");
-			HitIcon.dictionary.Add(AffectEffect.AttackDown, "Battle_text_ATKDOWN");
-			HitIcon.dictionary.Add(AffectEffect.DefenceUp, "Battle_text_DEFUP");
-			HitIcon.dictionary.Add(AffectEffect.DefenceDown, "Battle_text_DEFDOWN");
-			HitIcon.dictionary.Add(AffectEffect.SpAttackUp, "Battle_text_S_ATKUP");
-			HitIcon.dictionary.Add(AffectEffect.SpAttackDown, "Battle_text_S_ATKDOWN");
-			HitIcon.dictionary.Add(AffectEffect.SpDefenceUp, "Battle_text_S_DEFUP");
-			HitIcon.dictionary.Add(AffectEffect.SpDefenceDown, "Battle_text_S_DEFDOWN");
-			HitIcon.dictionary.Add(AffectEffect.SpeedUp, "Battle_text_spdup");
-			HitIcon.dictionary.Add(AffectEffect.SpeedDown, "Battle_text_spddown");
-			HitIcon.dictionary.Add(AffectEffect.CorrectionUpReset, "Battle_text_UPClear");
-			HitIcon.dictionary.Add(AffectEffect.CorrectionDownReset, "Battle_text_DOWNClear");
-			HitIcon.dictionary.Add(AffectEffect.HpRevival, "Battle_text_hp");
-			HitIcon.dictionary.Add(AffectEffect.Counter, "Battle_text_Counter");
-			HitIcon.dictionary.Add(AffectEffect.Reflection, "Battle_text_Reflection");
-			HitIcon.dictionary.Add(AffectEffect.Protect, "Battle_text_protected");
-			HitIcon.dictionary.Add(AffectEffect.HateUp, "Battle_text_HaightUP");
-			HitIcon.dictionary.Add(AffectEffect.HateDown, "Battle_text_HaightDOWN");
-			HitIcon.dictionary.Add(AffectEffect.PowerCharge, "Battle_text_power2");
-			HitIcon.dictionary.Add(AffectEffect.Destruct, "Battle_text_Destruction");
-			HitIcon.dictionary.Add(AffectEffect.Paralysis, "Battle_text_Numbness");
-			HitIcon.dictionary.Add(AffectEffect.Poison, "Battle_text_Poison");
-			HitIcon.dictionary.Add(AffectEffect.Sleep, "Battle_text_Sleep");
-			HitIcon.dictionary.Add(AffectEffect.SkillLock, "Battle_text_Skill_lock");
-			HitIcon.dictionary.Add(AffectEffect.HitRateUp, "Battle_text_HitUP");
-			HitIcon.dictionary.Add(AffectEffect.HitRateDown, "Battle_text_HitDOWN");
-			HitIcon.dictionary.Add(AffectEffect.InstantDeath, "Battle_text_death");
-			HitIcon.dictionary.Add(AffectEffect.Confusion, "Battle_text_Confusion");
-			HitIcon.dictionary.Add(AffectEffect.Stun, "Battle_text_Stun");
-			HitIcon.dictionary.Add(AffectEffect.SufferStatusClear, "Battle_text_Abnormal_Clear");
-			HitIcon.dictionary.Add(AffectEffect.SatisfactionRateUp, "Battle_text_crtup");
-			HitIcon.dictionary.Add(AffectEffect.SatisfactionRateDown, "Battle_text_crtdown");
-			HitIcon.dictionary.Add(AffectEffect.ApRevival, "Battle_text_apb");
-			HitIcon.dictionary.Add(AffectEffect.ApUp, "Battle_text_apup");
-			HitIcon.dictionary.Add(AffectEffect.ApDown, "Battle_text_apdown");
-			HitIcon.dictionary.Add(AffectEffect.ApConsumptionUp, "Battle_text_apcostup");
-			HitIcon.dictionary.Add(AffectEffect.ApConsumptionDown, "Battle_text_apcostdown");
-			HitIcon.dictionary.Add(AffectEffect.CountGuard, string.Empty);
-			HitIcon.dictionary.Add(AffectEffect.TurnBarrier, "Battle_text_invincible");
-			HitIcon.dictionary.Add(AffectEffect.CountBarrier, "Battle_text_invincible");
-			HitIcon.dictionary.Add(AffectEffect.Invalid, "Battle_text_Invalid");
-			HitIcon.dictionary.Add(AffectEffect.DamageRateUp, string.Empty);
-			HitIcon.dictionary.Add(AffectEffect.DamageRateDown, string.Empty);
-			HitIcon.dictionary.Add(AffectEffect.Regenerate, "Battle_text_hp");
-			HitIcon.dictionary.Add(AffectEffect.TurnEvasion, "Battle_text_Avoid");
-			HitIcon.dictionary.Add(AffectEffect.CountEvasion, "Battle_text_Avoid");
-			HitIcon.dictionary.Add(AffectEffect.ApDrain, "Battle_text_ApDrain");
-			HitIcon.dictionary.Add(AffectEffect.gimmickSpecialAttackUp, "Battle_text_gimi1");
-			HitIcon.dictionary.Add(AffectEffect.gimmickSpecialAttackDown, "Battle_text_gimi2");
-		}
+		this.materialPropertyBlock = new MaterialPropertyBlock();
 	}
 
 	public void HitIconReposition(Vector3 position)
@@ -98,171 +57,172 @@ public class HitIcon : MonoBehaviour
 
 	public void ApplyShowHitIcon(AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isRecoil, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 	{
-		string text = string.Empty;
-		string text2 = string.Empty;
-		string text3 = string.Empty;
-		string text4 = string.Empty;
-		bool flag = false;
-		HitIcon.FontType index = HitIcon.FontType.Normal;
 		this.ApplyHitIconPlayAnimation(onWeak);
-		if (onMiss)
-		{
-			text2 = "Battle_text_MISS";
-		}
-		else
-		{
-			if (extraEffectType != ExtraEffectType.Non)
-			{
-				flag = true;
-				if (extraEffectType == ExtraEffectType.Up)
-				{
-					text2 = HitIcon.dictionary[AffectEffect.gimmickSpecialAttackUp];
-					index = HitIcon.FontType.Gimmick;
-				}
-				else
-				{
-					text2 = HitIcon.dictionary[AffectEffect.gimmickSpecialAttackDown];
-					index = HitIcon.FontType.Gimmick2;
-				}
-			}
-			switch (affect)
-			{
-			case AffectEffect.Damage:
-				text4 = onDamage.ToString();
-				if (isDrain)
-				{
-					text3 = HitIcon.dictionary[affect];
-					index = HitIcon.FontType.Drain;
-				}
-				else
-				{
-					if (onCrithical)
-					{
-						text3 = "Battle_text_CRITICAL";
-					}
-					text = this.GetWeakName(onWeak);
-					index = this.GetWeakFontType(onWeak);
-				}
-				goto IL_2D7;
-			case AffectEffect.AttackUp:
-			case AffectEffect.AttackDown:
-			case AffectEffect.DefenceUp:
-			case AffectEffect.DefenceDown:
-			case AffectEffect.SpAttackUp:
-			case AffectEffect.SpAttackDown:
-			case AffectEffect.SpDefenceUp:
-			case AffectEffect.SpDefenceDown:
-			case AffectEffect.SpeedUp:
-			case AffectEffect.SpeedDown:
-			case AffectEffect.CorrectionUpReset:
-			case AffectEffect.CorrectionDownReset:
-			case AffectEffect.Protect:
-			case AffectEffect.PowerCharge:
-			case AffectEffect.Destruct:
-			case AffectEffect.HitRateUp:
-			case AffectEffect.HitRateDown:
-			case AffectEffect.SufferStatusClear:
-			case AffectEffect.SatisfactionRateUp:
-			case AffectEffect.SatisfactionRateDown:
-			case AffectEffect.ApRevival:
-			case AffectEffect.ApUp:
-			case AffectEffect.ApDown:
-			case AffectEffect.ApConsumptionUp:
-			case AffectEffect.ApConsumptionDown:
-			case AffectEffect.TurnBarrier:
-			case AffectEffect.CountBarrier:
-			case AffectEffect.Invalid:
-			case AffectEffect.DamageRateUp:
-			case AffectEffect.DamageRateDown:
-			case AffectEffect.TurnEvasion:
-			case AffectEffect.CountEvasion:
-				text2 = HitIcon.dictionary[affect];
-				goto IL_2D7;
-			case AffectEffect.HpRevival:
-				text3 = HitIcon.dictionary[affect];
-				text4 = onDamage.ToString();
-				index = HitIcon.FontType.Drain;
-				goto IL_2D7;
-			case AffectEffect.Counter:
-			case AffectEffect.Reflection:
-				if (isRecoil)
-				{
-					text4 = onDamage.ToString();
-				}
-				text3 = HitIcon.dictionary[affect];
-				index = HitIcon.FontType.Crithical;
-				goto IL_2D7;
-			case AffectEffect.Paralysis:
-			case AffectEffect.Sleep:
-			case AffectEffect.SkillLock:
-			case AffectEffect.InstantDeath:
-			case AffectEffect.Confusion:
-			case AffectEffect.Stun:
-				text2 = HitIcon.dictionary[affect];
-				goto IL_2D7;
-			case AffectEffect.Poison:
-				if (onDamage > 0)
-				{
-					BattleStateUIProperty uiProperty = BattleStateManager.current.uiProperty;
-					base.transform.localScale = uiProperty.hitIconLocalScale * uiProperty.onPoisonScalingSizeHitIcon;
-					text4 = onDamage.ToString();
-					text3 = HitIcon.dictionary[affect];
-					index = HitIcon.FontType.Poison;
-				}
-				else
-				{
-					text2 = HitIcon.dictionary[affect];
-				}
-				goto IL_2D7;
-			case AffectEffect.Regenerate:
-				if (onDamage > 0)
-				{
-					BattleStateUIProperty uiProperty2 = BattleStateManager.current.uiProperty;
-					base.transform.localScale = uiProperty2.hitIconLocalScale * uiProperty2.onPoisonScalingSizeHitIcon;
-					text4 = onDamage.ToString();
-					text3 = HitIcon.dictionary[affect];
-					index = HitIcon.FontType.Drain;
-				}
-				else
-				{
-					text2 = HitIcon.dictionary[affect];
-				}
-				goto IL_2D7;
-			case AffectEffect.ReferenceTargetHpRate:
-				text4 = onDamage.ToString();
-				goto IL_2D7;
-			case AffectEffect.HpBorderlineDamage:
-				text4 = onDamage.ToString();
-				goto IL_2D7;
-			}
-			NGUITools.SetActiveSelf(base.gameObject, false);
-		}
-		IL_2D7:
+		bool flag = extraEffectType != ExtraEffectType.Non;
 		HitIcon.Data data = (!flag) ? this.standard : this.gimmick;
 		this.standard.gameObject.SetActive(!flag);
 		this.gimmick.gameObject.SetActive(flag);
-		data.top.spriteName = text;
-		data.middle.spriteName = text2;
-		data.bottom.spriteName = text3;
-		data.num.text = text4;
-		if (!string.IsNullOrEmpty(text4))
+		base.transform.localScale = Vector3.one;
+		data.numMesh.text = null;
+		data.topMesh.text = null;
+		data.middleMesh.text = null;
+		data.bottomMesh.text = null;
+		this.upSprite.gameObject.SetActive(false);
+		this.downSprite.gameObject.SetActive(false);
+		if (onMiss)
 		{
-			data.num.bitmapFont = this.fontList[(int)index];
+			this.standard.middleMesh.text = this.GetString("HitIconMiss");
+			this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+			{
+				this.standard.middleMesh
+			});
 		}
-		if (!string.IsNullOrEmpty(text))
+		else
 		{
-			data.top.keepAspectRatio = UIWidget.AspectRatioSource.Free;
-			data.top.MakePixelPerfect();
-		}
-		if (!string.IsNullOrEmpty(text2))
-		{
-			data.middle.keepAspectRatio = UIWidget.AspectRatioSource.Free;
-			data.middle.MakePixelPerfect();
-		}
-		if (!string.IsNullOrEmpty(text3))
-		{
-			data.bottom.keepAspectRatio = UIWidget.AspectRatioSource.Free;
-			data.bottom.MakePixelPerfect();
+			switch (affect)
+			{
+			case AffectEffect.Damage:
+			case AffectEffect.ReferenceTargetHpRate:
+			case AffectEffect.HpBorderlineDamage:
+			case AffectEffect.HpBorderlineSpDamage:
+			case AffectEffect.DefenseThroughDamage:
+			case AffectEffect.SpDefenseThroughDamage:
+				this.ShowDamage(data, onDamage, onWeak, onCrithical, isDrain, extraEffectType);
+				return;
+			case AffectEffect.AttackUp:
+				this.ShowAttackUp(data);
+				return;
+			case AffectEffect.AttackDown:
+				this.ShowAttackDown(data);
+				return;
+			case AffectEffect.DefenceUp:
+				this.ShowDefenceUp(data);
+				return;
+			case AffectEffect.DefenceDown:
+				this.ShowDefenceDown(data);
+				return;
+			case AffectEffect.SpAttackUp:
+				this.ShowSpAttackUp(data);
+				return;
+			case AffectEffect.SpAttackDown:
+				this.ShowSpAttackDown(data);
+				return;
+			case AffectEffect.SpDefenceUp:
+				this.ShowSpDefenceUp(data);
+				return;
+			case AffectEffect.SpDefenceDown:
+				this.ShowSpDefenceDown(data);
+				return;
+			case AffectEffect.SpeedUp:
+				this.ShowSpeedUp(data);
+				return;
+			case AffectEffect.SpeedDown:
+				this.ShowSpeedDown(data);
+				return;
+			case AffectEffect.CorrectionUpReset:
+				this.ShowCorrectionUpReset(data);
+				return;
+			case AffectEffect.CorrectionDownReset:
+				this.ShowCorrectionDownReset(data);
+				return;
+			case AffectEffect.HpRevival:
+				this.ShowHpRevival(data, onDamage);
+				return;
+			case AffectEffect.Counter:
+				this.ShowCounter(data, onDamage, isRecoil);
+				return;
+			case AffectEffect.Reflection:
+				this.ShowReflection(data, onDamage, isRecoil);
+				return;
+			case AffectEffect.Protect:
+				this.ShowProtect(data);
+				return;
+			case AffectEffect.PowerCharge:
+				this.ShowPowerCharge(data);
+				return;
+			case AffectEffect.Destruct:
+				this.ShowDestruct(data);
+				return;
+			case AffectEffect.Paralysis:
+				this.ShowParalysis(data);
+				return;
+			case AffectEffect.Poison:
+				this.ShowPoison(data, onDamage);
+				return;
+			case AffectEffect.Sleep:
+				this.ShowSleep(data);
+				return;
+			case AffectEffect.SkillLock:
+				this.ShowSkillLock(data);
+				return;
+			case AffectEffect.HitRateUp:
+				this.ShowHitRateUp(data);
+				return;
+			case AffectEffect.HitRateDown:
+				this.ShowHitRateDown(data);
+				return;
+			case AffectEffect.InstantDeath:
+				this.ShowInstantDeath(data);
+				return;
+			case AffectEffect.Confusion:
+				this.ShowConfusion(data);
+				return;
+			case AffectEffect.Stun:
+				this.ShowStun(data);
+				return;
+			case AffectEffect.SufferStatusClear:
+				this.ShowSufferStatusClear(data);
+				return;
+			case AffectEffect.SatisfactionRateUp:
+				this.ShowSatisfactionRateUp(data);
+				return;
+			case AffectEffect.SatisfactionRateDown:
+				this.ShowSatisfactionRateDown(data);
+				return;
+			case AffectEffect.ApRevival:
+				this.ShowApRevival(data);
+				return;
+			case AffectEffect.ApUp:
+				this.ShowApUp(data);
+				return;
+			case AffectEffect.ApDown:
+				this.ShowApDown(data);
+				return;
+			case AffectEffect.ApConsumptionUp:
+				this.ShowApConsumptionUp(data);
+				return;
+			case AffectEffect.ApConsumptionDown:
+				this.ShowApConsumptionDown(data);
+				return;
+			case AffectEffect.TurnBarrier:
+				this.ShowTurnBarrier(data);
+				return;
+			case AffectEffect.CountBarrier:
+				this.ShowCountBarrier(data);
+				return;
+			case AffectEffect.Invalid:
+				this.ShowInvalid(data);
+				return;
+			case AffectEffect.Recommand:
+				this.ShowRecommand(data);
+				return;
+			case AffectEffect.DamageRateUp:
+				this.ShowDamageRateUp(data);
+				return;
+			case AffectEffect.DamageRateDown:
+				this.ShowDamageRateDown(data);
+				return;
+			case AffectEffect.Regenerate:
+				this.ShowRegenerate(data, onDamage);
+				return;
+			case AffectEffect.TurnEvasion:
+				this.ShowTurnEvasion(data);
+				return;
+			case AffectEffect.CountEvasion:
+				this.ShowCountEvasion(data);
+				return;
+			}
+			NGUITools.SetActiveSelf(base.gameObject, false);
 		}
 	}
 
@@ -305,47 +265,605 @@ public class HitIcon : MonoBehaviour
 		case Strength.None:
 			return string.Empty;
 		case Strength.Strong:
-			return "Battle_text_Half";
+			return this.GetString("HitIconStrong");
 		case Strength.Weak:
-			return "Battle_text_Preeminent";
+			return this.GetString("HitIconWeak");
 		case Strength.Drain:
-			return "Battle_text_Drain";
+			return this.GetString("HitIconDrain");
 		case Strength.Invalid:
-			return "Battle_text_Half";
+			return this.GetString("HitIconInvalid");
 		default:
 			return string.Empty;
 		}
 	}
 
-	private HitIcon.FontType GetWeakFontType(Strength onWeak)
+	private Texture GetResistanceFontTextureForNumber(Strength strength)
 	{
-		switch (onWeak)
+		switch (strength)
 		{
 		case Strength.None:
-			return HitIcon.FontType.Normal;
+			return this.standardEffectFontTexture.white;
 		case Strength.Strong:
-			return HitIcon.FontType.Minus;
+			return this.standardEffectFontTexture.blue;
 		case Strength.Weak:
-			return HitIcon.FontType.Plus;
+			return this.standardEffectFontTexture.red;
 		case Strength.Drain:
-			return HitIcon.FontType.Drain;
+			return this.standardEffectFontTexture.green;
 		case Strength.Invalid:
-			return HitIcon.FontType.Minus;
+			return this.standardEffectFontTexture.blue;
 		default:
-			return HitIcon.FontType.Normal;
+			return this.standardEffectFontTexture.white;
 		}
 	}
 
-	private enum FontType
+	private Texture GetResistanceFontTextureForTop(Strength strength)
 	{
-		Normal,
-		Plus,
-		Minus,
-		Poison,
-		Drain,
-		Crithical,
-		Gimmick,
-		Gimmick2
+		switch (strength)
+		{
+		case Strength.None:
+			return this.resistanceFontTexture.blue;
+		case Strength.Strong:
+			return this.resistanceFontTexture.blue;
+		case Strength.Weak:
+			return this.resistanceFontTexture.red;
+		case Strength.Drain:
+			return this.resistanceFontTexture.green;
+		case Strength.Invalid:
+			return this.resistanceFontTexture.blue;
+		default:
+			return this.resistanceFontTexture.blue;
+		}
+	}
+
+	private void ShowAttackUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconAttackUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowAttackDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconAttackDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowDefenceUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconDefenceUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowDefenceDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconDefenceDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSpAttackUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSpAttackUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSpAttackDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSpAttackDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSpDefenceUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSpDefenceUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSpDefenceDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSpDefenceDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSpeedUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSpeedUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSpeedDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSpeedDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowCorrectionUpReset(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconCorrectionUpReset");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowCorrectionDownReset(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconCorrectionDownReset");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowProtect(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconProtect");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowPowerCharge(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconPowerCharge");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowDestruct(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconDestruct");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowHitRateUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconHitRateUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowHitRateDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconHitRateDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSufferStatusClear(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSufferStatusClear");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSatisfactionRateUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSatisfactionRateUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSatisfactionRateDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSatisfactionRateDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowApUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconApUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowApDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconApDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowApConsumptionUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconApConsumptionUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowApConsumptionDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconApConsumptionDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowApRevival(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconApRevival");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowTurnBarrier(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconTurnBarrier");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowCountBarrier(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconCountBarrier");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowDamageRateUp(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconDamageRateUp");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowDamageRateDown(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconDamageRateDown");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowInvalid(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconInvalid");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowTurnEvasion(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconTurnEvasion");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowCountEvasion(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconCountEvasion");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowRecommand(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconRecommand");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowParalysis(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconParalysis");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSleep(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSleep");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowSkillLock(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconSkillLock");
+		this.ChangeFontTexture(this.standardEffectFontTexture.green, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowInstantDeath(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconInstantDeath");
+		this.ChangeFontTexture(this.standardEffectFontTexture.red, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowConfusion(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconConfusion");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowStun(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconStun");
+		this.ChangeFontTexture(this.standardEffectFontTexture.blue, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowPoison(HitIcon.Data data, int damage)
+	{
+		if (damage > 0)
+		{
+			BattleStateUIProperty uiProperty = BattleStateManager.current.uiProperty;
+			base.transform.localScale = uiProperty.hitIconLocalScale * uiProperty.onPoisonScalingSizeHitIcon;
+			data.bottomMesh.text = this.GetString("HitIconPoison");
+			data.numMesh.text = damage.ToString();
+			this.ChangeFontTexture(this.standardEffectFontTexture.purple, new TextMeshPro[]
+			{
+				data.numMesh,
+				data.bottomMesh
+			});
+		}
+		else
+		{
+			data.middleMesh.text = this.GetString("HitIconPoison");
+			this.ChangeFontTexture(this.standardEffectFontTexture.purple, new TextMeshPro[]
+			{
+				data.middleMesh
+			});
+		}
+	}
+
+	private void ShowRegenerate(HitIcon.Data data, int value)
+	{
+		if (value > 0)
+		{
+			BattleStateUIProperty uiProperty = BattleStateManager.current.uiProperty;
+			base.transform.localScale = uiProperty.hitIconLocalScale * uiProperty.onPoisonScalingSizeHitIcon;
+			data.bottomMesh.text = this.GetString("HitIconRegenerate");
+			data.numMesh.text = value.ToString();
+			this.ChangeFontTexture(this.standardEffectFontTexture.pink, new TextMeshPro[]
+			{
+				data.numMesh,
+				data.bottomMesh
+			});
+		}
+		else
+		{
+			data.middleMesh.text = this.GetString("HitIconRegenerate");
+			this.ChangeFontTexture(this.standardEffectFontTexture.pink, new TextMeshPro[]
+			{
+				data.middleMesh
+			});
+		}
+	}
+
+	private void ShowHpRevival(HitIcon.Data data, int value)
+	{
+		data.bottomMesh.text = this.GetString("HitIconHpRevival");
+		data.numMesh.text = value.ToString();
+		this.ChangeFontTexture(this.standardEffectFontTexture.pink, new TextMeshPro[]
+		{
+			data.numMesh,
+			data.bottomMesh
+		});
+	}
+
+	private void ShowCounter(HitIcon.Data data, int value, bool isRecoil)
+	{
+		data.bottomMesh.text = this.GetString("HitIconCounter");
+		if (isRecoil)
+		{
+			data.numMesh.text = value.ToString();
+		}
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.numMesh,
+			data.bottomMesh
+		});
+	}
+
+	private void ShowReflection(HitIcon.Data data, int value, bool isRecoil)
+	{
+		data.bottomMesh.text = this.GetString("HitIconReflection");
+		if (isRecoil)
+		{
+			data.numMesh.text = value.ToString();
+		}
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.numMesh,
+			data.bottomMesh
+		});
+	}
+
+	private void ShowDamage(HitIcon.Data data, int value, Strength strength, bool isCritical, bool isDrain, ExtraEffectType extraEffectType)
+	{
+		if (isDrain)
+		{
+			data.numMesh.text = value.ToString();
+			data.bottomMesh.text = this.GetString("HitIconDrain");
+			this.ChangeFontTexture(this.standardEffectFontTexture.pink, new TextMeshPro[]
+			{
+				data.numMesh,
+				data.bottomMesh
+			});
+		}
+		else
+		{
+			if (isCritical)
+			{
+				data.bottomMesh.text = this.GetString("HitIconCritical");
+				this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+				{
+					data.bottomMesh
+				});
+			}
+			data.numMesh.text = value.ToString();
+			Texture resistanceFontTextureForNumber = this.GetResistanceFontTextureForNumber(strength);
+			this.ChangeFontTexture(resistanceFontTextureForNumber, new TextMeshPro[]
+			{
+				data.numMesh
+			});
+			data.topMesh.text = this.GetWeakName(strength);
+			Texture resistanceFontTextureForTop = this.GetResistanceFontTextureForTop(strength);
+			this.ChangeFontTexture(resistanceFontTextureForTop, new TextMeshPro[]
+			{
+				data.topMesh
+			});
+		}
+		if (extraEffectType == ExtraEffectType.Up)
+		{
+			this.upSprite.gameObject.SetActive(true);
+			data.middleMesh.text = this.GetString("HitIconStageEffectUp");
+			this.ChangeFontTexture(this.stageEffectFontTexture.up, new TextMeshPro[]
+			{
+				data.middleMesh
+			});
+		}
+		else if (extraEffectType == ExtraEffectType.Down)
+		{
+			this.downSprite.gameObject.SetActive(true);
+			data.middleMesh.text = this.GetString("HitIconStageEffectDown");
+			this.ChangeFontTexture(this.stageEffectFontTexture.down, new TextMeshPro[]
+			{
+				data.middleMesh
+			});
+		}
+	}
+
+	private void ChangeFontTexture(Texture texture, params TextMeshPro[] textMeshPros)
+	{
+		this.materialPropertyBlock.SetTexture("_FaceTex", texture);
+		foreach (TextMeshPro textMeshPro in textMeshPros)
+		{
+			textMeshPro.renderer.SetPropertyBlock(this.materialPropertyBlock);
+		}
+	}
+
+	private string GetString(string key)
+	{
+		if (BattleStateManager.current.onServerConnect)
+		{
+			if (!HitIcon.dictionary.ContainsKey(key))
+			{
+				HitIcon.dictionary.Add(key, StringMaster.GetString(key));
+			}
+			return HitIcon.dictionary[key];
+		}
+		return string.Empty;
+	}
+
+	[Serializable]
+	private class ResistanceFontTexture
+	{
+		public Texture red;
+
+		public Texture blue;
+
+		public Texture green;
+	}
+
+	[Serializable]
+	private class StandardEffectFontTexture
+	{
+		public Texture red;
+
+		public Texture blue;
+
+		public Texture green;
+
+		public Texture yellow;
+
+		public Texture pink;
+
+		public Texture purple;
+
+		public Texture white;
+	}
+
+	[Serializable]
+	private class StageEffectFontTexture
+	{
+		public Texture up;
+
+		public Texture down;
 	}
 
 	[Serializable]
@@ -360,5 +878,13 @@ public class HitIcon : MonoBehaviour
 		public UISprite middle;
 
 		public UISprite bottom;
+
+		public TextMeshPro numMesh;
+
+		public TextMeshPro topMesh;
+
+		public TextMeshPro middleMesh;
+
+		public TextMeshPro bottomMesh;
 	}
 }

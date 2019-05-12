@@ -229,9 +229,6 @@ namespace System.Reflection
 
 		public override object GetValue(object obj, object[] index)
 		{
-			if (index == null || index.Length == 0)
-			{
-			}
 			return this.GetValue(obj, BindingFlags.Default, null, index, null);
 		}
 

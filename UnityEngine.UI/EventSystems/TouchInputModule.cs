@@ -6,14 +6,15 @@ using UnityEngine.Serialization;
 namespace UnityEngine.EventSystems
 {
 	[AddComponentMenu("Event/Touch Input Module")]
+	[Obsolete("TouchInputModule is no longer required as Touch input is now handled in StandaloneInputModule.")]
 	public class TouchInputModule : PointerInputModule
 	{
 		private Vector2 m_LastMousePosition;
 
 		private Vector2 m_MousePosition;
 
-		[FormerlySerializedAs("m_AllowActivationOnStandalone")]
 		[SerializeField]
+		[FormerlySerializedAs("m_AllowActivationOnStandalone")]
 		private bool m_ForceModuleActive;
 
 		protected TouchInputModule()
@@ -71,15 +72,7 @@ namespace UnityEngine.EventSystems
 				bool mouseButtonDown = Input.GetMouseButtonDown(0);
 				return mouseButtonDown | (this.m_MousePosition - this.m_LastMousePosition).sqrMagnitude > 0f;
 			}
-			for (int i = 0; i < Input.touchCount; i++)
-			{
-				Touch touch = Input.GetTouch(i);
-				if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
-				{
-					return true;
-				}
-			}
-			return false;
+			return Input.touchCount > 0;
 		}
 
 		private bool UseFakeInput()
@@ -120,18 +113,21 @@ namespace UnityEngine.EventSystems
 			for (int i = 0; i < Input.touchCount; i++)
 			{
 				Touch touch = Input.GetTouch(i);
-				bool pressed;
-				bool flag;
-				PointerEventData touchPointerEventData = base.GetTouchPointerEventData(touch, out pressed, out flag);
-				this.ProcessTouchPress(touchPointerEventData, pressed, flag);
-				if (!flag)
+				if (touch.type != TouchType.Indirect)
 				{
-					this.ProcessMove(touchPointerEventData);
-					this.ProcessDrag(touchPointerEventData);
-				}
-				else
-				{
-					base.RemovePointerData(touchPointerEventData);
+					bool pressed;
+					bool flag;
+					PointerEventData touchPointerEventData = base.GetTouchPointerEventData(touch, out pressed, out flag);
+					this.ProcessTouchPress(touchPointerEventData, pressed, flag);
+					if (!flag)
+					{
+						this.ProcessMove(touchPointerEventData);
+						this.ProcessDrag(touchPointerEventData);
+					}
+					else
+					{
+						base.RemovePointerData(touchPointerEventData);
+					}
 				}
 			}
 		}

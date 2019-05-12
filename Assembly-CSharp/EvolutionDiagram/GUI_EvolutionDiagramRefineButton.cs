@@ -1,4 +1,4 @@
-﻿using Master;
+﻿using Monster;
 using System;
 using UnityEngine;
 
@@ -50,12 +50,12 @@ namespace EvolutionDiagram
 					int num2 = (int)this.growList[i];
 					if (string.IsNullOrEmpty(this.label.text))
 					{
-						this.label.text = CommonSentenceData.GetGrade(num2.ToString());
+						this.label.text = MonsterGrowStepData.GetGrowStepName(num2.ToString());
 					}
 					else
 					{
 						UILabel uilabel = this.label;
-						uilabel.text = uilabel.text + "\n" + CommonSentenceData.GetGrade(num2.ToString());
+						uilabel.text = uilabel.text + "\n" + MonsterGrowStepData.GetGrowStepName(num2.ToString());
 					}
 				}
 			}

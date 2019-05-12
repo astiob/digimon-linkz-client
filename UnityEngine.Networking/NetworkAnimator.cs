@@ -3,10 +3,10 @@ using UnityEngine.Networking.NetworkSystem;
 
 namespace UnityEngine.Networking
 {
-	[DisallowMultipleComponent]
-	[AddComponentMenu("Network/NetworkAnimator")]
 	[RequireComponent(typeof(NetworkIdentity))]
 	[RequireComponent(typeof(Animator))]
+	[AddComponentMenu("Network/NetworkAnimator")]
+	[DisallowMultipleComponent]
 	public class NetworkAnimator : NetworkBehaviour
 	{
 		[SerializeField]
@@ -77,25 +77,9 @@ namespace UnityEngine.Networking
 			this.m_ParameterSendBits = 0u;
 		}
 
-		private void InitializeAuthority()
+		public override void OnStartAuthority()
 		{
 			this.m_ParameterWriter = new NetworkWriter();
-		}
-
-		public override void OnStartServer()
-		{
-			if (!base.localPlayerAuthority)
-			{
-				this.InitializeAuthority();
-			}
-		}
-
-		public override void OnStartLocalPlayer()
-		{
-			if (base.localPlayerAuthority)
-			{
-				this.InitializeAuthority();
-			}
 		}
 
 		private void FixedUpdate()

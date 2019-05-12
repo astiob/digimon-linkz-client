@@ -7,8 +7,8 @@ using UnityEngine;
 
 public sealed class CMD_Mission : CMD
 {
-	[SerializeField]
 	[Header("ミッションリストのタッチ領域")]
+	[SerializeField]
 	private GUISelectPanelMission missionList;
 
 	[SerializeField]

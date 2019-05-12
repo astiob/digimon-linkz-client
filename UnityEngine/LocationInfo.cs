@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Structure describing device location.</para>
-	/// </summary>
 	public struct LocationInfo
 	{
 		private double m_Timestamp;
@@ -19,9 +16,6 @@ namespace UnityEngine
 
 		private float m_VerticalAccuracy;
 
-		/// <summary>
-		///   <para>Geographical device location latitude.</para>
-		/// </summary>
 		public float latitude
 		{
 			get
@@ -30,9 +24,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Geographical device location latitude.</para>
-		/// </summary>
 		public float longitude
 		{
 			get
@@ -41,9 +32,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Geographical device location altitude.</para>
-		/// </summary>
 		public float altitude
 		{
 			get
@@ -52,9 +40,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Horizontal accuracy of the location.</para>
-		/// </summary>
 		public float horizontalAccuracy
 		{
 			get
@@ -63,9 +48,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Vertical accuracy of the location.</para>
-		/// </summary>
 		public float verticalAccuracy
 		{
 			get
@@ -74,9 +56,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Timestamp (in seconds since 1970) when location was last time updated.</para>
-		/// </summary>
 		public double timestamp
 		{
 			get

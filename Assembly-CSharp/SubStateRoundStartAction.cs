@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityExtension;
 
 public class SubStateRoundStartAction : BattleStateController
 {
-	protected bool roundLimitFlag;
-
-	protected bool speedClearFlag;
-
 	public SubStateRoundStartAction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
@@ -24,77 +21,46 @@ public class SubStateRoundStartAction : BattleStateController
 
 	protected override IEnumerator MainRoutine()
 	{
-		if (!base.stateManager.onEnableTutorial)
-		{
-			IEnumerator playStageEffect = this.PlayStageEffect();
-			while (playStageEffect.MoveNext())
-			{
-				object obj = playStageEffect.Current;
-				yield return obj;
-			}
-			IEnumerator playChipEffect = this.PlayChipEffect();
-			while (playChipEffect.MoveNext())
-			{
-				yield return null;
-			}
-		}
-		this.PlayHpAndApRevivalEffect();
-		int speedLimitRoundCount = base.hierarchyData.speedClearRound - base.battleStateData.totalRoundNumber;
-		speedLimitRoundCount++;
-		if (base.hierarchyData.limitRound > 0 && base.hierarchyData.speedClearRound > 0)
-		{
-			this.roundLimitFlag = true;
-			this.speedClearFlag = (speedLimitRoundCount > 0);
-			base.stateManager.SetBattleScreen(BattleScreen.RoundStartActionsLimit);
-		}
-		else if (base.hierarchyData.limitRound > 0 && base.hierarchyData.speedClearRound <= 0)
-		{
-			this.roundLimitFlag = true;
-			this.speedClearFlag = false;
-			base.stateManager.SetBattleScreen(BattleScreen.RoundStartActionsLimit);
-		}
-		else if (base.hierarchyData.limitRound <= 0 && base.hierarchyData.speedClearRound > 0)
-		{
-			this.roundLimitFlag = false;
-			this.speedClearFlag = (speedLimitRoundCount > 0);
-			if (this.speedClearFlag)
-			{
-				base.stateManager.SetBattleScreen(BattleScreen.RoundStartActionsChallenge);
-			}
-			else
-			{
-				base.stateManager.SetBattleScreen(BattleScreen.RoundStartActions);
-			}
-		}
-		else
-		{
-			this.roundLimitFlag = false;
-			this.speedClearFlag = false;
-			base.stateManager.SetBattleScreen(BattleScreen.RoundStartActions);
-		}
-		IEnumerator roundStartCameraMotionFunction = this.RoundStartCameraMotionFunction();
-		while (roundStartCameraMotionFunction.MoveNext())
-		{
-			yield return null;
-		}
-		this.StopHpAndApRevivalEffect();
 		IEnumerator[] functions = new IEnumerator[]
 		{
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.WaveStart),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.RoundStart),
+			this.PlayStageEffect(),
+			this.PlayChipEffect(),
+			this.PlayRoundStartEffect(),
 			this.UpFunction(),
-			this.DownFunction()
+			this.DownFunction(),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.WaveEnd),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.RoundEnd)
 		};
 		foreach (IEnumerator function in functions)
 		{
 			while (function.MoveNext())
 			{
-				yield return null;
+				object obj = function.Current;
+				yield return obj;
 			}
+		}
+		yield break;
+	}
+
+	private IEnumerator PlayAdventureScene(BattleAdventureSceneManager.TriggerType triggerType)
+	{
+		base.stateManager.battleAdventureSceneManager.OnTrigger(triggerType);
+		IEnumerator update = base.stateManager.battleAdventureSceneManager.Update();
+		while (update.MoveNext())
+		{
+			yield return null;
 		}
 		yield break;
 	}
 
 	private IEnumerator PlayStageEffect()
 	{
+		if (base.stateManager.onEnableTutorial)
+		{
+			yield break;
+		}
 		if (base.battleStateData.currentRoundNumber <= 1)
 		{
 			IEnumerator gimmickWait = base.stateManager.threeDAction.PlayGimmickAnimation(base.battleStateData.playerCharacters, base.battleStateData.enemies);
@@ -106,7 +72,7 @@ public class SubStateRoundStartAction : BattleStateController
 		}
 		if (base.battleStateData.currentRoundNumber <= 1)
 		{
-			base.battleStateData.reqestStageEffectTriggerList.Add(ChipEffectStatus.EffectTriggerType.WaveStarted);
+			base.battleStateData.reqestStageEffectTriggerList.Add(EffectStatusBase.EffectTriggerType.WaveStarted);
 			base.SetState(typeof(SubStatePlayStageEffect));
 			while (base.isWaitState)
 			{
@@ -122,26 +88,43 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			foreach (CharacterStateControl characterState in base.battleStateData.playerCharacters)
 			{
-				characterState.OnChipTrigger(ChipEffectStatus.EffectTriggerType.WaveStarted, false);
+				characterState.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted, false);
 			}
 			foreach (CharacterStateControl characterState2 in base.battleStateData.enemies)
 			{
-				characterState2.OnChipTrigger(ChipEffectStatus.EffectTriggerType.WaveStarted, false);
+				characterState2.OnChipTrigger(EffectStatusBase.EffectTriggerType.WaveStarted, false);
 			}
 		}
 		foreach (CharacterStateControl characterState3 in base.battleStateData.playerCharacters)
 		{
-			characterState3.OnChipTrigger(ChipEffectStatus.EffectTriggerType.RoundStarted, false);
+			characterState3.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted, false);
 		}
 		foreach (CharacterStateControl characterState4 in base.battleStateData.enemies)
 		{
-			characterState4.OnChipTrigger(ChipEffectStatus.EffectTriggerType.RoundStarted, false);
+			characterState4.OnChipTrigger(EffectStatusBase.EffectTriggerType.RoundStarted, false);
 		}
 		base.SetState(typeof(SubStatePlayChipEffect));
 		while (base.isWaitState)
 		{
 			yield return null;
 		}
+		yield break;
+	}
+
+	private IEnumerator PlayRoundStartEffect()
+	{
+		this.PlayHpAndApRevivalEffect();
+		IEnumerator roundStartScreenFunction = this.RoundStartScreenFunction();
+		while (roundStartScreenFunction.MoveNext())
+		{
+			yield return null;
+		}
+		IEnumerator roundStartCameraMotionFunction = this.RoundStartCameraMotionFunction();
+		while (roundStartCameraMotionFunction.MoveNext())
+		{
+			yield return null;
+		}
+		this.StopHpAndApRevivalEffect();
 		yield break;
 	}
 
@@ -210,21 +193,22 @@ public class SubStateRoundStartAction : BattleStateController
 		{
 			base.stateManager.cameraControl.PlayCameraMotionAction("0002_command", base.battleStateData.stageSpawnPoint, true);
 		}
-		IEnumerator waitRoundStartAction = this.WaitRoundStartAction();
-		while (waitRoundStartAction.MoveNext())
-		{
-			yield return null;
-		}
+		yield return null;
 		base.stateManager.cameraControl.StopCameraMotionAction("0002_command");
 		base.stateManager.cameraControl.StopCameraMotionAction("BigBoss/0002_command");
 		yield break;
 	}
 
-	protected IEnumerator WaitRoundStartAction()
+	private IEnumerator RoundStartScreenFunction()
 	{
-		if (this.roundLimitFlag)
+		int speedLimitRoundCount = base.hierarchyData.speedClearRound - base.battleStateData.totalRoundNumber;
+		speedLimitRoundCount++;
+		if (base.hierarchyData.limitRound > 0 && base.hierarchyData.speedClearRound > 0)
 		{
-			if (this.speedClearFlag)
+			base.stateManager.uiControl.ApplyRoundLimitStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			base.stateManager.uiControl.ApplyRoundChallengeStartRevivalText(false, false);
+			base.stateManager.SetBattleScreen(BattleScreen.RoundStartActionsLimit);
+			if (speedLimitRoundCount > 0)
 			{
 				while (base.stateManager.battleUiComponents.roundLimitStart.AnimationTimeCheck())
 				{
@@ -244,17 +228,43 @@ public class SubStateRoundStartAction : BattleStateController
 				}
 			}
 		}
-		else if (!this.roundLimitFlag && this.speedClearFlag)
+		else if (base.hierarchyData.limitRound > 0 && base.hierarchyData.speedClearRound <= 0)
 		{
-			while (base.stateManager.battleUiComponents.roundChallengeStart.AnimationIsPlaying())
+			base.stateManager.uiControl.ApplyRoundLimitStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			base.stateManager.SetBattleScreen(BattleScreen.RoundStartActionsLimit);
+			while (base.stateManager.battleUiComponents.roundLimitStart.AnimationIsPlaying())
 			{
 				yield return null;
 			}
 		}
-		else if (!this.roundLimitFlag && !this.speedClearFlag)
+		else if (base.hierarchyData.limitRound <= 0 && base.hierarchyData.speedClearRound > 0)
 		{
-			IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.RoundStartActionWaitSecond, null, null);
-			while (wait.MoveNext())
+			if (speedLimitRoundCount > 0)
+			{
+				base.stateManager.uiControl.ApplyRoundChallengeStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+				base.stateManager.SetBattleScreen(BattleScreen.RoundStartActionsChallenge);
+				while (base.stateManager.battleUiComponents.roundChallengeStart.AnimationIsPlaying())
+				{
+					yield return null;
+				}
+			}
+			else
+			{
+				base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+				base.stateManager.SetBattleScreen(BattleScreen.RoundStartActions);
+				IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.RoundStartActionWaitSecond, null, null);
+				while (wait.MoveNext())
+				{
+					yield return null;
+				}
+			}
+		}
+		else
+		{
+			base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			base.stateManager.SetBattleScreen(BattleScreen.RoundStartActions);
+			IEnumerator wait2 = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.RoundStartActionWaitSecond, null, null);
+			while (wait2.MoveNext())
 			{
 				yield return null;
 			}

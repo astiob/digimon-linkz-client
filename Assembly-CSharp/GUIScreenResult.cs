@@ -30,12 +30,9 @@ public sealed class GUIScreenResult : GUIScreen
 
 	private bool isPointQuest;
 
-	public int UsedCT_ForLimitQuest { get; set; }
-
 	protected override void Awake()
 	{
 		GUIScreenResult.instance = this;
-		this.UsedCT_ForLimitQuest = 1;
 		base.Awake();
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		ClassSingleton<BattleDataStore>.Instance.DeleteForSystem();

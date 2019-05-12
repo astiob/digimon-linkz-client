@@ -39,29 +39,16 @@ namespace CharacterModelUI
 			}
 		}
 
-		public virtual void LoadCharacterModel(MonsterData monsterData, Vector3 characterPosition, float characterEulerAngleY)
+		public virtual void LoadMonsterModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
 		{
-			if (!MonsterData.IsEgg(monsterData.monsterMG.growStep))
-			{
-				string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterData.monsterM.monsterGroupId);
-				this.renderTextureCamera.LoadMonsterModel(monsterCharaPathByMonsterGroupId, characterPosition, characterEulerAngleY);
-			}
-			else
-			{
-				GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM respDataMA_MonsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM;
-				string monsterGroupId = string.Empty;
-				for (int i = 0; i < respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM.Length; i++)
-				{
-					GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM.MonsterEvolutionRouteM monsterEvolutionRouteM = respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i];
-					if (monsterData.userMonster == null || monsterEvolutionRouteM.monsterEvolutionRouteId == monsterData.userMonster.monsterEvolutionRouteId)
-					{
-						monsterGroupId = monsterEvolutionRouteM.eggMonsterId;
-						break;
-					}
-				}
-				string monsterCharaPathByMonsterGroupId2 = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
-				this.renderTextureCamera.LoadEgg(monsterCharaPathByMonsterGroupId2, this.renderTextureCamera.transform.localPosition.x, this.renderTextureCamera.transform.localPosition.y, characterPosition.y);
-			}
+			string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
+			this.renderTextureCamera.LoadMonsterModel(monsterCharaPathByMonsterGroupId, characterPosition, characterEulerAngleY);
+		}
+
+		public virtual void LoadEggModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
+		{
+			string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
+			this.renderTextureCamera.LoadEgg(monsterCharaPathByMonsterGroupId, this.renderTextureCamera.transform.localPosition.x, this.renderTextureCamera.transform.localPosition.y, characterPosition.y);
 		}
 
 		public void SetCharacterCameraDistance()

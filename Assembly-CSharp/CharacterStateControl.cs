@@ -169,7 +169,7 @@ public class CharacterStateControl
 
 	private bool isLoad;
 
-	private Dictionary<ChipEffectStatus.EffectTriggerType, List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>> triggerChips = new Dictionary<ChipEffectStatus.EffectTriggerType, List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>>();
+	private Dictionary<EffectStatusBase.EffectTriggerType, List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>> triggerChips = new Dictionary<EffectStatusBase.EffectTriggerType, List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>>();
 
 	public bool isRecommand;
 
@@ -185,7 +185,7 @@ public class CharacterStateControl
 		this.isInitSpecialCorrectionStatus = false;
 	}
 
-	public CharacterStateControl(CharacterStatus status, Tolerance tolerance, CharacterDatas datas, LeaderSkillStatus leaderCharacterLeaderSkill, string attackSkillId, CharacterDatas leaderCharacterData, LeaderSkillStatus myLeaderSkill = null, bool isEnemy = false)
+	public CharacterStateControl(CharacterStatus status, Tolerance tolerance, CharacterDatas datas, SkillStatus[] skillStatuses, LeaderSkillStatus leaderCharacterLeaderSkill, CharacterDatas leaderCharacterData, LeaderSkillStatus myLeaderSkill = null, bool isEnemy = false)
 	{
 		this.stagingChipIdList = new Dictionary<int, int>();
 		this.autoCounterSkillList = new List<string>();
@@ -195,6 +195,7 @@ public class CharacterStateControl
 		this._characterStatus = status;
 		this._characterDatas = datas;
 		this._tolerance = tolerance;
+		this._skillStatus = skillStatuses;
 		this._isEnemy = isEnemy;
 		if (myLeaderSkill == null)
 		{
@@ -205,7 +206,7 @@ public class CharacterStateControl
 			this._leaderSkillStatus = myLeaderSkill;
 		}
 		this._leaderSkillResult = new LeaderSkillResult(this, leaderCharacterLeaderSkill, leaderCharacterData);
-		this.StatusInitialize(attackSkillId);
+		this.StatusInitialize();
 		this.enemyAi = ((status.GetType() != typeof(EnemyStatus)) ? null : this.enemyStatus.enemyAiPattern);
 	}
 
@@ -419,7 +420,57 @@ public class CharacterStateControl
 		}
 	}
 
-	public bool IsHittingTheTargetChip { get; private set; }
+	public int stageChipAddMaxHp
+	{
+		get
+		{
+			return this.m_stageChipAddMaxHp;
+		}
+	}
+
+	public int stageChipAddAttackPower
+	{
+		get
+		{
+			return this.m_stageChipAddAttackPower;
+		}
+	}
+
+	public int stageChipAddDefencePower
+	{
+		get
+		{
+			return this.m_stageChipAddDefencePower;
+		}
+	}
+
+	public int stageChipAddSpecialAttackPower
+	{
+		get
+		{
+			return this.m_stageChipAddSpecialAttackPower;
+		}
+	}
+
+	public int stageChipAddSpecialDefencePower
+	{
+		get
+		{
+			return this.m_stageChipAddSpecialDefencePower;
+		}
+	}
+
+	public int stageChipAddSpeed
+	{
+		get
+		{
+			return this.m_stageChipAddSpeed;
+		}
+	}
+
+	public InvariantType hittingTheTargetChipType { get; private set; }
+
+	public InvariantType criticalTheTargetChipType { get; private set; }
 
 	public Dictionary<int, int> potencyChipIdList { get; private set; }
 
@@ -539,13 +590,13 @@ public class CharacterStateControl
 			if (this._currentHp == 0)
 			{
 				this.stagingChipIdList.Clear();
-				this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.Dead, false);
+				this.OnChipTrigger(EffectStatusBase.EffectTriggerType.Dead, false);
 				this.RemoveDeadStagingChips();
 			}
 			else
 			{
-				this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.HpPercentage, currentHp < this._currentHp);
-				this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.HpFixed, false);
+				this.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpPercentage, currentHp < this._currentHp);
+				this.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpFixed, false);
 			}
 		}
 	}
@@ -666,35 +717,11 @@ public class CharacterStateControl
 		}
 	}
 
-	public int maxFriendshipLevel
-	{
-		get
-		{
-			return this._characterDatas.GetMaxFriendshipLevel();
-		}
-	}
-
 	public Talent talent
 	{
 		get
 		{
 			return (!PlayerStatus.Match(this._characterStatus)) ? new Talent() : this.playerStatus.talent;
-		}
-	}
-
-	public Species species
-	{
-		get
-		{
-			return this._characterDatas.species;
-		}
-	}
-
-	public EvolutionStep evolutionStep
-	{
-		get
-		{
-			return this._characterDatas.evolutionStep;
 		}
 	}
 
@@ -739,6 +766,14 @@ public class CharacterStateControl
 		get
 		{
 			return this._characterStatus.prefabId;
+		}
+	}
+
+	public string groupId
+	{
+		get
+		{
+			return this._characterStatus.groupId;
 		}
 	}
 
@@ -1064,19 +1099,18 @@ public class CharacterStateControl
 		return num >= minRange && num <= maxRange;
 	}
 
-	private void StatusInitialize(string attackSkillId)
+	private void StatusInitialize()
 	{
 		this.currentSufferState = new HaveSufferState();
 		this._maxHp = this._characterStatus.maxHp + Mathf.FloorToInt((float)this.defaultMaxHp * this.leaderSkillResult.hpUpPercent);
 		this._currentHp = this._maxHp;
 		this.m_extraMaxHp = this._maxHp;
-		List<string> list = new List<string>(this._characterStatus.skillIds);
-		if (!list.Contains(attackSkillId))
-		{
-			list.Insert(0, attackSkillId);
-		}
-		this.skillIds = list.ToArray();
+		this.skillIds = this._characterStatus.skillIds;
 		this.skillStatus = new SkillStatus[this.skillIds.Length];
+		for (int i = 0; i < this.skillIds.Length; i++)
+		{
+			this.skillStatus[i] = BattleStateManager.current.hierarchyData.GetSkillStatus(this.skillIds[i]);
+		}
 		if (!PlayerStatus.Match(this._characterStatus))
 		{
 			this.ItemDrop();
@@ -1089,6 +1123,7 @@ public class CharacterStateControl
 		{
 			this.ap = this.maxAp;
 		}
+		this.InitializeSkillExtraStatus();
 		this.InitializeChipEffectCount();
 		this.HateReset();
 		this.SpeedRandomize(false);
@@ -1112,8 +1147,8 @@ public class CharacterStateControl
 			}
 			else
 			{
-				this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.HpPercentage, false);
-				this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.HpFixed, false);
+				this.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpPercentage, false);
+				this.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpFixed, false);
 			}
 		}
 	}
@@ -1126,30 +1161,30 @@ public class CharacterStateControl
 		int baseValue4 = (!PlayerStatus.Match(this._characterStatus)) ? this._characterStatus.specialDefencePower : this.playerStatus.friendshipStatus.GetCorrectedSpecialDefencePower(this._characterStatus.specialDefencePower);
 		int baseValue5 = (!PlayerStatus.Match(this._characterStatus)) ? this._characterStatus.speed : this.playerStatus.friendshipStatus.GetCorrectedSpeed(this._characterStatus.speed);
 		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
-		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
-		this.m_extraMaxHp = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._maxHp, this, ExtraEffectStatus.ExtraEffectType.Hp);
-		this.m_extraAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue, this, ExtraEffectStatus.ExtraEffectType.Atk);
-		this.m_extraDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue2, this, ExtraEffectStatus.ExtraEffectType.Def);
-		this.m_extraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue3, this, ExtraEffectStatus.ExtraEffectType.Satk);
-		this.m_extraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue4, this, ExtraEffectStatus.ExtraEffectType.Sdef);
-		this.m_extraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue5, this, ExtraEffectStatus.ExtraEffectType.Speed);
-		this.m_defaultExtraAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.attackPower, this, ExtraEffectStatus.ExtraEffectType.Atk);
-		this.m_defaultExtraDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.defencePower, this, ExtraEffectStatus.ExtraEffectType.Def);
-		this.m_defaultExtraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.specialAttackPower, this, ExtraEffectStatus.ExtraEffectType.Satk);
-		this.m_defaultExtraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.specialDefencePower, this, ExtraEffectStatus.ExtraEffectType.Sdef);
-		this.m_defaultExtraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.speed, this, ExtraEffectStatus.ExtraEffectType.Speed);
+		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
+		this.m_extraMaxHp = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._maxHp, this, EffectStatusBase.ExtraEffectType.Hp);
+		this.m_extraAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue, this, EffectStatusBase.ExtraEffectType.Atk);
+		this.m_extraDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue2, this, EffectStatusBase.ExtraEffectType.Def);
+		this.m_extraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue3, this, EffectStatusBase.ExtraEffectType.Satk);
+		this.m_extraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue4, this, EffectStatusBase.ExtraEffectType.Sdef);
+		this.m_extraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, baseValue5, this, EffectStatusBase.ExtraEffectType.Speed);
+		this.m_defaultExtraAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.attackPower, this, EffectStatusBase.ExtraEffectType.Atk);
+		this.m_defaultExtraDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.defencePower, this, EffectStatusBase.ExtraEffectType.Def);
+		this.m_defaultExtraSpecialAttackPower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.specialAttackPower, this, EffectStatusBase.ExtraEffectType.Satk);
+		this.m_defaultExtraSpecialDefencePower = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.specialDefencePower, this, EffectStatusBase.ExtraEffectType.Sdef);
+		this.m_defaultExtraSpeed = ExtraEffectStatus.GetExtraEffectValue(invocationList, this._characterStatus.speed, this, EffectStatusBase.ExtraEffectType.Speed);
 	}
 
 	public void InitializeSkillExtraStatus()
 	{
+		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
+		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
 		if (this.skillStatus.Length > 1)
 		{
 			AffectEffectProperty affectEffectFirst = this.skillStatus[1].GetAffectEffectFirst();
 			if (affectEffectFirst != null)
 			{
-				List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
-				List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
-				if (affectEffectFirst.type == AffectEffect.Damage)
+				if (AffectEffectProperty.IsDamage(affectEffectFirst.type))
 				{
 					this.m_extraDeathblowSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst, this);
 				}
@@ -1161,13 +1196,11 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst2 = this.skillStatus[2].GetAffectEffectFirst();
 			if (affectEffectFirst2 != null)
 			{
-				List<ExtraEffectStatus> extraEffectStatus2 = BattleStateManager.current.battleStateData.extraEffectStatus;
-				List<ExtraEffectStatus> invocationList2 = ExtraEffectStatus.GetInvocationList(extraEffectStatus2, ChipEffectStatus.EffectTriggerType.Usually);
-				if (affectEffectFirst2.type == AffectEffect.Damage)
+				if (AffectEffectProperty.IsDamage(affectEffectFirst2.type))
 				{
-					this.m_extraInheritanceSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList2, affectEffectFirst2, this);
+					this.m_extraInheritanceSkillPower = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst2, this);
 				}
-				this.m_extraInheritanceSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList2, affectEffectFirst2, this);
+				this.m_extraInheritanceSkillHitRate = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectFirst2, this);
 			}
 		}
 		if (this.skillStatus.Length > 3)
@@ -1175,13 +1208,11 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst3 = this.skillStatus[3].GetAffectEffectFirst();
 			if (affectEffectFirst3 != null)
 			{
-				List<ExtraEffectStatus> extraEffectStatus3 = BattleStateManager.current.battleStateData.extraEffectStatus;
-				List<ExtraEffectStatus> invocationList3 = ExtraEffectStatus.GetInvocationList(extraEffectStatus3, ChipEffectStatus.EffectTriggerType.Usually);
-				if (affectEffectFirst3.type == AffectEffect.Damage)
+				if (AffectEffectProperty.IsDamage(affectEffectFirst3.type))
 				{
-					this.m_extraInheritanceSkillPower2 = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList3, affectEffectFirst3, this);
+					this.m_extraInheritanceSkillPower2 = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectFirst3, this);
 				}
-				this.m_extraInheritanceSkillHitRate2 = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList3, affectEffectFirst3, this);
+				this.m_extraInheritanceSkillHitRate2 = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, affectEffectFirst3, this);
 			}
 		}
 	}
@@ -1211,14 +1242,14 @@ public class CharacterStateControl
 			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(num.ToString());
 			if (chipEffectData != null)
 			{
-				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList = ChipEffectStatus.GetInvocationList(chipEffectData, ChipEffectStatus.EffectTriggerType.Usually, this.prefabId.ToInt32(), this, 0);
+				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList = ChipEffectStatus.GetInvocationList(chipEffectData, EffectStatusBase.EffectTriggerType.Usually, this.groupId.ToInt32(), this, 0);
 				this.AddChipParam(true, this.GetAddChipParamEffects(invocationList, true).ToArray(), false, false);
 				int triggerValue = 0;
 				if (BattleStateManager.current != null)
 				{
 					triggerValue = BattleStateManager.current.hierarchyData.areaId;
 				}
-				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList2 = ChipEffectStatus.GetInvocationList(chipEffectData, ChipEffectStatus.EffectTriggerType.Area, this.prefabId.ToInt32(), this, triggerValue);
+				GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList2 = ChipEffectStatus.GetInvocationList(chipEffectData, EffectStatusBase.EffectTriggerType.Area, this.groupId.ToInt32(), this, triggerValue);
 				this.AddChipParam(true, this.GetAddChipParamEffects(invocationList2, true).ToArray(), true, true);
 			}
 		}
@@ -1230,7 +1261,7 @@ public class CharacterStateControl
 		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipInvocationEffects)
 		{
 			int num = chipEffect.monsterGroupId.ToInt32();
-			if (num <= 0 || num == this.prefabId.ToInt32())
+			if (num <= 0 || num == this.groupId.ToInt32())
 			{
 				if (chipEffect.effectType.ToInt32() != 57 && (!isInit || chipEffect.effectType.ToInt32() != 56))
 				{
@@ -1249,14 +1280,14 @@ public class CharacterStateControl
 								int num4 = UnityEngine.Random.Range(0, 10000);
 								if (num4 > num3)
 								{
-									goto IL_1CD;
+									goto IL_252;
 								}
 							}
 							if (this.chipEffectCount.ContainsKey(num2))
 							{
 								if (this.chipEffectCount[num2] <= 0)
 								{
-									goto IL_1CD;
+									goto IL_252;
 								}
 								Dictionary<int, int> dictionary2;
 								Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
@@ -1267,10 +1298,28 @@ public class CharacterStateControl
 							}
 							if (chipEffect.effectType.ToInt32() == 58)
 							{
-								this.IsHittingTheTargetChip = true;
+								if (this.hittingTheTargetChipType != InvariantType.Up && chipEffect.effectValue != "0")
+								{
+									this.hittingTheTargetChipType = InvariantType.Down;
+								}
+								else
+								{
+									this.hittingTheTargetChipType = InvariantType.Up;
+								}
+							}
+							if (chipEffect.effectType.ToInt32() == 59)
+							{
+								if (this.criticalTheTargetChipType != InvariantType.Up && chipEffect.effectValue != "0")
+								{
+									this.criticalTheTargetChipType = InvariantType.Down;
+								}
+								else
+								{
+									this.criticalTheTargetChipType = InvariantType.Up;
+								}
 							}
 							list.Add(chipEffect);
-							if (chipEffect.effectType.ToInt32() != 60 && chipEffect.effectType.ToInt32() != 56)
+							if (chipEffect.effectType.ToInt32() != 60 && chipEffect.effectType.ToInt32() != 61 && chipEffect.effectType.ToInt32() != 56)
 							{
 								this.potencyChipIdList.Add(num2, chipEffect.targetType.ToInt32());
 							}
@@ -1282,7 +1331,7 @@ public class CharacterStateControl
 					}
 				}
 			}
-			IL_1CD:;
+			IL_252:;
 		}
 		return list;
 	}
@@ -1369,8 +1418,8 @@ public class CharacterStateControl
 		this.isDiedJustBefore = false;
 		this.isInitSpecialCorrectionStatus = false;
 		this.InitializeSpecialCorrectionStatus();
-		this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.HpPercentage, true);
-		this.OnChipTrigger(ChipEffectStatus.EffectTriggerType.HpFixed, false);
+		this.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpPercentage, true);
+		this.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpFixed, false);
 	}
 
 	public void ItemDrop()
@@ -1494,13 +1543,13 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst = this.skillStatus[1].GetAffectEffectFirst();
 			if (affectEffectFirst != null)
 			{
-				if (affectEffectFirst.type == AffectEffect.Damage)
+				if (AffectEffectProperty.IsDamage(affectEffectFirst.type))
 				{
-					if (this.m_extraDeathblowSkillPower - affectEffectFirst.power > 0)
+					if (this.m_extraDeathblowSkillPower - affectEffectFirst.GetPower(this) > 0)
 					{
 						return 1;
 					}
-					if (this.m_extraDeathblowSkillPower - affectEffectFirst.power < 0)
+					if (this.m_extraDeathblowSkillPower - affectEffectFirst.GetPower(this) < 0)
 					{
 						result = -1;
 					}
@@ -1520,13 +1569,13 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst2 = this.skillStatus[2].GetAffectEffectFirst();
 			if (affectEffectFirst2 != null)
 			{
-				if (affectEffectFirst2.type == AffectEffect.Damage)
+				if (AffectEffectProperty.IsDamage(affectEffectFirst2.type))
 				{
-					if (this.m_extraInheritanceSkillPower - affectEffectFirst2.power > 0)
+					if (this.m_extraInheritanceSkillPower - affectEffectFirst2.GetPower(this) > 0)
 					{
 						return 1;
 					}
-					if (this.m_extraInheritanceSkillPower - affectEffectFirst2.power < 0)
+					if (this.m_extraInheritanceSkillPower - affectEffectFirst2.GetPower(this) < 0)
 					{
 						result = -1;
 					}
@@ -1546,13 +1595,13 @@ public class CharacterStateControl
 			AffectEffectProperty affectEffectFirst3 = this.skillStatus[3].GetAffectEffectFirst();
 			if (affectEffectFirst3 != null)
 			{
-				if (affectEffectFirst3.type == AffectEffect.Damage)
+				if (AffectEffectProperty.IsDamage(affectEffectFirst3.type))
 				{
-					if (this.m_extraInheritanceSkillPower2 - affectEffectFirst3.power > 0)
+					if (this.m_extraInheritanceSkillPower2 - affectEffectFirst3.GetPower(this) > 0)
 					{
 						return 1;
 					}
-					if (this.m_extraInheritanceSkillPower2 - affectEffectFirst3.power < 0)
+					if (this.m_extraInheritanceSkillPower2 - affectEffectFirst3.GetPower(this) < 0)
 					{
 						result = -1;
 					}
@@ -1570,7 +1619,7 @@ public class CharacterStateControl
 		return result;
 	}
 
-	public void OnChipTrigger(ChipEffectStatus.EffectTriggerType triggerType, bool isRecovery = false)
+	public void OnChipTrigger(EffectStatusBase.EffectTriggerType triggerType, bool isRecovery = false)
 	{
 		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> chipTriggerList = this.GetChipTriggerList(triggerType);
 		if (chipTriggerList.Count == 0)
@@ -1579,15 +1628,15 @@ public class CharacterStateControl
 		}
 		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
 		int triggerValue = 0;
-		if (triggerType == ChipEffectStatus.EffectTriggerType.HpPercentage)
+		if (triggerType == EffectStatusBase.EffectTriggerType.HpPercentage)
 		{
 			triggerValue = (int)((float)this.hp / (float)this.maxHp * 100f);
 		}
-		else if (triggerType == ChipEffectStatus.EffectTriggerType.HpFixed)
+		else if (triggerType == EffectStatusBase.EffectTriggerType.HpFixed)
 		{
 			triggerValue = this.hp;
 		}
-		GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList = ChipEffectStatus.GetInvocationList(chipTriggerList.ToArray(), triggerType, this.prefabId.ToInt32(), this, triggerValue);
+		GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] invocationList = ChipEffectStatus.GetInvocationList(chipTriggerList.ToArray(), triggerType, this.groupId.ToInt32(), this, triggerValue);
 		foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipTriggerList)
 		{
 			bool flag = false;
@@ -1607,7 +1656,11 @@ public class CharacterStateControl
 					this.potencyChipIdList.Remove(key);
 					if (chipEffect.effectType.ToInt32() == 58)
 					{
-						this.IsHittingTheTargetChip = false;
+						this.hittingTheTargetChipType = InvariantType.Non;
+					}
+					if (chipEffect.effectType.ToInt32() == 59)
+					{
+						this.criticalTheTargetChipType = InvariantType.Non;
 					}
 				}
 			}
@@ -1628,7 +1681,7 @@ public class CharacterStateControl
 		}
 	}
 
-	private List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> GetChipTriggerList(ChipEffectStatus.EffectTriggerType triggerType)
+	private List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> GetChipTriggerList(EffectStatusBase.EffectTriggerType triggerType)
 	{
 		List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
 		if (!this.triggerChips.ContainsKey(triggerType))
@@ -1645,7 +1698,7 @@ public class CharacterStateControl
 						{
 							num2 = chipEffect.monsterGroupId.ToInt32();
 						}
-						if (num2 <= 0 || num2 == this.prefabId.ToInt32())
+						if (num2 <= 0 || num2 == this.groupId.ToInt32())
 						{
 							if (chipEffect.effectTrigger.ToInt32() == (int)triggerType)
 							{
@@ -1725,15 +1778,15 @@ public class CharacterStateControl
 		int num7 = (!isAdd) ? -1 : 1;
 		if (isAll)
 		{
-			num = ChipEffectStatus.GetChipEffectValue(chipEffects, this.defaultMaxHp, this, ExtraEffectStatus.ExtraEffectType.Hp);
-			num2 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue, this, ExtraEffectStatus.ExtraEffectType.Atk);
-			num3 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue2, this, ExtraEffectStatus.ExtraEffectType.Def);
-			num4 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue3, this, ExtraEffectStatus.ExtraEffectType.Satk);
-			num5 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue4, this, ExtraEffectStatus.ExtraEffectType.Sdef);
-			num6 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue5, this, ExtraEffectStatus.ExtraEffectType.Speed);
+			num = ChipEffectStatus.GetChipEffectValue(chipEffects, this.defaultMaxHp, this, EffectStatusBase.ExtraEffectType.Hp);
+			num2 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue, this, EffectStatusBase.ExtraEffectType.Atk);
+			num3 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue2, this, EffectStatusBase.ExtraEffectType.Def);
+			num4 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue3, this, EffectStatusBase.ExtraEffectType.Satk);
+			num5 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue4, this, EffectStatusBase.ExtraEffectType.Sdef);
+			num6 = ChipEffectStatus.GetChipEffectValue(chipEffects, baseValue5, this, EffectStatusBase.ExtraEffectType.Speed);
 		}
-		float chipEffectValueToFloat = ChipEffectStatus.GetChipEffectValueToFloat(chipEffects, 0f, this, ExtraEffectStatus.ExtraEffectType.Critical);
-		float chipEffectValueToFloat2 = ChipEffectStatus.GetChipEffectValueToFloat(chipEffects, 0f, this, ExtraEffectStatus.ExtraEffectType.Hit);
+		float chipEffectValueToFloat = ChipEffectStatus.GetChipEffectValueToFloat(chipEffects, 0f, this, EffectStatusBase.ExtraEffectType.Critical);
+		float chipEffectValueToFloat2 = ChipEffectStatus.GetChipEffectValueToFloat(chipEffects, 0f, this, EffectStatusBase.ExtraEffectType.Hit);
 		if (isArea)
 		{
 			this.m_stageChipAddMaxHp += num * num7;
@@ -1741,6 +1794,7 @@ public class CharacterStateControl
 			this.m_stageChipAddDefencePower += num3 * num7;
 			this.m_stageChipAddSpecialAttackPower += num4 * num7;
 			this.m_stageChipAddSpecialDefencePower += num5 * num7;
+			this.m_stageChipAddSpeed += num6 * num7;
 		}
 		else
 		{
@@ -1749,8 +1803,8 @@ public class CharacterStateControl
 			this.m_chipAddDefencePower += num3 * num7;
 			this.m_chipAddSpecialAttackPower += num4 * num7;
 			this.m_chipAddSpecialDefencePower += num5 * num7;
+			this.m_chipAddSpeed += num6 * num7;
 		}
-		this.m_chipAddSpeed += num6 * num7;
 		this.m_chipAddCritical += chipEffectValueToFloat * (float)num7;
 		this.m_chipAddHit += chipEffectValueToFloat2 * (float)num7;
 	}
@@ -1766,7 +1820,7 @@ public class CharacterStateControl
 				foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipEffectData)
 				{
 					int num3 = chipEffect.monsterGroupId.ToInt32();
-					if (num3 <= 0 || num3 == this.prefabId.ToInt32())
+					if (num3 <= 0 || num3 == this.groupId.ToInt32())
 					{
 						if (chipEffect.effectType.ToInt32() == 57)
 						{
@@ -1806,7 +1860,24 @@ public class CharacterStateControl
 										int key = num5 = num4;
 										num5 = dictionary2[num5];
 										dictionary[key] = num5 - 1;
-										this._currentHp = Mathf.Clamp(chipEffect.effectValue.ToInt32(), 1, maxHp);
+										int value;
+										if (chipEffect.effectSubType.ToInt32() == 1)
+										{
+											value = chipEffect.effectValue.ToInt32();
+										}
+										else if (chipEffect.effectSubType.ToInt32() == 2)
+										{
+											value = chipEffect.effectValue.ToInt32();
+										}
+										else if (chipEffect.effectSubType.ToInt32() == 3)
+										{
+											value = (int)((float)this._maxHp * chipEffect.effectValue.ToFloat());
+										}
+										else
+										{
+											value = chipEffect.effectValue.ToInt32();
+										}
+										this._currentHp = Mathf.Clamp(value, 1, maxHp);
 										if (!this.stagingChipIdList.ContainsKey(num4))
 										{
 											this.stagingChipIdList.Add(num4, num2);
@@ -1815,7 +1886,24 @@ public class CharacterStateControl
 								}
 								else
 								{
-									this._currentHp = Mathf.Clamp(chipEffect.effectValue.ToInt32(), 1, maxHp);
+									int value2;
+									if (chipEffect.effectSubType.ToInt32() == 1)
+									{
+										value2 = chipEffect.effectValue.ToInt32();
+									}
+									else if (chipEffect.effectSubType.ToInt32() == 2)
+									{
+										value2 = chipEffect.effectValue.ToInt32();
+									}
+									else if (chipEffect.effectSubType.ToInt32() == 3)
+									{
+										value2 = (int)((float)this._maxHp * chipEffect.effectValue.ToFloat());
+									}
+									else
+									{
+										value2 = chipEffect.effectValue.ToInt32();
+									}
+									this._currentHp = Mathf.Clamp(value2, 1, maxHp);
 									if (!this.stagingChipIdList.ContainsKey(num4))
 									{
 										this.stagingChipIdList.Add(num4, num2);
@@ -1838,6 +1926,31 @@ public class CharacterStateControl
 			Dictionary<int, int> dictionary = dictionary2 = this.chipEffectCount;
 			int num = dictionary2[chipEffectId];
 			dictionary[chipEffectId] = num + value;
+		}
+	}
+
+	public void InitChipEffectCountForWave()
+	{
+		this.InitChipEffectCount("1");
+	}
+
+	public void InitChipEffectCountForTurn()
+	{
+		this.InitChipEffectCount("2");
+	}
+
+	private void InitChipEffectCount(string value)
+	{
+		foreach (int num in this.chipIds)
+		{
+			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(num.ToString());
+			foreach (GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect in chipEffectData)
+			{
+				if (chipEffect.effectTurnType == value && this.chipEffectCount.ContainsKey(chipEffect.chipEffectId.ToInt32()))
+				{
+					this.chipEffectCount[chipEffect.chipEffectId.ToInt32()] = chipEffect.effectTurn.ToInt32();
+				}
+			}
 		}
 	}
 

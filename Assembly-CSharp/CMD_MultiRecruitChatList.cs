@@ -13,15 +13,15 @@ public class CMD_MultiRecruitChatList : CMD
 	[SerializeField]
 	private GameObject partChatList;
 
-	[SerializeField]
 	[Header("デフォルトメッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[Header("全選択ボタン")]
 	[SerializeField]
+	[Header("全選択ボタン")]
 	private GameObject goBtnSelectAll;
 
 	[SerializeField]

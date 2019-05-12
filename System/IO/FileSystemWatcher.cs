@@ -167,8 +167,8 @@ namespace System.IO
 			}
 		}
 
-		[Conditional("DEBUG")]
 		[Conditional("TRACE")]
+		[Conditional("DEBUG")]
 		private void ShowWatcherInfo()
 		{
 			Console.WriteLine("Watcher implementation: {0}", (FileSystemWatcher.watcher == null) ? "<none>" : FileSystemWatcher.watcher.GetType().ToString());
@@ -275,10 +275,10 @@ namespace System.IO
 		/// <summary>Gets or sets the filter string used to determine what files are monitored in a directory.</summary>
 		/// <returns>The filter string. The default is "*.*" (Watches all files.) </returns>
 		/// <filterpriority>2</filterpriority>
+		[IODescription("File name filter pattern")]
+		[System.ComponentModel.DefaultValue("*.*")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
 		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		[System.ComponentModel.DefaultValue("*.*")]
-		[IODescription("File name filter pattern")]
 		public string Filter
 		{
 			get
@@ -388,11 +388,11 @@ namespace System.IO
 		/// <returns>The path to monitor. The default is an empty string ("").</returns>
 		/// <exception cref="T:System.ArgumentException">The specified path does not exist or could not be found.-or- The specified path contains wildcard characters.-or- The specified path contains invalid path characters.</exception>
 		/// <filterpriority>2</filterpriority>
-		[IODescription("The directory to monitor")]
-		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		[System.ComponentModel.DefaultValue("")]
-		[System.ComponentModel.Editor("System.Diagnostics.Design.FSWPathEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
+		[System.ComponentModel.DefaultValue("")]
+		[IODescription("The directory to monitor")]
+		[System.ComponentModel.Editor("System.Diagnostics.Design.FSWPathEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string Path
 		{
 			get
@@ -452,9 +452,9 @@ namespace System.IO
 		/// <summary>Gets or sets the object used to marshal the event handler calls issued as a result of a directory change.</summary>
 		/// <returns>The <see cref="T:System.ComponentModel.ISynchronizeInvoke" /> that represents the object used to marshal the event handler calls issued as a result of a directory change. The default is null.</returns>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.Browsable(false)]
 		[IODescription("The object used to marshal the event handler calls resulting from a directory change")]
 		[System.ComponentModel.DefaultValue(null)]
-		[System.ComponentModel.Browsable(false)]
 		public System.ComponentModel.ISynchronizeInvoke SynchronizingObject
 		{
 			get

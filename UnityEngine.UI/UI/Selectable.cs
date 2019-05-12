@@ -5,10 +5,10 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.UI
 {
+	[DisallowMultipleComponent]
 	[SelectionBase]
 	[ExecuteInEditMode]
 	[AddComponentMenu("UI/Selectable", 70)]
-	[DisallowMultipleComponent]
 	public class Selectable : UIBehaviour, IEventSystemHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ISelectHandler, IDeselectHandler, IMoveHandler
 	{
 		private static List<Selectable> s_List = new List<Selectable>();
@@ -17,8 +17,8 @@ namespace UnityEngine.UI
 		[FormerlySerializedAs("navigation")]
 		private Navigation m_Navigation = Navigation.defaultNavigation;
 
-		[SerializeField]
 		[FormerlySerializedAs("transition")]
+		[SerializeField]
 		private Selectable.Transition m_Transition = Selectable.Transition.ColorTint;
 
 		[FormerlySerializedAs("colors")]
@@ -29,12 +29,12 @@ namespace UnityEngine.UI
 		[FormerlySerializedAs("spriteState")]
 		private SpriteState m_SpriteState;
 
-		[FormerlySerializedAs("animationTriggers")]
 		[SerializeField]
+		[FormerlySerializedAs("animationTriggers")]
 		private AnimationTriggers m_AnimationTriggers = new AnimationTriggers();
 
-		[Tooltip("Can the Selectable be interacted with?")]
 		[SerializeField]
+		[Tooltip("Can the Selectable be interacted with?")]
 		private bool m_Interactable = true;
 
 		[SerializeField]
@@ -68,7 +68,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (SetPropertyUtility.SetStruct<Navigation>(ref this.m_Navigation, value))
+				if (SetPropertyUtility.SetEquatableStruct<Navigation>(ref this.m_Navigation, value))
 				{
 					this.OnSetProperty();
 				}
@@ -98,7 +98,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (SetPropertyUtility.SetStruct<ColorBlock>(ref this.m_Colors, value))
+				if (SetPropertyUtility.SetEquatableStruct<ColorBlock>(ref this.m_Colors, value))
 				{
 					this.OnSetProperty();
 				}
@@ -113,7 +113,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				if (SetPropertyUtility.SetStruct<SpriteState>(ref this.m_SpriteState, value))
+				if (SetPropertyUtility.SetEquatableStruct<SpriteState>(ref this.m_SpriteState, value))
 				{
 					this.OnSetProperty();
 				}
@@ -160,6 +160,10 @@ namespace UnityEngine.UI
 			{
 				if (SetPropertyUtility.SetStruct<bool>(ref this.m_Interactable, value))
 				{
+					if (this.m_Interactable && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == base.gameObject)
+					{
+						EventSystem.current.SetSelectedGameObject(null);
+					}
 					this.OnSetProperty();
 				}
 			}
@@ -577,7 +581,7 @@ namespace UnityEngine.UI
 			{
 				return;
 			}
-			if (this.IsInteractable() && this.navigation.mode != Navigation.Mode.None)
+			if (this.IsInteractable() && this.navigation.mode != Navigation.Mode.None && EventSystem.current != null)
 			{
 				EventSystem.current.SetSelectedGameObject(base.gameObject, eventData);
 			}
@@ -621,7 +625,7 @@ namespace UnityEngine.UI
 
 		public virtual void Select()
 		{
-			if (EventSystem.current.alreadySelecting)
+			if (EventSystem.current == null || EventSystem.current.alreadySelecting)
 			{
 				return;
 			}

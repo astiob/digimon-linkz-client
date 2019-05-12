@@ -46,16 +46,16 @@ public class UIPanel : UIRect
 	[HideInInspector]
 	private Texture2D mClipTexture;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mAlpha = 1f;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIDrawCall.Clipping mClipping;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mClipRange = new Vector4(0f, 0f, 300f, 200f);
 
 	[SerializeField]

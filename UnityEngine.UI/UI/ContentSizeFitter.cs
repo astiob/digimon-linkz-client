@@ -3,9 +3,9 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
+	[ExecuteInEditMode]
 	[AddComponentMenu("Layout/Content Size Fitter", 141)]
 	[RequireComponent(typeof(RectTransform))]
-	[ExecuteInEditMode]
 	public class ContentSizeFitter : UIBehaviour, ILayoutController, ILayoutSelfController
 	{
 		[SerializeField]
@@ -88,6 +88,7 @@ namespace UnityEngine.UI
 			ContentSizeFitter.FitMode fitMode = (axis != 0) ? this.verticalFit : this.horizontalFit;
 			if (fitMode == ContentSizeFitter.FitMode.Unconstrained)
 			{
+				this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.None);
 				return;
 			}
 			this.m_Tracker.Add(this, this.rectTransform, (axis != 0) ? DrivenTransformProperties.SizeDeltaY : DrivenTransformProperties.SizeDeltaX);

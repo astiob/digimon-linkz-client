@@ -2,9 +2,6 @@
 
 namespace UnityEngine.Rendering
 {
-	/// <summary>
-	///   <para>Identifies a RenderTexture for a Rendering.CommandBuffer.</para>
-	/// </summary>
 	public struct RenderTargetIdentifier
 	{
 		private BuiltinRenderTextureType m_Type;
@@ -13,13 +10,6 @@ namespace UnityEngine.Rendering
 
 		private int m_InstanceID;
 
-		/// <summary>
-		///   <para>Creates a render target identifier.</para>
-		/// </summary>
-		/// <param name="rt">RenderTexture object to use.</param>
-		/// <param name="type">Built-in temporary render texture type.</param>
-		/// <param name="name">Temporary render texture name.</param>
-		/// <param name="nameID">Temporary render texture name (as integer, see Shader.PropertyToID).</param>
 		public RenderTargetIdentifier(BuiltinRenderTextureType type)
 		{
 			this.m_Type = type;
@@ -27,13 +17,6 @@ namespace UnityEngine.Rendering
 			this.m_InstanceID = 0;
 		}
 
-		/// <summary>
-		///   <para>Creates a render target identifier.</para>
-		/// </summary>
-		/// <param name="rt">RenderTexture object to use.</param>
-		/// <param name="type">Built-in temporary render texture type.</param>
-		/// <param name="name">Temporary render texture name.</param>
-		/// <param name="nameID">Temporary render texture name (as integer, see Shader.PropertyToID).</param>
 		public RenderTargetIdentifier(string name)
 		{
 			this.m_Type = BuiltinRenderTextureType.None;
@@ -41,13 +24,6 @@ namespace UnityEngine.Rendering
 			this.m_InstanceID = 0;
 		}
 
-		/// <summary>
-		///   <para>Creates a render target identifier.</para>
-		/// </summary>
-		/// <param name="rt">RenderTexture object to use.</param>
-		/// <param name="type">Built-in temporary render texture type.</param>
-		/// <param name="name">Temporary render texture name.</param>
-		/// <param name="nameID">Temporary render texture name (as integer, see Shader.PropertyToID).</param>
 		public RenderTargetIdentifier(int nameID)
 		{
 			this.m_Type = BuiltinRenderTextureType.None;
@@ -55,13 +31,6 @@ namespace UnityEngine.Rendering
 			this.m_InstanceID = 0;
 		}
 
-		/// <summary>
-		///   <para>Creates a render target identifier.</para>
-		/// </summary>
-		/// <param name="rt">RenderTexture object to use.</param>
-		/// <param name="type">Built-in temporary render texture type.</param>
-		/// <param name="name">Temporary render texture name.</param>
-		/// <param name="nameID">Temporary render texture name (as integer, see Shader.PropertyToID).</param>
 		public RenderTargetIdentifier(RenderTexture rt)
 		{
 			this.m_Type = BuiltinRenderTextureType.None;

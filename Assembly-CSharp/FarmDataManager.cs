@@ -21,8 +21,6 @@ public static class FarmDataManager
 
 	public static List<FacilityChipM> facilityChipFieldMaster;
 
-	public static List<MonsterFixidM> monsterFixidMaster;
-
 	public static List<FacilityWarehouseM> facilityWarehouseMaster;
 
 	public static List<FacilityExpUpM> facilityExpUpMaster;
@@ -120,11 +118,6 @@ public static class FarmDataManager
 		{
 			FarmDataManager.InitList<FacilityChipM>(ref FarmDataManager.facilityChipFieldMaster);
 			FarmDataManager.facilityChipFieldMaster.AddRange(((GameWebAPI.RespDataMA_GetFacilityChipM)response).facilityChipM);
-		}
-		else if (typeof(GameWebAPI.RespDataMA_MonsterFixidM) == response.GetType())
-		{
-			FarmDataManager.InitList<MonsterFixidM>(ref FarmDataManager.monsterFixidMaster);
-			FarmDataManager.monsterFixidMaster.AddRange(((GameWebAPI.RespDataMA_MonsterFixidM)response).monsterFixedValueM);
 		}
 	}
 

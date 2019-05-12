@@ -5,45 +5,7 @@ using UnityExtension;
 
 public class BattleSkillDetails : BattleFunctionBase
 {
-	public const int OneTargetLength = 1;
-
 	public const int IsDiedCounterReflectionDamage = -1;
-
-	public bool IsFirstSkillDetails(int detailsIndex)
-	{
-		return detailsIndex == 0;
-	}
-
-	public bool IsProtectEnableSkill(AffectEffect affectEffect)
-	{
-		return affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage;
-	}
-
-	public CharacterStateControl[] GetProtectCharacters(CharacterStateControl[] isTargetsStatus, AffectEffectProperty currentSuffer)
-	{
-		if (this.IsProtectEnableSkill(currentSuffer.type))
-		{
-			List<CharacterStateControl> list = new List<CharacterStateControl>();
-			for (int i = 0; i < isTargetsStatus.Length; i++)
-			{
-				if (!isTargetsStatus[i].isDied && isTargetsStatus[i].currentSufferState.FindSufferState(SufferStateProperty.SufferType.Protect))
-				{
-					list.Add(isTargetsStatus[i]);
-				}
-			}
-			if (list.Count > 0)
-			{
-				CharacterStateControl[] array = CharacterStateControlSorter.SortedSufferStateGenerateStartTiming(list.ToArray(), SufferStateProperty.SufferType.Protect);
-				list.Clear();
-				for (int j = 0; j < isTargetsStatus.Length; j++)
-				{
-					list.Add(array[0]);
-				}
-				return list.ToArray();
-			}
-		}
-		return null;
-	}
 
 	public void NotToCounterReflectionMonsterWhoDiedOnTheWay(List<int[]> TotalCounterReflectionDamage)
 	{

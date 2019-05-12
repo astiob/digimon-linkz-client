@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Title
 {
-	public class AgreementConsent
+	public sealed class AgreementConsent
 	{
 		private bool agreement;
 

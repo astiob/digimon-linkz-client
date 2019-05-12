@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using UnityEngine.Internal;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>The BitStream class represents seralized variables, packed into a stream.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	public sealed class BitStream
 	{
 		internal IntPtr m_Ptr;
@@ -128,14 +127,8 @@ namespace UnityEngine
 			this.Serializen(ref viewID);
 		}
 
-		/// <summary>
-		///   <para>Is the BitStream currently being read? (Read Only)</para>
-		/// </summary>
 		public extern bool isReading { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
-		/// <summary>
-		///   <para>Is the BitStream currently being written? (Read Only)</para>
-		/// </summary>
 		public extern bool isWriting { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
 		[WrapperlessIcall]

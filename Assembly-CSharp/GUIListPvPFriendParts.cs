@@ -72,7 +72,7 @@ public class GUIListPvPFriendParts : GUIListPartBS
 		MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.friendData.monsterData.monsterId);
 		if (monsterData != null)
 		{
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.goMonsterIcon.transform.localScale, this.goMonsterIcon.transform.localPosition, this.goMonsterIcon.transform.parent, true, false);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.goMonsterIcon.transform.localScale, this.goMonsterIcon.transform.localPosition, this.goMonsterIcon.transform.parent, true, false);
 			DepthController depthController = guimonsterIcon.GetDepthController();
 			depthController.AddWidgetDepth(guimonsterIcon.transform, 1800);
 		}

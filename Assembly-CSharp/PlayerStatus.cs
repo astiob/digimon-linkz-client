@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,8 +8,8 @@ public class PlayerStatus : CharacterStatus
 	[SerializeField]
 	private int _luck = 1;
 
-	[FormerlySerializedAs("_rarity")]
 	[SerializeField]
+	[FormerlySerializedAs("_rarity")]
 	private int _arousal;
 
 	[SerializeField]
@@ -22,24 +21,11 @@ public class PlayerStatus : CharacterStatus
 	[SerializeField]
 	private FriendshipStatus _friendshipStatus;
 
-	public PlayerStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, int luck, string deathblowId, string inheritanceTechniqueId, string inheritanceTechniqueId2, string leaderSkillId, string thumbnailId, Talent talent, int arousal, FriendshipStatus friendshipStatus, int[] chipIds) : base(prefabId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, toleranceId, tolerance, chipIds)
+	public PlayerStatus(string userMonsterId, string prefabId, string groupId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, Tolerance tolerance, int luck, string leaderSkillId, string thumbnailId, Talent talent, int arousal, FriendshipStatus friendshipStatus, string[] skillIds, int[] chipIds, string[] monsterIntegrationIds) : base(prefabId, groupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, tolerance, skillIds, chipIds, monsterIntegrationIds)
 	{
+		this.userMonsterId = userMonsterId;
 		this._luck = luck;
 		this._arousal = arousal;
-		List<string> list = new List<string>();
-		if (!string.IsNullOrEmpty(deathblowId))
-		{
-			list.Add(deathblowId);
-		}
-		if (!string.IsNullOrEmpty(inheritanceTechniqueId))
-		{
-			list.Add(inheritanceTechniqueId);
-		}
-		if (!string.IsNullOrEmpty(inheritanceTechniqueId2) && inheritanceTechniqueId2 != "0")
-		{
-			list.Add(inheritanceTechniqueId2);
-		}
-		base.skillIds = list.ToArray();
 		this._leaderSkillId = leaderSkillId;
 		this._thumbnailId = thumbnailId;
 		this._talent = talent;
@@ -62,6 +48,8 @@ public class PlayerStatus : CharacterStatus
 		this._friendshipStatus = new FriendshipStatus();
 	}
 
+	public string userMonsterId { get; private set; }
+
 	public int luck
 	{
 		get
@@ -75,22 +63,6 @@ public class PlayerStatus : CharacterStatus
 		get
 		{
 			return this._arousal;
-		}
-	}
-
-	public string deathblowId
-	{
-		get
-		{
-			return base.skillIds[0];
-		}
-	}
-
-	public string inheritanceTechniqueId
-	{
-		get
-		{
-			return base.skillIds[1];
 		}
 	}
 

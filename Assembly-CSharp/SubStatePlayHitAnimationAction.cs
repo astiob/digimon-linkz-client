@@ -18,6 +18,11 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	protected override IEnumerator MainRoutine()
 	{
+		IEnumerator skillHitStart = this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillHitStart);
+		while (skillHitStart.MoveNext())
+		{
+			yield return null;
+		}
 		CharacterStateControl currentCharacter = (CharacterStateControl)base.battleStateData.sendValues["currentCharacter"];
 		CharacterStateControl[] isTargetsStatus = base.battleStateData.sendValues["isTargetsStatus"] as CharacterStateControl[];
 		AffectEffect affectEffect = (AffectEffect)((int)base.battleStateData.sendValues["affectEffect"]);
@@ -81,10 +86,14 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 					}
 					else if (!onMissHit[i])
 					{
-						AffectEffect affectEffect2 = affectEffect;
-						switch (affectEffect2)
+						switch (affectEffect)
 						{
 						case AffectEffect.Damage:
+						case AffectEffect.ReferenceTargetHpRate:
+						case AffectEffect.HpBorderlineDamage:
+						case AffectEffect.HpBorderlineSpDamage:
+						case AffectEffect.DefenseThroughDamage:
+						case AffectEffect.SpDefenseThroughDamage:
 						{
 							Strength strength = isTargetsStatus[i].tolerance.GetAttributeStrength(status.attribute);
 							if (strength == Strength.Weak)
@@ -110,27 +119,38 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							}
 							break;
 						}
-						default:
-							switch (affectEffect2)
-							{
-							case AffectEffect.ReferenceTargetHpRate:
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
-								{
-									isTargetsStatus[i]
-								});
-								break;
-							case AffectEffect.ApDrain:
-								goto IL_642;
-							case AffectEffect.HpBorderlineDamage:
-								base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
-								{
-									isTargetsStatus[i]
-								});
-								break;
-							default:
-								goto IL_642;
-							}
-							break;
+						case AffectEffect.AttackUp:
+						case AffectEffect.DefenceUp:
+						case AffectEffect.SpAttackUp:
+						case AffectEffect.SpDefenceUp:
+						case AffectEffect.SpeedUp:
+						case AffectEffect.CorrectionDownReset:
+						case AffectEffect.HpRevival:
+						case AffectEffect.Counter:
+						case AffectEffect.Reflection:
+						case AffectEffect.Protect:
+						case AffectEffect.HateDown:
+						case AffectEffect.PowerCharge:
+						case AffectEffect.Destruct:
+						case AffectEffect.HitRateUp:
+						case AffectEffect.InstantDeath:
+						case AffectEffect.SufferStatusClear:
+						case AffectEffect.SatisfactionRateUp:
+						case AffectEffect.ApRevival:
+						case AffectEffect.ApUp:
+						case AffectEffect.ApConsumptionDown:
+						case AffectEffect.CountGuard:
+						case AffectEffect.TurnBarrier:
+						case AffectEffect.CountBarrier:
+						case AffectEffect.Invalid:
+						case AffectEffect.Recommand:
+						case AffectEffect.DamageRateUp:
+						case AffectEffect.DamageRateDown:
+						case AffectEffect.Regenerate:
+						case AffectEffect.TurnEvasion:
+						case AffectEffect.CountEvasion:
+						case AffectEffect.ApDrain:
+							goto IL_652;
 						case AffectEffect.AttackDown:
 						case AffectEffect.DefenceDown:
 						case AffectEffect.SpAttackDown:
@@ -153,14 +173,11 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 								isTargetsStatus[i]
 							});
 							break;
-						case AffectEffect.Counter:
-						case AffectEffect.Reflection:
-						case AffectEffect.PowerCharge:
-						case AffectEffect.Destruct:
-							goto IL_642;
+						default:
+							goto IL_652;
 						}
-						goto IL_6A4;
-						IL_642:
+						goto IL_6B4;
+						IL_652:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							isTargetsStatus[i]
@@ -173,7 +190,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							isTargetsStatus[i]
 						});
 					}
-					IL_6A4:;
+					IL_6B4:;
 				}
 				else
 				{
@@ -231,13 +248,18 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 			yield return null;
 		}
 		base.battleStateData.stopHitAnimation = base.stateManager.threeDAction.StopHitAnimation(this.currentHitEffect);
+		IEnumerator skillHitEnd = this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.SkillHitEnd);
+		while (skillHitEnd.MoveNext())
+		{
+			yield return null;
+		}
 		yield break;
 	}
 
 	private HitEffectParams[] GetHitEffectParams(AffectEffect affectEffect, CharacterStateControl[] isTargetsStatus, AffectEffectProperty status, ExtraEffectType extraEffectType)
 	{
 		HitEffectParams[] result;
-		if (affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage)
+		if (AffectEffectProperty.IsDamage(affectEffect))
 		{
 			if (!base.stateManager.onEnableTutorial && extraEffectType == ExtraEffectType.Up)
 			{
@@ -272,10 +294,6 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 					else if (affectEffect == AffectEffect.ReferenceTargetHpRate)
 					{
 						item = base.battleStateData.hitEffects.GetObject(AffectEffect.ReferenceTargetHpRate.ToString())[i];
-					}
-					else if (affectEffect == AffectEffect.HpBorderlineDamage)
-					{
-						item = base.battleStateData.GetDamageEffect(Strength.None)[i];
 					}
 					else
 					{
@@ -339,7 +357,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	private bool CheckBarrier(CharacterStateControl characterStateControl, AffectEffect affectEffect)
 	{
-		bool flag = affectEffect == AffectEffect.Damage;
+		bool flag = AffectEffectProperty.IsDamage(affectEffect);
 		bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(affectEffect);
 		bool isActive = characterStateControl.currentSufferState.onTurnBarrier.isActive;
 		bool isActive2 = characterStateControl.currentSufferState.onCountBarrier.isActive;
@@ -348,7 +366,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	private bool CheckEvasion(CharacterStateControl characterStateControl, AffectEffect affectEffect)
 	{
-		bool flag = affectEffect == AffectEffect.Damage;
+		bool flag = AffectEffectProperty.IsDamage(affectEffect);
 		bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(affectEffect);
 		bool isActive = characterStateControl.currentSufferState.onTurnEvasion.isActive;
 		bool isActive2 = characterStateControl.currentSufferState.onCountEvasion.isActive;
@@ -357,7 +375,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 
 	private bool CheckInvalid(CharacterStateControl characterStateControl, AffectEffect affectEffect, AffectEffectProperty status)
 	{
-		bool flag = affectEffect == AffectEffect.Damage;
+		bool flag = AffectEffectProperty.IsDamage(affectEffect);
 		bool flag2 = Tolerance.OnInfluenceToleranceAffectEffect(affectEffect);
 		Tolerance tolerance = characterStateControl.tolerance;
 		if (flag)
@@ -371,6 +389,17 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 			return affectEffectStrength == Strength.Invalid;
 		}
 		return false;
+	}
+
+	private IEnumerator PlayAdventureScene(BattleAdventureSceneManager.TriggerType triggerType)
+	{
+		base.stateManager.battleAdventureSceneManager.OnTrigger(triggerType);
+		IEnumerator Update = base.stateManager.battleAdventureSceneManager.Update();
+		while (Update.MoveNext())
+		{
+			yield return null;
+		}
+		yield break;
 	}
 
 	protected override void DisabledThisState()

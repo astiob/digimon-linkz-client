@@ -34,7 +34,7 @@ public sealed class BattleResultFriendReqInfo : MonoBehaviour
 		this.TXT_LV.text = leader_lv.ToString();
 		TitleDataMng.SetTitleIcon(title_id, this.titleIcon);
 		MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(leader_monster_id);
-		GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.iconAnchor.localScale, this.iconAnchor.localPosition, this.iconAnchor.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.iconAnchor.localScale, this.iconAnchor.localPosition, this.iconAnchor.parent, true, false);
 		guimonsterIcon.name = "DigimonIcon";
 		UIWidget[] componentsInChildren = guimonsterIcon.GetComponentsInChildren<UIWidget>();
 		foreach (UIWidget uiwidget in componentsInChildren)

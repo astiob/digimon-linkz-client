@@ -15,27 +15,12 @@ public class FarmColosseum : MonoBehaviour
 	[SerializeField]
 	private GameObject[] colosseums;
 
-	[SerializeField]
-	private GameObject signalPresent;
-
-	private GameObject instantSignalPresent;
-
 	private List<FarmColosseum.Schedule> scheduleList = new List<FarmColosseum.Schedule>();
 
 	public void Awake()
 	{
 		base.gameObject.tag = "Farm.Other";
 		FarmRoot.Instance.Input.AddTouchEndEvent(new Action<InputControll, bool>(this.OnTouchUp));
-		this.instantSignalPresent = UnityEngine.Object.Instantiate<GameObject>(this.signalPresent);
-	}
-
-	private void OnDestroy()
-	{
-		if (this.instantSignalPresent != null)
-		{
-			UnityEngine.Object.Destroy(this.instantSignalPresent);
-			this.instantSignalPresent = null;
-		}
 	}
 
 	private void Update()
@@ -59,17 +44,6 @@ public class FarmColosseum : MonoBehaviour
 			{
 				this.CreateSignalColosseumEvent();
 			}
-		}
-		GameWebAPI.RespDataCL_GetColosseumReward respData_ColosseumReward = DataMng.Instance().RespData_ColosseumReward;
-		bool flag2 = respData_ColosseumReward != null && respData_ColosseumReward.rewardList != null;
-		Vector3 position = FarmRoot.Instance.Camera.WorldToScreenPoint(base.gameObject.transform.position);
-		Vector3 position2 = GUIManager.gUICamera.ScreenToWorldPoint(position);
-		position2.z = 0f;
-		this.instantSignalPresent.transform.position = position2;
-		this.instantSignalPresent.transform.localPosition += new Vector3(0f, 20f, 0f);
-		if (this.instantSignalPresent.activeSelf != flag2)
-		{
-			this.instantSignalPresent.SetActive(flag2);
 		}
 	}
 

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleSkillSelect : MonoBehaviour
 {
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
 	[Header("エモーション送信機能（マルチ）")]
@@ -24,20 +24,20 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	public RemainingTurn remainingTurnMiddle;
 
-	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
 	[SerializeField]
+	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
 	public GameObject skillButtonRoot;
 
-	[Header("コライダー")]
 	[SerializeField]
+	[Header("コライダー")]
 	private Collider[] colliderValues;
 
 	[Header("タッチ判定")]
 	[SerializeField]
 	public UITouchChecker[] touchChecker;
 
-	[Header("スキル説明1の命中率のローカライズ")]
 	[SerializeField]
+	[Header("スキル説明1の命中率のローカライズ")]
 	private UILabel skillDesc1HitRateLocalize;
 
 	[Header("スキル説明2の命中率のローカライズ")]
@@ -48,24 +48,24 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	private UILabel skillDesc1PowerLocalize;
 
-	[Header("スキル説明2の威力のローカライズ")]
 	[SerializeField]
+	[Header("スキル説明2の威力のローカライズ")]
 	private UILabel skillDesc2PowerLocalize;
 
 	[SerializeField]
 	[Header("Leftの親")]
 	private Transform leftParent;
 
-	[Header("スキルボタン")]
 	[SerializeField]
+	[Header("スキルボタン")]
 	public BattleSkillBtn[] skillButton;
 
 	[Header("デジモンボタン")]
 	[SerializeField]
 	public BattleMonsterButton[] monsterButton;
 
-	[SerializeField]
 	[Header("アタックタイマー")]
+	[SerializeField]
 	public AttackTime attackTime;
 
 	private void Awake()

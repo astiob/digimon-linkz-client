@@ -35,6 +35,7 @@ namespace UnityEngine.Networking
 			this.InitMaxCombinedReliableMessageCount(config.MaxCombinedReliableMessageCount);
 			this.InitMaxSentMessageQueueSize(config.MaxSentMessageQueueSize);
 			this.InitIsAcksLong(config.IsAcksLong);
+			this.InitUsePlatformSpecificProtocols(config.UsePlatformSpecificProtocols);
 			byte b = 0;
 			while ((int)b < config.ChannelCount)
 			{
@@ -124,6 +125,10 @@ namespace UnityEngine.Networking
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void InitIsAcksLong(bool value);
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public extern void InitUsePlatformSpecificProtocols(bool value);
 
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]

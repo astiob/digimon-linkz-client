@@ -70,6 +70,8 @@ public class CharacterParams : MonoBehaviour
 
 	private bool _isVisibleRenderer = true;
 
+	private MaterialController[] materialControllers = new MaterialController[0];
+
 	private CharacterStateControl _characterStateControl;
 
 	public ShadowParams shadowObject { get; private set; }
@@ -195,6 +197,11 @@ public class CharacterParams : MonoBehaviour
 				list.Add(item2);
 			}
 			this._isHavingRenderers = list.ToArray();
+			MaterialController[] componentsInChildren3 = base.GetComponentsInChildren<MaterialController>(true);
+			if (componentsInChildren3 != null)
+			{
+				this.materialControllers = componentsInChildren3;
+			}
 		}
 		this.characterDeadEffect = new CharacterDeadEffect(this);
 		this.attachEffectLocators = new Dictionary<string, Transform>();
@@ -570,6 +577,10 @@ public class CharacterParams : MonoBehaviour
 		if (this.shadowObject != null)
 		{
 			this.shadowObject.shadowEnable = value;
+		}
+		foreach (MaterialController materialController in this.materialControllers)
+		{
+			materialController.enabled = value;
 		}
 	}
 

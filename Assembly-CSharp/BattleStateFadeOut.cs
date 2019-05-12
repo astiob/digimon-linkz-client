@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleStateFadeOut : BattleStateController
 {
@@ -33,7 +34,7 @@ public class BattleStateFadeOut : BattleStateController
 		else
 		{
 			this.BattleEndResourcesCleaning();
-			Application.LoadLevelAsync(BattleStateManager.BattleSceneName);
+			SceneManager.LoadSceneAsync(BattleStateManager.BattleSceneName);
 		}
 	}
 

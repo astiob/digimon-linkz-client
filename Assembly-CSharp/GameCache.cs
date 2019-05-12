@@ -9,7 +9,7 @@ public static class GameCache
 	{
 		try
 		{
-			GameCache.<ClearCache>c__AnonStorey431 <ClearCache>c__AnonStorey = new GameCache.<ClearCache>c__AnonStorey431();
+			GameCache.<ClearCache>c__AnonStorey455 <ClearCache>c__AnonStorey = new GameCache.<ClearCache>c__AnonStorey455();
 			DirectoryInfo directoryInfo = new DirectoryInfo(Application.persistentDataPath);
 			<ClearCache>c__AnonStorey.fileInfoList = directoryInfo.GetFiles();
 			int i;

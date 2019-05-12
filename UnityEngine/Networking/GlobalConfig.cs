@@ -2,9 +2,6 @@
 
 namespace UnityEngine.Networking
 {
-	/// <summary>
-	///   <para>Defines global paramters for network library.</para>
-	/// </summary>
 	[Serializable]
 	public class GlobalConfig
 	{
@@ -23,9 +20,6 @@ namespace UnityEngine.Networking
 		[SerializeField]
 		private ushort m_MaxPacketSize;
 
-		/// <summary>
-		///   <para>Create new global config object.</para>
-		/// </summary>
 		public GlobalConfig()
 		{
 			this.m_ThreadAwakeTimeout = 1u;
@@ -35,9 +29,6 @@ namespace UnityEngine.Networking
 			this.m_MaxPacketSize = 2000;
 		}
 
-		/// <summary>
-		///   <para>Defines (1) for select reactor, minimum time period, when system will check if there are any messages for send (2) for fixrate reactor, minimum interval of time, when system will check for sending and receiving messages.</para>
-		/// </summary>
 		public uint ThreadAwakeTimeout
 		{
 			get
@@ -54,9 +45,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Defines reactor model for the network library.</para>
-		/// </summary>
 		public ReactorModel ReactorModel
 		{
 			get
@@ -69,9 +57,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Defines maximum amount of messages in the receive queue.</para>
-		/// </summary>
 		public ushort ReactorMaximumReceivedMessages
 		{
 			get
@@ -84,9 +69,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Defines maximum message count in sent queue.</para>
-		/// </summary>
 		public ushort ReactorMaximumSentMessages
 		{
 			get
@@ -99,9 +81,6 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Defines maximum possible packet size in bytes for all network connections.</para>
-		/// </summary>
 		public ushort MaxPacketSize
 		{
 			get

@@ -53,6 +53,9 @@ public enum AffectEffect
 	ReferenceTargetHpRate,
 	ApDrain,
 	HpBorderlineDamage,
+	HpBorderlineSpDamage,
+	DefenseThroughDamage,
+	SpDefenseThroughDamage,
 	gimmickSpecialAttackUp,
 	gimmickSpecialAttackDown
 }

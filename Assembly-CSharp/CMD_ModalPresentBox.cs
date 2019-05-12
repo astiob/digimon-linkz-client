@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,19 +13,19 @@ public class CMD_ModalPresentBox : CMD
 	[Header("タイトルラベル")]
 	private UILabel lbTitle;
 
-	[Header("残り受取件数")]
 	[SerializeField]
+	[Header("残り受取件数")]
 	private UILabel lbSubtitle;
 
-	[Header("初期メッセージ")]
 	[SerializeField]
+	[Header("初期メッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("一括受取ボタン")]
+	[SerializeField]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]
@@ -36,8 +37,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnGetAll;
 
-	[Header("履歴ボタン")]
 	[SerializeField]
+	[Header("履歴ボタン")]
 	private GameObject goBtnHistory;
 
 	[SerializeField]
@@ -106,12 +107,12 @@ public class CMD_ModalPresentBox : CMD
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
 			APIRequestTask apirequestTask = Singleton<UserDataMng>.Instance.RequestPlayerInfo(true);
-			apirequestTask.Add(Singleton<UserDataMng>.Instance.RequestUserSoulData(true)).Add(DataMng.Instance().RequestUserMonster(null, true)).Add(DataMng.Instance().RequestMyPageData(true)).Add(ChipDataMng.RequestAPIChipList(true)).Add(ChipDataMng.RequestAPIMonsterSlotInfoList(true)).Add(TitleDataMng.RequestAPIUsetTitleList(true));
+			apirequestTask.Add(Singleton<UserDataMng>.Instance.RequestUserSoulData(true)).Add(this.RequestUserMonster()).Add(DataMng.Instance().RequestMyPageData(true)).Add(ChipDataMng.RequestAPIChipList(true)).Add(ChipDataMng.RequestAPIMonsterSlotInfoList(true)).Add(TitleDataMng.RequestAPIUsetTitleList(true));
 			base.StartCoroutine(apirequestTask.Run(delegate
 			{
 				GUIPlayerStatus.RefreshParams_S(true);
 				ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
-				MonsterDataMng.Instance().RefreshMonsterDataList();
+				ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 				RestrictionInput.EndLoad();
 				this.ClosePanel(animation);
 			}, null, null));
@@ -120,6 +121,17 @@ public class CMD_ModalPresentBox : CMD
 		{
 			base.ClosePanel(animation);
 		}
+	}
+
+	private APIRequestTask RequestUserMonster()
+	{
+		GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
+		requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
+		{
+			ClassSingleton<MonsterUserDataMng>.Instance.RefreshUserMonsterData(response.userMonsterList);
+		};
+		GameWebAPI.RequestMonsterList request = requestMonsterList;
+		return new APIRequestTask(request, true);
 	}
 
 	private void SetCommonUI()
@@ -298,22 +310,25 @@ public class CMD_ModalPresentBox : CMD
 	private void OnClickGetAll()
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		string[] receiveIds = new string[this.prizeDataList.prizeData.Length];
 		this.candidateList.Clear();
 		for (int i = 0; i < this.prizeDataList.prizeData.Length; i++)
 		{
 			this.candidateList.Add(this.prizeDataList.prizeData[i]);
+			receiveIds[i] = this.prizeDataList.prizeData[i].receiveId;
 		}
-		GameWebAPI.RequestPR_PrizeReceive requestPR_PrizeReceive = new GameWebAPI.RequestPR_PrizeReceive();
-		requestPR_PrizeReceive.SetSendData = delegate(GameWebAPI.PR_Req_PrizeReceiveIds param)
+		GameWebAPI.RequestPR_PrizeReceive request = new GameWebAPI.RequestPR_PrizeReceive
 		{
-			param.receiveType = 1;
-			param.page = "1";
+			SetSendData = delegate(GameWebAPI.PR_Req_PrizeReceiveIds param)
+			{
+				param.receiveType = 2;
+				param.receiveIds = receiveIds;
+			},
+			OnReceived = delegate(GameWebAPI.RespDataPR_PrizeReceiveIds response)
+			{
+				this.DispReceiveResultModal(response);
+			}
 		};
-		requestPR_PrizeReceive.OnReceived = delegate(GameWebAPI.RespDataPR_PrizeReceiveIds response)
-		{
-			this.DispReceiveResultModal(response);
-		};
-		GameWebAPI.RequestPR_PrizeReceive request = requestPR_PrizeReceive;
 		base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
@@ -333,13 +348,21 @@ public class CMD_ModalPresentBox : CMD
 
 	public void DispReceiveResultModal(GameWebAPI.RespDataPR_PrizeReceiveIds data)
 	{
+		if (data.resultCode != 1)
+		{
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage.Title = StringMaster.GetString("Present-13");
+			cmd_ModalMessage.Info = StringMaster.GetString(string.Format("PresentRecieveResultCode-{0}", data.resultCode));
+			cmd_ModalMessage.AdjustSize();
+			return;
+		}
 		this.SetAfterReceiveParams(data);
 		if (data.prizeReceiveIds.Length > 0)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.DispLimitResultModal), "CMD_ModalMessage") as CMD_ModalMessage;
-			cmd_ModalMessage.Title = StringMaster.GetString("Present-03");
-			cmd_ModalMessage.Info = this.GetPresentCountDescription(this.receivedPresentCountList);
-			cmd_ModalMessage.AdjustSize();
+			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.DispLimitResultModal), "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage2.Title = StringMaster.GetString("Present-03");
+			cmd_ModalMessage2.Info = this.GetPresentCountDescription(this.receivedPresentCountList);
+			cmd_ModalMessage2.AdjustSize();
 		}
 		else
 		{

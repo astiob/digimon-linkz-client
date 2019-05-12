@@ -3,14 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Renders a Sprite for 2D graphics.</para>
-	/// </summary>
 	public sealed class SpriteRenderer : Renderer
 	{
-		/// <summary>
-		///   <para>The Sprite to render.</para>
-		/// </summary>
 		public Sprite sprite
 		{
 			get
@@ -31,9 +25,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void SetSprite_INTERNAL(Sprite sprite);
 
-		/// <summary>
-		///   <para>Rendering color for the Sprite graphic.</para>
-		/// </summary>
 		public Color color
 		{
 			get
@@ -55,5 +46,9 @@ namespace UnityEngine
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_color(ref Color value);
+
+		public extern bool flipX { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
+
+		public extern bool flipY { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 	}
 }

@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Reflection;
+using UnityEngine.Scripting;
 using UnityEngineInternal;
 
 namespace UnityEngine.Events
 {
-	/// <summary>
-	///   <para>Two argument version of UnityEvent.</para>
-	/// </summary>
 	[Serializable]
 	public abstract class UnityEvent<T0, T1> : UnityEventBase
 	{
 		private readonly object[] m_InvokeArray = new object[2];
+
+		[RequiredByNativeCode]
+		public UnityEvent()
+		{
+		}
 
 		public void AddListener(UnityAction<T0, T1> call)
 		{

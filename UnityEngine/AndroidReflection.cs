@@ -16,6 +16,16 @@ namespace UnityEngine
 
 		private static IntPtr s_ReflectionHelperNewProxyInstance = AndroidReflection.GetStaticMethodID("com/unity3d/player/ReflectionHelper", "newProxyInstance", "(ILjava/lang/Class;)Ljava/lang/Object;");
 
+		public static bool IsPrimitive(Type t)
+		{
+			return t.IsPrimitive;
+		}
+
+		public static bool IsAssignableFrom(Type t, Type from)
+		{
+			return t.IsAssignableFrom(from);
+		}
+
 		private static IntPtr GetStaticMethodID(string clazz, string methodName, string signature)
 		{
 			IntPtr intPtr = AndroidJNISafe.FindClass(clazz);

@@ -23,17 +23,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Xml", "System.Xml\Sy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System", "System\System.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE6885796D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.Advertisements", "UnityEngine.Advertisements\UnityEngine.Advertisements.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE6885796F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextMeshPro", "TextMeshPro\TextMeshPro.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE6885796F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.Analytics", "UnityEngine.Analytics\UnityEngine.Analytics.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857970}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.Networking", "UnityEngine.Networking\UnityEngine.Networking.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.Networking", "UnityEngine.Networking\UnityEngine.Networking.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857972}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.UI", "UnityEngine.UI\UnityEngine.UI.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857972}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.UI", "UnityEngine.UI\UnityEngine.UI.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857973}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine", "UnityEngine\UnityEngine.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857970}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine", "UnityEngine\UnityEngine.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857971}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "websocket-sharp", "websocket-sharp\websocket-sharp.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857974}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "websocket-sharp", "websocket-sharp\websocket-sharp.csproj", "{6F8DAB99-2302-404C-AC7D-0ACE68857973}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,26 +87,22 @@ Global
 		{6F8DAB99-2302-404C-AC7D-0ACE6885796F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F8DAB99-2302-404C-AC7D-0ACE6885796F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F8DAB99-2302-404C-AC7D-0ACE6885796F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F8DAB99-2302-404C-AC7D-0ACE68857971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F8DAB99-2302-404C-AC7D-0ACE68857971}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F8DAB99-2302-404C-AC7D-0ACE68857971}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F8DAB99-2302-404C-AC7D-0ACE68857971}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857974}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857974}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F8DAB99-2302-404C-AC7D-0ACE68857974}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8DAB99-2302-404C-AC7D-0ACE68857973}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

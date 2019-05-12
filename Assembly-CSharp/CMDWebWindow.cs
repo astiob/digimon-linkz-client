@@ -9,9 +9,8 @@ using UnityEngine;
 
 public class CMDWebWindow : CMD, INpWebViewListener
 {
-	public GameObject goTXT_TITLE;
-
-	private GameStringsFont gsfTXT_TITLE;
+	[SerializeField]
+	private UILabel LB_TXT_TITLE;
 
 	private float defaultBgmVolume;
 
@@ -62,7 +61,6 @@ public class CMDWebWindow : CMD, INpWebViewListener
 	{
 		base.Awake();
 		this.defaultBgmVolume = SoundMng.Instance().VolumeBGM;
-		this.gsfTXT_TITLE = this.goTXT_TITLE.GetComponent<GameStringsFont>();
 		AlertManager.alertOpenedAction = new Action(this.alertOpenedAction);
 		CMDWebWindow.instance = this;
 	}
@@ -75,7 +73,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 	protected override void Update()
 	{
 		base.Update();
-		this.gsfTXT_TITLE.text = this.titleText;
+		this.LB_TXT_TITLE.text = this.titleText;
 		this.webWindowOpenWait += Time.deltaTime;
 	}
 

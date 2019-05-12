@@ -80,8 +80,6 @@ namespace BattleStateMachineInternal
 
 		private int _maxDropNum;
 
-		private UnityObjectPooler<SkillStatus> _skillStatus = new UnityObjectPooler<SkillStatus>();
-
 		private List<ExtraEffectStatus> _extraEffectStatus = new List<ExtraEffectStatus>();
 
 		private UnityObjectPooler<HitEffectParams[]> _hitEffects = new UnityObjectPooler<HitEffectParams[]>();
@@ -217,7 +215,7 @@ namespace BattleStateMachineInternal
 
 		public bool isConfusionAttack;
 
-		public List<ChipEffectStatus.EffectTriggerType> reqestStageEffectTriggerList = new List<ChipEffectStatus.EffectTriggerType>();
+		public List<EffectStatusBase.EffectTriggerType> reqestStageEffectTriggerList = new List<EffectStatusBase.EffectTriggerType>();
 
 		public bool isTutorialInduction;
 
@@ -653,18 +651,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public UnityObjectPooler<SkillStatus> skillStatus
-		{
-			get
-			{
-				return this._skillStatus;
-			}
-			set
-			{
-				this._skillStatus = value;
-			}
-		}
-
 		public List<ExtraEffectStatus> extraEffectStatus
 		{
 			get
@@ -929,20 +915,6 @@ namespace BattleStateMachineInternal
 				if (!(characterStateControl.CharacterParams == null))
 				{
 					UnityEngine.Object.Destroy(characterStateControl.CharacterParams.gameObject);
-				}
-			}
-			foreach (SkillStatus skillStatus in this._skillStatus.GetAllObject())
-			{
-				if (skillStatus.invocationEffectParams != null)
-				{
-					UnityEngine.Object.Destroy(skillStatus.invocationEffectParams.gameObject);
-				}
-				foreach (PassiveEffectParams passiveEffectParams2 in skillStatus.passiveEffectParams)
-				{
-					if (passiveEffectParams2 != null)
-					{
-						UnityEngine.Object.Destroy(passiveEffectParams2.gameObject);
-					}
 				}
 			}
 			foreach (HitEffectParams array in this.hitEffects.GetAllObject())

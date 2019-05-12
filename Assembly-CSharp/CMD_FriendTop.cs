@@ -139,6 +139,7 @@ public class CMD_FriendTop : CMD
 			this.ShowFriendCount();
 		}, null, null), false);
 		RestrictionInput.EndLoad();
+		GUIMain.BarrierOFF();
 		yield break;
 	}
 
@@ -1015,10 +1016,11 @@ public class CMD_FriendTop : CMD
 
 	private void CorrespondFriendBreakEnd()
 	{
+		GUIMain.BarrierON(null);
 		RestrictionInput.EndLoad();
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
-			this.EndFriendBreak();
+			this.OnCorrespondCommonRecieve();
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("Friend-09");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("Friend-10"), this.selectFriendDict.Count);
@@ -1026,10 +1028,11 @@ public class CMD_FriendTop : CMD
 
 	private void CorrespondApplyReleaseEnd()
 	{
+		GUIMain.BarrierON(null);
 		RestrictionInput.EndLoad();
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
-			this.EndFriendReqCancel();
+			this.OnCorrespondCommonRecieve();
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FriendApply-05");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FriendApply-06"), this.selectFriendDict.Count);
@@ -1037,10 +1040,11 @@ public class CMD_FriendTop : CMD
 
 	private void CorrespondAcceptEnd()
 	{
+		GUIMain.BarrierON(null);
 		RestrictionInput.EndLoad();
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
-			this.EndFriendApprove();
+			this.OnCorrespondCommonRecieve();
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FriendApproval-12");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FriendApproval-13"), this.selectFriendDict.Count);
@@ -1048,10 +1052,11 @@ public class CMD_FriendTop : CMD
 
 	private void CorrespondRejectEnd()
 	{
+		GUIMain.BarrierON(null);
 		RestrictionInput.EndLoad();
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
-			this.EndFriendReject();
+			this.OnCorrespondCommonRecieve();
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FriendApproval-07");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FriendApproval-08"), this.selectFriendDict.Count);
@@ -1080,7 +1085,17 @@ public class CMD_FriendTop : CMD
 	{
 		this.ResetBadgeInfo(delegate
 		{
+			GUIMain.BarrierON(null);
 			RestrictionInput.EndLoad();
+			this.ReturnFromSelectMode();
+			AppCoroutine.Start(this.ReloadFriendUI(), false);
+		});
+	}
+
+	private void OnCorrespondCommonRecieve()
+	{
+		this.ResetBadgeInfo(delegate
+		{
 			this.ReturnFromSelectMode();
 			AppCoroutine.Start(this.ReloadFriendUI(), false);
 		});

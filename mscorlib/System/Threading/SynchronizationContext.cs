@@ -29,10 +29,6 @@ namespace System.Threading
 		{
 			get
 			{
-				if (SynchronizationContext.currentContext == null)
-				{
-					SynchronizationContext.currentContext = new SynchronizationContext();
-				}
 				return SynchronizationContext.currentContext;
 			}
 		}

@@ -266,6 +266,12 @@ namespace BattleStateMachineInternal
 				return AffectEffect.ApDrain;
 			case 63:
 				return AffectEffect.HpBorderlineDamage;
+			case 64:
+				return AffectEffect.HpBorderlineSpDamage;
+			case 65:
+				return AffectEffect.DefenseThroughDamage;
+			case 66:
+				return AffectEffect.DefenseThroughDamage;
 			default:
 				global::Debug.LogError("AffectEffectの値が不正です. (" + value + ")");
 				return AffectEffect.Damage;
@@ -280,16 +286,6 @@ namespace BattleStateMachineInternal
 			}
 			global::Debug.LogError("LeaderSkillTypeの値が不正です. (" + value + ")");
 			return LeaderSkillType.HpFollowingDamageUp;
-		}
-
-		public static Species IntToSpecies(string value)
-		{
-			if (Enum.IsDefined(typeof(Species), value.ToInt32()))
-			{
-				return (Species)value.ToInt32();
-			}
-			global::Debug.LogError("Speciesの値が不正です. (" + value + ")");
-			return Species.Null;
 		}
 
 		public static Strength IntToStrength(string value)
@@ -309,32 +305,6 @@ namespace BattleStateMachineInternal
 			}
 			global::Debug.LogError("Strengthの値が不正です. (" + value + ")");
 			return Strength.None;
-		}
-
-		public static EvolutionStep IntToEvolutionStep(string value)
-		{
-			switch (int.Parse(value))
-			{
-			case 2:
-				return EvolutionStep.InfancyPhase1;
-			case 3:
-				return EvolutionStep.InfancyPhase2;
-			case 4:
-				return EvolutionStep.GrowthPhase;
-			case 5:
-				return EvolutionStep.MaturationPhase;
-			case 6:
-				return EvolutionStep.PerfectPhase;
-			case 7:
-				return EvolutionStep.UltimatePhase;
-			case 8:
-				return EvolutionStep.AmorPhase1;
-			case 9:
-				return EvolutionStep.AmorPhase2;
-			default:
-				global::Debug.LogError("EvolutionStepの値が不正です. (" + value + ")");
-				return EvolutionStep.InfancyPhase1;
-			}
 		}
 
 		public static bool GetUseDrainAffectEffect(int value)
@@ -395,11 +365,20 @@ namespace BattleStateMachineInternal
 				case 50:
 					return TechniqueType.Special;
 				default:
-					if (value != 1)
+					switch (value)
 					{
+					case 64:
+						return TechniqueType.Special;
+					default:
+						if (value != 1)
+						{
+							return TechniqueType.Physics;
+						}
 						return TechniqueType.Physics;
+					case 66:
+						return TechniqueType.Special;
 					}
-					return TechniqueType.Physics;
+					break;
 				}
 				break;
 			case 36:
@@ -446,6 +425,11 @@ namespace BattleStateMachineInternal
 				global::Debug.LogError("SkillTypeの値が不正です. (" + value + ")");
 				return SkillType.Attack;
 			}
+		}
+
+		public static Tolerance ResistanceToTolerance(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data)
+		{
+			return new Tolerance(ServerToBattleUtility.IntToStrength(data.none), ServerToBattleUtility.IntToStrength(data.fire), ServerToBattleUtility.IntToStrength(data.water), ServerToBattleUtility.IntToStrength(data.thunder), ServerToBattleUtility.IntToStrength(data.nature), ServerToBattleUtility.IntToStrength(data.light), ServerToBattleUtility.IntToStrength(data.dark), ServerToBattleUtility.IntToStrength(data.poison), ServerToBattleUtility.IntToStrength(data.confusion), ServerToBattleUtility.IntToStrength(data.paralysis), ServerToBattleUtility.IntToStrength(data.sleep), ServerToBattleUtility.IntToStrength(data.stun), ServerToBattleUtility.IntToStrength(data.skillLock), ServerToBattleUtility.IntToStrength(data.death));
 		}
 	}
 }

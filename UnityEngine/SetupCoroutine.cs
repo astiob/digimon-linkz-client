@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Reflection;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
+	[RequiredByNativeCode]
 	internal class SetupCoroutine
 	{
+		[RequiredByNativeCode]
 		public static object InvokeMember(object behaviour, string name, object variable)
 		{
 			object[] args = null;

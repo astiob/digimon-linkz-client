@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class TutorialConnectingController : MonoBehaviour
 {
-	[SerializeField]
 	[Header("回転するオブジェクト")]
+	[SerializeField]
 	private Transform[] RotationObjects = new Transform[0];
 
-	[SerializeField]
 	[Header("回転オブジェクトの回転制御")]
+	[SerializeField]
 	private float[] RotationSpeed = new float[0];
 
 	private int ObjectIndex;

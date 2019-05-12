@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using Quest;
 using System;
 using System.Collections;
@@ -29,16 +30,16 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private UserStamina userStamina;
 
-	[SerializeField]
 	[Header("クリッピングしているオブジェクト達")]
+	[SerializeField]
 	private GameObject[] clipObjects;
 
-	[SerializeField]
 	[Header("ポイントクエスト用 ROOT")]
+	[SerializeField]
 	private GameObject goPartsPointROOT;
 
-	[SerializeField]
 	[Header("ポイントクエスト用（ランキングなし） ROOT")]
+	[SerializeField]
 	private GameObject goPartsPointWithoutRankingROOT;
 
 	[Header("ポイントクエスト用 BG")]
@@ -90,6 +91,9 @@ public class CMD_QuestTOP : CMD
 		base.Awake();
 		CMD_QuestTOP.instance = this;
 		ClassSingleton<QuestTOPAccessor>.Instance.questTOP = this;
+		DataMng.Instance().GetResultUtilData().ClearLastDngReq();
+		ClassSingleton<PlayLimit>.Instance.ClearTicketNumCont();
+		ClassSingleton<PlayLimit>.Instance.ClearPlayLimitNumCont();
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -590,7 +594,7 @@ public class CMD_QuestTOP : CMD
 
 	private bool CanPlayDungeonOver()
 	{
-		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
 		{
 			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
 			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
@@ -671,25 +675,32 @@ public class CMD_QuestTOP : CMD
 		{
 			return;
 		}
-		if ((idx == 0 || idx == 10 || idx == 20) && !ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(this.StageDataBk.dungeon, delegate(int _idx)
+		if (idx == 0 || idx == 10 || idx == 20)
 		{
-			if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 2)
+			if (!ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(this.StageDataBk.dungeon, delegate(int _idx)
 			{
-				this.OnCloseConfirmShop(_idx);
-			}
-			else if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 6)
+				if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 2)
+				{
+					this.OnCloseConfirmShop(_idx);
+				}
+				else if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 6)
+				{
+					GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.StageDataBk.dungeon.playLimit.recoveryAssetValue.ToString());
+					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					cmd_ModalMessage2.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
+					cmd_ModalMessage2.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
+				}
+			}, delegate(int _idx_)
 			{
-				GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.StageDataBk.dungeon.playLimit.recoveryAssetValue.ToString());
-				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
-				cmd_ModalMessage2.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
-				cmd_ModalMessage2.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
+				ClassSingleton<PlayLimit>.Instance.RecoverPlayLimit(this.StageDataBk.dungeon, new Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons>(this.OnSuccessedRecoverPlayLimit));
+			}, ConstValue.PLAYLIMIT_USE_COUNT))
+			{
+				return;
 			}
-		}, delegate(int _idx_)
-		{
-			ClassSingleton<PlayLimit>.Instance.RecoverPlayLimit(this.StageDataBk.dungeon, new Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons>(this.OnSuccessedRecoverPlayLimit));
-		}, 0))
-		{
-			return;
+			if (CMD_QuestTOP.AreaData.data.worldAreaId == "8")
+			{
+				ClassSingleton<PlayLimit>.Instance.SetTicketNumCont(this.StageDataBk.dungeon, ConstValue.PLAYLIMIT_USE_COUNT);
+			}
 		}
 		if (idx != 0)
 		{
@@ -737,25 +748,32 @@ public class CMD_QuestTOP : CMD
 		{
 			return;
 		}
-		if ((selectButtonIndex == 10 || selectButtonIndex == 20) && !ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(this.StageDataBk.dungeon, delegate(int _idx)
+		if (selectButtonIndex == 10 || selectButtonIndex == 20)
 		{
-			if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 2)
+			if (!ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(this.StageDataBk.dungeon, delegate(int _idx)
 			{
-				this.OnCloseConfirmShop(_idx);
-			}
-			else if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 6)
+				if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 2)
+				{
+					this.OnCloseConfirmShop(_idx);
+				}
+				else if (this.StageDataBk.dungeon.playLimit.recoveryAssetCategoryId == 6)
+				{
+					GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.StageDataBk.dungeon.playLimit.recoveryAssetValue.ToString());
+					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					cmd_ModalMessage.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
+					cmd_ModalMessage.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
+				}
+			}, delegate(int _idx_)
 			{
-				GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.StageDataBk.dungeon.playLimit.recoveryAssetValue.ToString());
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
-				cmd_ModalMessage.Title = string.Format(StringMaster.GetString("SystemShortage"), itemM.name);
-				cmd_ModalMessage.Info = string.Format(StringMaster.GetString("QuestPlayLimitItemShortInfo"), itemM.name);
+				ClassSingleton<PlayLimit>.Instance.RecoverPlayLimit(this.StageDataBk.dungeon, new Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons>(this.OnSuccessedRecoverPlayLimit));
+			}, ConstValue.PLAYLIMIT_USE_COUNT))
+			{
+				return;
 			}
-		}, delegate(int _idx_)
-		{
-			ClassSingleton<PlayLimit>.Instance.RecoverPlayLimit(this.StageDataBk.dungeon, new Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons>(this.OnSuccessedRecoverPlayLimit));
-		}, 0))
-		{
-			return;
+			if (CMD_QuestTOP.AreaData.data.worldAreaId == "8")
+			{
+				ClassSingleton<PlayLimit>.Instance.SetTicketNumCont(this.StageDataBk.dungeon, ConstValue.PLAYLIMIT_USE_COUNT);
+			}
 		}
 		if (selectButtonIndex != 10)
 		{
@@ -794,6 +812,7 @@ public class CMD_QuestTOP : CMD
 		if (this.needLife <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina)
 		{
 			ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
+			DataMng.Instance().GetResultUtilData().SetLastDngReq(this.StageDataBk.worldDungeonM.worldDungeonId, "-1", this.StageDataBk.dungeon.userDungeonTicketId);
 			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
 			GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit");
 		}

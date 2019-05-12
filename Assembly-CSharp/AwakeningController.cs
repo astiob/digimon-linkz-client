@@ -8,20 +8,20 @@ public class AwakeningController : CutsceneControllerBase
 	[SerializeField]
 	private GameObject Camera;
 
-	[Header("カメラの向き先")]
 	[SerializeField]
+	[Header("カメラの向き先")]
 	private GameObject CameraTarget;
 
-	[Header("回ってるサークル小")]
 	[SerializeField]
+	[Header("回ってるサークル小")]
 	private GameObject[] CirclesS = new GameObject[0];
 
 	[SerializeField]
 	[Header("回ってるサークル中")]
 	private GameObject[] CirclesM = new GameObject[0];
 
-	[Header("回ってるサークル大")]
 	[SerializeField]
+	[Header("回ってるサークル大")]
 	private GameObject[] CirclesL = new GameObject[0];
 
 	[SerializeField]

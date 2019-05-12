@@ -1,4 +1,6 @@
 ﻿using Master;
+using Monster;
+using MonsterPicturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ public class CMD_Picturebook : CMD
 
 	private List<string> collectionIdList;
 
-	private List<MonsterData> collectionIconMonsterDataList;
+	private List<PicturebookMonster> collectionIconMonsterDataList;
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
@@ -132,7 +134,7 @@ public class CMD_Picturebook : CMD
 	private void CreateAllMonsterData()
 	{
 		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM[] monsterM = MasterDataMng.Instance().RespDataMA_MonsterMS.monsterM;
-		this.collectionIconMonsterDataList = new List<MonsterData>();
+		this.collectionIconMonsterDataList = new List<PicturebookMonster>();
 		for (int i = 0; i < monsterM.Length; i++)
 		{
 			if (monsterM[i].GetArousal() == 0)
@@ -144,15 +146,16 @@ public class CMD_Picturebook : CMD
 				}
 			}
 		}
-		this.collectionIconMonsterDataList.Sort(new Comparison<MonsterData>(CMD_Picturebook.CompareByCollectionId));
+		this.collectionIconMonsterDataList.Sort(new Comparison<PicturebookMonster>(CMD_Picturebook.CompareByCollectionId));
 	}
 
 	private bool ExistCollectionId(string collectionId)
 	{
 		bool result = false;
+		int num = int.Parse(collectionId);
 		for (int i = 0; i < this.collectionIconMonsterDataList.Count; i++)
 		{
-			if (collectionId == this.collectionIconMonsterDataList[i].monsterMG.monsterCollectionId)
+			if (num == this.collectionIconMonsterDataList[i].collectionId)
 			{
 				result = true;
 				break;
@@ -161,26 +164,23 @@ public class CMD_Picturebook : CMD
 		return result;
 	}
 
-	private static int CompareByCollectionId(MonsterData dataA, MonsterData dataB)
+	private static int CompareByCollectionId(PicturebookMonster dataA, PicturebookMonster dataB)
 	{
-		int num = dataA.monsterMG.monsterCollectionId.ToInt32();
-		int num2 = dataB.monsterMG.monsterCollectionId.ToInt32();
-		return num - num2;
+		return dataA.collectionId - dataB.collectionId;
 	}
 
-	private MonsterData GetCollectionMonsterIconData(GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMaster, GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMaster)
+	private PicturebookMonster GetCollectionMonsterIconData(GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMaster, GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMaster)
 	{
-		MonsterData monsterData;
-		if (this.collectionIdList.Contains(monsterGroupMaster.monsterCollectionId))
+		PicturebookMonster picturebookMonster = new PicturebookMonster
 		{
-			monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(monsterMaster.monsterId);
-			monsterData.InitSkillInfo();
-		}
-		else
+			collectionId = int.Parse(monsterGroupMaster.monsterCollectionId)
+		};
+		picturebookMonster.monsterMaster = new MonsterClientMaster(monsterMaster, monsterGroupMaster);
+		if (!this.collectionIdList.Contains(monsterGroupMaster.monsterCollectionId))
 		{
-			monsterData = this.selectPanelPicturebookIcon.CreateUnknownIconMonsterData(monsterGroupMaster.monsterCollectionId);
+			picturebookMonster.isUnknown = true;
 		}
-		return monsterData;
+		return picturebookMonster;
 	}
 
 	private IEnumerator InitializeMonsterList()
@@ -188,25 +188,14 @@ public class CMD_Picturebook : CMD
 		this.selectPanelPicturebookIcon.initLocation = true;
 		Vector3 iconScale = this.thumbnail.transform.localScale;
 		this.selectPanelPicturebookIcon.useLocationRecord = true;
-		yield return base.StartCoroutine(this.selectPanelPicturebookIcon.AllBuild(this.collectionIconMonsterDataList, iconScale, new Action<MonsterData>(this.PressMIconShort)));
+		yield return base.StartCoroutine(this.selectPanelPicturebookIcon.AllBuild(this.collectionIconMonsterDataList, iconScale, new Action<PicturebookMonster>(this.PressMIconShort)));
 		UnityEngine.Object.Destroy(this.selectPanelPicturebookIcon.selectParts);
 		this.selectPanelPicturebookIcon.selectParts = null;
 		yield break;
 	}
 
-	public void PressMIconShort(MonsterData monsterData)
+	public void PressMIconShort(PicturebookMonster monsterData)
 	{
-		global::Debug.Log("<color=yellow>[IMPLEMENTATING]</color> press icon short");
-		this.PlaySelectSE();
-		CMD_PicturebookDetail.DisplayMonsterData = monsterData;
-		CMD_PicturebookDetail.SetOnClosedPanel(delegate
-		{
-			base.transform.gameObject.SetActive(true);
-		});
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_PictureBookDetail");
-		commonDialog.SetOnOpened(delegate(int i)
-		{
-			base.transform.gameObject.SetActive(false);
-		});
+		CMD_PicturebookDetailedInfo.CreateDialog(base.gameObject, monsterData);
 	}
 }

@@ -123,7 +123,7 @@ public class GUIScreenHome : GUIScreen
 	protected virtual IEnumerator CreateHomeData()
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
-		MonsterDataMng.Instance().GetMonsterDataList(true);
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		MonsterDataMng.Instance().InitMonsterGO();
 		this.MissionProcess();
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();

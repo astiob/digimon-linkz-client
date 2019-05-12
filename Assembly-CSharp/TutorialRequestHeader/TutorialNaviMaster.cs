@@ -10,7 +10,5 @@ namespace TutorialRequestHeader
 		public string message;
 
 		public string face;
-
-		public string deleteFlg;
 	}
 }

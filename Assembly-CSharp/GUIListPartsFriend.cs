@@ -97,7 +97,7 @@ public class GUIListPartsFriend : GUIListPartBS
 		if (!this.isUpdateMIcon && this.data != null)
 		{
 			this.md_favo = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.monsterData.monsterId);
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.md_favo, this.goMN_ICON.transform.localScale, this.goMN_ICON.transform.localPosition, this.goMN_ICON.transform.parent, true, true);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(this.md_favo, this.goMN_ICON.transform.localScale, this.goMN_ICON.transform.localPosition, this.goMN_ICON.transform.parent, true, true);
 			this.goMN_ICON_2 = guimonsterIcon.gameObject;
 			this.goMN_ICON_2.SetActive(true);
 			guimonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.actMIconLong));

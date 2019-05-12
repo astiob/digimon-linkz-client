@@ -8,8 +8,8 @@ public class BillBoardController : MonoBehaviour
 	[SerializeField]
 	private Camera cam;
 
-	[SerializeField]
 	[Header("解決する軸タイプ + オフセット回転してカメラへ向ける")]
+	[SerializeField]
 	private BillBoardController.AXIS_TYPE type = BillBoardController.AXIS_TYPE.Y;
 
 	[SerializeField]

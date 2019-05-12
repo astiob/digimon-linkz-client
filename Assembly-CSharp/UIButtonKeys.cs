@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Button Keys (Legacy)")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Button Keys (Legacy)")]
 public class UIButtonKeys : UIKeyNavigation
 {
 	public UIButtonKeys selectOnClick;

@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>WheelFrictionCurve is used by the WheelCollider to describe friction properties of the wheel tire.</para>
-	/// </summary>
 	public struct WheelFrictionCurve
 	{
 		private float m_ExtremumSlip;
@@ -17,9 +14,6 @@ namespace UnityEngine
 
 		private float m_Stiffness;
 
-		/// <summary>
-		///   <para>Extremum point slip (default 1).</para>
-		/// </summary>
 		public float extremumSlip
 		{
 			get
@@ -32,9 +26,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Force at the extremum slip (default 20000).</para>
-		/// </summary>
 		public float extremumValue
 		{
 			get
@@ -47,9 +38,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Asymptote point slip (default 2).</para>
-		/// </summary>
 		public float asymptoteSlip
 		{
 			get
@@ -62,9 +50,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Force at the asymptote slip (default 10000).</para>
-		/// </summary>
 		public float asymptoteValue
 		{
 			get
@@ -77,9 +62,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Multiplier for the extremumValue and asymptoteValue values (default 1).</para>
-		/// </summary>
 		public float stiffness
 		{
 			get

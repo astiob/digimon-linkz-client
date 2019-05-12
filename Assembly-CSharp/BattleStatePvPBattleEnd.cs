@@ -59,6 +59,12 @@ public class BattleStatePvPBattleEnd : BattleStateBase
 				responseData.score = this.colosseumEnd.score;
 				responseData.colosseumRankId = this.colosseumEnd.colosseumRankId;
 				responseData.isFirstRankUp = this.colosseumEnd.isFirstRankUp;
+				if (this.colosseumEnd.battleRecord != null)
+				{
+					responseData.battleRecord = new MultiBattleData.BattleEndResponseData.ColosseumBattleRecord();
+					responseData.battleRecord.count = this.colosseumEnd.battleRecord.count;
+					responseData.battleRecord.winPercent = this.colosseumEnd.battleRecord.winPercent;
+				}
 			}
 			else
 			{

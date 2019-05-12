@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleStatePvPFadeOut : BattleStateController
 {
@@ -22,7 +23,7 @@ public class BattleStatePvPFadeOut : BattleStateController
 		else
 		{
 			this.BattleEndResourcesCleaning();
-			Application.LoadLevelAsync(BattleStateManager.BattleSceneName);
+			SceneManager.LoadSceneAsync(BattleStateManager.BattleSceneName);
 		}
 	}
 

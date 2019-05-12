@@ -100,9 +100,17 @@ public class CMD_ColosseumRanking : CMD
 			{
 				if (isUpdate)
 				{
-					List<GameWebAPI.RespDataCL_Ranking.RankingData> list = this.colosseumRankingList.rankingMember.ToList<GameWebAPI.RespDataCL_Ranking.RankingData>();
+					List<GameWebAPI.RespDataCL_Ranking.RankingData> list = new List<GameWebAPI.RespDataCL_Ranking.RankingData>();
+					list = this.colosseumRankingList.rankingMember.ToList<GameWebAPI.RespDataCL_Ranking.RankingData>();
 					list.AddRange(response.rankingMember.ToList<GameWebAPI.RespDataCL_Ranking.RankingData>());
-					this.colosseumRankingList.rankingMember = list.ToArray();
+					if (list.Count == 0)
+					{
+						this.colosseumRankingList.rankingMember = new GameWebAPI.RespDataCL_Ranking.RankingData[0];
+					}
+					else
+					{
+						this.colosseumRankingList.rankingMember = list.ToArray();
+					}
 				}
 				else
 				{

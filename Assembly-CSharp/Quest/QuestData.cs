@@ -533,7 +533,7 @@ namespace Quest
 					List<QuestData.WorldDungeonData> worldDungeonData_ByAreaIdStageId;
 					do
 					{
-						worldDungeonData_ByAreaIdStageId = this.GetWorldDungeonData_ByAreaIdStageId(id, worldStageM[i].worldStageId, num, true);
+						worldDungeonData_ByAreaIdStageId = this.GetWorldDungeonData_ByAreaIdStageId(id, worldStageM[i].worldStageId, num, true, false);
 						num++;
 						if (worldDungeonData_ByAreaIdStageId != null && worldDungeonData_ByAreaIdStageId.Count > 0)
 						{
@@ -729,7 +729,7 @@ namespace Quest
 			}
 		}
 
-		public List<QuestData.WorldDungeonData> GetWorldDungeonData_ByAreaIdStageId(string aid, string sid, int idx = 0, bool addLock = false)
+		public List<QuestData.WorldDungeonData> GetWorldDungeonData_ByAreaIdStageId(string aid, string sid, int idx = 0, bool addLock = false, bool addEmpty = false)
 		{
 			List<QuestData.WorldDungeonData> list = new List<QuestData.WorldDungeonData>();
 			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
@@ -775,7 +775,7 @@ namespace Quest
 				{
 					for (j = 0; j < array.Length; j++)
 					{
-						if (int.Parse(list2[i].worldDungeonId) == array[j].worldDungeonId && !this.IsEmptyDng(array[j], aid) && (addLock || array[j].status > 1))
+						if (int.Parse(list2[i].worldDungeonId) == array[j].worldDungeonId && (addEmpty || !this.IsEmptyDng(array[j], aid)) && (addLock || array[j].status > 1))
 						{
 							list.Add(new QuestData.WorldDungeonData
 							{

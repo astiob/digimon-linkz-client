@@ -3,16 +3,8 @@ using System.Collections.Generic;
 
 namespace UnityEngine.Networking.Match
 {
-	/// <summary>
-	///   <para>JSON response for a ListMatchRequest. It contains a list of matches that can be parsed through to describe a page of matches.</para>
-	/// </summary>
 	public class ListMatchResponse : BasicResponse
 	{
-		/// <summary>
-		///   <para>Constructor for response class.</para>
-		/// </summary>
-		/// <param name="matches">A list of matches to give to the object. Only used when generating a new response and not used by callers of a ListMatchRequest.</param>
-		/// <param name="otherMatches"></param>
 		public ListMatchResponse()
 		{
 		}
@@ -22,14 +14,8 @@ namespace UnityEngine.Networking.Match
 			this.matches = otherMatches;
 		}
 
-		/// <summary>
-		///   <para>List of matches fitting the requested description.</para>
-		/// </summary>
 		public List<MatchDesc> matches { get; set; }
 
-		/// <summary>
-		///   <para>Provides string description of current class data.</para>
-		/// </summary>
 		public override string ToString()
 		{
 			return UnityString.Format("[{0}]-matches.Count:{1}", new object[]

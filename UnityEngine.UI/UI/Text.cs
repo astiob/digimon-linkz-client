@@ -232,6 +232,23 @@ namespace UnityEngine.UI
 			}
 		}
 
+		public bool alignByGeometry
+		{
+			get
+			{
+				return this.m_FontData.alignByGeometry;
+			}
+			set
+			{
+				if (this.m_FontData.alignByGeometry == value)
+				{
+					return;
+				}
+				this.m_FontData.alignByGeometry = value;
+				this.SetVerticesDirty();
+			}
+		}
+
 		public int fontSize
 		{
 			get
@@ -375,6 +392,7 @@ namespace UnityEngine.UI
 				result.resizeTextMaxSize = this.m_FontData.maxSize;
 			}
 			result.textAnchor = this.m_FontData.alignment;
+			result.alignByGeometry = this.m_FontData.alignByGeometry;
 			result.scaleFactor = this.pixelsPerUnit;
 			result.color = base.color;
 			result.font = this.font;
@@ -429,8 +447,8 @@ namespace UnityEngine.UI
 			Rect rect = base.rectTransform.rect;
 			Vector2 textAnchorPivot = Text.GetTextAnchorPivot(this.m_FontData.alignment);
 			Vector2 zero = Vector2.zero;
-			zero.x = ((textAnchorPivot.x != 1f) ? rect.xMin : rect.xMax);
-			zero.y = ((textAnchorPivot.y != 0f) ? rect.yMax : rect.yMin);
+			zero.x = Mathf.Lerp(rect.xMin, rect.xMax, textAnchorPivot.x);
+			zero.y = Mathf.Lerp(rect.yMin, rect.yMax, textAnchorPivot.y);
 			Vector2 lhs = base.PixelAdjustPoint(zero) - zero;
 			IList<UIVertex> verts = this.cachedTextGenerator.verts;
 			float d = 1f / this.pixelsPerUnit;

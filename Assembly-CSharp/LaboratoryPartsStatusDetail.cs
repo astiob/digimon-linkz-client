@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Monster;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LaboratoryPartsStatusDetail : MonoBehaviour
@@ -70,7 +72,9 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 				this.monsterBasicInfo.SetMonsterData(monsterData);
 			}
 			this.statusList.SetValues(monsterData, false);
-			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = monsterData.AddResistanceFromMultipleTranceData();
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(monsterData.monsterM.resistanceId);
+			List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);
 			this.resistanceList.SetValues(values);
 			if (this.medalList != null)
 			{

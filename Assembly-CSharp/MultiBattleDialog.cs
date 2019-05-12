@@ -9,24 +9,24 @@ public class MultiBattleDialog : MonoBehaviour
 
 	private int nowTime = 10;
 
-	[Header("内容ラベル")]
 	[SerializeField]
+	[Header("内容ラベル")]
 	private UILabel messageLabel;
 
 	[SerializeField]
 	[Header("ボタンのテキストラベル")]
 	private UILabel buttonTextLabel;
 
-	[Header("ボタン無し内容ラベル")]
 	[SerializeField]
+	[Header("ボタン無し内容ラベル")]
 	private UILabel noButtonMessageLabel;
 
-	[Header("ボタン")]
 	[SerializeField]
+	[Header("ボタン")]
 	private UIButton button;
 
-	[Header("スキン")]
 	[SerializeField]
+	[Header("スキン")]
 	private UIComponentSkinner uiCompornentSkinner;
 
 	[SerializeField]

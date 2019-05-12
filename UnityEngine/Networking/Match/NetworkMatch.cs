@@ -6,18 +6,12 @@ using UnityEngine.Networking.Types;
 
 namespace UnityEngine.Networking.Match
 {
-	/// <summary>
-	///   <para>A component for communicating with the UNET Matchmaking service.</para>
-	/// </summary>
 	public class NetworkMatch : MonoBehaviour
 	{
 		private const string kMultiplayerNetworkingIdKey = "CloudNetworkingId";
 
 		private Uri m_BaseUri = new Uri("https://mm.unet.unity3d.com");
 
-		/// <summary>
-		///   <para>The base URI of the UNET MatchMaker that this NetworkMatch will communicate with.</para>
-		/// </summary>
 		public Uri baseUri
 		{
 			get
@@ -30,10 +24,6 @@ namespace UnityEngine.Networking.Match
 			}
 		}
 
-		/// <summary>
-		///   <para>Set this before calling any UNET functions. Must match AppID for this program from the Cloud API.</para>
-		/// </summary>
-		/// <param name="programAppID">AppID that corresponds to the Cloud API AppID for this app.</param>
 		public void SetProgramAppID(AppID programAppID)
 		{
 			Utility.SetAppID(programAppID);

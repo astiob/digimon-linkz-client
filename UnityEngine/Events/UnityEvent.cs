@@ -1,30 +1,25 @@
 ﻿using System;
 using System.Reflection;
+using UnityEngine.Scripting;
 using UnityEngineInternal;
 
 namespace UnityEngine.Events
 {
-	/// <summary>
-	///   <para>A zero argument persistent callback that can be saved with the scene.</para>
-	/// </summary>
 	[Serializable]
 	public class UnityEvent : UnityEventBase
 	{
 		private readonly object[] m_InvokeArray = new object[0];
 
-		/// <summary>
-		///   <para>Add a non persistent listener to the UnityEvent.</para>
-		/// </summary>
-		/// <param name="call">Callback function.</param>
+		[RequiredByNativeCode]
+		public UnityEvent()
+		{
+		}
+
 		public void AddListener(UnityAction call)
 		{
 			base.AddCall(UnityEvent.GetDelegate(call));
 		}
 
-		/// <summary>
-		///   <para>Remove a non persistent listener from the UnityEvent.</para>
-		/// </summary>
-		/// <param name="call">Callback function.</param>
 		public void RemoveListener(UnityAction call)
 		{
 			base.RemoveListener(call.Target, call.GetMethodInfo());
@@ -45,9 +40,6 @@ namespace UnityEngine.Events
 			return new InvokableCall(action);
 		}
 
-		/// <summary>
-		///   <para>Invoke all registered callbacks (runtime and peristent).</para>
-		/// </summary>
 		public void Invoke()
 		{
 			base.Invoke(this.m_InvokeArray);

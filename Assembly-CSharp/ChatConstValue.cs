@@ -79,6 +79,8 @@ public static class ChatConstValue
 
 	public const int ON_VALUE = 1;
 
+	public const int LEAVE_GROUP_RESULT_CODE_EXPULSION = 90;
+
 	public const int DIALOG_YES = 0;
 
 	public const int DIALOG_NO = 1;
@@ -94,6 +96,8 @@ public static class ChatConstValue
 	public const string SPRITE_MEMBER_RELATION_TYPE_BLOCK = "Text_block";
 
 	public const string API_SOCKET_SEND_MESSAGE = "810002";
+
+	public const string API_SOCKET_SEND_EXPULSION = "810003";
 
 	public const string CHAT_MESSEGE_HISTORY_ID_DEFAULT = "0";
 

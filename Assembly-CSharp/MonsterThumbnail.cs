@@ -1,4 +1,4 @@
-﻿using Master;
+﻿using Monster;
 using System;
 using UnityEngine;
 
@@ -9,9 +9,6 @@ public sealed class MonsterThumbnail : MonoBehaviour
 
 	[SerializeField]
 	private UISprite frameImage;
-
-	[SerializeField]
-	private UILabel bottomLabel;
 
 	public void Initialize()
 	{
@@ -32,12 +29,25 @@ public sealed class MonsterThumbnail : MonoBehaviour
 
 	public void SetImage(string iconId, string growStep)
 	{
-		string resourcePath = MonsterDataMng.Instance().InternalGetMonsterIconPathByIconId(iconId);
-		string monsterIconPathByIconId = MonsterDataMng.Instance().GetMonsterIconPathByIconId(iconId);
+		string resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(iconId);
+		string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(iconId);
+		this.monsterImage.enabled = false;
 		GUIMonsterIcon.SetTextureMonsterParts(this.monsterImage, resourcePath, monsterIconPathByIconId, true);
+		this.monsterImage.enabled = true;
 		UISprite component = base.gameObject.GetComponent<UISprite>();
-		GrowStep growStep2 = MonsterData.ToGrowStepId(growStep);
+		int growStep2 = (int)MonsterGrowStepData.ToGrowStep(growStep);
 		GUIMonsterIcon.SetThumbnailFrame(component, this.frameImage, growStep2);
+	}
+
+	public void SetEmptyIcon()
+	{
+		if (this.monsterImage.enabled)
+		{
+			this.monsterImage.enabled = false;
+		}
+		UISprite component = base.gameObject.GetComponent<UISprite>();
+		component.spriteName = "Common02_Thumbnail_Empty";
+		this.frameImage.spriteName = "Common02_Thumbnail_wakuE";
 	}
 
 	public void SetSize(int width, int height)
@@ -49,18 +59,5 @@ public sealed class MonsterThumbnail : MonoBehaviour
 		this.monsterImage.height = height;
 		this.frameImage.width = width;
 		this.frameImage.height = height;
-	}
-
-	public void SetBottomText(string text)
-	{
-	}
-
-	public void SetBottomText(string text, Color color)
-	{
-		this.SetBottomText(text);
-	}
-
-	public void ClearBottomText()
-	{
 	}
 }

@@ -1,4 +1,5 @@
-﻿using FarmData;
+﻿using Evolution;
+using FarmData;
 using Master;
 using System;
 using System.Collections;
@@ -103,7 +104,7 @@ public sealed class PresentBoxItem : MonoBehaviour
 		switch (assetCategory2)
 		{
 		case MasterDataMng.AssetCategory.MONSTER:
-			this.monsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(objectId), Vector3.one, Vector3.zero, this.iconSprite.transform, true, false);
+			this.monsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(objectId), Vector3.one, Vector3.zero, this.iconSprite.transform, true, false);
 			this.monsterIcon.ResizeIcon(this.iconSprite.width, this.iconSprite.height);
 			if (null != this.monsterIcon)
 			{
@@ -271,7 +272,7 @@ public sealed class PresentBoxItem : MonoBehaviour
 		switch (assetCategoryId)
 		{
 		case MasterDataMng.AssetCategory.SOUL:
-			result = MonsterDataMng.Instance().GetEvolveItemIconPathByID(objectId);
+			result = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(objectId);
 			break;
 		default:
 			if (assetCategoryId == MasterDataMng.AssetCategory.ITEM)

@@ -452,7 +452,7 @@ namespace System
 			case Environment.SpecialFolder.CommonProgramFiles:
 				return string.Empty;
 			case Environment.SpecialFolder.MyDocuments:
-				return Path.Combine(text, "Documents");
+				return text;
 			case Environment.SpecialFolder.MyMusic:
 				return Environment.ReadXdgUserDir(text3, text, "XDG_MUSIC_DIR", "Music");
 			case Environment.SpecialFolder.MyComputer:

@@ -85,24 +85,6 @@ public class UIGaugeManager : MonoBehaviour
 		return (float)this._intValue;
 	}
 
-	public int GetValueToInt(float multiple = 100f, bool onFloor = false, bool onCeil = false)
-	{
-		UIGaugeManager.ValueType valueType = this._valueType;
-		if (valueType == UIGaugeManager.ValueType.Integer)
-		{
-			return this._intValue;
-		}
-		if (onFloor)
-		{
-			return Mathf.FloorToInt(this._floatValue * multiple);
-		}
-		if (onCeil)
-		{
-			return Mathf.CeilToInt(this._floatValue * multiple);
-		}
-		return Mathf.RoundToInt(this._floatValue * multiple);
-	}
-
 	public float GetValueToFloat()
 	{
 		return this.GetValue();

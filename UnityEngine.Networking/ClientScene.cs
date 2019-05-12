@@ -6,6 +6,10 @@ namespace UnityEngine.Networking
 {
 	public class ClientScene
 	{
+		public const int ReconnectIdInvalid = -1;
+
+		public const int ReconnectIdHost = 0;
+
 		private static List<PlayerController> s_LocalPlayers = new List<PlayerController>();
 
 		private static NetworkConnection s_ReadyConnection;
@@ -30,7 +34,21 @@ namespace UnityEngine.Networking
 
 		private static ClientAuthorityMessage s_ClientAuthorityMessage = new ClientAuthorityMessage();
 
+		private static int s_ReconnectId = -1;
+
+		private static PeerInfoMessage[] s_Peers;
+
 		private static List<ClientScene.PendingOwner> s_PendingOwnerIds = new List<ClientScene.PendingOwner>();
+
+		public static void SetReconnectId(int newReconnectId, PeerInfoMessage[] peers)
+		{
+			ClientScene.s_ReconnectId = newReconnectId;
+			ClientScene.s_Peers = peers;
+			if (LogFilter.logDebug)
+			{
+				Debug.Log("ClientScene::SetReconnectId: " + newReconnectId);
+			}
+		}
 
 		internal static void SetNotReady()
 		{
@@ -58,6 +76,14 @@ namespace UnityEngine.Networking
 			get
 			{
 				return ClientScene.s_ReadyConnection;
+			}
+		}
+
+		public static int reconnectId
+		{
+			get
+			{
+				return ClientScene.s_ReconnectId;
 			}
 		}
 
@@ -94,6 +120,7 @@ namespace UnityEngine.Networking
 			ClientScene.s_ReadyConnection = null;
 			ClientScene.s_IsReady = false;
 			ClientScene.s_IsSpawnFinished = false;
+			ClientScene.s_ReconnectId = -1;
 			NetworkTransport.Shutdown();
 			NetworkTransport.Init();
 		}
@@ -226,16 +253,60 @@ namespace UnityEngine.Networking
 					"]"
 				}));
 			}
-			AddPlayerMessage addPlayerMessage = new AddPlayerMessage();
-			addPlayerMessage.playerControllerId = playerControllerId;
-			if (extraMessage != null)
+			if (ClientScene.s_ReconnectId == -1)
 			{
-				NetworkWriter networkWriter = new NetworkWriter();
-				extraMessage.Serialize(networkWriter);
-				addPlayerMessage.msgData = networkWriter.ToArray();
-				addPlayerMessage.msgSize = (int)networkWriter.Position;
+				AddPlayerMessage addPlayerMessage = new AddPlayerMessage();
+				addPlayerMessage.playerControllerId = playerControllerId;
+				if (extraMessage != null)
+				{
+					NetworkWriter networkWriter = new NetworkWriter();
+					extraMessage.Serialize(networkWriter);
+					addPlayerMessage.msgData = networkWriter.ToArray();
+					addPlayerMessage.msgSize = (int)networkWriter.Position;
+				}
+				ClientScene.s_ReadyConnection.Send(37, addPlayerMessage);
 			}
-			ClientScene.s_ReadyConnection.Send(37, addPlayerMessage);
+			else
+			{
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("ClientScene::AddPlayer reconnect " + ClientScene.s_ReconnectId);
+				}
+				if (ClientScene.s_Peers == null)
+				{
+					ClientScene.SetReconnectId(-1, null);
+					if (LogFilter.logError)
+					{
+						Debug.LogError("ClientScene::AddPlayer: reconnecting, but no peers.");
+					}
+					return false;
+				}
+				foreach (PeerInfoMessage peerInfoMessage in ClientScene.s_Peers)
+				{
+					if (peerInfoMessage.playerIds != null)
+					{
+						if (peerInfoMessage.connectionId == ClientScene.s_ReconnectId)
+						{
+							foreach (PeerInfoPlayer peerInfoPlayer in peerInfoMessage.playerIds)
+							{
+								ReconnectMessage reconnectMessage = new ReconnectMessage();
+								reconnectMessage.oldConnectionId = ClientScene.s_ReconnectId;
+								reconnectMessage.netId = peerInfoPlayer.netId;
+								reconnectMessage.playerControllerId = peerInfoPlayer.playerControllerId;
+								if (extraMessage != null)
+								{
+									NetworkWriter networkWriter2 = new NetworkWriter();
+									extraMessage.Serialize(networkWriter2);
+									reconnectMessage.msgData = networkWriter2.ToArray();
+									reconnectMessage.msgSize = (int)networkWriter2.Position;
+								}
+								ClientScene.s_ReadyConnection.Send(47, reconnectMessage);
+							}
+						}
+					}
+				}
+				ClientScene.SetReconnectId(-1, null);
+			}
 			return true;
 		}
 
@@ -304,8 +375,21 @@ namespace UnityEngine.Networking
 		{
 			LocalClient localClient = new LocalClient();
 			NetworkServer.instance.ActivateLocalClientScene();
-			localClient.InternalConnectLocalServer();
+			localClient.InternalConnectLocalServer(true);
 			return localClient;
+		}
+
+		internal static NetworkClient ReconnectLocalServer()
+		{
+			LocalClient localClient = new LocalClient();
+			NetworkServer.instance.ActivateLocalClientScene();
+			localClient.InternalConnectLocalServer(false);
+			return localClient;
+		}
+
+		internal static void ClearLocalPlayers()
+		{
+			ClientScene.s_LocalPlayers.Clear();
 		}
 
 		internal static void HandleClientDisconnect(NetworkConnection conn)
@@ -394,6 +478,11 @@ namespace UnityEngine.Networking
 			return "unknown";
 		}
 
+		public static void RegisterPrefab(GameObject prefab, NetworkHash128 newAssetId)
+		{
+			NetworkScene.RegisterPrefab(prefab, newAssetId);
+		}
+
 		public static void RegisterPrefab(GameObject prefab)
 		{
 			NetworkScene.RegisterPrefab(prefab);
@@ -441,6 +530,10 @@ namespace UnityEngine.Networking
 
 		private static void ApplySpawnPayload(NetworkIdentity uv, Vector3 position, byte[] payload, NetworkInstanceId netId, GameObject newGameObject)
 		{
+			if (!uv.gameObject.activeSelf)
+			{
+				uv.gameObject.SetActive(true);
+			}
 			uv.transform.position = position;
 			if (payload != null && payload.Length > 0)
 			{

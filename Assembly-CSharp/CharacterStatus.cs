@@ -8,6 +8,9 @@ public class CharacterStatus
 	protected string _prefabId;
 
 	[SerializeField]
+	protected string _groupId;
+
+	[SerializeField]
 	protected int _hp = 40;
 
 	[SerializeField]
@@ -37,9 +40,10 @@ public class CharacterStatus
 	[SerializeField]
 	protected string[] _skillIds;
 
-	public CharacterStatus(string prefabId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, string toleranceId, Tolerance tolerance, int[] chipIdList)
+	public CharacterStatus(string prefabId, string groupId, int hp, int attackPower, int defencePower, int specialAttackPower, int specialDefencePower, int speed, int level, Tolerance tolerance, string[] skillIds, int[] chipIdList, string[] monsterIntegrationIds)
 	{
 		this._prefabId = prefabId;
+		this._groupId = groupId;
 		this._hp = hp;
 		this._attackPower = attackPower;
 		this._defencePower = defencePower;
@@ -47,21 +51,18 @@ public class CharacterStatus
 		this._specialDefencePower = specialDefencePower;
 		this._speed = speed;
 		this._level = level;
-		this._toleranceId = toleranceId;
+		this._toleranceId = this.toleranceId;
 		this.tolerance = tolerance;
 		this.chipIds = chipIdList;
+		this._skillIds = skillIds;
 		Array.Sort<int>(this.chipIds);
-		this._skillIds = new string[]
-		{
-			string.Empty,
-			string.Empty,
-			string.Empty
-		};
+		this.monsterIntegrationIds = monsterIntegrationIds;
 	}
 
 	public CharacterStatus()
 	{
 		this._prefabId = string.Empty;
+		this._groupId = string.Empty;
 		this._hp = 40;
 		this._attackPower = 1000;
 		this._defencePower = 1000;
@@ -78,11 +79,13 @@ public class CharacterStatus
 			string.Empty
 		};
 		this.tolerance = Tolerance.GetNutralTolerance();
+		this.monsterIntegrationIds = new string[0];
 	}
 
 	public CharacterStatus(CharacterStatus characterStatus)
 	{
 		this._prefabId = characterStatus._prefabId;
+		this._groupId = characterStatus._groupId;
 		this._hp = characterStatus._hp;
 		this._attackPower = characterStatus._attackPower;
 		this._defencePower = characterStatus._defencePower;
@@ -98,6 +101,7 @@ public class CharacterStatus
 			string.Empty
 		};
 		this.tolerance = Tolerance.GetNutralTolerance();
+		this.monsterIntegrationIds = characterStatus.monsterIntegrationIds;
 	}
 
 	public string prefabId
@@ -105,6 +109,14 @@ public class CharacterStatus
 		get
 		{
 			return this._prefabId;
+		}
+	}
+
+	public string groupId
+	{
+		get
+		{
+			return this._groupId;
 		}
 	}
 
@@ -204,8 +216,10 @@ public class CharacterStatus
 
 	public int[] chipIds { get; private set; }
 
+	public string[] monsterIntegrationIds { get; private set; }
+
 	public CharacterStatus ToCharacterStatus()
 	{
-		return new CharacterStatus(this._prefabId, this._hp, this._attackPower, this._defencePower, this._specialAttackPower, this._specialDefencePower, this._speed, this._level, this._toleranceId, this.tolerance, this.chipIds);
+		return new CharacterStatus(this._prefabId, this._groupId, this._hp, this._attackPower, this._defencePower, this._specialAttackPower, this._specialDefencePower, this._speed, this._level, this.tolerance, this.skillIds, this.chipIds, this.monsterIntegrationIds);
 	}
 }

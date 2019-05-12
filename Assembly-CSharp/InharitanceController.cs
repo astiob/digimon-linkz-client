@@ -22,8 +22,8 @@ public class InharitanceController : CutsceneControllerBase
 	[Header("カメラ2")]
 	private GameObject inharitanceCamera2;
 
-	[SerializeField]
 	[Header("カメラUI")]
+	[SerializeField]
 	private GameObject camera2D;
 
 	private MaterialController[] materialcontroller;

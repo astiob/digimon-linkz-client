@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 namespace UnityEngine.UI
 {
 	[Serializable]
-	public struct Navigation
+	public struct Navigation : IEquatable<Navigation>
 	{
 		[FormerlySerializedAs("mode")]
 		[SerializeField]
@@ -22,8 +22,8 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private Selectable m_SelectOnLeft;
 
-		[FormerlySerializedAs("selectOnRight")]
 		[SerializeField]
+		[FormerlySerializedAs("selectOnRight")]
 		private Selectable m_SelectOnRight;
 
 		public Navigation.Mode mode
@@ -95,6 +95,11 @@ namespace UnityEngine.UI
 					m_Mode = Navigation.Mode.Automatic
 				};
 			}
+		}
+
+		public bool Equals(Navigation other)
+		{
+			return this.mode == other.mode && this.selectOnUp == other.selectOnUp && this.selectOnDown == other.selectOnDown && this.selectOnLeft == other.selectOnLeft && this.selectOnRight == other.selectOnRight;
 		}
 
 		[Flags]

@@ -1,4 +1,4 @@
-﻿using Master;
+﻿using Monster;
 using System;
 using System.Collections.Generic;
 
@@ -18,6 +18,8 @@ namespace EvolutionDiagram
 
 		private List<EvolutionDiagramData.IconMonster> monsterListArmor;
 
+		private List<EvolutionDiagramData.IconMonster> monsterListHybrid;
+
 		private List<EvolutionDiagramData.IconMonster> monsterListAll;
 
 		private List<EvolutionDiagramData.IconMonster> partsDataList;
@@ -30,6 +32,7 @@ namespace EvolutionDiagram
 			this.monsterListPerfect = new List<EvolutionDiagramData.IconMonster>();
 			this.monsterListUltimate = new List<EvolutionDiagramData.IconMonster>();
 			this.monsterListArmor = new List<EvolutionDiagramData.IconMonster>();
+			this.monsterListHybrid = new List<EvolutionDiagramData.IconMonster>();
 			EvolutionDiagramDataCreator.CreateMonsterDataList(this);
 			this.monsterListChild.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
 			this.monsterListGrowing.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
@@ -37,6 +40,7 @@ namespace EvolutionDiagram
 			this.monsterListPerfect.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
 			this.monsterListUltimate.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
 			this.monsterListArmor.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
+			this.monsterListHybrid.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
 			this.monsterListAll = new List<EvolutionDiagramData.IconMonster>();
 			this.monsterListAll.AddRange(this.monsterListChild);
 			this.monsterListAll.AddRange(this.monsterListGrowing);
@@ -44,12 +48,13 @@ namespace EvolutionDiagram
 			this.monsterListAll.AddRange(this.monsterListPerfect);
 			this.monsterListAll.AddRange(this.monsterListUltimate);
 			this.monsterListAll.AddRange(this.monsterListArmor);
+			this.monsterListAll.AddRange(this.monsterListHybrid);
 			this.monsterListAll.Sort(new Comparison<EvolutionDiagramData.IconMonster>(EvolutionDiagramDataCreator.CompareByCollectionId));
 		}
 
 		public void AddMonsterData(EvolutionDiagramData.IconMonster monsterData)
 		{
-			switch (MonsterData.ToGrowStepId(monsterData.groupData.growStep))
+			switch (MonsterGrowStepData.ToGrowStep(monsterData.master.Group.growStep))
 			{
 			case GrowStep.CHILD_1:
 			case GrowStep.CHILD_2:
@@ -70,6 +75,12 @@ namespace EvolutionDiagram
 			case GrowStep.ARMOR_1:
 			case GrowStep.ARMOR_2:
 				this.monsterListArmor.Add(monsterData);
+				break;
+			case GrowStep.HYBRID_GROWING:
+			case GrowStep.HYBRID_RIPE:
+			case GrowStep.HYBRID_PERFECT:
+			case GrowStep.HYBRID_ULTIMATE:
+				this.monsterListHybrid.Add(monsterData);
 				break;
 			}
 		}
@@ -99,6 +110,12 @@ namespace EvolutionDiagram
 			case GrowStep.ARMOR_2:
 				result = this.monsterListArmor;
 				break;
+			case GrowStep.HYBRID_GROWING:
+			case GrowStep.HYBRID_RIPE:
+			case GrowStep.HYBRID_PERFECT:
+			case GrowStep.HYBRID_ULTIMATE:
+				result = this.monsterListHybrid;
+				break;
 			default:
 				result = this.monsterListAll;
 				break;
@@ -120,9 +137,7 @@ namespace EvolutionDiagram
 		{
 			public int collectionId;
 
-			public GameWebAPI.RespDataMA_GetMonsterMS.MonsterM singleData;
-
-			public GameWebAPI.RespDataMA_GetMonsterMG.MonsterM groupData;
+			public MonsterClientMaster master;
 		}
 	}
 }

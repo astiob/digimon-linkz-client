@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine.Experimental.Director
 {
-	/// <summary>
-	///   <para>Playable used to mix AnimationPlayables.</para>
-	/// </summary>
 	public class AnimationMixerPlayable : AnimationPlayable
 	{
 		public AnimationMixerPlayable() : base(false)
@@ -27,13 +24,6 @@ namespace UnityEngine.Experimental.Director
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void InstantiateEnginePlayable();
 
-		/// <summary>
-		///   <para>Automatically creates an AnimationClipPlayable for each supplied AnimationClip, then sets them as inputs to the mixer.</para>
-		/// </summary>
-		/// <param name="clips">AnimationClips to be used as inputs.</param>
-		/// <returns>
-		///   <para>Returns false if the creation of the AnimationClipPlayables failed, or if the connection failed.</para>
-		/// </returns>
 		public bool SetInputs(AnimationClip[] clips)
 		{
 			if (clips == null)

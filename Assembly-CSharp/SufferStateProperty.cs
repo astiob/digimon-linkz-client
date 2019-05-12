@@ -246,6 +246,7 @@ public class SufferStateProperty
 			this.keepRoundNumber = affectProperty.keepRoundNumber;
 			this.currentKeepRound = affectProperty.keepRoundNumber;
 			this.damagePercent = affectProperty.damagePercent;
+			this.isMultiHitThrough = affectProperty.isMultiHitThrough;
 			break;
 		case AffectEffect.TurnBarrier:
 			sufferTypecache = SufferStateProperty.SufferType.TurnBarrier;
@@ -256,6 +257,7 @@ public class SufferStateProperty
 			sufferTypecache = SufferStateProperty.SufferType.CountBarrier;
 			this.keepRoundNumber = affectProperty.keepRoundNumber;
 			this.currentKeepRound = affectProperty.keepRoundNumber;
+			this.isMultiHitThrough = affectProperty.isMultiHitThrough;
 			break;
 		case AffectEffect.DamageRateUp:
 			sufferTypecache = SufferStateProperty.SufferType.DamageRateUp;
@@ -300,6 +302,7 @@ public class SufferStateProperty
 			sufferTypecache = SufferStateProperty.SufferType.CountEvasion;
 			this.keepRoundNumber = affectProperty.keepRoundNumber;
 			this.currentKeepRound = affectProperty.keepRoundNumber;
+			this.isMultiHitThrough = affectProperty.isMultiHitThrough;
 			break;
 		}
 		this._sufferTypecache = sufferTypecache;
@@ -575,6 +578,8 @@ public class SufferStateProperty
 			this.intValue[0] = value;
 		}
 	}
+
+	public bool isMultiHitThrough { get; private set; }
 
 	public int generationStartTiming
 	{

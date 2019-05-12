@@ -12,6 +12,11 @@ namespace Evolution
 			EvolutionMaterialData.materialList.Clear();
 		}
 
+		public static GameWebAPI.MonsterEvolutionMaterialMaster.Material GetEvolutionMaterial(string monsterEvolutionMaterialId)
+		{
+			return EvolutionMaterialData.GetEvolutionMaterial(int.Parse(monsterEvolutionMaterialId));
+		}
+
 		public static GameWebAPI.MonsterEvolutionMaterialMaster.Material GetEvolutionMaterial(int monsterEvolutionMaterialId)
 		{
 			GameWebAPI.MonsterEvolutionMaterialMaster.Material result;
@@ -30,6 +35,12 @@ namespace Evolution
 				}
 			}
 			return result;
+		}
+
+		public static GameWebAPI.UserSoulData GetUserEvolutionMaterial(string materialId)
+		{
+			GameWebAPI.UserSoulData[] userSoulData = DataMng.Instance().RespDataUS_SoulInfo.userSoulData;
+			return Algorithm.BinarySearch<GameWebAPI.UserSoulData>(userSoulData, materialId, 0, userSoulData.Length - 1, "soulId", 8);
 		}
 	}
 }

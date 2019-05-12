@@ -163,7 +163,7 @@ public class SubStatePlayChipEffect : BattleStateController
 					{
 						if (chipEffect.effectType.ToInt32() == 60 || chipEffect.effectType.ToInt32() == 56)
 						{
-							SkillStatus status = base.battleStateData.skillStatus.GetObject(chipEffect.effectValue);
+							SkillStatus status = base.hierarchyData.GetSkillStatus(chipEffect.effectValue);
 							CharacterStateControl target = this.GetTarget(returnData.characterStateControl, chipEffect);
 							if (status == null || target == null)
 							{
@@ -202,27 +202,30 @@ public class SubStatePlayChipEffect : BattleStateController
 					{
 						returnData.dictionary[keyValuePair.Value] = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
 					}
-					if (chipEffectDataToId.effectType.ToInt32() == 60 || chipEffectDataToId.effectType.ToInt32() == 56)
+					if (chipEffectDataToId.effectTrigger.ToInt32() != 12 || chipEffectDataToId.effectType.ToInt32() != 61)
 					{
-						SkillStatus @object = base.battleStateData.skillStatus.GetObject(chipEffectDataToId.effectValue);
-						CharacterStateControl target = this.GetTarget(characterStateControl, chipEffectDataToId);
-						if (@object != null && target != null)
+						if (chipEffectDataToId.effectType.ToInt32() == 60 || chipEffectDataToId.effectType.ToInt32() == 56)
 						{
-							returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay;
-							returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
+							SkillStatus skillStatus = base.hierarchyData.GetSkillStatus(chipEffectDataToId.effectValue);
+							CharacterStateControl target = this.GetTarget(characterStateControl, chipEffectDataToId);
+							if (skillStatus != null && target != null)
+							{
+								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay;
+								returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
+							}
+							else
+							{
+								returnData.characterStateControl.AddChipEffectCount(chipEffectDataToId.chipEffectId.ToInt32(), 1);
+							}
 						}
 						else
 						{
-							returnData.characterStateControl.AddChipEffectCount(chipEffectDataToId.chipEffectId.ToInt32(), 1);
+							if (returnData.chipPlayType == SubStatePlayChipEffect.ChipPlayType.None)
+							{
+								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipPlay;
+							}
+							returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
 						}
-					}
-					else
-					{
-						if (returnData.chipPlayType == SubStatePlayChipEffect.ChipPlayType.None)
-						{
-							returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipPlay;
-						}
-						returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
 					}
 				}
 			}
@@ -369,10 +372,10 @@ public class SubStatePlayChipEffect : BattleStateController
 
 	private CharacterStateControl GetTarget(CharacterStateControl chipCharacter, GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffect)
 	{
-		SkillStatus @object = base.battleStateData.skillStatus.GetObject(chipEffect.effectValue);
+		SkillStatus skillStatus = base.hierarchyData.GetSkillStatus(chipEffect.effectValue);
 		if (chipEffect.effectType.ToInt32() != 56)
 		{
-			CharacterStateControl[] skillTargetList = base.stateManager.targetSelect.GetSkillTargetList(chipCharacter, @object.target);
+			CharacterStateControl[] skillTargetList = base.stateManager.targetSelect.GetSkillTargetList(chipCharacter, skillStatus.target);
 			if (chipCharacter.targetCharacter != null && !chipCharacter.targetCharacter.isDied)
 			{
 				bool flag = false;
@@ -397,7 +400,7 @@ public class SubStatePlayChipEffect : BattleStateController
 					}
 				}
 			}
-			foreach (AffectEffectProperty affectEffectProperty in @object.affectEffect)
+			foreach (AffectEffectProperty affectEffectProperty in skillStatus.affectEffect)
 			{
 				if (affectEffectProperty.type == AffectEffect.SufferStatusClear)
 				{
@@ -433,11 +436,47 @@ public class SubStatePlayChipEffect : BattleStateController
 			}
 			return (skillTargetList.Length <= 0) ? null : skillTargetList[0];
 		}
-		if (base.battleStateData.currentSelectCharacterState != null && !base.battleStateData.currentSelectCharacterState.isDied)
+		CharacterStateControl[] skillTargetList2;
+		if (chipCharacter.isEnemy)
 		{
+			skillTargetList2 = base.stateManager.targetSelect.GetSkillTargetList(base.battleStateData.playerCharacters[0], skillStatus.target);
+		}
+		else
+		{
+			skillTargetList2 = base.stateManager.targetSelect.GetSkillTargetList(base.battleStateData.enemies[0], skillStatus.target);
+		}
+		if (skillTargetList2 == null || skillTargetList2.Length == 0)
+		{
+			return null;
+		}
+		if (skillStatus.numbers != EffectNumbers.Simple)
+		{
+			return skillTargetList2[0];
+		}
+		if (skillStatus.target == EffectTarget.Attacker)
+		{
+			return chipCharacter;
+		}
+		if (skillStatus.target == EffectTarget.Enemy)
+		{
+			if (base.battleStateData.currentSelectCharacterState == null || base.battleStateData.currentSelectCharacterState.isDied)
+			{
+				return null;
+			}
 			return base.battleStateData.currentSelectCharacterState;
 		}
-		return null;
+		else
+		{
+			if (skillStatus.target == EffectTarget.Ally)
+			{
+				return chipCharacter;
+			}
+			if (base.battleStateData.currentSelectCharacterState == null || base.battleStateData.currentSelectCharacterState.isDied)
+			{
+				return null;
+			}
+			return base.battleStateData.currentSelectCharacterState;
+		}
 	}
 
 	private enum ChipPlayType

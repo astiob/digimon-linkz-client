@@ -11,15 +11,22 @@ namespace UnityEngine
 			{
 				AndroidJNI.ExceptionClear();
 				IntPtr intPtr2 = AndroidJNI.FindClass("java/lang/Throwable");
+				IntPtr intPtr3 = AndroidJNI.FindClass("android/util/Log");
 				try
 				{
 					IntPtr methodID = AndroidJNI.GetMethodID(intPtr2, "toString", "()Ljava/lang/String;");
-					throw new AndroidJavaException(AndroidJNI.CallStringMethod(intPtr, methodID, new jvalue[0]));
+					IntPtr staticMethodID = AndroidJNI.GetStaticMethodID(intPtr3, "getStackTraceString", "(Ljava/lang/Throwable;)Ljava/lang/String;");
+					string message = AndroidJNI.CallStringMethod(intPtr, methodID, new jvalue[0]);
+					jvalue[] array = new jvalue[1];
+					array[0].l = intPtr;
+					string javaStackTrace = AndroidJNI.CallStaticStringMethod(intPtr3, staticMethodID, array);
+					throw new AndroidJavaException(message, javaStackTrace);
 				}
 				finally
 				{
 					AndroidJNISafe.DeleteLocalRef(intPtr);
 					AndroidJNISafe.DeleteLocalRef(intPtr2);
+					AndroidJNISafe.DeleteLocalRef(intPtr3);
 				}
 			}
 		}

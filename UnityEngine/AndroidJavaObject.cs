@@ -3,9 +3,6 @@ using System.Text;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>AndroidJavaObject is the Unity representation of a generic instance of java.lang.Object.</para>
-	/// </summary>
 	public class AndroidJavaObject : IDisposable
 	{
 		private static bool enableDebugPrints;
@@ -18,11 +15,6 @@ namespace UnityEngine
 
 		private static AndroidJavaClass s_JavaLangClass;
 
-		/// <summary>
-		///   <para>Construct an AndroidJavaObject based on the name of the class.</para>
-		/// </summary>
-		/// <param name="className">Specifies the Java class name (e.g. "&lt;tt&gt;java.lang.String&lt;tt&gt;" or "&lt;tt&gt;javalangString&lt;tt&gt;").</param>
-		/// <param name="args">An array of parameters passed to the constructor.</param>
 		public AndroidJavaObject(string className, params object[] args) : this()
 		{
 			this._AndroidJavaObject(className, args);
@@ -44,29 +36,16 @@ namespace UnityEngine
 		{
 		}
 
-		/// <summary>
-		///   <para>IDisposable callback.</para>
-		/// </summary>
 		public void Dispose()
 		{
 			this._Dispose();
 		}
 
-		/// <summary>
-		///   <para>Calls a Java method on an object (non-static).</para>
-		/// </summary>
-		/// <param name="methodName">Specifies which method to call.</param>
-		/// <param name="args">An array of parameters passed to the method.</param>
 		public void Call(string methodName, params object[] args)
 		{
 			this._Call(methodName, args);
 		}
 
-		/// <summary>
-		///   <para>Call a static Java method on a class.</para>
-		/// </summary>
-		/// <param name="methodName">Specifies which method to call.</param>
-		/// <param name="args">An array of parameters passed to the method.</param>
 		public void CallStatic(string methodName, params object[] args)
 		{
 			this._CallStatic(methodName, args);
@@ -92,17 +71,11 @@ namespace UnityEngine
 			this._SetStatic<FieldType>(fieldName, val);
 		}
 
-		/// <summary>
-		///   <para>Retrieve the raw jobject pointer to the Java object.</para>
-		/// </summary>
 		public IntPtr GetRawObject()
 		{
 			return this._GetRawObject();
 		}
 
-		/// <summary>
-		///   <para>Retrieve the raw jclass pointer to the Java class.</para>
-		/// </summary>
 		public IntPtr GetRawClass()
 		{
 			return this._GetRawClass();
@@ -227,7 +200,7 @@ namespace UnityEngine
 			ReturnType result;
 			try
 			{
-				if (typeof(ReturnType).IsPrimitive)
+				if (AndroidReflection.IsPrimitive(typeof(ReturnType)))
 				{
 					if (typeof(ReturnType) == typeof(int))
 					{
@@ -282,7 +255,7 @@ namespace UnityEngine
 				}
 				else
 				{
-					if (!typeof(Array).IsAssignableFrom(typeof(ReturnType)))
+					if (!AndroidReflection.IsAssignableFrom(typeof(Array), typeof(ReturnType)))
 					{
 						throw new Exception("JNI: Unknown return type '" + typeof(ReturnType) + "'");
 					}
@@ -300,7 +273,7 @@ namespace UnityEngine
 		protected FieldType _Get<FieldType>(string fieldName)
 		{
 			IntPtr fieldID = AndroidJNIHelper.GetFieldID<FieldType>(this.m_jclass, fieldName, false);
-			if (typeof(FieldType).IsPrimitive)
+			if (AndroidReflection.IsPrimitive(typeof(FieldType)))
 			{
 				if (typeof(FieldType) == typeof(int))
 				{
@@ -352,7 +325,7 @@ namespace UnityEngine
 					IntPtr objectField2 = AndroidJNISafe.GetObjectField(this.m_jobject, fieldID);
 					return (FieldType)((object)AndroidJavaObject.AndroidJavaObjectDeleteLocalRef(objectField2));
 				}
-				if (typeof(Array).IsAssignableFrom(typeof(FieldType)))
+				if (AndroidReflection.IsAssignableFrom(typeof(Array), typeof(FieldType)))
 				{
 					IntPtr objectField3 = AndroidJNISafe.GetObjectField(this.m_jobject, fieldID);
 					return (FieldType)((object)AndroidJNIHelper.ConvertFromJNIArray<FieldType>(objectField3));
@@ -364,7 +337,7 @@ namespace UnityEngine
 		protected void _Set<FieldType>(string fieldName, FieldType val)
 		{
 			IntPtr fieldID = AndroidJNIHelper.GetFieldID<FieldType>(this.m_jclass, fieldName, false);
-			if (typeof(FieldType).IsPrimitive)
+			if (AndroidReflection.IsPrimitive(typeof(FieldType)))
 			{
 				if (typeof(FieldType) == typeof(int))
 				{
@@ -413,7 +386,7 @@ namespace UnityEngine
 			}
 			else
 			{
-				if (!typeof(Array).IsAssignableFrom(typeof(FieldType)))
+				if (!AndroidReflection.IsAssignableFrom(typeof(Array), typeof(FieldType)))
 				{
 					throw new Exception("JNI: Unknown field type '" + typeof(FieldType) + "'");
 				}
@@ -451,7 +424,7 @@ namespace UnityEngine
 			ReturnType result;
 			try
 			{
-				if (typeof(ReturnType).IsPrimitive)
+				if (AndroidReflection.IsPrimitive(typeof(ReturnType)))
 				{
 					if (typeof(ReturnType) == typeof(int))
 					{
@@ -506,7 +479,7 @@ namespace UnityEngine
 				}
 				else
 				{
-					if (!typeof(Array).IsAssignableFrom(typeof(ReturnType)))
+					if (!AndroidReflection.IsAssignableFrom(typeof(Array), typeof(ReturnType)))
 					{
 						throw new Exception("JNI: Unknown return type '" + typeof(ReturnType) + "'");
 					}
@@ -524,7 +497,7 @@ namespace UnityEngine
 		protected FieldType _GetStatic<FieldType>(string fieldName)
 		{
 			IntPtr fieldID = AndroidJNIHelper.GetFieldID<FieldType>(this.m_jclass, fieldName, true);
-			if (typeof(FieldType).IsPrimitive)
+			if (AndroidReflection.IsPrimitive(typeof(FieldType)))
 			{
 				if (typeof(FieldType) == typeof(int))
 				{
@@ -576,7 +549,7 @@ namespace UnityEngine
 					IntPtr staticObjectField2 = AndroidJNISafe.GetStaticObjectField(this.m_jclass, fieldID);
 					return (FieldType)((object)AndroidJavaObject.AndroidJavaObjectDeleteLocalRef(staticObjectField2));
 				}
-				if (typeof(Array).IsAssignableFrom(typeof(FieldType)))
+				if (AndroidReflection.IsAssignableFrom(typeof(Array), typeof(FieldType)))
 				{
 					IntPtr staticObjectField3 = AndroidJNISafe.GetStaticObjectField(this.m_jclass, fieldID);
 					return (FieldType)((object)AndroidJNIHelper.ConvertFromJNIArray<FieldType>(staticObjectField3));
@@ -588,7 +561,7 @@ namespace UnityEngine
 		protected void _SetStatic<FieldType>(string fieldName, FieldType val)
 		{
 			IntPtr fieldID = AndroidJNIHelper.GetFieldID<FieldType>(this.m_jclass, fieldName, true);
-			if (typeof(FieldType).IsPrimitive)
+			if (AndroidReflection.IsPrimitive(typeof(FieldType)))
 			{
 				if (typeof(FieldType) == typeof(int))
 				{
@@ -637,7 +610,7 @@ namespace UnityEngine
 			}
 			else
 			{
-				if (!typeof(Array).IsAssignableFrom(typeof(FieldType)))
+				if (!AndroidReflection.IsAssignableFrom(typeof(Array), typeof(FieldType)))
 				{
 					throw new Exception("JNI: Unknown field type '" + typeof(FieldType) + "'");
 				}

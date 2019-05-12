@@ -10,16 +10,16 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	[SerializeField]
 	private UISprite spBase;
 
-	[Header("ベースのSabスプライト")]
 	[SerializeField]
+	[Header("ベースのSabスプライト")]
 	private UISprite spBaseSab;
 
-	[SerializeField]
 	[Header("ベースのLineスプライト")]
+	[SerializeField]
 	private UISprite spBaseLine;
 
-	[SerializeField]
 	[Header("ベースのGlowスプライト")]
+	[SerializeField]
 	private UISprite spBaseGlow;
 
 	[SerializeField]

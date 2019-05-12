@@ -38,7 +38,7 @@ namespace UnityEngine.UI
 			GraphicRegistry.instance.m_Graphics.TryGetValue(c, out indexedSet);
 			if (indexedSet != null)
 			{
-				indexedSet.Add(graphic);
+				indexedSet.AddUnique(graphic);
 				return;
 			}
 			indexedSet = new IndexedSet<Graphic>();

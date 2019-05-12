@@ -5,8 +5,8 @@ public class ChipTools
 {
 	public static GameWebAPI.RespDataMA_ChipM.Chip GetChipData(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip)
 	{
-		GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipDataByUserChipId = ChipDataMng.GetUserChipDataByUserChipId(equip.userChipId);
-		return ChipDataMng.GetChipMainData(userChipDataByUserChipId);
+		GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(equip.userChipId);
+		return ChipDataMng.GetChipMainData(userChip);
 	}
 
 	public static int ConvertToButtonNo(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip)

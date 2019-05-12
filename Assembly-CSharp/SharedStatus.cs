@@ -16,8 +16,6 @@ public class SharedStatus
 	[SerializeField]
 	private int _sharedAp;
 
-	private SharedAPMulti _sharedAPMulti;
-
 	public SharedStatus()
 	{
 		this._isShared = false;
@@ -25,11 +23,10 @@ public class SharedStatus
 		SharedStatus.currentSharedStatus = this;
 	}
 
-	public SharedStatus(int sharedAp, SharedAPMulti sharedAPMulti)
+	public SharedStatus(int sharedAp)
 	{
 		this._sharedAp = sharedAp;
 		this._isShared = true;
-		this._sharedAPMulti = sharedAPMulti;
 	}
 
 	public static SharedStatus currentSharedStatus
@@ -74,7 +71,6 @@ public class SharedStatus
 		set
 		{
 			this._sharedAp = Mathf.Clamp(value, 0, 16);
-			this._sharedAPMulti.APNum = value;
 		}
 	}
 

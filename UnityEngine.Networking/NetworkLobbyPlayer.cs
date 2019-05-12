@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine.Networking.NetworkSystem;
+using UnityEngine.SceneManagement;
 
 namespace UnityEngine.Networking
 {
@@ -54,7 +55,7 @@ namespace UnityEngine.Networking
 			}
 			else
 			{
-				Debug.LogError("No Lobby for LobbyPlayer");
+				Debug.LogError("LobbyPlayer could not find a NetworkLobbyManager. The LobbyPlayer requires a NetworkLobbyManager object to function. Make sure that there is one in the scene.");
 			}
 		}
 
@@ -107,9 +108,13 @@ namespace UnityEngine.Networking
 		private void OnLevelWasLoaded()
 		{
 			NetworkLobbyManager networkLobbyManager = NetworkManager.singleton as NetworkLobbyManager;
-			if (networkLobbyManager && Application.loadedLevelName == networkLobbyManager.lobbyScene)
+			if (networkLobbyManager)
 			{
-				return;
+				string name = SceneManager.GetSceneAt(0).name;
+				if (name == networkLobbyManager.lobbyScene)
+				{
+					return;
+				}
 			}
 			if (base.isLocalPlayer)
 			{
@@ -172,7 +177,8 @@ namespace UnityEngine.Networking
 				{
 					return;
 				}
-				if (Application.loadedLevelName != networkLobbyManager.lobbyScene)
+				string name = SceneManager.GetSceneAt(0).name;
+				if (name != networkLobbyManager.lobbyScene)
 				{
 					return;
 				}
@@ -180,11 +186,20 @@ namespace UnityEngine.Networking
 			Rect position = new Rect((float)(100 + this.m_Slot * 100), 200f, 90f, 20f);
 			if (base.isLocalPlayer)
 			{
-				GUI.Label(position, " [ You ]");
+				string text;
+				if (this.m_ReadyToBegin)
+				{
+					text = "(Ready)";
+				}
+				else
+				{
+					text = "(Not Ready)";
+				}
+				GUI.Label(position, text);
 				if (this.m_ReadyToBegin)
 				{
 					position.y += 25f;
-					if (GUI.Button(position, "Ready"))
+					if (GUI.Button(position, "STOP"))
 					{
 						this.SendNotReadyToBeginMessage();
 					}
@@ -192,7 +207,7 @@ namespace UnityEngine.Networking
 				else
 				{
 					position.y += 25f;
-					if (GUI.Button(position, "Not Ready"))
+					if (GUI.Button(position, "START"))
 					{
 						this.SendReadyToBeginMessage();
 					}

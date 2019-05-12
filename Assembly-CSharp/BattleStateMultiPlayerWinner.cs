@@ -10,14 +10,27 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 
 	protected override IEnumerator MainRoutine()
 	{
-		base.stateManager.SetBattleScreen(BattleScreen.PlayerWinner);
-		base.stateManager.time.SetPlaySpeed(false, false);
-		base.stateManager.uiControlMulti.HideAllDIalog();
-		base.stateManager.uiControlMulti.ShowWinnerUI();
-		base.stateManager.uiControl.ShowHidePlayerWinnerButton(false);
-		base.battleStateData.isSkipWinnerAction = false;
-		IEnumerator wait = this.PlayerWinnerAction();
-		while (wait.MoveNext())
+		IEnumerator[] functions = new IEnumerator[]
+		{
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.WinStart),
+			this.PlayerWinnerAction(),
+			this.PlayAdventureScene(BattleAdventureSceneManager.TriggerType.WinEnd)
+		};
+		foreach (IEnumerator function in functions)
+		{
+			while (function.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		yield break;
+	}
+
+	private IEnumerator PlayAdventureScene(BattleAdventureSceneManager.TriggerType triggerType)
+	{
+		base.stateManager.battleAdventureSceneManager.OnTrigger(triggerType);
+		IEnumerator update = base.stateManager.battleAdventureSceneManager.Update();
+		while (update.MoveNext())
 		{
 			yield return null;
 		}
@@ -26,6 +39,12 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 
 	private IEnumerator PlayerWinnerAction()
 	{
+		base.stateManager.SetBattleScreen(BattleScreen.PlayerWinner);
+		base.stateManager.time.SetPlaySpeed(false, false);
+		base.stateManager.uiControlMulti.HideAllDIalog();
+		base.stateManager.uiControlMulti.ShowWinnerUI();
+		base.stateManager.uiControl.ShowHidePlayerWinnerButton(false);
+		base.battleStateData.isSkipWinnerAction = false;
 		if (base.battleStateData.totalRoundNumber <= base.hierarchyData.speedClearRound && base.hierarchyData.speedClearRound > 0)
 		{
 			base.stateManager.battleUiComponents.playerWinnerUi.SpeedClearObjActive(true);

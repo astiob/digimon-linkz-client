@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Scene
 {
@@ -7,7 +7,7 @@ namespace Scene
 	{
 		public static void DeleteCurrentScene()
 		{
-			Application.LoadLevel("Empty");
+			SceneManager.LoadScene("Empty");
 		}
 
 		public static void ChangeBattleResultScene(float fadeoutTime = 0.5f)

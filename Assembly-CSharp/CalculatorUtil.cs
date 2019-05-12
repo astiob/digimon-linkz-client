@@ -1,4 +1,5 @@
 ﻿using Ability;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,41 +49,28 @@ public sealed class CalculatorUtil
 		return (int)Mathf.Floor(num2 * num3);
 	}
 
-	public static int CalcClusterForReinforcement(List<MonsterData> partnerDigimons)
-	{
-		GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
-		GameWebAPI.RespDataCP_Campaign.CampaignInfo campaign = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.TrainCostDown, false);
-		float num = 1f;
-		if (campaign != null)
-		{
-			num = campaign.rate.ToFloat();
-		}
-		float reinforcementCost = MonsterDataMng.Instance().GetReinforcementCost(partnerDigimons);
-		return Mathf.FloorToInt(reinforcementCost * num);
-	}
-
 	public static int CalcClusterForEvolve(string monsterId)
 	{
 		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterId(monsterId);
+		int growStep = monsterGroupMasterByMonsterId.growStep.ToInt32();
 		int num = 0;
 		int num2 = 0;
-		string growStep = monsterGroupMasterByMonsterId.growStep;
-		switch (growStep)
+		if (MonsterGrowStepData.IsRipeScope(growStep))
 		{
-		case "5":
-		case "8":
 			num = ConstValue.EVOLVE_COEFFICIENT_FOR_5;
-			goto IL_D4;
-		case "6":
-			num = ConstValue.EVOLVE_COEFFICIENT_FOR_6;
-			goto IL_D4;
-		case "7":
-		case "9":
-			num = ConstValue.EVOLVE_COEFFICIENT_FOR_7;
-			goto IL_D4;
 		}
-		global::Debug.Log("growStepの値が不正です");
-		IL_D4:
+		else if (MonsterGrowStepData.IsPerfectScope(growStep))
+		{
+			num = ConstValue.EVOLVE_COEFFICIENT_FOR_6;
+		}
+		else if (MonsterGrowStepData.IsUltimateScope(growStep))
+		{
+			num = ConstValue.EVOLVE_COEFFICIENT_FOR_7;
+		}
+		else
+		{
+			global::Debug.Log("growStepの値が不正です");
+		}
 		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId);
 		int arousalValue = CalculatorUtil.GetArousalValue(monsterMasterByMonsterId);
 		if (arousalValue >= 0 && arousalValue < ConstValue.EVOLVE_COEFFICIENT_RARE.Length)
@@ -97,22 +85,22 @@ public sealed class CalculatorUtil
 		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterId(monsterId);
 		int num = 0;
 		int num2 = 0;
-		switch (monsterGroupMasterByMonsterId.growStep.ToInt32())
+		int growStep = monsterGroupMasterByMonsterId.growStep.ToInt32();
+		if (MonsterGrowStepData.IsRipeScope(growStep))
 		{
-		case 5:
-		case 8:
 			num = ConstValue.MODE_CHANGE_COEFFICIENT_FOR_5;
-			break;
-		case 6:
+		}
+		else if (MonsterGrowStepData.IsPerfectScope(growStep))
+		{
 			num = ConstValue.MODE_CHANGE_COEFFICIENT_FOR_6;
-			break;
-		case 7:
-		case 9:
+		}
+		else if (MonsterGrowStepData.IsUltimateScope(growStep))
+		{
 			num = ConstValue.MODE_CHANGE_COEFFICIENT_FOR_7;
-			break;
-		default:
+		}
+		else
+		{
 			global::Debug.Log("growStepの値が不正です");
-			break;
 		}
 		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId);
 		int arousalValue = CalculatorUtil.GetArousalValue(monsterMasterByMonsterId);

@@ -27,12 +27,12 @@ public class AffectEffectProperty
 	[SerializeField]
 	private TechniqueType _techniqueType;
 
-	[SerializeField]
 	[FormerlySerializedAs("intValue")]
+	[SerializeField]
 	private int[] _intValue = new int[2];
 
-	[SerializeField]
 	[FormerlySerializedAs("floatValue")]
+	[SerializeField]
 	private float[] _floatValue = new float[6];
 
 	public AffectEffectProperty()
@@ -75,12 +75,38 @@ public class AffectEffectProperty
 
 	public int skillId { get; private set; }
 
-	public int power
+	private int power
 	{
 		get
 		{
 			return this._intValue[1];
 		}
+	}
+
+	public int GetPower(CharacterStateControl characterStateControl = null)
+	{
+		int result = this.power;
+		if (characterStateControl == null)
+		{
+			return result;
+		}
+		if (this.type == AffectEffect.HpBorderlineDamage || this.type == AffectEffect.HpBorderlineSpDamage)
+		{
+			float num = (float)characterStateControl.hp / (float)characterStateControl.maxHp;
+			if (num >= this.borderlineRange1)
+			{
+				result = (int)this.borderlineDamage1;
+			}
+			else if (num >= this.borderlineRange2)
+			{
+				result = (int)this.borderlineDamage2;
+			}
+			else
+			{
+				result = (int)this.defaultDamage;
+			}
+		}
+		return result;
 	}
 
 	public int upPower
@@ -323,6 +349,14 @@ public class AffectEffectProperty
 		}
 	}
 
+	public bool isMultiHitThrough
+	{
+		get
+		{
+			return this._intValue[0] > 0;
+		}
+	}
+
 	public int damageRateKeepRoundNumber
 	{
 		get
@@ -435,15 +469,33 @@ public class AffectEffectProperty
 		}
 	}
 
+	public int DefenseThrough
+	{
+		get
+		{
+			return (int)this._floatValue[2];
+		}
+	}
+
 	public bool ThisSkillIsAttack
 	{
 		get
 		{
-			return this.type == AffectEffect.Damage;
+			return AffectEffectProperty.IsDamage(this.type);
 		}
 	}
 
+	public static bool IsDamage(AffectEffect affectEffect)
+	{
+		return affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage || affectEffect == AffectEffect.HpBorderlineSpDamage || affectEffect == AffectEffect.DefenseThroughDamage || affectEffect == AffectEffect.SpDefenseThroughDamage;
+	}
+
 	public bool isMissThrough { get; private set; }
+
+	public bool OnHit(CharacterStateControl target)
+	{
+		return this.OnHit(null, target);
+	}
 
 	public bool OnHit(CharacterStateControl attacker, CharacterStateControl target)
 	{
@@ -452,9 +504,36 @@ public class AffectEffectProperty
 			return true;
 		}
 		float num = this.hitRate;
+		if (attacker != null)
+		{
+			num += this.GetSkillHitRateCorrectionValue(attacker);
+		}
+		if (this.powerType != PowerType.Fixable && Tolerance.OnInfluenceToleranceAffectEffect(this.type))
+		{
+			Tolerance tolerance = target.tolerance;
+			Strength affectEffectStrength = tolerance.GetAffectEffectStrength(this.type);
+			if (affectEffectStrength == Strength.Strong)
+			{
+				num *= 0.5f;
+			}
+			else if (affectEffectStrength == Strength.Weak)
+			{
+				num *= 1.5f;
+			}
+			else if (affectEffectStrength == Strength.Invalid)
+			{
+				num *= 0f;
+			}
+		}
+		return RandomExtension.Switch(Mathf.Clamp01(num));
+	}
+
+	private float GetSkillHitRateCorrectionValue(CharacterStateControl attacker)
+	{
+		float num = 0f;
 		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
-		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, ChipEffectStatus.EffectTriggerType.Usually);
-		num = ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, this, attacker);
+		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
+		num += ExtraEffectStatus.GetSkillHitRateCorrectionValue(invocationList, this, attacker) - this.hitRate;
 		num += attacker.chipAddHit;
 		foreach (int num2 in attacker.potencyChipIdList.Keys)
 		{
@@ -476,57 +555,13 @@ public class AffectEffectProperty
 				num -= attacker.currentSufferState.onHitRateDown.downPercent;
 			}
 			num += attacker.leaderSkillResult.hitRateUpPercent;
-			if (Tolerance.OnInfluenceToleranceAffectEffect(this.type))
-			{
-				Tolerance tolerance = target.tolerance;
-				Strength affectEffectStrength = tolerance.GetAffectEffectStrength(this.type);
-				if (affectEffectStrength == Strength.Strong)
-				{
-					num *= 0.5f;
-				}
-				else if (affectEffectStrength == Strength.Weak)
-				{
-					num *= 1.5f;
-				}
-				else if (affectEffectStrength == Strength.Invalid)
-				{
-					num *= 0f;
-				}
-			}
 		}
-		return RandomExtension.Switch(Mathf.Clamp01(num));
-	}
-
-	public bool OnHit(CharacterStateControl target)
-	{
-		if (SkillStatus.onHitRate100Percent)
-		{
-			return true;
-		}
-		float num = this.hitRate;
-		if (this.powerType != PowerType.Fixable && Tolerance.OnInfluenceToleranceAffectEffect(this.type))
-		{
-			Tolerance tolerance = target.tolerance;
-			Strength affectEffectStrength = tolerance.GetAffectEffectStrength(this.type);
-			if (affectEffectStrength == Strength.Strong)
-			{
-				num *= 0.5f;
-			}
-			else if (affectEffectStrength == Strength.Weak)
-			{
-				num *= 1.5f;
-			}
-			else if (affectEffectStrength == Strength.Invalid)
-			{
-				num *= 0f;
-			}
-		}
-		return RandomExtension.Switch(Mathf.Clamp01(num));
+		return num;
 	}
 
 	public int GetHate()
 	{
-		if (this.type == AffectEffect.Damage)
+		if (AffectEffectProperty.IsDamage(this.type))
 		{
 			return 20;
 		}

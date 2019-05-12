@@ -1,4 +1,6 @@
 ﻿using Master;
+using Monster;
+using Picturebook;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,7 +33,7 @@ namespace EvolutionDiagram
 			GrowStep defaultSelectGrowStep = this.buttonList.GetDefaultSelectGrowStep();
 			List<EvolutionDiagramData.IconMonster> monsterDataList = this.evolutionData.GetMonsterDataList(defaultSelectGrowStep);
 			this.evolutionData.SetViewData(defaultSelectGrowStep, monsterDataList);
-			this.iconList.InitializeView(2);
+			this.iconList.Initialize();
 			this.UpdateViewList();
 		}
 
@@ -51,11 +53,11 @@ namespace EvolutionDiagram
 
 		public static void CreateDialog(GameObject parentDialog)
 		{
-			if (MonsterDataMng.userPicturebookData == null)
+			if (!MonsterPicturebookData.IsReady())
 			{
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-				APIRequestTask picturebookData = MonsterDataMng.Instance().GetPicturebookData(DataMng.Instance().RespDataCM_Login.playerInfo.userId, false);
-				AppCoroutine.Start(picturebookData.Run(delegate
+				APIRequestTask task = MonsterPicturebookData.RequestUserPicturebook();
+				AppCoroutine.Start(task.Run(delegate
 				{
 					RestrictionInput.EndLoad();
 					CMD_EvolutionDiagram.SetDialog(parentDialog);

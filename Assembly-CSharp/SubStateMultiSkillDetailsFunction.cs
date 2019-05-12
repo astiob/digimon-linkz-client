@@ -56,9 +56,12 @@ public class SubStateMultiSkillDetailsFunction : SubStateSkillDetailsFunction
 
 	private IEnumerator RefreshSharedAP()
 	{
-		base.stateManager.battleUiComponentsMulti.sharedApMulti.PlayApUpAnimations();
-		base.stateManager.uiControlMulti.RefreshSharedAP(false);
-		while (base.stateManager.uiControlMulti.isPlayingSharedAp)
+		bool isEndPlayApUpAnimations = false;
+		base.stateManager.uiControlMulti.PlayApUpAnimations(delegate
+		{
+			isEndPlayApUpAnimations = true;
+		});
+		while (!isEndPlayApUpAnimations)
 		{
 			yield return null;
 		}

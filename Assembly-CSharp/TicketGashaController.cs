@@ -13,12 +13,12 @@ public class TicketGashaController : MonoBehaviour
 	[SerializeField]
 	public Camera mainCam;
 
-	[Header("2Dカメラ")]
 	[SerializeField]
+	[Header("2Dカメラ")]
 	public Camera camUI;
 
-	[SerializeField]
 	[Header("白フェード板")]
+	[SerializeField]
 	private GUISprite spFade;
 
 	[Header("白フェード速度")]
@@ -64,7 +64,7 @@ public class TicketGashaController : MonoBehaviour
 
 	public void SetTicketGashaTex(UITexture tex)
 	{
-		this.renderTex = new RenderTexture(1100, 1000, 16);
+		this.renderTex = new RenderTexture(1200, 1200, 16);
 		this.renderTex.antiAliasing = 2;
 		this.ticketGashaTex = tex;
 		this.ticketGashaTex.mainTexture = this.renderTex;

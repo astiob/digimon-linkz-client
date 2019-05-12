@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Utility class containing helper methods for working with  RectTransform.</para>
-	/// </summary>
 	public sealed class RectTransformUtility
 	{
 		private static Vector3[] s_Corners = new Vector3[4];
@@ -19,15 +16,6 @@ namespace UnityEngine
 			return RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, null);
 		}
 
-		/// <summary>
-		///   <para>Does the RectTransform contain the screen point as seen from the given camera?</para>
-		/// </summary>
-		/// <param name="rect">The RectTransform to test with.</param>
-		/// <param name="screenPoint">The screen point to test.</param>
-		/// <param name="cam">The camera from which the test is performed from.</param>
-		/// <returns>
-		///   <para>True if the point is inside the rectangle.</para>
-		/// </returns>
 		public static bool RectangleContainsScreenPoint(RectTransform rect, Vector2 screenPoint, Camera cam)
 		{
 			return RectTransformUtility.INTERNAL_CALL_RectangleContainsScreenPoint(rect, ref screenPoint, cam);
@@ -37,15 +25,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool INTERNAL_CALL_RectangleContainsScreenPoint(RectTransform rect, ref Vector2 screenPoint, Camera cam);
 
-		/// <summary>
-		///   <para>Convert a given point in screen space into a pixel correct point.</para>
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="elementTransform"></param>
-		/// <param name="canvas"></param>
-		/// <returns>
-		///   <para>Pixel adjusted point.</para>
-		/// </returns>
 		public static Vector2 PixelAdjustPoint(Vector2 point, Transform elementTransform, Canvas canvas)
 		{
 			Vector2 result;
@@ -62,17 +41,16 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void INTERNAL_CALL_PixelAdjustPoint(ref Vector2 point, Transform elementTransform, Canvas canvas, out Vector2 output);
 
-		/// <summary>
-		///   <para>Given a rect transform, return the corner points in pixel accurate coordinates.</para>
-		/// </summary>
-		/// <param name="rectTransform"></param>
-		/// <param name="canvas"></param>
-		/// <returns>
-		///   <para>Pixel adjusted rect.</para>
-		/// </returns>
+		public static Rect PixelAdjustRect(RectTransform rectTransform, Canvas canvas)
+		{
+			Rect result;
+			RectTransformUtility.INTERNAL_CALL_PixelAdjustRect(rectTransform, canvas, out result);
+			return result;
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern Rect PixelAdjustRect(RectTransform rectTransform, Canvas canvas);
+		private static extern void INTERNAL_CALL_PixelAdjustRect(RectTransform rectTransform, Canvas canvas, out Rect value);
 
 		public static bool ScreenPointToWorldPointInRectangle(RectTransform rect, Vector2 screenPoint, Camera cam, out Vector3 worldPoint)
 		{
@@ -153,13 +131,6 @@ namespace UnityEngine
 			return RectTransformUtility.CalculateRelativeRectTransformBounds(trans, trans);
 		}
 
-		/// <summary>
-		///   <para>Flips the alignment of the RectTransform along the horizontal or vertical axis, and optionally its children as well.</para>
-		/// </summary>
-		/// <param name="rect">The RectTransform to flip.</param>
-		/// <param name="keepPositioning">Flips around the pivot if true. Flips within the parent rect if false.</param>
-		/// <param name="recursive">Flip the children as well?</param>
-		/// <param name="axis">The axis to flip along. 0 is horizontal and 1 is vertical.</param>
 		public static void FlipLayoutOnAxis(RectTransform rect, int axis, bool keepPositioning, bool recursive)
 		{
 			if (rect == null)
@@ -196,12 +167,6 @@ namespace UnityEngine
 			rect.anchorMax = anchorMax;
 		}
 
-		/// <summary>
-		///   <para>Flips the horizontal and vertical axes of the RectTransform size and alignment, and optionally its children as well.</para>
-		/// </summary>
-		/// <param name="rect">The RectTransform to flip.</param>
-		/// <param name="keepPositioning">Flips around the pivot if true. Flips within the parent rect if false.</param>
-		/// <param name="recursive">Flip the children as well?</param>
 		public static void FlipLayoutAxes(RectTransform rect, bool keepPositioning, bool recursive)
 		{
 			if (rect == null)

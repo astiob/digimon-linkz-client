@@ -2,7 +2,6 @@
 using MultiBattle.Tools;
 using Quest;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DataMng : MonoBehaviour
@@ -16,8 +15,6 @@ public class DataMng : MonoBehaviour
 	private GameWebAPI.RespDataCM_ABVersion resp_data_cm_abversion;
 
 	private GameWebAPI.RespDataUS_GetPlayerInfo resp_data_us_playerinfo;
-
-	private GameWebAPI.RespDataUS_GetMonsterList resp_data_us_monsterlist;
 
 	private GameWebAPI.RespDataUS_GetSoulInfo resp_data_us_soulinfo;
 
@@ -211,142 +208,6 @@ public class DataMng : MonoBehaviour
 		int num = int.Parse(this.RespDataUS_PlayerInfo.playerInfo.gamemoney);
 		num -= subChip;
 		this.RespDataUS_PlayerInfo.playerInfo.gamemoney = num.ToString();
-	}
-
-	public GameWebAPI.RespDataUS_GetMonsterList RespDataUS_MonsterList
-	{
-		get
-		{
-			return this.resp_data_us_monsterlist;
-		}
-		set
-		{
-			this.resp_data_us_monsterlist = value;
-		}
-	}
-
-	public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList GetUserMonster(string userMonsterId)
-	{
-		for (int i = 0; i < this.resp_data_us_monsterlist.userMonsterList.Length; i++)
-		{
-			if (userMonsterId == this.resp_data_us_monsterlist.userMonsterList[i].userMonsterId)
-			{
-				return this.resp_data_us_monsterlist.userMonsterList[i];
-			}
-		}
-		global::Debug.LogError("============================== DataMng.Inst GetUserMonster");
-		return null;
-	}
-
-	public void SetUserMonster(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
-	{
-		for (int i = 0; i < this.resp_data_us_monsterlist.userMonsterList.Length; i++)
-		{
-			if (userMonster.userMonsterId == this.resp_data_us_monsterlist.userMonsterList[i].userMonsterId)
-			{
-				this.resp_data_us_monsterlist.userMonsterList[i] = userMonster;
-				break;
-			}
-		}
-	}
-
-	public void SetUserMonsterList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsL)
-	{
-		for (int i = 0; i < userMonsL.Length; i++)
-		{
-			for (int j = 0; j < this.resp_data_us_monsterlist.userMonsterList.Length; j++)
-			{
-				if (userMonsL[i].userMonsterId == this.resp_data_us_monsterlist.userMonsterList[j].userMonsterId)
-				{
-					this.resp_data_us_monsterlist.userMonsterList[j] = userMonsL[i];
-				}
-			}
-		}
-	}
-
-	public void AddUserMonster(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
-	{
-		List<GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList> list = new List<GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList>();
-		for (int i = 0; i < this.resp_data_us_monsterlist.userMonsterList.Length; i++)
-		{
-			list.Add(this.resp_data_us_monsterlist.userMonsterList[i]);
-		}
-		list.Add(userMonster);
-		this.resp_data_us_monsterlist.userMonsterList = list.ToArray();
-	}
-
-	public void AddUserMonsterList(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsL)
-	{
-		List<GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList> list = new List<GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList>();
-		for (int i = 0; i < this.resp_data_us_monsterlist.userMonsterList.Length; i++)
-		{
-			list.Add(this.resp_data_us_monsterlist.userMonsterList[i]);
-		}
-		for (int i = 0; i < userMonsL.Length; i++)
-		{
-			list.Add(userMonsL[i]);
-		}
-		this.resp_data_us_monsterlist.userMonsterList = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[list.Count];
-		for (int i = 0; i < list.Count; i++)
-		{
-			this.resp_data_us_monsterlist.userMonsterList[i] = list[i];
-		}
-	}
-
-	public void DeleteUserMonsterList(int[] umidL)
-	{
-		List<GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList> list = new List<GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList>();
-		for (int i = 0; i < this.resp_data_us_monsterlist.userMonsterList.Length; i++)
-		{
-			int j;
-			for (j = 0; j < umidL.Length; j++)
-			{
-				if (umidL[j].ToString() == this.resp_data_us_monsterlist.userMonsterList[i].userMonsterId)
-				{
-					break;
-				}
-			}
-			if (j == umidL.Length)
-			{
-				list.Add(this.resp_data_us_monsterlist.userMonsterList[i]);
-			}
-		}
-		this.resp_data_us_monsterlist.userMonsterList = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[list.Count];
-		for (int j = 0; j < list.Count; j++)
-		{
-			this.resp_data_us_monsterlist.userMonsterList[j] = list[j];
-		}
-		foreach (int num in umidL)
-		{
-			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(num.ToString());
-			if (monsterChipList != null)
-			{
-				foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in monsterChipList)
-				{
-					ChipDataMng.DeleteUserChipData(userChipList.userChipId);
-				}
-			}
-		}
-	}
-
-	public APIRequestTask RequestUserMonster(int[] ids = null, bool requestRetry = true)
-	{
-		if (ids == null)
-		{
-			ids = new int[0];
-		}
-		GameWebAPI.RequestMonsterList request = new GameWebAPI.RequestMonsterList
-		{
-			SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
-			{
-				param.userMonsterIds = ids;
-			},
-			OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
-			{
-				this.RespDataUS_MonsterList = response;
-			}
-		};
-		return new APIRequestTask(request, requestRetry);
 	}
 
 	public GameWebAPI.RespDataUS_GetSoulInfo RespDataUS_SoulInfo
@@ -898,68 +759,6 @@ public class DataMng : MonoBehaviour
 
 	public GameWebAPI.RespData_WorldMultiStartInfo RespData_WorldMultiStartInfo { get; set; }
 
-	public int[] MultiAliveInfos(string[] userIds)
-	{
-		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = this.RespData_WorldMultiStartInfo;
-		GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
-		int[] array = new int[3];
-		if (respData_WorldMultiStartInfo == null || respData_WorldMultiResultInfoLogic == null)
-		{
-			return array;
-		}
-		for (int i = 0; i < userIds.Length; i++)
-		{
-			if (this.IsOnlineUser(userIds[i]))
-			{
-				array[i] = 1;
-			}
-		}
-		return array;
-	}
-
-	public bool IsOnlineUser(string userId)
-	{
-		GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
-		int[] onlineGuestIds = respData_WorldMultiResultInfoLogic.onlineGuestIds;
-		MultiBattleData multiBattleData = ClassSingleton<MultiBattleData>.Instance;
-		MultiUser[] multiUsers = multiBattleData.MultiUsers;
-		string b = string.Empty;
-		foreach (MultiUser multiUser in multiUsers)
-		{
-			if (multiUser.isOwner)
-			{
-				b = multiUser.userId;
-				break;
-			}
-		}
-		foreach (int num in onlineGuestIds)
-		{
-			if (userId == b)
-			{
-				return true;
-			}
-			if (userId == num.ToString())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public GameWebAPI.RespData_WorldMultiStartInfo.LuckDrop[] GetOnlineUSerLuckDrops()
-	{
-		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = this.RespData_WorldMultiStartInfo;
-		List<GameWebAPI.RespData_WorldMultiStartInfo.LuckDrop> list = new List<GameWebAPI.RespData_WorldMultiStartInfo.LuckDrop>();
-		foreach (GameWebAPI.RespData_WorldMultiStartInfo.LuckDrop luckDrop2 in respData_WorldMultiStartInfo.luckDrop)
-		{
-			if (this.IsOnlineUser(luckDrop2.userId))
-			{
-				list.Add(luckDrop2);
-			}
-		}
-		return list.ToArray();
-	}
-
 	public static GameWebAPI.RespData_WorldMultiStartInfo.LuckDrop ExchangeMultiLuckDrop(GameWebAPI.RespDataWD_DungeonStart.LuckDrop soloPlayLuckDrop)
 	{
 		if (soloPlayLuckDrop == null)
@@ -1038,20 +837,6 @@ public class DataMng : MonoBehaviour
 		return false;
 	}
 
-	public int GetLuckDropTotalNum(MasterDataMng.AssetCategory assetCategory)
-	{
-		GameWebAPI.RespData_WorldMultiStartInfo.LuckDrop[] onlineUSerLuckDrops = this.GetOnlineUSerLuckDrops();
-		int num = 0;
-		for (int i = 0; i < onlineUSerLuckDrops.Length; i++)
-		{
-			if (int.Parse(onlineUSerLuckDrops[i].assetCategoryId) == (int)assetCategory)
-			{
-				num += onlineUSerLuckDrops[i].assetNum;
-			}
-		}
-		return num;
-	}
-
 	public bool IsReleaseColosseum { get; set; }
 
 	public GameWebAPI.RespData_ColosseumInfoLogic RespData_ColosseumInfo { get; set; }
@@ -1119,5 +904,23 @@ public class DataMng : MonoBehaviour
 	public class ResultUtilData
 	{
 		public GameWebAPI.WD_Req_DngStart last_dng_req;
+
+		public void SetLastDngReq(string dungeonId, string deckNum = "-1", string userDungeonTicketId = "-1")
+		{
+			this.last_dng_req = new GameWebAPI.WD_Req_DngStart();
+			this.last_dng_req.dungeonId = dungeonId;
+			this.last_dng_req.deckNum = deckNum;
+			this.last_dng_req.userDungeonTicketId = userDungeonTicketId;
+		}
+
+		public void ClearLastDngReq()
+		{
+			this.last_dng_req = null;
+		}
+
+		public GameWebAPI.WD_Req_DngStart GetLastDngReq()
+		{
+			return this.last_dng_req;
+		}
 	}
 }

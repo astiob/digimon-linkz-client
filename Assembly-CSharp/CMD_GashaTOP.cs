@@ -1,5 +1,6 @@
 ﻿using FarmData;
 using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -899,7 +900,7 @@ public class CMD_GashaTOP : CMD
 		bool flag2 = true;
 		if (result.IsRare() || result.IsLink())
 		{
-			flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_GASHA_1);
+			flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_GASHA_1);
 			flag2 = false;
 		}
 		else if (result.IsRareChip() || result.IsLinkChip())
@@ -938,7 +939,7 @@ public class CMD_GashaTOP : CMD
 		bool flag2 = true;
 		if (result.IsRare() || result.IsLink())
 		{
-			flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_GASHA_10);
+			flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_GASHA_10);
 			flag2 = false;
 		}
 		else if (result.IsRareChip() || result.IsLinkChip())
@@ -1254,7 +1255,7 @@ public class CMD_GashaTOP : CMD
 			this.ResetStatus(10);
 		}
 		CutSceneMain.UserAssetList = this.chipResult.userAssetList;
-		CutSceneMain.FadeReqCutScene("Cutscenes/chip_gacha", new Action<int>(this.StartChipCutSceneCallBack), delegate(int index)
+		CutSceneMain.FadeReqCutScene("Cutscenes/AssetBundle/ChipGasha/chip_gacha", new Action<int>(this.StartChipCutSceneCallBack), delegate(int index)
 		{
 			this.ShowUI(true);
 			CutSceneMain.FadeReqCutSceneEnd();
@@ -1324,7 +1325,6 @@ public class CMD_GashaTOP : CMD
 			OnReceived = delegate(GameWebAPI.RespDataGA_ExecGacha response)
 			{
 				this.gachaResult = response;
-				DataMng.Instance().AddUserMonsterList(response.userMonsterList);
 				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
 			}
 		};
@@ -1341,7 +1341,7 @@ public class CMD_GashaTOP : CMD
 
 	private IEnumerator GetChipSlotInfo()
 	{
-		GameWebAPI.MonsterSlotInfoListLogic request = ChipDataMng.RequestAPIMonsterSlotInfo(this.gachaResult.userMonsterList, null);
+		GameWebAPI.MonsterSlotInfoListLogic request = ChipDataMng.RequestAPIMonsterSlotInfo(this.gachaResult.userMonsterList);
 		yield return AppCoroutine.Start(request.Run(new Action(this.EndExecGashaSuccess), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
@@ -1352,6 +1352,7 @@ public class CMD_GashaTOP : CMD
 
 	private void EndExecGashaSuccess()
 	{
+		ClassSingleton<MonsterUserDataMng>.Instance.AddUserMonsterData(this.gachaResult.userMonsterList);
 		if (!GashaTutorialMode.TutoExec)
 		{
 			this.isExecGasha = true;
@@ -1365,18 +1366,18 @@ public class CMD_GashaTOP : CMD
 		{
 			this.ResetStatus(10);
 		}
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
-		monsterDataMng.RefreshMonsterDataList();
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		for (int i = 0; i < userMonsterList.Length; i++)
 		{
-			MonsterData monsterDataByUserMonsterID = monsterDataMng.GetMonsterDataByUserMonsterID(userMonsterList[i].userMonsterId, false);
-			monsterDataByUserMonsterID.New = Convert.ToBoolean(userMonsterList[i].isNew);
+			MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterList[i].userMonsterId, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterDataByUserMonsterID);
+			icon.New = Convert.ToBoolean(userMonsterList[i].isNew);
 		}
 		List<int> list = new List<int>();
 		List<int> list2 = new List<int>();
-		for (int i = 0; i < userMonsterList.Length; i++)
+		for (int j = 0; j < userMonsterList.Length; j++)
 		{
-			MonsterData monsterDataByUserMonsterID2 = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterList[i].userMonsterId, false);
+			MonsterData monsterDataByUserMonsterID2 = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterList[j].userMonsterId, false);
 			int item = int.Parse(monsterDataByUserMonsterID2.monsterM.monsterGroupId);
 			list.Add(item);
 			list2.Add(int.Parse(monsterDataByUserMonsterID2.monsterMG.growStep));
@@ -1418,53 +1419,45 @@ public class CMD_GashaTOP : CMD
 		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
 		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsterList = this.gachaResult.userMonsterList;
 		CMD_10gashaResult.RewardsData = this.gachaResult.rewards;
-		if (this.req_exec_bk.playCount < 1)
+		List<string> list = new List<string>();
+		for (int j = 0; j < userMonsterList.Length; j++)
 		{
-			MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterList[0].userMonsterId, false);
-			CMD_CharacterDetailed.DataChg = monsterDataByUserMonsterID;
-			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed");
-			if (CMD_10gashaResult.instance != null)
-			{
-				CMD_10gashaResult.instance.ClosePanel(true);
-			}
-			if (result.IsRare())
-			{
-				LeadReview leadReview = new LeadReview();
-				leadReview.DisplayDialog(monsterDataByUserMonsterID);
-			}
+			list.Add(userMonsterList[j].userMonsterId);
+		}
+		List<MonsterData> monsterDataListByUserMonsterIDList = this.GetMonsterDataListByUserMonsterIDList(list);
+		CMD_10gashaResult.DataList = monsterDataListByUserMonsterIDList;
+		if (result.IsRare())
+		{
+			CMD_10gashaResult.GashaType = ConstValue.RARE_GASHA_TYPE;
+		}
+		else if (result.IsLink())
+		{
+			CMD_10gashaResult.GashaType = ConstValue.LINK_GASHA_TYPE;
+		}
+		if (CMD_10gashaResult.instance != null)
+		{
+			CMD_10gashaResult.instance.ReShow();
 		}
 		else
 		{
-			List<string> list = new List<string>();
-			for (int j = 0; j < userMonsterList.Length; j++)
-			{
-				list.Add(userMonsterList[j].userMonsterId);
-			}
-			List<MonsterData> monsterDataListByUserMonsterIDList = MonsterDataMng.Instance().GetMonsterDataListByUserMonsterIDList(list);
-			CMD_10gashaResult.DataList = monsterDataListByUserMonsterIDList;
-			if (result.IsRare())
-			{
-				CMD_10gashaResult.GashaType = ConstValue.RARE_GASHA_TYPE;
-			}
-			else if (result.IsLink())
-			{
-				CMD_10gashaResult.GashaType = ConstValue.LINK_GASHA_TYPE;
-			}
-			if (CMD_10gashaResult.instance != null)
-			{
-				CMD_10gashaResult.instance.ReShow();
-			}
-			else
-			{
-				GUIMain.ShowCommonDialog(null, "CMD_10gashaResult");
-			}
-			if (result.IsRare())
-			{
-				LeadReview leadReview2 = new LeadReview();
-				leadReview2.DisplayDialog(monsterDataListByUserMonsterIDList);
-			}
+			GUIMain.ShowCommonDialog(null, "CMD_10gashaResult");
+		}
+		if (result.IsRare())
+		{
+			LeadReview leadReview = new LeadReview();
+			leadReview.DisplayDialog(monsterDataListByUserMonsterIDList);
 		}
 		this.ShowUI(false);
+	}
+
+	private List<MonsterData> GetMonsterDataListByUserMonsterIDList(List<string> userMonsterIdList)
+	{
+		List<MonsterData> list = new List<MonsterData>();
+		for (int i = 0; i < userMonsterIdList.Count; i++)
+		{
+			list.Add(MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterIdList[i], false));
+		}
+		return list;
 	}
 
 	private IEnumerator ExecTicketAPI()

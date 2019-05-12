@@ -1149,8 +1149,8 @@ namespace System.ComponentModel
 		/// <exception cref="T:System.ArgumentNullException">One or both of the parameters are null.</exception>
 		/// <exception cref="T:System.ArgumentException">
 		///   <paramref name="primary" /> is equal to <paramref name="secondary" />.</exception>
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[MonoNotSupported("Associations not supported")]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static void CreateAssociation(object primary, object secondary)
 		{
 			throw new NotImplementedException();
@@ -1161,8 +1161,8 @@ namespace System.ComponentModel
 		/// <param name="type">The <see cref="T:System.Type" /> of the target component.</param>
 		/// <param name="primary">The primary object of the association.</param>
 		/// <exception cref="T:System.ArgumentNullException">One or both of the parameters are null.</exception>
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[MonoNotSupported("Associations not supported")]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static object GetAssociation(Type type, object primary)
 		{
 			throw new NotImplementedException();
@@ -1183,8 +1183,8 @@ namespace System.ComponentModel
 		/// <param name="primary">The primary <see cref="T:System.Object" /> in an association.</param>
 		/// <exception cref="T:System.ArgumentNullException">
 		///   <paramref name="primary" /> is null.</exception>
-		[MonoNotSupported("Associations not supported")]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[MonoNotSupported("Associations not supported")]
 		public static void RemoveAssociations(object primary)
 		{
 			throw new NotImplementedException();

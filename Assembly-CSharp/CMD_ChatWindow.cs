@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using WebAPIRequest;
 
 public class CMD_ChatWindow : CMD
 {
@@ -319,6 +320,17 @@ public class CMD_ChatWindow : CMD
 			this.csPartMessageParent.AllBuild(data);
 			this.partMessageList.SetActive(false);
 		}
+		else if (data.resultCode == 90)
+		{
+			this.UpdateJoinGroupData();
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
+			{
+				CMD_ChatWindow.instance.PushedChatReturnBtn();
+				CMD_ChatTop.instance.GetUserChatGroupListExec();
+			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
+			cmd_ModalMessage.Info = StringMaster.GetString("ChatMemberKickNotice");
+		}
 		else
 		{
 			ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupLastHistoryId = "0";
@@ -432,6 +444,18 @@ public class CMD_ChatWindow : CMD
 						}
 						continue;
 					}
+					case "chatGroupId":
+						common_MessageData.chatGroupId = keyValuePair2.Value.ToString();
+						continue;
+					case "target":
+						common_MessageData.target = keyValuePair2.Value.ToString();
+						continue;
+					case "resultCode":
+						common_MessageData.resultCode = keyValuePair2.Value.ToString();
+						continue;
+					case "rc":
+						common_MessageData.resultCode = keyValuePair2.Value.ToString();
+						continue;
 					}
 					global::Debug.LogError(string.Concat(new object[]
 					{
@@ -441,6 +465,18 @@ public class CMD_ChatWindow : CMD
 						keyValuePair2.Value
 					}));
 				}
+			}
+			if (common_MessageData.resultCode != null && int.Parse(common_MessageData.resultCode) == 90)
+			{
+				this.UpdateJoinGroupData();
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
+				{
+					CMD_ChatWindow.instance.PushedChatReturnBtn();
+					CMD_ChatTop.instance.GetUserChatGroupListExec();
+				}, "CMD_ModalMessage") as CMD_ModalMessage;
+				cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
+				cmd_ModalMessage.Info = StringMaster.GetString("ChatMemberKickNotice");
+				break;
 			}
 			if (common_MessageData.chatGroupId != null && ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId == int.Parse(common_MessageData.chatGroupId))
 			{
@@ -526,5 +562,25 @@ public class CMD_ChatWindow : CMD
 		}, "CMD_ModalMessage") as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("AlertNetworkErrorTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("ChatLogError");
+	}
+
+	private void UpdateJoinGroupData()
+	{
+		RequestList requestList = new RequestList();
+		GameWebAPI.UserChatGroupList userChatGroupList = new GameWebAPI.UserChatGroupList();
+		userChatGroupList.OnReceived = delegate(GameWebAPI.RespData_UserChatGroupList response)
+		{
+			ClassSingleton<ChatData>.Instance.CurrentChatInfo.joinGroupData = response;
+		};
+		RequestBase addRequest = userChatGroupList;
+		requestList.AddRequest(addRequest);
+		base.StartCoroutine(requestList.RunOneTime(delegate()
+		{
+			RestrictionInput.EndLoad();
+			ClassSingleton<ChatData>.Instance.UpdateMaxJoinState();
+		}, delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null));
 	}
 }

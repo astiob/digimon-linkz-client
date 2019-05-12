@@ -143,6 +143,7 @@ public sealed class CMD_PartyEdit : CMD
 			string arg = string.Empty;
 			int num = 0;
 			bool flag = false;
+			GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
 			if (null != CMD_QuestTOP.instance)
 			{
 				QuestData.WorldStageData worldStageData = CMD_QuestTOP.instance.GetWorldStageData();
@@ -152,6 +153,17 @@ public sealed class CMD_PartyEdit : CMD
 					flag = true;
 					num = stageDataBk.dungeon.dungeonTicketNum.ToInt32();
 					arg = worldStageData.worldStageM.name;
+				}
+			}
+			else if (lastDngReq != null)
+			{
+				GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons ticketQuestDungeonByTicketID = ClassSingleton<QuestData>.Instance.GetTicketQuestDungeonByTicketID(lastDngReq.userDungeonTicketId);
+				if (ticketQuestDungeonByTicketID != null)
+				{
+					flag = true;
+					num = ticketQuestDungeonByTicketID.dungeonTicketNum.ToInt32();
+					GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonMaster = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(ticketQuestDungeonByTicketID.worldDungeonId.ToString());
+					arg = worldDungeonMaster.name;
 				}
 			}
 			if (flag)
@@ -177,12 +189,12 @@ public sealed class CMD_PartyEdit : CMD
 
 	private void OnClickedSaveOperation()
 	{
-		this.partyEditAction.ChangeOperation(this.partyMember, this.idxNumber, this.battleInfo.GetFavoriteDeckNo());
+		this.partyEditAction.ChangeOperation(this.partyMember, this.idxNumber, this.partyInfo.GetFavoriteDeckNo());
 	}
 
 	public override void ClosePanel(bool animation = true)
 	{
-		this.partyEditAction.CloseOperation(this.partyMember, this.idxNumber, this.battleInfo.GetFavoriteDeckNo(), animation);
+		this.partyEditAction.CloseOperation(this.partyMember, this.idxNumber, this.partyInfo.GetFavoriteDeckNo(), animation);
 	}
 
 	public List<MonsterData> GetSelectedMD()
@@ -226,14 +238,14 @@ public sealed class CMD_PartyEdit : CMD
 		if (this.backUpIdx != this.idxNumber)
 		{
 			this.UpdateSelectDeckData();
-			this.battleInfo.EnableFavoriteButton(this.battleInfo.GetFavoriteDeckNo() == this.idxNumber);
+			this.partyInfo.EnableFavoriteButton(this.partyInfo.GetFavoriteDeckNo() == this.idxNumber);
 			this.backUpIdx = this.idxNumber;
 		}
 	}
 
 	private void OnClickedFavorite()
 	{
-		this.battleInfo.SetFavoriteDeckNo(this.idxNumber);
+		this.partyInfo.SetFavoriteDeckNo(this.idxNumber);
 	}
 
 	private void OnClickedChangeStatus()

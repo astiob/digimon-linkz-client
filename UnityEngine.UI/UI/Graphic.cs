@@ -8,9 +8,9 @@ using UnityEngine.UI.CoroutineTween;
 namespace UnityEngine.UI
 {
 	[ExecuteInEditMode]
-	[RequireComponent(typeof(RectTransform))]
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(CanvasRenderer))]
+	[RequireComponent(typeof(RectTransform))]
 	public abstract class Graphic : UIBehaviour, ICanvasElement
 	{
 		protected static Material s_DefaultUI = null;
@@ -184,6 +184,7 @@ namespace UnityEngine.UI
 		protected override void OnTransformParentChanged()
 		{
 			base.OnTransformParentChanged();
+			this.m_Canvas = null;
 			if (!this.IsActive())
 			{
 				return;
@@ -232,7 +233,18 @@ namespace UnityEngine.UI
 			base.gameObject.GetComponentsInParent<Canvas>(false, list);
 			if (list.Count > 0)
 			{
-				this.m_Canvas = list[0];
+				for (int i = 0; i < list.Count; i++)
+				{
+					if (list[i].isActiveAndEnabled)
+					{
+						this.m_Canvas = list[i];
+						break;
+					}
+				}
+			}
+			else
+			{
+				this.m_Canvas = null;
 			}
 			ListPool<Canvas>.Release(list);
 		}
@@ -325,11 +337,19 @@ namespace UnityEngine.UI
 		protected override void OnCanvasHierarchyChanged()
 		{
 			Canvas canvas = this.m_Canvas;
+			this.m_Canvas = null;
+			if (!this.IsActive())
+			{
+				return;
+			}
 			this.CacheCanvas();
 			if (canvas != this.m_Canvas)
 			{
 				GraphicRegistry.UnregisterGraphicForCanvas(canvas, this);
-				GraphicRegistry.RegisterGraphicForCanvas(this.canvas, this);
+				if (this.IsActive())
+				{
+					GraphicRegistry.RegisterGraphicForCanvas(this.canvas, this);
+				}
 			}
 		}
 
@@ -484,40 +504,46 @@ namespace UnityEngine.UI
 			Transform transform = base.transform;
 			List<Component> list = ListPool<Component>.Get();
 			bool flag = false;
+			bool flag2 = true;
 			while (transform != null)
 			{
 				transform.GetComponents<Component>(list);
 				for (int i = 0; i < list.Count; i++)
 				{
+					Canvas canvas = list[i] as Canvas;
+					if (canvas != null && canvas.overrideSorting)
+					{
+						flag2 = false;
+					}
 					ICanvasRaycastFilter canvasRaycastFilter = list[i] as ICanvasRaycastFilter;
 					if (canvasRaycastFilter != null)
 					{
-						bool flag2 = true;
+						bool flag3 = true;
 						CanvasGroup canvasGroup = list[i] as CanvasGroup;
 						if (canvasGroup != null)
 						{
 							if (!flag && canvasGroup.ignoreParentGroups)
 							{
 								flag = true;
-								flag2 = canvasRaycastFilter.IsRaycastLocationValid(sp, eventCamera);
+								flag3 = canvasRaycastFilter.IsRaycastLocationValid(sp, eventCamera);
 							}
 							else if (!flag)
 							{
-								flag2 = canvasRaycastFilter.IsRaycastLocationValid(sp, eventCamera);
+								flag3 = canvasRaycastFilter.IsRaycastLocationValid(sp, eventCamera);
 							}
 						}
 						else
 						{
-							flag2 = canvasRaycastFilter.IsRaycastLocationValid(sp, eventCamera);
+							flag3 = canvasRaycastFilter.IsRaycastLocationValid(sp, eventCamera);
 						}
-						if (!flag2)
+						if (!flag3)
 						{
 							ListPool<Component>.Release(list);
 							return false;
 						}
 					}
 				}
-				transform = transform.parent;
+				transform = ((!flag2) ? null : transform.parent);
 			}
 			ListPool<Component>.Release(list);
 			return true;

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</ProjectGuid>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnityEngine.Networking</RootNamespace>
@@ -70,11 +70,13 @@
     <Compile Include="NetworkMessage.cs" />
     <Compile Include="NetworkMessageDelegate.cs" />
     <Compile Include="NetworkMessageHandlers.cs" />
+    <Compile Include="NetworkMigrationManager.cs" />
     <Compile Include="NetworkProximityChecker.cs" />
     <Compile Include="NetworkReader.cs" />
     <Compile Include="NetworkScene.cs" />
     <Compile Include="NetworkSceneId.cs" />
     <Compile Include="NetworkServer.cs" />
+    <Compile Include="NetworkServerSimple.cs" />
     <Compile Include="NetworkSettingsAttribute.cs" />
     <Compile Include="NetworkStartPosition.cs" />
     <Compile Include="NetworkSystem\AddPlayerMessage.cs" />
@@ -95,9 +97,12 @@
     <Compile Include="NetworkSystem\ObjectSpawnSceneMessage.cs" />
     <Compile Include="NetworkSystem\OverrideTransformMessage.cs" />
     <Compile Include="NetworkSystem\OwnerMessage.cs" />
+    <Compile Include="NetworkSystem\PeerAuthorityMessage.cs" />
     <Compile Include="NetworkSystem\PeerInfoMessage.cs" />
+    <Compile Include="NetworkSystem\PeerInfoPlayer.cs" />
     <Compile Include="NetworkSystem\PeerListMessage.cs" />
     <Compile Include="NetworkSystem\ReadyMessage.cs" />
+    <Compile Include="NetworkSystem\ReconnectMessage.cs" />
     <Compile Include="NetworkSystem\RemovePlayerMessage.cs" />
     <Compile Include="NetworkSystem\StringMessage.cs" />
     <Compile Include="NetworkTransform.cs" />
@@ -135,7 +140,7 @@
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>UnityEngine</Name>
     </ProjectReference>
   </ItemGroup>

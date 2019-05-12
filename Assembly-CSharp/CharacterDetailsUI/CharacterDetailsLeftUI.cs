@@ -80,8 +80,6 @@ namespace CharacterDetailsUI
 				OnReceived = delegate(GameWebAPI.RespDataMS_UserProtectMonsterLogic response)
 				{
 					CMD_CharacterDetailed.DataChg.userMonster.SetLock(changeLockState);
-					GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster = DataMng.Instance().GetUserMonster(userMonsterId);
-					userMonster.SetLock(changeLockState);
 				}
 			};
 			return new APIRequestTask(request, false);
@@ -160,7 +158,7 @@ namespace CharacterDetailsUI
 			FarmCameraControlForCMD.ClearRefCT();
 			FarmCameraControlForCMD.On();
 			GUIMain.DestroyAllDialog(null);
-			CMD_EvolutionRouteMap.CreateDialog(null, showCharacterMonsterData);
+			CMD_EvolutionRouteMap.CreateDialog(null, showCharacterMonsterData.GetMonsterMaster());
 		}
 
 		public void Initialize(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterData)

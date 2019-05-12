@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class DropItemTotalParts : MonoBehaviour
 {
-	[Header("ドロップアイテム")]
 	[SerializeField]
+	[Header("ドロップアイテム")]
 	private PresentBoxItem dropItemItems;
 
 	[Header("ドロップ数のラベル")]

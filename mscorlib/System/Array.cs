@@ -2380,7 +2380,7 @@ namespace System
 					Array.combsort(keys as double[], index, length, swap_items);
 					return;
 				}
-				if (keys is int[])
+				if (!(keys is uint[]) && keys is int[])
 				{
 					Array.combsort(keys as int[], index, length, swap_items);
 					return;

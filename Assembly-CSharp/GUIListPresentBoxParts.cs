@@ -65,7 +65,6 @@ public sealed class GUIListPresentBoxParts : GUIListPartBS
 		requestPR_PrizeReceive.SetSendData = delegate(GameWebAPI.PR_Req_PrizeReceiveIds param)
 		{
 			param.receiveType = 2;
-			param.page = null;
 			param.receiveIds = new string[]
 			{
 				this.prizeData.receiveId

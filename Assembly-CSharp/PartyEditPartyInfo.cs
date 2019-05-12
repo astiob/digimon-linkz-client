@@ -8,6 +8,21 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 	private UILabel partyNo;
 
 	[SerializeField]
+	private GameObject favoriteButton;
+
+	[SerializeField]
+	private UILabel favoriteButtonLabel;
+
+	[SerializeField]
+	private Color favoriteButtonLabelColor;
+
+	private GUICollider favoriteButtonCollider;
+
+	private UISprite favoriteButtonBackground;
+
+	private int favoriteDeckNo;
+
+	[SerializeField]
 	private MonsterLeaderSkill monsterLeaderSkill;
 
 	[SerializeField]
@@ -22,6 +37,46 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 	[SerializeField]
 	private PartyEditPartyInfo.ViewInfo partyEditViewInfo;
 
+	private void InitializeFavoriteButton(CMD_PartyEdit.MODE_TYPE type)
+	{
+		string favoriteDeckNum = DataMng.Instance().RespDataMN_DeckList.favoriteDeckNum;
+		this.favoriteDeckNo = int.Parse(favoriteDeckNum);
+		this.favoriteButtonCollider = this.favoriteButton.GetComponent<GUICollider>();
+		this.favoriteButtonBackground = this.favoriteButton.GetComponent<UISprite>();
+		switch (type)
+		{
+		case CMD_PartyEdit.MODE_TYPE.SELECT:
+		case CMD_PartyEdit.MODE_TYPE.PVP:
+		case CMD_PartyEdit.MODE_TYPE.MULTI:
+			this.favoriteButton.SetActive(false);
+			break;
+		default:
+			if (!this.favoriteButton.activeSelf)
+			{
+				this.favoriteButton.SetActive(true);
+			}
+			break;
+		}
+	}
+
+	private void SetFavoriteButton(bool enable)
+	{
+		if (this.favoriteButton.activeSelf)
+		{
+			this.favoriteButtonCollider.activeCollider = !enable;
+			if (enable)
+			{
+				this.favoriteButtonBackground.spriteName = "Common02_Btn_SupportRed";
+				this.favoriteButtonLabel.color = Color.white;
+			}
+			else
+			{
+				this.favoriteButtonBackground.spriteName = "Common02_Btn_SupportWhite";
+				this.favoriteButtonLabel.color = this.favoriteButtonLabelColor;
+			}
+		}
+	}
+
 	public void SetView(CMD_PartyEdit.MODE_TYPE type)
 	{
 		if (type == CMD_PartyEdit.MODE_TYPE.EDIT)
@@ -31,12 +86,35 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 			this.nameUnderLine.width = this.partyEditViewInfo.nameUnderLine;
 			this.infoUnderLine.width = this.partyEditViewInfo.infoUnderLine;
 		}
+		this.InitializeFavoriteButton(type);
 	}
 
 	public void SetPartyInfo(int viewPartyNo, MonsterData monsterData)
 	{
 		this.partyNo.text = string.Format(StringMaster.GetString("PartyNumber"), viewPartyNo);
 		this.monsterLeaderSkill.SetSkill(monsterData);
+	}
+
+	public void SetFavoriteDeckNo(int partyNo)
+	{
+		this.favoriteDeckNo = partyNo;
+		this.SetFavoriteButton(true);
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		if (cmd_ModalMessage != null)
+		{
+			cmd_ModalMessage.Title = StringMaster.GetString("PartyFavoriteTitle");
+			cmd_ModalMessage.Info = StringMaster.GetString("PartyFavoriteInfo");
+		}
+	}
+
+	public int GetFavoriteDeckNo()
+	{
+		return this.favoriteDeckNo;
+	}
+
+	public void EnableFavoriteButton(bool enable)
+	{
+		this.SetFavoriteButton(enable);
 	}
 
 	[Serializable]

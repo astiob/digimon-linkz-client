@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class VersionUpItem : GUICollider
 {
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	public UISprite spIcon;
 
 	[Header("アイコン")]
@@ -20,8 +20,8 @@ public class VersionUpItem : GUICollider
 	[SerializeField]
 	public UISprite spNumPlate;
 
-	[SerializeField]
 	[Header("個数表示")]
+	[SerializeField]
 	public UILabel lbNum;
 
 	private Action actTouchShort;

@@ -29,20 +29,20 @@ public class TrainingController : MonoBehaviour
 
 	private GameObject obj_mons6;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	private GameObject obj_cam;
 
-	[SerializeField]
 	[Header("メインカメラリグ")]
+	[SerializeField]
 	private GameObject obj_camrig;
 
-	[Header("サブカメラ")]
 	[SerializeField]
+	[Header("サブカメラ")]
 	private GameObject obj_cam2;
 
-	[SerializeField]
 	[Header("UIカメラ")]
+	[SerializeField]
 	private GameObject obj_uicam;
 
 	[Header("カメラスイッチャー")]
@@ -56,12 +56,12 @@ public class TrainingController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_mcpar3;
 
-	[SerializeField]
 	[Header("オーラ")]
+	[SerializeField]
 	private GameObject obj_aura2;
 
-	[Header("∞エフェクト")]
 	[SerializeField]
+	[Header("∞エフェクト")]
 	private GameObject obj_infinity;
 
 	private ParticleSystem ps_aura2;

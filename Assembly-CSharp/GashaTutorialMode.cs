@@ -34,7 +34,7 @@ internal sealed class GashaTutorialMode
 	public void UpdateFakeExec(bool isRare)
 	{
 		int num = (!isRare) ? 1 : 4;
-		List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList(false);
+		List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList();
 		if (num <= monsterDataList.Count)
 		{
 			this.fakeExec = true;

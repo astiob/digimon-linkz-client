@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleStateMultiFadeOut : BattleStateController
 {
@@ -19,19 +20,20 @@ public class BattleStateMultiFadeOut : BattleStateController
 			base.stateManager.sleep.SetSleepOff(false);
 			Input.multiTouchEnabled = true;
 			GUIMain.SetBattleCallBack(new Action(this.BattleEndResourcesCleaning));
+			int startId = base.hierarchyData.startId.ToInt32();
 			if (DataMng.Instance().WD_ReqDngResult.clear == 1)
 			{
-				GUIMain.FadeBlackReqFromSceneForMulti(base.stateManager.multiFunction.startId.ToInt32(), "UIResult", 0.5f, 0.5f);
+				GUIMain.FadeBlackReqFromSceneForMulti(startId, "UIResult", 0.5f, 0.5f);
 			}
 			else
 			{
-				GUIMain.FadeBlackReqFromSceneForMulti(base.stateManager.multiFunction.startId.ToInt32(), "UIHome", 0.5f, 0.5f);
+				GUIMain.FadeBlackReqFromSceneForMulti(startId, "UIHome", 0.5f, 0.5f);
 			}
 		}
 		else
 		{
 			this.BattleEndResourcesCleaning();
-			Application.LoadLevelAsync(BattleStateManager.BattleSceneName);
+			SceneManager.LoadSceneAsync(BattleStateManager.BattleSceneName);
 		}
 	}
 

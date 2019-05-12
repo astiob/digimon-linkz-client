@@ -17,23 +17,23 @@ public class BattleWaveControl : BattleFunctionBase
 		Dictionary<string, int> dictionary = new Dictionary<string, int>();
 		for (int i = 0; i < base.battleStateData.enemies.Length; i++)
 		{
-			string prefabId = base.battleStateData.enemies[i].characterStatus.prefabId;
+			string groupId = base.battleStateData.enemies[i].characterStatus.groupId;
 			int num = 0;
-			if (dictionary.ContainsKey(prefabId))
+			if (dictionary.ContainsKey(groupId))
 			{
 				Dictionary<string, int> dictionary3;
 				Dictionary<string, int> dictionary2 = dictionary3 = dictionary;
 				string key2;
-				string key = key2 = prefabId;
+				string key = key2 = groupId;
 				int num2 = dictionary3[key2];
 				dictionary2[key] = num2 + 1;
-				num = dictionary[prefabId];
+				num = dictionary[groupId];
 			}
 			else
 			{
-				dictionary.Add(prefabId, 0);
+				dictionary.Add(groupId, 0);
 			}
-			this.WaveResetEnemyResetupFunction(prefabId, num, i, isRecover);
+			this.WaveResetEnemyResetupFunction(groupId, num, i, isRecover);
 			int index = base.battleStateData.playerCharacters.Length + i;
 			base.stateManager.uiControl.ApplyCharacterHudBoss(index, base.hierarchyData.batteWaves[waveNumber].enemiesBossFlag[i]);
 			base.stateManager.uiControl.ApplyCharacterHudContent(index, base.battleStateData.enemies[i]);
@@ -115,53 +115,56 @@ public class BattleWaveControl : BattleFunctionBase
 
 	public void RoundCountingFunction(CharacterStateControl[] totalCharacters, int[] apRevivals)
 	{
-		for (int i = 0; i < totalCharacters.Length; i++)
+		foreach (CharacterStateControl characterStateControl in this.GetTotalCharacters())
 		{
-			CharacterStateControl characterStateControl = totalCharacters[i];
-			if (!characterStateControl.isDied)
+			if (!characterStateControl.isDied && characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && characterStateControl.currentSufferState.onSleep.GetSleepGetupOccurrence())
+			{
+				characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
+			}
+		}
+		for (int j = 0; j < totalCharacters.Length; j++)
+		{
+			CharacterStateControl characterStateControl2 = totalCharacters[j];
+			if (!characterStateControl2.isDied)
 			{
 				bool flag = false;
-				if (characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && characterStateControl.currentSufferState.onSleep.GetSleepGetupOccurrence())
+				if (characterStateControl2.currentSufferState.FindSufferState(SufferStateProperty.SufferType.ApRevival))
 				{
-					characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
-				}
-				if (characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.ApRevival))
-				{
-					int revivalAp = characterStateControl.currentSufferState.onApRevival.GetRevivalAp(characterStateControl.maxAp);
-					characterStateControl.ap += revivalAp;
-					characterStateControl.upAp += revivalAp;
+					int revivalAp = characterStateControl2.currentSufferState.onApRevival.GetRevivalAp(characterStateControl2.maxAp);
+					characterStateControl2.ap += revivalAp;
+					characterStateControl2.upAp += revivalAp;
 					flag = true;
 				}
 				if (apRevivals != null)
 				{
-					int num = apRevivals[i];
+					int num = apRevivals[j];
 					if (num > 0)
 					{
 						flag = true;
-						characterStateControl.ap += num;
-						characterStateControl.upAp += num;
+						characterStateControl2.ap += num;
+						characterStateControl2.upAp += num;
 					}
 				}
-				if (characterStateControl.StartMyRoundApUp() || flag)
+				if (characterStateControl2.StartMyRoundApUp() || flag)
 				{
 					int num2;
-					if (characterStateControl.isEnemy)
+					if (characterStateControl2.isEnemy)
 					{
-						num2 = base.battleStateData.playerCharacters.Length + characterStateControl.myIndex;
+						num2 = base.battleStateData.playerCharacters.Length + characterStateControl2.myIndex;
 					}
 					else
 					{
-						num2 = characterStateControl.myIndex;
+						num2 = characterStateControl2.myIndex;
 					}
 					base.battleStateData.isRoundStartApRevival[num2] = true;
 				}
-				characterStateControl.currentSufferState.RoundCount();
+				characterStateControl2.currentSufferState.RoundCount();
 			}
 			else
 			{
-				characterStateControl.ApZero();
+				characterStateControl2.ApZero();
 			}
-			characterStateControl.HateReset();
+			characterStateControl2.HateReset();
 		}
 		base.battleStateData.totalRoundNumber++;
 		if (!base.battleStateData.GetCharactersDeath(true))
@@ -169,5 +172,18 @@ public class BattleWaveControl : BattleFunctionBase
 			base.battleStateData.currentRoundNumber++;
 		}
 		base.stateManager.uiControl.ApplyWaveAndRound(base.battleStateData.currentWaveNumber, base.battleStateData.currentRoundNumber);
+	}
+
+	private CharacterStateControl[] GetTotalCharacters()
+	{
+		if (base.stateManager.battleMode != BattleMode.PvP)
+		{
+			return base.battleStateData.GetTotalCharacters();
+		}
+		if (base.stateManager.pvpFunction.IsOwner)
+		{
+			return base.battleStateData.GetTotalCharacters();
+		}
+		return base.battleStateData.GetTotalCharactersEnemyFirst();
 	}
 }

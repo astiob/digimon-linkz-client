@@ -12,8 +12,8 @@ public class IsWarning : MonoBehaviour
 	[SerializeField]
 	private UIComponentSkinner allyTitleBarSkinner;
 
-	[SerializeField]
 	[Header("メッセージ")]
+	[SerializeField]
 	private UILabel messageLocalize;
 
 	public void ApplyWarning(SufferStateProperty.SufferType sufferType, CharacterStateControl characterStateControl = null)

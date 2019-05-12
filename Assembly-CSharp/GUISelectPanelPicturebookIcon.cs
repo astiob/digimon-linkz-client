@@ -1,4 +1,6 @@
 ﻿using Master;
+using MonsterIcon;
+using MonsterPicturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,43 +15,27 @@ public sealed class GUISelectPanelPicturebookIcon : GUISelectPanelBSPartsUD
 	[SerializeField]
 	private Color iconTextColor = new Color(1f, 1f, 0f, 1f);
 
-	private void SetIconMonsterData(GUIMonsterIcon monsterIcon, MonsterData monsterData, Action<MonsterData> actionShortPress)
+	private void SetIconMonsterData(GUIMonsterIcon monsterIcon, PicturebookMonster monsterData, Action<PicturebookMonster> actionShortPress)
 	{
-		monsterIcon.Data = monsterData;
-		monsterIcon.SetTouchAct_L(null);
-		if (MonsterData.ToGrowStepId(monsterData.monsterMG.growStep) == GrowStep.NONE)
+		monsterIcon.SetMonsterIcon(monsterData.monsterMaster.Simple.iconId, monsterData.monsterMaster.Simple.rare, monsterData.monsterMaster.Group.growStep);
+		if (monsterData.isUnknown)
 		{
+			MonsterIconGrayout.SetGrayout(monsterIcon.gameObject, GUIMonsterIcon.DIMM_LEVEL.DISABLE);
+			monsterIcon.SortMess = StringMaster.GetString("EvolutionUnkown");
+			monsterIcon.SetSortMessageColor(this.iconTextColor);
 			monsterIcon.SetTouchAct_S(null);
 		}
 		else
 		{
-			monsterIcon.DimmLevel = monsterData.dimmLevel;
-			if (monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.ACTIVE || monsterData.dimmLevel == GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE)
+			monsterIcon.SetTouchAct_S(delegate(MonsterData noop)
 			{
-				monsterIcon.SetTouchAct_S(actionShortPress);
-			}
+				actionShortPress(monsterData);
+			});
 		}
+		monsterIcon.SetTouchAct_L(null);
 	}
 
-	public MonsterData CreateUnknownIconMonsterData(string monsterCollectionId)
-	{
-		return new MonsterData
-		{
-			monsterM = new GameWebAPI.RespDataMA_GetMonsterMS.MonsterM(),
-			monsterMG = new GameWebAPI.RespDataMA_GetMonsterMG.MonsterM(),
-			monsterMG = 
-			{
-				monsterCollectionId = monsterCollectionId,
-				growStep = 0.ToString()
-			},
-			monsterM = 
-			{
-				rare = "1"
-			}
-		};
-	}
-
-	public IEnumerator AllBuild(List<MonsterData> monsterDataList, Vector3 partsObjectScale, Action<MonsterData> actionTap)
+	public IEnumerator AllBuild(List<PicturebookMonster> monsterDataList, Vector3 partsObjectScale, Action<PicturebookMonster> actionTap)
 	{
 		base.InitBuild();
 		this.partsCount = monsterDataList.Count;

@@ -4,9 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Specialized values for the given states used by GUIStyle objects.</para>
-	/// </summary>
 	[Serializable]
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class GUIStyleState
@@ -24,11 +21,24 @@ namespace UnityEngine
 			this.Init();
 		}
 
-		internal GUIStyleState(GUIStyle sourceStyle, IntPtr source)
+		private GUIStyleState(GUIStyle sourceStyle, IntPtr source)
 		{
 			this.m_SourceStyle = sourceStyle;
 			this.m_Ptr = source;
-			this.m_Background = this.GetBackgroundInternal();
+		}
+
+		internal static GUIStyleState ProduceGUIStyleStateFromDeserialization(GUIStyle sourceStyle, IntPtr source)
+		{
+			GUIStyleState guistyleState = new GUIStyleState(sourceStyle, source);
+			guistyleState.m_Background = guistyleState.GetBackgroundInternalFromDeserialization();
+			return guistyleState;
+		}
+
+		internal static GUIStyleState GetGUIStyleState(GUIStyle sourceStyle, IntPtr source)
+		{
+			GUIStyleState guistyleState = new GUIStyleState(sourceStyle, source);
+			guistyleState.m_Background = guistyleState.GetBackgroundInternal();
+			return guistyleState;
 		}
 
 		~GUIStyleState()
@@ -39,9 +49,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The background image used by GUI elements in this given state.</para>
-		/// </summary>
 		public Texture2D background
 		{
 			get
@@ -69,11 +76,12 @@ namespace UnityEngine
 
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
+		private extern Texture2D GetBackgroundInternalFromDeserialization();
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern Texture2D GetBackgroundInternal();
 
-		/// <summary>
-		///   <para>The text color used by GUI elements in this state.</para>
-		/// </summary>
 		public Color textColor
 		{
 			get

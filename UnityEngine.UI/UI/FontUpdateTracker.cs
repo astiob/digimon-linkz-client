@@ -17,18 +17,17 @@ namespace UnityEngine.UI
 			FontUpdateTracker.m_Tracked.TryGetValue(t.font, out list);
 			if (list == null)
 			{
+				if (FontUpdateTracker.m_Tracked.Count == 0)
+				{
+					Font.textureRebuilt += FontUpdateTracker.RebuildForFont;
+				}
 				list = new List<Text>();
 				FontUpdateTracker.m_Tracked.Add(t.font, list);
-				Font.textureRebuilt += FontUpdateTracker.RebuildForFont;
 			}
-			for (int i = 0; i < list.Count; i++)
+			if (!list.Contains(t))
 			{
-				if (list[i] == t)
-				{
-					return;
-				}
+				list.Add(t);
 			}
-			list.Add(t);
 		}
 
 		private static void RebuildForFont(Font f)
@@ -61,6 +60,10 @@ namespace UnityEngine.UI
 			if (list.Count == 0)
 			{
 				FontUpdateTracker.m_Tracked.Remove(t.font);
+				if (FontUpdateTracker.m_Tracked.Count == 0)
+				{
+					Font.textureRebuilt -= FontUpdateTracker.RebuildForFont;
+				}
 			}
 		}
 	}

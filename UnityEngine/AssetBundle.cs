@@ -1,49 +1,74 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Internal;
 using UnityEngineInternal;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>AssetBundles let you stream additional assets via the WWW class and instantiate them at runtime. AssetBundles are created via BuildPipeline.BuildAssetBundle.</para>
-	/// </summary>
 	public sealed class AssetBundle : Object
 	{
-		/// <summary>
-		///   <para>Asynchronously create an AssetBundle from a memory region.</para>
-		/// </summary>
-		/// <param name="binary"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern AssetBundleCreateRequest CreateFromMemory(byte[] binary);
+		public static extern AssetBundleCreateRequest LoadFromFileAsync(string path, [DefaultValue("0")] uint crc, [DefaultValue("0")] ulong offset);
 
-		/// <summary>
-		///   <para>Synchronously create an AssetBundle from a memory region.</para>
-		/// </summary>
-		/// <param name="binary">Array of bytes with the AssetBundle data.</param>
+		[ExcludeFromDocs]
+		public static AssetBundleCreateRequest LoadFromFileAsync(string path, uint crc)
+		{
+			ulong offset = 0UL;
+			return AssetBundle.LoadFromFileAsync(path, crc, offset);
+		}
+
+		[ExcludeFromDocs]
+		public static AssetBundleCreateRequest LoadFromFileAsync(string path)
+		{
+			ulong offset = 0UL;
+			uint crc = 0u;
+			return AssetBundle.LoadFromFileAsync(path, crc, offset);
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern AssetBundle CreateFromMemoryImmediate(byte[] binary);
+		public static extern AssetBundle LoadFromFile(string path, [DefaultValue("0")] uint crc, [DefaultValue("0")] ulong offset);
 
-		/// <summary>
-		///   <para>Loads an asset bundle from a disk.</para>
-		/// </summary>
-		/// <param name="path">Path of the file on disk
-		///
-		/// See Also: WWW.assetBundle, WWW.LoadFromCacheOrDownload.</param>
+		[ExcludeFromDocs]
+		public static AssetBundle LoadFromFile(string path, uint crc)
+		{
+			ulong offset = 0UL;
+			return AssetBundle.LoadFromFile(path, crc, offset);
+		}
+
+		[ExcludeFromDocs]
+		public static AssetBundle LoadFromFile(string path)
+		{
+			ulong offset = 0UL;
+			uint crc = 0u;
+			return AssetBundle.LoadFromFile(path, crc, offset);
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern AssetBundle CreateFromFile(string path);
+		public static extern AssetBundleCreateRequest LoadFromMemoryAsync(byte[] binary, [DefaultValue("0")] uint crc);
 
-		/// <summary>
-		///   <para>Main asset that was supplied when building the asset bundle (Read Only).</para>
-		/// </summary>
+		[ExcludeFromDocs]
+		public static AssetBundleCreateRequest LoadFromMemoryAsync(byte[] binary)
+		{
+			uint crc = 0u;
+			return AssetBundle.LoadFromMemoryAsync(binary, crc);
+		}
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern AssetBundle LoadFromMemory(byte[] binary, [DefaultValue("0")] uint crc);
+
+		[ExcludeFromDocs]
+		public static AssetBundle LoadFromMemory(byte[] binary)
+		{
+			uint crc = 0u;
+			return AssetBundle.LoadFromMemory(binary, crc);
+		}
+
 		public extern Object mainAsset { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
-		/// <summary>
-		///   <para>Check if an AssetBundle contains a specific object.</para>
-		/// </summary>
-		/// <param name="name"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern bool Contains(string name);
@@ -60,14 +85,14 @@ namespace UnityEngine
 			return (T)((object)null);
 		}
 
-		[WrapperlessIcall]
 		[TypeInferenceRule(TypeInferenceRules.TypeReferencedBySecondArgument)]
+		[WrapperlessIcall]
 		[Obsolete("Method Load has been deprecated. Script updater cannot update it as the loading behaviour has changed. Please use LoadAsset instead and check the documentation for details.", true)]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern Object Load(string name, Type type);
 
-		[Obsolete("Method LoadAsync has been deprecated. Script updater cannot update it as the loading behaviour has changed. Please use LoadAssetAsync instead and check the documentation for details.", true)]
 		[WrapperlessIcall]
+		[Obsolete("Method LoadAsync has been deprecated. Script updater cannot update it as the loading behaviour has changed. Please use LoadAssetAsync instead and check the documentation for details.", true)]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern AssetBundleRequest LoadAsync(string name, Type type);
 
@@ -88,10 +113,6 @@ namespace UnityEngine
 			return null;
 		}
 
-		/// <summary>
-		///   <para>Loads asset with name of type T from the bundle.</para>
-		/// </summary>
-		/// <param name="name"></param>
 		public Object LoadAsset(string name)
 		{
 			return this.LoadAsset(name, typeof(Object));
@@ -102,11 +123,6 @@ namespace UnityEngine
 			return (T)((object)this.LoadAsset(name, typeof(T)));
 		}
 
-		/// <summary>
-		///   <para>Loads asset with name of a given type from the bundle.</para>
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="type"></param>
 		[TypeInferenceRule(TypeInferenceRules.TypeReferencedBySecondArgument)]
 		public Object LoadAsset(string name, Type type)
 		{
@@ -130,10 +146,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern Object LoadAsset_Internal(string name, Type type);
 
-		/// <summary>
-		///   <para>Asynchronously loads asset with name from the bundle.</para>
-		/// </summary>
-		/// <param name="name"></param>
 		public AssetBundleRequest LoadAssetAsync(string name)
 		{
 			return this.LoadAssetAsync(name, typeof(Object));
@@ -144,11 +156,6 @@ namespace UnityEngine
 			return this.LoadAssetAsync(name, typeof(T));
 		}
 
-		/// <summary>
-		///   <para>Asynchronously loads asset with name of a given type from the bundle.</para>
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="type"></param>
 		public AssetBundleRequest LoadAssetAsync(string name, Type type)
 		{
 			if (name == null)
@@ -170,10 +177,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern AssetBundleRequest LoadAssetAsync_Internal(string name, Type type);
 
-		/// <summary>
-		///   <para>Loads asset and sub assets with name from the bundle.</para>
-		/// </summary>
-		/// <param name="name"></param>
 		public Object[] LoadAssetWithSubAssets(string name)
 		{
 			return this.LoadAssetWithSubAssets(name, typeof(Object));
@@ -184,11 +187,6 @@ namespace UnityEngine
 			return Resources.ConvertObjects<T>(this.LoadAssetWithSubAssets(name, typeof(T)));
 		}
 
-		/// <summary>
-		///   <para>Loads asset and sub assets with name of a given type from the bundle.</para>
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="type"></param>
 		public Object[] LoadAssetWithSubAssets(string name, Type type)
 		{
 			if (name == null)
@@ -210,10 +208,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		internal extern Object[] LoadAssetWithSubAssets_Internal(string name, Type type);
 
-		/// <summary>
-		///   <para>Loads asset with sub assets with name from the bundle asynchronously.</para>
-		/// </summary>
-		/// <param name="name"></param>
 		public AssetBundleRequest LoadAssetWithSubAssetsAsync(string name)
 		{
 			return this.LoadAssetWithSubAssetsAsync(name, typeof(Object));
@@ -224,11 +218,6 @@ namespace UnityEngine
 			return this.LoadAssetWithSubAssetsAsync(name, typeof(T));
 		}
 
-		/// <summary>
-		///   <para>Loads asset with sub assets with name of a given type from the bundle asynchronously.</para>
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="type"></param>
 		public AssetBundleRequest LoadAssetWithSubAssetsAsync(string name, Type type)
 		{
 			if (name == null)
@@ -250,9 +239,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern AssetBundleRequest LoadAssetWithSubAssetsAsync_Internal(string name, Type type);
 
-		/// <summary>
-		///   <para>Loads all assets contained in the asset bundle.</para>
-		/// </summary>
 		public Object[] LoadAllAssets()
 		{
 			return this.LoadAllAssets(typeof(Object));
@@ -263,10 +249,6 @@ namespace UnityEngine
 			return Resources.ConvertObjects<T>(this.LoadAllAssets(typeof(T)));
 		}
 
-		/// <summary>
-		///   <para>Loads all assets contained in the asset bundle that inherit from type.</para>
-		/// </summary>
-		/// <param name="type"></param>
 		public Object[] LoadAllAssets(Type type)
 		{
 			if (type == null)
@@ -276,9 +258,6 @@ namespace UnityEngine
 			return this.LoadAssetWithSubAssets_Internal(string.Empty, type);
 		}
 
-		/// <summary>
-		///   <para>Loads all assets contained in the asset bundle asynchronously.</para>
-		/// </summary>
 		public AssetBundleRequest LoadAllAssetsAsync()
 		{
 			return this.LoadAllAssetsAsync(typeof(Object));
@@ -289,10 +268,6 @@ namespace UnityEngine
 			return this.LoadAllAssetsAsync(typeof(T));
 		}
 
-		/// <summary>
-		///   <para>Loads all assets contained in the asset bundle that inherit from type asynchronously.</para>
-		/// </summary>
-		/// <param name="type"></param>
 		public AssetBundleRequest LoadAllAssetsAsync(Type type)
 		{
 			if (type == null)
@@ -302,10 +277,6 @@ namespace UnityEngine
 			return this.LoadAssetWithSubAssetsAsync_Internal(string.Empty, type);
 		}
 
-		/// <summary>
-		///   <para>Unloads all assets in the bundle.</para>
-		/// </summary>
-		/// <param name="unloadAllLoadedObjects"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern void Unload(bool unloadAllLoadedObjects);
@@ -316,16 +287,10 @@ namespace UnityEngine
 			return this.GetAllAssetNames();
 		}
 
-		/// <summary>
-		///   <para>Return all asset names in the AssetBundle.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern string[] GetAllAssetNames();
 
-		/// <summary>
-		///   <para>Return all the scene asset paths (paths to *.unity assets) in the AssetBundle.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public extern string[] GetAllScenePaths();

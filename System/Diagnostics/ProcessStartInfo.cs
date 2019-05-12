@@ -77,10 +77,10 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets the set of command-line arguments to use when starting the application.</summary>
 		/// <returns>File type–specific arguments that the system can associate with the application specified in the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property. The length of the arguments added to the length of the full path to the process must be less than 2080.</returns>
 		/// <filterpriority>1</filterpriority>
+		[System.ComponentModel.DefaultValue("")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		[MonitoringDescription("Command line agruments for this process.")]
 		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		[System.ComponentModel.DefaultValue("")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
 		public string Arguments
 		{
@@ -97,9 +97,9 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets a value indicating whether to start the process in a new window.</summary>
 		/// <returns>true to start the process without creating a new window to contain it; otherwise, false. The default is false.</returns>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.DefaultValue(false)]
 		[MonitoringDescription("Start this process with a new window.")]
 		[System.ComponentModel.NotifyParentProperty(true)]
-		[System.ComponentModel.DefaultValue(false)]
 		public bool CreateNoWindow
 		{
 			get
@@ -115,10 +115,10 @@ namespace System.Diagnostics
 		/// <summary>Gets search paths for files, directories for temporary files, application-specific options, and other similar information.</summary>
 		/// <returns>A <see cref="T:System.Collections.Specialized.StringDictionary" /> that provides environment variables that apply to this process and child processes. The default is null.</returns>
 		/// <filterpriority>1</filterpriority>
-		[MonitoringDescription("Environment variables used for this process.")]
-		[System.ComponentModel.Editor("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		[System.ComponentModel.DefaultValue(null)]
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
+		[System.ComponentModel.DefaultValue(null)]
+		[System.ComponentModel.Editor("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[MonitoringDescription("Environment variables used for this process.")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		public System.Collections.Specialized.StringDictionary EnvironmentVariables
 		{
@@ -148,8 +148,8 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets a value indicating whether an error dialog box is displayed to the user if the process cannot be started.</summary>
 		/// <returns>true to display an error dialog box on the screen if the process cannot be started; otherwise, false.</returns>
 		/// <filterpriority>2</filterpriority>
-		[MonitoringDescription("Thread shows dialogboxes for errors.")]
 		[System.ComponentModel.NotifyParentProperty(true)]
+		[MonitoringDescription("Thread shows dialogboxes for errors.")]
 		[System.ComponentModel.DefaultValue(false)]
 		public bool ErrorDialog
 		{
@@ -204,9 +204,9 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets a value that indicates whether the error output of an application is written to the <see cref="P:System.Diagnostics.Process.StandardError" /> stream.</summary>
 		/// <returns>true to write error output to <see cref="P:System.Diagnostics.Process.StandardError" />; otherwise, false.</returns>
 		/// <filterpriority>2</filterpriority>
-		[MonitoringDescription("Errors of this process are redirected.")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		[System.ComponentModel.DefaultValue(false)]
+		[MonitoringDescription("Errors of this process are redirected.")]
 		public bool RedirectStandardError
 		{
 			get
@@ -286,9 +286,9 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets a value indicating whether to use the operating system shell to start the process.</summary>
 		/// <returns>true to use the shell when starting the process; otherwise, the process is created directly from the executable file. The default is true.</returns>
 		/// <filterpriority>2</filterpriority>
-		[System.ComponentModel.DefaultValue(true)]
 		[MonitoringDescription("Use the shell to start this process.")]
 		[System.ComponentModel.NotifyParentProperty(true)]
+		[System.ComponentModel.DefaultValue(true)]
 		public bool UseShellExecute
 		{
 			get
@@ -304,10 +304,10 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets the verb to use when opening the application or document specified by the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property.</summary>
 		/// <returns>The action to take with the file that the process opens. The default is an empty string ("").</returns>
 		/// <filterpriority>2</filterpriority>
+		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.VerbConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.DefaultValue("")]
 		[System.ComponentModel.NotifyParentProperty(true)]
 		[MonitoringDescription("The verb to apply to a used document.")]
-		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.VerbConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string Verb
 		{
 			get
@@ -341,9 +341,9 @@ namespace System.Diagnostics
 		/// <returns>A <see cref="T:System.Diagnostics.ProcessWindowStyle" /> that indicates whether the process is started in a window that is maximized, minimized, normal (neither maximized nor minimized), or not visible. The default is normal.</returns>
 		/// <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">The window style is not one of the <see cref="T:System.Diagnostics.ProcessWindowStyle" /> enumeration members. </exception>
 		/// <filterpriority>2</filterpriority>
-		[MonitoringDescription("The window style used to start this process.")]
-		[System.ComponentModel.NotifyParentProperty(true)]
 		[System.ComponentModel.DefaultValue(typeof(ProcessWindowStyle), "Normal")]
+		[System.ComponentModel.NotifyParentProperty(true)]
+		[MonitoringDescription("The window style used to start this process.")]
 		public ProcessWindowStyle WindowStyle
 		{
 			get
@@ -359,12 +359,12 @@ namespace System.Diagnostics
 		/// <summary>Gets or sets the initial directory for the process to be started.</summary>
 		/// <returns>The fully qualified name of the directory that contains the process to be started. The default is an empty string ("").</returns>
 		/// <filterpriority>1</filterpriority>
-		[MonitoringDescription("The initial directory for this process.")]
-		[System.ComponentModel.NotifyParentProperty(true)]
 		[System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		[System.ComponentModel.Editor("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.DefaultValue("")]
+		[MonitoringDescription("The initial directory for this process.")]
 		[System.ComponentModel.RecommendedAsConfigurable(true)]
+		[System.ComponentModel.Editor("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[System.ComponentModel.NotifyParentProperty(true)]
 		public string WorkingDirectory
 		{
 			get

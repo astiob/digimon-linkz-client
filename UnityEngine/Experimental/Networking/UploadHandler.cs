@@ -4,9 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace UnityEngine.Experimental.Networking
 {
-	/// <summary>
-	///   <para>Helper object for UnityWebRequests. Manages the buffering and transmission of body data during HTTP requests.</para>
-	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public class UploadHandler : IDisposable
 	{
@@ -19,6 +16,10 @@ namespace UnityEngine.Experimental.Networking
 
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
+		internal extern void InternalCreateRaw(byte[] data);
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void InternalDestroy();
 
 		~UploadHandler()
@@ -26,18 +27,12 @@ namespace UnityEngine.Experimental.Networking
 			this.InternalDestroy();
 		}
 
-		/// <summary>
-		///   <para>Signals that this [UploadHandler] is no longer being used, and should clean up any resources it is using.</para>
-		/// </summary>
 		public void Dispose()
 		{
 			this.InternalDestroy();
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary>
-		///   <para>The raw data which will be transmitted to the remote server as body data. (Read Only)</para>
-		/// </summary>
 		public byte[] data
 		{
 			get
@@ -46,9 +41,6 @@ namespace UnityEngine.Experimental.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Determines the default Content-Type header which will be transmitted with the outbound HTTP request.</para>
-		/// </summary>
 		public string contentType
 		{
 			get
@@ -61,9 +53,6 @@ namespace UnityEngine.Experimental.Networking
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the proportion of data uploaded to the remote server compared to the total amount of data to upload. (Read Only)</para>
-		/// </summary>
 		public float progress
 		{
 			get

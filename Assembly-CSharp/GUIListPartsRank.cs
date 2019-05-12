@@ -40,7 +40,14 @@ public class GUIListPartsRank : GUIListPartBS
 		{
 			this.pointLabel.text = string.Format(StringMaster.GetString("ColosseumRankListNeedInfo"), this.data.lowerPoint, string.Empty);
 		}
-		this.rankSprite.spriteName = "Rank_" + this.data.id.ToString();
+		if (this.data.groupedId > -1)
+		{
+			this.rankSprite.spriteName = "Rank_" + this.data.groupedId.ToString();
+		}
+		else
+		{
+			this.rankSprite.spriteName = "Rank_" + this.data.id.ToString();
+		}
 	}
 
 	public class RankData
@@ -52,5 +59,7 @@ public class GUIListPartsRank : GUIListPartBS
 		public int id;
 
 		public bool isHideMaximum;
+
+		public int groupedId = -1;
 	}
 }

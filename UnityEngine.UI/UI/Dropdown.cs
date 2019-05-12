@@ -7,8 +7,8 @@ using UnityEngine.UI.CoroutineTween;
 
 namespace UnityEngine.UI
 {
-	[RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("UI/Dropdown", 35)]
+	[RequireComponent(typeof(RectTransform))]
 	public class Dropdown : Selectable, IEventSystemHandler, IPointerClickHandler, ISubmitHandler, ICancelHandler
 	{
 		[SerializeField]
@@ -20,23 +20,23 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private Image m_CaptionImage;
 
-		[Space]
 		[SerializeField]
+		[Space]
 		private Text m_ItemText;
 
 		[SerializeField]
 		private Image m_ItemImage;
 
-		[Space]
 		[SerializeField]
+		[Space]
 		private int m_Value;
 
 		[Space]
 		[SerializeField]
 		private Dropdown.OptionDataList m_Options = new Dropdown.OptionDataList();
 
-		[SerializeField]
 		[Space]
+		[SerializeField]
 		private Dropdown.DropdownEvent m_OnValueChanged = new Dropdown.DropdownEvent();
 
 		private GameObject m_Dropdown;
@@ -48,6 +48,8 @@ namespace UnityEngine.UI
 		private TweenRunner<FloatTween> m_AlphaTweenRunner;
 
 		private bool validTemplate;
+
+		private static Dropdown.OptionData s_NoOptionData = new Dropdown.OptionData();
 
 		protected Dropdown()
 		{
@@ -62,7 +64,7 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_Template = value;
-				this.Refresh();
+				this.RefreshShownValue();
 			}
 		}
 
@@ -75,7 +77,7 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_CaptionText = value;
-				this.Refresh();
+				this.RefreshShownValue();
 			}
 		}
 
@@ -88,7 +90,7 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_CaptionImage = value;
-				this.Refresh();
+				this.RefreshShownValue();
 			}
 		}
 
@@ -101,7 +103,7 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_ItemText = value;
-				this.Refresh();
+				this.RefreshShownValue();
 			}
 		}
 
@@ -114,7 +116,7 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_ItemImage = value;
-				this.Refresh();
+				this.RefreshShownValue();
 			}
 		}
 
@@ -127,7 +129,7 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_Options.options = value;
-				this.Refresh();
+				this.RefreshShownValue();
 			}
 		}
 
@@ -156,7 +158,7 @@ namespace UnityEngine.UI
 					return;
 				}
 				this.m_Value = Mathf.Clamp(value, 0, this.options.Count - 1);
-				this.Refresh();
+				this.RefreshShownValue();
 				this.m_OnValueChanged.Invoke(this.m_Value);
 			}
 		}
@@ -175,13 +177,13 @@ namespace UnityEngine.UI
 			}
 		}
 
-		private void Refresh()
+		public void RefreshShownValue()
 		{
-			if (this.options.Count == 0)
+			Dropdown.OptionData optionData = Dropdown.s_NoOptionData;
+			if (this.options.Count > 0)
 			{
-				return;
+				optionData = this.options[Mathf.Clamp(this.m_Value, 0, this.options.Count - 1)];
 			}
-			Dropdown.OptionData optionData = this.options[Mathf.Clamp(this.m_Value, 0, this.options.Count - 1)];
 			if (this.m_CaptionText)
 			{
 				if (optionData != null && optionData.text != null)
@@ -205,6 +207,36 @@ namespace UnityEngine.UI
 				}
 				this.m_CaptionImage.enabled = (this.m_CaptionImage.sprite != null);
 			}
+		}
+
+		public void AddOptions(List<Dropdown.OptionData> options)
+		{
+			this.options.AddRange(options);
+			this.RefreshShownValue();
+		}
+
+		public void AddOptions(List<string> options)
+		{
+			for (int i = 0; i < options.Count; i++)
+			{
+				this.options.Add(new Dropdown.OptionData(options[i]));
+			}
+			this.RefreshShownValue();
+		}
+
+		public void AddOptions(List<Sprite> options)
+		{
+			for (int i = 0; i < options.Count; i++)
+			{
+				this.options.Add(new Dropdown.OptionData(options[i]));
+			}
+			this.RefreshShownValue();
+		}
+
+		public void ClearOptions()
+		{
+			this.options.Clear();
+			this.RefreshShownValue();
 		}
 
 		private void SetupTemplate()
@@ -363,28 +395,31 @@ namespace UnityEngine.UI
 			}
 			Vector3[] array = new Vector3[4];
 			rectTransform.GetWorldCorners(array);
-			bool flag = false;
 			RectTransform rectTransform3 = canvas.transform as RectTransform;
-			for (int j = 0; j < 4; j++)
+			Rect rect3 = rectTransform3.rect;
+			for (int j = 0; j < 2; j++)
 			{
-				Vector3 point = rectTransform3.InverseTransformPoint(array[j]);
-				if (!rectTransform3.rect.Contains(point))
+				bool flag = false;
+				for (int k = 0; k < 4; k++)
 				{
-					flag = true;
-					break;
+					Vector3 vector3 = rectTransform3.InverseTransformPoint(array[k]);
+					if (vector3[j] < rect3.min[j] || vector3[j] > rect3.max[j])
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+				{
+					RectTransformUtility.FlipLayoutOnAxis(rectTransform, j, false, false);
 				}
 			}
-			if (flag)
+			for (int l = 0; l < this.m_Items.Count; l++)
 			{
-				RectTransformUtility.FlipLayoutOnAxis(rectTransform, 0, false, false);
-				RectTransformUtility.FlipLayoutOnAxis(rectTransform, 1, false, false);
-			}
-			for (int k = 0; k < this.m_Items.Count; k++)
-			{
-				RectTransform rectTransform4 = this.m_Items[k].rectTransform;
+				RectTransform rectTransform4 = this.m_Items[l].rectTransform;
 				rectTransform4.anchorMin = new Vector2(rectTransform4.anchorMin.x, 0f);
 				rectTransform4.anchorMax = new Vector2(rectTransform4.anchorMax.x, 0f);
-				rectTransform4.anchoredPosition = new Vector2(rectTransform4.anchoredPosition.x, vector.y + size.y * (float)(this.m_Items.Count - 1 - k) + size.y * rectTransform4.pivot.y);
+				rectTransform4.anchoredPosition = new Vector2(rectTransform4.anchoredPosition.x, vector.y + size.y * (float)(this.m_Items.Count - 1 - l) + size.y * rectTransform4.pivot.y);
 				rectTransform4.sizeDelta = new Vector2(rectTransform4.sizeDelta.x, size.y);
 			}
 			this.AlphaFadeList(0.15f, 0f, 1f);
@@ -499,7 +534,10 @@ namespace UnityEngine.UI
 			if (this.m_Dropdown != null)
 			{
 				this.AlphaFadeList(0.15f, 0f);
-				base.StartCoroutine(this.DelayedDestroyDropdownList(0.15f));
+				if (this.IsActive())
+				{
+					base.StartCoroutine(this.DelayedDestroyDropdownList(0.15f));
+				}
 			}
 			if (this.m_Blocker != null)
 			{
@@ -511,7 +549,11 @@ namespace UnityEngine.UI
 
 		private IEnumerator DelayedDestroyDropdownList(float delay)
 		{
-			yield return new WaitForSeconds(delay);
+			float waitTime = Time.realtimeSinceStartup + delay;
+			while (Time.realtimeSinceStartup < waitTime)
+			{
+				yield return null;
+			}
 			for (int i = 0; i < this.m_Items.Count; i++)
 			{
 				if (this.m_Items[i] != null)

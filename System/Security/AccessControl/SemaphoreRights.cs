@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Security.AccessControl
 {
 	/// <summary>Specifies the access control rights that can be applied to named system semaphore objects.</summary>
-	[Flags]
 	[ComVisible(false)]
+	[Flags]
 	public enum SemaphoreRights
 	{
 		/// <summary>The right to release a named semaphore.</summary>

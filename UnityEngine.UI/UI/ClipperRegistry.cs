@@ -39,7 +39,7 @@ namespace UnityEngine.UI
 			{
 				return;
 			}
-			ClipperRegistry.instance.m_Clippers.Add(c);
+			ClipperRegistry.instance.m_Clippers.AddUnique(c);
 		}
 
 		public static void Unregister(IClipper c)

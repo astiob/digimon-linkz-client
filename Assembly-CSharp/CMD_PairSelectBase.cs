@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,8 +37,8 @@ public class CMD_PairSelectBase : CMD
 	[Header("ベースデジモンラベル")]
 	private UILabel baseDigimonLabel;
 
-	[Header("パートナーデジモンラベル")]
 	[SerializeField]
+	[Header("パートナーデジモンラベル")]
 	private UILabel partnerDigimonLabel;
 
 	protected int useClusterBK;
@@ -91,12 +92,12 @@ public class CMD_PairSelectBase : CMD
 		bool flag3 = false;
 		if (this.baseDigimon != null)
 		{
-			flag3 = this.baseDigimon.IsVersionUp();
+			flag3 = MonsterStatusData.IsVersionUp(this.baseDigimon.GetMonsterMaster().Simple.rare);
 		}
 		if (this.partnerDigimon != null)
 		{
-			flag = this.partnerDigimon.IsArousal();
-			flag2 = this.partnerDigimon.IsVersionUp();
+			flag = MonsterStatusData.IsArousal(this.partnerDigimon.monsterM.rare);
+			flag2 = MonsterStatusData.IsVersionUp(this.partnerDigimon.GetMonsterMaster().Simple.rare);
 		}
 		Action<int> action = new Action<int>(this.OpenConfirmTargetParameter);
 		if (flag2)
@@ -195,7 +196,7 @@ public class CMD_PairSelectBase : CMD
 		{
 			this.GetUserMonsterData()
 		};
-		GameWebAPI.MonsterSlotInfoListLogic request = ChipDataMng.RequestAPIMonsterSlotInfo(monsterList, null);
+		GameWebAPI.MonsterSlotInfoListLogic request = ChipDataMng.RequestAPIMonsterSlotInfo(monsterList);
 		yield return AppCoroutine.Start(request.Run(new Action(this.EndSuccess), delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
@@ -398,7 +399,8 @@ public class CMD_PairSelectBase : CMD
 		CMD_CharacterDetailed.DataChg = monsterData;
 		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
 		{
-			PartyUtil.SetLock(monsterData, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+			icon.Lock = monsterData.userMonster.IsLocked;
 		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
 		cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Laboratory;
 	}
@@ -408,7 +410,8 @@ public class CMD_PairSelectBase : CMD
 		CMD_CharacterDetailed.DataChg = monsterData;
 		GUIMain.ShowCommonDialog(delegate(int i)
 		{
-			PartyUtil.SetLock(monsterData, false);
+			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
+			icon.Lock = monsterData.userMonster.IsLocked;
 		}, "CMD_CharacterDetailed");
 	}
 
@@ -505,7 +508,7 @@ public class CMD_PairSelectBase : CMD
 			{
 				UnityEngine.Object.DestroyImmediate(goIcon);
 			}
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(md, goEmpty.transform.localScale, goEmpty.transform.localPosition, goEmpty.transform.parent, true, false);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, goEmpty.transform.localScale, goEmpty.transform.localPosition, goEmpty.transform.parent, true, false);
 			goIcon = guimonsterIcon.gameObject;
 			goIcon.SetActive(true);
 			guimonsterIcon.Data = md;

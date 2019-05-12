@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>The NetworkPlayer is a data structure with which you can locate another player over the network.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	public struct NetworkPlayer
 	{
 		internal int index;
@@ -62,9 +61,6 @@ namespace UnityEngine
 			return other is NetworkPlayer && ((NetworkPlayer)other).index == this.index;
 		}
 
-		/// <summary>
-		///   <para>The IP address of this player.</para>
-		/// </summary>
 		public string ipAddress
 		{
 			get
@@ -77,9 +73,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The port of this player.</para>
-		/// </summary>
 		public int port
 		{
 			get
@@ -92,9 +85,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The GUID for this player, used when connecting with NAT punchthrough.</para>
-		/// </summary>
 		public string guid
 		{
 			get
@@ -107,17 +97,11 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the index number for this network player.</para>
-		/// </summary>
 		public override string ToString()
 		{
 			return this.index.ToString();
 		}
 
-		/// <summary>
-		///   <para>Returns the external IP address of the network interface.</para>
-		/// </summary>
 		public string externalIP
 		{
 			get
@@ -126,9 +110,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the external port of the network interface.</para>
-		/// </summary>
 		public int externalPort
 		{
 			get

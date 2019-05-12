@@ -1,5 +1,8 @@
 ﻿using EvolutionRouteMap;
 using Master;
+using MonsterIcon;
+using MonsterIconExtensions;
+using Picturebook;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +14,27 @@ namespace EvolutionDiagram
 		[SerializeField]
 		private GUI_EvolutionDiagramIconList listComponent;
 
-		private void OnPushedIcon()
+		[SerializeField]
+		private int iconSize;
+
+		[SerializeField]
+		private Color iconTextColor;
+
+		private MonsterIcon monsterIcon;
+
+		private void Initialize()
+		{
+			this.playSelectSE = true;
+			this.touchBehavior = GUICollider.TouchBehavior.None;
+			UIWidget component = this.listComponent.GetComponent<UIWidget>();
+			int depth = component.depth;
+			this.monsterIcon = this.listComponent.GetMonsterIconObject();
+			this.monsterIcon.Initialize(base.transform, this.iconSize, depth);
+			this.monsterIcon.Message.SetSortTextColor(this.iconTextColor);
+			base.InitializeInputEvent();
+		}
+
+		private void OnPushedItem()
 		{
 			int idx = base.IDX;
 			List<EvolutionDiagramData.IconMonster> evolutionData = this.listComponent.GetEvolutionData();
@@ -29,25 +52,21 @@ namespace EvolutionDiagram
 			EvolutionDiagramData.IconMonster iconMonster = evolutionData[listPartsIndex];
 			if (iconMonster != null)
 			{
-				MonsterThumbnail component = base.gameObject.GetComponent<MonsterThumbnail>();
-				component.SetImage(iconMonster.singleData.iconId, iconMonster.groupData.growStep);
-				if (!MonsterDataMng.ExistPicturebook(iconMonster.groupData.monsterCollectionId))
+				this.monsterIcon.SetMonsterImage(iconMonster.master);
+				if (!MonsterPicturebookData.ExistPicturebook(iconMonster.master.Group.monsterCollectionId))
 				{
-					component.SetBottomText(StringMaster.GetString("EvolutionUnkown"));
+					this.monsterIcon.Message.SetSortText(StringMaster.GetString("EvolutionUnkown"));
 				}
 				else
 				{
-					component.ClearBottomText();
+					this.monsterIcon.Message.ClearSortText();
 				}
 			}
 		}
 
 		public override void InitParts()
 		{
-			this.playSelectSE = true;
-			this.touchBehavior = GUICollider.TouchBehavior.None;
-			MonsterThumbnail component = base.gameObject.GetComponent<MonsterThumbnail>();
-			component.Initialize();
+			this.Initialize();
 		}
 	}
 }

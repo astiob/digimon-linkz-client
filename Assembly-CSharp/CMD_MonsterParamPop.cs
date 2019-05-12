@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -79,7 +80,7 @@ public class CMD_MonsterParamPop : CMD
 
 	public void MonsterDataSet(MonsterData mData, DataMng.ExperienceInfo experienceInfo, int chipSlotNum)
 	{
-		this.viewExtraSkillPage = mData.IsVersionUp();
+		this.viewExtraSkillPage = MonsterStatusData.IsVersionUp(mData.GetMonsterMaster().Simple.rare);
 		this.monsterStatusList.ClearValues();
 		this.monsterStatusList.SetValues(mData, true);
 		this.monsterBasicInfo.ClearMonsterData();
@@ -106,12 +107,13 @@ public class CMD_MonsterParamPop : CMD
 			this.learnSkill2.ClearSkill();
 			this.learnSkill2.SetSkill(mData);
 		}
-		this.SetMedalParameter(this.hpUpLabel, mData.userMonster.hpAbility, mData.Base_HP(int.Parse(mData.userMonster.level)));
-		this.SetMedalParameter(this.attackUpLabel, mData.userMonster.attackAbility, mData.Base_ATK(int.Parse(mData.userMonster.level)));
-		this.SetMedalParameter(this.defenseUpLabel, mData.userMonster.defenseAbility, mData.Base_DEF(int.Parse(mData.userMonster.level)));
-		this.SetMedalParameter(this.spAttackUpLabel, mData.userMonster.spAttackAbility, mData.Base_SATK(int.Parse(mData.userMonster.level)));
-		this.SetMedalParameter(this.spDefenseUpLabel, mData.userMonster.spDefenseAbility, mData.Base_SDEF(int.Parse(mData.userMonster.level)));
-		this.SetMedalParameter(this.speedUpLabel, mData.userMonster.speedAbility, mData.Base_SPD(int.Parse(mData.userMonster.level)));
+		StatusValue statusValue = MonsterStatusData.GetStatusValue(mData.userMonster.monsterId, mData.userMonster.level);
+		this.SetMedalParameter(this.hpUpLabel, mData.userMonster.hpAbility, (float)statusValue.hp);
+		this.SetMedalParameter(this.attackUpLabel, mData.userMonster.attackAbility, (float)statusValue.attack);
+		this.SetMedalParameter(this.defenseUpLabel, mData.userMonster.defenseAbility, (float)statusValue.defense);
+		this.SetMedalParameter(this.spAttackUpLabel, mData.userMonster.spAttackAbility, (float)statusValue.magicAttack);
+		this.SetMedalParameter(this.spDefenseUpLabel, mData.userMonster.spDefenseAbility, (float)statusValue.magicDefense);
+		this.SetMedalParameter(this.speedUpLabel, mData.userMonster.speedAbility, (float)statusValue.speed);
 		this.monsterMedal.SetActive(true);
 		this.monsterMedal.SetValues(mData.userMonster);
 		chipSlotNum += 5;

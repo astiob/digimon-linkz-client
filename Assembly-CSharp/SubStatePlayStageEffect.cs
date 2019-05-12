@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SubStatePlayStageEffect : BattleStateController
 {
 	private bool isShowBattleStageEffect;
 
-	private List<CharacterStateControl> countBarrierList;
-
-	private List<CharacterStateControl> countEvasionList;
+	private Dictionary<SufferStateProperty.SufferType, List<CharacterStateControl>> countDictionary;
 
 	public SubStatePlayStageEffect(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
@@ -24,13 +23,12 @@ public class SubStatePlayStageEffect : BattleStateController
 	protected override void EnabledThisState()
 	{
 		this.isShowBattleStageEffect = false;
-		this.countBarrierList = new List<CharacterStateControl>();
-		this.countEvasionList = new List<CharacterStateControl>();
+		this.countDictionary = new Dictionary<SufferStateProperty.SufferType, List<CharacterStateControl>>();
 	}
 
 	protected override IEnumerator MainRoutine()
 	{
-		foreach (ChipEffectStatus.EffectTriggerType trigger in base.battleStateData.reqestStageEffectTriggerList)
+		foreach (EffectStatusBase.EffectTriggerType trigger in base.battleStateData.reqestStageEffectTriggerList)
 		{
 			IEnumerator function = this.PlayStageEffect(trigger);
 			while (function.MoveNext())
@@ -50,7 +48,7 @@ public class SubStatePlayStageEffect : BattleStateController
 	{
 	}
 
-	private IEnumerator PlayStageEffect(ChipEffectStatus.EffectTriggerType effectTriggerType)
+	private IEnumerator PlayStageEffect(EffectStatusBase.EffectTriggerType effectTriggerType)
 	{
 		bool isBigBoss = base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1;
 		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
@@ -70,9 +68,9 @@ public class SubStatePlayStageEffect : BattleStateController
 		foreach (ExtraEffectStatus invocation in invocationList)
 		{
 			IEnumerator function = null;
-			ExtraEffectStatus.ExtraEffectType effectType = (ExtraEffectStatus.ExtraEffectType)invocation.EffectType;
-			ExtraEffectStatus.ExtraEffectType extraEffectType = effectType;
-			if (extraEffectType != ExtraEffectStatus.ExtraEffectType.LeaderChange)
+			EffectStatusBase.ExtraEffectType effectType = (EffectStatusBase.ExtraEffectType)invocation.EffectType;
+			EffectStatusBase.ExtraEffectType extraEffectType = effectType;
+			if (extraEffectType != EffectStatusBase.ExtraEffectType.LeaderChange)
 			{
 				function = this.PlayDefaultEffect(invocation);
 			}
@@ -256,7 +254,7 @@ public class SubStatePlayStageEffect : BattleStateController
 		List<CharacterStateControl> targetList = new List<CharacterStateControl>();
 		foreach (CharacterStateControl character in base.battleStateData.GetTotalCharacters())
 		{
-			if (!character.isDied && extraEffectStatus.IsHitExtraEffect(character, ExtraEffectStatus.ExtraEffectType.Skill))
+			if (!character.isDied && extraEffectStatus.IsHitExtraEffect(character, EffectStatusBase.ExtraEffectType.Skill))
 			{
 				targetList.Add(character);
 			}
@@ -277,7 +275,7 @@ public class SubStatePlayStageEffect : BattleStateController
 			this.isShowBattleStageEffect = true;
 		}
 		string key = ((int)extraEffectStatus.EffectValue).ToString();
-		SkillStatus status = base.battleStateData.skillStatus.GetObject(key);
+		SkillStatus status = base.hierarchyData.GetSkillStatus(key);
 		IEnumerator playFunction = null;
 		if (status != null)
 		{
@@ -291,6 +289,7 @@ public class SubStatePlayStageEffect : BattleStateController
 		{
 			yield return null;
 		}
+		base.battleStateData.currentDeadCharacters = targetList.Where((CharacterStateControl item) => item.isDied).ToArray<CharacterStateControl>();
 		base.SetState(typeof(SubStateEnemiesItemDroppingFunction));
 		while (base.isWaitState)
 		{
@@ -315,12 +314,11 @@ public class SubStatePlayStageEffect : BattleStateController
 
 	private IEnumerator PlaySkill(SkillStatus status, List<CharacterStateControl> targetList)
 	{
-		this.countBarrierList.Clear();
-		this.countEvasionList.Clear();
+		this.countDictionary.Clear();
 		foreach (AffectEffectProperty affectEffectProperty in status.affectEffect)
 		{
 			int hitNumber = 1;
-			if (affectEffectProperty.type == AffectEffect.Damage || affectEffectProperty.type == AffectEffect.ReferenceTargetHpRate)
+			if (AffectEffectProperty.IsDamage(affectEffectProperty.type))
 			{
 				hitNumber = affectEffectProperty.hitNumber;
 			}
@@ -333,8 +331,9 @@ public class SubStatePlayStageEffect : BattleStateController
 				}
 			}
 		}
-		this.UpdateCountBarrier();
-		this.UpdateCountEvasion();
+		this.UpdateCount(SufferStateProperty.SufferType.CountGuard);
+		this.UpdateCount(SufferStateProperty.SufferType.CountBarrier);
+		this.UpdateCount(SufferStateProperty.SufferType.CountEvasion);
 		yield break;
 	}
 
@@ -355,7 +354,7 @@ public class SubStatePlayStageEffect : BattleStateController
 				AffectEffect affectEffect = affectEffectProperty.type;
 				if (isHit)
 				{
-					if (affectEffectProperty.type == AffectEffect.Damage || affectEffectProperty.type == AffectEffect.ReferenceTargetHpRate)
+					if (AffectEffectProperty.IsDamage(affectEffectProperty.type))
 					{
 						strength = target.tolerance.GetAttributeStrength(affectEffectProperty.attribute);
 						if (strength == Strength.Invalid)
@@ -369,7 +368,7 @@ public class SubStatePlayStageEffect : BattleStateController
 						else if (target.currentSufferState.onCountBarrier.isActive)
 						{
 							affectEffect = AffectEffect.CountBarrier;
-							this.AddCountBarrierList(target);
+							this.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
 						}
 						else if (target.currentSufferState.onTurnEvasion.isActive)
 						{
@@ -378,7 +377,7 @@ public class SubStatePlayStageEffect : BattleStateController
 						else if (target.currentSufferState.onCountEvasion.isActive)
 						{
 							affectEffect = AffectEffect.CountEvasion;
-							this.AddCountEvasionList(target);
+							this.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
 						}
 						else
 						{
@@ -399,6 +398,10 @@ public class SubStatePlayStageEffect : BattleStateController
 							{
 								target.hp += hitIconDigit;
 							}
+							if (target.currentSufferState.onCountGuard.isActive)
+							{
+								this.AddCountDictionary(SufferStateProperty.SufferType.CountGuard, target);
+							}
 						}
 					}
 					else if (Tolerance.OnInfluenceToleranceAffectEffect(affectEffectProperty.type))
@@ -415,7 +418,7 @@ public class SubStatePlayStageEffect : BattleStateController
 						else if (target.currentSufferState.onCountBarrier.isActive)
 						{
 							affectEffect = AffectEffect.CountBarrier;
-							this.AddCountBarrierList(target);
+							this.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
 						}
 						else if (target.currentSufferState.onTurnEvasion.isActive)
 						{
@@ -424,7 +427,7 @@ public class SubStatePlayStageEffect : BattleStateController
 						else if (target.currentSufferState.onCountEvasion.isActive)
 						{
 							affectEffect = AffectEffect.CountEvasion;
-							this.AddCountEvasionList(target);
+							this.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
 						}
 						else if (affectEffectProperty.type == AffectEffect.InstantDeath)
 						{
@@ -474,42 +477,53 @@ public class SubStatePlayStageEffect : BattleStateController
 		yield break;
 	}
 
-	private void AddCountBarrierList(CharacterStateControl value)
+	private void AddCountDictionary(SufferStateProperty.SufferType key, CharacterStateControl value)
 	{
-		if (!this.countBarrierList.Contains(value))
+		if (!this.countDictionary.ContainsKey(key))
 		{
-			this.countBarrierList.Add(value);
+			this.countDictionary.Add(key, new List<CharacterStateControl>());
 		}
-	}
-
-	private void UpdateCountBarrier()
-	{
-		foreach (CharacterStateControl characterStateControl in this.countBarrierList)
+		HaveSufferState currentSufferState = value.currentSufferState;
+		if (currentSufferState.FindSufferState(key))
 		{
-			characterStateControl.currentSufferState.onCountBarrier.currentKeepRound--;
-			if (characterStateControl.currentSufferState.onCountBarrier.currentKeepRound <= 0)
+			SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
+			if (sufferStateProperty.isMultiHitThrough)
 			{
-				characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.CountBarrier);
+				sufferStateProperty.currentKeepRound--;
+				if (sufferStateProperty.currentKeepRound <= 0)
+				{
+					currentSufferState.RemoveSufferState(key);
+				}
+			}
+			else if (this.countDictionary[key].Contains(value))
+			{
+				this.countDictionary[key].Add(value);
 			}
 		}
 	}
 
-	private void AddCountEvasionList(CharacterStateControl value)
+	private void UpdateCount(SufferStateProperty.SufferType key)
 	{
-		if (!this.countEvasionList.Contains(value))
+		List<CharacterStateControl> list = null;
+		this.countDictionary.TryGetValue(key, out list);
+		if (list == null || list.Count == 0)
 		{
-			this.countEvasionList.Add(value);
+			return;
 		}
-	}
-
-	private void UpdateCountEvasion()
-	{
-		foreach (CharacterStateControl characterStateControl in this.countEvasionList)
+		foreach (CharacterStateControl characterStateControl in list)
 		{
-			characterStateControl.currentSufferState.onCountEvasion.currentKeepRound--;
-			if (characterStateControl.currentSufferState.onCountEvasion.currentKeepRound <= 0)
+			HaveSufferState currentSufferState = characterStateControl.currentSufferState;
+			if (currentSufferState.FindSufferState(key))
 			{
-				characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.CountEvasion);
+				SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(key);
+				if (!sufferStateProperty.isMultiHitThrough)
+				{
+					sufferStateProperty.currentKeepRound--;
+					if (sufferStateProperty.currentKeepRound <= 0)
+					{
+						currentSufferState.RemoveSufferState(key);
+					}
+				}
 			}
 		}
 	}

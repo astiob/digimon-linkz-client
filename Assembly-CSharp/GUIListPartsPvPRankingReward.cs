@@ -1,4 +1,5 @@
-﻿using FarmData;
+﻿using Evolution;
+using FarmData;
 using Master;
 using System;
 using System.Linq;
@@ -75,7 +76,7 @@ public sealed class GUIListPartsPvPRankingReward : MonoBehaviour
 			{
 				UnityEngine.Object.Destroy(this.monsterIcon.gameObject);
 			}
-			this.monsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(objectId), Vector3.one, Vector3.zero, this.iconSprite.transform, true, false);
+			this.monsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(objectId), Vector3.one, Vector3.zero, this.iconSprite.transform, true, false);
 			this.monsterIcon.ResizeIcon(this.iconSprite.width, this.iconSprite.height);
 			if (null != this.monsterIcon)
 			{
@@ -215,7 +216,7 @@ public sealed class GUIListPartsPvPRankingReward : MonoBehaviour
 		switch (assetCategoryId)
 		{
 		case MasterDataMng.AssetCategory.SOUL:
-			result = MonsterDataMng.Instance().GetEvolveItemIconPathByID(objectId);
+			result = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(objectId);
 			break;
 		default:
 			if (assetCategoryId == MasterDataMng.AssetCategory.ITEM)

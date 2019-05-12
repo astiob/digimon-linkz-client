@@ -1,4 +1,5 @@
-﻿using ExchangeData;
+﻿using Evolution;
+using ExchangeData;
 using Master;
 using System;
 using System.Collections.Generic;
@@ -190,7 +191,7 @@ public class CMD_ClearingHouse : CMD
 					this.exchangeItemPathList.Add(text);
 					break;
 				case MasterDataMng.AssetCategory.SOUL:
-					this.exchangeConsumeItemTexturePath = MonsterDataMng.Instance().GetEvolveItemIconPathByID(consumeAssetValue);
+					this.exchangeConsumeItemTexturePath = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(consumeAssetValue);
 					if (this.exchangeBaseObject.Count > num)
 					{
 						this.exchangeConsumeTexture[num].enabled = true;

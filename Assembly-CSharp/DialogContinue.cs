@@ -9,60 +9,60 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("特定商取引ボタン")]
 	private UIButton specificTradeButton;
 
-	[SerializeField]
 	[Header("リタイアボタン")]
+	[SerializeField]
 	private UIButton retireButton;
 
-	[Header("復活ボタン")]
 	[SerializeField]
+	[Header("復活ボタン")]
 	private UIButton revivalButton;
 
-	[Header("所持デジストーンの数")]
 	[SerializeField]
+	[Header("所持デジストーンの数")]
 	private UILabel digistoneNumLabel;
 
-	[Header("バックグラウンドのスキナー")]
 	[SerializeField]
+	[Header("バックグラウンドのスキナー")]
 	private UIComponentSkinner backgroundSkinner;
 
-	[Header("コンティニューかショップ切り替えスキナー")]
 	[SerializeField]
+	[Header("コンティニューかショップ切り替えスキナー")]
 	private UIComponentSkinner revivalOrShowShopButtonSwitch;
 
 	[Header("デジストーン説明Replacer")]
 	[SerializeField]
 	private UILabel digistoneDescription;
 
-	[Header("特定商取引ボタンのコライダー")]
 	[SerializeField]
+	[Header("特定商取引ボタンのコライダー")]
 	private Collider specificTradeCollider;
 
-	[Header("リタイアボタンのコライダー")]
 	[SerializeField]
+	[Header("リタイアボタンのコライダー")]
 	private Collider retireButtonCollider;
 
-	[Header("復活ボタンボタンのコライダー")]
 	[SerializeField]
+	[Header("復活ボタンボタンのコライダー")]
 	private Collider revivalButtonCollider;
 
-	[Header("UIOpenCloseDialog")]
 	[SerializeField]
+	[Header("UIOpenCloseDialog")]
 	public UIOpenCloseDialog openCloseDialog;
 
-	[Header("特定商取引法に基づく表記ローカライズ")]
 	[SerializeField]
+	[Header("特定商取引法に基づく表記ローカライズ")]
 	private UILabel specificTradeLocalize;
 
-	[Header("諦めるローカライズ")]
 	[SerializeField]
+	[Header("諦めるローカライズ")]
 	private UILabel retireLocalize;
 
-	[SerializeField]
 	[Header("コンティニューのタイトルのローカライズ")]
+	[SerializeField]
 	private UILabel continueTitleLocalize;
 
-	[Header("復活する/ショップへ移動ローカライズ")]
 	[SerializeField]
+	[Header("復活する/ショップへ移動ローカライズ")]
 	private UITextReplacer revivalOrShopLocalize;
 
 	[Header("復活する/ショップへ移動ローカライズ(マルチのみ)")]

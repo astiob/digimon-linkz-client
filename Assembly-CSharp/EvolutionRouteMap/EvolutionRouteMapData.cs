@@ -1,5 +1,6 @@
 ﻿using Evolution;
 using EvolutionDiagram;
+using Monster;
 using System;
 using System.Collections.Generic;
 
@@ -19,19 +20,14 @@ namespace EvolutionRouteMap
 			this.afterRouteList = new List<EvolutionDiagramData.IconMonster>();
 		}
 
-		private void AddMonsterData(GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMaster, List<EvolutionDiagramData.IconMonster> monsterList)
+		private void AddMonsterData(MonsterClientMaster monsterMaster, List<EvolutionDiagramData.IconMonster> monsterList)
 		{
-			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMaster.monsterGroupId);
-			if (monsterGroupMasterByMonsterGroupId != null)
+			EvolutionDiagramData.IconMonster item = new EvolutionDiagramData.IconMonster
 			{
-				EvolutionDiagramData.IconMonster item = new EvolutionDiagramData.IconMonster
-				{
-					collectionId = monsterGroupMasterByMonsterGroupId.monsterCollectionId.ToInt32(),
-					singleData = monsterMaster,
-					groupData = monsterGroupMasterByMonsterGroupId
-				};
-				monsterList.Add(item);
-			}
+				collectionId = int.Parse(monsterMaster.Group.monsterCollectionId),
+				master = monsterMaster
+			};
+			monsterList.Add(item);
 		}
 
 		private void CreateRouteList(string monsterId, string growStep)
@@ -41,7 +37,7 @@ namespace EvolutionRouteMap
 			List<GameWebAPI.RespDataMA_GetMonsterEvolutionM.Evolution> list = ClassSingleton<EvolutionData>.Instance.GetBeforeMonsterEvolutionList(monsterId, growStep);
 			for (int i = 0; i < list.Count; i++)
 			{
-				GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(list[i].baseMonsterId);
+				MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(list[i].baseMonsterId);
 				if (monsterMasterByMonsterId != null)
 				{
 					this.AddMonsterData(monsterMasterByMonsterId, this.beforeRouteList);
@@ -50,7 +46,7 @@ namespace EvolutionRouteMap
 			list = ClassSingleton<EvolutionData>.Instance.GetAfterMonsterEvolutionList(monsterId, growStep);
 			for (int j = 0; j < list.Count; j++)
 			{
-				GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId2 = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(list[j].nextMonsterId);
+				MonsterClientMaster monsterMasterByMonsterId2 = MonsterMaster.GetMonsterMasterByMonsterId(list[j].nextMonsterId);
 				if (monsterMasterByMonsterId2 != null)
 				{
 					this.AddMonsterData(monsterMasterByMonsterId2, this.afterRouteList);
@@ -60,10 +56,10 @@ namespace EvolutionRouteMap
 
 		public void SetSelectMonster(EvolutionDiagramData.IconMonster monster)
 		{
-			if (this.selectMonster == null || this.selectMonster.singleData.monsterId != monster.singleData.monsterId)
+			if (this.selectMonster == null || this.selectMonster.master.Simple.monsterId != monster.master.Simple.monsterId)
 			{
 				this.selectMonster = monster;
-				this.CreateRouteList(monster.singleData.monsterId, monster.groupData.growStep);
+				this.CreateRouteList(monster.master.Simple.monsterId, monster.master.Group.growStep);
 			}
 		}
 

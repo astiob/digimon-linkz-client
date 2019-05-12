@@ -92,12 +92,12 @@ public class BattleStartAction : MonoBehaviour
 		[Header("味方スキル発動ローカライズ")]
 		public UILabel leaderSkillLocalize;
 
-		[Header("リーダースキルのオブジェクト")]
 		[SerializeField]
+		[Header("リーダースキルのオブジェクト")]
 		public GameObject leaderSkillUIPlayer;
 
-		[Header("リーダースキルの名前")]
 		[SerializeField]
+		[Header("リーダースキルの名前")]
 		public UILabel leaderSkillNamePlayer;
 	}
 }

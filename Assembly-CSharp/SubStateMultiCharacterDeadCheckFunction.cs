@@ -257,21 +257,26 @@ public class SubStateMultiCharacterDeadCheckFunction : BattleStateController
 			}
 		}
 		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
-		base.stateManager.uiControlMulti.isPlayingSharedAp = true;
-		HitEffectParams hitEffectParams = base.battleStateData.roundChangeApRevivalEffect[0];
-		base.stateManager.uiControlMulti.APEffectCallBackMulti(hitEffectParams);
 		base.stateManager.uiControlMulti.ResetHUD(totalCharacters);
 		base.stateManager.uiControl.ShowCharacterHUDFunction(totalCharacters);
-		base.stateManager.uiControlMulti.RefreshSharedAP(false);
 		for (int j = 0; j < totalCharacters.Length; j++)
 		{
 			totalCharacters[j].skillOrder = -1;
 		}
 		yield return null;
 		base.stateManager.uiControl.RepositionCharacterHUDPosition(totalCharacters);
-		while (base.stateManager.uiControlMulti.isPlayingSharedAp)
+		bool isEndPlayApUpAnimations = false;
+		base.stateManager.uiControlMulti.PlayApUpAnimations(delegate
+		{
+			isEndPlayApUpAnimations = true;
+		});
+		while (!isEndPlayApUpAnimations)
 		{
 			yield return null;
+		}
+		for (int k = 0; k < base.battleStateData.playerCharacters.Length; k++)
+		{
+			base.stateManager.uiControlMulti.HideHUDRecoverMulti(k);
 		}
 		yield break;
 	}

@@ -1,4 +1,5 @@
 ﻿using FarmData;
+using Monster;
 using Neptune.Movie;
 using Quest;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TutorialRequestHeader;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WebAPIRequest;
 
 public sealed class TutorialControlToGame : MonoBehaviour
@@ -200,7 +202,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			GUIMain.ReqScreen("UIIdle", string.Empty);
 			GUIFace.ForceHideDigiviceBtn_S();
 			BattleStateManager.onAutoServerConnect = true;
-			Application.LoadLevel(BattleStateManager.BattleSceneName);
+			SceneManager.LoadScene(BattleStateManager.BattleSceneName);
 			if (completed != null)
 			{
 				completed();
@@ -217,16 +219,20 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	private IEnumerator RequestBattleData()
 	{
 		RequestList requestList = new RequestList();
+		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
 		RequestBase addRequest = new TutorialMonsterEvolution();
 		requestList.AddRequest(addRequest);
-		GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
-		requestMonsterList.SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
+		GameWebAPI.MonsterSlotInfoListLogic monsterSlotInfoListLogic = new GameWebAPI.MonsterSlotInfoListLogic();
+		monsterSlotInfoListLogic.OnReceived = delegate(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic response)
 		{
-			param.userMonsterIds = new int[0];
+			ChipDataMng.GetUserChipSlotData().SetMonsterSlotList(response.slotInfo);
 		};
+		addRequest = monsterSlotInfoListLogic;
+		requestList.AddRequest(addRequest);
+		GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
 		requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
 		{
-			DataMng.Instance().RespDataUS_MonsterList = response;
+			ClassSingleton<MonsterUserDataMng>.Instance.SetUserMonsterData(response.userMonsterList);
 		};
 		addRequest = requestMonsterList;
 		requestList.AddRequest(addRequest);
@@ -254,7 +260,6 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	private IEnumerator StartBattle()
 	{
 		TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.TutorialToBattle, true);
-		MonsterDataMng.Instance().RefreshMonsterDataList();
 		string dungeonId = this.tutorialBattleDungeonId.ToString();
 		GameWebAPI.RequestWD_WorldStart requestWD_WorldStart = new GameWebAPI.RequestWD_WorldStart();
 		requestWD_WorldStart.SetSendData = delegate(GameWebAPI.WD_Req_DngStart param)
@@ -383,7 +388,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 	public void DeleteBattleScreen(Action completed)
 	{
 		SoundMng.Instance().StopBGM(0f, null);
-		Application.LoadLevel("Empty");
+		SceneManager.LoadScene("Empty");
 		Time.timeScale = 1f;
 		Singleton<GUIMain>.Instance.gameObject.transform.localPosition = Vector3.zero;
 		if (completed != null)
@@ -678,27 +683,23 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		switch (uiType2)
 		{
 		case "MEAL_DIGI":
-			if (MonsterDataMng.Instance().GetSelectMonsterDataList() != null)
-			{
-				List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-				MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DATE;
-				list = MonsterDataMng.Instance().SortMDList(list, false);
-				GameObject monsterPrefabByMonsterData = MonsterDataMng.Instance().GetMonsterPrefabByMonsterData(list.Last<MonsterData>());
-				tutorialEmphasizeUI = monsterPrefabByMonsterData.AddComponent<TutorialEmphasizeUI>();
-				tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.MEAL_DIGI;
-			}
+		{
+			List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList();
+			MonsterDataMng.Instance().SortMonsterUserDataList(monsterDataList, MonsterSortType.DATE, MonsterSortOrder.DESC);
+			GameObject monsterPrefabByMonsterData = MonsterDataMng.Instance().GetMonsterPrefabByMonsterData(monsterDataList.Last<MonsterData>());
+			tutorialEmphasizeUI = monsterPrefabByMonsterData.AddComponent<TutorialEmphasizeUI>();
+			tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.MEAL_DIGI;
 			return tutorialEmphasizeUI;
+		}
 		case "GARDEN_DIGI":
-			if (MonsterDataMng.Instance().GetSelectMonsterDataList() != null)
-			{
-				List<MonsterData> list2 = MonsterDataMng.Instance().GetMonsterDataList(false);
-				MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DATE;
-				list2 = MonsterDataMng.Instance().SortMDList(list2, false);
-				GameObject monsterPrefabByMonsterData2 = MonsterDataMng.Instance().GetMonsterPrefabByMonsterData(list2.Last<MonsterData>());
-				tutorialEmphasizeUI = monsterPrefabByMonsterData2.AddComponent<TutorialEmphasizeUI>();
-				tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.GARDEN_DIGI;
-			}
+		{
+			List<MonsterData> monsterDataList2 = MonsterDataMng.Instance().GetMonsterDataList();
+			MonsterDataMng.Instance().SortMonsterUserDataList(monsterDataList2, MonsterSortType.DATE, MonsterSortOrder.DESC);
+			GameObject monsterPrefabByMonsterData2 = MonsterDataMng.Instance().GetMonsterPrefabByMonsterData(monsterDataList2.Last<MonsterData>());
+			tutorialEmphasizeUI = monsterPrefabByMonsterData2.AddComponent<TutorialEmphasizeUI>();
+			tutorialEmphasizeUI.UiName = TutorialEmphasizeUI.UiNameType.GARDEN_DIGI;
 			return tutorialEmphasizeUI;
+		}
 		case "PARTY":
 		{
 			BattleTutorial tutorial = UnityEngine.Object.FindObjectOfType<BattleStateManager>().tutorial;
@@ -1305,22 +1306,22 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		string nextLevel = (setLevel + 1).ToString();
 		monsterExperienceM2 = monsterExperienceM.SingleOrDefault((GameWebAPI.RespDataMA_GetMonsterExperienceM.MonsterExperienceM x) => x.level == nextLevel);
 		string experienceNum = monsterExperienceM2.experienceNum;
-		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-		MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DATE;
-		list = MonsterDataMng.Instance().SortMDList(list, false);
-		int num2 = list.Count - index - 1;
-		if (list != null && num2 < list.Count && list[num2] != null)
+		List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList();
+		MonsterDataMng.Instance().SortMonsterUserDataList(monsterDataList, MonsterSortType.DATE, MonsterSortOrder.DESC);
+		int num2 = monsterDataList.Count - index - 1;
+		if (monsterDataList != null && num2 < monsterDataList.Count && monsterDataList[num2] != null)
 		{
-			MonsterData monsterData = list[num2];
+			MonsterData monsterData = monsterDataList[num2];
 			monsterData.userMonster.level = level;
 			monsterData.userMonster.ex = num.ToString();
 			monsterData.userMonster.levelEx = setExp.ToString();
 			monsterData.userMonster.nextLevelEx = experienceNum;
-			monsterData.userMonster.hp = monsterData.Now_HP(setLevel).ToString();
-			monsterData.userMonster.attack = monsterData.Now_ATK(setLevel).ToString();
-			monsterData.userMonster.defense = monsterData.Now_DEF(setLevel).ToString();
-			monsterData.userMonster.spAttack = monsterData.Now_SATK(setLevel).ToString();
-			monsterData.userMonster.spDefense = monsterData.Now_SDEF(setLevel).ToString();
+			StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterData.userMonster.monsterId, monsterData.userMonster.level);
+			monsterData.userMonster.hp = statusValue.hp.ToString();
+			monsterData.userMonster.attack = statusValue.attack.ToString();
+			monsterData.userMonster.defense = statusValue.defense.ToString();
+			monsterData.userMonster.spAttack = statusValue.magicAttack.ToString();
+			monsterData.userMonster.spDefense = statusValue.magicDefense.ToString();
 		}
 	}
 
@@ -1338,17 +1339,15 @@ public sealed class TutorialControlToGame : MonoBehaviour
 		}
 		if ("CMD_MealExecution" == openDialogName)
 		{
-			List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList(false);
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DATE;
-			list = MonsterDataMng.Instance().SortMDList(list, false);
-			CMD_MealExecution.DataChg = list.Last<MonsterData>();
+			List<MonsterData> monsterDataList = MonsterDataMng.Instance().GetMonsterDataList();
+			MonsterDataMng.Instance().SortMonsterUserDataList(monsterDataList, MonsterSortType.DATE, MonsterSortOrder.DESC);
+			CMD_MealExecution.DataChg = monsterDataList.Last<MonsterData>();
 		}
 		if ("CMD_CharacterDetailed" == openDialogName)
 		{
-			List<MonsterData> list2 = MonsterDataMng.Instance().GetMonsterDataList(false);
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DATE;
-			list2 = MonsterDataMng.Instance().SortMDList(list2, false);
-			CMD_CharacterDetailed.DataChg = list2.First<MonsterData>();
+			List<MonsterData> monsterDataList2 = MonsterDataMng.Instance().GetMonsterDataList();
+			MonsterDataMng.Instance().SortMonsterUserDataList(monsterDataList2, MonsterSortType.DATE, MonsterSortOrder.DESC);
+			CMD_CharacterDetailed.DataChg = monsterDataList2.First<MonsterData>();
 		}
 		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, openDialogName);
 		commonDialog.onOpened += actionOpened;
@@ -1542,30 +1541,28 @@ public sealed class TutorialControlToGame : MonoBehaviour
 			if (monsterEvolutionRouteId == respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i].monsterEvolutionRouteId)
 			{
 				string growthMonsterId = respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i].growthMonsterId;
-				MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(growthMonsterId);
-				monsterData.userMonster.userId = monsterDataByUserMonsterLargeID.userMonster.userId;
-				monsterData.userMonster.userMonsterId = monsterDataByUserMonsterLargeID.userMonster.userMonsterId;
-				monsterData.userMonster.leaderSkillId = monsterDataByUserMonsterLargeID.userMonster.leaderSkillId;
-				monsterData.actionSkillM = monsterDataByUserMonsterLargeID.actionSkillM;
-				monsterData.actionSkillDetailM = monsterDataByUserMonsterLargeID.actionSkillDetailM;
-				monsterData.commonSkillM = monsterDataByUserMonsterLargeID.commonSkillM;
-				monsterData.commonSkillDetailM = monsterDataByUserMonsterLargeID.commonSkillDetailM;
-				DataMng.Instance().SetUserMonster(monsterData.userMonster);
-				MonsterDataMng.Instance().RefreshMonsterDataList();
-				monsterDataByUserMonsterLargeID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterLargeID();
-				monsterDataByUserMonsterLargeID.actionSkillM = monsterData.actionSkillM;
-				monsterDataByUserMonsterLargeID.actionSkillDetailM = monsterData.actionSkillDetailM;
-				monsterDataByUserMonsterLargeID.commonSkillM = monsterData.commonSkillM;
-				monsterDataByUserMonsterLargeID.commonSkillDetailM = monsterData.commonSkillDetailM;
-				monsterDataByUserMonsterLargeID.userMonster.ex = "0";
-				monsterDataByUserMonsterLargeID.userMonster.hpAbilityFlg = "0";
-				monsterDataByUserMonsterLargeID.userMonster.attackAbilityFlg = "0";
-				monsterDataByUserMonsterLargeID.userMonster.defenseAbilityFlg = "0";
-				monsterDataByUserMonsterLargeID.userMonster.spAttackAbilityFlg = "0";
-				monsterDataByUserMonsterLargeID.userMonster.spDefenseAbilityFlg = "0";
-				monsterDataByUserMonsterLargeID.userMonster.speedAbilityFlg = "0";
-				monsterDataByUserMonsterLargeID.userMonster.friendship = "0";
-				monsterDataByUserMonsterLargeID.UpdateNowParam(-1);
+				if (monsterDataByUserMonsterLargeID.userMonster.monsterId != growthMonsterId)
+				{
+					MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(growthMonsterId);
+					monsterData.userMonster.userId = monsterDataByUserMonsterLargeID.userMonster.userId;
+					monsterData.userMonster.userMonsterId = monsterDataByUserMonsterLargeID.userMonster.userMonsterId;
+					monsterData.userMonster.leaderSkillId = monsterDataByUserMonsterLargeID.userMonster.leaderSkillId;
+					monsterData.userMonster.commonSkillId = monsterDataByUserMonsterLargeID.userMonster.commonSkillId;
+					monsterData.userMonster.defaultSkillGroupSubId = monsterDataByUserMonsterLargeID.userMonster.defaultSkillGroupSubId;
+					ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(monsterData.userMonster);
+					ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
+					monsterDataByUserMonsterLargeID.userMonster.ex = "0";
+					monsterDataByUserMonsterLargeID.userMonster.hpAbilityFlg = "0";
+					monsterDataByUserMonsterLargeID.userMonster.attackAbilityFlg = "0";
+					monsterDataByUserMonsterLargeID.userMonster.defenseAbilityFlg = "0";
+					monsterDataByUserMonsterLargeID.userMonster.spAttackAbilityFlg = "0";
+					monsterDataByUserMonsterLargeID.userMonster.spDefenseAbilityFlg = "0";
+					monsterDataByUserMonsterLargeID.userMonster.speedAbilityFlg = "0";
+					monsterDataByUserMonsterLargeID.userMonster.friendship = "0";
+					StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterDataByUserMonsterLargeID.userMonster.monsterId, monsterDataByUserMonsterLargeID.userMonster.level);
+					statusValue.luck = 1;
+					monsterDataByUserMonsterLargeID.SetStatus(statusValue);
+				}
 				break;
 			}
 		}

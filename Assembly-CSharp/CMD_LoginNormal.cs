@@ -1,4 +1,5 @@
-﻿using FarmData;
+﻿using Evolution;
+using FarmData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,7 +84,7 @@ public class CMD_LoginNormal : CMD_LoginBase
 				}
 				else if (assetCategoryId.ToInt32() == 1)
 				{
-					this.monsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(assetValue), Vector3.one, Vector3.zero, component.transform, true, false);
+					this.monsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(assetValue), Vector3.one, Vector3.zero, component.transform, true, false);
 					this.monsterIcon.ResizeIcon(component.width, component.height);
 					if (null != this.monsterIcon)
 					{
@@ -180,7 +181,7 @@ public class CMD_LoginNormal : CMD_LoginBase
 			result = "Common02_item_meat";
 			break;
 		case 14:
-			result = MonsterDataMng.Instance().GetEvolveItemIconPathByID(lr.assetValue);
+			result = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(lr.assetValue);
 			break;
 		case 16:
 		{

@@ -8,24 +8,24 @@ public class VersionUpDetail : MonoBehaviour
 	[Header("デジモンのサムネイル用のアイコン")]
 	private UISprite charaIcon;
 
-	[Header("バージョンアップ 文言")]
 	[SerializeField]
+	[Header("バージョンアップ 文言")]
 	private UILabel lbTXT_VerUp;
 
-	[SerializeField]
 	[Header("バージョンアップ LEV BEFORE 表示")]
+	[SerializeField]
 	private UILabel lbTXT_LevBefore;
 
 	[Header("バージョンアップ LEV ⇒ 表示")]
 	[SerializeField]
 	private UILabel lbTXT_LevArrow;
 
-	[Header("バージョンアップ LEV AFTER 表示")]
 	[SerializeField]
+	[Header("バージョンアップ LEV AFTER 表示")]
 	private UILabel lbTXT_LevAfter;
 
-	[SerializeField]
 	[Header("バージョンアップ スキル追加文言")]
+	[SerializeField]
 	private UILabel lbTXT_SkillUp;
 
 	private GUIMonsterIcon csMonsterIcon;
@@ -58,7 +58,7 @@ public class VersionUpDetail : MonoBehaviour
 				UnityEngine.Object.Destroy(this.csMonsterIcon.gameObject);
 			}
 			GameObject gameObject = this.charaIcon.gameObject;
-			this.csMonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(md, gameObject.transform.localScale, gameObject.transform.localPosition, gameObject.transform.parent, true, false);
+			this.csMonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, gameObject.transform.localScale, gameObject.transform.localPosition, gameObject.transform.parent, true, false);
 			UIWidget component = gameObject.GetComponent<UIWidget>();
 			if (component != null)
 			{

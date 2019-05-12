@@ -81,16 +81,16 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel specificType;
 
-	[Header("固有技")]
 	[SerializeField]
+	[Header("固有技")]
 	private BattleDigimonStatus.Skill deathblow;
 
-	[SerializeField]
 	[Header("継承技1")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance1;
 
-	[SerializeField]
 	[Header("継承技2")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance2;
 
 	[SerializeField]
@@ -100,44 +100,44 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("各才能メダルの表示切り替え")]
 	private MonsterMedalList MonsterMedalList;
 
-	[Header("Lvローカライズ")]
 	[SerializeField]
+	[Header("Lvローカライズ")]
 	private UILabel lvLocalize;
 
-	[Header("HPローカライズ")]
 	[SerializeField]
+	[Header("HPローカライズ")]
 	private UILabel hpLocalize;
 
 	[Header("友情度ローカライズ")]
 	[SerializeField]
 	private UILabel friendLocalize;
 
-	[SerializeField]
 	[Header("ATKローカライズ")]
+	[SerializeField]
 	private UILabel atkLocalize;
 
 	[SerializeField]
 	[Header("DEFローカライズ")]
 	private UILabel defLocalize;
 
-	[SerializeField]
 	[Header("SATKローカライズ")]
+	[SerializeField]
 	private UILabel satkLocalize;
 
 	[SerializeField]
 	[Header("SDEFローカライズ")]
 	private UILabel sdefLocalize;
 
-	[Header("SPDローカライズ")]
 	[SerializeField]
+	[Header("SPDローカライズ")]
 	private UILabel spdLocalize;
 
 	[Header("Luckローカライズ")]
 	[SerializeField]
 	private UILabel luckLocalize;
 
-	[SerializeField]
 	[Header("リーダースキルローカライズ")]
+	[SerializeField]
 	private UILabel lSkillLocalize;
 
 	[Header("装着チップ")]
@@ -185,7 +185,10 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 		num += this.ApplyValue(characterStatus.playerStatus.specialDefencePower + characterStatus.chipAddSpecialDefencePower, characterStatus.defaultExtraSpecialDefencePower, this.sdef, this.sdefUpObject, this.sdefDownObject);
 		num += this.ApplyValue(characterStatus.playerStatus.speed + characterStatus.chipAddSpeed, characterStatus.defaultExtraSpeed, this.speed, this.speedUpObject, this.speedDownObject);
 		this.luck.text = characterStatus.luck.ToString();
-		this.friendshipLevel.text = string.Format(StringMaster.GetString("SystemFraction"), characterStatus.friendshipLevel, characterStatus.maxFriendshipLevel);
+		if (MonsterDataMng.Instance() != null)
+		{
+			this.friendshipLevel.text = MonsterFriendshipData.GetMaxFriendshipFormat(characterStatus.friendshipLevel.ToString(), MonsterGrowStepData.ToGrowStepString(characterStatus.characterDatas.growStep));
+		}
 		if (characterStatus.isHavingLeaderSkill)
 		{
 			this.leaderSkillName.text = characterStatus.leaderSkillStatus.name;
@@ -200,13 +203,14 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 		{
 			this.deathblow.name.text = characterStatus.skillStatus[1].name;
 			this.deathblow.description.text = characterStatus.skillStatus[1].description;
-			int extraValue = characterStatus.skillStatus[1].power;
+			int powerFirst = characterStatus.skillStatus[1].GetPowerFirst(characterStatus);
+			int extraValue = powerFirst;
 			AffectEffectProperty affectEffectFirst = characterStatus.skillStatus[1].GetAffectEffectFirst();
-			if (affectEffectFirst != null && affectEffectFirst.type == AffectEffect.Damage)
+			if (affectEffectFirst != null && AffectEffectProperty.IsDamage(affectEffectFirst.type))
 			{
 				extraValue = characterStatus.extraDeathblowSkillPower;
 			}
-			num += this.ApplyValue(characterStatus.skillStatus[1].power, extraValue, null, this.deathblow.upObject, this.deathblow.downObject);
+			num += this.ApplyValue(powerFirst, extraValue, null, this.deathblow.upObject, this.deathblow.downObject);
 		}
 		else
 		{
@@ -218,13 +222,14 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 		{
 			this.inheritance1.name.text = characterStatus.skillStatus[2].name;
 			this.inheritance1.description.text = characterStatus.skillStatus[2].description;
-			int extraValue2 = characterStatus.skillStatus[2].power;
+			int powerFirst2 = characterStatus.skillStatus[2].GetPowerFirst(characterStatus);
+			int extraValue2 = powerFirst2;
 			AffectEffectProperty affectEffectFirst2 = characterStatus.skillStatus[2].GetAffectEffectFirst();
-			if (affectEffectFirst2 != null && affectEffectFirst2.type == AffectEffect.Damage)
+			if (affectEffectFirst2 != null && AffectEffectProperty.IsDamage(affectEffectFirst2.type))
 			{
 				extraValue2 = characterStatus.extraInheritanceSkillPower;
 			}
-			num += this.ApplyValue(characterStatus.skillStatus[2].power, extraValue2, null, this.inheritance1.upObject, this.inheritance1.downObject);
+			num += this.ApplyValue(powerFirst2, extraValue2, null, this.inheritance1.upObject, this.inheritance1.downObject);
 		}
 		else
 		{
@@ -244,13 +249,14 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 		{
 			this.inheritance2.name.text = characterStatus.skillStatus[3].name;
 			this.inheritance2.description.text = characterStatus.skillStatus[3].description;
-			int extraValue3 = characterStatus.skillStatus[3].power;
+			int powerFirst3 = characterStatus.skillStatus[3].GetPowerFirst(characterStatus);
+			int extraValue3 = powerFirst3;
 			AffectEffectProperty affectEffectFirst3 = characterStatus.skillStatus[3].GetAffectEffectFirst();
-			if (affectEffectFirst3 != null && affectEffectFirst3.type == AffectEffect.Damage)
+			if (affectEffectFirst3 != null && AffectEffectProperty.IsDamage(affectEffectFirst3.type))
 			{
 				extraValue3 = characterStatus.extraInheritanceSkillPower2;
 			}
-			num += this.ApplyValue(characterStatus.skillStatus[3].power, extraValue3, null, this.inheritance2.upObject, this.inheritance2.downObject);
+			num += this.ApplyValue(powerFirst3, extraValue3, null, this.inheritance2.upObject, this.inheritance2.downObject);
 		}
 		else
 		{

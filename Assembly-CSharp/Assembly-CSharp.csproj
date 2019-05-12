@@ -46,6 +46,7 @@
     <Compile Include="AB_DownLoadInfo.cs" />
     <Compile Include="AB_DownLoad_ALLInfo.cs" />
     <Compile Include="ActiveAnimation.cs" />
+    <Compile Include="AdventureSceneData.cs" />
     <Compile Include="AdventureScene\AdventureBaseCommand.cs" />
     <Compile Include="AdventureScene\AdventureCamera.cs" />
     <Compile Include="AdventureScene\AdventureCameraAnimation.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="AwakeningController.cs" />
     <Compile Include="BaseSelectChipCell.cs" />
     <Compile Include="Battle3DAction.cs" />
+    <Compile Include="BattleAdventureSceneManager.cs" />
     <Compile Include="BattleAlways.cs" />
     <Compile Include="BattleAutoMenu.cs" />
     <Compile Include="BattleCallAction.cs" />
@@ -262,6 +264,7 @@
     <Compile Include="BattleUIHUD.cs" />
     <Compile Include="BattleUIInitialInduction.cs" />
     <Compile Include="BattleUIInitialize.cs" />
+    <Compile Include="BattleUIMultiSharedAP.cs" />
     <Compile Include="BattleUIMultiX2PlayButton.cs" />
     <Compile Include="BattleUISingleX2PlayButton.cs" />
     <Compile Include="BattleValues.cs" />
@@ -312,7 +315,11 @@
     <Compile Include="CharacterMiniStatusUI\UI_SkillPanelSwitchButton.cs" />
     <Compile Include="CharacterModelUI\CharacterCameraView.cs" />
     <Compile Include="CharacterModelUI\CharacterModelController.cs" />
+    <Compile Include="CharacterModelUI\CharacterModelViewTransition.cs" />
     <Compile Include="CharacterModelUI\EggModelController.cs" />
+    <Compile Include="CharacterModelUI\GUI_ModelViewerButton.cs" />
+    <Compile Include="CharacterModelUI\ModelViewerCloseAnimationEvent.cs" />
+    <Compile Include="CharacterModelUI\ModelViewerOpenAnimationEvent.cs" />
     <Compile Include="CharacterModelUI\MonsterModelController.cs" />
     <Compile Include="CharacterModelUI\UI_CharacterModelTexture.cs" />
     <Compile Include="CharacterModelUI\UI_CharacterModelViewer.cs" />
@@ -342,6 +349,10 @@
     <Compile Include="ChipThumbnailAdvent.cs" />
     <Compile Include="ChipTools.cs" />
     <Compile Include="ChipTutoial.cs" />
+    <Compile Include="Chip\ChipAPIRequest.cs" />
+    <Compile Include="Chip\ChipClientEquip.cs" />
+    <Compile Include="Chip\ChipClientSlotInfo.cs" />
+    <Compile Include="Chip\ChipSlotData.cs" />
     <Compile Include="ClassSingleton.cs" />
     <Compile Include="Clipboard.cs" />
     <Compile Include="CloudBackup.cs" />
@@ -372,6 +383,7 @@
     <Compile Include="CMD_CharacterDetailed.cs" />
     <Compile Include="CMD_ChatFixedPhrase.cs" />
     <Compile Include="CMD_ChatInvitation.cs" />
+    <Compile Include="CMD_ChatInvitationModalAlert.cs" />
     <Compile Include="CMD_ChatMenu.cs" />
     <Compile Include="CMD_ChatModal.cs" />
     <Compile Include="CMD_ChatReqList.cs" />
@@ -429,6 +441,7 @@
     <Compile Include="CMD_ModalGroup.cs" />
     <Compile Include="CMD_ModalMessage.cs" />
     <Compile Include="CMD_ModalMessageBtn2.cs" />
+    <Compile Include="CMD_ModalMessageNoBtn.cs" />
     <Compile Include="CMD_ModalPresentBox.cs" />
     <Compile Include="CMD_ModalSort.cs" />
     <Compile Include="CMD_MonsterParamPop.cs" />
@@ -490,6 +503,14 @@
     <Compile Include="CMD_VersionUP.cs" />
     <Compile Include="CMD_VersionUpModal.cs" />
     <Compile Include="ColorControl.cs" />
+    <Compile Include="Colosseum\ColosseumData.cs" />
+    <Compile Include="Colosseum\DeckUI\CMD_ColosseumDeck.cs" />
+    <Compile Include="Colosseum\DeckUI\ColosseumConfirmDialog.cs" />
+    <Compile Include="Colosseum\DeckUI\ColosseumDeckData.cs" />
+    <Compile Include="Colosseum\DeckUI\ColosseumDeckWeb.cs" />
+    <Compile Include="Colosseum\DeckUI\GUI_ColosseumDeckListItem.cs" />
+    <Compile Include="Colosseum\DeckUI\UI_ColosseumDeckButton.cs" />
+    <Compile Include="Colosseum\DeckUI\UI_ColosseumDeckList.cs" />
     <Compile Include="CommonDialog.cs" />
     <Compile Include="CommonRender2D.cs" />
     <Compile Include="CommonRender3D.cs" />
@@ -542,6 +563,7 @@
     <Compile Include="EffectNumbers.cs" />
     <Compile Include="EffectParams.cs" />
     <Compile Include="EffectParamsGeneric.cs" />
+    <Compile Include="EffectStatusBase.cs" />
     <Compile Include="EffectTarget.cs" />
     <Compile Include="EFFECT_BASE_KEY_FRAME.cs" />
     <Compile Include="EmotionButtonFront.cs" />
@@ -577,7 +599,6 @@
     <Compile Include="EvolutionRouteMap\UI_EvolutionCharacterModelViewer.cs" />
     <Compile Include="EvolutionRouteMap\UI_EvolutionRouteMapSelectMonster.cs" />
     <Compile Include="EvolutionSelect\EvolutionSelectExecutionButton.cs" />
-    <Compile Include="EvolutionStep.cs" />
     <Compile Include="EvolutionUltimateController.cs" />
     <Compile Include="Evolution\EvolutionData.cs" />
     <Compile Include="Evolution\EvolutionMaterialData.cs" />
@@ -652,7 +673,6 @@
     <Compile Include="FarmData\FacilityUpgradeShorteningResult.cs" />
     <Compile Include="FarmData\FacilityWarehouseM.cs" />
     <Compile Include="FarmData\LastHarvestTime.cs" />
-    <Compile Include="FarmData\MonsterFixidM.cs" />
     <Compile Include="FarmData\RequestFA_FacilityAllArrangement.cs" />
     <Compile Include="FarmData\RequestFA_FacilityBuild.cs" />
     <Compile Include="FarmData\RequestFA_FacilityBuildComplete.cs" />
@@ -725,12 +745,13 @@
     <Compile Include="GooglePlayGamesIDs.cs" />
     <Compile Include="GooglePlayGamesObjects.cs" />
     <Compile Include="GooglePlayGamesTool.cs" />
-    <Compile Include="GrowStepExt.cs" />
     <Compile Include="GUIBannerPanel.cs" />
     <Compile Include="GUIBannerParts.cs" />
     <Compile Include="GUIBase.cs" />
     <Compile Include="GUICameraControll.cs" />
     <Compile Include="GUICollider.cs" />
+    <Compile Include="GUIColliderAddLongTouchEvent.cs" />
+    <Compile Include="GUIColliderAddLongTouchEventUD.cs" />
     <Compile Include="GuidancePart.cs" />
     <Compile Include="GuidanceSelector.cs" />
     <Compile Include="GuidanceUserData.cs" />
@@ -785,6 +806,7 @@
     <Compile Include="GUIManager.cs" />
     <Compile Include="GUIMenuPartsFriend.cs" />
     <Compile Include="GUIMonsterIcon.cs" />
+    <Compile Include="GUIMonsterIconList.cs" />
     <Compile Include="GUIMoveBanner.cs" />
     <Compile Include="GUIMultiTab.cs" />
     <Compile Include="GUIPageIndicator.cs" />
@@ -863,6 +885,7 @@
     <Compile Include="INpAirPlaneMode.cs" />
     <Compile Include="InputControll.cs" />
     <Compile Include="InternalUseDisclaimer.cs" />
+    <Compile Include="InvariantType.cs" />
     <Compile Include="InvocationEffectParams.cs" />
     <Compile Include="IsWarning.cs" />
     <Compile Include="ITCPMessageFactory.cs" />
@@ -899,7 +922,6 @@
     <Compile Include="MasterDataMng.cs" />
     <Compile Include="Master\AlertMaster.cs" />
     <Compile Include="Master\AlertMasterResource.cs" />
-    <Compile Include="Master\GrowStep.cs" />
     <Compile Include="Master\MasterBase.cs" />
     <Compile Include="Master\MasterBaseData.cs" />
     <Compile Include="Master\MasterDataFileIO.cs" />
@@ -939,8 +961,9 @@
     <Compile Include="Master\MA_MonsterEvolutionMaterialMaster.cs" />
     <Compile Include="Master\MA_MonsterEvolutionRouteMaster.cs" />
     <Compile Include="Master\MA_MonsterExperienceMaster.cs" />
-    <Compile Include="Master\MA_MonsterFixidMaster.cs" />
+    <Compile Include="Master\MA_MonsterFixedMaster.cs" />
     <Compile Include="Master\MA_MonsterGrowStepMaster.cs" />
+    <Compile Include="Master\MA_MonsterIntegrationGroupMaster.cs" />
     <Compile Include="Master\MA_MonsterMasterOnlyGroupData.cs" />
     <Compile Include="Master\MA_MonsterMasterWithoutGroupData.cs" />
     <Compile Include="Master\MA_MonsterResistanceMaster.cs" />
@@ -958,6 +981,7 @@
     <Compile Include="Master\MA_TitleMaster.cs" />
     <Compile Include="Master\MA_TutorialNaviMaster.cs" />
     <Compile Include="Master\MA_WorldAreaMaster.cs" />
+    <Compile Include="Master\MA_WorldDungeonAdventureSceneMaster.cs" />
     <Compile Include="Master\MA_WorldDungeonExtraEffectManageMaster.cs" />
     <Compile Include="Master\MA_WorldDungeonExtraEffectMaster.cs" />
     <Compile Include="Master\MA_WorldDungeonSortieLimitMaster.cs" />
@@ -990,19 +1014,87 @@
     <Compile Include="MonsterEggStatusInfo.cs" />
     <Compile Include="MonsterGimmickEffectStatusList.cs" />
     <Compile Include="MonsterIconCacheBuffer.cs" />
+    <Compile Include="MonsterIconExtensions\MonsterIconCustomize.cs" />
+    <Compile Include="MonsterIcon\MonsterIcon.cs" />
+    <Compile Include="MonsterIcon\MonsterIconArousal.cs" />
+    <Compile Include="MonsterIcon\MonsterIconFactory.cs" />
+    <Compile Include="MonsterIcon\MonsterIconGimmick.cs" />
+    <Compile Include="MonsterIcon\MonsterIconGrayout.cs" />
+    <Compile Include="MonsterIcon\MonsterIconLock.cs" />
     <Compile Include="MonsterIcon\MonsterIconMedal.cs" />
-    <Compile Include="MonsterIcon\MonsterIconMedalList.cs" />
+    <Compile Include="MonsterIcon\MonsterIconNew.cs" />
+    <Compile Include="MonsterIcon\MonsterIconPartsPool.cs" />
+    <Compile Include="MonsterIcon\MonsterIconPlayerNo.cs" />
+    <Compile Include="MonsterIcon\MonsterIconText.cs" />
+    <Compile Include="MonsterIcon\MonsterIconTransform.cs" />
     <Compile Include="MonsterInfoList.cs" />
     <Compile Include="MonsterLeaderSkill.cs" />
     <Compile Include="MonsterLearnSkill.cs" />
+    <Compile Include="MonsterList\BaseSelect\BaseSelectIconGrayOut.cs" />
+    <Compile Include="MonsterList\BaseSelect\BaseSelectMonsterList.cs" />
+    <Compile Include="MonsterList\ChangeMonster\ChangeMonsterIconGrayOut.cs" />
+    <Compile Include="MonsterList\ChangeMonster\ChangeMonsterMonsterList.cs" />
+    <Compile Include="MonsterList\ChangeMonster\CMD_ChangeMonster.cs" />
+    <Compile Include="MonsterList\HouseGarden\HouseGardenIconGrayOut.cs" />
+    <Compile Include="MonsterList\HouseGarden\HouseGardenMonsterList.cs" />
+    <Compile Include="MonsterList\InheritSkill\InheritSkillIconGrayOut.cs" />
+    <Compile Include="MonsterList\InheritSkill\InheritSkillMonsterList.cs" />
+    <Compile Include="MonsterList\MonsterListIconGrayOut.cs" />
+    <Compile Include="MonsterList\StrengthenChara\StrengthenCharaIconGrayOut.cs" />
+    <Compile Include="MonsterList\StrengthenChara\StrengthenCharaMonsterList.cs" />
+    <Compile Include="MonsterList\TranceResistance\TranceResistanceIconGrayOut.cs" />
+    <Compile Include="MonsterList\TranceResistance\TranceResistanceMonsterList.cs" />
     <Compile Include="MonsterMedalList.cs" />
     <Compile Include="MonsterMedalRateList.cs" />
+    <Compile Include="MonsterPicturebook\CMD_PicturebookDetailedInfo.cs" />
+    <Compile Include="MonsterPicturebook\PicturebookDetailedInfo.cs" />
+    <Compile Include="MonsterPicturebook\PicturebookModelViewTransition.cs" />
+    <Compile Include="MonsterPicturebook\PicturebookMonster.cs" />
+    <Compile Include="MonsterPicturebook\PictureDetailedInfoView.cs" />
+    <Compile Include="MonsterPicturebook\UI_PictureDetailedInfo.cs" />
     <Compile Include="MonsterResistanceList.cs" />
     <Compile Include="MonsterStatusChangeValueList.cs" />
     <Compile Include="MonsterStatusList.cs" />
     <Compile Include="MonsterThumbnail.cs" />
+    <Compile Include="Monster\GrowStep.cs" />
     <Compile Include="Monster\MonsterArousalData.cs" />
+    <Compile Include="Monster\MonsterChipEquipData.cs" />
+    <Compile Include="Monster\MonsterClientMaster.cs" />
+    <Compile Include="Monster\MonsterDetailedFilterType.cs" />
+    <Compile Include="Monster\MonsterFilter.cs" />
+    <Compile Include="Monster\MonsterFilterType.cs" />
+    <Compile Include="Monster\MonsterFixedData.cs" />
+    <Compile Include="Monster\MonsterFixedM.cs" />
+    <Compile Include="Monster\MonsterFriendshipData.cs" />
+    <Compile Include="Monster\MonsterGrowStepData.cs" />
+    <Compile Include="Monster\MonsterMaster.cs" />
+    <Compile Include="Monster\MonsterObject.cs" />
+    <Compile Include="Monster\MonsterResistanceData.cs" />
+    <Compile Include="Monster\MonsterSkillClientMaster.cs" />
+    <Compile Include="Monster\MonsterSkillData.cs" />
+    <Compile Include="Monster\MonsterSort.cs" />
+    <Compile Include="Monster\MonsterSortOrder.cs" />
+    <Compile Include="Monster\MonsterSortType.cs" />
     <Compile Include="Monster\MonsterSpecificTypeData.cs" />
+    <Compile Include="Monster\MonsterStatusData.cs" />
+    <Compile Include="Monster\MonsterTribeData.cs" />
+    <Compile Include="Monster\MonsterUniqueSkillData.cs" />
+    <Compile Include="Monster\MonsterUserData.cs" />
+    <Compile Include="Monster\MonsterUserDataMng.cs" />
+    <Compile Include="Monster\MonsterUserDataSort.cs" />
+    <Compile Include="Monster\MonsterUserDataSortArousal.cs" />
+    <Compile Include="Monster\MonsterUserDataSortAttack.cs" />
+    <Compile Include="Monster\MonsterUserDataSortDate.cs" />
+    <Compile Include="Monster\MonsterUserDataSortDefense.cs" />
+    <Compile Include="Monster\MonsterUserDataSortFriendship.cs" />
+    <Compile Include="Monster\MonsterUserDataSortGrowStep.cs" />
+    <Compile Include="Monster\MonsterUserDataSortHP.cs" />
+    <Compile Include="Monster\MonsterUserDataSortLevel.cs" />
+    <Compile Include="Monster\MonsterUserDataSortLuck.cs" />
+    <Compile Include="Monster\MonsterUserDataSortMagicAttack.cs" />
+    <Compile Include="Monster\MonsterUserDataSortMagicDefense.cs" />
+    <Compile Include="Monster\MonsterUserDataSortSpeed.cs" />
+    <Compile Include="Monster\MonsterUserDataSortTribe.cs" />
     <Compile Include="Monster\StatusValue.cs" />
     <Compile Include="MouseState.cs" />
     <Compile Include="MouseTouch.cs" />
@@ -1195,10 +1287,12 @@
     <Compile Include="PartyEdit\PartyEditActionBattle.cs" />
     <Compile Include="PartyEdit\PartyEditActionMulti.cs" />
     <Compile Include="PartyEdit\PartyEditActionPvP.cs" />
+    <Compile Include="PartyEdit\PartyEditColosseumButton.cs" />
     <Compile Include="PartyUtil.cs" />
     <Compile Include="PassiveEffectParams.cs" />
     <Compile Include="PicturebookDetailController.cs" />
     <Compile Include="PicturebookDetailStatus.cs" />
+    <Compile Include="Picturebook\MonsterPicturebookData.cs" />
     <Compile Include="PingData.cs" />
     <Compile Include="PlayerPrefsExtentions.cs" />
     <Compile Include="PlayerPrefsKeys.cs" />
@@ -1226,10 +1320,14 @@
     <Compile Include="PvPBattleSimulator.cs" />
     <Compile Include="PvPBattleStart.cs" />
     <Compile Include="PvPBattleState.cs" />
+    <Compile Include="PvPEnemyData.cs" />
+    <Compile Include="PvPEnemyDataReceive.cs" />
     <Compile Include="PvPMatching.cs" />
     <Compile Include="PvPMatchingFinishAnimation.cs" />
     <Compile Include="PvPOnlineCheck.cs" />
+    <Compile Include="PVPPartySelect3.cs" />
     <Compile Include="PvPVersusInfo.cs" />
+    <Compile Include="PvPVersusInfo6Icon.cs" />
     <Compile Include="PvP\PvPUtility.cs" />
     <Compile Include="QuestSecondTutorial.cs" />
     <Compile Include="QuestTOPAccessor.cs" />
@@ -1274,6 +1372,7 @@
     <Compile Include="ServerDateTime.cs" />
     <Compile Include="ShaderQuarity.cs" />
     <Compile Include="ShaderQuaritySwitcher.cs" />
+    <Compile Include="ShaderSetter.cs" />
     <Compile Include="ShadowParams.cs" />
     <Compile Include="SharedAPMulti.cs" />
     <Compile Include="SharedApNotes.cs" />
@@ -1295,7 +1394,6 @@
     <Compile Include="SoundMng.cs" />
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="SpawnPointParams.cs" />
-    <Compile Include="Species.cs" />
     <Compile Include="Spiral.cs" />
     <Compile Include="SpringPanel.cs" />
     <Compile Include="SpringPosition.cs" />
@@ -1372,6 +1470,7 @@
     <Compile Include="TCPMessageType.cs" />
     <Compile Include="TCPUtil.cs" />
     <Compile Include="TechniqueType.cs" />
+    <Compile Include="TextMeshProStringKey.cs" />
     <Compile Include="TextureManager.cs" />
     <Compile Include="TextureScroll.cs" />
     <Compile Include="TextureTimeScroll.cs" />
@@ -1393,6 +1492,7 @@
     <Compile Include="TitleDataMng.cs" />
     <Compile Include="TitleListItem.cs" />
     <Compile Include="Title\AgreementConsent.cs" />
+    <Compile Include="Title\UpdateMasterData.cs" />
     <Compile Include="Tolerance.cs" />
     <Compile Include="ToleranceIcon.cs" />
     <Compile Include="TrainingController.cs" />
@@ -1449,6 +1549,7 @@
     <Compile Include="TutorialUserName.cs" />
     <Compile Include="TVFade.cs" />
     <Compile Include="TweenAlpha.cs" />
+    <Compile Include="TweenAlphaForTextMeshPro.cs" />
     <Compile Include="TweenCameraFunction.cs" />
     <Compile Include="TweenCameraTargetFunction.cs" />
     <Compile Include="TweenColor.cs" />
@@ -1465,7 +1566,6 @@
     <Compile Include="TypewriterEffect.cs" />
     <Compile Include="UI2DSprite.cs" />
     <Compile Include="UI2DSpriteAnimation.cs" />
-    <Compile Include="UIActiveOnSceneSave.cs" />
     <Compile Include="UIAnchor.cs" />
     <Compile Include="UIAnchorOverride.cs" />
     <Compile Include="UIAnchorRemover.cs" />
@@ -1571,6 +1671,10 @@
     <Compile Include="UIWidgetContainer.cs" />
     <Compile Include="UIWrapContent.cs" />
     <Compile Include="UI\FadeController.cs" />
+    <Compile Include="UI\MonsterInfoParts\MonsterBasicInfoExtensions.cs" />
+    <Compile Include="UI\MonsterInfoParts\MonsterIconTouchEvent.cs" />
+    <Compile Include="UI\MonsterInfoParts\MonsterIconTouchEventUD.cs" />
+    <Compile Include="UI\MonsterInfoParts\MonsterSelectedIcon.cs" />
     <Compile Include="UnityEngine\CameraParams\Internal\CameraTargetController.cs" />
     <Compile Include="UnityEngine\CameraParams\Internal\CameraTargetIndexSelector.cs" />
     <Compile Include="UnityEngine\Csv\Csv.cs" />
@@ -1659,12 +1763,16 @@
       <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
       <Name>System</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TextMeshPro\TextMeshPro.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Name>TextMeshPro</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>UnityEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\websocket-sharp\websocket-sharp.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857974}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857973}</Project>
       <Name>websocket-sharp</Name>
     </ProjectReference>
   </ItemGroup>

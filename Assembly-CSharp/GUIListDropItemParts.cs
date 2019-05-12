@@ -33,8 +33,8 @@ public class GUIListDropItemParts : GUIListPartBS
 	[Header("運の文字アイコン")]
 	private UILabel luckIcons;
 
-	[Header("マルチ運プレイヤーアイコン")]
 	[SerializeField]
+	[Header("マルチ運プレイヤーアイコン")]
 	private GameObject goLuckPlayerIcons;
 
 	[SerializeField]
@@ -49,16 +49,16 @@ public class GUIListDropItemParts : GUIListPartBS
 	[Header("マルチのゲスト報酬アイコン")]
 	private UILabel guestRewardIcon;
 
-	[Header("チャレンジの文字アイコン")]
 	[SerializeField]
+	[Header("チャレンジの文字アイコン")]
 	private UILabel challengeIcon;
 
-	[SerializeField]
 	[Header("イベントチップドロップのアイコン")]
+	[SerializeField]
 	private UILabel eventChipDropIcon;
 
-	[SerializeField]
 	[Header("ドロップ数のラベル")]
+	[SerializeField]
 	private UILabel dropNumLabel;
 
 	private ParticleSystem dropParticleSystem;

@@ -2,6 +2,7 @@
 using EvolutionSelect;
 using Master;
 using Monster;
+using Picturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -79,7 +80,7 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		set
 		{
 			this.data = value;
-			this.evolutionType = this.data.md.GetEvolutionType(this.data.md_next.userMonster.monsterId);
+			this.evolutionType = ClassSingleton<EvolutionData>.Instance.GetEvolutionEffectType(this.data.md.userMonster.monsterId, this.data.md_next.userMonster.monsterId);
 			this.ShowGUI();
 		}
 	}
@@ -284,8 +285,13 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	private void ShowNextMonsterIcon()
 	{
 		Transform transform = this.goMONS_NEXT.transform;
-		this.csNextMons = MonsterDataMng.Instance().MakePrefabByMonsterData(this.data.md_next, transform.localScale, transform.localPosition, transform.parent, true, false);
+		this.csNextMons = GUIMonsterIcon.MakePrefabByMonsterData(this.data.md_next, transform.localScale, transform.localPosition, transform.parent, true, false);
 		this.goMONS_NEXT.SetActive(false);
+		if (!MonsterPicturebookData.ExistPicturebook(this.data.md_next.monsterMG.monsterCollectionId))
+		{
+			this.csNextMons.SortMess = StringMaster.GetString("EvolutionUnkown");
+			this.csNextMons.SetSortMessageColor(this.iconTextColor);
+		}
 		this.csNextMons.SetTouchAct_L(new Action<MonsterData>(this.OnLongPushedMonsterIcon));
 		UIWidget component = this.goMONS_NEXT.GetComponent<UIWidget>();
 		UIWidget component2 = this.csNextMons.gameObject.GetComponent<UIWidget>();
@@ -300,7 +306,7 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	private void ShowNextMonsterData()
 	{
 		this.ngTX_MONS_NEXT_NAME.text = this.data.md_next.monsterMG.monsterName;
-		this.ngTX_MONS_NEXT_SKILL.text = this.data.md_next.tribeM.monsterTribeName;
+		this.ngTX_MONS_NEXT_SKILL.text = MonsterTribeData.GetTribeName(this.data.md_next.monsterMG.tribe);
 		this.specificTypeName.text = MonsterSpecificTypeData.GetSpecificTypeName(this.data.md_next.monsterMG.monsterStatusId);
 		int num = 0;
 		if (this.evolutionType == "1" || this.evolutionType == "3" || this.evolutionType == "4")
@@ -360,7 +366,7 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 		for (i = 0; i < itemList.Count; i++)
 		{
 			UILabel component = this.goITEMS_NUM[i].GetComponent<UILabel>();
-			string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(itemList[i].sd_item.soulId);
+			string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(itemList[i].sd_item.soulId);
 			Vector3 localScale = this.goITEMS[i].transform.localScale;
 			this.goITEMS[i].transform.localScale = Vector2.zero;
 			this.LoadObjectASync(evolveItemIconPathByID, i, localScale);
@@ -425,8 +431,8 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 
 	private void ActCallBackDropItem(string soulId)
 	{
-		GameWebAPI.RespDataMA_GetSoulM.SoulM soulMasterBySoulId = MonsterDataMng.Instance().GetSoulMasterBySoulId(soulId);
-		CMD_QuestItemPOP.Create(soulMasterBySoulId);
+		GameWebAPI.RespDataMA_GetSoulM.SoulM soulMaster = ClassSingleton<EvolutionData>.Instance.GetSoulMaster(soulId);
+		CMD_QuestItemPOP.Create(soulMaster);
 	}
 
 	public string GetEvotuionType()

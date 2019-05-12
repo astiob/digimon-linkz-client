@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 
 	protected override void ServerRequest()
 	{
+		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
 		APIRequestTask task = APIUtil.Instance().RequestTutorialHomeData();
 		base.StartCoroutine(task.Run(delegate
 		{
@@ -41,7 +43,7 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 	protected override IEnumerator CreateHomeData()
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
-		MonsterDataMng.Instance().GetMonsterDataList(true);
+		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		MonsterDataMng.Instance().InitMonsterGO();
 		yield return base.StartCoroutine(base.CreateFarm());
 		FarmRoot farm = FarmRoot.Instance;

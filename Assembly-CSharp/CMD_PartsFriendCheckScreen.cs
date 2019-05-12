@@ -87,7 +87,7 @@ public class CMD_PartsFriendCheckScreen : CMD
 	private void ShowParam()
 	{
 		this.md_favo = MonsterDataMng.Instance().CreateMonsterDataByMID(CMD_PartsFriendCheckScreen.data.monsterData.monsterId);
-		GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.md_favo, this.goMN_ICON.transform.localScale, this.goMN_ICON.transform.localPosition, this.goMN_ICON.transform.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(this.md_favo, this.goMN_ICON.transform.localScale, this.goMN_ICON.transform.localPosition, this.goMN_ICON.transform.parent, true, false);
 		this.goMN_ICON_2 = guimonsterIcon.gameObject;
 		this.goMN_ICON_2.SetActive(true);
 		guimonsterIcon.Data = this.md_favo;

@@ -27,32 +27,32 @@ public class CharacterRevivalDialog : MonoBehaviour
 	[Header("復活タイトル")]
 	private UILabel revivalLocalize;
 
-	[SerializeField]
 	[Header("特定商取引法に基づく表記ローカライズ")]
+	[SerializeField]
 	private UILabel specificTradeLocalize;
 
-	[Header("足りないエッセージローカライズ(マルチバトル用)")]
 	[SerializeField]
+	[Header("足りないエッセージローカライズ(マルチバトル用)")]
 	private UILabel notEnoughConsumeMessageLocalize;
 
-	[Header("消費メッセージローカライズ")]
 	[SerializeField]
+	[Header("消費メッセージローカライズ")]
 	private UILabel consumeMessageLocalize;
 
 	[Header("所持ローカライズ")]
 	[SerializeField]
 	private UILabel haveLocalize;
 
-	[Header("閉じるローカライズ")]
 	[SerializeField]
+	[Header("閉じるローカライズ")]
 	private UILabel closeLocalize;
 
 	[SerializeField]
 	[Header("復活予約ローカライズ")]
 	private UILabel bookRevivalLocalize;
 
-	[SerializeField]
 	[Header("ショップへローカライズ")]
+	[SerializeField]
 	private UILabel goShopLocalize;
 
 	public GameObject GetRevivalDialogEnterUIButton

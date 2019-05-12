@@ -227,8 +227,8 @@ public static class NGUIText
 		return null;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float ParseAlpha(string text, int index)
 	{
 		int num = NGUIMath.HexToDecimal(text[index + 1]) << 4 | NGUIMath.HexToDecimal(text[index + 2]);
@@ -272,8 +272,8 @@ public static class NGUIText
 		return NGUIText.EncodeColor24(c);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeColor(string text, Color c)
 	{
 		return string.Concat(new string[]
@@ -286,8 +286,8 @@ public static class NGUIText
 		});
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeAlpha(float a)
 	{
 		int num = Mathf.Clamp(Mathf.RoundToInt(a * 255f), 0, 255);
@@ -321,8 +321,8 @@ public static class NGUIText
 		return NGUIText.ParseSymbol(text, ref index, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static bool IsHex(char ch)
 	{
 		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');

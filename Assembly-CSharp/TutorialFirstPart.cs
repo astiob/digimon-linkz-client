@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections;
 using TS;
 using UnityEngine;
@@ -19,7 +20,6 @@ public sealed class TutorialFirstPart : TutorialBasePart
 		GashaTutorialMode.TutoExec = true;
 		DataMng.Instance().CampaignForceHide = true;
 		this.gameEngineController = observer.AddComponent<TutorialControlToGame>();
-		MonsterDataMng.Instance().GetMonsterDataList(false);
 		yield return null;
 		yield return AppCoroutine.Start(base.LoadTutorialUI("Tutorial/TutorialUI"), false);
 		yield return AppCoroutine.Start(this.tutorialUI.LoadNonFrameText(), false);
@@ -85,6 +85,6 @@ public sealed class TutorialFirstPart : TutorialBasePart
 		GashaTutorialMode.TutoExec = false;
 		GUIManager.ExtBackKeyReady = true;
 		RestrictionInput.isDisableBackKeySetting = false;
-		DataMng.Instance().RespDataUS_MonsterList = null;
+		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
 	}
 }

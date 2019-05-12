@@ -1,4 +1,5 @@
-﻿using FarmData;
+﻿using Evolution;
+using FarmData;
 using Master;
 using System;
 using UnityEngine;
@@ -123,7 +124,7 @@ public class CMD_QuestItemPOP : CMD
 	{
 		this.titleLabel.text = data.soulName;
 		this.textLabel.text = data.description;
-		string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(data.soulId.ToString());
+		string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(data.soulId.ToString());
 		Action<UnityEngine.Object> actEnd = delegate(UnityEngine.Object obj)
 		{
 			this.iconTexture.mainTexture = (obj as Texture2D);

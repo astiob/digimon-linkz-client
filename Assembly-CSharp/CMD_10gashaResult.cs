@@ -40,8 +40,8 @@ public class CMD_10gashaResult : CMD
 	[SerializeField]
 	private GUICollider buttonColliderSingle;
 
-	[Header("10連キャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("10連キャプチャボタンGUICollider")]
 	private GUICollider buttonColliderTen;
 
 	[SerializeField]
@@ -262,7 +262,7 @@ public class CMD_10gashaResult : CMD
 			if (i < CMD_10gashaResult.DataList.Count)
 			{
 				Transform transform = this.goMN_ICON_LIST[i].transform;
-				GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(CMD_10gashaResult.DataList[i], transform.localScale, transform.localPosition, transform.parent, true, false);
+				GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(CMD_10gashaResult.DataList[i], transform.localScale, transform.localPosition, transform.parent, true, false);
 				this.monsterIconList.Add(guimonsterIcon);
 				guimonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconLong));
 				guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));

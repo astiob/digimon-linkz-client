@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Structure describing the status of a finger touching the screen.</para>
-	/// </summary>
 	public struct Touch
 	{
 		private int m_FingerId;
@@ -21,13 +18,20 @@ namespace UnityEngine
 
 		private TouchPhase m_Phase;
 
+		private TouchType m_Type;
+
 		private float m_Pressure;
 
 		private float m_maximumPossiblePressure;
 
-		/// <summary>
-		///   <para>The unique index for the touch.</para>
-		/// </summary>
+		private float m_Radius;
+
+		private float m_RadiusVariance;
+
+		private float m_AltitudeAngle;
+
+		private float m_AzimuthAngle;
+
 		public int fingerId
 		{
 			get
@@ -36,9 +40,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The position of the touch in pixel coordinates.</para>
-		/// </summary>
 		public Vector2 position
 		{
 			get
@@ -55,9 +56,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The position delta since last change.</para>
-		/// </summary>
 		public Vector2 deltaPosition
 		{
 			get
@@ -66,9 +64,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Amount of time that has passed since the last recorded change in Touch values.</para>
-		/// </summary>
 		public float deltaTime
 		{
 			get
@@ -77,9 +72,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Number of taps.</para>
-		/// </summary>
 		public int tapCount
 		{
 			get
@@ -88,9 +80,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Describes the phase of the touch.</para>
-		/// </summary>
 		public TouchPhase phase
 		{
 			get
@@ -99,9 +88,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The current amount of pressure being applied to a touch.  1.0f is considered to be the pressure of an average touch.  If Input.touchPressureSupported returns false, the value of this property will always be 1.0f.</para>
-		/// </summary>
 		public float pressure
 		{
 			get
@@ -110,14 +96,51 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The maximum possible pressure value for a platform.  If Input.touchPressureSupported returns false, the value of this property will always be 1.0f.</para>
-		/// </summary>
 		public float maximumPossiblePressure
 		{
 			get
 			{
 				return this.m_maximumPossiblePressure;
+			}
+		}
+
+		public TouchType type
+		{
+			get
+			{
+				return this.m_Type;
+			}
+		}
+
+		public float altitudeAngle
+		{
+			get
+			{
+				return this.m_AltitudeAngle;
+			}
+		}
+
+		public float azimuthAngle
+		{
+			get
+			{
+				return this.m_AzimuthAngle;
+			}
+		}
+
+		public float radius
+		{
+			get
+			{
+				return this.m_Radius;
+			}
+		}
+
+		public float radiusVariance
+		{
+			get
+			{
+				return this.m_RadiusVariance;
 			}
 		}
 	}

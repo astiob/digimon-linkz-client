@@ -13,12 +13,12 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 	[SerializeField]
 	public UISprite spSelectIcon;
 
-	[SerializeField]
 	[Header("個数プレート")]
+	[SerializeField]
 	public UISprite spNumPlate;
 
-	[SerializeField]
 	[Header("個数表示")]
+	[SerializeField]
 	public UILabel lbNum;
 
 	private Vector2 beganPosition;
@@ -66,7 +66,7 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 		CMD_AlMightySelect cmd_AlMightySelect = (CMD_AlMightySelect)base.GetInstanceCMD();
 		GameWebAPI.RespDataMA_GetSoulM.SoulM soulM = this.Data.soulM;
 		int haveNum = this.Data.haveNum;
-		string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(soulM.soulId);
+		string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(soulM.soulId);
 		this.LoadObjectASync(evolveItemIconPathByID);
 		if (cmd_AlMightySelect.CurSelectedSoulId == soulM.soulId)
 		{

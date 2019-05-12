@@ -23,8 +23,8 @@ namespace UnityEngine.UI
 		[Range(0f, 1f)]
 		private float m_Size = 0.2f;
 
-		[Range(0f, 11f)]
 		[SerializeField]
+		[Range(0f, 11f)]
 		private int m_NumberOfSteps;
 
 		[SerializeField]

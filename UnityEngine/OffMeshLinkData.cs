@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>State of OffMeshLink.</para>
-	/// </summary>
 	public struct OffMeshLinkData
 	{
 		private int m_Valid;
@@ -20,9 +17,6 @@ namespace UnityEngine
 
 		private Vector3 m_EndPos;
 
-		/// <summary>
-		///   <para>Is link valid (Read Only).</para>
-		/// </summary>
 		public bool valid
 		{
 			get
@@ -31,9 +25,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Is link active (Read Only).</para>
-		/// </summary>
 		public bool activated
 		{
 			get
@@ -42,9 +33,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Link type specifier (Read Only).</para>
-		/// </summary>
 		public OffMeshLinkType linkType
 		{
 			get
@@ -53,9 +41,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Link start world position (Read Only).</para>
-		/// </summary>
 		public Vector3 startPos
 		{
 			get
@@ -64,9 +49,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Link end world position (Read Only).</para>
-		/// </summary>
 		public Vector3 endPos
 		{
 			get
@@ -75,9 +57,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The OffMeshLink if the link type is a manually placed Offmeshlink (Read Only).</para>
-		/// </summary>
 		public OffMeshLink offMeshLink
 		{
 			get

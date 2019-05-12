@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Used to communicate between scripting and the controller. Some parameters can be set in scripting and used by the controller, while other parameters are based on Custom Curves in Animation Clips and can be sampled using the scripting API.</para>
-	/// </summary>
 	public sealed class AnimatorControllerParameter
 	{
 		internal string m_Name = string.Empty;
@@ -17,9 +14,6 @@ namespace UnityEngine
 
 		internal bool m_DefaultBool;
 
-		/// <summary>
-		///   <para>The name of the parameter.</para>
-		/// </summary>
 		public string name
 		{
 			get
@@ -28,9 +22,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the hash of the parameter based on its name.</para>
-		/// </summary>
 		public int nameHash
 		{
 			get
@@ -39,9 +30,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The type of the parameter.</para>
-		/// </summary>
 		public AnimatorControllerParameterType type
 		{
 			get
@@ -54,9 +42,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The default bool value for the parameter.</para>
-		/// </summary>
 		public float defaultFloat
 		{
 			get
@@ -69,9 +54,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The default bool value for the parameter.</para>
-		/// </summary>
 		public int defaultInt
 		{
 			get
@@ -84,9 +66,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The default bool value for the parameter.</para>
-		/// </summary>
 		public bool defaultBool
 		{
 			get

@@ -4,40 +4,80 @@ using UnityEngine;
 
 namespace MonsterIcon
 {
-	[Serializable]
-	public sealed class MonsterIconMedal
+	public sealed class MonsterIconMedal : MonoBehaviour
 	{
 		[SerializeField]
-		private UISprite medal;
+		private MonsterIconMedal.MedalUI medalLeft;
 
 		[SerializeField]
-		private UILabel num;
+		private MonsterIconMedal.MedalUI medalRight;
 
-		public void SetGoldMedal()
+		private void CountMedal(string abilityFlag, ref int goldMedalCount, ref int silverMedalCount)
 		{
-			this.medal.spriteName = "Common02_Talent_Gold";
+			ConstValue.Medal medal = (ConstValue.Medal)int.Parse(abilityFlag);
+			if (medal == ConstValue.Medal.Gold)
+			{
+				goldMedalCount++;
+			}
+			else if (medal == ConstValue.Medal.Silver)
+			{
+				silverMedalCount++;
+			}
 		}
 
-		public void SetSilverMedal()
+		private void SetMedalSpriteName(MonsterIconMedal.MedalUI ui, string spriteName)
 		{
-			this.medal.spriteName = "Common02_Talent_Silver";
+			ui.medal.enabled = true;
+			ui.medal.spriteName = spriteName;
 		}
 
-		public void SetMedalNum(int medalNum)
+		private void SetSilverMedal(MonsterIconMedal.MedalUI ui, int medalCount)
 		{
-			this.num.text = string.Format("{0}{1}", StringMaster.GetString("MissionRewardKakeru"), medalNum);
+			this.SetMedalSpriteName(ui, "Common02_Talent_Silver");
+			ui.num.enabled = true;
+			ui.num.text = string.Format(StringMaster.GetString("SystemItemCount2"), medalCount);
 		}
 
-		public void Show()
+		public void SetMedal(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster)
 		{
-			this.medal.enabled = true;
-			this.num.enabled = true;
+			int num = 0;
+			int num2 = 0;
+			this.CountMedal(userMonster.hpAbilityFlg, ref num, ref num2);
+			this.CountMedal(userMonster.attackAbilityFlg, ref num, ref num2);
+			this.CountMedal(userMonster.defenseAbilityFlg, ref num, ref num2);
+			this.CountMedal(userMonster.spAttackAbilityFlg, ref num, ref num2);
+			this.CountMedal(userMonster.spDefenseAbilityFlg, ref num, ref num2);
+			this.CountMedal(userMonster.speedAbilityFlg, ref num, ref num2);
+			if (0 < num)
+			{
+				this.SetMedalSpriteName(this.medalLeft, "Common02_Talent_Gold");
+				if (0 < num2)
+				{
+					this.SetSilverMedal(this.medalRight, num2);
+				}
+			}
+			else if (0 < num2)
+			{
+				this.SetSilverMedal(this.medalLeft, num2);
+			}
 		}
 
-		public void Clear()
+		public void ClearMedal()
 		{
-			this.medal.enabled = false;
-			this.num.enabled = false;
+			this.medalLeft.medal.enabled = false;
+			this.medalLeft.num.enabled = false;
+			this.medalRight.medal.enabled = false;
+			this.medalRight.num.enabled = false;
+		}
+
+		[Serializable]
+		private sealed class MedalUI
+		{
+			[SerializeField]
+			public UISprite medal;
+
+			[SerializeField]
+			public UILabel num;
 		}
 	}
 }

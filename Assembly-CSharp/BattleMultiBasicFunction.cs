@@ -11,10 +11,6 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 
 	protected const float tcpWaitingTerm = 1f;
 
-	protected const int failedDialogTerm = 10;
-
-	protected const int tcpMaxWaitingCount = 60;
-
 	private const int MAX_EXCEPTION_COUNT = 3;
 
 	protected Dictionary<TCPMessageType, Action> lastAction = new Dictionary<TCPMessageType, Action>();
@@ -27,15 +23,17 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 
 	protected MultiBattleData.PvPUserData[] multiUsers;
 
-	protected TCPUtil myTCPUtil;
-
 	protected bool isDisconnected;
 
 	protected float pausedTime;
 
 	protected bool isPaused;
 
+	private int tryRecoverCount;
+
 	private int exceptionCount;
+
+	private List<string> adventureSceneEndList = new List<string>();
 
 	protected virtual string myTCPKey
 	{
@@ -45,107 +43,27 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		}
 	}
 
-	protected virtual int otherUserCount
+	protected virtual int MaxTimeOutValue
 	{
 		get
 		{
-			return 1;
+			return 0;
 		}
 	}
 
-	public string[] userMonsterIds
+	protected virtual int MaxRecoverCount
 	{
 		get
 		{
-			return base.stateManager.serverControl._userMonsterId;
-		}
-		set
-		{
-			base.stateManager.serverControl._userMonsterId = value;
+			return 0;
 		}
 	}
 
-	public Dictionary<int, PlayerStatus> cachedPlayerStatus
+	protected int otherUserCount
 	{
 		get
 		{
-			return base.stateManager.serverControl._cachedPlayerStatus;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedPlayerStatus = value;
-		}
-	}
-
-	public Dictionary<string, GameWebAPI.RespDataMA_GetSkillM.SkillM> cachedLeaderSkillMs
-	{
-		get
-		{
-			return base.stateManager.serverControl._cachedLeaderSkillM;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedLeaderSkillM = value;
-		}
-	}
-
-	public Dictionary<string, Tolerance> cachedTolerances
-	{
-		get
-		{
-			return base.stateManager.serverControl._cachedTolerance;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedTolerance = value;
-		}
-	}
-
-	public Dictionary<string, SkillStatus> cachedSkillStatuses
-	{
-		get
-		{
-			return base.stateManager.serverControl._cachedSkillStatus;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedSkillStatus = value;
-		}
-	}
-
-	public Dictionary<string, LeaderSkillStatus> cachedLeaderSkillStatuses
-	{
-		get
-		{
-			return base.stateManager.serverControl._cachedLeaderSkillStatus;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedLeaderSkillStatus = value;
-		}
-	}
-
-	public Dictionary<string, CharacterDatas> cachedCharacterData
-	{
-		get
-		{
-			return base.stateManager.serverControl._cachedCharacterDatas;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedCharacterDatas = value;
-		}
-	}
-
-	public Dictionary<string, ExtraEffectStatus> cachedExtraEffectStatus
-	{
-		get
-		{
-			return base.stateManager.serverControl._cachedExtraEffectStatus;
-		}
-		set
-		{
-			base.stateManager.serverControl._cachedExtraEffectStatus = value;
+			return this.GetOtherUsersId().Count<string>();
 		}
 	}
 
@@ -153,11 +71,37 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 
 	public bool IsOwner { get; protected set; }
 
-	protected abstract void RunRecieverPlayerActions(TCPMessageType tcpMessageType, object messageObj);
+	public bool IsDisconnected
+	{
+		get
+		{
+			return this.isDisconnected;
+		}
+	}
 
-	public abstract void RoundStartInitMulti();
+	protected MultiBattleData.PvPUserData GetPlayerByUserId(string userId)
+	{
+		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId == userId).FirstOrDefault<MultiBattleData.PvPUserData>();
+	}
 
-	public bool CheckHash(string hashString)
+	protected bool CheckRecieveData(string playerUserId, string hashValue)
+	{
+		bool flag = this.CheckHash(hashValue);
+		bool flag2 = this.CheckStillAlive(playerUserId);
+		bool flag3 = this.GetOtherUsersId().Where((string item) => item == playerUserId).Count<string>() == 0;
+		if (flag || !flag2 || flag3)
+		{
+			global::Debug.LogFormat("isHash:{0}, isStillAlive:{1}", new object[]
+			{
+				flag,
+				flag2
+			});
+			return true;
+		}
+		return false;
+	}
+
+	private bool CheckHash(string hashString)
 	{
 		bool flag = this.hashValueQueue.Contains(hashString);
 		if (flag)
@@ -177,83 +121,9 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		return false;
 	}
 
-	public IEnumerator OnlineCheckActionFunction()
+	private bool CheckStillAlive(string userId)
 	{
-		IEnumerator battelStart = Singleton<TCPMessageSender>.Instance.SendPvPOnlineCheck();
-		while (battelStart.MoveNext())
-		{
-			yield return null;
-		}
-		yield break;
-	}
-
-	public abstract IEnumerator SendAttack();
-
-	protected PlayerStatus ConvertAPIParamsToPlayerStatus(GameWebAPI.Common_MonsterData commonMonsterData)
-	{
-		MonsterData monsterData = MultiTools.MakeAndSetMonster(commonMonsterData);
-		string monsterGroupId = monsterData.monsterM.monsterGroupId;
-		int arousal = monsterData.monsterM.GetArousal();
-		int friendshipLevel = commonMonsterData.friendship.ToInt32();
-		int hp = commonMonsterData.hp.ToInt32();
-		int attackPower = commonMonsterData.attack.ToInt32();
-		int defencePower = commonMonsterData.defense.ToInt32();
-		int specialAttackPower = commonMonsterData.spAttack.ToInt32();
-		int specialDefencePower = commonMonsterData.spDefense.ToInt32();
-		int speed = commonMonsterData.speed.ToInt32();
-		int maxAttackPower = monsterData.monsterM.maxAttack.ToInt32();
-		int maxDefencePower = monsterData.monsterM.maxDefense.ToInt32();
-		int maxSpecialAttackPower = monsterData.monsterM.maxSpAttack.ToInt32();
-		int maxSpecialDefencePower = monsterData.monsterM.maxSpDefense.ToInt32();
-		int maxSpeed = monsterData.monsterM.speed.ToInt32();
-		int level = commonMonsterData.level.ToInt32();
-		string resistanceId = monsterData.monsterM.resistanceId;
-		int luck = commonMonsterData.luck.ToInt32();
-		string uniqueSkillId = commonMonsterData.uniqueSkillId;
-		string commonSkillId = commonMonsterData.commonSkillId;
-		string extraCommonSkillId = commonMonsterData.extraCommonSkillId;
-		string text = commonMonsterData.leaderSkillId.Equals("0") ? string.Empty : commonMonsterData.leaderSkillId;
-		string iconId = monsterData.monsterM.iconId;
-		Talent talent = new Talent(commonMonsterData);
-		if (!this.cachedTolerances.ContainsKey(resistanceId.Trim()))
-		{
-			this.cachedTolerances.Add(resistanceId.Trim(), base.stateManager.serverControl.ResistanceToTolerance(resistanceId));
-		}
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM data = monsterData.AddResistanceFromMultipleTranceData();
-		Tolerance tolerance = base.stateManager.serverControl.ResistanceToTolerance(data);
-		FriendshipStatus friendshipStatus = new FriendshipStatus(friendshipLevel, maxAttackPower, maxDefencePower, maxSpecialAttackPower, maxSpecialDefencePower, maxSpeed);
-		List<int> list = new List<int>();
-		if (commonMonsterData.chipIdList != null && commonMonsterData.chipIdList.Length > 0)
-		{
-			foreach (int item in commonMonsterData.chipIdList)
-			{
-				list.Add(item);
-			}
-		}
-		PlayerStatus result = new PlayerStatus(monsterGroupId, hp, attackPower, defencePower, specialAttackPower, specialDefencePower, speed, level, resistanceId, tolerance, luck, uniqueSkillId, commonSkillId, extraCommonSkillId, text, iconId, talent, arousal, friendshipStatus, list.ToArray());
-		if (!this.cachedSkillStatuses.ContainsKey(uniqueSkillId.Trim()))
-		{
-			this.cachedSkillStatuses.Add(uniqueSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(uniqueSkillId));
-		}
-		if (!this.cachedSkillStatuses.ContainsKey(commonSkillId.Trim()))
-		{
-			this.cachedSkillStatuses.Add(commonSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(commonSkillId));
-		}
-		if (!this.cachedSkillStatuses.ContainsKey(extraCommonSkillId.Trim()))
-		{
-			this.cachedSkillStatuses.Add(extraCommonSkillId.Trim(), base.stateManager.serverControl.SkillMToSkillStatus(extraCommonSkillId));
-		}
-		if (!this.cachedLeaderSkillStatuses.ContainsKey(text.Trim()) && !text.Equals(string.Empty))
-		{
-			GameWebAPI.RespDataMA_GetSkillM.SkillM value;
-			this.cachedLeaderSkillStatuses.Add(text.Trim(), base.stateManager.serverControl.SkillMToLeaderSkillStatus(text, out value));
-			this.cachedLeaderSkillMs.Add(text.Trim(), value);
-		}
-		if (!this.cachedCharacterData.ContainsKey(monsterGroupId.Trim()))
-		{
-			this.cachedCharacterData.Add(monsterGroupId.Trim(), base.stateManager.serverControl.MonsterMToCharacterData(monsterGroupId));
-		}
-		return result;
+		return this.multiUsers.Any((MultiBattleData.PvPUserData user) => user.userStatus.userId == userId);
 	}
 
 	protected void RunLastAction(TCPMessageType tcpMessageType)
@@ -271,15 +141,546 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		}
 	}
 
-	public bool IsDisconnected
+	public void RunAttackAutomatically()
 	{
-		get
+		CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex];
+		characterStateControl.isSelectSkill = 0;
+		BattleStateManager.current.uiControl.ApplySkillButtonRotation(characterStateControl.isSelectSkill, 0);
+		base.battleStateData.onSkillTrigger = true;
+		base.stateManager.targetSelect.SetTarget(characterStateControl, null);
+	}
+
+	public string GetPlayerName()
+	{
+		string text = this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.nickname).FirstOrDefault<string>();
+		if (string.IsNullOrEmpty(text))
 		{
-			return this.isDisconnected;
+			return "-";
+		}
+		return text;
+	}
+
+	public string GetPlayerTitleId()
+	{
+		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.titleId).FirstOrDefault<string>();
+	}
+
+	public string GetEnemyName()
+	{
+		string text = this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.nickname).FirstOrDefault<string>();
+		if (string.IsNullOrEmpty(text))
+		{
+			return "-";
+		}
+		return text;
+	}
+
+	public string GetEnemyTitleId()
+	{
+		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.titleId).FirstOrDefault<string>();
+	}
+
+	protected IEnumerable<string> GetOtherUsersId()
+	{
+		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.userId).Distinct<string>();
+	}
+
+	public void Initialize()
+	{
+		this.CurrentEnemyMyIndex = -1;
+		this.recieveChecks = new Dictionary<TCPMessageType, bool>();
+		this.confirmationChecks = new Dictionary<TCPMessageType, List<string>>();
+		foreach (object obj in Enum.GetValues(typeof(TCPMessageType)))
+		{
+			TCPMessageType key = (TCPMessageType)((int)obj);
+			this.recieveChecks[key] = false;
+			this.confirmationChecks[key] = new List<string>();
+		}
+		this.multiUsers = ClassSingleton<MultiBattleData>.Instance.PvPUserDatas;
+		this.IsOwner = this.multiUsers.Any((MultiBattleData.PvPUserData item) => item.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId && item.isOwner);
+		base.stateManager.onApplicationPause.Add(new Action<bool>(this.OnApplicationPause));
+	}
+
+	private void OnApplicationPause(bool pauseStatus)
+	{
+		if (!this.isPaused)
+		{
+			return;
+		}
+		if (!pauseStatus)
+		{
+			this.isPaused = false;
+			this.tryRecoverCount++;
+			int num = (int)(Time.realtimeSinceStartup - this.pausedTime);
+			if (this.MaxTimeOutValue > 0 && num >= this.MaxTimeOutValue)
+			{
+				global::Debug.LogErrorFormat("{0}秒経ったので負け.", new object[]
+				{
+					num
+				});
+				this.ShowDisconnectTCPDialog(null);
+				return;
+			}
+			if (this.MaxRecoverCount > 0 && this.tryRecoverCount >= this.MaxRecoverCount)
+			{
+				global::Debug.LogErrorFormat("{0}回復帰しようとしたので負け.", new object[]
+				{
+					this.tryRecoverCount
+				});
+				this.ShowDisconnectTCPDialog(null);
+				return;
+			}
+			base.StartCoroutine(this.Reconnect(true));
 		}
 	}
 
-	protected abstract void TCPDisconnectedCallbackMethod();
+	public void InitializeTCPClient(bool isReconnect = false)
+	{
+		bool flag = this.ConnectTCPServer(base.stateManager.battleMode);
+		if (flag)
+		{
+			if (isReconnect)
+			{
+				if (base.stateManager.battleMode == BattleMode.PvP)
+				{
+					AppCoroutine.Start(Singleton<TCPMessageSender>.Instance.SendPvPRecoverCommunicate(), false);
+				}
+				else if (base.stateManager.battleMode == BattleMode.Multi)
+				{
+					AppCoroutine.Start(Singleton<TCPMessageSender>.Instance.SendMultiBattleResume(), false);
+				}
+			}
+			else
+			{
+				this.isDisconnected = false;
+			}
+		}
+		else
+		{
+			global::Debug.LogWarning("TCP接続 failed.");
+			this.isDisconnected = true;
+			this.ShowDisconnectTCPDialog(null);
+		}
+		global::Debug.Log("Initialized TCP");
+	}
+
+	private bool ConnectTCPServer(BattleMode battleMode)
+	{
+		Screen.sleepTimeout = -1;
+		Singleton<TCPUtil>.Instance.MakeTCPClient();
+		Singleton<TCPUtil>.Instance.battleMode = battleMode;
+		Singleton<TCPUtil>.Instance.SetTCPCallBackMethod(new Action<Dictionary<string, object>>(this.TCPCallbackMethod));
+		Singleton<TCPUtil>.Instance.SetOnExitCallBackMethod(new Action(this.TCPDisconnectedCallbackMethod));
+		Singleton<TCPUtil>.Instance.SetExceptionMethod(new Action<short, string>(this.ExceptionCallbackMethod));
+		return Singleton<TCPUtil>.Instance.ConnectTCPServer(ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId);
+	}
+
+	protected virtual void TCPCallbackMethod(Dictionary<string, object> arg)
+	{
+		if (!arg.ContainsKey(this.myTCPKey))
+		{
+			global::Debug.LogWarningFormat("{0} is not valid key.", new object[]
+			{
+				arg.Keys.First<string>()
+			});
+			return;
+		}
+		Dictionary<object, object> dictionary = arg[this.myTCPKey] as Dictionary<object, object>;
+		string text = dictionary.Keys.First<object>().ToString();
+		TCPMessageType tcpMessageType = MultiTools.StringToEnum<TCPMessageType>(text);
+		object messageObj = dictionary[text];
+		this.RunRecieverPlayerActions(tcpMessageType, messageObj);
+	}
+
+	protected abstract void RunRecieverPlayerActions(TCPMessageType tcpMessageType, object messageObj);
+
+	private void TCPDisconnectedCallbackMethod()
+	{
+		global::Debug.Log("切断されました.(意図的も含む)");
+		this.isDisconnected = true;
+	}
+
+	private void ExceptionCallbackMethod(short exitCode, string message)
+	{
+		global::Debug.LogWarningFormat("Exceptionが発生しました。exitCode:{0}, message:{1}", new object[]
+		{
+			exitCode,
+			message
+		});
+		this.isDisconnected = true;
+		if (exitCode == 741)
+		{
+			global::Debug.LogError("意図的に切断(Pause)、あとで勝手に再接続.");
+			this.pausedTime = Time.realtimeSinceStartup;
+			this.isPaused = true;
+		}
+		else if (exitCode == 720)
+		{
+			global::Debug.LogError("タイムアウト 負け.");
+			this.ShowDisconnectTCPDialog(null);
+		}
+		else if (exitCode == 750 || exitCode == 700 || exitCode == 711 || exitCode == 752 || exitCode == 760)
+		{
+			global::Debug.Log("無理やり再接続.");
+			base.StartCoroutine(this.Reconnect(true));
+		}
+		else
+		{
+			base.StartCoroutine(this.Exception(delegate(bool retry)
+			{
+				if (retry)
+				{
+					global::Debug.Log("無理やり再接続.");
+					return this.Reconnect(true);
+				}
+				global::Debug.LogErrorFormat("その他何らかのエラー. exitCode:{0}.", new object[]
+				{
+					exitCode
+				});
+				this.ShowDisconnectTCPDialog(null);
+				return null;
+			}));
+		}
+	}
+
+	protected abstract IEnumerator Reconnect(bool isDialog = true);
+
+	private IEnumerator Exception(Func<bool, IEnumerator> function)
+	{
+		this.exceptionCount++;
+		global::Debug.Log("exceptionCount " + this.exceptionCount);
+		IEnumerator wait = function(this.exceptionCount < 3);
+		while (wait != null && wait.MoveNext())
+		{
+			yield return wait.Current;
+		}
+		if (Singleton<TCPUtil>.Instance.CheckTCPConnection())
+		{
+			this.exceptionCount = 0;
+		}
+		yield break;
+	}
+
+	public void FinalizeTCP()
+	{
+		global::Debug.Log("Finalizeされました.");
+		Singleton<TCPUtil>.Instance.TCPDisConnect(true);
+		Screen.sleepTimeout = -2;
+		if (base.onServerConnect)
+		{
+			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StartGetHistoryIdList();
+		}
+	}
+
+	protected virtual void ShowDisconnectTCPDialog(Action callback = null)
+	{
+	}
+
+	public IEnumerator SendRandomSeedSync()
+	{
+		int randomSeed = (int)DateTime.Now.Ticks & 65535;
+		RandomSeedSyncData message = new RandomSeedSyncData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.RandomSeedSync, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			randomSeed = randomSeed
+		};
+		global::Debug.LogFormat("[RandomSeedSync送信] randomSeed:{0}", new object[]
+		{
+			randomSeed
+		});
+		IEnumerator wait = base.stateManager.multiBasicFunction.SendMessageInsistently<RandomSeedSyncData>(TCPMessageType.RandomSeedSync, message, 1f);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		UnityEngine.Random.seed = randomSeed;
+		yield break;
+	}
+
+	protected virtual void RecieveRandomSeedSync(TCPMessageType tcpMessageType, object messageObj)
+	{
+		if (this.isDisconnected)
+		{
+			global::Debug.Log("RandomSeedSync: 切断中");
+			return;
+		}
+		global::Debug.Log("RandomSeedSync: 受信");
+		if (base.stateManager.rootState.currentState.GetType() != typeof(SubStateWaitRandomSeedSync))
+		{
+			return;
+		}
+		RandomSeedSyncData randomSeedSyncData = TCPData<RandomSeedSyncData>.Convert(messageObj);
+		if (this.CheckRecieveData(randomSeedSyncData.playerUserId, randomSeedSyncData.hashValue))
+		{
+			return;
+		}
+		this.lastAction[TCPMessageType.RandomSeedSync] = delegate()
+		{
+			global::Debug.LogFormat("randomSeed:{0}", new object[]
+			{
+				randomSeedSyncData.randomSeed
+			});
+			UnityEngine.Random.seed = randomSeedSyncData.randomSeed;
+			this.recieveChecks[TCPMessageType.RandomSeedSync] = true;
+		};
+		this.SendConfirmation(tcpMessageType, randomSeedSyncData.playerUserId, string.Empty);
+	}
+
+	public virtual IEnumerator SendAttack()
+	{
+		base.battleStateData.isPossibleTargetSelect = false;
+		CharacterStateControl attackerCharacter = base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex];
+		AttackData message = new AttackData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.Attack, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			selectSkillIdx = attackerCharacter.isSelectSkill,
+			targetIdx = attackerCharacter.targetCharacter.myIndex,
+			isTargetCharacterEnemy = attackerCharacter.targetCharacter.isEnemy
+		};
+		global::Debug.LogFormat("[攻撃]targetIdx:{0} selectSkillIdx:{1}", new object[]
+		{
+			message.targetIdx,
+			message.selectSkillIdx
+		});
+		IEnumerator wait = this.SendMessageInsistently<AttackData>(TCPMessageType.Attack, message, 1f);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		base.battleStateData.isPossibleTargetSelect = true;
+		yield break;
+	}
+
+	protected virtual void RecieveAttack(TCPMessageType tcpMessageType, object messageObj)
+	{
+		if (this.isDisconnected)
+		{
+			global::Debug.Log("Attack: 切断中");
+			return;
+		}
+		global::Debug.Log("Attack: 受信");
+		if (base.stateManager.rootState.currentState.GetType() != typeof(SubStateMultiWaitEnemySkillSelect) && base.stateManager.rootState.currentState.GetType() != typeof(SubStateWaitEnemySkillSelect))
+		{
+			global::Debug.LogWarning("まだ準備していない");
+			return;
+		}
+		AttackData attackData = TCPData<AttackData>.Convert(messageObj);
+		if (this.CheckRecieveData(attackData.playerUserId, attackData.hashValue))
+		{
+			return;
+		}
+		this.lastAction[TCPMessageType.Attack] = delegate()
+		{
+			CharacterStateControl currentSelectCharacterState = this.battleStateData.currentSelectCharacterState;
+			int targetIdx = attackData.targetIdx;
+			int selectSkillIdx = attackData.selectSkillIdx;
+			if (this.battleStateData.currentSelectCharacterState.isEnemy)
+			{
+				if (attackData.isTargetCharacterEnemy)
+				{
+					currentSelectCharacterState.targetCharacter = this.battleStateData.playerCharacters[targetIdx];
+				}
+				else
+				{
+					currentSelectCharacterState.targetCharacter = this.battleStateData.enemies[targetIdx];
+				}
+			}
+			else if (attackData.isTargetCharacterEnemy)
+			{
+				currentSelectCharacterState.targetCharacter = this.battleStateData.enemies[targetIdx];
+			}
+			else
+			{
+				currentSelectCharacterState.targetCharacter = this.battleStateData.playerCharacters[targetIdx];
+			}
+			currentSelectCharacterState.targetCharacter.myIndex = targetIdx;
+			currentSelectCharacterState.isSelectSkill = selectSkillIdx;
+			this.battleStateData.onSkillTrigger = true;
+			this.recieveChecks[TCPMessageType.Attack] = true;
+		};
+		this.SendConfirmation(tcpMessageType, attackData.playerUserId, string.Empty);
+	}
+
+	public IEnumerator SendLeaderChange(int leaderindex)
+	{
+		LeaderChangeData message = new LeaderChangeData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LeaderChange, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			leaderIndex = leaderindex
+		};
+		IEnumerator wait = this.SendMessageInsistently<LeaderChangeData>(TCPMessageType.LeaderChange, message, 1f);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		base.battleStateData.ChangePlayerLeader(message.leaderIndex);
+		base.battleStateData.ChangeEnemyLeader(message.leaderIndex);
+		yield break;
+	}
+
+	protected void RecieveLeaderChange(TCPMessageType tcpMessageType, object messageObj)
+	{
+		if (this.isDisconnected)
+		{
+			global::Debug.Log("LeaderChange: 切断中");
+			return;
+		}
+		global::Debug.Log("LeaderChange: 受信");
+		LeaderChangeData data = TCPData<LeaderChangeData>.Convert(messageObj);
+		if (this.CheckHash(data.hashValue))
+		{
+			return;
+		}
+		this.lastAction[tcpMessageType] = delegate()
+		{
+			this.battleStateData.ChangePlayerLeader(data.leaderIndex);
+			this.battleStateData.ChangeEnemyLeader(data.leaderIndex);
+			this.recieveChecks[tcpMessageType] = true;
+		};
+		this.SendConfirmation(tcpMessageType, data.playerUserId, string.Empty);
+	}
+
+	public bool isAdventureSceneAllEnd { get; private set; }
+
+	public IEnumerator SendAdventureSceneData()
+	{
+		string[] otherUsersIds = this.GetOtherUsersId().ToArray<string>();
+		if (otherUsersIds.Length > 0)
+		{
+			int count = 0;
+			foreach (string otherUsersId in otherUsersIds)
+			{
+				foreach (string adventureSceneEnd in this.adventureSceneEndList)
+				{
+					if (otherUsersId == adventureSceneEnd)
+					{
+						count++;
+						break;
+					}
+				}
+			}
+			this.isAdventureSceneAllEnd = (otherUsersIds.Length == count);
+		}
+		else
+		{
+			this.isAdventureSceneAllEnd = true;
+		}
+		if (this.isAdventureSceneAllEnd)
+		{
+			this.adventureSceneEndList.Clear();
+		}
+		AdventureSceneData message = new AdventureSceneData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.AdventureScene, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			isEnd = ((!this.isAdventureSceneAllEnd) ? 0 : 1)
+		};
+		IEnumerator wait = this.SendMessageInsistently<AdventureSceneData>(TCPMessageType.AdventureScene, message, 1f);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		yield break;
+	}
+
+	private void RecieveAdventureSceneData(TCPMessageType tcpMessageType, object messageObj)
+	{
+		if (this.isDisconnected)
+		{
+			global::Debug.Log("AdventureSceneData: 切断中");
+			return;
+		}
+		global::Debug.Log("AdventureSceneData: 受信");
+		AdventureSceneData data = TCPData<AdventureSceneData>.Convert(messageObj);
+		if (this.CheckHash(data.hashValue))
+		{
+			return;
+		}
+		this.lastAction[tcpMessageType] = delegate()
+		{
+			this.isAdventureSceneAllEnd = (data.isEnd == 1);
+			if (this.isAdventureSceneAllEnd)
+			{
+				this.adventureSceneEndList.Clear();
+			}
+			this.recieveChecks[tcpMessageType] = true;
+		};
+		int num = (!base.stateManager.battleAdventureSceneManager.isUpdate) ? 1 : 0;
+		this.SendConfirmation(tcpMessageType, data.playerUserId, num.ToString());
+	}
+
+	protected void SendConfirmation(TCPMessageType tcpMessageType, string targetId, string value1 = "")
+	{
+		this.SendConfirmation(tcpMessageType, targetId, value1, true);
+	}
+
+	protected void SendConfirmationDisconnected(TCPMessageType tcpMessageType, string targetId, string value1 = "")
+	{
+		this.SendConfirmation(tcpMessageType, targetId, value1, false);
+	}
+
+	private void SendConfirmation(TCPMessageType tcpMessageType, string targetId, string value1, bool enableDisconnected)
+	{
+		global::Debug.LogFormat("[SendConfirmation] tcpMessageType:{0}, MyPlayerUserId:{1}, targetId:{2}", new object[]
+		{
+			tcpMessageType,
+			ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			targetId
+		});
+		ConfirmationData message = new ConfirmationData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.Confirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
+			tcpMessageType = tcpMessageType.ToInteger(),
+			value1 = value1
+		};
+		AppCoroutine.Start(this.SendMessageInsistentlyForTarget<ConfirmationData>(TCPMessageType.Confirmation, message, targetId, enableDisconnected), false);
+	}
+
+	protected void RecieveConfirmation(TCPMessageType tcpMessageType, object messageObj)
+	{
+		global::Debug.Log("Confirmation: 受信");
+		ConfirmationData confirmationData = TCPData<ConfirmationData>.Convert(messageObj);
+		if (this.CheckRecieveData(confirmationData.playerUserId, confirmationData.hashValue))
+		{
+			return;
+		}
+		TCPMessageType tcpMessageType2 = (TCPMessageType)confirmationData.tcpMessageType;
+		this.confirmationChecks[tcpMessageType2].Add(confirmationData.playerUserId);
+		global::Debug.LogFormat("confirmationChecks : {0}から確認用{1}を受信しました. Count:{2}", new object[]
+		{
+			confirmationData.playerUserId,
+			tcpMessageType2,
+			this.confirmationChecks[tcpMessageType2].Count
+		});
+		if (tcpMessageType2 == TCPMessageType.AdventureScene && confirmationData.value1 == "1" && !this.adventureSceneEndList.Contains(confirmationData.playerUserId))
+		{
+			this.adventureSceneEndList.Add(confirmationData.playerUserId);
+		}
+	}
+
+	protected void RecieveLastConfirmation(TCPMessageType tcpMessageType, object messageObj)
+	{
+		global::Debug.Log("LastConfirmation: 受信");
+		LastConfirmationData lastConfirmationData = TCPData<LastConfirmationData>.Convert(messageObj);
+		if (this.CheckRecieveData(lastConfirmationData.playerUserId, lastConfirmationData.hashValue))
+		{
+			return;
+		}
+		this.confirmationChecks[TCPMessageType.Confirmation].Add(lastConfirmationData.playerUserId);
+		this.RunLastAction((TCPMessageType)lastConfirmationData.tcpMessageType);
+		global::Debug.LogFormat("tcpMessageType:{0}", new object[]
+		{
+			(TCPMessageType)lastConfirmationData.tcpMessageType
+		});
+	}
 
 	private void SendMessageForTarget(TCPMessageType tcpMessageType, object message, string targetId, bool enableDisconnected = true)
 	{
@@ -293,13 +694,13 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			return;
 		}
 		global::Debug.Log("targetId: " + targetId);
-		if (this.myTCPUtil == null)
+		if (Singleton<TCPUtil>.Instance == null)
 		{
 			global::Debug.LogWarning("this.myTCPUtil is null");
 		}
 		else
 		{
-			this.myTCPUtil.SendTCPRequest(data, new List<int>
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, new List<int>
 			{
 				targetId.ToInt32()
 			}, this.myTCPKey);
@@ -348,172 +749,20 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 			list.Count,
 			text
 		});
-		if (this.myTCPUtil == null || dictionary == null)
+		if (Singleton<TCPUtil>.Instance == null || dictionary == null)
 		{
 			global::Debug.LogWarning("this.myTCPUtil is null");
 		}
 		else
 		{
 			List<int> to = list.Select((string s) => s.ToInt32()).ToList<int>();
-			this.myTCPUtil.SendTCPRequest(dictionary, to, this.myTCPKey);
+			Singleton<TCPUtil>.Instance.SendTCPRequest(dictionary, to, this.myTCPKey);
 			global::Debug.LogFormat("[TCPMessage]{0}へ{1}を送信しました", new object[]
 			{
 				text,
 				tcpMessageType
 			});
 		}
-	}
-
-	protected abstract bool CheckStillAlive(string userId);
-
-	protected MultiBattleData.PvPUserData GetUserData(bool _isMyData = true)
-	{
-		foreach (MultiBattleData.PvPUserData pvPUserData in ClassSingleton<MultiBattleData>.Instance.PvPUserDatas)
-		{
-			bool flag = pvPUserData.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId;
-			if (flag == _isMyData)
-			{
-				return pvPUserData;
-			}
-		}
-		return null;
-	}
-
-	public abstract void GetBattleData();
-
-	public abstract void InitializeTCPClient();
-
-	protected abstract void TCPCallbackMethod(Dictionary<string, object> arg);
-
-	public abstract IEnumerator WaitAllPlayers(TCPMessageType tcpMessageType);
-
-	public void FinalizeTCP()
-	{
-		global::Debug.Log("Finalizeされました.");
-		Singleton<TCPUtil>.Instance.TCPDisConnect(true);
-		Screen.sleepTimeout = -2;
-		if (base.onServerConnect)
-		{
-			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StartGetHistoryIdList();
-		}
-	}
-
-	public void RunAttackAutomatically()
-	{
-		CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex];
-		characterStateControl.isSelectSkill = 0;
-		BattleStateManager.current.uiControl.ApplySkillButtonRotation(characterStateControl.isSelectSkill, 0);
-		base.battleStateData.onSkillTrigger = true;
-		base.stateManager.targetSelect.SetTarget(characterStateControl, null);
-	}
-
-	public string GetPlayerName()
-	{
-		string text = this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.nickname).FirstOrDefault<string>();
-		if (string.IsNullOrEmpty(text))
-		{
-			return "-";
-		}
-		return text;
-	}
-
-	public string GetPlayerTitleId()
-	{
-		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId == ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.titleId).FirstOrDefault<string>();
-	}
-
-	public string GetEnemyName()
-	{
-		string text = this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.nickname).FirstOrDefault<string>();
-		if (string.IsNullOrEmpty(text))
-		{
-			return "-";
-		}
-		return text;
-	}
-
-	public string GetEnemyTitleId()
-	{
-		return this.multiUsers.Where((MultiBattleData.PvPUserData user) => user.userStatus.userId != ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId).Select((MultiBattleData.PvPUserData user) => user.userStatus.titleId).FirstOrDefault<string>();
-	}
-
-	protected abstract IEnumerable<string> GetOtherUsersId();
-
-	public virtual void OnSkillTrigger()
-	{
-		if (base.battleStateData.isShowMenuWindow)
-		{
-			return;
-		}
-		if (base.battleStateData.isShowRevivalWindow)
-		{
-			return;
-		}
-		NGUITools.SetActiveSelf(base.stateManager.battleUiComponents.skillSelectUi.gameObject, false);
-		base.battleStateData.isPossibleTargetSelect = false;
-	}
-
-	public IEnumerator SendLeaderChange(int leaderindex)
-	{
-		LeaderChangeData message = new LeaderChangeData
-		{
-			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
-			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LeaderChange, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
-			leaderIndex = leaderindex
-		};
-		IEnumerator wait = this.SendMessageInsistently<LeaderChangeData>(TCPMessageType.LeaderChange, message, 1f);
-		while (wait.MoveNext())
-		{
-			object obj = wait.Current;
-			yield return obj;
-		}
-		base.battleStateData.ChangePlayerLeader(message.leaderIndex);
-		base.battleStateData.ChangeEnemyLeader(message.leaderIndex);
-		yield break;
-	}
-
-	protected void RecieveLeaderChange(TCPMessageType tcpMessageType, object messageObj)
-	{
-		global::Debug.Log("LeaderChange: 受信");
-		LeaderChangeData data = TCPData<LeaderChangeData>.Convert(messageObj);
-		if (this.CheckHash(data.hashValue))
-		{
-			return;
-		}
-		this.lastAction[tcpMessageType] = delegate()
-		{
-			this.battleStateData.ChangePlayerLeader(data.leaderIndex);
-			this.battleStateData.ChangeEnemyLeader(data.leaderIndex);
-			this.recieveChecks[tcpMessageType] = true;
-		};
-		this.SendConfirmation(tcpMessageType, data.playerUserId);
-	}
-
-	protected void SendConfirmation(TCPMessageType tcpMessageType, string targetId)
-	{
-		this.SendConfirmation(tcpMessageType, targetId, true);
-	}
-
-	protected void SendConfirmationDisconnected(TCPMessageType tcpMessageType, string targetId)
-	{
-		this.SendConfirmation(tcpMessageType, targetId, false);
-	}
-
-	private void SendConfirmation(TCPMessageType tcpMessageType, string targetId, bool enableDisconnected)
-	{
-		global::Debug.LogFormat("[SendConfirmation] tcpMessageType:{0}, MyPlayerUserId:{1}, targetId:{2}", new object[]
-		{
-			tcpMessageType,
-			ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
-			targetId
-		});
-		ConfirmationData message = new ConfirmationData
-		{
-			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
-			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.Confirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
-			tcpMessageType = tcpMessageType.ToInteger()
-		};
-		AppCoroutine.Start(this.SendMessageInsistentlyForTarget<ConfirmationData>(TCPMessageType.Confirmation, message, targetId, enableDisconnected), false);
 	}
 
 	protected IEnumerator SendMessageInsistentlyForTarget<T>(TCPMessageType tcpMessageType, TCPData<T> message, string targetId, bool enableDisconnected = true) where T : class
@@ -549,51 +798,9 @@ public abstract class BattleMultiBasicFunction : BattleFunctionBase
 		yield break;
 	}
 
-	protected string[] SetWorldDungeonExtraEffect(string dungeonId)
-	{
-		IEnumerable<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> enumerable = MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectM.worldDungeonExtraEffectM.SelectMany((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM x) => MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectManageM.worldDungeonExtraEffectManageM, (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM x, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM y) => new
-		{
-			x,
-			y
-		}).Where(<>__TranspIdent1 => <>__TranspIdent1.x.worldDungeonExtraEffectId == <>__TranspIdent1.y.worldDungeonExtraEffectId && <>__TranspIdent1.y.worldDungeonId == dungeonId).Select(<>__TranspIdent1 => <>__TranspIdent1.x);
-		this.cachedExtraEffectStatus.Clear();
-		int num = 0;
-		string[] array = new string[enumerable.Count<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM>()];
-		foreach (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM worldDungeonExtraEffectM in enumerable)
-		{
-			this.cachedExtraEffectStatus.Add(num.ToString(), new ExtraEffectStatus(worldDungeonExtraEffectM));
-			array[num] = num.ToString();
-			num++;
-		}
-		return array;
-	}
-
 	public abstract IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 1f) where T : class;
 
-	protected IEnumerator Exception(Func<bool, IEnumerator> function)
-	{
-		this.exceptionCount++;
-		global::Debug.Log("exceptionCount " + this.exceptionCount);
-		IEnumerator wait = function(this.exceptionCount < 3);
-		while (wait != null && wait.MoveNext())
-		{
-			yield return wait.Current;
-		}
-		if (this.myTCPUtil.CheckTCPConnection())
-		{
-			this.exceptionCount = 0;
-		}
-		yield break;
-	}
-
-	protected virtual void CheckMasterData()
-	{
-	}
-
-	protected void ShowErrorLog(string variableName)
-	{
-		global::Debug.LogError(string.Format("マスタの{0}の値がおかしいです.", variableName));
-	}
+	public abstract IEnumerator WaitAllPlayers(TCPMessageType tcpMessageType);
 
 	public enum ClearFlag
 	{

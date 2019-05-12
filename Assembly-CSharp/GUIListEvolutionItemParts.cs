@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Evolution;
+using System;
 using UnityEngine;
 
 public class GUIListEvolutionItemParts : GUIListPartBS
@@ -7,20 +8,20 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 	[SerializeField]
 	private GUICollider colSoul;
 
-	[SerializeField]
 	[Header("素材用アイコンのUITexture")]
+	[SerializeField]
 	private UITexture texSoul;
 
 	[Header("所持数のGameObject")]
 	[SerializeField]
 	private GameObject goNum;
 
-	[SerializeField]
 	[Header("所持数のUIlabel")]
+	[SerializeField]
 	private UILabel lbNum;
 
-	[SerializeField]
 	[Header("所持数背景のGameObject")]
+	[SerializeField]
 	private GameObject goNumBG;
 
 	[Header("親のパネル")]
@@ -67,7 +68,7 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 		if (this.data != null)
 		{
 			this.soulId = this.data.soulId;
-			string evolveItemIconPathByID = MonsterDataMng.Instance().GetEvolveItemIconPathByID(this.soulId);
+			string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(this.soulId);
 			this.lbNum.text = this.data.num;
 			NGUIUtil.LoadTextureAsync(this.texSoul, evolveItemIconPathByID, new Action(this.DispItemNum));
 		}
@@ -84,7 +85,7 @@ public class GUIListEvolutionItemParts : GUIListPartBS
 
 	private void OnTouchedSoulIcon()
 	{
-		GameWebAPI.RespDataMA_GetSoulM.SoulM soulMasterBySoulId = MonsterDataMng.Instance().GetSoulMasterBySoulId(this.soulId);
-		CMD_QuestItemPOP.Create(soulMasterBySoulId);
+		GameWebAPI.RespDataMA_GetSoulM.SoulM soulMaster = ClassSingleton<EvolutionData>.Instance.GetSoulMaster(this.soulId);
+		CMD_QuestItemPOP.Create(soulMaster);
 	}
 }

@@ -312,6 +312,64 @@ namespace UnityEngine.Networking
 			return invoker.DebugString();
 		}
 
+		internal static bool GetInvokerForHashCommand(int cmdHash, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
+		{
+			return NetworkBehaviour.GetInvokerForHash(cmdHash, NetworkBehaviour.UNetInvokeType.Command, out invokeClass, out invokeFunction);
+		}
+
+		internal static bool GetInvokerForHashClientRpc(int cmdHash, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
+		{
+			return NetworkBehaviour.GetInvokerForHash(cmdHash, NetworkBehaviour.UNetInvokeType.ClientRpc, out invokeClass, out invokeFunction);
+		}
+
+		internal static bool GetInvokerForHashSyncList(int cmdHash, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
+		{
+			return NetworkBehaviour.GetInvokerForHash(cmdHash, NetworkBehaviour.UNetInvokeType.SyncList, out invokeClass, out invokeFunction);
+		}
+
+		internal static bool GetInvokerForHashSyncEvent(int cmdHash, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
+		{
+			return NetworkBehaviour.GetInvokerForHash(cmdHash, NetworkBehaviour.UNetInvokeType.SyncEvent, out invokeClass, out invokeFunction);
+		}
+
+		private static bool GetInvokerForHash(int cmdHash, NetworkBehaviour.UNetInvokeType invokeType, out Type invokeClass, out NetworkBehaviour.CmdDelegate invokeFunction)
+		{
+			NetworkBehaviour.Invoker invoker = null;
+			if (!NetworkBehaviour.s_CmdHandlerDelegates.TryGetValue(cmdHash, out invoker))
+			{
+				if (LogFilter.logDev)
+				{
+					Debug.Log("GetInvokerForHash hash:" + cmdHash + " not found");
+				}
+				invokeClass = null;
+				invokeFunction = null;
+				return false;
+			}
+			if (invoker == null)
+			{
+				if (LogFilter.logDev)
+				{
+					Debug.Log("GetInvokerForHash hash:" + cmdHash + " invoker null");
+				}
+				invokeClass = null;
+				invokeFunction = null;
+				return false;
+			}
+			if (invoker.invokeType != invokeType)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("GetInvokerForHash hash:" + cmdHash + " mismatched invokeType");
+				}
+				invokeClass = null;
+				invokeFunction = null;
+				return false;
+			}
+			invokeClass = invoker.invokeClass;
+			invokeFunction = invoker.invokeFunction;
+			return true;
+		}
+
 		internal static void DumpInvokers()
 		{
 			Debug.Log("DumpInvokers size:" + NetworkBehaviour.s_CmdHandlerDelegates.Count);
@@ -650,7 +708,7 @@ namespace UnityEngine.Networking
 			}
 		}
 
-		protected delegate void CmdDelegate(NetworkBehaviour obj, NetworkReader reader);
+		public delegate void CmdDelegate(NetworkBehaviour obj, NetworkReader reader);
 
 		protected delegate void EventDelegate(List<Delegate> targets, NetworkReader reader);
 	}

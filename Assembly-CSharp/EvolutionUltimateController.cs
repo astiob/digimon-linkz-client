@@ -13,28 +13,28 @@ public class EvolutionUltimateController : CutsceneControllerBase
 	[Header("スタンドの回転速度")]
 	private float[] standRollSpeed;
 
-	[Header("UIカメラ")]
 	[SerializeField]
+	[Header("UIカメラ")]
 	private GameObject camera2D;
 
 	[Header("3Dカメラ")]
 	[SerializeField]
 	private GameObject camera3D_1;
 
-	[SerializeField]
 	[Header("黄色いデジタルなマテリアル")]
+	[SerializeField]
 	private Material afterConversionMaterialB;
 
-	[SerializeField]
 	[Header("ライン時のマテリアル")]
+	[SerializeField]
 	private Material afterConversionMaterialC;
 
 	[SerializeField]
 	[Header("デジ文字螺旋")]
 	private GameObject spiral;
 
-	[SerializeField]
 	[Header("最後のカメラ")]
+	[SerializeField]
 	private GameObject lastCamera;
 
 	public float rollSpeed = 1f;

@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -79,9 +80,9 @@ public class StatusUpAnimation : MonoBehaviour
 
 	private Coroutine animationCoroutine;
 
-	public int defaultLevel { get; set; }
+	public GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster;
 
-	public MonsterData monsterData { get; set; }
+	public int defaultLevel { get; set; }
 
 	public int Displaylevel
 	{
@@ -125,13 +126,14 @@ public class StatusUpAnimation : MonoBehaviour
 		this.animationCoroutine = null;
 	}
 
-	public void Initialize(MonsterData monsterData, int defaultLevel)
+	public void Initialize(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster, int defaultLevel)
 	{
-		this.monsterData = monsterData;
+		this.userMonster = userMonster;
 		this.defaultLevel = defaultLevel;
 		if (this.levelLabel != null)
 		{
-			this.levelLabel.text = string.Format(StringMaster.GetString("SystemFraction"), this.defaultLevel.ToString(), this.monsterData.monsterM.maxLevel);
+			MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(this.userMonster.monsterId);
+			this.levelLabel.text = string.Format(StringMaster.GetString("SystemFraction"), this.defaultLevel.ToString(), monsterMasterByMonsterId.Simple.maxLevel);
 		}
 		this.displayLevel = defaultLevel;
 		this.HideDifference();
@@ -188,44 +190,48 @@ public class StatusUpAnimation : MonoBehaviour
 	private void DisplayDifference()
 	{
 		bool flag = false;
+		MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(this.userMonster.monsterId);
 		if (this.levelUpLabel != null)
 		{
 			string text = string.Empty;
 			if (this.displayLevel > this.defaultLevel)
 			{
-				text = string.Format(StringMaster.GetString("SystemFraction"), this.displayLevel.ToString(), this.monsterData.monsterM.maxLevel);
+				text = string.Format(StringMaster.GetString("SystemFraction"), this.displayLevel.ToString(), monsterMasterByMonsterId.Simple.maxLevel);
 			}
 			this.levelUpLabel.text = text;
 			flag = true;
 		}
+		int bonusStep = int.Parse(this.userMonster.friendship) / ConstValue.RIZE_CONDITION_FRENDSHIPSTATUS;
+		StatusValue friendshipBonusValue = MonsterFriendshipData.GetFriendshipBonusValue(monsterMasterByMonsterId.Simple, bonusStep);
+		StatusValue statusValue = MonsterStatusData.GetStatusValue(this.userMonster.monsterId, this.displayLevel.ToString());
 		if (this.hpUpLabel != null)
 		{
-			this.hpUpLabel.text = this.GetTextStatusUpValue(this.monsterData.userMonster.hp, this.monsterData.Now_HP(this.displayLevel));
+			this.hpUpLabel.text = this.GetTextStatusUpValue(this.userMonster.hp, statusValue.hp + friendshipBonusValue.hp);
 			flag = true;
 		}
 		if (this.atkUpLabel != null)
 		{
-			this.atkUpLabel.text = this.GetTextStatusUpValue(this.monsterData.userMonster.attack, this.monsterData.Now_ATK(this.displayLevel));
+			this.atkUpLabel.text = this.GetTextStatusUpValue(this.userMonster.attack, statusValue.attack + friendshipBonusValue.attack);
 			flag = true;
 		}
 		if (this.defUpLabel != null)
 		{
-			this.defUpLabel.text = this.GetTextStatusUpValue(this.monsterData.userMonster.defense, this.monsterData.Now_DEF(this.displayLevel));
+			this.defUpLabel.text = this.GetTextStatusUpValue(this.userMonster.defense, statusValue.defense + friendshipBonusValue.defense);
 			flag = true;
 		}
 		if (this.sAtkUpLabel != null)
 		{
-			this.sAtkUpLabel.text = this.GetTextStatusUpValue(this.monsterData.userMonster.spAttack, this.monsterData.Now_SATK(this.displayLevel));
+			this.sAtkUpLabel.text = this.GetTextStatusUpValue(this.userMonster.spAttack, statusValue.magicAttack + friendshipBonusValue.magicAttack);
 			flag = true;
 		}
 		if (this.sDefUpLabel != null)
 		{
-			this.sDefUpLabel.text = this.GetTextStatusUpValue(this.monsterData.userMonster.spDefense, this.monsterData.Now_SDEF(this.displayLevel));
+			this.sDefUpLabel.text = this.GetTextStatusUpValue(this.userMonster.spDefense, statusValue.magicDefense + friendshipBonusValue.magicDefense);
 			flag = true;
 		}
 		if (this.spdUpLabel != null)
 		{
-			this.spdUpLabel.text = this.GetTextStatusUpValue(this.monsterData.userMonster.speed, this.monsterData.Now_SPD(this.displayLevel));
+			this.spdUpLabel.text = this.GetTextStatusUpValue(this.userMonster.speed, statusValue.speed + friendshipBonusValue.speed);
 			flag = true;
 		}
 		if (this.luckUpLabel != null)

@@ -37,5 +37,13 @@ namespace CharacterMiniStatusUI
 			this.skillPanelShort.SetMonsterData(monsterData);
 			this.skillPanelLong.SetMonsterData(monsterData);
 		}
+
+		public void ClearMonsterData()
+		{
+			this.statusList.ClearValues();
+			this.medalList.SetActive(false);
+			this.skillPanelShort.ClearData();
+			this.skillPanelLong.ClearData();
+		}
 	}
 }

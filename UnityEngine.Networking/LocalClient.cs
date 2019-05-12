@@ -28,9 +28,10 @@ namespace UnityEngine.Networking
 				this.m_Connected = false;
 			}
 			this.m_AsyncConnect = NetworkClient.ConnectState.Disconnected;
+			this.m_LocalServer.RemoveLocalClient(this.m_Connection);
 		}
 
-		internal void InternalConnectLocalServer()
+		internal void InternalConnectLocalServer(bool generateConnectMsg)
 		{
 			if (this.m_FreeMessages == null)
 			{
@@ -48,7 +49,10 @@ namespace UnityEngine.Networking
 			this.m_AsyncConnect = NetworkClient.ConnectState.Connected;
 			NetworkClient.SetActive(true);
 			base.RegisterSystemHandlers(true);
-			this.PostInternalMessage(32);
+			if (generateConnectMsg)
+			{
+				this.PostInternalMessage(32);
+			}
 			this.m_Connected = true;
 		}
 

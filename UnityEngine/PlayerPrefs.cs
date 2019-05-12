@@ -4,9 +4,6 @@ using UnityEngine.Internal;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Stores and accesses player preferences between game sessions.</para>
-	/// </summary>
 	public sealed class PlayerPrefs
 	{
 		[WrapperlessIcall]
@@ -21,11 +18,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool TrySetSetString(string key, string value);
 
-		/// <summary>
-		///   <para>Sets the value of the preference identified by key.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
 		public static void SetInt(string key, int value)
 		{
 			if (!PlayerPrefs.TrySetInt(key, value))
@@ -34,20 +26,10 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the value corresponding to key in the preference file if it exists.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern int GetInt(string key, [DefaultValue("0")] int defaultValue);
 
-		/// <summary>
-		///   <para>Returns the value corresponding to key in the preference file if it exists.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
 		[ExcludeFromDocs]
 		public static int GetInt(string key)
 		{
@@ -55,11 +37,6 @@ namespace UnityEngine
 			return PlayerPrefs.GetInt(key, defaultValue);
 		}
 
-		/// <summary>
-		///   <para>Sets the value of the preference identified by key.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
 		public static void SetFloat(string key, float value)
 		{
 			if (!PlayerPrefs.TrySetFloat(key, value))
@@ -68,20 +45,10 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the value corresponding to key in the preference file if it exists.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern float GetFloat(string key, [DefaultValue("0.0F")] float defaultValue);
 
-		/// <summary>
-		///   <para>Returns the value corresponding to key in the preference file if it exists.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
 		[ExcludeFromDocs]
 		public static float GetFloat(string key)
 		{
@@ -89,11 +56,6 @@ namespace UnityEngine
 			return PlayerPrefs.GetFloat(key, defaultValue);
 		}
 
-		/// <summary>
-		///   <para>Sets the value of the preference identified by key.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
 		public static void SetString(string key, string value)
 		{
 			if (!PlayerPrefs.TrySetSetString(key, value))
@@ -102,20 +64,10 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the value corresponding to key in the preference file if it exists.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern string GetString(string key, [DefaultValue("\"\"")] string defaultValue);
 
-		/// <summary>
-		///   <para>Returns the value corresponding to key in the preference file if it exists.</para>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
 		[ExcludeFromDocs]
 		public static string GetString(string key)
 		{
@@ -123,32 +75,18 @@ namespace UnityEngine
 			return PlayerPrefs.GetString(key, empty);
 		}
 
-		/// <summary>
-		///   <para>Returns true if key exists in the preferences.</para>
-		/// </summary>
-		/// <param name="key"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern bool HasKey(string key);
 
-		/// <summary>
-		///   <para>Removes key and its corresponding value from the preferences.</para>
-		/// </summary>
-		/// <param name="key"></param>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void DeleteKey(string key);
 
-		/// <summary>
-		///   <para>Removes all keys and values from the preferences. Use with caution.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void DeleteAll();
 
-		/// <summary>
-		///   <para>Writes all modified preferences to disk.</para>
-		/// </summary>
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		public static extern void Save();

@@ -1,9 +1,8 @@
-﻿using Evolution;
-using Master;
+﻿using Master;
+using Monster;
 using Quest;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Title;
 using UnityEngine;
 
@@ -72,7 +71,9 @@ public sealed class GUIScreenTitle : GUIScreen
 	private IEnumerator StartEvent()
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-		DataMng.Instance().RespDataUS_MonsterList = null;
+		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
+		GUIMonsterIcon.InitMonsterGO(Singleton<GUIMain>.Instance.transform);
+		ClassSingleton<GUIMonsterIconList>.Instance.Initialize();
 		yield return base.StartCoroutine(AssetBundleMng.Instance().WaitCacheReady());
 		yield return base.StartCoroutine(StoreInit.Instance().InitStore());
 		this.googlePlay.Bootup();
@@ -198,7 +199,8 @@ public sealed class GUIScreenTitle : GUIScreen
 			this.CancelGameStart();
 			yield break;
 		}
-		yield return base.StartCoroutine(this.UpdateMasterData());
+		UpdateMasterData updateMasterData = new UpdateMasterData();
+		yield return base.StartCoroutine(updateMasterData.UpdateData());
 		yield return base.StartCoroutine(this.InitAssetBundleDownloadInfo());
 		bool tutorialStart = this.CheckFirstTutorial();
 		if (tutorialStart)
@@ -211,35 +213,6 @@ public sealed class GUIScreenTitle : GUIScreen
 			yield break;
 		}
 		ScreenController.ChangeHomeScreen(CMD_Tips.DISPLAY_PLACE.TitleToFarm);
-		yield break;
-	}
-
-	private IEnumerator UpdateMasterData()
-	{
-		List<MasterId> updateInfoList = new List<MasterId>();
-		GameObject go = UnityEngine.Object.Instantiate<GameObject>(AssetDataMng.Instance().LoadObject("UIPrefab/MasterDataLoadingGauge", null, true) as GameObject);
-		MasterDataLoadingGauge topDownload = go.GetComponent<MasterDataLoadingGauge>();
-		MasterDataMng.Instance().ClearCache();
-		MasterDataMng.Instance().InitialFileIO();
-		base.StartCoroutine(MasterDataMng.Instance().ReadMasterData(updateInfoList, new Action<int, int>(topDownload.SetLoadProgress)));
-		yield return base.StartCoroutine(topDownload.WaitMasterDataLoad());
-		topDownload = null;
-		UnityEngine.Object.Destroy(go);
-		go = null;
-		yield return base.StartCoroutine(MasterDataMng.Instance().GetMasterDataUpdateInfo(updateInfoList));
-		if (0 < updateInfoList.Count)
-		{
-			Loading.Invisible();
-			base.StartCoroutine(MasterDataMng.Instance().UpdateLocalMasterData(updateInfoList));
-			CMD_ShortDownload shortDownload = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload") as CMD_ShortDownload;
-			yield return base.StartCoroutine(shortDownload.WaitMasterDataDownload());
-			shortDownload.ClosePanel(true);
-			Loading.ResumeDisplay();
-		}
-		MasterDataMng.Instance().ReleaseFileIO();
-		GameWebAPI.Instance().SetMasterDataVersion();
-		ClassSingleton<EvolutionData>.Instance.Initialize();
-		VersionUpMaterialData.Initialize();
 		yield break;
 	}
 

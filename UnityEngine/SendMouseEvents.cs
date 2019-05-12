@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
@@ -35,11 +36,13 @@ namespace UnityEngine
 
 		private static Camera[] m_Cameras;
 
+		[RequiredByNativeCode]
 		private static void SetMouseMoved()
 		{
 			SendMouseEvents.s_MouseUsed = true;
 		}
 
+		[RequiredByNativeCode]
 		private static void DoSendMouseEvents(int skipRTCameras)
 		{
 			Vector3 mousePosition = Input.mousePosition;

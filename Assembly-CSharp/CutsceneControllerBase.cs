@@ -17,20 +17,20 @@ public class CutsceneControllerBase : MonoBehaviour
 
 	private Collider endbutton;
 
-	[Header("UI ROOT")]
 	[SerializeField]
+	[Header("UI ROOT")]
 	private Transform UIroot;
 
-	[SerializeField]
 	[Header("UIカメラ")]
+	[SerializeField]
 	private Camera UIcamera;
 
-	[Header("スキップボタンコライダ")]
 	[SerializeField]
+	[Header("スキップボタンコライダ")]
 	private Collider skipButtonCollider;
 
-	[Header("エンドボタンコライダ")]
 	[SerializeField]
+	[Header("エンドボタンコライダ")]
 	private Collider endButtonCollider;
 
 	[Header("餌モンスターのレベル帯")]
@@ -39,8 +39,8 @@ public class CutsceneControllerBase : MonoBehaviour
 	[Header("親モンスターのレベル帯")]
 	public int monsterLevelClass2;
 
-	[SerializeField]
 	[FormerlySerializedAs("target")]
+	[SerializeField]
 	private int[] _target = new int[0];
 
 	protected CharacterParams character1Params;

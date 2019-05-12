@@ -31,6 +31,8 @@ namespace BattleStateMachineInternal
 
 		public int cameraType;
 
+		public CharacterStatus[] enemyStatuses;
+
 		public bool isFindBoss
 		{
 			get

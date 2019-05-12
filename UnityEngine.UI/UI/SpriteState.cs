@@ -4,19 +4,19 @@ using UnityEngine.Serialization;
 namespace UnityEngine.UI
 {
 	[Serializable]
-	public struct SpriteState
+	public struct SpriteState : IEquatable<SpriteState>
 	{
 		[FormerlySerializedAs("m_SelectedSprite")]
-		[FormerlySerializedAs("highlightedSprite")]
 		[SerializeField]
+		[FormerlySerializedAs("highlightedSprite")]
 		private Sprite m_HighlightedSprite;
 
-		[FormerlySerializedAs("pressedSprite")]
 		[SerializeField]
+		[FormerlySerializedAs("pressedSprite")]
 		private Sprite m_PressedSprite;
 
-		[SerializeField]
 		[FormerlySerializedAs("disabledSprite")]
+		[SerializeField]
 		private Sprite m_DisabledSprite;
 
 		public Sprite highlightedSprite
@@ -53,6 +53,11 @@ namespace UnityEngine.UI
 			{
 				this.m_DisabledSprite = value;
 			}
+		}
+
+		public bool Equals(SpriteState other)
+		{
+			return this.highlightedSprite == other.highlightedSprite && this.pressedSprite == other.pressedSprite && this.disabledSprite == other.disabledSprite;
 		}
 	}
 }

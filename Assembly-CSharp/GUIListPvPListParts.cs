@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Colosseum.DeckUI;
+using Master;
 using MultiBattle.Tools;
 using PvP;
 using Quest;
@@ -107,7 +108,7 @@ public class GUIListPvPListParts : GUIListPartBS
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.userInfo.monsterId);
 			if (monsterData != null)
 			{
-				GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.goMasterIcon.transform.localScale, this.goMasterIcon.transform.localPosition, this.goMasterIcon.transform.parent, true, false);
+				GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.goMasterIcon.transform.localScale, this.goMasterIcon.transform.localPosition, this.goMasterIcon.transform.parent, true, false);
 				UIWidget component = base.gameObject.GetComponent<UIWidget>();
 				if (component != null)
 				{
@@ -124,6 +125,7 @@ public class GUIListPvPListParts : GUIListPartBS
 		if (CMD_ChatTop.instance != null)
 		{
 			isRecruitListLock = CMD_ChatTop.instance.isRecruitListLock;
+			CMD_ChatTop.instance.isRecruitListLock = true;
 		}
 		else
 		{
@@ -188,8 +190,7 @@ public class GUIListPvPListParts : GUIListPartBS
 		else
 		{
 			ClassSingleton<QuestData>.Instance.SelectDungeon = null;
-			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
-			GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
+			CMD_ColosseumDeck.Create(CMD_ColosseumDeck.Mode.FROM_COLOSSEUM_TOP);
 		}
 	}
 }

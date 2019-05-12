@@ -34,7 +34,7 @@ public class SubStatePlayInvocationEffectAction : BattleStateController
 		string applyName = string.Empty;
 		if (base.battleStateData.IsChipSkill())
 		{
-			this.skillStatus = base.battleStateData.skillStatus.GetObject(this.currentCharacter.chipSkillId);
+			this.skillStatus = base.hierarchyData.GetSkillStatus(this.currentCharacter.chipSkillId);
 			GameWebAPI.RespDataMA_ChipM.Chip chipData = ChipDataMng.GetChipMainData(this.currentCharacter.currentChipId);
 			applyName = chipData.name;
 		}

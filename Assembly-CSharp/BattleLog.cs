@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public class BattleLog : BattleFunctionBase
 {
@@ -30,7 +31,24 @@ public class BattleLog : BattleFunctionBase
 				}
 				array2[j] = array3;
 			}
-			base.stateManager.serverControl.SetBattleResult(onWin, array, isRetire, array2);
+			this.SetBattleResult(onWin, array, isRetire, array2);
+		}
+	}
+
+	private void SetBattleResult(DataMng.ClearFlag onClearBattle, bool[] characterAliveFlags, bool isRetire, int[][] enemyAliveList)
+	{
+		DataMng.Instance().SetClearFlag(onClearBattle);
+		DataMng.Instance().SetAliveFlag(characterAliveFlags);
+		DataMng.Instance().SetEnemyAliveFlag(enemyAliveList);
+		DataMng.Instance().AddStone(base.battleStateData.beforeConfirmDigiStoneNumber - DataMng.Instance().GetStone());
+		if (!isRetire && onClearBattle != DataMng.ClearFlag.Win)
+		{
+			if (!base.hierarchyData.useInitialIntroduction)
+			{
+				return;
+			}
+			PlayerPrefs.SetInt("BATTLE_LOSE_COUNT", Mathf.Clamp(base.hierarchyData.initialIntroductionIndex + 1, 0, base.hierarchyData.maxInitialIntroductionIndex + 1));
+			PlayerPrefs.Save();
 		}
 	}
 }

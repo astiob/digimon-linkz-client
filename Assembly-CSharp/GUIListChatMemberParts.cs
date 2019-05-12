@@ -1,7 +1,6 @@
 ﻿using Master;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class GUIListChatMemberParts : GUIListPartBS
@@ -42,6 +41,9 @@ public class GUIListChatMemberParts : GUIListPartBS
 	[SerializeField]
 	private GameObject userTypeIcon;
 
+	[SerializeField]
+	private GameObject goMemberExpulsionBtn;
+
 	private UILabel ngTX_LOGIN;
 
 	private UILabel ngTX_NAME;
@@ -65,6 +67,8 @@ public class GUIListChatMemberParts : GUIListPartBS
 	private GameWebAPI.ResponseData_ChatUserList.respUserList data;
 
 	private GameWebAPI.FriendList friendData;
+
+	private bool isDestroy;
 
 	public GameWebAPI.ResponseData_ChatUserList.respUserList Data
 	{
@@ -95,11 +99,21 @@ public class GUIListChatMemberParts : GUIListPartBS
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
+		if (this.isDestroy)
+		{
+			return;
+		}
 		this.ngTX_NAME = this.goTX_NAME.GetComponent<UILabel>();
 		this.ngTX_LOGIN = this.goTX_LOGIN.GetComponent<UILabel>();
 		this.ngTX_COMMENT = this.goTX_COMMENT.GetComponent<UILabel>();
 		this.ngMONSTER_ICON = this.goMONSTER_ICON;
 		this.ngTITLE_ICON = this.goTITLE_ICON;
+		if (this.goMemberExpulsionBtn != null)
+		{
+			this.goMemberExpulsionBtn.SetActive(false);
+		}
+		this.selectedListSprite.color = this.defaultListColor;
+		this.userTypeIcon.SetActive(false);
 		if (CMD_ChatMenu.instance.openMemberListType == 1)
 		{
 			this.ngTX_NAME.text = this.FriendData.userData.nickname;
@@ -122,10 +136,18 @@ public class GUIListChatMemberParts : GUIListPartBS
 				this.userTypeIconSprite.spriteName = "Text_you";
 				this.userTypeIcon.SetActive(true);
 			}
-			else if (BlockManager.instance().blockList != null && BlockManager.instance().blockList.Where((GameWebAPI.FriendList item) => item.userData.userId == this.Data.userId).ToList<GameWebAPI.FriendList>().Count > 0)
+			else if (BlockManager.instance().blockList != null && BlockManager.instance().CheckBlock(this.Data.userId))
 			{
 				this.selectedListSprite.color = this.blockListColor;
 				this.userTypeIcon.SetActive(true);
+				if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster && CMD_ChatMenu.instance.openMemberListType == 3 && this.goMemberExpulsionBtn != null)
+				{
+					this.goMemberExpulsionBtn.SetActive(true);
+				}
+			}
+			else if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster && CMD_ChatMenu.instance.openMemberListType == 3 && this.goMemberExpulsionBtn != null)
+			{
+				this.goMemberExpulsionBtn.SetActive(true);
 			}
 		}
 	}
@@ -137,9 +159,15 @@ public class GUIListChatMemberParts : GUIListPartBS
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.thumbMid);
 			if (monsterData != null)
 			{
-				GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.ngMONSTER_ICON.transform.localScale, this.ngMONSTER_ICON.transform.localPosition, this.ngMONSTER_ICON.transform.parent, true, true);
+				GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.ngMONSTER_ICON.transform.localScale, this.ngMONSTER_ICON.transform.localPosition, this.ngMONSTER_ICON.transform.parent, true, true);
+				int add = 1600;
+				UISprite component = this.ngMONSTER_ICON.GetComponent<UISprite>();
+				if (component != null)
+				{
+					add = component.depth;
+				}
 				DepthController depthController = guimonsterIcon.GetDepthController();
-				depthController.AddWidgetDepth(guimonsterIcon.transform, 1600);
+				depthController.AddWidgetDepth(guimonsterIcon.transform, add);
 			}
 			global::Debug.Log("==================================================================== GUIListChatMemberParts MID = " + this.thumbMid);
 			this.isUpdate = true;
@@ -185,6 +213,7 @@ public class GUIListChatMemberParts : GUIListPartBS
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
+		this.isDestroy = true;
 	}
 
 	private void OnChatInviteExec(int idx)
@@ -228,7 +257,10 @@ public class GUIListChatMemberParts : GUIListPartBS
 	private void OnOpenMemberProfile()
 	{
 		CMD_ProfileFriend.chatMemberData = this.Data;
-		CMD_ProfileFriend cmd_ProfileFriend = GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend") as CMD_ProfileFriend;
+		CMD_ProfileFriend cmd_ProfileFriend = GUIMain.ShowCommonDialog(delegate(int x)
+		{
+			this.ShowGUI();
+		}, "CMD_ProfileFriend") as CMD_ProfileFriend;
 		cmd_ProfileFriend.SetLastLoginTime(this.lastLoginTime);
 	}
 
@@ -242,6 +274,15 @@ public class GUIListChatMemberParts : GUIListPartBS
 				component.selectedListSprite.color = setCol;
 			}
 		}
+	}
+
+	public void OnExpulsionDecision()
+	{
+		CMD_ChatInvitationModalAlert cmd_ChatInvitationModalAlert = GUIMain.ShowCommonDialog(delegate(int x)
+		{
+			this.ShowGUI();
+		}, "CMD_ChatInvitationModalAlert") as CMD_ChatInvitationModalAlert;
+		cmd_ChatInvitationModalAlert.SetUserData(this.Data);
 	}
 
 	private void OnCrickedInfo()

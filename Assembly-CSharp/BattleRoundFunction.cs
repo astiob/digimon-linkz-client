@@ -1,4 +1,5 @@
 ﻿using BattleStateMachineInternal;
+using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ public class BattleRoundFunction : BattleFunctionBase
 		}
 		if (base.battleStateData.isRunnedRevivalFunction)
 		{
-			IEnumerator characterRevivalBeforeFunction = base.stateManager.serverControl.CharacterRevivalBeforeFunction(base.battleStateData.revivaledCharactersIndex);
+			IEnumerator characterRevivalBeforeFunction = this.CharacterRevivalBeforeFunction(base.battleStateData.revivaledCharactersIndex);
 			while (characterRevivalBeforeFunction.MoveNext())
 			{
 				object obj2 = characterRevivalBeforeFunction.Current;
@@ -76,28 +77,64 @@ public class BattleRoundFunction : BattleFunctionBase
 			}
 		}
 		base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(true);
-		if (base.hierarchyData.limitRound > 0)
+		yield break;
+	}
+
+	private IEnumerator CharacterRevivalBeforeFunction(params int[] playerIndex)
+	{
+		if (base.stateManager.onEnableTutorial)
 		{
-			base.stateManager.uiControl.ApplyRoundLimitStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
-			base.stateManager.uiControl.ApplyRoundChallengeStartRevivalText(false, false);
+			yield return true;
+			yield break;
 		}
-		else if (base.hierarchyData.speedClearRound > 0)
+		if (base.onServerConnect)
 		{
-			int speedLimitRoundCount = base.hierarchyData.speedClearRound - base.battleStateData.totalRoundNumber;
-			speedLimitRoundCount++;
-			bool spFlag = speedLimitRoundCount > 0;
-			if (spFlag)
+			int[] continueCharacters = new int[playerIndex.Length];
+			for (int i = 0; i < continueCharacters.Length; i++)
 			{
-				base.stateManager.uiControl.ApplyRoundChallengeStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+				string userMonsterId = base.hierarchyData.usePlayerCharacters[playerIndex[i]].userMonsterId;
+				continueCharacters[i] = int.Parse(userMonsterId);
+			}
+			bool getResult = false;
+			bool outResult = false;
+			if (base.stateManager.battleMode == BattleMode.Multi)
+			{
+				yield return ClassSingleton<QuestData>.Instance.DungeonContinueMulti(int.Parse(base.hierarchyData.startId), base.battleStateData.currentWaveNumberGUI, base.battleStateData.currentRoundNumber, continueCharacters, delegate(bool result)
+				{
+					getResult = true;
+					outResult = result;
+				});
 			}
 			else
 			{
-				base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+				yield return ClassSingleton<QuestData>.Instance.DungeonContinue(int.Parse(base.hierarchyData.startId), base.battleStateData.currentWaveNumberGUI, base.battleStateData.currentRoundNumber, continueCharacters, delegate(bool result)
+				{
+					getResult = true;
+					outResult = result;
+				});
+			}
+			while (!getResult)
+			{
+				yield return null;
+			}
+			if (outResult)
+			{
+				int minusCalcedStone = playerIndex.Length + ((playerIndex.Length != base.battleStateData.playerCharacters.Length) ? 0 : 2);
+				DataMng.Instance().AddStone(-minusCalcedStone);
+				base.battleStateData.beforeConfirmDigiStoneNumber = DataMng.Instance().GetStone();
+				yield return true;
+			}
+			else
+			{
+				global::Debug.LogError("復活に失敗しました.");
+				yield return false;
 			}
 		}
 		else
 		{
-			base.stateManager.uiControl.ApplyRoundStartRevivalText(!BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartApRevival), !BoolExtension.AllMachValue(false, base.battleStateData.isRoundStartHpRevival));
+			int minus = playerIndex.Length + ((playerIndex.Length != base.battleStateData.playerCharacters.Length) ? 0 : 2);
+			base.battleStateData.beforeConfirmDigiStoneNumber -= minus;
+			yield return true;
 		}
 		yield break;
 	}
@@ -251,15 +288,15 @@ public class BattleRoundFunction : BattleFunctionBase
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Paralysis, sortedCharacter);
 		}
-		if (this.onSleep)
+		else if (this.onSleep)
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Sleep, sortedCharacter);
 		}
-		if (this.onStun)
+		else if (this.onStun)
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Stun, sortedCharacter);
 		}
-		if (this.onPowerCharge)
+		else if (this.onPowerCharge)
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.PowerCharge, sortedCharacter);
 		}

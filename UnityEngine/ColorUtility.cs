@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>A collection of common color functions.</para>
-	/// </summary>
 	public sealed class ColorUtility
 	{
 		[WrapperlessIcall]
@@ -20,26 +17,12 @@ namespace UnityEngine
 			return result;
 		}
 
-		/// <summary>
-		///   <para>Returns the color as a hexadecimal string in the format "RRGGBB".</para>
-		/// </summary>
-		/// <param name="color">The color to be converted.</param>
-		/// <returns>
-		///   <para>Hexadecimal string representing the color.</para>
-		/// </returns>
 		public static string ToHtmlStringRGB(Color color)
 		{
 			Color32 color2 = color;
 			return string.Format("{0:X2}{1:X2}{2:X2}", color2.r, color2.g, color2.b);
 		}
 
-		/// <summary>
-		///   <para>Returns the color as a hexadecimal string in the format "RRGGBBAA".</para>
-		/// </summary>
-		/// <param name="color">The color to be converted.</param>
-		/// <returns>
-		///   <para>Hexadecimal string representing the color.</para>
-		/// </returns>
 		public static string ToHtmlStringRGBA(Color color)
 		{
 			Color32 color2 = color;

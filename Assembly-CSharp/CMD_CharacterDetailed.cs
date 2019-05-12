@@ -1,8 +1,10 @@
 ﻿using CharacterDetailsUI;
 using CharacterModelUI;
 using Master;
+using Monster;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(DigimonModelPlayer))]
@@ -135,15 +137,12 @@ public sealed class CMD_CharacterDetailed : CMD
 		this.characterCameraView.Destroy();
 	}
 
-	public void ShowByReinforcement(string newExp, MonsterData oldMonsterData, int oldLevel, int upLuck)
-	{
-		base.StartCoroutine(this.StartReinforcementEffect(newExp, oldMonsterData, oldLevel, upLuck));
-	}
-
-	public IEnumerator StartReinforcementEffect(string newExp, MonsterData oldMonsterData, int oldLevel, int upLuck)
+	public IEnumerator StartReinforcementEffect(string newExp, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList oldUserMonster, int upLuck)
 	{
 		this.enablePageChange = false;
-		this.statusAnime.monsterData = oldMonsterData;
+		int oldLevel = int.Parse(oldUserMonster.level);
+		this.statusAnime.Initialize(oldUserMonster, oldLevel);
+		this.statusAnime.userMonster = oldUserMonster;
 		this.statusAnime.defaultLevel = oldLevel;
 		DataMng.ExperienceInfo expInfo = DataMng.Instance().GetExperienceInfo(int.Parse(newExp));
 		this.statusAnime.DisplayDifference(expInfo.lev, upLuck);
@@ -171,10 +170,13 @@ public sealed class CMD_CharacterDetailed : CMD
 		yield break;
 	}
 
-	public void ShowByArousal(MonsterData oldMonsterData, MonsterData newMonsterData)
+	public void ShowByArousal(string uniqueResistanceId, string oldResistanceIds, string newResistanceIds)
 	{
 		this.enablePageChange = false;
-		GameObject tranceEffectObject = this.statusList.GetTranceEffectObject(oldMonsterData, newMonsterData);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterData.SerchResistanceById(uniqueResistanceId);
+		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceListByJson = MonsterResistanceData.GetUniqueResistanceListByJson(oldResistanceIds);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM oldResistance = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceListByJson);
+		GameObject tranceEffectObject = this.statusList.GetTranceEffectObject(oldResistance, newResistanceIds);
 		UIPanel uipanel = this.cutinController.GetComponent<UIPanel>();
 		if (null == uipanel)
 		{

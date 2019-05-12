@@ -3,8 +3,8 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
-	[AddComponentMenu("Layout/Layout Element", 140)]
 	[RequireComponent(typeof(RectTransform))]
+	[AddComponentMenu("Layout/Layout Element", 140)]
 	[ExecuteInEditMode]
 	public class LayoutElement : UIBehaviour, ILayoutElement, ILayoutIgnorer
 	{

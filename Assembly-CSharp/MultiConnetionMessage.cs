@@ -4,20 +4,20 @@ using UnityEngine;
 
 public sealed class MultiConnetionMessage : MonoBehaviour
 {
-	[Header("開始準備中ローカライズ")]
 	[SerializeField]
+	[Header("開始準備中ローカライズ")]
 	private UILabel prepareMessageLocalize;
 
 	[Header("コマンド入力中ローカライズ")]
 	[SerializeField]
 	private UILabel cmdSelectMessageeLocalize;
 
-	[SerializeField]
 	[Header("開始準備中オブジェクト")]
+	[SerializeField]
 	private GameObject prepareStartGO;
 
-	[Header("コマンド入力中オブジェクト")]
 	[SerializeField]
+	[Header("コマンド入力中オブジェクト")]
 	private GameObject commandWaitingGO;
 
 	private string myWaitingCommand = string.Empty;

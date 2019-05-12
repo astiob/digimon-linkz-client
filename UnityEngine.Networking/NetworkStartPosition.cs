@@ -2,8 +2,8 @@
 
 namespace UnityEngine.Networking
 {
-	[AddComponentMenu("Network/NetworkStartPosition")]
 	[DisallowMultipleComponent]
+	[AddComponentMenu("Network/NetworkStartPosition")]
 	public class NetworkStartPosition : MonoBehaviour
 	{
 		public void Awake()

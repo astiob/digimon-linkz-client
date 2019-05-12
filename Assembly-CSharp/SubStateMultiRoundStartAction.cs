@@ -10,7 +10,6 @@ public class SubStateMultiRoundStartAction : SubStateRoundStartAction
 	protected override IEnumerator RoundStartCameraMotionFunction()
 	{
 		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
-		bool isSetCallback = false;
 		bool isHPWait = false;
 		for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
 		{
@@ -23,46 +22,32 @@ public class SubStateMultiRoundStartAction : SubStateRoundStartAction
 				{
 					isHPWait = true;
 				}
-				if (isRevivalAp)
-				{
-					base.stateManager.uiControlMulti.isPlayingSharedAp = true;
-					if (!isSetCallback)
-					{
-						isSetCallback = true;
-						HitEffectParams hitEffectParams = base.battleStateData.roundChangeApRevivalEffect[i];
-						base.stateManager.uiControlMulti.APEffectCallBackMulti(hitEffectParams);
-					}
-				}
 			}
 		}
-		if (base.battleStateData.currentWaveNumber > 0 || base.battleStateData.currentRoundNumber > 1)
+		for (int j = 0; j < totalCharacters.Length; j++)
 		{
-			base.stateManager.uiControlMulti.ResetHUD(totalCharacters);
-			base.stateManager.uiControl.ShowCharacterHUDFunction(totalCharacters);
-			base.stateManager.uiControlMulti.RefreshSharedAP(false);
-			for (int j = 0; j < totalCharacters.Length; j++)
-			{
-				totalCharacters[j].skillOrder = -1;
-			}
+			totalCharacters[j].skillOrder = -1;
+		}
+		bool isEndPlayApUpAnimations = false;
+		base.stateManager.uiControlMulti.PlayApUpAnimations(delegate
+		{
+			isEndPlayApUpAnimations = true;
+		});
+		while (!isEndPlayApUpAnimations)
+		{
 			yield return null;
-			base.stateManager.uiControl.RepositionCharacterHUDPosition(totalCharacters);
-			while (base.stateManager.uiControlMulti.isPlayingSharedAp)
+		}
+		if (isHPWait)
+		{
+			IEnumerator asdWait = base.stateManager.time.WaitForCertainPeriodTimeAction(1f, null, null);
+			while (asdWait.MoveNext())
 			{
 				yield return null;
 			}
-			if (isHPWait)
-			{
-				IEnumerator asdWait = base.stateManager.time.WaitForCertainPeriodTimeAction(1f, null, null);
-				while (asdWait.MoveNext())
-				{
-					yield return null;
-				}
-			}
 		}
-		IEnumerator waitRoundStartAction = base.WaitRoundStartAction();
-		while (waitRoundStartAction.MoveNext())
+		for (int k = 0; k < base.battleStateData.playerCharacters.Length; k++)
 		{
-			yield return null;
+			base.stateManager.uiControlMulti.HideHUDRecoverMulti(k);
 		}
 		yield break;
 	}

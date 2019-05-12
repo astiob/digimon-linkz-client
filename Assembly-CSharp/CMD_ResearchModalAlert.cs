@@ -18,7 +18,6 @@ public sealed class CMD_ResearchModalAlert : CMD_ModalMessageBtn2
 		{
 			'\n'
 		}).Length;
-		global::Debug.Log(num);
 		if (num >= 5)
 		{
 			int num2 = (component.fontSize + component.spacingY) * (num - 4);

@@ -10,12 +10,12 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	[SerializeField]
 	public UITexture bannerTex;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[Header("NEW スプライト")]
 	[SerializeField]
+	[Header("NEW スプライト")]
 	private UISprite spNew;
 
 	private QuestData.WorldAreaData areaData;

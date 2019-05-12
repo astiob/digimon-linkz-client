@@ -59,6 +59,8 @@ namespace MultiBattle.Tools
 
 			public int isFirstRankUp;
 
+			public MultiBattleData.BattleEndResponseData.ColosseumBattleRecord battleRecord;
+
 			public class Reward
 			{
 				public int assetCategoryId;
@@ -66,6 +68,13 @@ namespace MultiBattle.Tools
 				public int assetValue;
 
 				public int assetNum;
+			}
+
+			public class ColosseumBattleRecord
+			{
+				public int count;
+
+				public int winPercent;
 			}
 		}
 	}

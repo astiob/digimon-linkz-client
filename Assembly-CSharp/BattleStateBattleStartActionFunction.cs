@@ -56,6 +56,9 @@ public class BattleStateBattleStartActionFunction : BattleStateController
 				}
 			}
 			base.hierarchyData.stageParams.TransformStage(base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType);
+			CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
+			base.stateManager.threeDAction.ShowAliveCharactersAction(totalCharacters);
+			base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(totalCharacters);
 		}
 		if (useRoundStartAction)
 		{
@@ -65,17 +68,6 @@ public class BattleStateBattleStartActionFunction : BattleStateController
 				yield return null;
 			}
 		}
-		else if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
-		{
-			base.battleStateData.commandSelectTweenTargetCamera = base.battleStateData.bigBossCommandSelectTweenTargetCamera;
-		}
-		else
-		{
-			base.battleStateData.commandSelectTweenTargetCamera = base.battleStateData.normalCommandSelectTweenTargetCamera;
-		}
-		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
-		base.stateManager.threeDAction.ShowAliveCharactersAction(totalCharacters);
-		base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(totalCharacters);
 		yield break;
 	}
 

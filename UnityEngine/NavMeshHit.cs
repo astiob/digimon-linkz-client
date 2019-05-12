@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Result information for NavMesh queries.</para>
-	/// </summary>
 	public struct NavMeshHit
 	{
 		private Vector3 m_Position;
@@ -17,9 +14,6 @@ namespace UnityEngine
 
 		private int m_Hit;
 
-		/// <summary>
-		///   <para>Position of hit.</para>
-		/// </summary>
 		public Vector3 position
 		{
 			get
@@ -32,9 +26,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Normal at the point of hit.</para>
-		/// </summary>
 		public Vector3 normal
 		{
 			get
@@ -47,9 +38,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Distance to the point of hit.</para>
-		/// </summary>
 		public float distance
 		{
 			get
@@ -62,9 +50,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Mask specifying NavMesh area at point of hit.</para>
-		/// </summary>
 		public int mask
 		{
 			get
@@ -77,9 +62,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Flag set when hit.</para>
-		/// </summary>
 		public bool hit
 		{
 			get

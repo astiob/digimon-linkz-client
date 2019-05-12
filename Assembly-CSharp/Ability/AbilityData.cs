@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,29 +55,32 @@ namespace Ability
 					isNext = true;
 				}
 			}
-			int num3 = int.Parse(baseGrowStep);
+			int growStep = int.Parse(baseGrowStep);
+			float num3 = 1f;
 			float num4 = 1f;
-			float num5 = 1f;
-			switch (num3)
+			if (MonsterGrowStepData.IsGrowingScope(growStep))
 			{
-			case 4:
-				num4 = ConstValue.ABILITY_UPGRADE_MULRATE_GROWING;
-				num5 = (float)ConstValue.ABILITY_INHERITRATE_GROWING;
-				break;
-			case 5:
-			case 8:
-				num4 = ConstValue.ABILITY_UPGRADE_MULRATE_RIPE;
-				num5 = (float)ConstValue.ABILITY_INHERITRATE_RIPE;
-				break;
-			case 6:
-				num4 = ConstValue.ABILITY_UPGRADE_MULRATE_PERFECT;
-				num5 = (float)ConstValue.ABILITY_INHERITRATE_PERFECT;
-				break;
-			case 7:
-			case 9:
-				num4 = ConstValue.ABILITY_UPGRADE_MULRATE_ULTIMATE;
-				num5 = (float)ConstValue.ABILITY_INHERITRATE_ULTIMATE;
-				break;
+				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_GROWING;
+				num4 = (float)ConstValue.ABILITY_INHERITRATE_GROWING;
+			}
+			else if (MonsterGrowStepData.IsRipeScope(growStep))
+			{
+				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_RIPE;
+				num4 = (float)ConstValue.ABILITY_INHERITRATE_RIPE;
+			}
+			else if (MonsterGrowStepData.IsPerfectScope(growStep))
+			{
+				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_PERFECT;
+				num4 = (float)ConstValue.ABILITY_INHERITRATE_PERFECT;
+			}
+			else if (MonsterGrowStepData.IsUltimateScope(growStep))
+			{
+				num3 = ConstValue.ABILITY_UPGRADE_MULRATE_ULTIMATE;
+				num4 = (float)ConstValue.ABILITY_INHERITRATE_ULTIMATE;
+			}
+			else
+			{
+				global::Debug.LogError("============================== Ability.AbilityData.GetAbilityUpgradeRate() ありえない成長スコープです!");
 			}
 			float result;
 			if (num2 == 20)
@@ -90,12 +94,12 @@ namespace Ability
 				{
 					global::Debug.LogError("============================== Ability.AbilityData.GetAbilityUpgradeRate() Keyがない！");
 				}
-				float num6 = this.abilityUpgradeDataList[key];
-				result = num6 * num4;
+				float num5 = this.abilityUpgradeDataList[key];
+				result = num5 * num3;
 			}
 			else
 			{
-				result = num5;
+				result = num4;
 			}
 			return result;
 		}

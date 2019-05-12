@@ -93,7 +93,18 @@ namespace UnityEngine.UI
 			matEntry2.customMat.SetInt("_StencilReadMask", readMask);
 			matEntry2.customMat.SetInt("_StencilWriteMask", writeMask);
 			matEntry2.customMat.SetInt("_ColorMask", (int)colorWriteMask);
-			matEntry2.customMat.SetInt("_UseAlphaClip", (!matEntry2.useAlphaClip) ? 0 : 1);
+			if (matEntry2.customMat.HasProperty("_UseAlphaClip"))
+			{
+				matEntry2.customMat.SetInt("_UseAlphaClip", (!matEntry2.useAlphaClip) ? 0 : 1);
+			}
+			if (matEntry2.useAlphaClip)
+			{
+				matEntry2.customMat.EnableKeyword("UNITY_UI_ALPHACLIP");
+			}
+			else
+			{
+				matEntry2.customMat.DisableKeyword("UNITY_UI_ALPHACLIP");
+			}
 			StencilMaterial.m_List.Add(matEntry2);
 			return matEntry2.customMat;
 		}

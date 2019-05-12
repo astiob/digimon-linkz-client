@@ -309,8 +309,8 @@ public static class CharacterStateControlSorter
 		int num2 = 0;
 		foreach (SkillStatus skillStatus2 in x.skillStatus)
 		{
-			List<int> serberAffectEffectList = CharacterStateControlSorter.GetSerberAffectEffectList(skillStatus2);
-			foreach (int num3 in serberAffectEffectList)
+			List<int> serverAffectEffectList = CharacterStateControlSorter.GetServerAffectEffectList(skillStatus2);
+			foreach (int num3 in serverAffectEffectList)
 			{
 				if (minValue <= num3 && num3 <= maxValue)
 				{
@@ -321,8 +321,8 @@ public static class CharacterStateControlSorter
 		}
 		foreach (SkillStatus skillStatus4 in y.skillStatus)
 		{
-			List<int> serberAffectEffectList2 = CharacterStateControlSorter.GetSerberAffectEffectList(skillStatus4);
-			foreach (int num4 in serberAffectEffectList2)
+			List<int> serverAffectEffectList2 = CharacterStateControlSorter.GetServerAffectEffectList(skillStatus4);
+			foreach (int num4 in serverAffectEffectList2)
 			{
 				if (minValue <= num4 && num4 <= maxValue)
 				{
@@ -334,7 +334,7 @@ public static class CharacterStateControlSorter
 		return Mathf.Clamp(num2 - num, -1, 1);
 	}
 
-	private static List<int> GetSerberAffectEffectList(SkillStatus skillStatus)
+	private static List<int> GetServerAffectEffectList(SkillStatus skillStatus)
 	{
 		List<int> list = new List<int>();
 		foreach (AffectEffectProperty affectEffectProperty in skillStatus.affectEffect)

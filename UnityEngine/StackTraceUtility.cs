@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security;
 using System.Text;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
@@ -10,12 +11,14 @@ namespace UnityEngine
 	{
 		private static string projectFolder = string.Empty;
 
+		[RequiredByNativeCode]
 		internal static void SetProjectFolder(string folder)
 		{
 			StackTraceUtility.projectFolder = folder;
 		}
 
 		[SecuritySafeCritical]
+		[RequiredByNativeCode]
 		public static string ExtractStackTrace()
 		{
 			StackTrace stackTrace = new StackTrace(1, true);
@@ -37,6 +40,7 @@ namespace UnityEngine
 		}
 
 		[SecuritySafeCritical]
+		[RequiredByNativeCode]
 		internal static void ExtractStringFromExceptionInternal(object exceptiono, out string message, out string stackTrace)
 		{
 			if (exceptiono == null)
@@ -85,6 +89,7 @@ namespace UnityEngine
 			stackTrace = stringBuilder.ToString();
 		}
 
+		[RequiredByNativeCode]
 		internal static string PostprocessStacktrace(string oldString, bool stripEngineInternalInformation)
 		{
 			if (oldString == null)
@@ -208,7 +213,7 @@ namespace UnityEngine
 						}
 						stringBuilder.Append(")");
 						string text = frame.GetFileName();
-						if (text != null && (!(declaringType.Name == "Debug") || !(declaringType.Namespace == "UnityEngine")))
+						if (text != null && (!(declaringType.Name == "Debug") || !(declaringType.Namespace == "UnityEngine")) && (!(declaringType.Name == "Logger") || !(declaringType.Namespace == "UnityEngine")) && (!(declaringType.Name == "DebugLogHandler") || !(declaringType.Namespace == "UnityEngine")) && (!(declaringType.Name == "Assert") || !(declaringType.Namespace == "UnityEngine.Assertions")))
 						{
 							stringBuilder.Append(" (at ");
 							if (text.StartsWith(StackTraceUtility.projectFolder))

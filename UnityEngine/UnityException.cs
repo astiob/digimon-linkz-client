@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
+	[RequiredByNativeCode]
 	[Serializable]
 	public class UnityException : SystemException
 	{

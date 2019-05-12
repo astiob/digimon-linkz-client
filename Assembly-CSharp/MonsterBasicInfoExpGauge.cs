@@ -30,6 +30,13 @@ public sealed class MonsterBasicInfoExpGauge : MonsterBasicInfo
 		this.UpdateExpGauge(monsterData, expInfo);
 	}
 
+	public new void SetEggData(string eggName, string rare)
+	{
+		base.SetEggData(eggName, rare);
+		this.nextLvRestExp.text = string.Empty;
+		this.expGauge.value = 0f;
+	}
+
 	public override void ClearMonsterData()
 	{
 		base.ClearMonsterData();

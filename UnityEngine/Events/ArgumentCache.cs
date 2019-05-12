@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using UnityEngine.Serialization;
 
 namespace UnityEngine.Events
@@ -7,14 +6,8 @@ namespace UnityEngine.Events
 	[Serializable]
 	internal class ArgumentCache : ISerializationCallbackReceiver
 	{
-		private const string kVersionString = ", Version=\\d+.\\d+.\\d+.\\d+";
-
-		private const string kCultureString = ", Culture=\\w+";
-
-		private const string kTokenString = ", PublicKeyToken=\\w+";
-
-		[FormerlySerializedAs("objectArgument")]
 		[SerializeField]
+		[FormerlySerializedAs("objectArgument")]
 		private Object m_ObjectArgument;
 
 		[SerializeField]
@@ -25,12 +18,12 @@ namespace UnityEngine.Events
 		[FormerlySerializedAs("intArgument")]
 		private int m_IntArgument;
 
-		[FormerlySerializedAs("floatArgument")]
 		[SerializeField]
+		[FormerlySerializedAs("floatArgument")]
 		private float m_FloatArgument;
 
-		[FormerlySerializedAs("stringArgument")]
 		[SerializeField]
+		[FormerlySerializedAs("stringArgument")]
 		private string m_StringArgument;
 
 		[SerializeField]
@@ -111,9 +104,27 @@ namespace UnityEngine.Events
 			{
 				return;
 			}
-			this.m_ObjectArgumentAssemblyTypeName = Regex.Replace(this.m_ObjectArgumentAssemblyTypeName, ", Version=\\d+.\\d+.\\d+.\\d+", string.Empty);
-			this.m_ObjectArgumentAssemblyTypeName = Regex.Replace(this.m_ObjectArgumentAssemblyTypeName, ", Culture=\\w+", string.Empty);
-			this.m_ObjectArgumentAssemblyTypeName = Regex.Replace(this.m_ObjectArgumentAssemblyTypeName, ", PublicKeyToken=\\w+", string.Empty);
+			int num = int.MaxValue;
+			int num2 = this.m_ObjectArgumentAssemblyTypeName.IndexOf(", Version=");
+			if (num2 != -1)
+			{
+				num = Math.Min(num2, num);
+			}
+			num2 = this.m_ObjectArgumentAssemblyTypeName.IndexOf(", Culture=");
+			if (num2 != -1)
+			{
+				num = Math.Min(num2, num);
+			}
+			num2 = this.m_ObjectArgumentAssemblyTypeName.IndexOf(", PublicKeyToken=");
+			if (num2 != -1)
+			{
+				num = Math.Min(num2, num);
+			}
+			if (num == 2147483647)
+			{
+				return;
+			}
+			this.m_ObjectArgumentAssemblyTypeName = this.m_ObjectArgumentAssemblyTypeName.Substring(0, num);
 		}
 
 		public void OnBeforeSerialize()

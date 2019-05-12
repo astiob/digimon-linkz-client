@@ -452,7 +452,10 @@ public sealed class CMD_ProfileFriend : CMD_ProfileBase
 		if (FarmRoot.Instance == null)
 		{
 			GUIManager.CloseAllCommonDialog(null);
-			CMD_BattleNextChoice.GoToFarm();
+			if (CMD_PvPTop.Instance != null)
+			{
+				CMD_BattleNextChoice.GoToFarm();
+			}
 			GUIScreenHome.homeOpenCallback = delegate()
 			{
 				CMD_FriendTop.onWindowOpened = delegate()

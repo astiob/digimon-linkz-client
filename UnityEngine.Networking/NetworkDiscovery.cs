@@ -136,6 +136,11 @@ namespace UnityEngine.Networking
 			set
 			{
 				this.m_BroadcastData = value;
+				this.m_MsgOutBuffer = NetworkDiscovery.StringToBytes(this.m_BroadcastData);
+				if (this.m_UseNetworkManager && LogFilter.logWarn)
+				{
+					Debug.LogWarning("NetworkDiscovery broadcast data changed while using NetworkManager. This can prevent clients from finding the server. The format of the broadcast data must be 'NetworkManager:IPAddress:Port'.");
+				}
 			}
 		}
 
@@ -425,6 +430,19 @@ namespace UnityEngine.Networking
 			while (networkEventType != NetworkEventType.Nothing);
 		}
 
+		private void OnDestroy()
+		{
+			if (this.m_IsServer && this.m_Running && this.m_HostId != -1)
+			{
+				NetworkTransport.StopBroadcastDiscovery();
+				NetworkTransport.RemoveHost(this.m_HostId);
+			}
+			if (this.m_IsClient && this.m_Running && this.m_HostId != -1)
+			{
+				NetworkTransport.RemoveHost(this.m_HostId);
+			}
+		}
+
 		public virtual void OnReceivedBroadcast(string fromAddress, string data)
 		{
 		}
@@ -437,6 +455,11 @@ namespace UnityEngine.Networking
 			}
 			int num = 10 + this.m_OffsetX;
 			int num2 = 40 + this.m_OffsetY;
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				GUI.Box(new Rect((float)num, (float)num2, 200f, 20f), "( WebGL cannot broadcast )");
+				return;
+			}
 			if (this.m_MsgInBuffer == null)
 			{
 				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Initialize Broadcast"))

@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Provides information about the current and previous states of one sphere in a CullingGroup.</para>
-	/// </summary>
 	public struct CullingGroupEvent
 	{
 		private const byte kIsVisibleMask = 128;
@@ -17,9 +14,6 @@ namespace UnityEngine
 
 		private byte m_ThisState;
 
-		/// <summary>
-		///   <para>The index of the sphere that has changed.</para>
-		/// </summary>
 		public int index
 		{
 			get
@@ -28,9 +22,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Was the sphere considered visible by the most recent culling pass?</para>
-		/// </summary>
 		public bool isVisible
 		{
 			get
@@ -39,9 +30,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Was the sphere visible before the most recent culling pass?</para>
-		/// </summary>
 		public bool wasVisible
 		{
 			get
@@ -50,9 +38,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Did this sphere change from being invisible to being visible in the most recent culling pass?</para>
-		/// </summary>
 		public bool hasBecomeVisible
 		{
 			get
@@ -61,9 +46,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Did this sphere change from being visible to being invisible in the most recent culling pass?</para>
-		/// </summary>
 		public bool hasBecomeInvisible
 		{
 			get
@@ -72,9 +54,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The current distance band index of the sphere, after the most recent culling pass.</para>
-		/// </summary>
 		public int currentDistance
 		{
 			get
@@ -83,9 +62,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The distance band index of the sphere before the most recent culling pass.</para>
-		/// </summary>
 		public int previousDistance
 		{
 			get

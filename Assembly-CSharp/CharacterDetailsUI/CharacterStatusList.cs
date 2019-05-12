@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -346,7 +347,7 @@ namespace CharacterDetailsUI
 		public void SetMonsterStatus(MonsterData monsterData)
 		{
 			this.chipBaseSelect.SetSelectedCharChg(monsterData);
-			if (!monsterData.IsVersionUp())
+			if (!MonsterStatusData.IsVersionUp(monsterData.GetMonsterMaster().Simple.rare))
 			{
 				this.skillInfo.SetSkill(monsterData);
 			}
@@ -361,7 +362,7 @@ namespace CharacterDetailsUI
 			this.changeValueList.SetValues(monsterData);
 			this.resistanceList.SetValues(monsterData);
 			this.medalList.SetValues(monsterData.userMonster);
-			this.viewExtraSkillPage = monsterData.IsVersionUp();
+			this.viewExtraSkillPage = MonsterStatusData.IsVersionUp(monsterData.GetMonsterMaster().Simple.rare);
 		}
 
 		public void SetEggStatus(MonsterData monsterData)
@@ -381,7 +382,7 @@ namespace CharacterDetailsUI
 					}
 				}
 			}
-			if (!monsterData.IsVersionUp())
+			if (!MonsterStatusData.IsVersionUp(monsterData.GetMonsterMaster().Simple.rare))
 			{
 				this.skillInfo.ClearSkill();
 			}
@@ -433,79 +434,78 @@ namespace CharacterDetailsUI
 			return result;
 		}
 
-		public GameObject GetTranceEffectObject(MonsterData oldMonsterData, MonsterData newMonsterData)
+		public GameObject GetTranceEffectObject(GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM oldResistance, string newResistanceIds)
 		{
-			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = oldMonsterData.AddResistanceFromMultipleTranceData();
-			List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> userUnitResistanceList = newMonsterData.GetUserUnitResistanceList();
+			List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceListByJson = MonsterResistanceData.GetUniqueResistanceListByJson(newResistanceIds);
 			this.particleGameObject = null;
-			for (int i = 0; i < userUnitResistanceList.Count; i++)
+			for (int i = 0; i < uniqueResistanceListByJson.Count; i++)
 			{
-				if ("1" == userUnitResistanceList[i].none && "1" != monsterResistanceM.none)
+				if ("1" == uniqueResistanceListByJson[i].none && "1" != oldResistance.none)
 				{
 					this.particleGameObject = this.resistanceNone;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].fire && "1" != monsterResistanceM.fire)
+				if ("1" == uniqueResistanceListByJson[i].fire && "1" != oldResistance.fire)
 				{
 					this.particleGameObject = this.resistanceFire;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].water && "1" != monsterResistanceM.water)
+				if ("1" == uniqueResistanceListByJson[i].water && "1" != oldResistance.water)
 				{
 					this.particleGameObject = this.resistanceWater;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].thunder && "1" != monsterResistanceM.thunder)
+				if ("1" == uniqueResistanceListByJson[i].thunder && "1" != oldResistance.thunder)
 				{
 					this.particleGameObject = this.resistanceThunder;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].nature && "1" != monsterResistanceM.nature)
+				if ("1" == uniqueResistanceListByJson[i].nature && "1" != oldResistance.nature)
 				{
 					this.particleGameObject = this.resistanceNature;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].dark && "1" != monsterResistanceM.dark)
+				if ("1" == uniqueResistanceListByJson[i].dark && "1" != oldResistance.dark)
 				{
 					this.particleGameObject = this.resistanceDark;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].light && "1" != monsterResistanceM.light)
+				if ("1" == uniqueResistanceListByJson[i].light && "1" != oldResistance.light)
 				{
 					this.particleGameObject = this.resistanceLight;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].stun && "1" != monsterResistanceM.stun)
+				if ("1" == uniqueResistanceListByJson[i].stun && "1" != oldResistance.stun)
 				{
 					this.particleGameObject = this.resistanceStun;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].skillLock && "1" != monsterResistanceM.skillLock)
+				if ("1" == uniqueResistanceListByJson[i].skillLock && "1" != oldResistance.skillLock)
 				{
 					this.particleGameObject = this.resistanceSkillLock;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].sleep && "1" != monsterResistanceM.sleep)
+				if ("1" == uniqueResistanceListByJson[i].sleep && "1" != oldResistance.sleep)
 				{
 					this.particleGameObject = this.resistanceSleep;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].paralysis && "1" != monsterResistanceM.paralysis)
+				if ("1" == uniqueResistanceListByJson[i].paralysis && "1" != oldResistance.paralysis)
 				{
 					this.particleGameObject = this.resistanceParalysis;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].confusion && "1" != monsterResistanceM.confusion)
+				if ("1" == uniqueResistanceListByJson[i].confusion && "1" != oldResistance.confusion)
 				{
 					this.particleGameObject = this.resistanceConfusion;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].poison && "1" != monsterResistanceM.poison)
+				if ("1" == uniqueResistanceListByJson[i].poison && "1" != oldResistance.poison)
 				{
 					this.particleGameObject = this.resistancePoison;
 					break;
 				}
-				if ("1" == userUnitResistanceList[i].death && "1" != monsterResistanceM.death)
+				if ("1" == uniqueResistanceListByJson[i].death && "1" != oldResistance.death)
 				{
 					this.particleGameObject = this.resistanceDeath;
 					break;
@@ -549,35 +549,26 @@ namespace CharacterDetailsUI
 		{
 			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId);
 			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
-			MonsterData monsterData = new MonsterData();
 			DataMng.ExperienceInfo experienceInfo = DataMng.Instance().GetExperienceInfo(0);
-			monsterData.userMonster = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList(userMonster);
-			monsterData.userMonster.monsterId = monsterId;
-			monsterData.userMonster.level = "1";
-			monsterData.userMonster.ex = "0";
-			monsterData.userMonster.levelEx = "0";
-			monsterData.userMonster.nextLevelEx = experienceInfo.expLevNext.ToString();
+			MonsterData monsterData = new MonsterData(new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList(userMonster)
+			{
+				monsterId = monsterId,
+				level = "1",
+				ex = "0",
+				levelEx = "0",
+				nextLevelEx = experienceInfo.expLevNext.ToString()
+			});
 			if (!string.IsNullOrEmpty(monsterGroupMasterByMonsterGroupId.leaderSkillId) && "0" != monsterGroupMasterByMonsterGroupId.leaderSkillId)
 			{
 				monsterData.userMonster.leaderSkillId = monsterGroupMasterByMonsterGroupId.leaderSkillId;
+				monsterData.InitSkillInfo();
 			}
-			monsterData.monsterM = monsterMasterByMonsterId;
-			monsterData.monsterMG = monsterGroupMasterByMonsterGroupId;
-			monsterData.InitSkillInfo();
-			monsterData.InitGrowStepInfo();
-			monsterData.InitResistanceInfo();
-			monsterData.InitTribeInfo();
-			monsterData.userMonster.hp = string.Empty;
-			monsterData.userMonster.attack = string.Empty;
-			monsterData.userMonster.defense = string.Empty;
-			monsterData.userMonster.spAttack = string.Empty;
-			monsterData.userMonster.spDefense = string.Empty;
-			monsterData.userMonster.speed = string.Empty;
-			monsterData.UpdateNowParam(1);
-			monsterData.userMonster.luck = userMonster.luck;
-			monsterData.InitChipInfo();
+			StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterId, "1");
+			statusValue.luck = int.Parse(userMonster.luck);
+			monsterData.SetStatus(statusValue);
 			CMD_CharacterDetailed.DataChg = monsterData;
-			bool active = this.AnyMatchStrongResistance(monsterData.resistanceM, userMonster.tranceResistance, userMonster.tranceStatusAilment);
+			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(monsterData.monsterM.resistanceId);
+			bool active = this.AnyMatchStrongResistance(resistanceMaster, userMonster.tranceResistance, userMonster.tranceStatusAilment);
 			this.nextMonsterResistanceAlert.gameObject.SetActive(active);
 		}
 

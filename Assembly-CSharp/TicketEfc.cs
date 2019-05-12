@@ -12,16 +12,16 @@ public class TicketEfc : MonoBehaviour
 	[Header("チケット TEX")]
 	public UITexture ngTICKET;
 
-	[Header("パーティクル OBJ")]
 	[SerializeField]
+	[Header("パーティクル OBJ")]
 	public GameObject goPARTICLE;
 
 	[SerializeField]
 	[Header("NEW スプライト")]
 	public UISprite spNew;
 
-	[SerializeField]
 	[Header("枚数ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_TICKET_NUM;
 
 	private int playFrameCT;

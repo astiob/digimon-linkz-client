@@ -15,8 +15,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	private UIWidget _pvpBattleEnemyPartyUi;
 
-	[SerializeField]
 	[Header("シード同期中のもの")]
+	[SerializeField]
 	private UIWidget _pvpBattleSyncWaitUi;
 
 	[SerializeField]

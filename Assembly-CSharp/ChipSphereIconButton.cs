@@ -9,20 +9,20 @@ public sealed class ChipSphereIconButton : GUICollider
 
 	private ChipSphereIconButton.Parameter myParameter;
 
-	[Header("枠のスプライト")]
 	[SerializeField]
+	[Header("枠のスプライト")]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("LOOKのオブジェクト")]
+	[SerializeField]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("Chargesのオブジェクト")]
+	[SerializeField]
 	private GameObject chargesGO;
 
-	[Header("選択中(Chip_choosing)")]
 	[SerializeField]
+	[Header("選択中(Chip_choosing)")]
 	private GameObject choosingGO;
 
 	[Header("チップの名前/拡張説明")]
@@ -37,16 +37,16 @@ public sealed class ChipSphereIconButton : GUICollider
 	[Header("チップのテクスチャ/枠")]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("アイテムのスプライト")]
+	[SerializeField]
 	private UISprite itemSprite;
 
-	[Header("LOOKのスプライト")]
 	[SerializeField]
+	[Header("LOOKのスプライト")]
 	private UISprite lookSprite;
 
-	[SerializeField]
 	[Header("チップランクのスプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	public CMD_ChipSphere cmdChipSphere { private get; set; }
@@ -222,10 +222,15 @@ public sealed class ChipSphereIconButton : GUICollider
 
 		public int userChipId;
 
+		public bool IsEmpty()
+		{
+			return 0 == this.userChipId;
+		}
+
 		public GameWebAPI.RespDataMA_ChipM.Chip GetChipMainData()
 		{
-			GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipDataByUserChipId = ChipDataMng.GetUserChipDataByUserChipId(this.userChipId);
-			return ChipDataMng.GetChipMainData(userChipDataByUserChipId);
+			GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(this.userChipId);
+			return ChipDataMng.GetChipMainData(userChip);
 		}
 
 		public string ConvertChipGroupId()

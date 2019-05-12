@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 
 namespace System.Diagnostics
 {
 	/// <summary>Provides a strongly typed collection of <see cref="T:System.Diagnostics.ProcessModule" /> objects.</summary>
 	/// <filterpriority>2</filterpriority>
-	public class ProcessModuleCollection : ProcessModuleCollectionBase
+	public class ProcessModuleCollection : ReadOnlyCollectionBase
 	{
 		/// <summary>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessModuleCollection" /> class, with no associated <see cref="T:System.Diagnostics.ProcessModule" /> instances.</summary>
 		protected ProcessModuleCollection()
@@ -22,11 +23,11 @@ namespace System.Diagnostics
 		/// <returns>A <see cref="T:System.Diagnostics.ProcessModule" /> that indexes the modules in the collection </returns>
 		/// <param name="index">The zero-based index value of the module in the collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new ProcessModule this[int index]
+		public ProcessModule this[int index]
 		{
 			get
 			{
-				return base.InnerList[index];
+				return (ProcessModule)base.InnerList[index];
 			}
 		}
 
@@ -34,7 +35,7 @@ namespace System.Diagnostics
 		/// <returns>true if the module exists in the collection; otherwise, false.</returns>
 		/// <param name="module">A <see cref="T:System.Diagnostics.ProcessModule" /> instance that indicates the module to find in this collection. </param>
 		/// <filterpriority>2</filterpriority>
-		public new bool Contains(ProcessModule module)
+		public bool Contains(ProcessModule module)
 		{
 			return base.InnerList.Contains(module);
 		}
@@ -43,7 +44,7 @@ namespace System.Diagnostics
 		/// <param name="array">An array of <see cref="T:System.Diagnostics.ProcessModule" /> instances to add to the collection. </param>
 		/// <param name="index">The location at which to add the new instances. </param>
 		/// <filterpriority>2</filterpriority>
-		public new void CopyTo(ProcessModule[] array, int index)
+		public void CopyTo(ProcessModule[] array, int index)
 		{
 			base.InnerList.CopyTo(array, index);
 		}
@@ -52,7 +53,7 @@ namespace System.Diagnostics
 		/// <returns>The zero-based index that defines the location of the module within the <see cref="T:System.Diagnostics.ProcessModuleCollection" />.</returns>
 		/// <param name="module">The <see cref="T:System.Diagnostics.ProcessModule" /> whose index is retrieved. </param>
 		/// <filterpriority>2</filterpriority>
-		public new int IndexOf(ProcessModule module)
+		public int IndexOf(ProcessModule module)
 		{
 			return base.InnerList.IndexOf(module);
 		}

@@ -64,7 +64,7 @@ public class GUIListMultiRecruitFriendParts : GUIListPartBS
 		MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.friendData.monsterData.monsterId);
 		if (monsterData != null)
 		{
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.goMonsterIcon.transform.localScale, this.goMonsterIcon.transform.localPosition, this.goMonsterIcon.transform.parent, true, false);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.goMonsterIcon.transform.localScale, this.goMonsterIcon.transform.localPosition, this.goMonsterIcon.transform.parent, true, false);
 			if (guimonsterIcon.transform.parent != null)
 			{
 				UIWidget component = guimonsterIcon.transform.parent.gameObject.GetComponent<UIWidget>();

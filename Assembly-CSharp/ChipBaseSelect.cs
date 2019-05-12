@@ -18,24 +18,24 @@ public sealed class ChipBaseSelect : MonoBehaviour
 	[Header("PartsStatusChipのオブジェクト")]
 	private GameObject partsStatusChipGO;
 
-	[SerializeField]
 	[Header("チップの□スロット")]
+	[SerializeField]
 	private UISprite[] chipSlots;
 
-	[SerializeField]
 	[Header("チップのセル")]
+	[SerializeField]
 	private BaseSelectChipCell[] chipCells;
 
 	[SerializeField]
 	[Header("チップのラベル")]
 	private UILabel chipLabel;
 
-	[SerializeField]
 	[Header("チップがないメッセージ")]
+	[SerializeField]
 	private UILabel noChipLabel;
 
-	[SerializeField]
 	[Header("分数ラベル(パーティ編成限定)")]
+	[SerializeField]
 	private UILabel fractionLabel;
 
 	private int myMaxChipSlot;
@@ -116,11 +116,10 @@ public sealed class ChipBaseSelect : MonoBehaviour
 
 	public void SetSelectedCharChg(MonsterData monsterData)
 	{
-		GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo userMonsterSlotInfo = monsterData.userMonsterSlotInfo;
+		GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage slotStatus = monsterData.GetSlotStatus();
 		int num = 0;
-		if (userMonsterSlotInfo == null)
+		if (slotStatus == null)
 		{
-			global::Debug.Log("userMonsterSlotInfo == null");
 			this.myMaxChipSlot = 0;
 			this.SetNumber(0, this.myMaxChipSlot);
 			if (this.chipCells != null)
@@ -128,34 +127,32 @@ public sealed class ChipBaseSelect : MonoBehaviour
 				for (int i = 0; i < this.chipCells.Length; i++)
 				{
 					NGUITools.SetActiveSelf(this.chipCells[i].gameObject, false);
-					global::Debug.Log("ikikioki");
 				}
 			}
 			this.SetNoChipMessage(true);
 		}
 		else
 		{
-			GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage manage = userMonsterSlotInfo.manage;
-			this.myMaxChipSlot = manage.maxSlotNum + manage.maxExtraSlotNum;
+			this.myMaxChipSlot = slotStatus.maxSlotNum + slotStatus.maxExtraSlotNum;
 			if (this.myMaxChipSlot != 5 && this.myMaxChipSlot != 10)
 			{
 				global::Debug.LogErrorFormat("スロット数がありえない. myMaxChipSlot:{0} [{1}, {2}]", new object[]
 				{
 					this.myMaxChipSlot,
-					manage.maxSlotNum,
-					manage.maxExtraSlotNum
+					slotStatus.maxSlotNum,
+					slotStatus.maxExtraSlotNum
 				});
 				this.myMaxChipSlot = 10;
 			}
-			if (userMonsterSlotInfo.equip != null)
+			if (monsterData.GetSlotEquip() != null)
 			{
-				num = userMonsterSlotInfo.equip.Length;
+				num = monsterData.GetSlotEquip().Length;
 			}
 			this.SetNoChipMessage(num == 0);
-			this.SetupChipCells(userMonsterSlotInfo.equip);
+			this.SetupChipCells(monsterData.GetSlotEquip());
 			this.SetupChipSlotsAndCells();
 			this.SetNumber(num, this.myMaxChipSlot);
-			this.SetupChipIcons(num, userMonsterSlotInfo);
+			this.SetupChipIcons(num, monsterData.GetSlotStatus());
 		}
 	}
 
@@ -224,29 +221,24 @@ public sealed class ChipBaseSelect : MonoBehaviour
 		}
 	}
 
-	private void SetupChipIcons(int attachedLength, GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.SlotInfo userMonsterSlotInfo)
+	private void SetupChipIcons(int attachedLength, GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage slotStatus)
 	{
 		int num = 0;
-		if (userMonsterSlotInfo == null)
+		if (slotStatus == null)
 		{
-			global::Debug.Log("DataChg.userMonsterSlotInfo == null");
-		}
-		else if (userMonsterSlotInfo.manage == null)
-		{
-			global::Debug.Log("DataChg.userMonsterSlotInfo.manage == null");
+			global::Debug.Log("DataChg.GetSlotStatus() == null");
 		}
 		else
 		{
-			GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Manage manage = userMonsterSlotInfo.manage;
-			num = manage.slotNum + manage.extraSlotNum - attachedLength;
+			num = slotStatus.slotNum + slotStatus.extraSlotNum - attachedLength;
 			global::Debug.LogFormat("openedSlotNum:{0}", new object[]
 			{
 				num
 			});
 			global::Debug.LogFormat("空きスロット数:{0}, 課金空きスロット数:{1}", new object[]
 			{
-				manage.slotNum,
-				manage.extraSlotNum
+				slotStatus.slotNum,
+				slotStatus.extraSlotNum
 			});
 			global::Debug.LogFormat("attachedLength:{0}", new object[]
 			{

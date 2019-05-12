@@ -4,25 +4,25 @@ using UnityEngine;
 
 namespace EvolutionRouteMap
 {
-	public class ChangeModelViewerAnimationEvent : StateMachineBehaviour
+	public sealed class ChangeModelViewerAnimationEvent : StateMachineBehaviour
 	{
 		private UI_CharacterModelViewer modelViewer;
 
 		private BoxCollider returnButtonCollider;
 
-		private MonsterData modelMonsterData;
+		private string monsterGroupId;
 
 		private void OnFinishShowAnimation()
 		{
-			if (!MonsterData.IsEgg(this.modelMonsterData.monsterMG.growStep))
+			if (!string.IsNullOrEmpty(this.monsterGroupId))
 			{
-				this.modelViewer.LoadCharacterModel(this.modelMonsterData, Vector3.zero, 170f);
+				this.modelViewer.LoadMonsterModel(this.monsterGroupId, Vector3.zero, 170f);
 				this.modelViewer.SetCharacterCameraDistance();
 			}
 			else
 			{
 				Vector3 characterPosition = new Vector3(0f, 0.1f, 0f);
-				this.modelViewer.LoadCharacterModel(this.modelMonsterData, characterPosition, 0f);
+				this.modelViewer.LoadEggModel(this.monsterGroupId, characterPosition, 0f);
 			}
 			this.modelViewer.EnableTouchEvent(true);
 			this.returnButtonCollider.enabled = true;
@@ -57,9 +57,24 @@ namespace EvolutionRouteMap
 			this.returnButtonCollider = collider;
 		}
 
-		public void SetMonsterData(MonsterData monsterData)
+		public void SetMonsterData(string monsterGroupId)
 		{
-			this.modelMonsterData = monsterData;
+			this.monsterGroupId = monsterGroupId;
+		}
+
+		public void SetEggData(string monsterEvolutionRouteId)
+		{
+			GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM respDataMA_MonsterEvolutionRouteM = MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM;
+			this.monsterGroupId = string.Empty;
+			for (int i = 0; i < respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM.Length; i++)
+			{
+				GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM.MonsterEvolutionRouteM monsterEvolutionRouteM = respDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM[i];
+				if (string.IsNullOrEmpty(monsterEvolutionRouteId) || monsterEvolutionRouteM.monsterEvolutionRouteId == monsterEvolutionRouteId)
+				{
+					this.monsterGroupId = monsterEvolutionRouteM.eggMonsterId;
+					break;
+				}
+			}
 		}
 	}
 }

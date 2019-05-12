@@ -279,7 +279,7 @@ public class CutSceneMain : MonoBehaviour
 			CutSceneMain.csAwakeningScene.target = CutSceneMain.cs_umidList_bk0[0];
 			CutSceneMain.csAwakeningScene.EndCallBack = CutSceneMain.cs_endSceneCallBack;
 			break;
-		case "Cutscenes/chip_gacha":
+		case "Cutscenes/AssetBundle/ChipGasha/chip_gacha":
 			CutSceneMain.csChipGashaController = CutSceneMain.goCutScene.GetComponent<ChipGashaController>();
 			CutSceneMain.csChipGashaController.UserAssetList = CutSceneMain.UserAssetList;
 			CutSceneMain.csChipGashaController.EndCallBack = CutSceneMain.cs_endSceneCallBack;

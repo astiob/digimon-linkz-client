@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Describes a contact point where the collision occurs.</para>
-	/// </summary>
+	[UsedByNativeCode]
 	public struct ContactPoint
 	{
 		internal Vector3 m_Point;
@@ -16,9 +15,6 @@ namespace UnityEngine
 
 		internal int m_OtherColliderInstanceID;
 
-		/// <summary>
-		///   <para>The point of contact.</para>
-		/// </summary>
 		public Vector3 point
 		{
 			get
@@ -27,9 +23,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Normal of the contact point.</para>
-		/// </summary>
 		public Vector3 normal
 		{
 			get
@@ -38,9 +31,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The first collider in contact at the point.</para>
-		/// </summary>
 		public Collider thisCollider
 		{
 			get
@@ -49,9 +39,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The other collider in contact at the point.</para>
-		/// </summary>
 		public Collider otherCollider
 		{
 			get

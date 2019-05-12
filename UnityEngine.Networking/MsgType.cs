@@ -36,6 +36,8 @@ namespace UnityEngine.Networking
 
 		public const short LocalChildTransform = 16;
 
+		public const short PeerClientAuthority = 17;
+
 		internal const short UserMessage = 0;
 
 		internal const short HLAPIMsg = 28;
@@ -78,7 +80,9 @@ namespace UnityEngine.Networking
 
 		public const short LobbyReturnToLobby = 46;
 
-		public const short Highest = 46;
+		public const short ReconnectPlayer = 47;
+
+		public const short Highest = 47;
 
 		internal static string[] msgLabels = new string[]
 		{
@@ -99,7 +103,7 @@ namespace UnityEngine.Networking
 			"CRC",
 			"LocalClientAuthority",
 			"LocalChildTransform",
-			string.Empty,
+			"PeerClientAuthority",
 			string.Empty,
 			string.Empty,
 			string.Empty,
@@ -128,12 +132,13 @@ namespace UnityEngine.Networking
 			"LobbyReadyToBegin",
 			"LobbySceneLoaded",
 			"LobbyAddPlayerFailed",
-			"LobbyReturnToLobby"
+			"LobbyReturnToLobby",
+			"ReconnectPlayer"
 		};
 
 		public static string MsgTypeToString(short value)
 		{
-			if (value < 0 || value > 46)
+			if (value < 0 || value > 47)
 			{
 				return string.Empty;
 			}

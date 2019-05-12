@@ -137,9 +137,7 @@ public sealed class FarmDigimonManager : MonoBehaviour
 		for (int i = 0; i < ids.Length; i++)
 		{
 			this.farmDigimons[i].DeleteDigimon();
-			MonsterData monsterData = new MonsterData();
-			monsterData.monsterM = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(ids[i].ToString());
-			monsterData.monsterMG = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterData.monsterM.monsterGroupId);
+			MonsterData monsterData = new MonsterData(ids[i].ToString());
 			yield return base.StartCoroutine(this.farmDigimons[i].CreateDigimon(monsterData));
 		}
 		this.lastMonstreIDs = new string[]

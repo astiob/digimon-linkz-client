@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Information about clip been played and blended by the Animator.</para>
-	/// </summary>
+	[UsedByNativeCode]
 	public struct AnimatorClipInfo
 	{
 		private int m_ClipInstanceID;
 
 		private float m_Weight;
 
-		/// <summary>
-		///   <para>Returns the animation clip played by the Animator.</para>
-		/// </summary>
 		public AnimationClip clip
 		{
 			get
@@ -23,9 +19,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Returns the blending weight used by the Animator to blend this clip.</para>
-		/// </summary>
 		public float weight
 		{
 			get

@@ -145,7 +145,12 @@ public class StandardSkillConverter
 			result = StandardSkillConverter.ConvertToApDrain(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.HpBorderlineDamage:
+		case StandardSkillConverter.AffectEffect.HpBorderlineSpDamage:
 			result = StandardSkillConverter.ConvertToHpBorderlineDamage(subSkillDetails.ToArray());
+			break;
+		case StandardSkillConverter.AffectEffect.DefenseThroughDamage:
+		case StandardSkillConverter.AffectEffect.SpDefenseThroughDamage:
+			result = StandardSkillConverter.ConvertToDefenseThroughDamage(subSkillDetails.ToArray());
 			break;
 		default:
 			UnityEngine.Debug.LogError("Not AffectEffect " + affectEffect);
@@ -592,6 +597,7 @@ public class StandardSkillConverter
 			attribute = skillDetails[0].attribute.ToInt32(),
 			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
 			effect1 = skillDetails[0].motionCount.ToInt32(),
+			effect2 = skillDetails[0].effect2.ToInt32(),
 			effect3 = skillDetails[0].effect.ToInt32()
 		};
 	}
@@ -624,7 +630,8 @@ public class StandardSkillConverter
 			targetType = skillDetails[0].targetType.ToInt32(),
 			attribute = skillDetails[0].attribute.ToInt32(),
 			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
-			effect1 = skillDetails[0].motionCount.ToInt32()
+			effect1 = skillDetails[0].motionCount.ToInt32(),
+			effect2 = skillDetails[0].effect2.ToInt32()
 		};
 	}
 
@@ -656,7 +663,8 @@ public class StandardSkillConverter
 			targetType = skillDetails[0].targetType.ToInt32(),
 			attribute = skillDetails[0].attribute.ToInt32(),
 			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
-			effect1 = skillDetails[0].motionCount.ToInt32()
+			effect1 = skillDetails[0].motionCount.ToInt32(),
+			effect2 = skillDetails[0].effect2.ToInt32()
 		};
 	}
 
@@ -790,6 +798,25 @@ public class StandardSkillConverter
 		};
 	}
 
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToDefenseThroughDamage(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		{
+			skillId = skillDetails[0].skillId,
+			subId = skillDetails[0].subId,
+			effectType = skillDetails[0].effectType.ToInt32(),
+			hitRate = skillDetails[0].hitRate.ToInt32(),
+			target = skillDetails[0].target.ToInt32(),
+			targetType = skillDetails[0].targetType.ToInt32(),
+			attribute = skillDetails[0].attribute.ToInt32(),
+			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
+			effect1 = skillDetails[0].motionCount.ToInt32(),
+			effect2 = skillDetails[0].effect.ToInt32(),
+			effect4 = skillDetails[0].subRate.ToInt32(),
+			effect5 = skillDetails[0].effect2.ToInt32()
+		};
+	}
+
 	public enum AffectEffect
 	{
 		PhysicalDamage = 1,
@@ -854,6 +881,9 @@ public class StandardSkillConverter
 		CountEvasion,
 		ReferenceTargetHpRate,
 		ApDrain,
-		HpBorderlineDamage
+		HpBorderlineDamage,
+		HpBorderlineSpDamage,
+		DefenseThroughDamage,
+		SpDefenseThroughDamage
 	}
 }

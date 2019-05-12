@@ -89,10 +89,7 @@ public class SubStatePlayerCharacterAndSkillSelectFunction : BattleStateControll
 				base.stateManager.cameraControl.PlayTweenCameraMotion(base.battleStateData.commandSelectTweenTargetCamera, null);
 				base.stateManager.cameraControl.SetCameraLengthAction(base.battleStateData.commandSelectTweenTargetCamera);
 			}
-			else
-			{
-				this.UpdateTarget();
-			}
+			this.UpdateTarget();
 			if (base.battleStateData.isShowMenuWindow || base.battleStateData.isShowRevivalWindow)
 			{
 				base.stateManager.callAction.HideMonsterDescription();

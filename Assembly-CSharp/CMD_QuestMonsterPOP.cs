@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using UnityEngine;
 
 public class CMD_QuestMonsterPOP : CMD
@@ -21,9 +22,9 @@ public class CMD_QuestMonsterPOP : CMD
 	public void SetBossDetails(MonsterData monsterData, int resistanceId)
 	{
 		this.digimonNameLabel.text = monsterData.monsterMG.monsterName;
-		this.tribeLabel.text = monsterData.tribeM.monsterTribeName;
-		this.growStepLabel.text = monsterData.growStepM.monsterGrowStepName;
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = monsterData.SerchResistanceById(resistanceId.ToString());
+		this.tribeLabel.text = MonsterTribeData.GetTribeName(monsterData.monsterMG.tribe);
+		this.growStepLabel.text = MonsterGrowStepData.GetGrowStepName(monsterData.monsterMG.growStep);
+		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = MonsterData.SerchResistanceById(resistanceId.ToString());
 		this.monsterResistanceList.SetValues(monsterResistanceM);
 		this.monsterInvalidResistanceList.SetInvalid(monsterResistanceM);
 	}
@@ -33,8 +34,8 @@ public class CMD_QuestMonsterPOP : CMD
 		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterMasterByMonsterId = MonsterDataMng.Instance().GetMonsterMasterByMonsterId(monsterId.ToString());
 		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterMasterByMonsterId.monsterGroupId);
 		this.digimonNameLabel.text = monsterGroupMasterByMonsterGroupId.monsterName;
-		this.tribeLabel.text = CommonSentenceData.GetTribe(monsterGroupMasterByMonsterGroupId.tribe);
-		this.growStepLabel.text = CommonSentenceData.GetGrade(monsterGroupMasterByMonsterGroupId.growStep);
+		this.tribeLabel.text = MonsterTribeData.GetTribeName(monsterGroupMasterByMonsterGroupId.tribe);
+		this.growStepLabel.text = MonsterGrowStepData.GetGrowStepName(monsterGroupMasterByMonsterGroupId.growStep);
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM monsterResistanceM = null;
 		string b = resistanceId.ToString();
 		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM[] monsterResistanceM2 = MasterDataMng.Instance().RespDataMA_MonsterResistanceM.monsterResistanceM;

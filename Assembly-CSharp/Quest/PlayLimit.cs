@@ -5,6 +5,14 @@ namespace Quest
 {
 	public class PlayLimit : ClassSingleton<PlayLimit>
 	{
+		private GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dngTicket_cache;
+
+		private int dngTicket_UseCount_cache;
+
+		private GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dngPlayLimit_cache;
+
+		private int dngPlayLimit_UseCount_cache;
+
 		public void RecoverPlayLimit(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dng, Action<GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons> actCallBackRcv)
 		{
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
@@ -55,7 +63,6 @@ namespace Quest
 			if (playLimit != null)
 			{
 				int num = int.Parse(playLimit.restCount);
-				num -= usedCT;
 				if (num <= 0)
 				{
 					if (playLimit.recoveryFlg == "1")
@@ -141,9 +148,65 @@ namespace Quest
 					}
 					return false;
 				}
-				playLimit.restCount = num.ToString();
+				if (usedCT > 0)
+				{
+					this.SetPlayLimitNumCont(dng, usedCT);
+				}
 			}
 			return true;
+		}
+
+		public void ClearTicketNumCont()
+		{
+			this.dngTicket_cache = null;
+		}
+
+		public void SetTicketNumCont(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dng, int useCount)
+		{
+			this.dngTicket_cache = dng;
+			this.dngTicket_UseCount_cache = useCount;
+		}
+
+		public void UseTicketNumCont()
+		{
+			if (this.dngTicket_cache != null)
+			{
+				int num = int.Parse(this.dngTicket_cache.dungeonTicketNum);
+				num -= this.dngTicket_UseCount_cache;
+				if (num < 0)
+				{
+					num = 0;
+				}
+				this.dngTicket_cache.dungeonTicketNum = num.ToString();
+				this.dngTicket_cache = null;
+			}
+		}
+
+		public void ClearPlayLimitNumCont()
+		{
+			this.dngPlayLimit_cache = null;
+		}
+
+		public void SetPlayLimitNumCont(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dng, int useCount)
+		{
+			this.dngPlayLimit_cache = dng;
+			this.dngPlayLimit_UseCount_cache = useCount;
+		}
+
+		public void UsePlayLimitNumCont()
+		{
+			if (this.dngPlayLimit_cache != null && this.dngPlayLimit_cache.playLimit != null)
+			{
+				GameWebAPI.RespDataWD_GetDungeonInfo.PlayLimit playLimit = this.dngPlayLimit_cache.playLimit;
+				int num = int.Parse(playLimit.restCount);
+				num -= this.dngPlayLimit_UseCount_cache;
+				if (num < 0)
+				{
+					num = 0;
+				}
+				playLimit.restCount = num.ToString();
+				this.dngPlayLimit_cache = null;
+			}
 		}
 	}
 }

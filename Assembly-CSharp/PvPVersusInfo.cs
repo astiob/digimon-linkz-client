@@ -21,8 +21,8 @@ public sealed class PvPVersusInfo : MonoBehaviour
 	[SerializeField]
 	private PvPVersusInfo.UserDataUI opponentDataUI;
 
-	[SerializeField]
 	[Header("背景のDepth値")]
+	[SerializeField]
 	private int backgroundDepth;
 
 	private float pausedTime;

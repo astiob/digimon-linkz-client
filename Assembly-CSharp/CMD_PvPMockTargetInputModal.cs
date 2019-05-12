@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Colosseum.DeckUI;
+using Master;
 using MultiBattle.Tools;
 using Quest;
 using System;
@@ -100,8 +101,7 @@ public class CMD_PvPMockTargetInputModal : CMD
 				global::Debug.Log("対戦相手UserCode: " + this.pvpMockTargetInput.value);
 				ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode = this.pvpMockTargetInput.value;
 				ClassSingleton<QuestData>.Instance.SelectDungeon = null;
-				CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
-				GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
+				CMD_ColosseumDeck.Create(CMD_ColosseumDeck.Mode.FROM_COLOSSEUM_TOP);
 				return;
 			}
 			break;

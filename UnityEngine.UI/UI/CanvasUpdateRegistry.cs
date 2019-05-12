@@ -167,12 +167,7 @@ namespace UnityEngine.UI
 
 		private bool InternalRegisterCanvasElementForLayoutRebuild(ICanvasElement element)
 		{
-			if (this.m_LayoutRebuildQueue.Contains(element))
-			{
-				return false;
-			}
-			this.m_LayoutRebuildQueue.Add(element);
-			return true;
+			return !this.m_LayoutRebuildQueue.Contains(element) && this.m_LayoutRebuildQueue.AddUnique(element);
 		}
 
 		public static void RegisterCanvasElementForGraphicRebuild(ICanvasElement element)
@@ -192,12 +187,7 @@ namespace UnityEngine.UI
 				Debug.LogError(string.Format("Trying to add {0} for graphic rebuild while we are already inside a graphic rebuild loop. This is not supported.", element));
 				return false;
 			}
-			if (this.m_GraphicRebuildQueue.Contains(element))
-			{
-				return false;
-			}
-			this.m_GraphicRebuildQueue.Add(element);
-			return true;
+			return this.m_GraphicRebuildQueue.AddUnique(element);
 		}
 
 		public static void UnRegisterCanvasElementForRebuild(ICanvasElement element)

@@ -1,4 +1,5 @@
-﻿using Master;
+﻿using Colosseum.DeckUI;
+using Master;
 using MultiBattle.Tools;
 using PvP;
 using Quest;
@@ -49,10 +50,19 @@ public class CMD_PvPTop : CMD
 	private UILabel nowScore;
 
 	[SerializeField]
-	private UILabel aggregateLabel;
+	private GameObject staminaDispGroup;
 
 	[SerializeField]
+	private GameObject rankingDispGroup;
+
+	[SerializeField]
+	private GameObject bpDispGroup;
+
+	[SerializeField]
+	private UILabel aggregateLabel;
+
 	[Header("全国バトルボタン")]
+	[SerializeField]
 	private GUICollider nationwideCollider;
 
 	[SerializeField]
@@ -119,8 +129,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel lbRewardPercentage;
 
-	[Header("スケジュール")]
 	[SerializeField]
+	[Header("スケジュール")]
 	private GameObject goTimeSchedule;
 
 	[Header("以下,○回目ラベル(昇順)")]
@@ -135,16 +145,16 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel[] fromMarkLabelArray = new UILabel[0];
 
-	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
 	[SerializeField]
 	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
-	[Header("以下,ヘルプの画像パス(表示順)")]
 	[SerializeField]
+	[Header("以下,ヘルプの画像パス(表示順)")]
 	private List<string> helpImagePathList = new List<string>();
 
 	[Header("以下,UIテキスト")]
@@ -176,6 +186,8 @@ public class CMD_PvPTop : CMD
 	private UITexture bpIcon;
 
 	private GameWebAPI.ColosseumUserStatus colosseumUserStatus;
+
+	private GameWebAPI.RespData_ColosseumUserStatusLogic.ColosseumBattleRecord colosseumBattleRecord;
 
 	private int freeCostBattleCount;
 
@@ -340,6 +352,7 @@ public class CMD_PvPTop : CMD
 		GameWebAPI.RespData_ColosseumUserStatusLogic responseStatus = null;
 		task.Add(PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, delegate(GameWebAPI.RespData_ColosseumUserStatusLogic res)
 		{
+			PvPUtility.SetPvPTopNoticeCode(res);
 			responseStatus = res;
 		}));
 		yield return base.StartCoroutine(task.Run(null, null, null));
@@ -384,6 +397,7 @@ public class CMD_PvPTop : CMD
 		this.CreateRankDataList();
 		this.InitializeUI();
 		isSuccess = false;
+		GameWebAPI.RespDataCL_GetColosseumReward responseReward = null;
 		GameWebAPI.RequestCL_GetColosseumReward requestCL_GetColosseumReward = new GameWebAPI.RequestCL_GetColosseumReward();
 		requestCL_GetColosseumReward.SetSendData = delegate(GameWebAPI.SendDataCL_GetColosseumReward param)
 		{
@@ -391,7 +405,7 @@ public class CMD_PvPTop : CMD
 		};
 		requestCL_GetColosseumReward.OnReceived = delegate(GameWebAPI.RespDataCL_GetColosseumReward resData)
 		{
-			GameWebAPI.RespDataCL_GetColosseumReward responseReward = resData;
+			responseReward = resData;
 		};
 		GameWebAPI.RequestCL_GetColosseumReward requestReward = requestCL_GetColosseumReward;
 		yield return base.StartCoroutine(requestReward.RunOneTime(delegate()
@@ -399,7 +413,10 @@ public class CMD_PvPTop : CMD
 			if (responseReward != null && responseReward.ExistReward())
 			{
 				DataMng.Instance().RespData_ColosseumReward = null;
-				this.ShowColosseumReward(responseReward.rewardList);
+				this.ShowColosseumReward(responseReward, delegate(int value)
+				{
+					this.ShowRankDownDialog();
+				});
 			}
 			isSuccess = true;
 		}, null, null));
@@ -407,6 +424,10 @@ public class CMD_PvPTop : CMD
 		{
 			onInitialized(false);
 			yield break;
+		}
+		if (responseReward == null || !responseReward.ExistReward())
+		{
+			this.ShowRankDownDialog();
 		}
 		onInitialized(true);
 		yield break;
@@ -436,6 +457,7 @@ public class CMD_PvPTop : CMD
 			task = PvPUtility.RequestColosseumBattleEnd(result, GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleMode.NORMAL_BATTLE);
 			task.Add(PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, delegate(GameWebAPI.RespData_ColosseumUserStatusLogic res)
 			{
+				PvPUtility.SetPvPTopNoticeCode(res);
 				GameWebAPI.RespData_ColosseumUserStatusLogic status = res;
 			}));
 			yield return base.StartCoroutine(task.Run(null, null, null));
@@ -481,6 +503,7 @@ public class CMD_PvPTop : CMD
 		if (colosseumStatus != null && colosseumStatus.userStatus != null)
 		{
 			this.colosseumUserStatus = colosseumStatus.userStatus;
+			this.colosseumBattleRecord = colosseumStatus.battleRecord;
 			this.colosseumUserStatus.nickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
 			this.freeCostBattleCount = colosseumStatus.freeCostBattleCount;
 			this.lbColosseumBattleRanking.text = ((colosseumStatus.ranking != 0) ? string.Format(StringMaster.GetString("ColosseumRankLabel"), colosseumStatus.ranking.ToString()) : StringMaster.GetString("ColosseumRankOutside"));
@@ -765,13 +788,16 @@ public class CMD_PvPTop : CMD
 		{
 			this.nextRankLabel.gameObject.SetActive(false);
 			this.nowScore.gameObject.SetActive(false);
+			this.staminaDispGroup.SetActive(false);
+			this.rankingDispGroup.SetActive(false);
+			this.bpDispGroup.SetActive(false);
 			this.aggregateLabel.gameObject.SetActive(true);
 		}
 		else
 		{
-			if (this.rankDataList[0] == this.currentRankData)
+			if (this.colosseumBattleRecord != null)
 			{
-				this.nextRankLabel.text = StringMaster.GetString("ColosseumRankMax");
+				this.nextRankLabel.text = string.Format(StringMaster.GetString("ColosseumRankAGroup"), this.colosseumBattleRecord.count, this.colosseumBattleRecord.winPercent);
 			}
 			else
 			{
@@ -794,9 +820,10 @@ public class CMD_PvPTop : CMD
 			});
 		}
 		this.rankDataList.Sort((GUIListPartsRank.RankData a, GUIListPartsRank.RankData b) => b.lowerPoint - a.lowerPoint);
+		int lowerPoint = this.rankDataList[0].lowerPoint;
 		for (int j = 0; j < this.rankDataList.Count; j++)
 		{
-			this.rankDataList[j].isHideMaximum = (j == 0);
+			this.rankDataList[j].isHideMaximum = (lowerPoint == this.rankDataList[j].lowerPoint);
 		}
 	}
 
@@ -910,9 +937,18 @@ public class CMD_PvPTop : CMD
 		{
 			if (this.displayCommentDataList[this.displayCommentDataListIndex].tipsId == "45")
 			{
-				if (this.rankDataList[0] == this.currentRankData)
+				if (this.currentRankData.id >= ConstValue.PVP_MAX_RANK)
 				{
 					this.commentLabel.text = StringMaster.GetString("ColosseumTips");
+				}
+				else if (this.colosseumBattleRecord != null)
+				{
+					this.displayCommentDataListIndex++;
+					if (this.displayCommentDataListIndex == this.displayCommentDataList.Count)
+					{
+						this.displayCommentDataListIndex = 0;
+					}
+					this.commentLabel.text = this.displayCommentDataList[this.displayCommentDataListIndex].message;
 				}
 				else
 				{
@@ -1045,8 +1081,7 @@ public class CMD_PvPTop : CMD
 		{
 			ClassSingleton<QuestData>.Instance.SelectDungeon = this.GetWorldDungeonMaster();
 			ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode = "0";
-			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.PVP;
-			GUIMain.ShowCommonDialog(null, "CMD_PartyEdit");
+			CMD_ColosseumDeck.Create(CMD_ColosseumDeck.Mode.FROM_COLOSSEUM_TOP);
 		}
 	}
 
@@ -1104,11 +1139,33 @@ public class CMD_PvPTop : CMD
 		}
 	}
 
-	private void ShowColosseumReward(GameWebAPI.ColosseumReward[] RewardList)
+	private void ShowColosseumReward(GameWebAPI.RespDataCL_GetColosseumReward colosseumReward, Action<int> action)
 	{
-		CMD_ColosseumBonus cmd_ColosseumBonus = GUIMain.ShowCommonDialog(null, "CMD_ColosseumBonus") as CMD_ColosseumBonus;
-		cmd_ColosseumBonus.RewardList = RewardList;
-		cmd_ColosseumBonus.SetReward();
+		int num = colosseumReward.maxRewardListKey();
+		int num2 = colosseumReward.maxInterimRewardListKey();
+		CMD_ColosseumBonus cmd_ColosseumBonus = GUIMain.ShowCommonDialog(action, "CMD_ColosseumBonus") as CMD_ColosseumBonus;
+		if (num >= num2)
+		{
+			cmd_ColosseumBonus.RewardList = colosseumReward.rewardList[num.ToString()];
+			cmd_ColosseumBonus.SetReward(StringMaster.GetString("ColosseumRankRewardTitle"));
+		}
+		else
+		{
+			cmd_ColosseumBonus.RewardList = colosseumReward.interimRewardList[num2.ToString()];
+			cmd_ColosseumBonus.SetReward(StringMaster.GetString("ColosseumInterimRankRewardName"));
+		}
+	}
+
+	private void ShowRankDownDialog()
+	{
+		string text = PvPUtility.PopPvPTopNoticeCode();
+		if (!string.IsNullOrEmpty(text))
+		{
+			string @string = StringMaster.GetString(string.Format("ColosseumNotice-{0}", text));
+			CMD_ModalMessageNoBtn cmd_ModalMessageNoBtn = GUIMain.ShowCommonDialog(null, "CMD_ModalMessageNoBtn") as CMD_ModalMessageNoBtn;
+			cmd_ModalMessageNoBtn.SetParam(@string);
+			cmd_ModalMessageNoBtn.AdjustSize();
+		}
 	}
 
 	public void OnTouchedNationwide()

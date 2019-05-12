@@ -71,6 +71,14 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		public bool isConnected
+		{
+			get
+			{
+				return this.hostId != -1;
+			}
+		}
+
 		internal Dictionary<short, NetworkConnection.PacketStat> packetStats
 		{
 			get
@@ -87,6 +95,10 @@ namespace UnityEngine.Networking
 			this.connectionId = networkConnectionId;
 			int channelCount = hostTopology.DefaultConfig.ChannelCount;
 			int packetSize = (int)hostTopology.DefaultConfig.PacketSize;
+			if (hostTopology.DefaultConfig.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4)
+			{
+				throw new ArgumentOutOfRangeException("Platform specific protocols are not supported on this platform");
+			}
 			this.m_Channels = new ChannelBuffer[channelCount];
 			for (int i = 0; i < channelCount; i++)
 			{
@@ -164,6 +176,11 @@ namespace UnityEngine.Networking
 		{
 			this.m_MessageHandlers = handlers;
 			this.m_MessageHandlersDict = handlers.GetHandlers();
+		}
+
+		public bool CheckHandler(short msgType)
+		{
+			return this.m_MessageHandlersDict.ContainsKey(msgType);
 		}
 
 		public bool InvokeHandlerNoData(short msgType)

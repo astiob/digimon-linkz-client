@@ -135,16 +135,6 @@ public class BattleStatePvPRoundStartToRoundEnd : BattleStateRoundStartToRoundEn
 
 	protected override IEnumerator TurnEndFunction()
 	{
-		if (base.stateManager.pvpFunction.isRetireDialog)
-		{
-			IEnumerator waitDialog = this.WaitRetireDialog();
-			while (waitDialog.MoveNext())
-			{
-				object obj = waitDialog.Current;
-				yield return obj;
-			}
-			base.stateManager.roundFunction.SetResult(false, true, false);
-		}
 		yield break;
 	}
 
@@ -202,15 +192,6 @@ public class BattleStatePvPRoundStartToRoundEnd : BattleStateRoundStartToRoundEn
 				break;
 			}
 		}
-	}
-
-	private IEnumerator WaitRetireDialog()
-	{
-		while (base.stateManager.pvpFunction.isRetireDialog)
-		{
-			yield return null;
-		}
-		yield break;
 	}
 
 	private bool DecideWinner(bool isDiedCheck = false)

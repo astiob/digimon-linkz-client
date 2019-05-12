@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine.Advertisements
 {
+	[RequiredByNativeCode]
 	internal sealed class UnityAdsInternal
 	{
 		public static event UnityAdsDelegate onCampaignsAvailable;
@@ -16,30 +18,6 @@ namespace UnityEngine.Advertisements
 		public static event UnityAdsDelegate<string, bool> onVideoCompleted;
 
 		public static event UnityAdsDelegate onVideoStarted;
-
-		[WrapperlessIcall]
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern void RegisterNative();
-
-		[WrapperlessIcall]
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern void Init(string gameId, bool testModeEnabled, bool debugModeEnabled, string unityVersion);
-
-		[WrapperlessIcall]
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern bool Show(string zoneId, string rewardItemKey, string options);
-
-		[WrapperlessIcall]
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern bool CanShowAds(string zoneId);
-
-		[WrapperlessIcall]
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern void SetLogLevel(int logLevel);
-
-		[WrapperlessIcall]
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		public static extern void SetCampaignDataURL(string url);
 
 		public static void RemoveAllEventHandlers()
 		{
@@ -104,5 +82,29 @@ namespace UnityEngine.Advertisements
 				unityAdsDelegate();
 			}
 		}
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern void RegisterNative();
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern void Init(string gameId, bool testModeEnabled, bool debugModeEnabled, string unityVersion);
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern bool Show(string zoneId, string rewardItemKey, string options);
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern bool CanShowAds(string zoneId);
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern void SetLogLevel(int logLevel);
+
+		[WrapperlessIcall]
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		public static extern void SetCampaignDataURL(string url);
 	}
 }

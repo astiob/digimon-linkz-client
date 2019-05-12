@@ -4,6 +4,8 @@ namespace UnityEngine.Networking
 {
 	public class NetworkMessage
 	{
+		public const int MaxMessageSize = 65535;
+
 		public short msgType;
 
 		public NetworkConnection conn;

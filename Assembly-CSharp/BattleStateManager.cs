@@ -6,16 +6,18 @@ using UnityEngine;
 [RequireComponent(typeof(BattleInputFunctionBase))]
 public sealed class BattleStateManager : MonoBehaviour
 {
+	public BattleAdventureSceneManager battleAdventureSceneManager;
+
 	[Header("シングルUI")]
 	[SerializeField]
 	private BattleUIComponentsSingle battleUIComponentsSingle;
 
-	[Header("マルチUI")]
 	[SerializeField]
+	[Header("マルチUI")]
 	private BattleUIComponentsMulti battleUIComponentsMulti;
 
-	[SerializeField]
 	[Header("PvPUI")]
+	[SerializeField]
 	private BattleUIComponentsPvP battleUIComponentsPvP;
 
 	private static BattleMode _battleMode;

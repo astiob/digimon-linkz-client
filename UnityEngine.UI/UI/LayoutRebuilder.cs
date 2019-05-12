@@ -148,49 +148,46 @@ namespace UnityEngine.UI
 			{
 				return;
 			}
+			List<Component> list = ListPool<Component>.Get();
 			RectTransform rectTransform = rect;
 			for (;;)
 			{
 				RectTransform rectTransform2 = rectTransform.parent as RectTransform;
-				if (!LayoutRebuilder.ValidLayoutGroup(rectTransform2))
+				if (!LayoutRebuilder.ValidLayoutGroup(rectTransform2, list))
 				{
 					break;
 				}
 				rectTransform = rectTransform2;
 			}
-			if (rectTransform == rect && !LayoutRebuilder.ValidController(rectTransform))
+			if (rectTransform == rect && !LayoutRebuilder.ValidController(rectTransform, list))
 			{
+				ListPool<Component>.Release(list);
 				return;
 			}
 			LayoutRebuilder.MarkLayoutRootForRebuild(rectTransform);
+			ListPool<Component>.Release(list);
 		}
 
-		private static bool ValidLayoutGroup(RectTransform parent)
+		private static bool ValidLayoutGroup(RectTransform parent, List<Component> comps)
 		{
 			if (parent == null)
 			{
 				return false;
 			}
-			List<Component> list = ListPool<Component>.Get();
-			parent.GetComponents(typeof(ILayoutGroup), list);
-			LayoutRebuilder.StripDisabledBehavioursFromList(list);
-			bool result = list.Count > 0;
-			ListPool<Component>.Release(list);
-			return result;
+			parent.GetComponents(typeof(ILayoutGroup), comps);
+			LayoutRebuilder.StripDisabledBehavioursFromList(comps);
+			return comps.Count > 0;
 		}
 
-		private static bool ValidController(RectTransform layoutRoot)
+		private static bool ValidController(RectTransform layoutRoot, List<Component> comps)
 		{
 			if (layoutRoot == null)
 			{
 				return false;
 			}
-			List<Component> list = ListPool<Component>.Get();
-			layoutRoot.GetComponents(typeof(ILayoutController), list);
-			LayoutRebuilder.StripDisabledBehavioursFromList(list);
-			bool result = list.Count > 0;
-			ListPool<Component>.Release(list);
-			return result;
+			layoutRoot.GetComponents(typeof(ILayoutController), comps);
+			LayoutRebuilder.StripDisabledBehavioursFromList(comps);
+			return comps.Count > 0;
 		}
 
 		private static void MarkLayoutRootForRebuild(RectTransform controller)

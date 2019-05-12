@@ -2,9 +2,6 @@
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>The JointMotor is used to motorize a joint.</para>
-	/// </summary>
 	public struct JointMotor
 	{
 		private float m_TargetVelocity;
@@ -13,9 +10,6 @@ namespace UnityEngine
 
 		private int m_FreeSpin;
 
-		/// <summary>
-		///   <para>The motor will apply a force up to force to achieve targetVelocity.</para>
-		/// </summary>
 		public float targetVelocity
 		{
 			get
@@ -28,9 +22,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The motor will apply a force.</para>
-		/// </summary>
 		public float force
 		{
 			get
@@ -43,9 +34,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>If freeSpin is enabled the motor will only accelerate but never slow down.</para>
-		/// </summary>
 		public bool freeSpin
 		{
 			get

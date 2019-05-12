@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
@@ -43,8 +44,8 @@ public class GashaController : MonoBehaviour
 
 	private GameObject obj_mons;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	private GameObject obj_cam;
 
 	[SerializeField]
@@ -55,12 +56,12 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_cam2;
 
-	[SerializeField]
 	[Header("UIカメラ")]
+	[SerializeField]
 	private GameObject obj_uicam;
 
-	[SerializeField]
 	[Header("カメラスイッチャー")]
+	[SerializeField]
 	private GameObject obj_cs;
 
 	[SerializeField]
@@ -79,8 +80,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_mcpar3;
 
-	[Header("オーラ")]
 	[SerializeField]
+	[Header("オーラ")]
 	private GameObject obj_aura;
 
 	[SerializeField]
@@ -134,8 +135,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_r3;
 
-	[SerializeField]
 	[Header("成熟期")]
+	[SerializeField]
 	private GameObject obj_sr1;
 
 	[SerializeField]
@@ -164,8 +165,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_lr3;
 
-	[SerializeField]
 	[Header("アーマー体")]
+	[SerializeField]
 	private GameObject obj_sr1b;
 
 	[SerializeField]
@@ -180,6 +181,28 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_sr5b;
 
+	[Header("ハイブリッド体")]
+	[SerializeField]
+	private GameObject obj_HB1;
+
+	[SerializeField]
+	private GameObject obj_HB2;
+
+	[SerializeField]
+	private GameObject obj_HB3;
+
+	[SerializeField]
+	private GameObject obj_HB4;
+
+	[SerializeField]
+	private GameObject obj_HB5;
+
+	[SerializeField]
+	private GameObject obj_HB6;
+
+	[SerializeField]
+	private GameObject obj_HB7;
+
 	[SerializeField]
 	[Header("激レア")]
 	private GameObject obj_sr1_r;
@@ -190,8 +213,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_sr3_r;
 
-	[Header("超激レア")]
 	[SerializeField]
+	[Header("超激レア")]
 	private GameObject obj_ssr1_r;
 
 	[SerializeField]
@@ -216,8 +239,8 @@ public class GashaController : MonoBehaviour
 	[SerializeField]
 	private GameObject obj_lr4_r;
 
-	[SerializeField]
 	[Header("キラキラ")]
+	[SerializeField]
 	private GameObject obj_newfx10;
 
 	[SerializeField]
@@ -561,6 +584,13 @@ public class GashaController : MonoBehaviour
 		this.obj_lr3_r.GetComponent<UITexture>().alpha = 0f;
 		this.obj_lr2_r.GetComponent<UITexture>().alpha = 0f;
 		this.obj_lr1_r.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB1.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB2.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB3.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB4.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB5.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB6.GetComponent<UITexture>().alpha = 0f;
+		this.obj_HB7.GetComponent<UITexture>().alpha = 0f;
 		this.ps_thunder.Clear();
 		this.ps_mf.Clear();
 		this.ps_mcpar2.Stop();
@@ -575,7 +605,7 @@ public class GashaController : MonoBehaviour
 			fx2_v = new Vector3(0f, 16f, 0f);
 		}
 		this.obj_electron.transform.position = fx2_v;
-		if (this.growStep[i] == 6 || this.growStep[i] == 7 || this.growStep[i] == 9)
+		if (MonsterGrowStepData.IsGrowStepHigh(this.growStep[i]))
 		{
 			this.obj_star.SetActive(true);
 		}
@@ -590,12 +620,12 @@ public class GashaController : MonoBehaviour
 			this.cam_cam2.fieldOfView = 12f;
 		}
 		this.obj_cam2.transform.position = new Vector3(0f, 1f, -2f);
-		if (this.growStep[i] == 5 || this.growStep[i] == 8)
+		if (MonsterGrowStepData.IsRipeScope(this.growStep[i]))
 		{
 			this.cam_cam.backgroundColor = this.c_red;
 			this.cam_cam2.backgroundColor = this.c_red;
 		}
-		else if (this.growStep[i] == 6 || this.growStep[i] == 7 || this.growStep[i] == 9)
+		else if (MonsterGrowStepData.IsGrowStepHigh(this.growStep[i]))
 		{
 			this.cam_cam.backgroundColor = this.c_black;
 			this.cam_cam2.backgroundColor = this.c_black;
@@ -690,11 +720,11 @@ public class GashaController : MonoBehaviour
 			this.efxSource2.volume = SoundMng.Instance().VolumeSE * 0.1f;
 		}
 		this.efxSource2.Play();
-		if (this.growStep[i] == 5 || this.growStep[i] == 8)
+		if (MonsterGrowStepData.IsRipeScope(this.growStep[i]))
 		{
 			this.ps_aura2.Play();
 		}
-		else if (this.growStep[i] == 6 || this.growStep[i] == 7)
+		else if (MonsterGrowStepData.IsGrowStepHigh(this.growStep[i]))
 		{
 			this.ps_aura3.Play();
 		}
@@ -715,7 +745,7 @@ public class GashaController : MonoBehaviour
 	{
 		this.cam_cam2.fieldOfView = 30f;
 		this.obj_cam2.transform.position = new Vector3(2f, 1f, 0f);
-		if (this.growStep[i] == 7 || this.growStep[i] == 9)
+		if (MonsterGrowStepData.IsUltimateScope(this.growStep[i]))
 		{
 			this.cam_cam.backgroundColor = this.c_gold;
 			this.cam_cam2.backgroundColor = this.c_gold;
@@ -724,7 +754,7 @@ public class GashaController : MonoBehaviour
 		this.cp_mons.PlayIdleAnimation();
 		this.cs_switcher.targetName = "mons" + i;
 		yield return new WaitForSeconds(1f);
-		if (this.growStep[i] == 5 || this.growStep[i] == 8)
+		if (MonsterGrowStepData.IsRipeScope(this.growStep[i]))
 		{
 			if (!this.debugMode)
 			{
@@ -745,7 +775,7 @@ public class GashaController : MonoBehaviour
 				yield break;
 			}
 		}
-		if (this.growStep[i] == 6)
+		if (MonsterGrowStepData.IsPerfectScope(this.growStep[i]))
 		{
 			if (!this.debugMode)
 			{
@@ -768,7 +798,7 @@ public class GashaController : MonoBehaviour
 				yield break;
 			}
 		}
-		if (this.growStep[i] == 7 || this.growStep[i] == 9)
+		if (MonsterGrowStepData.IsUltimateScope(this.growStep[i]))
 		{
 			if (!this.debugMode)
 			{
@@ -807,7 +837,7 @@ public class GashaController : MonoBehaviour
 		this.obj_lr3_r.GetComponent<UITexture>().alpha = 0f;
 		this.obj_lr2_r.GetComponent<UITexture>().alpha = 0f;
 		this.obj_lr1_r.GetComponent<UITexture>().alpha = 0f;
-		if (this.growStep[i] == 2 || this.growStep[i] == 3)
+		if (MonsterGrowStepData.IsChildScope(this.growStep[i]))
 		{
 			this.obj_n1.GetComponent<UITexture>().alpha = 1f;
 			yield return new WaitForSeconds(0.02f);
@@ -815,7 +845,7 @@ public class GashaController : MonoBehaviour
 			yield return new WaitForSeconds(0.02f);
 			this.obj_n3.GetComponent<UITexture>().alpha = 1f;
 			yield return new WaitForSeconds(0.02f);
-			if (this.growStep[i] == 2)
+			if (MonsterGrowStepData.IsChild1Scope(this.growStep[i]))
 			{
 				this.obj_n4.GetComponent<UITexture>().alpha = 1f;
 			}
@@ -824,7 +854,7 @@ public class GashaController : MonoBehaviour
 				this.obj_n5.GetComponent<UITexture>().alpha = 1f;
 			}
 		}
-		else if (this.growStep[i] == 4)
+		else if (MonsterGrowStepData.IsGrowingGroup(this.growStep[i]))
 		{
 			this.obj_r1.GetComponent<UITexture>().alpha = 1f;
 			yield return new WaitForSeconds(0.02f);
@@ -832,7 +862,7 @@ public class GashaController : MonoBehaviour
 			yield return new WaitForSeconds(0.02f);
 			this.obj_r3.GetComponent<UITexture>().alpha = 1f;
 		}
-		else if (this.growStep[i] == 5)
+		else if (MonsterGrowStepData.IsRipeGroup(this.growStep[i]))
 		{
 			this.obj_sr1.GetComponent<UITexture>().alpha = 1f;
 			iTween.ScaleTo(this.obj_sr1, iTween.Hash(new object[]
@@ -919,7 +949,7 @@ public class GashaController : MonoBehaviour
 				0.2f
 			}));
 		}
-		else if (this.growStep[i] == 6)
+		else if (MonsterGrowStepData.IsPerfectGroup(this.growStep[i]))
 		{
 			this.obj_ssr1.GetComponent<UITexture>().alpha = 1f;
 			iTween.ScaleTo(this.obj_ssr1, iTween.Hash(new object[]
@@ -1006,7 +1036,7 @@ public class GashaController : MonoBehaviour
 				0.2f
 			}));
 		}
-		else if (this.growStep[i] == 7)
+		else if (MonsterGrowStepData.IsUltimateGroup(this.growStep[i]))
 		{
 			this.obj_lr1.GetComponent<UITexture>().alpha = 1f;
 			iTween.ScaleTo(this.obj_lr1, iTween.Hash(new object[]
@@ -1093,7 +1123,7 @@ public class GashaController : MonoBehaviour
 				0.2f
 			}));
 		}
-		else if (this.growStep[i] == 8 || this.growStep[i] == 9)
+		else if (MonsterGrowStepData.IsArmorGroup(this.growStep[i]))
 		{
 			this.obj_sr1b.GetComponent<UITexture>().alpha = 1f;
 			iTween.ScaleTo(this.obj_sr1b, iTween.Hash(new object[]
@@ -1223,6 +1253,205 @@ public class GashaController : MonoBehaviour
 				0.2f
 			}));
 			iTween.ScaleTo(this.obj_sr5b, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+		}
+		else if (MonsterGrowStepData.IsHybridGroup(this.growStep[i]))
+		{
+			this.obj_HB1.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB1, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB1, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+			this.ps_newfx10.Play();
+			yield return new WaitForSeconds(0.45f);
+			this.obj_HB2.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB2, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB2, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+			yield return new WaitForSeconds(0.45f);
+			this.obj_HB3.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB3, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB3, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+			yield return new WaitForSeconds(0.45f);
+			this.obj_HB4.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB4, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB4, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+			yield return new WaitForSeconds(0.45f);
+			this.obj_HB5.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB5, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB5, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+			yield return new WaitForSeconds(0.45f);
+			this.obj_HB6.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB6, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB6, iTween.Hash(new object[]
+			{
+				"x",
+				1,
+				"y",
+				1,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0f,
+				"delay",
+				0.2f
+			}));
+			yield return new WaitForSeconds(0.45f);
+			this.obj_HB7.GetComponent<UITexture>().alpha = 1f;
+			iTween.ScaleTo(this.obj_HB7, iTween.Hash(new object[]
+			{
+				"x",
+				0.5,
+				"y",
+				0.5,
+				"easetype",
+				"easeOutQuart",
+				"time",
+				0.1f,
+				"delay",
+				0.2f
+			}));
+			iTween.ScaleTo(this.obj_HB7, iTween.Hash(new object[]
 			{
 				"x",
 				1,

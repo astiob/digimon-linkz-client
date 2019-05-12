@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,29 +72,35 @@ public class CMD_ModalSort : CMD
 	[SerializeField]
 	private UILabel lbSelectNum;
 
-	private static bool isSort = true;
-
-	private MonsterDataMng.SORT_TYPE nowSortType_bak;
-
-	private MonsterDataMng.SORT_DIR nowSortDir_bak;
-
-	private MonsterDataMng.SELECTION_TYPE nowSelectionType_bak;
-
 	[SerializeField]
 	private UILabel ngTX_SORT;
 
-	public bool IsEvolvePage { get; set; }
+	private MonsterSortType sortType;
+
+	private MonsterSortOrder sortOrder;
+
+	private MonsterDetailedFilterType filterType;
+
+	private Action onChangeSetting;
+
+	private List<MonsterData> targetMonsterList;
+
+	private static bool isSort = true;
 
 	protected override void Awake()
 	{
-		this.nowSortType_bak = MonsterDataMng.Instance().NowSortType;
-		this.nowSortDir_bak = MonsterDataMng.Instance().NowSortDir;
-		this.nowSelectionType_bak = MonsterDataMng.Instance().NowSelectionType;
+		this.sortType = CMD_BaseSelect.IconSortType;
+		this.sortOrder = CMD_BaseSelect.IconSortOrder;
+		this.filterType = CMD_BaseSelect.IconFilterType;
 		base.Awake();
+	}
+
+	public void Initialize()
+	{
 		this.SetupSortBtn();
 		this.SetupSelectBtn();
 		this.SetupUtilBtn();
-		this.FlipShouKouBtn(MonsterDataMng.SORT_DIR.NONE);
+		this.FlipShouKouBtn();
 		this.FlipSelectBtn(false);
 		this.SetSortName();
 		this.SetSelectNum();
@@ -192,7 +199,7 @@ public class CMD_ModalSort : CMD
 				break;
 			}
 		}
-		this.SetupSortBtnCol(MonsterDataMng.Instance().NowSortType);
+		this.SetupSortBtnCol(this.sortType);
 	}
 
 	private void SetupSelectBtn()
@@ -217,17 +224,17 @@ public class CMD_ModalSort : CMD
 			case 0:
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.LEADER_SKILL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.LEADER_SKILL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-2);
+						this.filterType &= (MonsterDetailedFilterType)(-2);
 					}
 					else
 					{
-						MonsterDataMng.Instance().NowSelectionType |= MonsterDataMng.SELECTION_TYPE.LEADER_SKILL;
+						this.filterType |= MonsterDetailedFilterType.LEADER_SKILL;
 					}
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.NO_LEADER_SKILL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.NO_LEADER_SKILL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-17);
+						this.filterType &= (MonsterDetailedFilterType)(-17);
 					}
 					this.SetSelectNum();
 					this.DispSelectBtnList();
@@ -236,13 +243,13 @@ public class CMD_ModalSort : CMD
 			case 1:
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.ACTIVE_SUCCESS) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.ACTIVE_SUCCESS) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-3);
+						this.filterType &= (MonsterDetailedFilterType)(-3);
 					}
 					else
 					{
-						MonsterDataMng.Instance().NowSelectionType |= MonsterDataMng.SELECTION_TYPE.ACTIVE_SUCCESS;
+						this.filterType |= MonsterDetailedFilterType.ACTIVE_SUCCESS;
 					}
 					this.SetSelectNum();
 					this.DispSelectBtnList();
@@ -251,13 +258,13 @@ public class CMD_ModalSort : CMD
 			case 2:
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.PASSIV_SUCCESS) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.PASSIV_SUCCESS) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-5);
+						this.filterType &= (MonsterDetailedFilterType)(-5);
 					}
 					else
 					{
-						MonsterDataMng.Instance().NowSelectionType |= MonsterDataMng.SELECTION_TYPE.PASSIV_SUCCESS;
+						this.filterType |= MonsterDetailedFilterType.PASSIV_SUCCESS;
 					}
 					this.SetSelectNum();
 					this.DispSelectBtnList();
@@ -266,17 +273,17 @@ public class CMD_ModalSort : CMD
 			case 3:
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.MEDAL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.MEDAL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-9);
+						this.filterType &= (MonsterDetailedFilterType)(-9);
 					}
 					else
 					{
-						MonsterDataMng.Instance().NowSelectionType |= MonsterDataMng.SELECTION_TYPE.MEDAL;
+						this.filterType |= MonsterDetailedFilterType.MEDAL;
 					}
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.NO_MEDAL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.NO_MEDAL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-33);
+						this.filterType &= (MonsterDetailedFilterType)(-33);
 					}
 					this.SetSelectNum();
 					this.DispSelectBtnList();
@@ -285,17 +292,17 @@ public class CMD_ModalSort : CMD
 			case 4:
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.NO_LEADER_SKILL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.NO_LEADER_SKILL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-17);
+						this.filterType &= (MonsterDetailedFilterType)(-17);
 					}
 					else
 					{
-						MonsterDataMng.Instance().NowSelectionType |= MonsterDataMng.SELECTION_TYPE.NO_LEADER_SKILL;
+						this.filterType |= MonsterDetailedFilterType.NO_LEADER_SKILL;
 					}
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.LEADER_SKILL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.LEADER_SKILL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-2);
+						this.filterType &= (MonsterDetailedFilterType)(-2);
 					}
 					this.SetSelectNum();
 					this.DispSelectBtnList();
@@ -304,17 +311,17 @@ public class CMD_ModalSort : CMD
 			case 5:
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.NO_MEDAL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.NO_MEDAL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-33);
+						this.filterType &= (MonsterDetailedFilterType)(-33);
 					}
 					else
 					{
-						MonsterDataMng.Instance().NowSelectionType |= MonsterDataMng.SELECTION_TYPE.NO_MEDAL;
+						this.filterType |= MonsterDetailedFilterType.NO_MEDAL;
 					}
-					if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.MEDAL) > MonsterDataMng.SELECTION_TYPE.NONE)
+					if ((this.filterType & MonsterDetailedFilterType.MEDAL) > MonsterDetailedFilterType.NONE)
 					{
-						MonsterDataMng.Instance().NowSelectionType &= (MonsterDataMng.SELECTION_TYPE)(-9);
+						this.filterType &= (MonsterDetailedFilterType)(-9);
 					}
 					this.SetSelectNum();
 					this.DispSelectBtnList();
@@ -324,7 +331,7 @@ public class CMD_ModalSort : CMD
 		}
 		this.clBtnSelectReset.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 		{
-			MonsterDataMng.Instance().NowSelectionType = MonsterDataMng.SELECTION_TYPE.NONE;
+			this.filterType = MonsterDetailedFilterType.NONE;
 			this.SetSelectNum();
 			this.DispSelectBtnList();
 		};
@@ -335,11 +342,17 @@ public class CMD_ModalSort : CMD
 	{
 		this.clBtnChange.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 		{
-			List<MonsterData> list = MonsterDataMng.Instance().GetSelectMonsterDataList();
-			list = MonsterDataMng.Instance().SortMDList(list, this.IsEvolvePage);
-			if (GUISelectPanelMonsterIcon.instance != null)
+			bool flag2 = false;
+			if (CMD_BaseSelect.IconSortType != this.sortType || CMD_BaseSelect.IconSortOrder != this.sortOrder || CMD_BaseSelect.IconFilterType != this.filterType)
 			{
-				GUISelectPanelMonsterIcon.instance.ReAllBuild(list);
+				flag2 = true;
+			}
+			CMD_BaseSelect.IconSortType = this.sortType;
+			CMD_BaseSelect.IconSortOrder = this.sortOrder;
+			CMD_BaseSelect.IconFilterType = this.filterType;
+			if (flag2 && this.onChangeSetting != null)
+			{
+				this.onChangeSetting();
 			}
 			this.ClosePanel(true);
 		};
@@ -349,43 +362,34 @@ public class CMD_ModalSort : CMD
 		};
 		this.clBtnShou.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 		{
-			this.FlipShouKouBtn(MonsterDataMng.SORT_DIR.LOWER_2_UPPER);
+			this.sortOrder = MonsterSortOrder.ASC;
+			this.FlipShouKouBtn();
 		};
 		this.clBtnKou.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 		{
-			this.FlipShouKouBtn(MonsterDataMng.SORT_DIR.UPPER_2_LOWER);
-		};
-		this.clBtnClose.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
-		{
-			MonsterDataMng.Instance().NowSortType = this.nowSortType_bak;
-			MonsterDataMng.Instance().NowSortDir = this.nowSortDir_bak;
-			MonsterDataMng.Instance().NowSelectionType = this.nowSelectionType_bak;
+			this.sortOrder = MonsterSortOrder.DESC;
+			this.FlipShouKouBtn();
 		};
 	}
 
 	private void SetSelectNum()
 	{
-		List<MonsterData> list = MonsterDataMng.Instance().GetSelectMonsterDataList();
-		int count = list.Count;
-		list = MonsterDataMng.Instance().SelectionMDList(list);
+		int count = this.targetMonsterList.Count;
+		List<MonsterData> list = MonsterDataMng.Instance().DetailFilterMonsterDataList(this.targetMonsterList, this.filterType);
 		int count2 = list.Count;
 		this.lbSelectNum.text = string.Format(StringMaster.GetString("SystemFraction"), count2.ToString(), count.ToString());
 	}
 
-	private void FlipShouKouBtn(MonsterDataMng.SORT_DIR dir)
+	private void FlipShouKouBtn()
 	{
-		if (dir != MonsterDataMng.SORT_DIR.NONE)
-		{
-			MonsterDataMng.Instance().NowSortDir = dir;
-		}
-		if (MonsterDataMng.Instance().NowSortDir == MonsterDataMng.SORT_DIR.UPPER_2_LOWER)
+		if (this.sortOrder == MonsterSortOrder.DESC)
 		{
 			this.spBtnKou.spriteName = "Common02_Btn_SupportRed";
 			this.lbBtnKou.color = Color.white;
 			this.spBtnShou.spriteName = "Common02_Btn_SupportWhite";
 			this.lbBtnShou.color = new Color(0.227450982f, 0.227450982f, 0.227450982f, 1f);
 		}
-		else if (MonsterDataMng.Instance().NowSortDir == MonsterDataMng.SORT_DIR.LOWER_2_UPPER)
+		else if (this.sortOrder == MonsterSortOrder.ASC)
 		{
 			this.spBtnShou.spriteName = "Common02_Btn_SupportRed";
 			this.lbBtnShou.color = Color.white;
@@ -428,7 +432,7 @@ public class CMD_ModalSort : CMD
 			this.spBtnSelectList[i].spriteName = "Common02_Btn_SupportWhite";
 			this.lbBtnSelectList[i].color = Color.black;
 		}
-		if (MonsterDataMng.Instance().NowSelectionType == MonsterDataMng.SELECTION_TYPE.NONE)
+		if (this.filterType == MonsterDetailedFilterType.NONE)
 		{
 			this.spBtnSelectReset.spriteName = "Common02_Btn_BaseG";
 			this.lbBtnSelectReset.color = Color.white;
@@ -436,32 +440,32 @@ public class CMD_ModalSort : CMD
 		}
 		else
 		{
-			if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.LEADER_SKILL) > MonsterDataMng.SELECTION_TYPE.NONE)
+			if ((this.filterType & MonsterDetailedFilterType.LEADER_SKILL) > MonsterDetailedFilterType.NONE)
 			{
 				this.spBtnSelectList[0].spriteName = "Common02_Btn_SupportRed";
 				this.lbBtnSelectList[0].color = Color.white;
 			}
-			if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.ACTIVE_SUCCESS) > MonsterDataMng.SELECTION_TYPE.NONE)
+			if ((this.filterType & MonsterDetailedFilterType.ACTIVE_SUCCESS) > MonsterDetailedFilterType.NONE)
 			{
 				this.spBtnSelectList[1].spriteName = "Common02_Btn_SupportRed";
 				this.lbBtnSelectList[1].color = Color.white;
 			}
-			if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.PASSIV_SUCCESS) > MonsterDataMng.SELECTION_TYPE.NONE)
+			if ((this.filterType & MonsterDetailedFilterType.PASSIV_SUCCESS) > MonsterDetailedFilterType.NONE)
 			{
 				this.spBtnSelectList[2].spriteName = "Common02_Btn_SupportRed";
 				this.lbBtnSelectList[2].color = Color.white;
 			}
-			if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.MEDAL) > MonsterDataMng.SELECTION_TYPE.NONE)
+			if ((this.filterType & MonsterDetailedFilterType.MEDAL) > MonsterDetailedFilterType.NONE)
 			{
 				this.spBtnSelectList[3].spriteName = "Common02_Btn_SupportRed";
 				this.lbBtnSelectList[3].color = Color.white;
 			}
-			if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.NO_LEADER_SKILL) > MonsterDataMng.SELECTION_TYPE.NONE)
+			if ((this.filterType & MonsterDetailedFilterType.NO_LEADER_SKILL) > MonsterDetailedFilterType.NONE)
 			{
 				this.spBtnSelectList[4].spriteName = "Common02_Btn_SupportRed";
 				this.lbBtnSelectList[4].color = Color.white;
 			}
-			if ((MonsterDataMng.Instance().NowSelectionType & MonsterDataMng.SELECTION_TYPE.NO_MEDAL) > MonsterDataMng.SELECTION_TYPE.NONE)
+			if ((this.filterType & MonsterDetailedFilterType.NO_MEDAL) > MonsterDetailedFilterType.NONE)
 			{
 				this.spBtnSelectList[5].spriteName = "Common02_Btn_SupportRed";
 				this.lbBtnSelectList[5].color = Color.white;
@@ -477,47 +481,47 @@ public class CMD_ModalSort : CMD
 		switch (idx)
 		{
 		case 0:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DATE;
+			this.sortType = MonsterSortType.DATE;
 			break;
 		case 1:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.RARE;
+			this.sortType = MonsterSortType.AROUSAL;
 			break;
 		case 2:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.LEVEL;
+			this.sortType = MonsterSortType.LEVEL;
 			break;
 		case 3:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.HP;
+			this.sortType = MonsterSortType.HP;
 			break;
 		case 4:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.ATK;
+			this.sortType = MonsterSortType.ATK;
 			break;
 		case 5:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.DEF;
+			this.sortType = MonsterSortType.DEF;
 			break;
 		case 6:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.S_ATK;
+			this.sortType = MonsterSortType.S_ATK;
 			break;
 		case 7:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.S_DEF;
+			this.sortType = MonsterSortType.S_DEF;
 			break;
 		case 8:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.SPD;
+			this.sortType = MonsterSortType.SPD;
 			break;
 		case 9:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.LUCK;
+			this.sortType = MonsterSortType.LUCK;
 			break;
 		case 10:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.GRADE;
+			this.sortType = MonsterSortType.GROW_STEP;
 			break;
 		case 11:
-			MonsterDataMng.Instance().NowSortType = MonsterDataMng.SORT_TYPE.TRIBE;
+			this.sortType = MonsterSortType.TRIBE;
 			break;
 		}
-		this.SetupSortBtnCol(MonsterDataMng.Instance().NowSortType);
+		this.SetupSortBtnCol(this.sortType);
 		this.SetSortName();
 	}
 
-	private void SetupSortBtnCol(MonsterDataMng.SORT_TYPE type)
+	private void SetupSortBtnCol(MonsterSortType type)
 	{
 		for (int i = 0; i < this.goBtnSortList.Count; i++)
 		{
@@ -536,6 +540,64 @@ public class CMD_ModalSort : CMD
 
 	private void SetSortName()
 	{
-		this.ngTX_SORT.text = string.Format(StringMaster.GetString("Sort-01"), MonsterDataMng.Instance().GetSortName());
+		this.ngTX_SORT.text = string.Format(StringMaster.GetString("Sort-01"), CMD_ModalSort.GetSortName(this.sortType));
+	}
+
+	public static string GetSortName(MonsterSortType type)
+	{
+		string result = string.Empty;
+		switch (type)
+		{
+		case MonsterSortType.DATE:
+			result = StringMaster.GetString("Sort-13");
+			break;
+		case MonsterSortType.AROUSAL:
+			result = StringMaster.GetString("Sort-10");
+			break;
+		case MonsterSortType.LEVEL:
+			result = StringMaster.GetString("Sort-05");
+			break;
+		case MonsterSortType.HP:
+			result = StringMaster.GetString("Sort-04");
+			break;
+		case MonsterSortType.ATK:
+			result = StringMaster.GetString("Sort-02");
+			break;
+		case MonsterSortType.DEF:
+			result = StringMaster.GetString("Sort-03");
+			break;
+		case MonsterSortType.S_ATK:
+			result = StringMaster.GetString("Sort-06");
+			break;
+		case MonsterSortType.S_DEF:
+			result = StringMaster.GetString("Sort-07");
+			break;
+		case MonsterSortType.SPD:
+			result = StringMaster.GetString("Sort-08");
+			break;
+		case MonsterSortType.LUCK:
+			result = StringMaster.GetString("Sort-09");
+			break;
+		case MonsterSortType.GROW_STEP:
+			result = StringMaster.GetString("Sort-12");
+			break;
+		case MonsterSortType.TRIBE:
+			result = StringMaster.GetString("Sort-11");
+			break;
+		case MonsterSortType.FRIENDSHIP:
+			result = StringMaster.GetString("Sort-14");
+			break;
+		}
+		return result;
+	}
+
+	public void SetChangeSettingAction(Action action)
+	{
+		this.onChangeSetting = action;
+	}
+
+	public void SetTargetMonsterList(List<MonsterData> monsterDataList)
+	{
+		this.targetMonsterList = monsterDataList;
 	}
 }

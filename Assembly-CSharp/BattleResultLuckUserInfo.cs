@@ -23,7 +23,7 @@ public class BattleResultLuckUserInfo : MonoBehaviour
 		this.TXT_NAME.text = user_name;
 		this.TXT_LUCK.text = leader_luck.ToString();
 		MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(leader_monster_id);
-		GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.iconAnchor.localScale, this.iconAnchor.localPosition, this.iconAnchor.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.iconAnchor.localScale, this.iconAnchor.localPosition, this.iconAnchor.parent, true, false);
 		guimonsterIcon.name = "DigimonIcon";
 		Vector3 localPosition = this.arrowSprite.transform.localPosition;
 		Vector3 vector = this.arrowSprite.transform.parent.InverseTransformPoint(target.position);

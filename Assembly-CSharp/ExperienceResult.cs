@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using Quest;
 using System;
 using System.Collections;
@@ -18,24 +19,24 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("経験値などが入ってる")]
+	[SerializeField]
 	private GameObject acquisitionGO;
 
 	[Header("デジモン部分")]
 	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[SerializeField]
 	[Header("デジモンに吸収されるパーティクルを消す")]
+	[SerializeField]
 	private GameObject particleRemover;
 
 	[Header("取得経験値のラベル")]
 	[SerializeField]
 	private UILabel getExp;
 
-	[SerializeField]
 	[Header("取得経験値の文言ラベル")]
+	[SerializeField]
 	private UILabel getExpText;
 
 	[SerializeField]
@@ -50,12 +51,12 @@ public class ExperienceResult : ResultBase
 	[Header("取得友情度【リーダー】のラベル")]
 	private UILabel getFriendPointForLeader;
 
-	[Header("取得友情度【リーダー】の文言ラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】の文言ラベル")]
 	private UILabel getFriendPointForLeaderText;
 
-	[SerializeField]
 	[Header("取得友情度のラベル")]
+	[SerializeField]
 	private UILabel getFriendPoint;
 
 	[Header("取得友情度の文言ラベル")]
@@ -178,22 +179,21 @@ public class ExperienceResult : ResultBase
 		if (!this.isMulti)
 		{
 			int[] aliveInfo = DataMng.Instance().WD_ReqDngResult.aliveInfo;
-			GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsterList = DataMng.Instance().RespDataUS_MonsterList.userMonsterList;
 			for (int i = 0; i < this.deckData.monsterList.Length; i++)
 			{
 				this.digimonInfos[i].DigimonNo = i;
-				GameWebAPI.RespDataMN_GetDeckList.MonsterList deckDigimon = this.deckData.monsterList[i];
-				GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterList2 = userMonsterList.SingleOrDefault((GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList x) => x.userMonsterId == deckDigimon.userMonsterId);
-				MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(userMonsterList2.monsterId);
+				GameWebAPI.RespDataMN_GetDeckList.MonsterList monsterList = this.deckData.monsterList[i];
+				MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(monsterList.userMonsterId);
+				MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(userMonster.GetMonster().monsterId);
 				Transform iconLocator = this.digimonInfos[i].GetIconLocator();
-				GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, iconLocator.localScale, iconLocator.localPosition, iconLocator.parent, true, false);
+				GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, iconLocator.localScale, iconLocator.localPosition, iconLocator.parent, true, false);
 				guimonsterIcon.name = "DigimonIcon" + i;
 				guimonsterIcon.activeCollider = false;
 				int depth = guimonsterIcon.GetComponent<UIWidget>().depth;
 				this.digimonInfos[i].SetDepth(depth);
 				if (aliveInfo.Length > i && aliveInfo[i] == 0)
 				{
-					guimonsterIcon.DimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
+					guimonsterIcon.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE);
 				}
 			}
 		}
@@ -208,7 +208,7 @@ public class ExperienceResult : ResultBase
 				int monsterIndex = DataMng.Instance().GetMonsterIndex(j);
 				MonsterData monsterData2 = MonsterDataMng.Instance().CreateMonsterDataByMID(respData_WorldMultiStartInfo.party[partyIndex].userMonsters[monsterIndex].monsterId);
 				Transform iconLocator2 = this.digimonInfos[j].GetIconLocator();
-				GUIMonsterIcon guimonsterIcon2 = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData2, iconLocator2.localScale, iconLocator2.localPosition, iconLocator2.parent, true, false);
+				GUIMonsterIcon guimonsterIcon2 = GUIMonsterIcon.MakePrefabByMonsterData(monsterData2, iconLocator2.localScale, iconLocator2.localPosition, iconLocator2.parent, true, false);
 				guimonsterIcon2.name = "DigimonIcon" + j;
 				guimonsterIcon2.activeCollider = false;
 				int depth2 = guimonsterIcon2.GetComponent<UIWidget>().depth;
@@ -216,7 +216,7 @@ public class ExperienceResult : ResultBase
 				guimonsterIcon2.SetPlayerIcon(partyIndex + 1);
 				if (aliveInfo2.Length > j && aliveInfo2[j] == 0)
 				{
-					guimonsterIcon2.DimmLevel = GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE;
+					guimonsterIcon2.SetGrayout(GUIMonsterIcon.DIMM_LEVEL.NOTACTIVE);
 				}
 			}
 		}
@@ -711,9 +711,7 @@ public class ExperienceResult : ResultBase
 		yield return new WaitForSeconds(1f);
 		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP") as CMD_FriendshipStatusUP;
 		cd.SetData(afterMonsterData);
-		MonsterData beforeMonsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.memoryUserMonsterList.monsterId);
-		beforeMonsterData.DuplicateUserMonster(this.memoryUserMonsterList);
-		cd.SetChangeData(beforeMonsterData);
+		cd.SetChangeData(this.memoryUserMonsterList.monsterId, this.memoryUserMonsterList.friendship);
 		while (cd != null)
 		{
 			yield return null;
@@ -728,14 +726,14 @@ public class ExperienceResult : ResultBase
 		int[] aliveInfo = DataMng.Instance().WD_ReqDngResult.aliveInfo;
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		List<int> aliveUserMonsterIds = new List<int>();
-		List<MonsterData> aliveUserMonsters = new List<MonsterData>();
+		List<MonsterData> list = new List<MonsterData>();
 		int i = 0;
 		while (i < aliveInfo.Length)
 		{
 			string text = string.Empty;
 			if (respData_WorldMultiStartInfo == null)
 			{
-				goto IL_DA;
+				goto IL_D5;
 			}
 			int partyIndex = DataMng.Instance().GetPartyIndex(i);
 			int monsterIndex = DataMng.Instance().GetMonsterIndex(i);
@@ -743,43 +741,32 @@ public class ExperienceResult : ResultBase
 			if (int.Parse(common_MonsterData.userId) == DataMng.Instance().RespDataCM_Login.playerInfo.UserId)
 			{
 				text = common_MonsterData.userMonsterId;
-				goto IL_DA;
+				goto IL_D5;
 			}
-			IL_140:
+			IL_136:
 			i++;
 			continue;
-			IL_DA:
+			IL_D5:
 			if (aliveInfo[i] == 1 && deckList.monsterList.Length > i)
 			{
 				string text2 = (respData_WorldMultiStartInfo != null) ? text : deckList.monsterList[i].userMonsterId;
 				MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(text2, false);
-				aliveUserMonsters.Add(monsterDataByUserMonsterID);
+				list.Add(monsterDataByUserMonsterID);
 				aliveUserMonsterIds.Add(int.Parse(text2));
-				goto IL_140;
+				goto IL_136;
 			}
-			goto IL_140;
+			goto IL_136;
 		}
-		GameWebAPI.RequestMonsterList request = new GameWebAPI.RequestMonsterList
+		GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
+		requestMonsterList.SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
 		{
-			SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
-			{
-				param.userMonsterIds = aliveUserMonsterIds.ToArray();
-			},
-			OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
-			{
-				GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] userMonsterList = response.userMonsterList;
-				for (int j = 0; j < userMonsterList.Length; j++)
-				{
-					string id = userMonsterList[j].userMonsterId;
-					MonsterData monsterData = aliveUserMonsters.SingleOrDefault((MonsterData x) => x.userMonster.userMonsterId == id);
-					if (monsterData != null)
-					{
-						monsterData.DuplicateUserMonster(userMonsterList[j]);
-					}
-				}
-				MonsterDataMng.Instance().RefreshUserMonsterByUserMonsterList(response.userMonsterList);
-			}
+			param.userMonsterIds = aliveUserMonsterIds.ToArray();
 		};
+		requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
+		{
+			MonsterDataMng.Instance().RefreshUserMonsterByUserMonsterList(response.userMonsterList);
+		};
+		GameWebAPI.RequestMonsterList request = requestMonsterList;
 		return new APIRequestTask(request, true);
 	}
 

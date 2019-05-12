@@ -24,8 +24,8 @@ public class CMD_MultiRecruitTop : CMD
 	[SerializeField]
 	private UILabel nationwideLebel;
 
-	[Header("PASSラベル")]
 	[SerializeField]
+	[Header("PASSラベル")]
 	private UILabel passLabel;
 
 	[SerializeField]
@@ -115,6 +115,14 @@ public class CMD_MultiRecruitTop : CMD
 		if (CMD_QuestTOP.instance != null)
 		{
 			this.worldDungeonId = int.Parse(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
+		}
+		else
+		{
+			GameWebAPI.WD_Req_DngStart lastDngReq = DataMng.Instance().GetResultUtilData().GetLastDngReq();
+			if (lastDngReq != null)
+			{
+				this.worldDungeonId = int.Parse(lastDngReq.dungeonId);
+			}
 		}
 		this.SetMultiRecruitList(0);
 	}
@@ -236,6 +244,7 @@ public class CMD_MultiRecruitTop : CMD
 					}
 				}
 				ClassSingleton<QuestData>.Instance.SelectDungeon = ClassSingleton<QuestData>.Instance.GetWorldDungeonMaster(this.passInputJoinData.multiRoomInfo.worldDungeonId);
+				DataMng.Instance().GetResultUtilData().SetLastDngReq(this.passInputJoinData.multiRoomInfo.worldDungeonId, "-1", "-1");
 				CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
 				CMD_MultiRecruitPartyWait.roomJoinData = this.passInputJoinData;
 				GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait");

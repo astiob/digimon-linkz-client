@@ -27,7 +27,7 @@ namespace UnityEngine.Networking
 
 		private int m_MaxPendingPacketCount;
 
-		private List<ChannelPacket> m_PendingPackets;
+		private Queue<ChannelPacket> m_PendingPackets;
 
 		private static List<ChannelPacket> s_FreePackets;
 
@@ -35,7 +35,7 @@ namespace UnityEngine.Networking
 
 		public float maxDelay = 0.01f;
 
-		private float m_LastBufferedMessageCountTimer = Time.time;
+		private float m_LastBufferedMessageCountTimer = Time.realtimeSinceStartup;
 
 		private static NetworkWriter s_SendWriter = new NetworkWriter();
 
@@ -51,7 +51,7 @@ namespace UnityEngine.Networking
 			this.m_IsReliable = isReliable;
 			if (isReliable)
 			{
-				this.m_PendingPackets = new List<ChannelPacket>();
+				this.m_PendingPackets = new Queue<ChannelPacket>();
 				if (ChannelBuffer.s_FreePackets == null)
 				{
 					ChannelBuffer.s_FreePackets = new List<ChannelPacket>();
@@ -83,9 +83,10 @@ namespace UnityEngine.Networking
 		{
 			if (!this.m_Disposed && disposing && this.m_PendingPackets != null)
 			{
-				foreach (ChannelPacket item in this.m_PendingPackets)
+				while (this.m_PendingPackets.Count > 0)
 				{
 					ChannelBuffer.pendingPacketCount--;
+					ChannelPacket item = this.m_PendingPackets.Dequeue();
 					if (ChannelBuffer.s_FreePackets.Count < 512)
 					{
 						ChannelBuffer.s_FreePackets.Add(item);
@@ -130,16 +131,16 @@ namespace UnityEngine.Networking
 
 		public void CheckInternalBuffer()
 		{
-			if (Time.time - this.m_LastFlushTime > this.maxDelay && !this.m_CurrentPacket.IsEmpty())
+			if (Time.realtimeSinceStartup - this.m_LastFlushTime > this.maxDelay && !this.m_CurrentPacket.IsEmpty())
 			{
 				this.SendInternalBuffer();
-				this.m_LastFlushTime = Time.time;
+				this.m_LastFlushTime = Time.realtimeSinceStartup;
 			}
-			if (Time.time - this.m_LastBufferedMessageCountTimer > 1f)
+			if (Time.realtimeSinceStartup - this.m_LastBufferedMessageCountTimer > 1f)
 			{
 				this.lastBufferedPerSecond = this.numBufferedPerSecond;
 				this.numBufferedPerSecond = 0;
-				this.m_LastBufferedMessageCountTimer = Time.time;
+				this.m_LastBufferedMessageCountTimer = Time.realtimeSinceStartup;
 			}
 		}
 
@@ -229,7 +230,7 @@ namespace UnityEngine.Networking
 		private void QueuePacket()
 		{
 			ChannelBuffer.pendingPacketCount++;
-			this.m_PendingPackets.Add(this.m_CurrentPacket);
+			this.m_PendingPackets.Enqueue(this.m_CurrentPacket);
 			this.m_CurrentPacket = this.AllocPacket();
 		}
 
@@ -239,8 +240,8 @@ namespace UnityEngine.Networking
 			{
 				return new ChannelPacket(this.m_MaxPacketSize, this.m_IsReliable);
 			}
-			ChannelPacket result = ChannelBuffer.s_FreePackets[0];
-			ChannelBuffer.s_FreePackets.RemoveAt(0);
+			ChannelPacket result = ChannelBuffer.s_FreePackets[ChannelBuffer.s_FreePackets.Count - 1];
+			ChannelBuffer.s_FreePackets.RemoveAt(ChannelBuffer.s_FreePackets.Count - 1);
 			result.Reset();
 			return result;
 		}
@@ -260,14 +261,14 @@ namespace UnityEngine.Networking
 			{
 				while (this.m_PendingPackets.Count > 0)
 				{
-					ChannelPacket packet = this.m_PendingPackets[0];
-					if (!packet.SendToTransport(this.m_Connection, (int)this.m_ChannelId))
+					ChannelPacket channelPacket = this.m_PendingPackets.Dequeue();
+					if (!channelPacket.SendToTransport(this.m_Connection, (int)this.m_ChannelId))
 					{
+						this.m_PendingPackets.Enqueue(channelPacket);
 						break;
 					}
 					ChannelBuffer.pendingPacketCount--;
-					this.m_PendingPackets.RemoveAt(0);
-					ChannelBuffer.FreePacket(packet);
+					ChannelBuffer.FreePacket(channelPacket);
 					if (this.m_IsBroken && this.m_PendingPackets.Count < this.m_MaxPendingPacketCount / 2)
 					{
 						if (LogFilter.logWarn)

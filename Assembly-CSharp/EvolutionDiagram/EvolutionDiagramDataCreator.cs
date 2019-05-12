@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Monster;
+using System;
 using System.Collections.Generic;
 
 namespace EvolutionDiagram
@@ -7,24 +8,19 @@ namespace EvolutionDiagram
 	{
 		public static void CreateMonsterDataList(EvolutionDiagramData diagramData)
 		{
-			GameWebAPI.RespDataMA_GetMonsterMS.MonsterM[] monsterM = MasterDataMng.Instance().RespDataMA_MonsterMS.monsterM;
 			List<string> list = new List<string>();
-			foreach (GameWebAPI.RespDataMA_GetMonsterMS.MonsterM monsterM2 in monsterM)
+			foreach (KeyValuePair<string, Dictionary<string, MonsterClientMaster>> keyValuePair in MonsterMaster.GetGroupMasterList())
 			{
-				if (monsterM2.GetArousal() == 0)
+				MonsterClientMaster monsterClientMaster;
+				if (keyValuePair.Value.TryGetValue("1", out monsterClientMaster) && "0" != monsterClientMaster.Group.monsterCollectionId && !list.Contains(monsterClientMaster.Group.monsterCollectionId))
 				{
-					GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterGroupMasterByMonsterGroupId = MonsterDataMng.Instance().GetMonsterGroupMasterByMonsterGroupId(monsterM2.monsterGroupId);
-					if ("0" != monsterGroupMasterByMonsterGroupId.monsterCollectionId && !list.Contains(monsterGroupMasterByMonsterGroupId.monsterCollectionId))
+					list.Add(monsterClientMaster.Group.monsterCollectionId);
+					EvolutionDiagramData.IconMonster monsterData = new EvolutionDiagramData.IconMonster
 					{
-						list.Add(monsterGroupMasterByMonsterGroupId.monsterCollectionId);
-						EvolutionDiagramData.IconMonster monsterData = new EvolutionDiagramData.IconMonster
-						{
-							collectionId = monsterGroupMasterByMonsterGroupId.monsterCollectionId.ToInt32(),
-							singleData = monsterM2,
-							groupData = monsterGroupMasterByMonsterGroupId
-						};
-						diagramData.AddMonsterData(monsterData);
-					}
+						collectionId = monsterClientMaster.Group.monsterCollectionId.ToInt32(),
+						master = monsterClientMaster
+					};
+					diagramData.AddMonsterData(monsterData);
 				}
 			}
 		}

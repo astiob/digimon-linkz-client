@@ -779,7 +779,7 @@ public class UIDrawCall : MonoBehaviour
 			{
 				if (UIDrawCall.mActiveList.Remove(dc))
 				{
-					NGUITools.DestroyImmediate(dc.gameObject);
+					UnityEngine.Object.Destroy(dc.gameObject);
 				}
 			}
 			else

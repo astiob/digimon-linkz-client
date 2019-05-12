@@ -14,6 +14,7 @@ namespace UnityEngine.Networking
 			return reader.ReadSingle();
 		}
 
+		[Obsolete("ReadReference is now used instead")]
 		public static SyncListFloat ReadInstance(NetworkReader reader)
 		{
 			ushort num = reader.ReadUInt16();
@@ -23,6 +24,16 @@ namespace UnityEngine.Networking
 				syncListFloat.AddInternal(reader.ReadSingle());
 			}
 			return syncListFloat;
+		}
+
+		public static void ReadReference(NetworkReader reader, SyncListFloat syncList)
+		{
+			ushort num = reader.ReadUInt16();
+			syncList.Clear();
+			for (ushort num2 = 0; num2 < num; num2 += 1)
+			{
+				syncList.AddInternal(reader.ReadSingle());
+			}
 		}
 
 		public static void WriteInstance(NetworkWriter writer, SyncListFloat items)

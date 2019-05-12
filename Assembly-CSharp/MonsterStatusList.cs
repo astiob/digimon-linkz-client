@@ -99,17 +99,18 @@ public class MonsterStatusList : MonoBehaviour
 		}
 		else
 		{
-			this.hpLabel.text = ((int)monsterData.Base_HP(-1)).ToString();
-			this.attackLabel.text = ((int)monsterData.Base_ATK(-1)).ToString();
-			this.defenseLabel.text = ((int)monsterData.Base_DEF(-1)).ToString();
-			this.magicAttackLabel.text = ((int)monsterData.Base_SATK(-1)).ToString();
-			this.magicDefenceLabel.text = ((int)monsterData.Base_SDEF(-1)).ToString();
-			this.speedLabel.text = ((int)monsterData.Base_SPD(-1)).ToString();
+			StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterData.userMonster.monsterId, monsterData.userMonster.level);
+			this.hpLabel.text = statusValue.hp.ToString();
+			this.attackLabel.text = statusValue.attack.ToString();
+			this.defenseLabel.text = statusValue.defense.ToString();
+			this.magicAttackLabel.text = statusValue.magicAttack.ToString();
+			this.magicDefenceLabel.text = statusValue.magicDefense.ToString();
+			this.speedLabel.text = statusValue.speed.ToString();
 		}
 		this.luckLabel.text = monsterData.userMonster.luck;
 		if (!this.disableFriendshipMaxValue)
 		{
-			this.friendshipLabel.text = CommonSentenceData.MaxFriendshipFormat(monsterData.userMonster.friendship, monsterData.monsterMG.growStep);
+			this.friendshipLabel.text = MonsterFriendshipData.GetMaxFriendshipFormat(monsterData.userMonster.friendship, monsterData.monsterMG.growStep);
 		}
 		else
 		{

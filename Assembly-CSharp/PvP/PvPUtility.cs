@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace PvP
 {
@@ -91,6 +92,26 @@ namespace PvP
 				}
 			};
 			return new APIRequestTask(request, true);
+		}
+
+		public static void SetPvPTopNoticeCode(GameWebAPI.RespData_ColosseumUserStatusLogic res)
+		{
+			if (!string.IsNullOrEmpty(res.noticeCode))
+			{
+				PlayerPrefs.SetString("ColosseumTopNoticeCode", res.noticeCode);
+				PlayerPrefs.Save();
+			}
+		}
+
+		public static string PopPvPTopNoticeCode()
+		{
+			string result = null;
+			if (PlayerPrefs.HasKey("ColosseumTopNoticeCode"))
+			{
+				result = PlayerPrefs.GetString("ColosseumTopNoticeCode");
+				PlayerPrefs.DeleteKey("ColosseumTopNoticeCode");
+			}
+			return result;
 		}
 
 		public enum RequestUserStatusType

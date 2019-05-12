@@ -29,8 +29,8 @@ namespace CharacterModelUI
 			this.csRender3DRT = gameObject.GetComponent<CommonRender3DRT>();
 			if (!monsterData.userMonster.IsEgg())
 			{
-				string monsterCharaPathByMonsterData = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterData(monsterData);
-				this.csRender3DRT.LoadChara(monsterCharaPathByMonsterData, 0f, 10000f, -0.65f, 1.1f, true);
+				string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterData.monsterM.monsterGroupId);
+				this.csRender3DRT.LoadChara(monsterCharaPathByMonsterGroupId, 0f, 10000f, -0.65f, 1.1f, true);
 				this.csRender3DRT.SetBillBoardCamera();
 			}
 			else
@@ -46,8 +46,8 @@ namespace CharacterModelUI
 						break;
 					}
 				}
-				string monsterCharaPathByMonsterGroupId = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
-				this.csRender3DRT.LoadEgg(monsterCharaPathByMonsterGroupId, 0f, 10000f, 0.1f);
+				string monsterCharaPathByMonsterGroupId2 = MonsterDataMng.Instance().GetMonsterCharaPathByMonsterGroupId(monsterGroupId);
+				this.csRender3DRT.LoadEgg(monsterCharaPathByMonsterGroupId2, 0f, 10000f, 0.1f);
 			}
 			this.renderTex = this.csRender3DRT.SetRenderTarget(1136, 820, 16);
 			this.defaultPos = Camera.main.ScreenToViewportPoint(new Vector3(-382f, -80f, 0f));

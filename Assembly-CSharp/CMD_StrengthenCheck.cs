@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,28 +10,28 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[Header("タイトルのラベル")]
 	[SerializeField]
+	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
 	[Header("消費クラスタのラベル")]
 	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[SerializeField]
 	[Header("強化前のレベルのラベル")]
+	[SerializeField]
 	private UILabel beforeLevelLabel;
 
 	[Header("強化後のレベルのラベル")]
 	[SerializeField]
 	private UILabel afterLevelLabel;
 
-	[SerializeField]
 	[Header("上昇値のレベルのラベル")]
+	[SerializeField]
 	private UILabel plusLevelLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]
@@ -41,8 +42,8 @@ public sealed class CMD_StrengthenCheck : CMD
 	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)
@@ -69,8 +70,8 @@ public sealed class CMD_StrengthenCheck : CMD
 		bool flag4 = false;
 		foreach (MonsterData monsterData in selectedMonsterDataList)
 		{
-			bool flag5 = monsterData.IsArousal();
-			bool flag6 = monsterData.IsVersionUp();
+			bool flag5 = MonsterStatusData.IsArousal(monsterData.GetMonsterMaster().Simple.rare);
+			bool flag6 = MonsterStatusData.IsVersionUp(monsterData.GetMonsterMaster().Simple.rare);
 			if (flag6)
 			{
 				flag4 = true;
@@ -94,20 +95,9 @@ public sealed class CMD_StrengthenCheck : CMD
 		}
 		if (flag2)
 		{
-			GameWebAPI.RespDataMA_GetMonsterGrowStepM.MonsterGrowStepM[] monsterGrowStepM = MasterDataMng.Instance().RespDataMA_MonsterGrowStepM.monsterGrowStepM;
-			string b = ConstValue.GROW_STEP_HIGH.ToString();
-			int i;
-			for (i = 0; i < monsterGrowStepM.Length; i++)
-			{
-				if (monsterGrowStepM[i].monsterGrowStepId == b)
-				{
-					break;
-				}
-			}
-			if (i < monsterGrowStepM.Length)
-			{
-				list.Add(string.Format(StringMaster.GetString("ReinforcementCautionGrowth"), monsterGrowStepM[i].monsterGrowStepName));
-			}
+			string growStep = ConstValue.GROW_STEP_HIGH.ToString();
+			string growStepName = MonsterGrowStepData.GetGrowStepName(growStep);
+			list.Add(string.Format(StringMaster.GetString("ReinforcementCautionGrowth"), growStepName));
 		}
 		if (list.Count >= 2)
 		{
@@ -118,13 +108,13 @@ public sealed class CMD_StrengthenCheck : CMD
 			this.btnGroup.transform.SetLocalY(this.btnGroup.transform.localPosition.y - (float)num);
 		}
 		this.warningMessageLabel.text = string.Join("\n", list.ToArray());
-		for (int j = 0; j < this.guiMonsterIcons.Length; j++)
+		for (int i = 0; i < this.guiMonsterIcons.Length; i++)
 		{
-			if (selectedMonsterDataList.Count > j)
+			if (selectedMonsterDataList.Count > i)
 			{
-				GUIMonsterIcon guimonsterIcon = this.guiMonsterIcons[j];
-				MonsterData md = selectedMonsterDataList[j];
-				this.CreateIcon(j, md, guimonsterIcon.gameObject);
+				GUIMonsterIcon guimonsterIcon = this.guiMonsterIcons[i];
+				MonsterData md = selectedMonsterDataList[i];
+				this.CreateIcon(i, md, guimonsterIcon.gameObject);
 			}
 		}
 		this.useClusterLabel.text = useCluster;
@@ -141,9 +131,8 @@ public sealed class CMD_StrengthenCheck : CMD
 
 	private void CreateIcon(int index, MonsterData md, GameObject goEmpty)
 	{
-		MonsterDataMng monsterDataMng = MonsterDataMng.Instance();
 		Transform transform = goEmpty.transform;
-		GUIMonsterIcon guimonsterIcon = monsterDataMng.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(md, transform.localScale, transform.localPosition, transform.parent, true, false);
 		guimonsterIcon.playSelectSE = false;
 		guimonsterIcon.SendMoveToParent = false;
 		guimonsterIcon.CancelTouchEndByMove = false;

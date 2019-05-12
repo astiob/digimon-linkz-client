@@ -7,7 +7,6 @@ public class BattleInputMulti : BattleInputBasic
 	public override void OnClickSkillButton(int index)
 	{
 		base.OnClickSkillButton(index);
-		base.stateManager.uiControlMulti.RefreshSharedAP(true);
 		base.stateManager.uiControlMulti.StartSharedAPAnimation();
 	}
 

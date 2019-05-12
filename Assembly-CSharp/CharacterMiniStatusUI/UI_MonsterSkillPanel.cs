@@ -32,5 +32,15 @@ namespace CharacterMiniStatusUI
 			this.extraCommonSkill.SetSkill(monsterData);
 			this.extraCommonSkillUI.SetMonsterData(monsterData);
 		}
+
+		public void ClearData()
+		{
+			this.resistanceList.ClearValues();
+			this.leaderSkill.ClearSkill();
+			this.uniqueSkill.ClearSkill();
+			this.commonSkill.ClearSkill();
+			this.extraCommonSkill.ClearSkill();
+			this.extraCommonSkillUI.ClearData();
+		}
 	}
 }

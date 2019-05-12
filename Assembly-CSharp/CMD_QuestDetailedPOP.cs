@@ -29,24 +29,24 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_TITLE;
 
-	[SerializeField]
 	[Header("ステージの数字のラベル")]
+	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
-	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	[SerializeField]
+	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	private GameObject goContentsROOT;
 
-	[SerializeField]
 	[Header("ポイントコンテンツ・ルート (ボーナス)")]
+	[SerializeField]
 	private GameObject goPointContentsROOT;
 
 	[Header("詳細説明 (ヒナの吹き出し)")]
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[Header("ポイント・タイトルのリスト)")]
 	[SerializeField]
+	[Header("ポイント・タイトルのリスト)")]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
@@ -60,8 +60,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getEXPLabel;
 
-	[SerializeField]
 	[Header("取得できるクラスタタイトル")]
+	[SerializeField]
 	private UILabel getClusterTitleLabel;
 
 	[SerializeField]
@@ -72,8 +72,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getStaminaTitleLabel;
 
-	[Header("消費するスタミナ")]
 	[SerializeField]
+	[Header("消費するスタミナ")]
 	private UILabel getStaminaLabel;
 
 	[Header("バトルボタン")]
@@ -82,15 +82,15 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private UISprite spBattleBtn;
 
-	[SerializeField]
 	[Header("マルチバトルボタン")]
+	[SerializeField]
 	private GameObject goMultiBattleBtn;
 
 	[SerializeField]
 	private RewardIconRoot rewardIconRoot;
 
-	[SerializeField]
 	[Header("初回報酬取得済みカラー")]
+	[SerializeField]
 	private Color clearColor = Color.gray;
 
 	private QuestData.WorldDungeonData d_data;
@@ -199,7 +199,7 @@ public class CMD_QuestDetailedPOP : CMD
 					MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(text);
 					if (monsterData != null)
 					{
-						GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(monsterData, this.goENCOUNT_MONS_LIST[num].transform.localScale, this.goENCOUNT_MONS_LIST[num].transform.localPosition, this.goENCOUNT_MONS_LIST[num].transform.parent, true, false);
+						GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, this.goENCOUNT_MONS_LIST[num].transform.localScale, this.goENCOUNT_MONS_LIST[num].transform.localPosition, this.goENCOUNT_MONS_LIST[num].transform.parent, true, false);
 						DepthController depthController = guimonsterIcon.GetDepthController();
 						depthController.AddWidgetDepth(guimonsterIcon.transform, 40);
 						guimonsterIcon.SetTouchAct_S(delegate(MonsterData tappedMonsterData)
@@ -214,7 +214,7 @@ public class CMD_QuestDetailedPOP : CMD
 		}
 		if (this.d_data.dungeon.isExtraWave == 1 && num < this.goENCOUNT_MONS_LIST.Count)
 		{
-			GUIMonsterIcon guimonsterIcon2 = MonsterDataMng.Instance().MakeQuestionPrefab(this.goENCOUNT_MONS_LIST[num].transform.localScale, this.goENCOUNT_MONS_LIST[num].transform.localPosition, (int)(this.goENCOUNT_MONS_LIST[num].transform.localPosition.z + 35f), this.goENCOUNT_MONS_LIST[num].transform.parent);
+			GUIMonsterIcon guimonsterIcon2 = GUIMonsterIcon.MakeQuestionPrefab(this.goENCOUNT_MONS_LIST[num].transform.localScale, this.goENCOUNT_MONS_LIST[num].transform.localPosition, (int)(this.goENCOUNT_MONS_LIST[num].transform.localPosition.z + 35f), this.goENCOUNT_MONS_LIST[num].transform.parent);
 			guimonsterIcon2.SetTouchAct_S(null);
 			guimonsterIcon2.SetTouchAct_L(null);
 		}
@@ -311,7 +311,7 @@ public class CMD_QuestDetailedPOP : CMD
 		}
 		if (this.d_data.dungeon.isExtraWave == 1 && num < this.itemDROP_ITEM_LIST.Count)
 		{
-			GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakeQuestionPrefab(new Vector3(0.46f, 0.46f, 1f), this.itemDROP_ITEM_LIST[num].transform.localPosition, (int)(this.itemDROP_ITEM_LIST[num].transform.localPosition.z + 35f), this.itemDROP_ITEM_LIST[num].transform.parent);
+			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakeQuestionPrefab(new Vector3(0.46f, 0.46f, 1f), this.itemDROP_ITEM_LIST[num].transform.localPosition, (int)(this.itemDROP_ITEM_LIST[num].transform.localPosition.z + 35f), this.itemDROP_ITEM_LIST[num].transform.parent);
 			guimonsterIcon.SetTouchAct_S(null);
 			guimonsterIcon.SetTouchAct_L(null);
 		}

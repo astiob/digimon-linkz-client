@@ -1,4 +1,5 @@
-﻿using FarmData;
+﻿using Evolution;
+using FarmData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -181,17 +182,14 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		return this.lastHarvestTimeList.SingleOrDefault((LastHarvestTime x) => x.userFacilityId == userFacilityID);
 	}
 
-	public bool IsOverUnitLimit(int addCount = 0)
+	public bool IsOverUnitLimit(int count)
 	{
+		int num = 0;
 		if (DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
 		{
-			int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.unitLimitMax);
-			if (DataMng.Instance().RespDataUS_MonsterList.userMonsterList != null)
-			{
-				return num < DataMng.Instance().RespDataUS_MonsterList.userMonsterList.Length + addCount;
-			}
+			num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.unitLimitMax);
 		}
-		return false;
+		return num < count;
 	}
 
 	public bool IsOverChipLimit(int addCount = 0)
@@ -524,5 +522,31 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 				callback(this.isLoadedUserStockFacility);
 			}
 		}, null));
+	}
+
+	private GameWebAPI.UserSoulData GetUserSoulDataBySID(string soulId)
+	{
+		return EvolutionMaterialData.GetUserEvolutionMaterial(soulId);
+	}
+
+	public bool CheckMaterialCount(GameWebAPI.MonsterEvolutionMaterialMaster.Material materialMaster)
+	{
+		bool result = true;
+		for (int i = 1; i <= 7; i++)
+		{
+			string assetValue = materialMaster.GetAssetValue(i);
+			int num = int.Parse(materialMaster.GetAssetNum(i));
+			GameWebAPI.UserSoulData userSoulDataBySID = this.GetUserSoulDataBySID(assetValue);
+			if (userSoulDataBySID != null)
+			{
+				int num2 = int.Parse(userSoulDataBySID.num);
+				if (num > num2)
+				{
+					result = false;
+					break;
+				}
+			}
+		}
+		return result;
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using CharacterModelUI;
 using Master;
+using PvP;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -230,6 +231,7 @@ public abstract class CMD_ProfileBase : CMD
 			},
 			OnReceived = delegate(GameWebAPI.RespData_ColosseumUserStatusLogic resData)
 			{
+				PvPUtility.SetPvPTopNoticeCode(resData);
 				this.colosseumUserStatus = resData.userStatus;
 			}
 		};

@@ -13,28 +13,28 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
-	[Header("ユーザーネーム")]
 	[SerializeField]
+	[Header("ユーザーネーム")]
 	private UILabel lbTX_UserName;
 
 	[Header("称号アイコン")]
 	[SerializeField]
 	private GameObject goTITLE_ICON;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[Header("Nextポイント")]
 	[SerializeField]
+	[Header("Nextポイント")]
 	private UILabel lbTX_NextPoint;
 
-	[Header("ランキング順位")]
 	[SerializeField]
+	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
-	[SerializeField]
 	[Header("ランキングアイコン")]
+	[SerializeField]
 	private UISprite spRankingIcon;
 
 	private MonsterData digimonData;
@@ -140,7 +140,7 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 		if (this.digimonData == null)
 		{
 			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.iconId);
-			this.csMonsIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.digimonData, this.goMONSTER_ICON.transform.localScale, this.goMONSTER_ICON.transform.localPosition, this.goMONSTER_ICON.transform.parent, true, true);
+			this.csMonsIcon = GUIMonsterIcon.MakePrefabByMonsterData(this.digimonData, this.goMONSTER_ICON.transform.localScale, this.goMONSTER_ICON.transform.localPosition, this.goMONSTER_ICON.transform.parent, true, true);
 			UIWidget component = this.goMONSTER_ICON.GetComponent<UIWidget>();
 			UIWidget component2 = this.csMonsIcon.gameObject.GetComponent<UIWidget>();
 			if (component != null && component2 != null)
@@ -154,7 +154,7 @@ public class GUIListPartsQuestRanking : GUIListPartBS
 		else
 		{
 			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.iconId);
-			MonsterDataMng.Instance().RefreshPrefabByMonsterData(this.digimonData, this.csMonsIcon, true, true);
+			this.csMonsIcon.RefreshPrefabByMonsterData(this.digimonData);
 		}
 	}
 

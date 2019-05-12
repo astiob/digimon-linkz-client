@@ -49,9 +49,16 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		internal static extern void Pop();
 
+		internal static Rect GetTopRect()
+		{
+			Rect result;
+			GUIClip.INTERNAL_CALL_GetTopRect(out result);
+			return result;
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		internal static extern Rect GetTopRect();
+		private static extern void INTERNAL_CALL_GetTopRect(out Rect value);
 
 		public static extern bool enabled { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
 
@@ -109,9 +116,16 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		internal static extern void Reapply();
 
+		internal static Matrix4x4 GetMatrix()
+		{
+			Matrix4x4 result;
+			GUIClip.INTERNAL_CALL_GetMatrix(out result);
+			return result;
+		}
+
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		internal static extern Matrix4x4 GetMatrix();
+		private static extern void INTERNAL_CALL_GetMatrix(out Matrix4x4 value);
 
 		internal static void SetMatrix(Matrix4x4 m)
 		{

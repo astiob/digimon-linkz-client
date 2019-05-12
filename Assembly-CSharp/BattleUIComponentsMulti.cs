@@ -6,7 +6,7 @@ public class BattleUIComponentsMulti : BattleUIComponentsMultiBasic
 	public UITimer continueTimer;
 
 	[NonSerialized]
-	public SharedAPMulti sharedApMulti;
+	public BattleUIMultiSharedAP sharedAP;
 
 	[NonSerialized]
 	public EmotionSenderMulti emotionSenderMulti;

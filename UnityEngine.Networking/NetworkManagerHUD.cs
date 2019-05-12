@@ -4,9 +4,9 @@ using UnityEngine.Networking.Match;
 
 namespace UnityEngine.Networking
 {
+	[RequireComponent(typeof(NetworkManager))]
 	[AddComponentMenu("Network/NetworkManagerHUD")]
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	[RequireComponent(typeof(NetworkManager))]
 	public class NetworkManagerHUD : MonoBehaviour
 	{
 		public NetworkManager manager;
@@ -35,13 +35,16 @@ namespace UnityEngine.Networking
 			}
 			if (!this.manager.IsClientConnected() && !NetworkServer.active && this.manager.matchMaker == null)
 			{
-				if (Input.GetKeyDown(KeyCode.S))
+				if (Application.platform != RuntimePlatform.WebGLPlayer)
 				{
-					this.manager.StartServer();
-				}
-				if (Input.GetKeyDown(KeyCode.H))
-				{
-					this.manager.StartHost();
+					if (Input.GetKeyDown(KeyCode.S))
+					{
+						this.manager.StartServer();
+					}
+					if (Input.GetKeyDown(KeyCode.H))
+					{
+						this.manager.StartHost();
+					}
 				}
 				if (Input.GetKeyDown(KeyCode.C))
 				{
@@ -62,30 +65,66 @@ namespace UnityEngine.Networking
 			}
 			int num = 10 + this.offsetX;
 			int num2 = 40 + this.offsetY;
+			bool flag = this.manager.client == null || this.manager.client.connection == null || this.manager.client.connection.connectionId == -1;
 			if (!this.manager.IsClientConnected() && !NetworkServer.active && this.manager.matchMaker == null)
 			{
-				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "LAN Host(H)"))
+				if (flag)
 				{
-					this.manager.StartHost();
+					if (Application.platform != RuntimePlatform.WebGLPlayer)
+					{
+						if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "LAN Host(H)"))
+						{
+							this.manager.StartHost();
+						}
+						num2 += 24;
+					}
+					if (GUI.Button(new Rect((float)num, (float)num2, 105f, 20f), "LAN Client(C)"))
+					{
+						this.manager.StartClient();
+					}
+					this.manager.networkAddress = GUI.TextField(new Rect((float)(num + 100), (float)num2, 95f, 20f), this.manager.networkAddress);
+					num2 += 24;
+					if (Application.platform == RuntimePlatform.WebGLPlayer)
+					{
+						GUI.Box(new Rect((float)num, (float)num2, 200f, 25f), "(  WebGL cannot be server  )");
+						num2 += 24;
+					}
+					else
+					{
+						if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "LAN Server Only(S)"))
+						{
+							this.manager.StartServer();
+						}
+						num2 += 24;
+					}
 				}
-				num2 += 24;
-				if (GUI.Button(new Rect((float)num, (float)num2, 105f, 20f), "LAN Client(C)"))
+				else
 				{
-					this.manager.StartClient();
+					GUI.Label(new Rect((float)num, (float)num2, 200f, 20f), string.Concat(new object[]
+					{
+						"Connecting to ",
+						this.manager.networkAddress,
+						":",
+						this.manager.networkPort,
+						".."
+					}));
+					num2 += 24;
+					if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Cancel Connection Attempt"))
+					{
+						this.manager.StopClient();
+					}
 				}
-				this.manager.networkAddress = GUI.TextField(new Rect((float)(num + 100), (float)num2, 95f, 20f), this.manager.networkAddress);
-				num2 += 24;
-				if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "LAN Server Only(S)"))
-				{
-					this.manager.StartServer();
-				}
-				num2 += 24;
 			}
 			else
 			{
 				if (NetworkServer.active)
 				{
-					GUI.Label(new Rect((float)num, (float)num2, 300f, 20f), "Server: port=" + this.manager.networkPort);
+					string text = "Server: port=" + this.manager.networkPort;
+					if (this.manager.useWebSockets)
+					{
+						text += " (Using WebSockets)";
+					}
+					GUI.Label(new Rect((float)num, (float)num2, 300f, 20f), text);
 					num2 += 24;
 				}
 				if (this.manager.IsClientConnected())
@@ -120,9 +159,14 @@ namespace UnityEngine.Networking
 				}
 				num2 += 24;
 			}
-			if (!NetworkServer.active && !this.manager.IsClientConnected())
+			if (!NetworkServer.active && !this.manager.IsClientConnected() && flag)
 			{
 				num2 += 10;
+				if (Application.platform == RuntimePlatform.WebGLPlayer)
+				{
+					GUI.Box(new Rect((float)(num - 5), (float)num2, 220f, 25f), "(WebGL cannot use Match Maker)");
+					return;
+				}
 				if (this.manager.matchMaker == null)
 				{
 					if (GUI.Button(new Rect((float)num, (float)num2, 200f, 20f), "Enable Match Maker (M)"))

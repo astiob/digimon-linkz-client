@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using UnityEngine.Scripting;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>This is the data structure for holding individual host information.</para>
-	/// </summary>
+	[RequiredByNativeCode]
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class HostData
 	{
@@ -29,9 +28,6 @@ namespace UnityEngine
 
 		private string m_GUID;
 
-		/// <summary>
-		///   <para>Does this server require NAT punchthrough?</para>
-		/// </summary>
 		public bool useNat
 		{
 			get
@@ -44,9 +40,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The type of the game (like "MyUniqueGameType").</para>
-		/// </summary>
 		public string gameType
 		{
 			get
@@ -59,9 +52,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The name of the game (like John Doe's Game).</para>
-		/// </summary>
 		public string gameName
 		{
 			get
@@ -74,9 +64,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Currently connected players.</para>
-		/// </summary>
 		public int connectedPlayers
 		{
 			get
@@ -89,9 +76,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Maximum players limit.</para>
-		/// </summary>
 		public int playerLimit
 		{
 			get
@@ -104,9 +88,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Server IP address.</para>
-		/// </summary>
 		public string[] ip
 		{
 			get
@@ -119,9 +100,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Server port.</para>
-		/// </summary>
 		public int port
 		{
 			get
@@ -134,9 +112,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Does the server require a password?</para>
-		/// </summary>
 		public bool passwordProtected
 		{
 			get
@@ -149,9 +124,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>A miscellaneous comment (can hold data).</para>
-		/// </summary>
 		public string comment
 		{
 			get
@@ -164,9 +136,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The GUID of the host, needed when connecting with NAT punchthrough.</para>
-		/// </summary>
 		public string guid
 		{
 			get

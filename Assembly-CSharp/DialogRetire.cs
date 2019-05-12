@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class DialogRetire : MonoBehaviour
 {
-	[Header("Yesボタン")]
 	[SerializeField]
+	[Header("Yesボタン")]
 	private UIButton yesButton;
 
 	[Header("Noボタン")]
@@ -16,8 +16,8 @@ public class DialogRetire : MonoBehaviour
 	[SerializeField]
 	public UIOpenCloseDialog openCloseDialog;
 
-	[Header("はいローカライズ")]
 	[SerializeField]
+	[Header("はいローカライズ")]
 	private UILabel yesLocalize;
 
 	[Header("いいえローカライズ")]
@@ -28,8 +28,8 @@ public class DialogRetire : MonoBehaviour
 	[SerializeField]
 	private UILabel retireLocalize;
 
-	[SerializeField]
 	[Header("リタイアメッセージローカライズ")]
+	[SerializeField]
 	private UILabel retireMessageLocalize;
 
 	private void Awake()

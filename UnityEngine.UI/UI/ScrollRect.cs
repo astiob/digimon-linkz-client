@@ -4,11 +4,11 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
-	[SelectionBase]
+	[RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("UI/Scroll Rect", 37)]
+	[SelectionBase]
 	[ExecuteInEditMode]
 	[DisallowMultipleComponent]
-	[RequireComponent(typeof(RectTransform))]
 	public class ScrollRect : UIBehaviour, IEventSystemHandler, IBeginDragHandler, IInitializePotentialDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutController, ILayoutGroup
 	{
 		[SerializeField]
@@ -103,7 +103,6 @@ namespace UnityEngine.UI
 
 		protected ScrollRect()
 		{
-			this.flexibleWidth = -1f;
 		}
 
 		public RectTransform content
@@ -803,7 +802,13 @@ namespace UnityEngine.UI
 			}
 		}
 
-		public virtual float flexibleWidth { get; private set; }
+		public virtual float flexibleWidth
+		{
+			get
+			{
+				return -1f;
+			}
+		}
 
 		public virtual float minHeight
 		{

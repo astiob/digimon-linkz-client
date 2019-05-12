@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace CharacterModelUI
 {
-	[RequireComponent(typeof(BoxCollider))]
 	[RequireComponent(typeof(UIWidget))]
+	[RequireComponent(typeof(BoxCollider))]
 	public sealed class UI_CharacterModelViewer : UI_CharacterModelTexture
 	{
 		private const float DETAILS_UI_VIEW_POSITION_OFFSET_X = -0.6f;
@@ -67,17 +67,16 @@ namespace CharacterModelUI
 			this.pinch = new PinchInOut();
 		}
 
-		public override void LoadCharacterModel(MonsterData monsterData, Vector3 characterPosition, float characterEulerAngleY)
+		public override void LoadMonsterModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
 		{
-			base.LoadCharacterModel(monsterData, characterPosition, characterEulerAngleY);
-			if (!MonsterData.IsEgg(monsterData.monsterMG.growStep))
-			{
-				this.characterModelController = new MonsterModelController();
-			}
-			else
-			{
-				this.characterModelController = new EggModelController();
-			}
+			base.LoadMonsterModel(monsterGroupId, characterPosition, characterEulerAngleY);
+			this.characterModelController = new MonsterModelController();
+		}
+
+		public override void LoadEggModel(string monsterGroupId, Vector3 characterPosition, float characterEulerAngleY)
+		{
+			base.LoadEggModel(monsterGroupId, characterPosition, characterEulerAngleY);
+			this.characterModelController = new EggModelController();
 		}
 
 		public void SetCameraViewOffset(float screenPositionOffsetY, float viewPositionOffsetX)

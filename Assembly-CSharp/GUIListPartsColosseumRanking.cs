@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class GUIListPartsColosseumRanking : GUIListPartBS
 {
-	[SerializeField]
 	[Header("あなたを示すアイコン")]
+	[SerializeField]
 	private UISprite spYouIcon;
 
 	[Header("キャラサムネの位置")]
@@ -21,12 +21,12 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 	[SerializeField]
 	private GameObject goTITLE_ICON;
 
-	[SerializeField]
 	[Header("ポイント")]
+	[SerializeField]
 	private UILabel lbTX_DuelPoint;
 
-	[SerializeField]
 	[Header("ランキング順位")]
+	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
 	[Header("ランキングアイコン")]
@@ -47,6 +47,10 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 
 	public override void SetData()
 	{
+		if (GUISelectPanelColosseumRanking.partsDataList == null || GUISelectPanelColosseumRanking.partsDataList.Count <= base.IDX)
+		{
+			return;
+		}
 		this.data = GUISelectPanelColosseumRanking.partsDataList[base.IDX];
 		this.limitRank = CMD_ColosseumRanking.instance.GetlimitRank();
 	}
@@ -74,6 +78,10 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 
 	private void ShowData()
 	{
+		if (this.data == null)
+		{
+			return;
+		}
 		this.SetDigimonIcon();
 		if (this.data.userId.ToString() == DataMng.Instance().RespDataCM_Login.playerInfo.userId)
 		{
@@ -140,7 +148,7 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 		if (this.digimonData == null)
 		{
 			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.leaderMonsterId);
-			this.csMonsIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.digimonData, this.goMONSTER_ICON.transform.localScale, this.goMONSTER_ICON.transform.localPosition, this.goMONSTER_ICON.transform.parent, true, true);
+			this.csMonsIcon = GUIMonsterIcon.MakePrefabByMonsterData(this.digimonData, this.goMONSTER_ICON.transform.localScale, this.goMONSTER_ICON.transform.localPosition, this.goMONSTER_ICON.transform.parent, true, true);
 			UIWidget component = this.goMONSTER_ICON.GetComponent<UIWidget>();
 			UIWidget component2 = this.csMonsIcon.gameObject.GetComponent<UIWidget>();
 			if (component != null && component2 != null)
@@ -154,7 +162,7 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 		else
 		{
 			this.digimonData = MonsterDataMng.Instance().CreateMonsterDataByMID(this.data.leaderMonsterId);
-			MonsterDataMng.Instance().RefreshPrefabByMonsterData(this.digimonData, this.csMonsIcon, true, true);
+			this.csMonsIcon.RefreshPrefabByMonsterData(this.digimonData);
 		}
 	}
 

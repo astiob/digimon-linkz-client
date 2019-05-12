@@ -1,5 +1,8 @@
 ﻿using EvolutionDiagram;
 using Master;
+using Monster;
+using MonsterIcon;
+using Picturebook;
 using System;
 using UnityEngine;
 
@@ -20,6 +23,18 @@ namespace EvolutionRouteMap
 
 		private bool openEvolutionDiagram;
 
+		private MonsterIcon monsterIconSource;
+
+		private static void SetDialog(GameObject parentDialog, MonsterClientMaster monsterMaster)
+		{
+			EvolutionDiagramData.IconMonster monsterData = new EvolutionDiagramData.IconMonster
+			{
+				collectionId = int.Parse(monsterMaster.Group.monsterCollectionId),
+				master = monsterMaster
+			};
+			CMD_EvolutionRouteMap.CreateDialog(parentDialog, monsterData);
+		}
+
 		private void OnPushedReturnTopButton()
 		{
 			if (null == this.parentDialogGameObject || null == this.parentDialogGameObject.GetComponent<CMD_EvolutionDiagram>())
@@ -32,9 +47,10 @@ namespace EvolutionRouteMap
 		protected override void OnShowDialog()
 		{
 			base.PartsTitle.SetTitle(StringMaster.GetString("EvolutionDiagramTitle"));
+			this.monsterIconSource = MonsterIconFactory.CreateIcon(1);
 			this.selectMonsterInfo.Initialize();
-			this.beforeList.InitializeView(1);
-			this.afterList.InitializeView(1);
+			this.beforeList.Initialize();
+			this.afterList.Initialize();
 			this.UpdateSelectMonster();
 			this.UpdateViewList();
 			UI_EvolutionCharacterModelViewer component = base.gameObject.GetComponent<UI_EvolutionCharacterModelViewer>();
@@ -65,15 +81,25 @@ namespace EvolutionRouteMap
 			}
 		}
 
-		public static void CreateDialog(GameObject parentDialog, MonsterData monsterData)
+		public static void CreateDialog(GameObject parentDialog, MonsterClientMaster monsterMaster)
 		{
-			EvolutionDiagramData.IconMonster monsterData2 = new EvolutionDiagramData.IconMonster
+			if (!MonsterPicturebookData.IsReady())
 			{
-				collectionId = monsterData.monsterMG.monsterCollectionId.ToInt32(),
-				singleData = monsterData.monsterM,
-				groupData = monsterData.monsterMG
-			};
-			CMD_EvolutionRouteMap.CreateDialog(parentDialog, monsterData2);
+				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+				APIRequestTask task = MonsterPicturebookData.RequestUserPicturebook();
+				AppCoroutine.Start(task.Run(delegate
+				{
+					RestrictionInput.EndLoad();
+					CMD_EvolutionRouteMap.SetDialog(parentDialog, monsterMaster);
+				}, delegate(Exception noop)
+				{
+					RestrictionInput.EndLoad();
+				}, null), false);
+			}
+			else
+			{
+				CMD_EvolutionRouteMap.SetDialog(parentDialog, monsterMaster);
+			}
 		}
 
 		public static void CreateDialog(GameObject parentDialog, EvolutionDiagramData.IconMonster monsterData)
@@ -89,6 +115,11 @@ namespace EvolutionRouteMap
 		public EvolutionRouteMapData GetRouteMapData()
 		{
 			return this.routeMapData;
+		}
+
+		public MonsterIcon GetMonsterIconObject()
+		{
+			return MonsterIconFactory.Copy(this.monsterIconSource);
 		}
 
 		public void UpdateSelectMonster()

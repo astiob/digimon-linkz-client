@@ -3,14 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Parent class for all joints that have anchor points.</para>
-	/// </summary>
 	public class AnchoredJoint2D : Joint2D
 	{
-		/// <summary>
-		///   <para>The joint's anchor point on the object that has the joint component.</para>
-		/// </summary>
 		public Vector2 anchor
 		{
 			get
@@ -33,9 +27,6 @@ namespace UnityEngine
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_anchor(ref Vector2 value);
 
-		/// <summary>
-		///   <para>The joint's anchor point on the second object (ie, the one which doesn't have the joint component).</para>
-		/// </summary>
 		public Vector2 connectedAnchor
 		{
 			get
@@ -57,5 +48,7 @@ namespace UnityEngine
 		[WrapperlessIcall]
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void INTERNAL_set_connectedAnchor(ref Vector2 value);
+
+		public extern bool autoConfigureConnectedAnchor { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] set; }
 	}
 }

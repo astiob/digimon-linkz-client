@@ -28,6 +28,9 @@ public sealed class CMD_FirstClear : CMD
 	[SerializeField]
 	private GameObject goWinRewardTitle;
 
+	[SerializeField]
+	private GameObject goMidwayRankingTitle;
+
 	public static bool isNormalReward;
 
 	private bool isParticleStopped;
@@ -205,11 +208,27 @@ public sealed class CMD_FirstClear : CMD
 	{
 		this.goRankupRewardTitle.SetActive(true);
 		this.goWinRewardTitle.SetActive(false);
+		this.goMidwayRankingTitle.SetActive(false);
 	}
 
 	public void SetWinRewardTitle()
 	{
 		this.goRankupRewardTitle.SetActive(false);
 		this.goWinRewardTitle.SetActive(true);
+		this.goMidwayRankingTitle.SetActive(false);
+	}
+
+	public void SetMidwayRankingTitle()
+	{
+		this.goRankupRewardTitle.SetActive(false);
+		this.goWinRewardTitle.SetActive(false);
+		this.goMidwayRankingTitle.SetActive(true);
+	}
+
+	public void SetTitleHide()
+	{
+		this.goRankupRewardTitle.SetActive(false);
+		this.goWinRewardTitle.SetActive(false);
+		this.goMidwayRankingTitle.SetActive(true);
 	}
 }

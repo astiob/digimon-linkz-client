@@ -95,6 +95,14 @@ public class BattleStateMultiRoundStartToRoundEnd : BattleStateRoundStartToRound
 			}
 		}
 		base.battleStateData.enableRotateCam = false;
+		if (base.battleStateData.isShowMenuWindow)
+		{
+			base.stateManager.callAction.OnHideMenu();
+			while (base.battleStateData.isShowMenuWindow)
+			{
+				yield return null;
+			}
+		}
 		yield break;
 	}
 
@@ -106,6 +114,7 @@ public class BattleStateMultiRoundStartToRoundEnd : BattleStateRoundStartToRound
 			object obj = skillFunction.Current;
 			yield return obj;
 		}
+		base.stateManager.uiControlMulti.PlayApUpAnimations(null);
 		base.SetState(this.subStateMultiAreaRandomDamageHitFunction.GetType());
 		while (base.isWaitState)
 		{

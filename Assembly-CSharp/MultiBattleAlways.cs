@@ -11,17 +11,17 @@ public sealed class MultiBattleAlways : BattleAlways
 	[SerializeField]
 	private UIButton emotionIconButton;
 
-	[SerializeField]
 	[Header("右下のメッセージ")]
+	[SerializeField]
 	public MultiConnetionMessage connectionMessage;
 
-	[SerializeField]
 	[Header("マルチバトルのダイアログ")]
+	[SerializeField]
 	public MultiBattleDialog multiBattleDialog;
 
 	[SerializeField]
 	[Header("共有AP")]
-	public SharedAPMulti sharedAPMulti;
+	public BattleUIMultiSharedAP sharedAP;
 
 	[Header("残りターン(右下)")]
 	[SerializeField]

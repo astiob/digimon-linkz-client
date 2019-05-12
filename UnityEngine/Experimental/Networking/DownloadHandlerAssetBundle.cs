@@ -1,34 +1,43 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace UnityEngine.Experimental.Networking
 {
-	/// <summary>
-	///   <para>A DownloadHandler subclass specialized for downloading AssetBundles.</para>
-	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class DownloadHandlerAssetBundle : DownloadHandler
 	{
-		/// <summary>
-		///   <para>Not implemented. Throws &lt;a href="http:msdn.microsoft.comen-uslibrarysystem.notsupportedexception"&gt;NotSupportedException&lt;a&gt;.</para>
-		/// </summary>
-		/// <returns>
-		///   <para>Not implemented.</para>
-		/// </returns>
+		public DownloadHandlerAssetBundle(string url, uint crc)
+		{
+			base.InternalCreateWebStream(url, crc);
+		}
+
+		public DownloadHandlerAssetBundle(string url, uint version, uint crc)
+		{
+			Hash128 hash = new Hash128(0u, 0u, 0u, version);
+			base.InternalCreateWebStream(url, hash, crc);
+		}
+
+		public DownloadHandlerAssetBundle(string url, Hash128 hash, uint crc)
+		{
+			base.InternalCreateWebStream(url, hash, crc);
+		}
+
 		protected override byte[] GetData()
 		{
 			throw new NotSupportedException("Raw data access is not supported for asset bundles");
 		}
 
-		/// <summary>
-		///   <para>Not implemented. Throws &lt;a href="http:msdn.microsoft.comen-uslibrarysystem.notsupportedexception"&gt;NotSupportedException&lt;a&gt;.</para>
-		/// </summary>
-		/// <returns>
-		///   <para>Not implemented.</para>
-		/// </returns>
 		protected override string GetText()
 		{
 			throw new NotSupportedException("String access is not supported for asset bundles");
+		}
+
+		public extern AssetBundle assetBundle { [WrapperlessIcall] [MethodImpl(MethodImplOptions.InternalCall)] get; }
+
+		public static AssetBundle GetContent(UnityWebRequest www)
+		{
+			return DownloadHandler.GetCheckedDownloader<DownloadHandlerAssetBundle>(www).assetBundle;
 		}
 	}
 }

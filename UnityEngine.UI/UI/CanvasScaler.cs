@@ -4,8 +4,8 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI
 {
 	[AddComponentMenu("Layout/Canvas Scaler", 101)]
-	[RequireComponent(typeof(Canvas))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Canvas))]
 	public class CanvasScaler : UIBehaviour
 	{
 		private const float kLogBase = 2f;
@@ -14,8 +14,8 @@ namespace UnityEngine.UI
 		[Tooltip("Determines how UI elements in the Canvas are scaled.")]
 		private CanvasScaler.ScaleMode m_UiScaleMode;
 
-		[Tooltip("If a sprite has this 'Pixels Per Unit' setting, then one pixel in the sprite will cover one unit in the UI.")]
 		[SerializeField]
+		[Tooltip("If a sprite has this 'Pixels Per Unit' setting, then one pixel in the sprite will cover one unit in the UI.")]
 		protected float m_ReferencePixelsPerUnit = 100f;
 
 		[Tooltip("Scales all UI elements in the Canvas by this factor.")]
@@ -30,25 +30,25 @@ namespace UnityEngine.UI
 		[Tooltip("A mode used to scale the canvas area if the aspect ratio of the current resolution doesn't fit the reference resolution.")]
 		protected CanvasScaler.ScreenMatchMode m_ScreenMatchMode;
 
-		[SerializeField]
-		[Range(0f, 1f)]
 		[Tooltip("Determines if the scaling is using the width or height as reference, or a mix in between.")]
+		[Range(0f, 1f)]
+		[SerializeField]
 		protected float m_MatchWidthOrHeight;
 
 		[Tooltip("The physical unit to specify positions and sizes in.")]
 		[SerializeField]
 		protected CanvasScaler.Unit m_PhysicalUnit = CanvasScaler.Unit.Points;
 
-		[SerializeField]
 		[Tooltip("The DPI to assume if the screen DPI is not known.")]
+		[SerializeField]
 		protected float m_FallbackScreenDPI = 96f;
 
 		[SerializeField]
 		[Tooltip("The pixels per inch to use for sprites that have a 'Pixels Per Unit' setting that matches the 'Reference Pixels Per Unit' setting.")]
 		protected float m_DefaultSpriteDPI = 96f;
 
-		[SerializeField]
 		[Tooltip("The amount of pixels per unit to use for dynamically created bitmaps in the UI, such as Text.")]
+		[SerializeField]
 		protected float m_DynamicPixelsPerUnit = 1f;
 
 		private Canvas m_Canvas;
@@ -95,7 +95,7 @@ namespace UnityEngine.UI
 			}
 			set
 			{
-				this.m_ScaleFactor = value;
+				this.m_ScaleFactor = Mathf.Max(0.01f, value);
 			}
 		}
 
@@ -108,6 +108,14 @@ namespace UnityEngine.UI
 			set
 			{
 				this.m_ReferenceResolution = value;
+				if (this.m_ReferenceResolution.x > -1E-05f && this.m_ReferenceResolution.x < 1E-05f)
+				{
+					this.m_ReferenceResolution.x = 1E-05f * Mathf.Sign(this.m_ReferenceResolution.x);
+				}
+				if (this.m_ReferenceResolution.y > -1E-05f && this.m_ReferenceResolution.y < 1E-05f)
+				{
+					this.m_ReferenceResolution.y = 1E-05f * Mathf.Sign(this.m_ReferenceResolution.y);
+				}
 			}
 		}
 

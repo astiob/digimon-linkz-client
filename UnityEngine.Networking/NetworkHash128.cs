@@ -113,7 +113,7 @@ namespace UnityEngine.Networking
 
 		public override string ToString()
 		{
-			return string.Format("{0:x}{1:x}{2:x}{3:x}{4:x}{5:x}{6:x}{7:x}{8:x}{9:x}{10:x}{11:x}{12:x}{13:x}{14:x}{15:x}", new object[]
+			return string.Format("{0:x2}{1:x2}{2:x2}{3:x2}{4:x2}{5:x2}{6:x2}{7:x2}{8:x2}{9:x2}{10:x2}{11:x2}{12:x2}{13:x2}{14:x2}{15:x2}", new object[]
 			{
 				this.i0,
 				this.i1,

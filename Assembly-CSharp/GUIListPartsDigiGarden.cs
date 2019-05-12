@@ -1,4 +1,5 @@
 ﻿using Master;
+using Monster;
 using System;
 using UnityEngine;
 
@@ -81,7 +82,7 @@ public class GUIListPartsDigiGarden : GUIListPartBS
 		{
 			UnityEngine.Object.DestroyImmediate(this.goMN_ICON_CHG_2);
 		}
-		GUIMonsterIcon guimonsterIcon = MonsterDataMng.Instance().MakePrefabByMonsterData(this.data, this.goMN_ICON.transform.localScale, this.goMN_ICON.transform.localPosition, this.goMN_ICON.transform.parent, true, false);
+		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(this.data, this.goMN_ICON.transform.localScale, this.goMN_ICON.transform.localPosition, this.goMN_ICON.transform.parent, true, false);
 		this.goMN_ICON_CHG_2 = guimonsterIcon.gameObject;
 		this.goMN_ICON_CHG_2.SetActive(true);
 		guimonsterIcon.Data = this.data;
@@ -109,7 +110,7 @@ public class GUIListPartsDigiGarden : GUIListPartBS
 		if (!this.data.userMonster.IsEgg())
 		{
 			this.ngTX_NAME.text = this.data.monsterMG.monsterName;
-			this.ngTX_GRADE.text = this.data.growStepM.monsterGrowStepName;
+			this.ngTX_GRADE.text = MonsterGrowStepData.GetGrowStepName(this.data.monsterMG.growStep);
 			if (CMD_DigiGarden.instance != null && CMD_DigiGarden.instance.IsOfflineModeFlag)
 			{
 				this.ngTX_EXP.text = StringMaster.GetString("Garden-13");

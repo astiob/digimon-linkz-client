@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BtnSort : GUICollider
 {
-	public GameObject goTX_SORT;
+	[SerializeField]
+	private GameObject goTX_SORT;
 
 	private UILabel ngTX_SORT;
 
-	public bool IsEvolvePage { get; set; }
+	public Action OnChangeSortType { private get; set; }
+
+	public List<MonsterData> SortTargetMonsterList { private get; set; }
 
 	public Action ActCallBackEnd { get; set; }
 
@@ -15,11 +19,6 @@ public class BtnSort : GUICollider
 	{
 		base.Awake();
 		this.AwakeSort();
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 
 	public override void OnTouchBegan(Touch touch, Vector2 pos)
@@ -66,7 +65,9 @@ public class BtnSort : GUICollider
 			if (magnitude < 40f)
 			{
 				CMD_ModalSort cmd_ModalSort = GUIMain.ShowCommonDialog(new Action<int>(this.EndSort), "CMD_ModalSort") as CMD_ModalSort;
-				cmd_ModalSort.IsEvolvePage = this.IsEvolvePage;
+				cmd_ModalSort.SetTargetMonsterList(this.SortTargetMonsterList);
+				cmd_ModalSort.SetChangeSettingAction(this.OnChangeSortType);
+				cmd_ModalSort.Initialize();
 			}
 		}
 	}
@@ -74,12 +75,12 @@ public class BtnSort : GUICollider
 	private void AwakeSort()
 	{
 		this.ngTX_SORT = this.goTX_SORT.GetComponent<UILabel>();
-		this.ngTX_SORT.text = MonsterDataMng.Instance().GetSortName();
+		this.ngTX_SORT.text = CMD_ModalSort.GetSortName(CMD_BaseSelect.IconSortType);
 	}
 
 	private void EndSort(int i)
 	{
-		this.ngTX_SORT.text = MonsterDataMng.Instance().GetSortName();
+		this.ngTX_SORT.text = CMD_ModalSort.GetSortName(CMD_BaseSelect.IconSortType);
 		if (this.ActCallBackEnd != null)
 		{
 			this.ActCallBackEnd();

@@ -229,19 +229,11 @@ public class CMD_ChatMenu : CMD
 	{
 		if (ChatTools.CheckOnFLG(data.result))
 		{
-			Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, StringMaster.GetString("ChatLog-03"), DataMng.Instance().UserName, delegate(int nop)
-			{
-				RestrictionInput.EndLoad();
-				this.UpdateJoinGroupData();
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
-				{
-					base.ClosePanel(true);
-					CMD_ChatWindow.instance.PushedChatReturnBtn();
-					CMD_ChatTop.instance.GetUserChatGroupListExec();
-				}, "CMD_ModalMessage") as CMD_ModalMessage;
-				cmd_ModalMessage.Title = StringMaster.GetString("ChatConfirmTitle");
-				cmd_ModalMessage.Info = StringMaster.GetString("ChatLeavingSuccess");
-			});
+			this.SendChatResignGroup(StringMaster.GetString("ChatLog-03"), StringMaster.GetString("ChatConfirmTitle"), StringMaster.GetString("ChatLeavingSuccess"));
+		}
+		else if (data.resultCode == 90)
+		{
+			this.SendChatResignGroup(StringMaster.GetString("ChatLog-03"), StringMaster.GetString("SystemConfirm"), StringMaster.GetString("ChatMemberKickNotice"));
 		}
 		else
 		{
@@ -324,5 +316,22 @@ public class CMD_ChatMenu : CMD
 		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("SystemCaution");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_CHAT_NOTICE;
+	}
+
+	private void SendChatResignGroup(string mes, string title, string info)
+	{
+		Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, mes, DataMng.Instance().UserName, delegate(int nop)
+		{
+			RestrictionInput.EndLoad();
+			this.UpdateJoinGroupData();
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
+			{
+				this.ClosePanel(true);
+				CMD_ChatWindow.instance.PushedChatReturnBtn();
+				CMD_ChatTop.instance.GetUserChatGroupListExec();
+			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			cmd_ModalMessage.Title = title;
+			cmd_ModalMessage.Info = info;
+		});
 	}
 }

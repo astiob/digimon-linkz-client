@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Struct used to describe meshes to be combined using Mesh.CombineMeshes.</para>
-	/// </summary>
 	public struct CombineInstance
 	{
 		private int m_MeshInstanceID;
@@ -14,9 +11,6 @@ namespace UnityEngine
 
 		private Matrix4x4 m_Transform;
 
-		/// <summary>
-		///   <para>Mesh to combine.</para>
-		/// </summary>
 		public Mesh mesh
 		{
 			get
@@ -29,9 +23,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Submesh index of the mesh.</para>
-		/// </summary>
 		public int subMeshIndex
 		{
 			get
@@ -44,9 +35,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>Matrix to transform the mesh with before combining.</para>
-		/// </summary>
 		public Matrix4x4 transform
 		{
 			get

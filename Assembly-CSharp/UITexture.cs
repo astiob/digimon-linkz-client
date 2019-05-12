@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Texture")]
+[ExecuteInEditMode]
 public class UITexture : UIBasicSprite
 {
 	[HideInInspector]
@@ -13,12 +13,12 @@ public class UITexture : UIBasicSprite
 	[SerializeField]
 	private Texture mTexture;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Shader mShader;
 
 	[SerializeField]

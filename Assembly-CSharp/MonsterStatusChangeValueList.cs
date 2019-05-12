@@ -52,12 +52,14 @@ public sealed class MonsterStatusChangeValueList : MonoBehaviour
 
 	public void SetValues(MonsterData monsterData)
 	{
-		this.SetPlusParameter(this.hpLabel, monsterData.Now_HP(-1) - (int)monsterData.Base_HP(-1));
-		this.SetPlusParameter(this.attackLabel, monsterData.Now_ATK(-1) - (int)monsterData.Base_ATK(-1));
-		this.SetPlusParameter(this.defenseLabel, monsterData.Now_DEF(-1) - (int)monsterData.Base_DEF(-1));
-		this.SetPlusParameter(this.magicAttackLabel, monsterData.Now_SATK(-1) - (int)monsterData.Base_SATK(-1));
-		this.SetPlusParameter(this.magicDefenseLabel, monsterData.Now_SDEF(-1) - (int)monsterData.Base_SDEF(-1));
-		this.SetPlusParameter(this.speedLabel, monsterData.Now_SPD(-1) - (int)monsterData.Base_SPD(-1));
+		StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterData.userMonster.monsterId, monsterData.userMonster.level);
+		StatusValue status = monsterData.GetStatus();
+		this.SetPlusParameter(this.hpLabel, status.hp - statusValue.hp);
+		this.SetPlusParameter(this.attackLabel, status.attack - statusValue.attack);
+		this.SetPlusParameter(this.defenseLabel, status.defense - statusValue.defense);
+		this.SetPlusParameter(this.magicAttackLabel, status.magicAttack - statusValue.magicAttack);
+		this.SetPlusParameter(this.magicDefenseLabel, status.magicDefense - statusValue.magicDefense);
+		this.SetPlusParameter(this.speedLabel, status.speed - statusValue.speed);
 	}
 
 	private void SetParameter(UILabel label, int value)

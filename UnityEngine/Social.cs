@@ -3,14 +3,8 @@ using UnityEngine.SocialPlatforms;
 
 namespace UnityEngine
 {
-	/// <summary>
-	///   <para>Generic access to the Social API.</para>
-	/// </summary>
 	public static class Social
 	{
-		/// <summary>
-		///   <para>This is the currently active social platform. </para>
-		/// </summary>
 		public static ISocialPlatform Active
 		{
 			get
@@ -23,9 +17,6 @@ namespace UnityEngine
 			}
 		}
 
-		/// <summary>
-		///   <para>The local user (potentially not logged in).</para>
-		/// </summary>
 		public static ILocalUser localUser
 		{
 			get
@@ -64,33 +55,21 @@ namespace UnityEngine
 			Social.Active.LoadScores(leaderboardID, callback);
 		}
 
-		/// <summary>
-		///   <para>Create an ILeaderboard instance.</para>
-		/// </summary>
 		public static ILeaderboard CreateLeaderboard()
 		{
 			return Social.Active.CreateLeaderboard();
 		}
 
-		/// <summary>
-		///   <para>Create an IAchievement instance.</para>
-		/// </summary>
 		public static IAchievement CreateAchievement()
 		{
 			return Social.Active.CreateAchievement();
 		}
 
-		/// <summary>
-		///   <para>Show a default/system view of the games achievements.</para>
-		/// </summary>
 		public static void ShowAchievementsUI()
 		{
 			Social.Active.ShowAchievementsUI();
 		}
 
-		/// <summary>
-		///   <para>Show a default/system view of the games leaderboards.</para>
-		/// </summary>
 		public static void ShowLeaderboardUI()
 		{
 			Social.Active.ShowLeaderboardUI();

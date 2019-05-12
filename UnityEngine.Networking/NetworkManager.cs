@@ -4,6 +4,7 @@ using System.Net;
 using UnityEngine.Networking.Match;
 using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.Networking.Types;
+using UnityEngine.SceneManagement;
 
 namespace UnityEngine.Networking
 {
@@ -30,9 +31,6 @@ namespace UnityEngine.Networking
 
 		[SerializeField]
 		private bool m_ScriptCRCCheck = true;
-
-		[SerializeField]
-		private bool m_SendPeerInfo;
 
 		[SerializeField]
 		private float m_MaxDelay = 0.01f;
@@ -68,6 +66,9 @@ namespace UnityEngine.Networking
 		private ConnectionConfig m_ConnectionConfig;
 
 		[SerializeField]
+		private GlobalConfig m_GlobalConfig;
+
+		[SerializeField]
 		private List<QosType> m_Channels = new List<QosType>();
 
 		[SerializeField]
@@ -88,7 +89,11 @@ namespace UnityEngine.Networking
 		[SerializeField]
 		private int m_MatchPort = 443;
 
+		private NetworkMigrationManager m_MigrationManager;
+
 		private EndPoint m_EndPoint;
+
+		private bool m_ClientLoadedScene;
 
 		public static string networkSceneName = string.Empty;
 
@@ -208,15 +213,15 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		[Obsolete("moved to NetworkMigrationManager")]
 		public bool sendPeerInfo
 		{
 			get
 			{
-				return this.m_SendPeerInfo;
+				return false;
 			}
 			set
 			{
-				this.m_SendPeerInfo = value;
 			}
 		}
 
@@ -345,6 +350,18 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		public GlobalConfig globalConfig
+		{
+			get
+			{
+				if (this.m_GlobalConfig == null)
+				{
+					this.m_GlobalConfig = new GlobalConfig();
+				}
+				return this.m_GlobalConfig;
+			}
+		}
+
 		public int maxConnections
 		{
 			get
@@ -449,6 +466,26 @@ namespace UnityEngine.Networking
 			}
 		}
 
+		public bool clientLoadedScene
+		{
+			get
+			{
+				return this.m_ClientLoadedScene;
+			}
+			set
+			{
+				this.m_ClientLoadedScene = value;
+			}
+		}
+
+		public NetworkMigrationManager migrationManager
+		{
+			get
+			{
+				return this.m_MigrationManager;
+			}
+		}
+
 		public int numPlayers
 		{
 			get
@@ -467,33 +504,29 @@ namespace UnityEngine.Networking
 						}
 					}
 				}
-				foreach (NetworkConnection networkConnection2 in NetworkServer.localConnections)
-				{
-					if (networkConnection2 != null)
-					{
-						foreach (PlayerController playerController2 in networkConnection2.playerControllers)
-						{
-							if (playerController2.IsValid)
-							{
-								num++;
-							}
-						}
-					}
-				}
 				return num;
 			}
 		}
 
 		private void Awake()
 		{
+			this.InitializeSingleton();
+		}
+
+		private void InitializeSingleton()
+		{
+			if (NetworkManager.singleton != null && NetworkManager.singleton == this)
+			{
+				return;
+			}
 			LogFilter.currentLogLevel = (int)this.m_LogLevel;
 			if (this.m_DontDestroyOnLoad)
 			{
 				if (NetworkManager.singleton != null)
 				{
-					if (LogFilter.logWarn)
+					if (LogFilter.logDev)
 					{
-						Debug.LogWarning("Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will not be used.");
+						Debug.Log("Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will not be used.");
 					}
 					Object.Destroy(base.gameObject);
 					return;
@@ -557,6 +590,22 @@ namespace UnityEngine.Networking
 				}
 				this.m_PlayerPrefab = null;
 			}
+			if (this.m_ConnectionConfig.MinUpdateTimeout <= 0u)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkManager MinUpdateTimeout cannot be zero or less. The value will be reset to 1 millisecond");
+				}
+				this.m_ConnectionConfig.MinUpdateTimeout = 1u;
+			}
+			if (this.m_GlobalConfig != null && this.m_GlobalConfig.ThreadAwakeTimeout <= 0u)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkManager ThreadAwakeTimeout cannot be zero or less. The value will be reset to 1 millisecond");
+				}
+				this.m_GlobalConfig.ThreadAwakeTimeout = 1u;
+			}
 		}
 
 		internal void RegisterServerMessages()
@@ -567,6 +616,11 @@ namespace UnityEngine.Networking
 			NetworkServer.RegisterHandler(37, new NetworkMessageDelegate(this.OnServerAddPlayerMessageInternal));
 			NetworkServer.RegisterHandler(38, new NetworkMessageDelegate(this.OnServerRemovePlayerMessageInternal));
 			NetworkServer.RegisterHandler(34, new NetworkMessageDelegate(this.OnServerErrorInternal));
+		}
+
+		public void SetupMigrationManager(NetworkMigrationManager man)
+		{
+			this.m_MigrationManager = man;
 		}
 
 		public bool StartServer(ConnectionConfig config, int maxConnections)
@@ -586,12 +640,18 @@ namespace UnityEngine.Networking
 
 		private bool StartServer(MatchInfo info, ConnectionConfig config, int maxConnections)
 		{
+			this.InitializeSingleton();
 			this.OnStartServer();
 			if (this.m_RunInBackground)
 			{
 				Application.runInBackground = true;
 			}
 			NetworkCRC.scriptCRCCheck = this.scriptCRCCheck;
+			NetworkServer.useWebSockets = this.m_UseWebSockets;
+			if (this.m_GlobalConfig != null)
+			{
+				NetworkTransport.Init(this.m_GlobalConfig);
+			}
 			if (this.m_CustomConfig && this.m_ConnectionConfig != null && config == null)
 			{
 				this.m_ConnectionConfig.Channels.Clear();
@@ -601,9 +661,6 @@ namespace UnityEngine.Networking
 				}
 				NetworkServer.Configure(this.m_ConnectionConfig, this.m_MaxConnections);
 			}
-			this.RegisterServerMessages();
-			NetworkServer.sendPeerInfo = this.m_SendPeerInfo;
-			NetworkServer.useWebSockets = this.m_UseWebSockets;
 			if (config != null)
 			{
 				NetworkServer.Configure(config, maxConnections);
@@ -638,12 +695,14 @@ namespace UnityEngine.Networking
 				}
 				return false;
 			}
+			this.RegisterServerMessages();
 			if (LogFilter.logDebug)
 			{
 				Debug.Log("NetworkManager StartServer port:" + this.m_NetworkPort);
 			}
 			this.isNetworkActive = true;
-			if (this.m_OnlineScene != string.Empty && this.m_OnlineScene != Application.loadedLevelName && this.m_OnlineScene != this.m_OfflineScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (this.m_OnlineScene != string.Empty && this.m_OnlineScene != name && this.m_OnlineScene != this.m_OfflineScene)
 			{
 				this.ServerChangeScene(this.m_OnlineScene);
 			}
@@ -680,24 +739,47 @@ namespace UnityEngine.Networking
 			{
 				Application.runInBackground = true;
 			}
-			this.isNetworkActive = true;
-			this.client = externalClient;
-			this.RegisterClientMessages(this.client);
-			this.OnStartClient(this.client);
+			if (externalClient != null)
+			{
+				this.client = externalClient;
+				this.isNetworkActive = true;
+				this.RegisterClientMessages(this.client);
+				this.OnStartClient(this.client);
+			}
+			else
+			{
+				this.OnStopClient();
+				ClientScene.DestroyAllClientObjects();
+				ClientScene.HandleClientDisconnect(this.client.connection);
+				this.client = null;
+				if (this.m_OfflineScene != string.Empty)
+				{
+					this.ClientChangeScene(this.m_OfflineScene, false);
+				}
+			}
 			NetworkManager.s_Address = this.m_NetworkAddress;
 		}
 
 		public NetworkClient StartClient(MatchInfo info, ConnectionConfig config)
 		{
+			this.InitializeSingleton();
 			this.matchInfo = info;
 			if (this.m_RunInBackground)
 			{
 				Application.runInBackground = true;
 			}
 			this.isNetworkActive = true;
+			if (this.m_GlobalConfig != null)
+			{
+				NetworkTransport.Init(this.m_GlobalConfig);
+			}
 			this.client = new NetworkClient();
 			if (config != null)
 			{
+				if (config.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4)
+				{
+					throw new ArgumentOutOfRangeException("Platform specific protocols are not supported on this platform");
+				}
 				this.client.Configure(config, 1);
 			}
 			else if (this.m_CustomConfig && this.m_ConnectionConfig != null)
@@ -706,6 +788,10 @@ namespace UnityEngine.Networking
 				foreach (QosType value in this.m_Channels)
 				{
 					this.m_ConnectionConfig.AddChannel(value);
+				}
+				if (this.m_ConnectionConfig.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4)
+				{
+					throw new ArgumentOutOfRangeException("Platform specific protocols are not supported on this platform");
 				}
 				this.client.Configure(this.m_ConnectionConfig, this.m_MaxConnections);
 			}
@@ -754,6 +840,10 @@ namespace UnityEngine.Networking
 				{
 					this.client.Connect(this.m_NetworkAddress, this.m_NetworkPort);
 				}
+			}
+			if (this.m_MigrationManager != null)
+			{
+				this.m_MigrationManager.Initialize(this.client, this.matchInfo);
 			}
 			this.OnStartClient(this.client);
 			NetworkManager.s_Address = this.m_NetworkAddress;
@@ -819,14 +909,23 @@ namespace UnityEngine.Networking
 			this.m_NetworkAddress = "localhost";
 			this.client = ClientScene.ConnectLocalServer();
 			this.RegisterClientMessages(this.client);
+			if (this.m_MigrationManager != null)
+			{
+				this.m_MigrationManager.Initialize(this.client, this.matchInfo);
+			}
 			return this.client;
 		}
 
 		public void StopHost()
 		{
+			bool active = NetworkServer.active;
 			this.OnStopHost();
 			this.StopServer();
 			this.StopClient();
+			if (this.m_MigrationManager != null && active)
+			{
+				this.m_MigrationManager.LostHostOnHost();
+			}
 		}
 
 		public void StopServer()
@@ -887,7 +986,7 @@ namespace UnityEngine.Networking
 			}
 			NetworkServer.SetAllClientsNotReady();
 			NetworkManager.networkSceneName = newSceneName;
-			NetworkManager.s_LoadingSceneAsync = Application.LoadLevelAsync(newSceneName);
+			NetworkManager.s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
 			StringMessage msg = new StringMessage(NetworkManager.networkSceneName);
 			NetworkServer.SendToAll(39, msg);
 			NetworkManager.s_StartPositionIndex = 0;
@@ -908,11 +1007,20 @@ namespace UnityEngine.Networking
 			{
 				Debug.Log("ClientChangeScene newSceneName:" + newSceneName + " networkSceneName:" + NetworkManager.networkSceneName);
 			}
-			if (newSceneName == NetworkManager.networkSceneName && !forceReload)
+			if (newSceneName == NetworkManager.networkSceneName)
 			{
-				return;
+				if (this.m_MigrationManager != null)
+				{
+					this.FinishLoadScene();
+					return;
+				}
+				if (!forceReload)
+				{
+					this.FinishLoadScene();
+					return;
+				}
 			}
-			NetworkManager.s_LoadingSceneAsync = Application.LoadLevelAsync(newSceneName);
+			NetworkManager.s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
 			NetworkManager.networkSceneName = newSceneName;
 		}
 
@@ -922,6 +1030,7 @@ namespace UnityEngine.Networking
 			{
 				if (NetworkManager.s_ClientReadyConnection != null)
 				{
+					this.m_ClientLoadedScene = true;
 					this.OnClientConnect(NetworkManager.s_ClientReadyConnection);
 					NetworkManager.s_ClientReadyConnection = null;
 				}
@@ -1021,6 +1130,10 @@ namespace UnityEngine.Networking
 				StringMessage msg = new StringMessage(NetworkManager.networkSceneName);
 				netMsg.conn.Send(39, msg);
 			}
+			if (this.m_MigrationManager != null)
+			{
+				this.m_MigrationManager.SendPeerInfo();
+			}
 			this.OnServerConnect(netMsg.conn);
 		}
 
@@ -1029,6 +1142,10 @@ namespace UnityEngine.Networking
 			if (LogFilter.logDebug)
 			{
 				Debug.Log("NetworkManager:OnServerDisconnectInternal");
+			}
+			if (this.m_MigrationManager != null)
+			{
+				this.m_MigrationManager.SendPeerInfo();
 			}
 			this.OnServerDisconnect(netMsg.conn);
 		}
@@ -1058,6 +1175,10 @@ namespace UnityEngine.Networking
 			{
 				this.OnServerAddPlayer(netMsg.conn, NetworkManager.s_AddPlayerMessage.playerControllerId);
 			}
+			if (this.m_MigrationManager != null)
+			{
+				this.m_MigrationManager.SendPeerInfo();
+			}
 		}
 
 		internal void OnServerRemovePlayerMessageInternal(NetworkMessage netMsg)
@@ -1071,6 +1192,10 @@ namespace UnityEngine.Networking
 			netMsg.conn.GetPlayerController(NetworkManager.s_RemovePlayerMessage.playerControllerId, out player);
 			this.OnServerRemovePlayer(netMsg.conn, player);
 			netMsg.conn.RemovePlayerController(NetworkManager.s_RemovePlayerMessage.playerControllerId);
+			if (this.m_MigrationManager != null)
+			{
+				this.m_MigrationManager.SendPeerInfo();
+			}
 		}
 
 		internal void OnServerErrorInternal(NetworkMessage netMsg)
@@ -1090,8 +1215,10 @@ namespace UnityEngine.Networking
 				Debug.Log("NetworkManager:OnClientConnectInternal");
 			}
 			netMsg.conn.SetMaxDelay(this.m_MaxDelay);
-			if (string.IsNullOrEmpty(this.m_OnlineScene) || this.m_OnlineScene == this.m_OfflineScene)
+			string name = SceneManager.GetSceneAt(0).name;
+			if (string.IsNullOrEmpty(this.m_OnlineScene) || this.m_OnlineScene == this.m_OfflineScene || name == this.m_OnlineScene)
 			{
+				this.m_ClientLoadedScene = false;
 				this.OnClientConnect(netMsg.conn);
 			}
 			else
@@ -1105,6 +1232,10 @@ namespace UnityEngine.Networking
 			if (LogFilter.logDebug)
 			{
 				Debug.Log("NetworkManager:OnClientDisconnectInternal");
+			}
+			if (this.m_MigrationManager != null && this.m_MigrationManager.LostHostOnClient(netMsg.conn))
+			{
+				return;
 			}
 			if (this.m_OfflineScene != string.Empty)
 			{
@@ -1261,7 +1392,7 @@ namespace UnityEngine.Networking
 
 		public virtual void OnClientConnect(NetworkConnection conn)
 		{
-			if (string.IsNullOrEmpty(this.m_OnlineScene) || this.m_OnlineScene == this.m_OfflineScene)
+			if (!this.clientLoadedScene)
 			{
 				ClientScene.Ready(conn);
 				if (this.m_AutoCreatePlayer)

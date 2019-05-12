@@ -19,7 +19,7 @@ public sealed class UITimer : MonoBehaviour
 		this.StartTimer();
 	}
 
-	private void OnDesable()
+	private void OnDisable()
 	{
 		this.Stop();
 	}
