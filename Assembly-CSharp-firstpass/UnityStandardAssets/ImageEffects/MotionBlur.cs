@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Blur/Motion Blur (Color Accumulation)")]
-	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Blur/Motion Blur (Color Accumulation)")]
 	public class MotionBlur : ImageEffectBase
 	{
 		public float blurAmount = 0.8f;

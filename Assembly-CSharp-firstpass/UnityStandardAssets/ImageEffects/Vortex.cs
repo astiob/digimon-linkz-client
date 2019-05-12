@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Displacement/Vortex")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Displacement/Vortex")]
 	public class Vortex : ImageEffectBase
 	{
 		public Vector2 radius = new Vector2(0.4f, 0.4f);

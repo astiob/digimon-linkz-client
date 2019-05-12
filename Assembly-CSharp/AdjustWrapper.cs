@@ -148,7 +148,7 @@ public class AdjustWrapper : MonoBehaviour
 			string value = (!keyValuePair.Value) ? "0" : "1";
 			adjustEvent.addCallbackParameter(keyValuePair.Key, value);
 		}
-		Adjust.trackEvent(adjustEvent);
+		this.adjust.trackEvent(adjustEvent);
 	}
 
 	public void start(AdjustConfig adjustConfig)

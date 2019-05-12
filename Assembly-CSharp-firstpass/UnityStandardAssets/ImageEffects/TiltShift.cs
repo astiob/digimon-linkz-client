@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[RequireComponent(typeof(Camera))]
 	[AddComponentMenu("Image Effects/Camera/Tilt Shift (Lens Blur)")]
+	[RequireComponent(typeof(Camera))]
 	internal class TiltShift : PostEffectsBase
 	{
 		public TiltShift.TiltShiftMode mode;

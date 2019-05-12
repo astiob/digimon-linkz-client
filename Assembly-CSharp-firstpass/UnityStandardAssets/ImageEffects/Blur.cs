@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Blur/Blur")]
+	[ExecuteInEditMode]
 	public class Blur : MonoBehaviour
 	{
 		public int iterations = 3;

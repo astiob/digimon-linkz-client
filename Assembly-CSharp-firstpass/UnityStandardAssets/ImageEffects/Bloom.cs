@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Bloom and Glow/Bloom")]
 	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Bloom and Glow/Bloom")]
 	public class Bloom : PostEffectsBase
 	{
 		public Bloom.TweakMode tweakMode;

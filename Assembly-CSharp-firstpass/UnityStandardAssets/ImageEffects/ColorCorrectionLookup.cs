@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Color Adjustments/Color Correction (3D Lookup Texture)")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Color Adjustments/Color Correction (3D Lookup Texture)")]
 	public class ColorCorrectionLookup : PostEffectsBase
 	{
 		public Shader shader;
