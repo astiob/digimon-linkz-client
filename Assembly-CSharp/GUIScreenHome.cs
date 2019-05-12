@@ -327,7 +327,6 @@ public class GUIScreenHome : GUIScreen
 			if (0 < showNum)
 			{
 				this.isInfoShowed = true;
-				Partytrack.start(5789, "07e569a17368b4a04e0eed94ee2937f3");
 			}
 		}
 		yield break;

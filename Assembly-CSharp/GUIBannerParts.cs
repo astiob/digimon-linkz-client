@@ -245,7 +245,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 			if (1 <= num)
 			{
 				GUIBannerParts.SetActiveRestTime(true, label);
-				GUIBannerParts.SetDateFormat(label, restTimeDate);
+				DateTime dateTime = TimeUtility.ToJPLocalDateTime(restTimeDate);
+				GUIBannerParts.SetDateFormat(label, dateTime);
 			}
 			else
 			{
@@ -253,7 +254,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 				if (1 <= num2)
 				{
 					GUIBannerParts.SetActiveRestTime(true, label);
-					GUIBannerParts.SetDateFormat(label, restTimeDate);
+					DateTime dateTime2 = TimeUtility.ToJPLocalDateTime(restTimeDate);
+					GUIBannerParts.SetDateFormat(label, dateTime2);
 				}
 				else
 				{
@@ -289,7 +291,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 			int num4 = totalSeconds % GUIBannerParts.MINUTES_SECONDS;
 			if (useDateFormat && 1 <= num)
 			{
-				GUIBannerParts.SetDateFormat(label, restTimeDate);
+				DateTime dateTime = TimeUtility.ToJPLocalDateTime(restTimeDate);
+				GUIBannerParts.SetDateFormat(label, dateTime);
 			}
 			else if (num2 >= 1)
 			{

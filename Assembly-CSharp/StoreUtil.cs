@@ -88,12 +88,9 @@ public class StoreUtil : MonoBehaviour
 							{
 								stoneStoreData.storePrice = storeProductInfoList[j].price;
 								stoneStoreData.storePriceNum = this.GetPriceNumberFromStorePrice(stoneStoreData.storePrice);
-								stoneStoreData.productTitle = storeProductInfoList[j].title;
 							}
 						}
 					}
-					string oldValue = "(DigimonLinks)";
-					stoneStoreData.productTitle = stoneStoreData.productTitle.Replace(oldValue, string.Empty);
 					stoneStoreData.priority = int.Parse(productList[i].priority);
 					stoneStoreData.limitCount = int.Parse(productList[i].limitCount);
 					if (!string.IsNullOrEmpty(productList[i].purchasedCount))

@@ -70,7 +70,6 @@ public sealed class TutorialFirstPart : TutorialBasePart
 
 	public override void FinishTutorial(GameObject observer)
 	{
-		Partytrack.sendEvent(40871);
 		this.tutorialCommandAction = null;
 		this.scriptEngine = null;
 		UIRoot uiroot = GUIMain.GetUIRoot();
