@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public class CMD_BlockList : CMD
+public sealed class CMD_BlockList : CMD
 {
 	[SerializeField]
 	private GUISelectPanelFriend guiSelectPanelFriend;
@@ -12,12 +12,6 @@ public class CMD_BlockList : CMD
 
 	[SerializeField]
 	private GameObject cautionText;
-
-	[SerializeField]
-	private UILabel cautionLabel;
-
-	[SerializeField]
-	private UILabel buttonLabel;
 
 	private static CMD_BlockList instance;
 
@@ -35,7 +29,7 @@ public class CMD_BlockList : CMD
 		base.Awake();
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		GUICollider.DisableAllCollider("CMD_BlockList");
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
@@ -45,20 +39,13 @@ public class CMD_BlockList : CMD
 		{
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
-			this.Initialize(f, sizeX, sizeY, aT);
+			this.Initialize(closeEvent, sizeX, sizeY, showAnimationTime);
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();
 			this.ClosePanel(false);
 			GUICollider.EnableAllCollider("CMD_BlockList");
 		}, null));
-		this.cautionLabel.text = StringMaster.GetString("BlockListNone");
-		this.buttonLabel.text = StringMaster.GetString("SystemButtonReturn");
-	}
-
-	protected override void WindowOpened()
-	{
-		base.WindowOpened();
 	}
 
 	public override void ClosePanel(bool animation = true)
@@ -69,10 +56,10 @@ public class CMD_BlockList : CMD
 		base.ClosePanel(animation);
 	}
 
-	private void Initialize(Action<int> f, float sizeX, float sizeY, float aT)
+	private void Initialize(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
-		base.Show(f, sizeX, sizeY, aT);
-		if (base.PartsTitle != null)
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
+		if (null != base.PartsTitle)
 		{
 			base.PartsTitle.SetTitle(StringMaster.GetString("BlockListTitle"));
 		}
@@ -89,7 +76,7 @@ public class CMD_BlockList : CMD
 		listWindowViewRect.yMax = 260f + GUIMain.VerticalSpaceSize;
 		this.guiSelectPanelFriend.ListWindowViewRect = listWindowViewRect;
 		this.guiSelectPanelFriend.selectParts = this.listParts;
-		this.cautionText.SetActive(BlockManager.instance().blockList.Count == 0);
+		this.cautionText.SetActive(0 == BlockManager.instance().blockList.Count);
 		this.listParts.SetActive(true);
 		this.guiSelectPanelFriend.initLocation = true;
 		GUISelectPanelFriend guiselectPanelFriend = this.guiSelectPanelFriend;

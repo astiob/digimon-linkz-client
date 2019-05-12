@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Tween/Tween Volume")]
 [RequireComponent(typeof(AudioSource))]
+[AddComponentMenu("NGUI/Tween/Tween Volume")]
 public class TweenVolume : UITweener
 {
 	[Range(0f, 1f)]

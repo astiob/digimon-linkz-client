@@ -152,7 +152,7 @@ public class CMD_ChatMenu : CMD
 
 	public void PushedGroupEditBtn()
 	{
-		CMD_CreateChatGroup cmd_CreateChatGroup = GUIMain.ShowCommonDialog(null, "CMD_CreateChatGroup") as CMD_CreateChatGroup;
+		CMD_CreateChatGroup cmd_CreateChatGroup = GUIMain.ShowCommonDialog(null, "CMD_CreateChatGroup", null) as CMD_CreateChatGroup;
 		cmd_CreateChatGroup.IsConfigModify = true;
 		base.ClosePanel(true);
 	}
@@ -160,41 +160,41 @@ public class CMD_ChatMenu : CMD
 	public void PushedMasterDelegateBtn()
 	{
 		this.openMemberListType = 2;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation", null);
 		base.ClosePanel(true);
 	}
 
 	public void PushedGroupInviteBtn()
 	{
 		this.openMemberListType = 1;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation", null);
 		base.ClosePanel(true);
 	}
 
 	public void PushedGroupMemberListBtn()
 	{
 		this.openMemberListType = 3;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation", null);
 		base.ClosePanel(true);
 	}
 
 	public void PushedGroupRequestListBtn()
 	{
 		this.openMemberListType = 4;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation", null);
 		base.ClosePanel(true);
 	}
 
 	public void PushedGroupInviteListBtn()
 	{
 		this.openMemberListType = 5;
-		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation");
+		GUIMain.ShowCommonDialog(null, "CMD_ChatInvitation", null);
 		base.ClosePanel(true);
 	}
 
 	public void PushedGroupExitBtn()
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnGroupExitExec), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnGroupExitExec), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("ChatLeavingConfirmTitle");
 		cmd_Confirm.Info = StringMaster.GetString("ChatLeavingConfirmInfo");
 	}
@@ -243,7 +243,7 @@ public class CMD_ChatMenu : CMD
 
 	public void PushedGroupDeleteBtn()
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnGroupDeleteExec), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnGroupDeleteExec), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("ChatDeleteConfirmTitle");
 		cmd_Confirm.Info = StringMaster.GetString("ChatDeleteConfirmInfo");
 	}
@@ -285,7 +285,7 @@ public class CMD_ChatMenu : CMD
 				base.ClosePanel(false);
 				CMD_ChatWindow.instance.ClosePanel(true);
 				CMD_ChatTop.instance.GetUserChatGroupListExec();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatDeleteSuccess");
 		}
@@ -313,7 +313,7 @@ public class CMD_ChatMenu : CMD
 
 	private void PushedChatNoticeBtn()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("SystemCaution");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_CHAT_NOTICE;
 	}
@@ -329,7 +329,7 @@ public class CMD_ChatMenu : CMD
 				this.ClosePanel(true);
 				CMD_ChatWindow.instance.PushedChatReturnBtn();
 				CMD_ChatTop.instance.GetUserChatGroupListExec();
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = title;
 			cmd_ModalMessage.Info = info;
 		});

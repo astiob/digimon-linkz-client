@@ -1,5 +1,6 @@
 ﻿using CharacterDetailsUI;
 using CharacterModelUI;
+using DeviceSafeArea;
 using Master;
 using Monster;
 using System;
@@ -84,11 +85,6 @@ public sealed class CMD_CharacterDetailed : CMD
 	{
 		base.Awake();
 		CMD_CharacterDetailed.instance = this;
-		Transform transform = this.renderTextureObject.transform;
-		Vector3 localPosition = transform.localPosition;
-		localPosition.x = 0f;
-		localPosition.y = 0f;
-		transform.localPosition = localPosition;
 	}
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
@@ -224,7 +220,8 @@ public sealed class CMD_CharacterDetailed : CMD
 
 	private void ShowCharacter()
 	{
-		this.characterCameraView = new CharacterCameraView(CMD_CharacterDetailed.DataChg);
+		Vector2 deviceScreenSize = SafeArea.GetDeviceScreenSize();
+		this.characterCameraView = new CharacterCameraView(CMD_CharacterDetailed.DataChg, (int)deviceScreenSize.x, (int)deviceScreenSize.y);
 		this.renderTextureObject.mainTexture = this.characterCameraView.renderTex;
 	}
 
@@ -232,17 +229,19 @@ public sealed class CMD_CharacterDetailed : CMD
 	{
 		this.vOrgSCR_HEADER = this.goSCR_HEADER.transform.localPosition;
 		this.vOrgSCR_DETAIL = this.goSCR_DETAIL.transform.localPosition;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		Vector2 windowSize = uipanel.GetWindowSize();
 		GameObject protectionButton = this.leftUI.GetProtectionButton();
 		if (protectionButton.activeSelf)
 		{
 			this.vOrgSCR_LOCKBTN = protectionButton.transform.localPosition;
 			this.vPosSCR_LOCKBTN = this.vOrgSCR_LOCKBTN;
-			this.vPosSCR_LOCKBTN.x = -800f;
+			this.vPosSCR_LOCKBTN.x = -windowSize.x;
 		}
 		this.vPosSCR_HEADER = this.vOrgSCR_HEADER;
-		this.vPosSCR_HEADER.y = 480f;
+		this.vPosSCR_HEADER.y = windowSize.y;
 		this.vPosSCR_DETAIL = this.vOrgSCR_DETAIL;
-		this.vPosSCR_DETAIL.x = 800f;
+		this.vPosSCR_DETAIL.x = windowSize.x;
 	}
 
 	public void OnClickedScreen()

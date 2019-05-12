@@ -32,20 +32,20 @@ public class BattleUIHUD : UITweener
 	[Header("押しっぱなしのボタン")]
 	private HoldPressButton holdPressButton;
 
-	[SerializeField]
 	[Header("アイコン画像(Group01)")]
+	[SerializeField]
 	private UISprite[] iconImageGroup01;
 
 	[SerializeField]
 	[Header("HUDコンポーネントのスキナー")]
 	private UIComponentSkinner hudComponentSkinner;
 
-	[Header("StatePlateコンポーネントのスキナー")]
 	[SerializeField]
+	[Header("StatePlateコンポーネントのスキナー")]
 	private UIComponentSkinner statePlateComponentSkinner;
 
-	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
 	[SerializeField]
+	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
 	private UIComponentSkinner pnSpriteComponentSkinner;
 
 	[SerializeField]
@@ -56,24 +56,24 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	public UIComponentSkinner hpUpRootComponentSkinner;
 
-	[Header("ターン数Tween")]
 	[SerializeField]
+	[Header("ターン数Tween")]
 	private UITweener turnNumberTween;
 
 	[Header("HUDのTween")]
 	[SerializeField]
 	private UITweener hudTween;
 
-	[SerializeField]
 	[Header("デジモンの名前")]
+	[SerializeField]
 	private UITextReplacer digimonName;
 
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float from = 1f;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float to = 1f;
 
 	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
@@ -247,6 +247,7 @@ public class BattleUIHUD : UITweener
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.Regenerate, "Battle_icon_EveryHpUp");
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.TurnEvasion, "Battle_icon_avoid");
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.CountEvasion, "Battle_icon_avoid");
+			this.iconSpriteNames.Add(SufferStateProperty.SufferType.Escape, "Battle_icon_escape");
 		}
 	}
 

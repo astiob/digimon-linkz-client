@@ -23,6 +23,10 @@ public class CharacterStateControlStore
 
 	public int[] chipIds { get; set; }
 
+	public bool isEscape { get; set; }
+
+	public int[] skillUseCounts { get; set; }
+
 	public HaveSufferStateStore currentSufferState { get; set; }
 
 	public float randomedSpeed { get; set; }

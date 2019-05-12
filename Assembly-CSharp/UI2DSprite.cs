@@ -13,16 +13,16 @@ public class UI2DSprite : UIBasicSprite
 	[SerializeField]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Shader mShader;
 
 	[HideInInspector]
 	[SerializeField]
 	private Vector4 mBorder = Vector4.zero;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mFixedAspect;
 
 	[SerializeField]

@@ -1,26 +1,26 @@
 ﻿using System;
 using UnityEngine;
 
-public class ChipEfc : MonoBehaviour
+public sealed class ChipEfc : MonoBehaviour
 {
-	[Header("サムネイル OBJ")]
 	[SerializeField]
+	[Header("サムネイル OBJ")]
 	public GameObject goCHIP_THUMB;
 
 	[Header("アニメーション コンポーネント")]
 	[SerializeField]
-	public Animation anim;
+	private Animation anim;
 
 	[Header("アニメーション OBJ")]
 	[SerializeField]
-	public GameObject goANIM;
+	private GameObject goANIM;
 
+	[SerializeField]
 	[Header("パーティクル OBJ")]
-	[SerializeField]
-	public GameObject goPARTICLE;
+	private GameObject goPARTICLE;
 
-	[SerializeField]
 	[Header("NEW スプライト")]
+	[SerializeField]
 	public UISprite spNew;
 
 	private int frameCT;
@@ -44,11 +44,11 @@ public class ChipEfc : MonoBehaviour
 			this.goANIM.transform.localScale = Vector3.one;
 		}
 		this.frameCT++;
-		if (this.frameCT >= 2 && this.reservePlay)
+		if (2 <= this.frameCT && this.reservePlay)
 		{
 			this.play();
 		}
-		if (this.frameCT > 8000)
+		if (8000 < this.frameCT)
 		{
 			this.frameCT = 8000;
 		}
@@ -56,7 +56,7 @@ public class ChipEfc : MonoBehaviour
 
 	public void Play()
 	{
-		if (this.frameCT < 2)
+		if (2 > this.frameCT)
 		{
 			this.reservePlay = true;
 		}

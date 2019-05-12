@@ -15,8 +15,8 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private const int BOSS_ID_AP_FREE = 4;
 
-	[SerializeField]
 	[Header("出現する敵リスト")]
+	[SerializeField]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
 	[Header("ドロップするアイテムリスト")]
@@ -33,8 +33,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("ステージの数字のラベル")]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
-	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	[SerializeField]
+	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	private GameObject goContentsROOT;
 
 	[Header("ポイントコンテンツ・ルート (ボーナス)")]
@@ -45,52 +45,52 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[SerializeField]
 	[Header("ポイント・タイトルのリスト)")]
+	[SerializeField]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
 	private GameObject changeBonusButton;
 
-	[Header("取得できるEXPのタイトル")]
 	[SerializeField]
+	[Header("取得できるEXPのタイトル")]
 	private UILabel getEXPTitleLabel;
 
-	[Header("取得できるEXP")]
 	[SerializeField]
+	[Header("取得できるEXP")]
 	private UILabel getEXPLabel;
 
-	[Header("取得できるクラスタタイトル")]
 	[SerializeField]
+	[Header("取得できるクラスタタイトル")]
 	private UILabel getClusterTitleLabel;
 
-	[Header("取得できるクラスタ数")]
 	[SerializeField]
+	[Header("取得できるクラスタ数")]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("消費するスタミナタイトル")]
+	[SerializeField]
 	private UILabel getStaminaTitleLabel;
 
 	[SerializeField]
 	[Header("消費するスタミナ")]
 	private UILabel getStaminaLabel;
 
-	[SerializeField]
 	[Header("バトルボタン")]
+	[SerializeField]
 	private GameObject goBattleBtn;
 
 	private UISprite spBattleBtn;
 
-	[SerializeField]
 	[Header("マルチバトルボタン")]
+	[SerializeField]
 	private GameObject goMultiBattleBtn;
 
 	[SerializeField]
 	private RewardIconRoot rewardIconRoot;
 
-	[Header("初回報酬取得済みカラー")]
 	[SerializeField]
+	[Header("初回報酬取得済みカラー")]
 	private Color clearColor = Color.gray;
 
 	private QuestData.WorldDungeonData d_data;
@@ -322,40 +322,34 @@ public class CMD_QuestDetailedPOP : CMD
 	{
 		GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dungeon = this.d_data.dungeon;
 		this.dropAssetList = new List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset>();
-		for (int i = 0; i < dungeon.dropAssets.Length; i++)
-		{
-			if (dungeon.dropAssets[i].assetCategoryId != 4 && dungeon.dropAssets[i].assetCategoryId != 5)
-			{
-				this.dropAssetList.Add(dungeon.dropAssets[i]);
-			}
-		}
+		QuestData.CreateDropAssetList(dungeon, this.dropAssetList);
 		int num = 0;
-		for (int j = 0; j < this.dropAssetList.Count; j++)
+		for (int i = 0; i < this.dropAssetList.Count; i++)
 		{
-			if (j >= this.itemDROP_ITEM_LIST.Count)
+			if (i >= this.itemDROP_ITEM_LIST.Count)
 			{
 				global::Debug.LogError("======================================= CMD_QuestItemPOP Drop Disp Over!!");
 				break;
 			}
 			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.goTEX_DROP);
 			Transform transform = gameObject.transform;
-			Transform transform2 = this.itemDROP_ITEM_LIST[j].transform;
+			Transform transform2 = this.itemDROP_ITEM_LIST[i].transform;
 			transform.parent = transform2.parent;
 			transform.localScale = transform2.transform.localScale;
 			transform.localPosition = transform2.localPosition;
-			int index = j;
+			int index = i;
 			GUICollider component = gameObject.GetComponent<GUICollider>();
 			component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				this.ActCallBackDropItem(index);
 			};
-			UIWidget component2 = this.itemDROP_ITEM_LIST[j].GetComponent<UIWidget>();
+			UIWidget component2 = this.itemDROP_ITEM_LIST[i].GetComponent<UIWidget>();
 			UIWidget component3 = gameObject.GetComponent<UIWidget>();
 			component3.depth = component2.depth;
-			string assetCategoryId = this.dropAssetList[j].assetCategoryId.ToString();
-			string objectId = this.dropAssetList[j].assetValue.ToString();
-			this.itemDROP_ITEM_LIST[j].SetItem(assetCategoryId, objectId, "1", true, null);
-			BoxCollider[] componentsInChildren = this.itemDROP_ITEM_LIST[j].GetComponentsInChildren<BoxCollider>();
+			string assetCategoryId = this.dropAssetList[i].assetCategoryId.ToString();
+			string objectId = this.dropAssetList[i].assetValue.ToString();
+			this.itemDROP_ITEM_LIST[i].SetItem(assetCategoryId, objectId, "1", true, null);
+			BoxCollider[] componentsInChildren = this.itemDROP_ITEM_LIST[i].GetComponentsInChildren<BoxCollider>();
 			if (componentsInChildren != null)
 			{
 				foreach (BoxCollider boxCollider in componentsInChildren)
@@ -442,7 +436,7 @@ public class CMD_QuestDetailedPOP : CMD
 		{
 			return;
 		}
-		CMD_QuestMonsterPOP cmd_QuestMonsterPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestMonsterPOP") as CMD_QuestMonsterPOP;
+		CMD_QuestMonsterPOP cmd_QuestMonsterPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestMonsterPOP", null) as CMD_QuestMonsterPOP;
 		cmd_QuestMonsterPOP.SetBossDetails(md, resistanceId);
 	}
 
@@ -482,7 +476,7 @@ public class CMD_QuestDetailedPOP : CMD
 		{
 			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(text);
 			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(int.Parse(facilityConditionM.releaseId));
+			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
 			CMD_QuestItemPOP.Create(facilityConditionM, text, facilityMasterByReleaseId);
 			break;
 		}
@@ -534,7 +528,7 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private void OnTapMultiBattleBtn()
 	{
-		GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseMultiBattleMenu), "CMD_MultiBattleParticipateMenu");
+		GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseMultiBattleMenu), "CMD_MultiBattleParticipateMenu", null);
 	}
 
 	private void OnCloseMultiBattleMenu(int idx)

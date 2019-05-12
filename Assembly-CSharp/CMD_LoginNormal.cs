@@ -200,7 +200,7 @@ public class CMD_LoginNormal : CMD_LoginBase
 		{
 			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(lr.assetValue);
 			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(int.Parse(facilityConditionM.releaseId));
+			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
 			result = facilityMasterByReleaseId.GetIconPath();
 			break;
 		}

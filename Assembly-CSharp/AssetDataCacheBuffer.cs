@@ -93,39 +93,23 @@ public class AssetDataCacheBuffer
 		return null;
 	}
 
-	public void AddCacheObj(string path, UnityEngine.Object obj)
+	private void AddCacheObj(string path, UnityEngine.Object obj)
 	{
-		if (this.objList[this.cacheIdx].path != string.Empty)
+		if (null != obj)
 		{
-			if (this.objListDic.ContainsKey(this.objList[this.cacheIdx].path))
+			if (!string.IsNullOrEmpty(this.objList[this.cacheIdx].path) && this.objListDic.ContainsKey(this.objList[this.cacheIdx].path))
 			{
 				this.objListDic.Remove(this.objList[this.cacheIdx].path);
 			}
-			else
+			this.objList[this.cacheIdx].path = path;
+			this.objList[this.cacheIdx].obj = obj;
+			this.objListDic.Add(path, this.cacheIdx);
+			this.cacheIdx++;
+			if (this.LOAD_AND_CACHE_OBJ_MAX <= this.cacheIdx)
 			{
-				global::Debug.LogError("============================= 深刻なエラー");
+				this.cacheIdx = 0;
 			}
 		}
-		this.objList[this.cacheIdx].path = path;
-		this.objList[this.cacheIdx].obj = obj;
-		this.objListDic.Add(path, this.cacheIdx);
-		this.cacheIdx++;
-		if (this.cacheIdx >= this.LOAD_AND_CACHE_OBJ_MAX)
-		{
-			this.cacheIdx = 0;
-		}
-	}
-
-	private bool DbgExist(string path)
-	{
-		for (int i = 0; i < this.objList.Count; i++)
-		{
-			if (this.objList[i].path == path)
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public class CacheObjData

@@ -10,36 +10,36 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("NEWの画像")]
 	private GameObject goNEW;
 
-	[SerializeField]
 	[Header("ドロップの画像")]
+	[SerializeField]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
 	[Header("ステージ数用のラベル")]
 	[SerializeField]
 	private UILabel ngTXT_STAGE;
 
-	[SerializeField]
 	[Header("ステージ名用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAGE_NAME;
 
 	[Header("消費スタミナ用のラベル")]
 	[SerializeField]
 	private UILabel ngTXT_STAMINA;
 
-	[Header("残回数 ラベル")]
 	[SerializeField]
+	[Header("残回数 ラベル")]
 	public UILabel ngTXT_TICKET_LEFT;
 
-	[SerializeField]
 	[Header("ノーコン ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_NO_CONTINUE;
 
 	[SerializeField]
 	[Header("ソロとマルチができるステージ色")]
 	private Color colorNormalStage;
 
-	[Header("マルチ専用のステージ色")]
 	[SerializeField]
+	[Header("マルチ専用のステージ色")]
 	private Color colorMultiStage;
 
 	[Header("ソロ専用のステージ色")]
@@ -50,40 +50,40 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("イベント用のステージ背景色")]
 	private Color colorEventStageBackground;
 
-	[SerializeField]
 	[Header("####ソロとマルチステージ名装飾色")]
+	[SerializeField]
 	private Color colorSoloMultiStageNameOutline;
 
 	[SerializeField]
 	[Header("####マルチ専用名装飾色")]
 	private Color colorMultiStageNameOutline;
 
-	[Header("####ソロ専用ステージ名装飾色")]
 	[SerializeField]
+	[Header("####ソロ専用ステージ名装飾色")]
 	private Color colorSoloStageNameOutline;
 
 	[SerializeField]
 	[Header("イベント用のステージ名装飾色")]
 	private Color colorEventStageNameOutline;
 
-	[SerializeField]
 	[Header("背景色のパーツ（板）")]
+	[SerializeField]
 	private UISprite backgroundBord;
 
-	[Header("背景色のパーツ（ライン）")]
 	[SerializeField]
+	[Header("背景色のパーツ（ライン）")]
 	private UITexture backgroundLine;
 
-	[SerializeField]
 	[Header("残回数無しラベル")]
+	[SerializeField]
 	private UILabel ngTXT_PLAY_LIMIT;
 
-	[Header("回数限定用グレーアウトSPR素材")]
 	[SerializeField]
+	[Header("回数限定用グレーアウトSPR素材")]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
-	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
+	[Header("NEWとCLEARのアイコン")]
 	private UISprite ngSPR_NEW;
 
 	[SerializeField]
@@ -500,7 +500,7 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 					string text = this.MakeStringLockStatus();
 					if (!string.IsNullOrEmpty(text))
 					{
-						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+						CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 						cmd_ModalMessage.Title = StringMaster.GetString("QuestClearConditionTitle");
 						cmd_ModalMessage.InfoWithNoReturn = text;
 					}
@@ -587,24 +587,18 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	{
 		GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons dungeon = this.WorldDungeonData.dungeon;
 		List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset> list = new List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset>();
-		for (int i = 0; i < dungeon.dropAssets.Length; i++)
+		QuestData.CreateDropAssetList(dungeon, list);
+		for (int i = 0; i < this.itemDROP_ITEM_LIST.Count; i++)
 		{
-			if (dungeon.dropAssets[i].assetCategoryId != 4 && dungeon.dropAssets[i].assetCategoryId != 5)
+			if (i < list.Count)
 			{
-				list.Add(dungeon.dropAssets[i]);
-			}
-		}
-		for (int j = 0; j < this.itemDROP_ITEM_LIST.Count; j++)
-		{
-			if (j < list.Count)
-			{
-				string assetCategoryId = list[j].assetCategoryId.ToString();
-				string objectId = list[j].assetValue.ToString();
-				this.itemDROP_ITEM_LIST[j].SetItem(assetCategoryId, objectId, "1", true, new Action(this.ScaleEnd));
+				string assetCategoryId = list[i].assetCategoryId.ToString();
+				string objectId = list[i].assetValue.ToString();
+				this.itemDROP_ITEM_LIST[i].SetItem(assetCategoryId, objectId, "1", true, new Action(this.ScaleEnd));
 			}
 			else
 			{
-				this.itemDROP_ITEM_LIST[j].enabled = false;
+				this.itemDROP_ITEM_LIST[i].enabled = false;
 			}
 		}
 	}

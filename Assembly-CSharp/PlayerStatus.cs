@@ -8,8 +8,8 @@ public class PlayerStatus : CharacterStatus
 	[SerializeField]
 	private int _luck = 1;
 
-	[FormerlySerializedAs("_rarity")]
 	[SerializeField]
+	[FormerlySerializedAs("_rarity")]
 	private int _arousal;
 
 	[SerializeField]

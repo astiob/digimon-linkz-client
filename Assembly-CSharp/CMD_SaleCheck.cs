@@ -14,24 +14,24 @@ public sealed class CMD_SaleCheck : CMD
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("取得クラスタのタイトルラベル")]
+	[SerializeField]
 	private UILabel getClusterTitleLabel;
 
-	[Header("取得クラスタのラベル")]
 	[SerializeField]
+	[Header("取得クラスタのラベル")]
 	private UILabel getClusterLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[SerializeField]
 	[Header("警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
+	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
 	[Header("警告ダイアログのボタングループ")]

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CMD_ColosseumRanking : CMD
+public sealed class CMD_ColosseumRanking : CMD
 {
 	private const int DEFAULT_DISP_RANKING_NUM = 100;
 

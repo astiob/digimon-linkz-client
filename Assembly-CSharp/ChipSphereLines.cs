@@ -7,8 +7,8 @@ public sealed class ChipSphereLines : MonoBehaviour
 
 	private const string yellowLineSpriteName = "Chip_Sphere_LINE_ON";
 
-	[SerializeField]
 	[Header("中から右上の光るライン")]
+	[SerializeField]
 	private UISprite middleToRightUp;
 
 	[Header("中から右下の光るライン")]
@@ -31,16 +31,16 @@ public sealed class ChipSphereLines : MonoBehaviour
 	[Header("中から右の光るライン")]
 	private UISprite middleToRight;
 
-	[SerializeField]
 	[Header("左の下から上の光るライン")]
+	[SerializeField]
 	private UISprite leftDownToUp;
 
-	[SerializeField]
 	[Header("右の下から上の光るライン")]
+	[SerializeField]
 	private UISprite rightDownToUp;
 
-	[Header("上の中から左の光るライン")]
 	[SerializeField]
+	[Header("上の中から左の光るライン")]
 	private UISprite upMiddleToLeft;
 
 	[SerializeField]

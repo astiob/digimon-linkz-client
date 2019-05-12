@@ -282,7 +282,7 @@ public class GUIListChatLogParts : GUIListPartBS
 	private void OnOpenMemberProfile()
 	{
 		CMD_ProfileFriend.chatLogData = this.respDatachatMessageDataResult;
-		GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend");
+		GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend", null);
 	}
 
 	private void OnThumbnailClicked()
@@ -295,7 +295,7 @@ public class GUIListChatLogParts : GUIListPartBS
 
 	private void OnMultiPassCodeClicked()
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OpenMultiRecruitPartyWait), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OpenMultiRecruitPartyWait), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 		cmd_Confirm.Info = StringMaster.GetString("ChatMultiConfirmInfo");
 	}
@@ -350,7 +350,7 @@ public class GUIListChatLogParts : GUIListPartBS
 								CMD_ChatTop.instance.SetReOpendAction(delegate(int _idx)
 								{
 									CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
-									GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait");
+									GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait", null);
 									return true;
 								});
 							}
@@ -361,13 +361,13 @@ public class GUIListChatLogParts : GUIListPartBS
 					}
 					else
 					{
-						CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
+						CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip", null) as CMD_UpperlimitChip;
 						cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
 					}
 				}
 				else
 				{
-					CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
+					CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit", null) as CMD_UpperLimit;
 					cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
 				}
 			});

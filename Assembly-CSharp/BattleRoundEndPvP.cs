@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleRoundEndPvP : MonoBehaviour
 {
-	[Header("あと○ラウンド")]
 	[SerializeField]
+	[Header("あと○ラウンド")]
 	private UILabel remainingTime;
 
 	[SerializeField]

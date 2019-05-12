@@ -16,8 +16,8 @@ public class CMD_PvPTop : CMD
 
 	private static CMD_PvPTop instance;
 
-	[SerializeField]
 	[Header("以下,PvPTopに関する設定")]
+	[SerializeField]
 	private UILabel lastTimeLabel;
 
 	[SerializeField]
@@ -150,8 +150,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
+	[SerializeField]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
 	[SerializeField]
@@ -304,6 +304,7 @@ public class CMD_PvPTop : CMD
 		if (!this.isToBattle)
 		{
 			SoundMng.Instance().PlayGameBGM("bgm_201");
+			base.SetForceReturnValue(100);
 		}
 		else
 		{
@@ -561,7 +562,7 @@ public class CMD_PvPTop : CMD
 	{
 		yield return TextureManager.instance.Load(path, delegate(Texture2D tex)
 		{
-			if (tex != null)
+			if (null != tex)
 			{
 				this.backgroundImg.mainTexture = tex;
 			}
@@ -598,9 +599,16 @@ public class CMD_PvPTop : CMD
 
 	private void SetTimeSchedule()
 	{
+		GameWebAPI.RespData_ColosseumInfoLogic colosseumInfo = DataMng.Instance().RespData_ColosseumInfo;
 		if (DataMng.Instance().RespData_ColosseumInfo.openAllDay == 1)
 		{
 			this.goTimeSchedule.SetActive(false);
+		}
+		GameWebAPI.RespDataMA_ColosseumM.Colosseum colosseum = new GameWebAPI.RespDataMA_ColosseumM.Colosseum();
+		GameWebAPI.RespDataMA_ColosseumM respDataMA_ColosseumMaster = MasterDataMng.Instance().RespDataMA_ColosseumMaster;
+		if (respDataMA_ColosseumMaster != null)
+		{
+			colosseum = respDataMA_ColosseumMaster.colosseumM.Where((GameWebAPI.RespDataMA_ColosseumM.Colosseum data) => data.colosseumId == colosseumInfo.colosseumId.ToString()).SingleOrDefault<GameWebAPI.RespDataMA_ColosseumM.Colosseum>();
 		}
 		GameWebAPI.RespDataMA_ColosseumTimeScheduleM.ColosseumTimeSchedule[] array;
 		if (MasterDataMng.Instance().RespDataMA_ColosseumTimeScheduleMaster == null)
@@ -622,11 +630,10 @@ public class CMD_PvPTop : CMD
 			gameObject.SetActive(false);
 		}
 		string @string = StringMaster.GetString("ColosseumTimes");
-		int num = 0;
-		foreach (UILabel uilabel in this.spanTimeLabelArray)
+		for (int j = 0; j < this.spanTimeLabelArray.Length; j++)
 		{
-			num++;
-			uilabel.text = string.Format(@string, num);
+			UILabel uilabel = this.spanTimeLabelArray[j];
+			uilabel.text = string.Format(@string, j + 1);
 		}
 		foreach (UILabel uilabel2 in this.startTimeLabelArray)
 		{
@@ -640,21 +647,21 @@ public class CMD_PvPTop : CMD
 		{
 			uilabel4.gameObject.SetActive(false);
 		}
-		int num2 = 0;
-		while (num2 < array.Length && num2 < this.startTimeLabelArray.Length && num2 < this.endTimeLabelArray.Length)
+		int num = 0;
+		while (num < array.Length && num < this.startTimeLabelArray.Length && num < this.endTimeLabelArray.Length)
 		{
-			DateTime dateTime = DateTime.Parse(array[num2].startHour);
-			DateTime dateTime2 = DateTime.Parse(array[num2].endHour);
+			DateTime dateTime = DateTime.Parse(array[num].startHour);
+			DateTime dateTime2 = DateTime.Parse(array[num].endHour);
 			DateTime? dateTime3 = null;
-			if (num2 + 1 < array.Length && num2 + 1 < this.startTimeLabelArray.Length)
+			if (num + 1 < array.Length && num + 1 < this.startTimeLabelArray.Length)
 			{
-				dateTime3 = new DateTime?(DateTime.Parse(array[num2 + 1].startHour));
+				dateTime3 = new DateTime?(DateTime.Parse(array[num + 1].startHour));
 			}
-			this.startTimeLabelArray[num2].gameObject.SetActive(true);
-			this.startTimeLabelArray[num2].text = dateTime.ToString("H:mm");
-			this.endTimeLabelArray[num2].text = dateTime2.ToString("H:mm");
-			this.endTimeLabelArray[num2].gameObject.SetActive(true);
-			this.fromMarkLabelArray[num2].gameObject.SetActive(true);
+			this.startTimeLabelArray[num].gameObject.SetActive(true);
+			this.startTimeLabelArray[num].text = dateTime.ToString("H:mm");
+			this.endTimeLabelArray[num].text = dateTime2.ToString("H:mm");
+			this.endTimeLabelArray[num].gameObject.SetActive(true);
+			this.fromMarkLabelArray[num].gameObject.SetActive(true);
 			DateTime? dateTime4 = this.nextDateTime;
 			if (dateTime4 == null)
 			{
@@ -665,16 +672,16 @@ public class CMD_PvPTop : CMD
 					this.lastTimeObj.SetActive(true);
 					this.endDateTime = new DateTime?(new DateTime(ServerDateTime.Now.Year, ServerDateTime.Now.Month, ServerDateTime.Now.Day, 23, 59, 59));
 				}
-				else if (dateTime < ServerDateTime.Now && ServerDateTime.Now < dateTime2)
+				else if (DateTime.Parse(colosseum.openTime) < ServerDateTime.Now && ServerDateTime.Now < DateTime.Parse(colosseum.closeTime) && dateTime < ServerDateTime.Now && ServerDateTime.Now < dateTime2)
 				{
-					this.inSessionObjArray[num2].SetActive(true);
+					this.inSessionObjArray[num].SetActive(true);
 					this.nextDateTime = new DateTime?(dateTime);
 					this.endDateTime = new DateTime?(dateTime2);
 					this.lastTimeObj.SetActive(true);
 					this.SetActiveNationwideButton(!this.isAggregate);
 					this.SetActiveNationwideExtraButton(!this.isAggregate);
 				}
-				else if (dateTime2 < ServerDateTime.Now)
+				else if (DateTime.Parse(colosseum.openTime) < ServerDateTime.Now && ServerDateTime.Now < DateTime.Parse(colosseum.closeTime) && dateTime2 < ServerDateTime.Now)
 				{
 					this.endDateTime = new DateTime?(dateTime2);
 					if (dateTime3 != null && (dateTime3 != null && ServerDateTime.Now < dateTime3.Value))
@@ -687,7 +694,7 @@ public class CMD_PvPTop : CMD
 					this.nextDateTime = new DateTime?(dateTime);
 				}
 			}
-			num2++;
+			num++;
 		}
 	}
 
@@ -702,7 +709,7 @@ public class CMD_PvPTop : CMD
 			{
 				DateTime? dateTime3 = this.endDateTime;
 				TimeSpan timeSpan = dateTime3.Value - ServerDateTime.Now;
-				if (timeSpan.TotalSeconds <= 0.0)
+				if (0.0 >= timeSpan.TotalSeconds)
 				{
 					this.ResetLastTimer();
 					return;
@@ -770,15 +777,17 @@ public class CMD_PvPTop : CMD
 		{
 			this.rankSprite.gameObject.SetActive(false);
 			this.aggregateMarkObj.SetActive(true);
-			return;
 		}
-		foreach (GUIListPartsRank.RankData rankData in this.rankDataList)
+		else
 		{
-			if (rankData.id == this.colosseumUserStatus.colosseumRankId)
+			foreach (GUIListPartsRank.RankData rankData in this.rankDataList)
 			{
-				this.rankSprite.spriteName = "Rank_" + rankData.id.ToString();
-				this.currentRankData = rankData;
-				break;
+				if (rankData.id == this.colosseumUserStatus.colosseumRankId)
+				{
+					this.rankSprite.spriteName = "Rank_" + rankData.id.ToString();
+					this.currentRankData = rankData;
+					break;
+				}
 			}
 		}
 	}
@@ -891,9 +900,11 @@ public class CMD_PvPTop : CMD
 					{
 						DateTime now = ServerDateTime.Now;
 						DateTime? dateTime4 = this.nextDateTime;
-						double totalSeconds = (now - dateTime4.Value).TotalSeconds;
+						TimeSpan timeSpan = now - dateTime4.Value;
 						DateTime? dateTime5 = this.endDateTime;
-						if (totalSeconds / (dateTime5.Value - ServerDateTime.Now).TotalSeconds > 2.0)
+						TimeSpan timeSpan2 = dateTime5.Value - ServerDateTime.Now;
+						double num = timeSpan.TotalSeconds / timeSpan2.TotalSeconds;
+						if (num > 2.0)
 						{
 							result = CMD_PvPTop.COMMENT_TIMING.EndBefore;
 						}
@@ -905,10 +916,12 @@ public class CMD_PvPTop : CMD
 					else
 					{
 						DateTime? dateTime6 = this.nextDateTime;
-						double totalSeconds2 = (dateTime6.Value - ServerDateTime.Now).TotalSeconds;
+						TimeSpan timeSpan3 = dateTime6.Value - ServerDateTime.Now;
 						DateTime now2 = ServerDateTime.Now;
 						DateTime? dateTime7 = this.endDateTime;
-						if (totalSeconds2 / (now2 - dateTime7.Value).TotalSeconds > 2.0)
+						TimeSpan timeSpan4 = now2 - dateTime7.Value;
+						double num2 = timeSpan3.TotalSeconds / timeSpan4.TotalSeconds;
+						if (num2 > 2.0)
 						{
 							result = CMD_PvPTop.COMMENT_TIMING.EndAfter;
 						}
@@ -934,11 +947,11 @@ public class CMD_PvPTop : CMD
 		{
 			this.displayCommentDataList = Algorithm.ShuffuleList<CMD_Tips.TipsM.Tips>(this.displayCommentDataList);
 		}
-		if (this.displayCommentDataList.Count > 0)
+		if (0 < this.displayCommentDataList.Count)
 		{
-			if (this.displayCommentDataList[this.displayCommentDataListIndex].tipsId == "45")
+			if ("45" == this.displayCommentDataList[this.displayCommentDataListIndex].tipsId)
 			{
-				if (this.currentRankData.id >= ConstValue.PVP_MAX_RANK)
+				if (ConstValue.PVP_MAX_RANK <= this.currentRankData.id)
 				{
 					this.commentLabel.text = StringMaster.GetString("ColosseumTips");
 				}
@@ -1032,12 +1045,12 @@ public class CMD_PvPTop : CMD
 		this.normalBattleStamina = int.Parse(worldDungeonM.needStamina);
 		this.staminaCostLabel.text = string.Format(StringMaster.GetString("PvPTop_txt2"), StringMaster.GetString("QuestDetailsCost"), worldDungeonM.needStamina);
 		this.staminaCostLabelExtra.text = string.Format(StringMaster.GetString("PvPTop_txt2"), StringMaster.GetString("QuestDetailsCost"), DataMng.Instance().RespData_ColosseumInfo.extraCost);
-		if (this.freeCostBattleCount > 0)
+		if (0 < this.freeCostBattleCount)
 		{
 			this.staminaCostLabel.text = string.Format(StringMaster.GetString("ColosseumStamina"), this.freeCostBattleCount);
 			this.staminaCostLabel.color = ConstValue.DIGIMON_YELLOW;
 		}
-		if (int.Parse(colosseumM.extraRewardRate) > 1)
+		if (1 < int.Parse(colosseumM.extraRewardRate))
 		{
 			this.lbRewardPercentage.text = string.Format(StringMaster.GetString("ColosseumRewardPercentage"), colosseumM.extraRewardRate);
 		}
@@ -1056,7 +1069,7 @@ public class CMD_PvPTop : CMD
 		int point = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 		if (num < this.needStamina)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("QuestNormal");
 			cmd_ModalMessage.Info = StringMaster.GetString("QuestStaminaOver");
 		}
@@ -1064,27 +1077,25 @@ public class CMD_PvPTop : CMD
 		{
 			if (point >= ConstValue.RECOVER_STAMINA_DIGISTONE_NUM)
 			{
-				CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+				CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 				cmd_ChangePOP_STONE.Title = StringMaster.GetString("StaminaShortageTitle");
-				string info = string.Format(StringMaster.GetString("StaminaShortageInfo"), new object[]
+				cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnSelectedRecover);
+				cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("StaminaShortageInfo"), new object[]
 				{
 					ConstValue.RECOVER_STAMINA_DIGISTONE_NUM,
 					stamina,
 					stamina + num,
 					point
 				});
-				cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnSelectedRecover);
-				cmd_ChangePOP_STONE.Info = info;
 				cmd_ChangePOP_STONE.SetDigistone(point, ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
 				cmd_ChangePOP_STONE.BtnTextYes = StringMaster.GetString("StaminaRecoveryExecution");
 				cmd_ChangePOP_STONE.BtnTextNo = StringMaster.GetString("SystemButtonClose");
 			}
 			else
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("StaminaShortageTitle");
-				string info2 = string.Format(StringMaster.GetString("StaminaShortageGoShop"), ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
-				cmd_Confirm.Info = info2;
+				cmd_Confirm.Info = string.Format(StringMaster.GetString("StaminaShortageGoShop"), ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
 				cmd_Confirm.BtnTextNo = StringMaster.GetString("SystemButtonClose");
 			}
@@ -1147,7 +1158,7 @@ public class CMD_PvPTop : CMD
 					this.StartNationwide();
 				}
 			};
-			GUIMain.ShowCommonDialog(action, "CMD_Shop");
+			GUIMain.ShowCommonDialog(action, "CMD_Shop", null);
 		}
 	}
 
@@ -1155,7 +1166,7 @@ public class CMD_PvPTop : CMD
 	{
 		int num = colosseumReward.maxRewardListKey();
 		int num2 = colosseumReward.maxInterimRewardListKey();
-		CMD_ColosseumBonus cmd_ColosseumBonus = GUIMain.ShowCommonDialog(action, "CMD_ColosseumBonus") as CMD_ColosseumBonus;
+		CMD_ColosseumBonus cmd_ColosseumBonus = GUIMain.ShowCommonDialog(action, "CMD_ColosseumBonus", null) as CMD_ColosseumBonus;
 		string title = string.Empty;
 		GameWebAPI.ColosseumReward[] rewardList;
 		if (num >= num2)
@@ -1177,7 +1188,7 @@ public class CMD_PvPTop : CMD
 		if (!string.IsNullOrEmpty(text))
 		{
 			string @string = StringMaster.GetString(string.Format("ColosseumNotice-{0}", text));
-			CMD_ModalMessageNoBtn cmd_ModalMessageNoBtn = GUIMain.ShowCommonDialog(null, "CMD_ModalMessageNoBtn") as CMD_ModalMessageNoBtn;
+			CMD_ModalMessageNoBtn cmd_ModalMessageNoBtn = GUIMain.ShowCommonDialog(null, "CMD_ModalMessageNoBtn", null) as CMD_ModalMessageNoBtn;
 			cmd_ModalMessageNoBtn.SetParam(@string);
 			cmd_ModalMessageNoBtn.AdjustSize();
 		}
@@ -1191,7 +1202,7 @@ public class CMD_PvPTop : CMD
 			DateTime? dateTime2 = this.cancelPenaltyDateTime;
 			if (dateTime2 != null && ServerDateTime.Now < dateTime2.Value)
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("ColosseumPenaltyTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("ColosseumPenaltyInfo");
 				return;
@@ -1209,7 +1220,7 @@ public class CMD_PvPTop : CMD
 			DateTime? dateTime2 = this.cancelPenaltyDateTime;
 			if (dateTime2 != null && ServerDateTime.Now < dateTime2.Value)
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("ColosseumPenaltyTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("ColosseumPenaltyInfo");
 				return;
@@ -1222,12 +1233,12 @@ public class CMD_PvPTop : CMD
 
 	public void OnTouchedMockBattle()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_MockBattleMenu");
+		GUIMain.ShowCommonDialog(null, "CMD_MockBattleMenu", null);
 	}
 
 	public void OnTouchedRanking()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ColosseumRanking");
+		GUIMain.ShowCommonDialog(null, "CMD_ColosseumRanking", null);
 	}
 
 	public void OnTouchedDiscription()
@@ -1248,20 +1259,20 @@ public class CMD_PvPTop : CMD
 
 	public void OnTouchedNotes()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("SystemCaution");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_COLOSSEUM_NOTICE;
 	}
 
 	public void OnTouchedRankInfo()
 	{
-		CMD_RankModal cmd_RankModal = GUIMain.ShowCommonDialog(null, "CMD_RankModal") as CMD_RankModal;
+		CMD_RankModal cmd_RankModal = GUIMain.ShowCommonDialog(null, "CMD_RankModal", null) as CMD_RankModal;
 		cmd_RankModal.Initialize(this.rankDataList, this.colosseumUserStatus.colosseumRankId, this.colosseumUserStatus.winTotal, this.isAggregate);
 	}
 
 	public void OnTouchedReward()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("ColosseumReward");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_COLOSSEUM_REWARD + DataMng.Instance().RespData_ColosseumInfo.colosseumId.ToString();
 	}

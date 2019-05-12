@@ -11,8 +11,8 @@ public class AffectEffectProperty
 
 	private const int FloatValueLength = 14;
 
-	[FormerlySerializedAs("_numbers")]
 	[SerializeField]
+	[FormerlySerializedAs("_numbers")]
 	private EffectNumbers _effectNumbers;
 
 	[SerializeField]
@@ -501,6 +501,22 @@ public class AffectEffectProperty
 		get
 		{
 			return (int)this._floatValue[2];
+		}
+	}
+
+	public int escapeRound
+	{
+		get
+		{
+			return this._intValue[0];
+		}
+	}
+
+	public float escapeRate
+	{
+		get
+		{
+			return this._floatValue[0];
 		}
 	}
 

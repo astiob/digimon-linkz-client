@@ -6,8 +6,8 @@ public class GUIPageIndicator : MonoBehaviour
 {
 	private const float PARTS_PITCH = 30f;
 
-	[SerializeField]
 	[Header("●のゲームオブジェクトのNGUIスプライトの指定")]
+	[SerializeField]
 	private UISprite spParts;
 
 	[Header("オンの時のスプライト名")]

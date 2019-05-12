@@ -80,7 +80,14 @@ public class BattleSoundPlayer : BattleFunctionBase
 
 	public override void BattleTriggerInitialize()
 	{
+		base.battleStateData.seValue = new float?(this.soundManager.VolumeSE);
 		base.battleStateData.pauseBgmVolume = new float?(this.soundManager.VolumeBGM);
+	}
+
+	public override void BattleEndBefore()
+	{
+		base.BattleEndBefore();
+		this.SetVolumeSE(false);
 	}
 
 	private SoundMng soundManager
@@ -204,6 +211,22 @@ public class BattleSoundPlayer : BattleFunctionBase
 	public void StopHitEffectSE()
 	{
 		this.TryStopSE(base.battleStateData.enemiesDeathEffect[0]);
+	}
+
+	public void SetVolumeSE(bool isX2Play)
+	{
+		if (base.battleStateData.seValue == null)
+		{
+			return;
+		}
+		if (isX2Play)
+		{
+			this.soundManager.VolumeSE = 0f;
+		}
+		else
+		{
+			this.soundManager.VolumeSE = base.battleStateData.seValue.Value;
+		}
 	}
 
 	public void TryPlayBGM(string path, float time = 0f)

@@ -90,7 +90,7 @@ public class CMD_AgreementConsent : CMD
 
 	private void OnClickedTermsOfUse()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("AgreementTitle");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_AGREE;
 	}

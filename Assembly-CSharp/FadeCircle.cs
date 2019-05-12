@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class FadeCircle : ScreenEffectBase
+public sealed class FadeCircle : ScreenEffectBase
 {
 	[SerializeField]
 	private Color baseColor;
@@ -63,9 +63,8 @@ public class FadeCircle : ScreenEffectBase
 		this.circleRunTime.radius.state = FadeCircle.AnimeState.STOP;
 	}
 
-	protected override void Update()
+	private void Update()
 	{
-		base.Update();
 		this.UpdateValue(this.fullFaceAlpha.min, this.fullFaceAlpha.max, this.fullFaceAlpha.blinkingSpeed, ref this.fullFaceAlphaRunTime, new Action<float>(this.SetAlphaMin));
 		this.UpdateValue(this.circle.alpha.min, this.circle.alpha.max, this.circle.alpha.blinkingSpeed, ref this.circleRunTime.alpha, new Action<float>(this.SetAlphaMax));
 		this.UpdateValue(this.circle.radius.to, this.circle.radius.from, this.circle.radius.changeSpeed, ref this.circleRunTime.radius, new Action<float>(this.SetRadius));
@@ -131,10 +130,9 @@ public class FadeCircle : ScreenEffectBase
 		return result;
 	}
 
-	protected override void Awake()
+	protected override void OnInitialize(float aspectRatio)
 	{
-		base.Awake();
-		this.material.SetFloat("_Aspect", this.aspectRatio);
+		this.material.SetFloat("_Aspect", aspectRatio);
 		this.SetBaseColor(this.baseColor);
 		this.SetCenterX(this.circleCenterX);
 		this.SetCenterY(this.circleCenterY);
@@ -146,34 +144,34 @@ public class FadeCircle : ScreenEffectBase
 		this.material.SetFloat("_Radius", rad);
 	}
 
-	public void SetAlphaMin(float f)
+	public void SetAlphaMin(float alphaMin)
 	{
-		this.material.SetFloat("_AlphaMin", f);
+		this.material.SetFloat("_AlphaMin", alphaMin);
 	}
 
-	public void SetAlphaMax(float f)
+	public void SetAlphaMax(float alphaMax)
 	{
-		this.material.SetFloat("_AlphaMax", f);
+		this.material.SetFloat("_AlphaMax", alphaMax);
 	}
 
-	public void SetBaseColor(Color col)
+	public void SetBaseColor(Color baseColor)
 	{
-		this.material.SetColor("_BaseCol", col);
+		this.material.SetColor("_BaseCol", baseColor);
 	}
 
-	public void SetCenterX(float p)
+	public void SetCenterX(float xPosition)
 	{
-		this.material.SetFloat("_CtrX", p);
+		this.material.SetFloat("_CtrX", xPosition);
 	}
 
-	public void SetCenterY(float p)
+	public void SetCenterY(float yPosition)
 	{
-		this.material.SetFloat("_CtrY", p);
+		this.material.SetFloat("_CtrY", yPosition);
 	}
 
-	public void SetRange(float f)
+	public void SetRange(float alphaRange)
 	{
-		this.material.SetFloat("_Range", f);
+		this.material.SetFloat("_Range", alphaRange);
 	}
 
 	private enum AnimeState
@@ -187,16 +185,16 @@ public class FadeCircle : ScreenEffectBase
 	[Serializable]
 	private struct AlphaInfo
 	{
-		[Range(0f, 1f)]
 		[SerializeField]
+		[Range(0f, 1f)]
 		public float min;
 
-		[Range(0f, 1f)]
 		[SerializeField]
+		[Range(0f, 1f)]
 		public float max;
 
-		[Range(0.5f, 5f)]
 		[SerializeField]
+		[Range(0.5f, 5f)]
 		public float blinkingSpeed;
 
 		[SerializeField]
@@ -206,12 +204,12 @@ public class FadeCircle : ScreenEffectBase
 	[Serializable]
 	private sealed class RadiusInfo
 	{
-		[Range(0f, 1.5f)]
 		[SerializeField]
+		[Range(0f, 1.5f)]
 		public float to;
 
-		[SerializeField]
 		[Range(0f, 1.5f)]
+		[SerializeField]
 		public float from;
 
 		[SerializeField]

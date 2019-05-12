@@ -12,6 +12,14 @@ public sealed class TutorialObserver : Singleton<TutorialObserver>
 
 	private TutorialBasePart tutorial;
 
+	public bool isTutorial
+	{
+		get
+		{
+			return this.tutorial != null;
+		}
+	}
+
 	public string[] assetNameList
 	{
 		get
@@ -130,6 +138,11 @@ public sealed class TutorialObserver : Singleton<TutorialObserver>
 			this.tutorial.FinishTutorial(base.gameObject);
 			this.tutorial = null;
 		}
+	}
+
+	public void ResumeScript()
+	{
+		this.tutorial.ResumeScript();
 	}
 
 	public int DownloaddAssetBundleLevelIndex

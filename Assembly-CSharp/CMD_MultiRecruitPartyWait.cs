@@ -10,22 +10,22 @@ using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[Header("エリア名 ステージ名")]
 	[SerializeField]
+	[Header("エリア名 ステージ名")]
 	private UILabel lbAreaName;
 
 	[SerializeField]
 	private UILabel lbStageName;
 
-	[Header("リーダースキル名")]
 	[SerializeField]
+	[Header("リーダースキル名")]
 	private UILabel lbTXT_LEADERSKILL;
 
 	[SerializeField]
 	private UILabel lbTXT_LEADERSKILL_EXP;
 
-	[SerializeField]
 	[Header("ルームパスワード")]
+	[SerializeField]
 	private GameObject goPASSWORD_BOX;
 
 	[SerializeField]
@@ -34,12 +34,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private UILabel lbTXT_PASSWORD_EXP;
 
-	[Header("フレンドボタン")]
 	[SerializeField]
+	[Header("フレンドボタン")]
 	private GameObject goBTN_FRIEND;
 
-	[SerializeField]
 	[Header("チャットボタン")]
+	[SerializeField]
 	private GameObject goBTN_CHAT;
 
 	[Header("ステータス変更ボタン")]
@@ -74,12 +74,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[SerializeField]
 	[Header("エモーション処理")]
+	[SerializeField]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[Header("エモーションコンポーネント")]
 	[SerializeField]
+	[Header("エモーションコンポーネント")]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]
@@ -466,7 +466,6 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		this.isGoingBattle = true;
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
 		DataMng.Instance().WD_ReqDngResult.dungeonId = data.worldDungeonId;
 		DataMng.Instance().WD_ReqDngResult.clear = 0;
 		DataMng.Instance().RespData_WorldMultiStartInfo = data;
@@ -899,14 +898,14 @@ public class CMD_MultiRecruitPartyWait : CMD
 	{
 		if (this.isReady)
 		{
-			this.cmdConfirm = (GUIMain.ShowCommonDialog(new Action<int>(this.OnClickReadyExec), "CMD_Confirm") as CMD_Confirm);
+			this.cmdConfirm = (GUIMain.ShowCommonDialog(new Action<int>(this.OnClickReadyExec), "CMD_Confirm", null) as CMD_Confirm);
 			this.cmdConfirm.Title = StringMaster.GetString("MultiRecruit-03");
 			this.cmdConfirm.Info = StringMaster.GetString("MultiRecruit-04");
 		}
 		else
 		{
 			this.OnClickReadyExec(0);
-			this.cmdModalMessage = (GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage);
+			this.cmdModalMessage = (GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage);
 			this.cmdModalMessage.Title = StringMaster.GetString("MultiRecruit-05");
 			this.cmdModalMessage.Info = StringMaster.GetString("MultiRecruit-06");
 		}
@@ -936,7 +935,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 	public void OnPassCodeCopy()
 	{
 		Clipboard.Text = this.lbTXT_PASSWORD.text;
-		this.cmdModalMessage = (GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage);
+		this.cmdModalMessage = (GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage);
 		this.cmdModalMessage.Title = StringMaster.GetString("SystemCopy");
 		this.cmdModalMessage.Info = StringMaster.GetString("MultiRecruit-02");
 	}
@@ -947,13 +946,13 @@ public class CMD_MultiRecruitPartyWait : CMD
 		{
 			this.recruitedFriendIdList = new List<string>();
 		}
-		CMD_MultiRecruitFriend cmd_MultiRecruitFriend = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitFriend") as CMD_MultiRecruitFriend;
+		CMD_MultiRecruitFriend cmd_MultiRecruitFriend = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitFriend", null) as CMD_MultiRecruitFriend;
 		cmd_MultiRecruitFriend.roomId = int.Parse(this.roomInfo.multiRoomId);
 	}
 
 	private void OnClickChat()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitChatList");
+		GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitChatList", null);
 	}
 
 	private void OnClickCancel()
@@ -1003,7 +1002,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private void OnClickStart()
 	{
-		this.cmdConfirm = (GUIMain.ShowCommonDialog(new Action<int>(this.OnClickStartExec), "CMD_Confirm") as CMD_Confirm);
+		this.cmdConfirm = (GUIMain.ShowCommonDialog(new Action<int>(this.OnClickStartExec), "CMD_Confirm", null) as CMD_Confirm);
 		this.cmdConfirm.Title = StringMaster.GetString("MultiRecruit-07");
 		if (this.TCPSendUserIdList.Count < 2)
 		{
@@ -1582,7 +1581,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 					{
 						this.ForceRoomOut(CMD_MultiRecruitPartyWait.ROOM_OUT_TYPE.MEMBER_EXPIRE);
 					}
-				}, "CMD_Confirm") as CMD_Confirm);
+				}, "CMD_Confirm", null) as CMD_Confirm);
 				this.cmdConfirm.Title = StringMaster.GetString("AlertNetworkErrorTitle");
 				this.cmdConfirm.Info = StringMaster.GetString("MultiRecruit-15");
 			}
@@ -1728,7 +1727,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 			{
 				this.ClosePanel(true);
 			}
-		}, "CMD_ModalMessage") as CMD_ModalMessage);
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage);
 		this.cmdModalMessage.Title = title;
 		this.cmdModalMessage.Info = info;
 		yield break;

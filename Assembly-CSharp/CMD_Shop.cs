@@ -4,21 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_Shop : CMD
+public sealed class CMD_Shop : CMD
 {
 	public static CMD_Shop instance;
 
 	[SerializeField]
-	private GameObject goListPartsStone;
-
-	[SerializeField]
 	private UILabel stoneNum;
-
-	[SerializeField]
-	private UILabel labelFund;
-
-	[SerializeField]
-	private UILabel labelTrade;
 
 	[SerializeField]
 	private GameObject fundObject;
@@ -27,13 +18,16 @@ public class CMD_Shop : CMD
 	private GameObject tradeObject;
 
 	[SerializeField]
-	private GUISelectPanelStone csSelectPanelStone;
+	private GUISelectPanelStone productScrollView;
 
-	private List<StoreUtil.StoneStoreData> ssdList;
+	[SerializeField]
+	private GameObject productScrollViewItem;
 
-	private int virtualUsedStoneCount;
+	private List<StoreUtil.StoneStoreData> storeProductList;
 
 	private bool closeWhenConsumed;
+
+	private int virtualUsedStoneCount;
 
 	private Action hideGUIAction;
 
@@ -46,7 +40,19 @@ public class CMD_Shop : CMD
 		set
 		{
 			this.virtualUsedStoneCount = value;
-			this.UpdateDigistone();
+			this.SetDigistoneNumber();
+		}
+	}
+
+	public bool CloseWhenConsumed
+	{
+		get
+		{
+			return this.closeWhenConsumed;
+		}
+		set
+		{
+			this.closeWhenConsumed = value;
 		}
 	}
 
@@ -59,11 +65,11 @@ public class CMD_Shop : CMD
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		if (this.fundObject != null)
+		if (null != this.fundObject)
 		{
 			this.fundObject.SetActive(true);
 		}
-		if (this.tradeObject != null)
+		if (null != this.tradeObject)
 		{
 			this.tradeObject.SetActive(true);
 		}
@@ -73,12 +79,10 @@ public class CMD_Shop : CMD
 
 	private IEnumerator InitShop(Action<int> f, float sizeX, float sizeY, float aT)
 	{
-		this.labelFund.text = StringMaster.GetString("ShopRule-01");
-		this.labelTrade.text = StringMaster.GetString("ShopRule-02");
-		yield return base.StartCoroutine(StoreInit.Instance().GetProductsOperation());
 		yield return base.StartCoroutine(StoreInit.Instance().InitStore());
 		yield return base.StartCoroutine(StoreInit.Instance().InitRestoreOperation());
-		if (StoreInit.Instance().GetProductsSucceed() && StoreInit.Instance().GetStatus() >= StoreInit.STATUS.DONE_RECONSUME)
+		yield return base.StartCoroutine(StoreInit.Instance().GetProductsOperation());
+		if (StoreInit.Instance().IsSuccessReceiveProducts() && StoreInit.STATUS.DONE_RECONSUME <= StoreInit.Instance().GetStatus())
 		{
 			if (DataMng.Instance().RespDataSH_Info.isShopMaintenance == 1)
 			{
@@ -104,11 +108,9 @@ public class CMD_Shop : CMD
 			{
 				base.ShowDLG();
 				base.PartsTitle.SetTitle(StringMaster.GetString("ShopTitle"));
-				this.UpdateDigistone();
-				this.SetCommonUI_Stone();
-				this.Init_Stone();
+				this.SetDigistoneNumber();
+				this.SetProductScrollView();
 				base.Show(f, sizeX, sizeY, aT);
-				Singleton<GUIMain>.Instance.SetScreenEdgeCurtain(true);
 			}
 		}
 		else
@@ -126,25 +128,20 @@ public class CMD_Shop : CMD
 		FarmCameraControlForCMD.Off();
 	}
 
-	private void CloseAndFarmCamOn(bool animation)
-	{
-		FarmCameraControlForCMD.On();
-		base.ClosePanel(animation);
-	}
-
 	public override void ClosePanel(bool animation = true)
 	{
 		if (this.hideGUIAction != null)
 		{
 			this.hideGUIAction();
+			this.hideGUIAction = null;
 		}
-		this.CloseAndFarmCamOn(animation);
-		if (this.csSelectPanelStone != null)
+		FarmCameraControlForCMD.On();
+		base.ClosePanel(animation);
+		if (null != this.productScrollView)
 		{
-			this.csSelectPanelStone.FadeOutAllListParts(null, false);
-			this.csSelectPanelStone.SetHideScrollBarAllWays(true);
+			this.productScrollView.FadeOutAllListParts(null, false);
+			this.productScrollView.SetHideScrollBarAllWays(true);
 		}
-		Singleton<GUIMain>.Instance.SetScreenEdgeCurtain(false);
 	}
 
 	protected override void OnDestroy()
@@ -155,66 +152,52 @@ public class CMD_Shop : CMD
 
 	private void OnClickedB0()
 	{
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow");
-		((CMDWebWindow)commonDialog).TitleText = StringMaster.GetString("ShopRule-02");
-		((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_TRADE;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
+		if (null != cmdwebWindow)
+		{
+			cmdwebWindow.TitleText = StringMaster.GetString("ShopRule-02");
+			cmdwebWindow.Url = WebAddress.EXT_ADR_TRADE;
+		}
 	}
 
 	private void OnClickedB1()
 	{
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow");
-		((CMDWebWindow)commonDialog).TitleText = StringMaster.GetString("ShopRule-01");
-		((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_FUND;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
+		if (null != cmdwebWindow)
+		{
+			cmdwebWindow.TitleText = StringMaster.GetString("ShopRule-01");
+			cmdwebWindow.Url = WebAddress.EXT_ADR_FUND;
+		}
 	}
 
-	public void UpdateDigistone()
+	private void SetDigistoneNumber()
 	{
 		int num = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point - this.virtualUsedStoneCount;
 		this.stoneNum.text = num.ToString();
 	}
 
-	private void SetCommonUI_Stone()
+	private void SetProductScrollView()
 	{
-		this.csSelectPanelStone.Callback = new Action(this.UpdateDigistone);
-		Vector3 localPosition = this.csSelectPanelStone.transform.localPosition;
-		GUICollider component = this.csSelectPanelStone.GetComponent<GUICollider>();
+		this.productScrollView.Callback = new Action(this.SetDigistoneNumber);
+		Vector3 localPosition = this.productScrollView.transform.localPosition;
+		GUICollider component = this.productScrollView.GetComponent<GUICollider>();
 		component.SetOriginalPos(localPosition);
-		this.csSelectPanelStone.selectParts = this.goListPartsStone;
+		this.productScrollView.selectParts = this.productScrollViewItem;
 		Rect listWindowViewRect = default(Rect);
 		listWindowViewRect.xMin = -560f;
 		listWindowViewRect.xMax = 560f;
 		listWindowViewRect.yMin = -256f - GUIMain.VerticalSpaceSize;
 		listWindowViewRect.yMax = 256f + GUIMain.VerticalSpaceSize;
-		this.csSelectPanelStone.ListWindowViewRect = listWindowViewRect;
+		this.productScrollView.ListWindowViewRect = listWindowViewRect;
+		this.storeProductList = StoreUtil.Instance().GetStoneStoreDataList();
+		this.productScrollView.initLocation = true;
+		this.productScrollView.AllBuild(this.storeProductList);
 	}
 
-	private void Init_Stone()
+	public void DeleteListParts(int index)
 	{
-		this.ssdList = StoreUtil.Instance().GetStoneStoreDataList();
-		this.goListPartsStone.SetActive(true);
-		this.csSelectPanelStone.initLocation = true;
-		this.csSelectPanelStone.AllBuild(this.ssdList);
-		this.goListPartsStone.SetActive(false);
-	}
-
-	public bool CloseWhenConsumed
-	{
-		get
-		{
-			return this.closeWhenConsumed;
-		}
-		set
-		{
-			this.closeWhenConsumed = value;
-		}
-	}
-
-	public void DeleteListParts(int IDX)
-	{
-		this.ssdList.RemoveAt(IDX);
-		this.goListPartsStone.SetActive(true);
-		this.csSelectPanelStone.AllBuild(this.ssdList);
-		this.goListPartsStone.SetActive(false);
+		this.storeProductList.RemoveAt(index);
+		this.productScrollView.AllBuild(this.storeProductList);
 	}
 
 	public void OnEndConsume(bool isSuccess)
@@ -247,10 +230,10 @@ public class CMD_Shop : CMD
 	private void OnUpdatedDigistone(bool isSuccess)
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
-		this.UpdateDigistone();
+		this.SetDigistoneNumber();
 		if (!isSuccess)
 		{
-			if (StoreInit.Instance().GetStatus() < StoreInit.STATUS.DONE_RECONSUME)
+			if (StoreInit.STATUS.DONE_RECONSUME > StoreInit.Instance().GetStatus())
 			{
 				this.ClosePanel(true);
 			}

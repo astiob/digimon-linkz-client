@@ -6,8 +6,8 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(UISprite))]
 public class UIAtlasSkinner : UISpriteSkinnerBase
 {
-	[SerializeField]
 	[FormerlySerializedAs("atlas")]
+	[SerializeField]
 	private List<UIAtlas> _atlas = new List<UIAtlas>();
 
 	[SerializeField]

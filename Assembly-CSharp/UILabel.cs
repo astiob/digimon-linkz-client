@@ -10,17 +10,17 @@ public class UILabel : UIWidget
 
 	public UILabel.Crispness keepCrispWhenShrunk = UILabel.Crispness.OnDesktop;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Font mTrueTypeFont;
 
 	[SerializeField]
 	[HideInInspector]
 	private UIFont mFont;
 
-	[HideInInspector]
 	[SerializeField]
 	[Multiline(6)]
+	[HideInInspector]
 	private string mText = string.Empty;
 
 	[SerializeField]
@@ -43,8 +43,8 @@ public class UILabel : UIWidget
 	[HideInInspector]
 	private int mMaxLineCount;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel.Effect mEffectStyle;
 
 	[SerializeField]
@@ -59,48 +59,48 @@ public class UILabel : UIWidget
 	[SerializeField]
 	private Vector2 mEffectDistance = Vector2.one;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UILabel.Overflow mOverflow;
 
 	[HideInInspector]
 	[SerializeField]
 	private Material mMaterial;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mApplyGradient;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Color mGradientTop = Color.white;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Color mGradientBottom = new Color(0.7f, 0.7f, 0.7f);
 
 	[HideInInspector]
 	[SerializeField]
 	private int mSpacingX;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mSpacingY;
 
 	[SerializeField]
 	[HideInInspector]
 	private bool mUseFloatSpacing;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mFloatSpacingX;
 
 	[SerializeField]
 	[HideInInspector]
 	private float mFloatSpacingY;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mOverflowEllipsis;
 
 	[HideInInspector]

@@ -7,7 +7,19 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 {
 	public static List<GUIListDropItemParts.Data> partsDataList;
 
-	public void AllBuild(int widthLength, Vector2 windowSize, GameWebAPI.RespDataWD_DungeonStart.Drop[] standardDrops, GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] ownerMultiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] multiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] multiLuckDrops, GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrops, GameWebAPI.RespDataWD_DungeonResult.EventChipReward[] eventChipRewards)
+	private GameObject multiClearRewardEffect;
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+		if (null != this.multiClearRewardEffect)
+		{
+			UnityEngine.Object.Destroy(this.multiClearRewardEffect);
+			this.multiClearRewardEffect = null;
+		}
+	}
+
+	public void AllBuild(int widthLength, Vector2 windowSize, GameWebAPI.RespDataWD_DungeonResult.Drop[] standardDrops, GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] ownerMultiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.DropReward[] multiDrops, GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LuckDrop[] multiLuckDrops, GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] optionDrops, GameWebAPI.RespDataWD_DungeonResult.EventChipReward[] eventChipRewards)
 	{
 		Rect listWindowViewRect = default(Rect);
 		float num = windowSize.x * 0.5f;
@@ -189,5 +201,6 @@ public class GUISelectPanelDropItemList : GUISelectPanelViewPartsUD
 		component["MultiClearReward"].time = 0f;
 		component.Play("MultiClearReward");
 		gameObject.AddComponent<DepthController>();
+		this.multiClearRewardEffect = gameObject;
 	}
 }

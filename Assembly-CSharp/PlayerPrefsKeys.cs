@@ -57,4 +57,20 @@ public static class PlayerPrefsKeys
 	public const string PLAYER_COUNTRY_CODE = "PlayerCountryCode";
 
 	public const string IS_SIGN_OUT_GOOGLE = "IsSignOutGoogle";
+
+	public const string FARM_CAMERA_POS_X = "FarmCameraPosX";
+
+	public const string FARM_CAMERA_POS_Y = "FarmCameraPosY";
+
+	public const string FARM_CAMERA_POS_Z = "FarmCameraPosZ";
+
+	public const string FARM_CAMERA_ORTHOGRAPHIC_SIZE = "FarmCameraOrthographicSize";
+
+	public const string DIGIMON_SORT_TYPE = "DigimonSortType";
+
+	public const string DIGIMON_SORT_ORDER = "DigimonSortOrder";
+
+	public const string DIGIMON_FILTER_TYPE = "DigimonFilterType";
+
+	public const string CHIP_SORT_DATA = "ChipSortData";
 }

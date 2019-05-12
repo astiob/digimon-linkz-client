@@ -2,8 +2,6 @@
 using Master;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class FarmColosseum : MonoBehaviour
@@ -15,34 +13,42 @@ public class FarmColosseum : MonoBehaviour
 	[SerializeField]
 	private GameObject[] colosseums;
 
-	private List<FarmColosseum.Schedule> scheduleList = new List<FarmColosseum.Schedule>();
+	private float timer;
+
+	private ColosseumUtil colosseumUtil;
 
 	public void Awake()
 	{
 		base.gameObject.tag = "Farm.Other";
 		FarmRoot.Instance.Input.AddTouchEndEvent(new Action<InputControll, bool>(this.OnTouchUp));
+		this.colosseumUtil = new ColosseumUtil();
 	}
 
 	private void Update()
 	{
-		bool flag = this.IsOpen() && DataMng.Instance().IsReleaseColosseum;
-		if (this.colosseums[0].activeSelf != flag)
+		this.timer -= Time.deltaTime;
+		if (this.timer < 0f)
 		{
-			this.colosseums[0].SetActive(flag);
-		}
-		if (this.colosseums[1].activeSelf != !flag)
-		{
-			this.colosseums[1].SetActive(!flag);
-		}
-		if (this.constructionName == null && FarmRoot.Instance.farmUI != null)
-		{
-			GameObject gameObject = GUIManager.LoadCommonGUI("Farm/ConstructionName", FarmRoot.Instance.farmUI.gameObject);
-			gameObject.name = "FacilityNamePlate_Colosseum";
-			this.constructionName = gameObject.GetComponent<ConstructionName>();
-			this.constructionName.farmObject = base.gameObject;
-			if (flag && DataMng.Instance().RespData_ColosseumInfo.openAllDay > 0)
+			this.timer = 1f;
+			bool flag = this.colosseumUtil.isOpen && DataMng.Instance().IsReleaseColosseum;
+			if (this.colosseums[0].activeSelf != flag)
 			{
-				this.CreateSignalColosseumEvent();
+				this.colosseums[0].SetActive(flag);
+			}
+			if (this.colosseums[1].activeSelf != !flag)
+			{
+				this.colosseums[1].SetActive(!flag);
+			}
+			if (this.constructionName == null && FarmRoot.Instance.farmUI != null)
+			{
+				GameObject gameObject = GUIManager.LoadCommonGUI("Farm/ConstructionName", FarmRoot.Instance.farmUI.gameObject);
+				gameObject.name = "FacilityNamePlate_Colosseum";
+				this.constructionName = gameObject.GetComponent<ConstructionName>();
+				this.constructionName.farmObject = base.gameObject;
+				if (this.colosseumUtil.isOpenAllDay)
+				{
+					this.CreateSignalColosseumEvent();
+				}
 			}
 		}
 	}
@@ -76,11 +82,11 @@ public class FarmColosseum : MonoBehaviour
 	{
 		if (DataMng.Instance().IsReleaseColosseum && DataMng.Instance().RespData_ColosseumInfo.colosseumId > 0)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_PvPTop");
+			GUIMain.ShowCommonDialog(null, "CMD_PvPTop", null);
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ColosseumTitle");
 			if (DataMng.Instance().IsReleaseColosseum)
 			{
@@ -126,49 +132,6 @@ public class FarmColosseum : MonoBehaviour
 		yield break;
 	}
 
-	private bool IsOpen()
-	{
-		GameWebAPI.RespData_ColosseumInfoLogic respData_ColosseumInfo = DataMng.Instance().RespData_ColosseumInfo;
-		if (respData_ColosseumInfo == null || respData_ColosseumInfo.colosseumId == 0)
-		{
-			this.scheduleList.Clear();
-			return false;
-		}
-		if (DataMng.Instance().RespData_ColosseumInfo.openAllDay > 0)
-		{
-			return true;
-		}
-		if (this.scheduleList.Count<FarmColosseum.Schedule>() == 0)
-		{
-			GameWebAPI.RespDataMA_ColosseumTimeScheduleM respDataMA_ColosseumTimeScheduleMaster = MasterDataMng.Instance().RespDataMA_ColosseumTimeScheduleMaster;
-			if (respDataMA_ColosseumTimeScheduleMaster == null)
-			{
-				return false;
-			}
-			string b = respData_ColosseumInfo.colosseumId.ToString();
-			foreach (GameWebAPI.RespDataMA_ColosseumTimeScheduleM.ColosseumTimeSchedule colosseumTimeSchedule in respDataMA_ColosseumTimeScheduleMaster.colosseumTimeScheduleM)
-			{
-				if (colosseumTimeSchedule.colosseumId == b)
-				{
-					FarmColosseum.Schedule item = new FarmColosseum.Schedule
-					{
-						start = DateTime.Parse(colosseumTimeSchedule.startHour),
-						end = DateTime.Parse(colosseumTimeSchedule.endHour)
-					};
-					this.scheduleList.Add(item);
-				}
-			}
-		}
-		foreach (FarmColosseum.Schedule schedule in this.scheduleList)
-		{
-			if (schedule.start < ServerDateTime.Now && ServerDateTime.Now < schedule.end)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public void CreateSignalColosseumEvent()
 	{
 		if (null != this.constructionName)
@@ -190,12 +153,5 @@ public class FarmColosseum : MonoBehaviour
 				}
 			}
 		}
-	}
-
-	private struct Schedule
-	{
-		public DateTime start;
-
-		public DateTime end;
 	}
 }

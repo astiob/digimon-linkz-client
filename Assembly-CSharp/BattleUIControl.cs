@@ -14,19 +14,19 @@ public abstract class BattleUIControl : BattleFunctionBase
 		}
 	}
 
-	protected BattleUIComponents ui
-	{
-		get
-		{
-			return base.stateManager.battleUiComponents;
-		}
-	}
-
 	protected BattleStateUIProperty uiProperty
 	{
 		get
 		{
 			return base.stateManager.uiProperty;
+		}
+	}
+
+	protected BattleUIComponents ui
+	{
+		get
+		{
+			return base.stateManager.battleUiComponents;
 		}
 	}
 

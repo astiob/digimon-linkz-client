@@ -58,6 +58,7 @@ public enum AffectEffect
 	SpDefenseThroughDamage,
 	HpSettingFixable,
 	HpSettingPercentage,
+	Escape,
 	gimmickSpecialAttackUp,
 	gimmickSpecialAttackDown
 }

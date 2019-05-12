@@ -7,7 +7,6 @@ namespace PartyEdit
 		protected override void OnCompleteChangeOperation()
 		{
 			DataMng.Instance().RespData_WorldMultiStartInfo = null;
-			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
 			this.uiRoot.HideClips();
 			TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.QuestToSoloBattle, false);
 			this.uiRoot.Close(true);

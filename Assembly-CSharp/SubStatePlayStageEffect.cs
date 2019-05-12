@@ -14,6 +14,8 @@ public class SubStatePlayStageEffect : BattleStateController
 
 	private SubStatePlayHitAnimationAction subStatePlayHitAnimationAction;
 
+	private string cameraKey = string.Empty;
+
 	public SubStatePlayStageEffect(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
@@ -65,12 +67,12 @@ public class SubStatePlayStageEffect : BattleStateController
 		}
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		base.stateManager.SetBattleScreen(BattleScreen.PoisonHit);
-		string cameraKey = "0002_command";
+		this.cameraKey = "0002_command";
 		if (isBigBoss)
 		{
-			cameraKey = "BigBoss/0002_command";
+			this.cameraKey = "BigBoss/0002_command";
 		}
-		base.stateManager.cameraControl.PlayCameraMotionAction(cameraKey, base.battleStateData.stageSpawnPoint, true);
+		base.stateManager.cameraControl.PlayCameraMotionAction(this.cameraKey, base.battleStateData.stageSpawnPoint, true);
 		foreach (ExtraEffectStatus invocation in invocationList)
 		{
 			IEnumerator function = null;
@@ -93,7 +95,7 @@ public class SubStatePlayStageEffect : BattleStateController
 				break;
 			}
 		}
-		base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
+		base.stateManager.cameraControl.StopCameraMotionAction(this.cameraKey);
 		yield break;
 	}
 
@@ -307,7 +309,6 @@ public class SubStatePlayStageEffect : BattleStateController
 			object obj = wait.Current;
 			yield return obj;
 		}
-		base.stateManager.threeDAction.HideDeadCharactersAction(base.battleStateData.GetTotalCharacters());
 		base.stateManager.uiControl.HideCharacterHUDFunction();
 		base.stateManager.uiControl.ApplyHideHitIcon();
 		yield break;
@@ -360,15 +361,15 @@ public class SubStatePlayStageEffect : BattleStateController
 					{
 						if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
 						{
-							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target, null);
 						}
 						else if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
 						{
-							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target, null);
 						}
-						else if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountGuard))
+						else if (skillResult.isGuard)
 						{
-							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountGuard, target);
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountGuard, target, skillResult.damageRateResult.dataList.Select((SufferStateProperty.Data item) => item.id).ToArray<string>());
 						}
 					}
 				}
@@ -379,11 +380,11 @@ public class SubStatePlayStageEffect : BattleStateController
 					{
 						if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
 						{
-							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target);
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountBarrier, target, null);
 						}
 						else if (target.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
 						{
-							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target);
+							this.sufferStatePropertyCounter.AddCountDictionary(SufferStateProperty.SufferType.CountEvasion, target, null);
 						}
 					}
 				}
@@ -396,6 +397,7 @@ public class SubStatePlayStageEffect : BattleStateController
 		}
 		data.time = base.stateManager.stateProperty.multiHitIntervalWaitSecond;
 		data.affectEffectProperty = affectEffectProperty;
+		data.cameraKey = this.cameraKey;
 		this.subStatePlayHitAnimationAction.Init(data);
 		base.SetState(this.subStatePlayHitAnimationAction.GetType());
 		while (base.isWaitState)

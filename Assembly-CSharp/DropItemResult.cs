@@ -16,8 +16,8 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private GameObject winLogo;
 
-	[Header("スキップ用Winのロゴ")]
 	[SerializeField]
+	[Header("スキップ用Winのロゴ")]
 	private GameObject winLogoForSkip;
 
 	[Header("エリア名とステージ名が入ってるGameObject")]
@@ -28,8 +28,8 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private UILabel areaName;
 
-	[Header("ステージ名")]
 	[SerializeField]
+	[Header("ステージ名")]
 	private UILabel stageName;
 
 	[Header("ライン達")]
@@ -123,7 +123,7 @@ public class DropItemResult : ResultBase
 	private void ShowDrops()
 	{
 		this.skipCount = DropItemResult.SkipCount.Drops;
-		GameWebAPI.RespDataWD_DungeonStart.Drop[] array = null;
+		GameWebAPI.RespDataWD_DungeonResult.Drop[] array = null;
 		GameWebAPI.RespDataWD_DungeonStart.LuckDrop luckDrop = null;
 		GameWebAPI.RespDataWD_DungeonResult.OptionDrop[] array2 = null;
 		GameWebAPI.RespDataWD_DungeonResult.EventChipReward[] array3 = null;
@@ -133,10 +133,10 @@ public class DropItemResult : ResultBase
 		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 		if (respDataWD_DungeonStart != null)
 		{
-			array = respDataWD_DungeonStart.dungeonFloor.Where((GameWebAPI.RespDataWD_DungeonStart.DungeonFloor x) => null != x.enemy).SelectMany((GameWebAPI.RespDataWD_DungeonStart.DungeonFloor x) => x.enemy.Where((GameWebAPI.RespDataWD_DungeonStart.Enemy e) => null != e.drop).Select((GameWebAPI.RespDataWD_DungeonStart.Enemy e) => e.drop)).ToArray<GameWebAPI.RespDataWD_DungeonStart.Drop[]>().SelectMany((GameWebAPI.RespDataWD_DungeonStart.Drop[] x) => x).ToArray<GameWebAPI.RespDataWD_DungeonStart.Drop>();
 			luckDrop = respDataWD_DungeonStart.luckDrop;
 			if (ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult != null)
 			{
+				array = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult.dropReward;
 				array2 = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult.optionDrop;
 				array3 = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult.eventChipReward;
 			}
@@ -146,7 +146,6 @@ public class DropItemResult : ResultBase
 		{
 			array = null;
 			luckDrop = null;
-			array = respData_WorldMultiStartInfo.dungeonFloor.Where((GameWebAPI.RespDataWD_DungeonStart.DungeonFloor x) => null != x.enemy).SelectMany((GameWebAPI.RespDataWD_DungeonStart.DungeonFloor x) => x.enemy.Where((GameWebAPI.RespDataWD_DungeonStart.Enemy e) => null != e.drop).Select((GameWebAPI.RespDataWD_DungeonStart.Enemy e) => e.drop)).ToArray<GameWebAPI.RespDataWD_DungeonStart.Drop[]>().SelectMany((GameWebAPI.RespDataWD_DungeonStart.Drop[] x) => x).ToArray<GameWebAPI.RespDataWD_DungeonStart.Drop>();
 			GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
 			if (respData_WorldMultiResultInfoLogic.dungeonReward != null)
 			{
@@ -159,13 +158,14 @@ public class DropItemResult : ResultBase
 				}
 				array5 = respData_WorldMultiResultInfoLogic.dungeonReward.multiReward;
 			}
+			array = respData_WorldMultiResultInfoLogic.dropReward;
 			array2 = respData_WorldMultiResultInfoLogic.optionDrop;
 			array3 = respData_WorldMultiResultInfoLogic.eventChipReward;
 		}
 		List<DropItemTotalParts.Data> list = new List<DropItemTotalParts.Data>();
 		if (array != null)
 		{
-			foreach (GameWebAPI.RespDataWD_DungeonStart.Drop drop in array)
+			foreach (GameWebAPI.RespDataWD_DungeonResult.Drop drop in array)
 			{
 				list.Add(new DropItemTotalParts.Data
 				{

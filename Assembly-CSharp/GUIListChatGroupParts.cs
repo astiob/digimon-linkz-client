@@ -248,7 +248,7 @@ public class GUIListChatGroupParts : GUIListPartBS
 		ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaster = (DataMng.Instance().UserId == this.Data.ownerUserId);
 		if (this.Data.chatMemberInviteId != null)
 		{
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_ChatModal");
+			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_ChatModal", null);
 			((CMD_ChatModal)commonDialog).SetTitle(string.Format(StringMaster.GetString("ChatInviteReplyTitle"), this.Data.ownerInfo.nickname, this.Data.groupName));
 			((CMD_ChatModal)commonDialog).SetBtn_CLOSE(true, StringMaster.GetString("SystemButtonClose"), null);
 			((CMD_ChatModal)commonDialog).SetBtn_YES(true, StringMaster.GetString("ChatConfirmYes"), new Action(this.OnReplyToInviteJoin));
@@ -256,7 +256,7 @@ public class GUIListChatGroupParts : GUIListPartBS
 		}
 		else if (this.Data.chatMemberRequestId != null)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCancelMemberRequestExec), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCancelMemberRequestExec), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = StringMaster.GetString("ChatApply-04");
 		}
@@ -294,19 +294,19 @@ public class GUIListChatGroupParts : GUIListPartBS
 				}
 				if (num2 > 0 || num3 > 0)
 				{
-					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 					cmd_ModalMessage.Info = StringMaster.GetString("ChatSearch-06");
 				}
 				else if (ClassSingleton<ChatData>.Instance.CurrentChatInfo.isMaxJoin)
 				{
-					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage2.Title = StringMaster.GetString("SystemConfirm");
 					cmd_ModalMessage2.Info = StringMaster.GetString("ChatSearch-05");
 				}
 				else
 				{
-					CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnChatApplyExec), "CMD_Confirm") as CMD_Confirm;
+					CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnChatApplyExec), "CMD_Confirm", null) as CMD_Confirm;
 					if (int.Parse(this.Data.approvalType) == 2)
 					{
 						cmd_Confirm2.Title = StringMaster.GetString("SystemConfirm");

@@ -7,12 +7,12 @@ using UnityEngine;
 
 public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 {
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color backgroundColor = Util.convertColor(255f, 200f, 0f, 30f);
 
-	[SerializeField]
 	[Header("非選択時の背景色 (有償) ")]
+	[SerializeField]
 	private Color backgroundColorOff_Paid = Util.convertColor(180f, 0f, 0f, 230f);
 
 	[SerializeField]
@@ -35,20 +35,20 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[SerializeField]
 	private UILabel ngTXT_TICKET_NAME;
 
-	[Header("チケット数ラベル")]
 	[SerializeField]
+	[Header("チケット数ラベル")]
 	private UILabel ngTXT_TICKET_NUM;
 
 	[Header("チケット有効期限")]
 	[SerializeField]
 	private UILabel ngTXT_TICKET_EXPIRE_TIME;
 
-	[Header("チケット更新日")]
 	[SerializeField]
+	[Header("チケット更新日")]
 	private UILabel ngTXT_TICKET_UPDATE_TIME;
 
-	[SerializeField]
 	[Header("ステージギミック表記Obj")]
+	[SerializeField]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

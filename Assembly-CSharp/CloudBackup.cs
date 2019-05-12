@@ -586,7 +586,7 @@ public class CloudBackup
 		CMD_ModalMessage cd = GUIMain.ShowCommonDialog(delegate(int index)
 		{
 			isClose = true;
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cd.Title = TitleText;
 		cd.Info = InfoText;
 		while (!isClose)
@@ -603,7 +603,7 @@ public class CloudBackup
 		CMD_BackupModal cd = GUIMain.ShowCommonDialog(delegate(int noop)
 		{
 			isClose = true;
-		}, "CMD_BackupModal") as CMD_BackupModal;
+		}, "CMD_BackupModal", null) as CMD_BackupModal;
 		cd.Title = TitleText;
 		cd.Info = InfoText;
 		cd.SetYesButtonAction(delegate

@@ -18,8 +18,8 @@ public class UIWidget : UIRect
 	[HideInInspector]
 	protected int mWidth = 100;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mHeight = 100;
 
 	[SerializeField]

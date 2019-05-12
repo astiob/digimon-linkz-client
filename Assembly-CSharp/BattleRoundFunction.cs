@@ -1,4 +1,5 @@
 ﻿using BattleStateMachineInternal;
+using Master;
 using Quest;
 using System;
 using System.Collections;
@@ -16,6 +17,8 @@ public class BattleRoundFunction : BattleFunctionBase
 
 	private bool onPowerCharge;
 
+	private bool onEscape;
+
 	public BattleRoundFunction()
 	{
 		this.result = new bool[2];
@@ -24,8 +27,6 @@ public class BattleRoundFunction : BattleFunctionBase
 	public bool isExit { get; private set; }
 
 	public bool[] result { get; private set; }
-
-	public bool onSkipCharacterSelect { get; private set; }
 
 	public bool onFreeze { get; private set; }
 
@@ -74,10 +75,10 @@ public class BattleRoundFunction : BattleFunctionBase
 				yield break;
 			}
 			base.battleStateData.isRunnedRevivalFunction = false;
-			if (base.stateManager.battleMode == BattleMode.Single)
-			{
-				base.stateManager.recover.Save();
-			}
+		}
+		if (base.stateManager.battleMode == BattleMode.Single)
+		{
+			base.stateManager.recover.Save();
 		}
 		base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(true);
 		yield break;
@@ -213,44 +214,78 @@ public class BattleRoundFunction : BattleFunctionBase
 
 	public void InitRunSufferFlags()
 	{
-		this.onSkipCharacterSelect = false;
 		this.onFreeze = false;
 		this.onStun = false;
 		this.onSleep = false;
 		this.onParalysis = false;
 		this.onPowerCharge = false;
 		this.onConfusion = false;
+		this.onEscape = false;
 	}
 
-	public void RunSufferBeforeCommand(List<CharacterStateControl> sortedCharacters, CharacterStateControl sortedCharacter)
+	public IEnumerator RunSufferBeforeCommand(List<CharacterStateControl> sortedCharacters, CharacterStateControl sortedCharacter)
 	{
 		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Stun))
 		{
-			this.onSkipCharacterSelect = true;
 			this.onStun = true;
 			this.onFreeze = true;
 			sortedCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Stun);
 		}
 		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep))
 		{
-			this.onSkipCharacterSelect = true;
 			this.onSleep = true;
 			this.onFreeze = true;
 		}
-		SufferStateProperty sufferStateProperty = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.PowerCharge);
-		if (sufferStateProperty.isActive)
+		SufferStateProperty powerChargeSuffer = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.PowerCharge);
+		if (powerChargeSuffer.isActive)
 		{
 			this.onPowerCharge = true;
-			if (!sufferStateProperty.OnInvocationPowerChargeAttack)
+			if (!powerChargeSuffer.OnInvocationPowerChargeAttack)
 			{
-				this.onSkipCharacterSelect = true;
 				this.onFreeze = true;
 			}
 		}
+		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Escape))
+		{
+			SufferStateProperty suffer = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Escape);
+			if (suffer.GetNearCurrentKeepRound() < 1)
+			{
+				if (suffer.GetAheadEscapeResult())
+				{
+					this.onEscape = true;
+					this.onFreeze = true;
+				}
+				else
+				{
+					sortedCharacter.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Escape);
+					string format = StringMaster.GetString("BattleNotice-21");
+					string str = string.Format(format, sortedCharacter.characterDatas.name);
+					base.stateManager.uiControl.ApplyWarning(str, sortedCharacter.isEnemy);
+					IEnumerator animation = this.Animation(sortedCharacter);
+					while (animation.MoveNext())
+					{
+						yield return null;
+					}
+				}
+			}
+			else
+			{
+				string format2 = StringMaster.GetString("BattleNotice-19");
+				string str2 = string.Format(format2, suffer.GetNearCurrentKeepRound());
+				base.stateManager.uiControl.ApplyWarning(str2, sortedCharacter.isEnemy);
+				IEnumerator animation2 = this.Animation(sortedCharacter);
+				while (animation2.MoveNext())
+				{
+					yield return null;
+				}
+			}
+		}
+		yield break;
 	}
 
 	public void RunSufferAfterCommand(List<CharacterStateControl> sortedCharacters, CharacterStateControl sortedCharacter)
 	{
+		base.stateManager.uiControl.HideCharacterHUDFunction();
 		SufferStateProperty sufferStateProperty = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Paralysis);
 		if (sufferStateProperty.isActive && sufferStateProperty.GetOccurrenceFreeze())
 		{
@@ -290,38 +325,89 @@ public class BattleRoundFunction : BattleFunctionBase
 
 	public IEnumerator RunOnFreezAction(CharacterStateControl sortedCharacter)
 	{
-		if (this.onParalysis)
+		if (this.onEscape)
 		{
-			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Paralysis, sortedCharacter);
-		}
-		else if (this.onSleep)
-		{
-			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Sleep, sortedCharacter);
+			string format = StringMaster.GetString("BattleNotice-20");
+			string str = string.Format(format, sortedCharacter.characterDatas.name);
+			base.stateManager.uiControl.ApplyWarning(str, sortedCharacter.isEnemy);
 		}
 		else if (this.onStun)
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Stun, sortedCharacter);
 		}
+		else if (this.onSleep)
+		{
+			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Sleep, sortedCharacter);
+		}
+		else if (this.onParalysis)
+		{
+			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.Paralysis, sortedCharacter);
+		}
 		else if (this.onPowerCharge)
 		{
 			base.stateManager.uiControl.ApplyWarning(SufferStateProperty.SufferType.PowerCharge, sortedCharacter);
 		}
+		if (this.onEscape)
+		{
+			base.stateManager.SetBattleScreen(BattleScreen.IsWarning);
+			string cameraKey = "0002_command";
+			if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
+			{
+				cameraKey = "BigBoss/0002_command";
+			}
+			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(new CharacterStateControl[]
+			{
+				sortedCharacter
+			});
+			base.stateManager.cameraControl.PlayCameraMotionAction(cameraKey, base.battleStateData.stageSpawnPoint, true);
+			IEnumerator wait2 = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.freezeActionWaitSecond, null, null);
+			while (wait2.MoveNext())
+			{
+				yield return null;
+			}
+			base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
+			IEnumerator bigToSmallTransition = base.stateManager.threeDAction.BigToSmallTransition(sortedCharacter, base.stateManager.battleStateData.insertCharacterEffect[0]);
+			while (bigToSmallTransition.MoveNext())
+			{
+				yield return null;
+			}
+			sortedCharacter.Escape();
+		}
+		else
+		{
+			IEnumerator animation = this.Animation(sortedCharacter);
+			while (animation.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		yield break;
+	}
+
+	private IEnumerator Animation(CharacterStateControl characterStateControl)
+	{
 		base.stateManager.SetBattleScreen(BattleScreen.IsWarning);
 		string cameraKey = "0006_behIncap";
-		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1 && sortedCharacter.isEnemy)
+		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1 && characterStateControl.isEnemy)
 		{
 			cameraKey = "BigBoss/skillF";
 		}
-		base.stateManager.threeDAction.PlayIdleAnimationCharactersAction(new CharacterStateControl[]
+		base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(new CharacterStateControl[]
 		{
-			sortedCharacter
+			characterStateControl
 		});
-		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, sortedCharacter);
+		bool isEscape = characterStateControl.CharacterParams.currentAnimationType == CharacterAnimationType.move;
+		Quaternion quaternion = characterStateControl.CharacterParams.transform.localRotation;
+		characterStateControl.CharacterParams.transform.localRotation = quaternion * ((!isEscape) ? Quaternion.identity : Quaternion.Euler(0f, 180f, 0f));
+		characterStateControl.CharacterParams.SetEscapeRotation(false);
+		base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, characterStateControl);
 		IEnumerator wait2 = base.stateManager.time.WaitForCertainPeriodTimeAction(base.stateManager.stateProperty.freezeActionWaitSecond, null, null);
 		while (wait2.MoveNext())
 		{
 			yield return null;
 		}
+		characterStateControl.CharacterParams.transform.localRotation = quaternion;
+		characterStateControl.CharacterParams.SetEscapeRotation(isEscape);
 		base.stateManager.cameraControl.StopCameraMotionAction(cameraKey);
 		yield break;
 	}

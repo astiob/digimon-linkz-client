@@ -12,12 +12,12 @@ public sealed class CMD_ArousalCheck : CMD
 	[SerializeField]
 	private MonsterResistanceList monsterResistanceList;
 
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[Header("警告のメッセージのラベル")]
@@ -32,12 +32,12 @@ public sealed class CMD_ArousalCheck : CMD
 	[SerializeField]
 	private UILabel buttonNoLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
-	[Header("警告ダイアログのボタングループ")]
 	[SerializeField]
+	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
 
 	protected override void Awake()

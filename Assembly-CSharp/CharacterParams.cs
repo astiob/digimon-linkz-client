@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExtension;
 
-[DisallowMultipleComponent]
 [RequireComponent(typeof(CapsuleCollider))]
+[DisallowMultipleComponent]
 public class CharacterParams : MonoBehaviour
 {
 	public const float DeathEffectGenerationInterval = 1f;
@@ -387,41 +387,6 @@ public class CharacterParams : MonoBehaviour
 		this.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 	}
 
-	public void PlayDeadAnimation(HitEffectParams hitEffectParams, Action callback)
-	{
-		this.PlayAnimation(CharacterAnimationType.dead, SkillType.Attack, 0, hitEffectParams, callback);
-	}
-
-	public void PlayAttackAnimation(SkillType attackType = SkillType.Attack, int motionIndex = 0)
-	{
-		this.PlayAnimation(CharacterAnimationType.attacks, attackType, motionIndex, null, null);
-	}
-
-	public void PlayAttackAnimationSmooth(SkillType attackType = SkillType.Attack, int motionIndex = 0)
-	{
-		this.PlayAnimationSmooth(CharacterAnimationType.attacks, attackType, motionIndex, null, null);
-	}
-
-	public void PlayHitAnimation()
-	{
-		this.PlayAnimation(CharacterAnimationType.hit, SkillType.Attack, 0, null, null);
-	}
-
-	public void PlayRevivalAnimation()
-	{
-		this.PlayAnimation(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
-	}
-
-	public void PlayRevivalAnimationSmooth()
-	{
-		this.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
-	}
-
-	public void PlayGuardAnimation()
-	{
-		this.PlayAnimation(CharacterAnimationType.guard, SkillType.Attack, 0, null, null);
-	}
-
 	public void PlayAnimationSmooth(CharacterAnimationType type, SkillType attackType = SkillType.Attack, int motionIndex = 0, HitEffectParams hitEffectParams = null, Action callback = null)
 	{
 		if (!base.isActiveAndEnabled)
@@ -438,6 +403,18 @@ public class CharacterParams : MonoBehaviour
 			return;
 		}
 		this.PlayAnimationCorutine(type, attackType, motionIndex, hitEffectParams, callback, false);
+	}
+
+	public void SetEscapeRotation(bool value)
+	{
+		if (value)
+		{
+			this._characterAnimation.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+		}
+		else
+		{
+			this._characterAnimation.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+		}
 	}
 
 	private void PlayAnimationCorutine(CharacterAnimationType type, SkillType attackType = SkillType.Attack, int motionIndex = 0, HitEffectParams hitEffectParams = null, Action callback = null, bool isSmooth = false)
@@ -566,6 +543,10 @@ public class CharacterParams : MonoBehaviour
 		}
 		this._characterAnimation.clip = attackClip;
 		IL_3D4:
+		if (BattleStateManager.current != null)
+		{
+			this.SetEscapeRotation(this.currentAnimationType == CharacterAnimationType.move);
+		}
 		if (type != CharacterAnimationType.strongHit)
 		{
 			if (this._characterAnimation.clip.wrapMode == WrapMode.Once || this._characterAnimation.clip.wrapMode == WrapMode.Default)

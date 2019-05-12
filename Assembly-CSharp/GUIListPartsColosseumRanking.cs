@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class GUIListPartsColosseumRanking : GUIListPartBS
 {
-	[Header("あなたを示すアイコン")]
 	[SerializeField]
+	[Header("あなたを示すアイコン")]
 	private UISprite spYouIcon;
 
 	[Header("キャラサムネの位置")]
@@ -17,24 +17,24 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 	[SerializeField]
 	private UILabel lbTX_UserName;
 
-	[Header("称号アイコン")]
 	[SerializeField]
+	[Header("称号アイコン")]
 	private GameObject goTITLE_ICON;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
 	[Header("ランキング順位")]
 	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
-	[Header("ランキングアイコン")]
 	[SerializeField]
+	[Header("ランキングアイコン")]
 	private UISprite spRankingIcon;
 
-	[SerializeField]
 	[Header("背景スプライト")]
+	[SerializeField]
 	private UISprite spWindow;
 
 	private MonsterData digimonData;
@@ -223,7 +223,7 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 	{
 		if (this.data.userId.ToString() == DataMng.Instance().RespDataCM_Login.playerInfo.userId)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Profile");
+			GUIMain.ShowCommonDialog(null, "CMD_Profile", null);
 		}
 		else
 		{
@@ -260,7 +260,7 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 					userId = this.data.userId.ToString()
 				}
 			};
-			GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend");
+			GUIMain.ShowCommonDialog(null, "CMD_ProfileFriend", null);
 		}
 		yield break;
 	}

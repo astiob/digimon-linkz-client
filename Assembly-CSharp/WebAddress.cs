@@ -14,12 +14,6 @@ public class WebAddress
 
 	public static string EXT_ADR_HELP_DETAIL = ConstValue.APP_WEB_DOMAIN + "/help/HelpView/?helpId=";
 
-	public static string EXT_ADR_GASHA_NOTICE = ConstValue.APP_WEB_DOMAIN + "/gacha/GachaNotice/?gachaId=";
-
-	public static string EXT_ADR_CHIP_GASHA_NOTICE = ConstValue.APP_WEB_DOMAIN + "/gacha/GachaChipNotice/?gachaId=";
-
-	public static string EXT_ADR_TICKET_GASHA_NOTICE = ConstValue.APP_WEB_DOMAIN + "/gacha/GachaDungeonTicketNotice/?gachaId=";
-
 	public static string EXT_ADR_CHAT_NOTICE = ConstValue.APP_WEB_DOMAIN + "/agreement/ChatNotice";
 
 	public static string EXT_ADR_COLOSSEUM_NOTICE = ConstValue.APP_WEB_DOMAIN + "/colosseum/ColosseumNotice";

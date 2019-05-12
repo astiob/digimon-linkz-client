@@ -130,7 +130,7 @@ public class CommonRender3DRT : MonoBehaviour
 		if (null != this.cpParams)
 		{
 			this.cpParams.SetBillBoardCamera(this.cam);
-			this.cpParams.PlayIdleAnimation();
+			this.cpParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		}
 		this.goChara.name = path;
 		this.goChara.transform.SetParent(base.gameObject.transform);
@@ -164,7 +164,7 @@ public class CommonRender3DRT : MonoBehaviour
 	{
 		if (null != this.cpParams)
 		{
-			this.cpParams.PlayIdleAnimation();
+			this.cpParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		}
 	}
 
@@ -206,7 +206,7 @@ public class CommonRender3DRT : MonoBehaviour
 		this.cpParams = this.goChara.GetComponent<CharacterParams>();
 		if (null != this.cpParams)
 		{
-			this.cpParams.PlayIdleAnimation();
+			this.cpParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		}
 		this.SetBillBoardCamera();
 	}

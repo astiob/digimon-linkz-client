@@ -176,22 +176,22 @@ public class AssetDataMng : MonoBehaviour
 			}
 			if (@object == null)
 			{
-				string objName = string.Empty;
+				string resourceName = string.Empty;
 				for (int i = 0; i < this.abidList.Count; i++)
 				{
 					if (path.Length > this.abidList[i].abPath.Length && path.StartsWith(this.abidList[i].abPath))
 					{
-						objName = path.Substring(this.abidList[i].abPath.Length);
+						resourceName = path.Substring(this.abidList[i].abPath.Length);
 						if (actEnd != null)
 						{
-							if (AssetBundleMng.Instance().LoadObjectASync(this.abidList[i], objName, actEnd))
+							if (AssetBundleMng.Instance().LoadObjectASync(this.abidList[i], resourceName, actEnd))
 							{
 								return null;
 							}
 						}
 						else
 						{
-							@object = AssetBundleMng.Instance().LoadObject(this.abidList[i], objName);
+							@object = AssetBundleMng.Instance().LoadObject(this.abidList[i], resourceName);
 							if (!(@object == null))
 							{
 								break;
@@ -199,10 +199,7 @@ public class AssetDataMng : MonoBehaviour
 						}
 					}
 				}
-				if (@object == null)
-				{
-					global::Debug.LogError("====================================== AssetDataMng:LoadObject = " + path + "がない！");
-				}
+				global::Debug.Assert(null != @object, "AssetDataMng:LoadObject = " + path + "がない");
 			}
 		}
 		if (@object == null && showAlert)
@@ -287,7 +284,7 @@ public class AssetDataMng : MonoBehaviour
 
 	private IEnumerator LoadABData_FromWWW()
 	{
-		string strROOT = AssetBundleMng.Instance().GetAB_ROOT_PATH();
+		string strROOT = AssetBundleMng.Instance().GetAssetBundleRootPath();
 		string fullpath = string.Empty;
 		for (int i = 0; i < this.abFolderList.Count; i++)
 		{

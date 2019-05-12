@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleAutoMenu : MonoBehaviour
 {
-	[SerializeField]
 	[Header("Autoボタン")]
+	[SerializeField]
 	private UIButton autoButton;
 
 	[Header("Autoのスキナー")]

@@ -214,6 +214,10 @@ public class BattleInputBasic : BattleInputFunctionBase
 		{
 			return;
 		}
+		if (base.stateManager.IsLastBattleAndAllDeath())
+		{
+			return;
+		}
 		base.callAction.OnShowMenu();
 	}
 
@@ -261,13 +265,11 @@ public class BattleInputBasic : BattleInputFunctionBase
 
 	public void OnClickRetireDialogOkButton()
 	{
-		base.stateManager.uiControl.ApplySetContinueUIColliders(true);
 		base.callAction.OnOkRetire();
 	}
 
 	public void OnClickRetireDialogCancelButton()
 	{
-		base.stateManager.uiControl.ApplySetContinueUIColliders(true);
 		base.callAction.OnCancelRetire();
 	}
 
@@ -297,7 +299,6 @@ public class BattleInputBasic : BattleInputFunctionBase
 		{
 			return;
 		}
-		base.stateManager.uiControl.ApplySetContinueUIColliders(false);
 		base.callAction.OnRetireCheck();
 	}
 

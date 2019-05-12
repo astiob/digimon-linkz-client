@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(UISprite))]
 public class CustomUISpriteAnimation : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected float mFPS = 30f;
 
 	[HideInInspector]

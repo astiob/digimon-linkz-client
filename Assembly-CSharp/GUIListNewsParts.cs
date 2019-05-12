@@ -47,19 +47,21 @@ public class GUIListNewsParts : GUIListPartBS
 		{
 		case "1":
 			arg = StringMaster.GetString("InfomationTitle");
-			goto IL_C2;
+			goto IL_C3;
 		case "2":
 			arg = StringMaster.GetString("InfomationUpdate");
-			goto IL_C2;
+			goto IL_C3;
 		case "3":
 			arg = StringMaster.GetString("InfomationEvent");
-			goto IL_C2;
+			goto IL_C3;
 		}
 		arg = StringMaster.GetString("InfomationOther");
-		IL_C2:
+		IL_C3:
 		this.newsTitle.text = string.Format(StringMaster.GetString("InfomationSubTitle"), arg);
 		this.newsDetails.text = this.Data.title;
-		this.newsDate.text = this.Data.startDateTime;
+		string text = string.Empty;
+		text = this.Data.startDateTime;
+		this.newsDate.text = text;
 		this.newsDate.text = this.newsDate.text.Remove(16);
 		this.presentIcon.gameObject.SetActive(this.Data.prizeStatus != 0);
 		this.presentIcon.color = ((this.Data.prizeStatus != 2) ? Color.white : Color.gray);
@@ -127,7 +129,7 @@ public class GUIListNewsParts : GUIListPartBS
 
 	private void OnCrickedInfo()
 	{
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(this.ClosedInfoWindow), "CMDWebWindow");
+		CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(this.ClosedInfoWindow), "CMDWebWindow", null);
 		((CMDWebWindow)commonDialog).TitleText = this.Data.title;
 		((CMDWebWindow)commonDialog).callbackAction = new Action(this.CallbackClosePanel);
 		((CMDWebWindow)commonDialog).Url = ConstValue.APP_WEB_DOMAIN + ConstValue.WEB_INFO_ADR + this.Data.userInfoId;

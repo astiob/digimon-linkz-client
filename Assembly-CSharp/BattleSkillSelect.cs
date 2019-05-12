@@ -8,28 +8,28 @@ public class BattleSkillSelect : MonoBehaviour
 	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("エモーション送信機能（マルチ）")]
 	[SerializeField]
+	[Header("エモーション送信機能（マルチ）")]
 	public EmotionSenderMulti emotionSenderMulti;
 
 	[Header("エモーション送信機能（PvP）")]
 	[SerializeField]
 	public EmotionSenderMulti emotionSenderPvP;
 
-	[Header("ボタンオブジェクト")]
 	[SerializeField]
+	[Header("ボタンオブジェクト")]
 	public GameObject monsterButtonRoot;
 
-	[SerializeField]
 	[Header("残りターン/マルチバトルのみ")]
+	[SerializeField]
 	public RemainingTurn remainingTurnMiddle;
 
-	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
 	[SerializeField]
+	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
 	public GameObject skillButtonRoot;
 
-	[Header("コライダー")]
 	[SerializeField]
+	[Header("コライダー")]
 	private Collider[] colliderValues;
 
 	[SerializeField]
@@ -60,20 +60,20 @@ public class BattleSkillSelect : MonoBehaviour
 	[Header("スキル説明3の威力のローカライズ")]
 	private UILabel skillDesc3PowerLocalize;
 
-	[Header("Leftの親")]
 	[SerializeField]
+	[Header("Leftの親")]
 	private Transform leftParent;
 
 	[Header("スキルボタン")]
 	[SerializeField]
 	public BattleSkillBtn[] skillButton;
 
-	[SerializeField]
 	[Header("デジモンボタン")]
+	[SerializeField]
 	public BattleMonsterButton[] monsterButton;
 
-	[SerializeField]
 	[Header("アタックタイマー")]
+	[SerializeField]
 	public AttackTime attackTime;
 
 	private void Awake()

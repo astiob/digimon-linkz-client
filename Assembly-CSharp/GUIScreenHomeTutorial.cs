@@ -9,6 +9,12 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 
 	public bool isSkipTutorial;
 
+	public override void ShowGUI()
+	{
+		base.ShowGUI();
+		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
+	}
+
 	protected override void ServerRequest()
 	{
 		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
@@ -21,7 +27,8 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 
 	protected override IEnumerator StartEvent()
 	{
-		GUIFace.ForceHideDigiviceBtn_S();
+		GUIFace.CloseDigiviceChildButtonNotPlaySE();
+		GUIFace.CloseFacilityChildButtonNotPlaySE();
 		yield return base.StartCoroutine(this.CreateHomeData());
 		if (!this.isSkipTutorial)
 		{
@@ -64,7 +71,10 @@ public class GUIScreenHomeTutorial : GUIScreenHome
 	{
 		UnityEngine.Object.Destroy(base.gameObject);
 		UnityEngine.Object.Destroy(this.goFARM_ROOT);
-		GUIFace.instance.HideGUI();
-		GUIFaceIndicator.instance.HideLocator(true);
+		if (null != this.faceUI)
+		{
+			UnityEngine.Object.Destroy(this.faceUI);
+			this.faceUI = null;
+		}
 	}
 }

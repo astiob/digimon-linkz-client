@@ -10,20 +10,20 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 
 	private const float PARTICLE_POS_Y = 240f;
 
-	[SerializeField]
 	[Header("元レベルのLv部分")]
+	[SerializeField]
 	private GameObject oldLevelTitle;
 
 	[Header("元レベルのテキスト")]
 	[SerializeField]
 	private UILabel oldLevel;
 
-	[Header("新しいレベルのLv部分")]
 	[SerializeField]
+	[Header("新しいレベルのLv部分")]
 	private GameObject newLevelTitle;
 
-	[Header("新しいレベルのテキスト")]
 	[SerializeField]
+	[Header("新しいレベルのテキスト")]
 	private UILabel newLevel;
 
 	[SerializeField]
@@ -42,8 +42,8 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 
 	private Animation levelUpAnimtion;
 
-	[SerializeField]
 	[Header("友情度アップアイコン")]
+	[SerializeField]
 	private GameObject friendUpIcon;
 
 	private Transform friendUpIconTrans;
@@ -58,20 +58,20 @@ public sealed class BattleResultDigimonInfo : MonoBehaviour
 	[SerializeField]
 	private UILabel newLevelText;
 
-	[SerializeField]
 	[Header("ゲージの背景")]
+	[SerializeField]
 	private GameObject expGaugeBG;
 
 	[SerializeField]
 	[Header("黄色の経験値ゲージ")]
 	private UIProgressBar expGauge;
 
-	[Header("アイコンのアンカー")]
 	[SerializeField]
+	[Header("アイコンのアンカー")]
 	private Transform iconAnchor;
 
-	[Header("レベルマックスの時のマーク")]
 	[SerializeField]
+	[Header("レベルマックスの時のマーク")]
 	private GameObject levelMaxMark;
 
 	private GameObject levelUpParticlePref;

@@ -6,15 +6,15 @@ using UnityEngine;
 
 public class CMD_MultiRecruitChatList : CMD
 {
-	[SerializeField]
 	[Header("リストパーツ")]
+	[SerializeField]
 	private GameObject partChatListParent;
 
 	[SerializeField]
 	private GameObject partChatList;
 
-	[SerializeField]
 	[Header("デフォルトメッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
@@ -176,7 +176,7 @@ public class CMD_MultiRecruitChatList : CMD
 		}
 		MultiTools.DispLoading(false, RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		yield return null;
-		CMD_ModalMessage cd = GUIMain.ShowCommonDialog(new Action<int>(this.CloseModalMessage), "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cd = GUIMain.ShowCommonDialog(new Action<int>(this.CloseModalMessage), "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cd.Title = StringMaster.GetString("MultiRecruitChat-05");
 		cd.Info = StringMaster.GetString("MultiRecruitChat-06");
 		yield break;

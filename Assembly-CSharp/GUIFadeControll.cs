@@ -32,15 +32,14 @@ public class GUIFadeControll : MonoBehaviour
 
 	private static bool actionStop;
 
-	private GameObject goScreen;
-
-	private UISprite sprScreenNG;
+	[SerializeField]
+	private UISprite fadeImage;
 
 	private bool fadeEfcStart_;
 
 	private EffectBase fadeEfcBase_ = new EffectBase();
 
-	private Color EfcColorW = new Color(1f, 1f, 1f, 1f);
+	private Color EfcColorW = Color.white;
 
 	private bool isBarrier;
 
@@ -52,52 +51,10 @@ public class GUIFadeControll : MonoBehaviour
 		}
 	}
 
-	public static void SetLoadInfo(Action<int> action_ = null, string APLoadName_ = "", string LoadGUIName_ = "", string HideGUIName_ = "", Action<int> actionEnd_ = null, bool executeFadeIn = false)
-	{
-		GUIFadeControll.APLoadName = APLoadName_;
-		GUIFadeControll.LoadGUIName = LoadGUIName_;
-		GUIFadeControll.HideGUIName = HideGUIName_;
-		GUIFadeControll.fadeAction = action_;
-		GUIFadeControll.fadeEndAction = actionEnd_;
-		GUIFadeControll.isExecuteFadeIn = executeFadeIn;
-	}
-
-	public static void SetFadeInfo(float foutTime_, float waitTime_, float finTime_, float alphaMax_)
-	{
-		GUIFadeControll.foutTime = foutTime_;
-		GUIFadeControll.waitTime = waitTime_;
-		GUIFadeControll.finTime = finTime_;
-		GUIFadeControll.alphaMax = alphaMax_;
-		GUIFadeControll.alphaScale = 1f;
-	}
-
-	public static void ActionRestart()
-	{
-		GUIFadeControll.actionStop = false;
-		GUIFadeControll.LoadGUIAll();
-	}
-
-	public static void StartFadeIn(float scale = 1f)
-	{
-		GUIFadeControll.actionStop = false;
-		GUIFadeControll.alphaScale = scale;
-	}
-
 	private void Awake()
 	{
+		global::Debug.Assert(null != this.fadeImage, "GUIFadeControll.mask を Inspector で設定してください.");
 		GUIFadeControll.fadeEnd = false;
-		foreach (object obj in base.transform)
-		{
-			Transform transform = (Transform)obj;
-			if (transform.name == "SCREEN")
-			{
-				this.goScreen = transform.gameObject;
-				if (this.goScreen != null)
-				{
-					this.sprScreenNG = this.goScreen.GetComponent<UISprite>();
-				}
-			}
-		}
 		EFFECT_BASE_KEY_FRAME[] fadeKeys = EffectKeyFrame.GetFadeKeys(GUIFadeControll.foutTime, GUIFadeControll.waitTime, GUIFadeControll.finTime, GUIFadeControll.alphaMax);
 		this.fadeEfcBase_.efSetKeyFrameTbl(fadeKeys);
 		this.fadeEfcBase_.efSetLoopCt(1);
@@ -125,13 +82,9 @@ public class GUIFadeControll : MonoBehaviour
 		}
 		if (!this.fadeEfcBase_.efIsEnd())
 		{
-			this.fadeEfcBase_.efTransform(this.goScreen.transform);
 			EFFECT_BASE_KEY_FRAME curFrameValue = this.fadeEfcBase_.getCurFrameValue();
 			this.EfcColorW.a = curFrameValue.col_a * GUIFadeControll.alphaScale;
-			if (this.sprScreenNG != null)
-			{
-				this.sprScreenNG.color = this.EfcColorW;
-			}
+			this.fadeImage.color = this.EfcColorW;
 			if (!GUIFadeControll.actionStop)
 			{
 				this.fadeEfcBase_.efUpdate();
@@ -177,23 +130,54 @@ public class GUIFadeControll : MonoBehaviour
 		}
 	}
 
+	private void DummyMethod()
+	{
+	}
+
+	public static void SetLoadInfo(Action<int> action_ = null, string APLoadName_ = "", string LoadGUIName_ = "", string HideGUIName_ = "", Action<int> actionEnd_ = null, bool executeFadeIn = false)
+	{
+		GUIFadeControll.APLoadName = APLoadName_;
+		GUIFadeControll.LoadGUIName = LoadGUIName_;
+		GUIFadeControll.HideGUIName = HideGUIName_;
+		GUIFadeControll.fadeAction = action_;
+		GUIFadeControll.fadeEndAction = actionEnd_;
+		GUIFadeControll.isExecuteFadeIn = executeFadeIn;
+	}
+
+	public static void SetFadeInfo(float foutTime_, float waitTime_, float finTime_, float alphaMax_)
+	{
+		GUIFadeControll.foutTime = foutTime_;
+		GUIFadeControll.waitTime = waitTime_;
+		GUIFadeControll.finTime = finTime_;
+		GUIFadeControll.alphaMax = alphaMax_;
+		GUIFadeControll.alphaScale = 1f;
+	}
+
+	public static void ActionRestart()
+	{
+		GUIFadeControll.actionStop = false;
+		GUIFadeControll.LoadGUIAll();
+	}
+
+	public static void StartFadeIn(float alphaScale = 1f)
+	{
+		GUIFadeControll.actionStop = false;
+		GUIFadeControll.alphaScale = alphaScale;
+	}
+
 	public static void LoadGUIAll()
 	{
-		if (GUIFadeControll.HideGUIName != string.Empty)
+		if (!string.IsNullOrEmpty(GUIFadeControll.HideGUIName))
 		{
 			GUIManager.HideGUI(GUIFadeControll.HideGUIName);
 		}
-		if (GUIFadeControll.APLoadName != string.Empty)
+		if (!string.IsNullOrEmpty(GUIFadeControll.APLoadName))
 		{
 			SceneManager.LoadScene(GUIFadeControll.APLoadName);
 		}
-		if (GUIFadeControll.LoadGUIName != string.Empty)
+		if (!string.IsNullOrEmpty(GUIFadeControll.LoadGUIName))
 		{
 			GUIMain.ReqScreen(GUIFadeControll.LoadGUIName, string.Empty);
 		}
-	}
-
-	private void DummyMethod()
-	{
 	}
 }

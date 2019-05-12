@@ -5,44 +5,44 @@ using UnityEngine;
 
 public class ItemInfoField : MonoBehaviour
 {
-	[Header("Box画像(ノーマル)")]
 	[SerializeField]
+	[Header("Box画像(ノーマル)")]
 	private GameObject normalBoxImage;
 
 	[SerializeField]
 	[Header("Box画像(レア)")]
 	private GameObject rareBoxImage;
 
-	[Header("Box(ノーマル)")]
 	[SerializeField]
+	[Header("Box(ノーマル)")]
 	private GameObject normalBox;
 
-	[Header("Box(レア)")]
 	[SerializeField]
+	[Header("Box(レア)")]
 	private GameObject rareBox;
 
-	[SerializeField]
 	[Header("Wave & Roundのテキスト")]
+	[SerializeField]
 	private UILabel waveAndRoundText;
 
 	[Header("残りRoundのテキスト")]
 	[SerializeField]
 	private UILabel remainingRoundText;
 
-	[Header("Box数テキスト(ノーマル)")]
 	[SerializeField]
+	[Header("Box数テキスト(ノーマル)")]
 	private UILabel normalBoxNumberText;
 
-	[Header("Box数テキスト(レア)")]
 	[SerializeField]
+	[Header("Box数テキスト(レア)")]
 	private UILabel rareBoxNumberText;
 
 	[Header("BoxのTween(ノーマル)")]
 	[SerializeField]
 	private UITweener normalBoxTween;
 
-	[Header("BoxのTween(レア)")]
 	[SerializeField]
+	[Header("BoxのTween(レア)")]
 	private UITweener rareBoxTween;
 
 	public void TwinkleNormalBox()

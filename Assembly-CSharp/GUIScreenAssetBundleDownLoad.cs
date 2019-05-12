@@ -277,7 +277,7 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 		transform.localPosition = Vector3.up * 3000f;
 		transform.rotation = Quaternion.Euler(0f, 180f, 0f);
 		CharacterParams component = gameObject.GetComponent<CharacterParams>();
-		component.PlayIdleAnimation();
+		component.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 	}
 
 	public override void OnDestroy()

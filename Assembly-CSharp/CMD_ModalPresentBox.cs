@@ -17,15 +17,15 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbSubtitle;
 
-	[Header("初期メッセージ")]
 	[SerializeField]
+	[Header("初期メッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("一括受取ボタン")]
+	[SerializeField]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]
@@ -350,7 +350,7 @@ public class CMD_ModalPresentBox : CMD
 	{
 		if (data.resultCode != 1)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("Present-13");
 			cmd_ModalMessage.Info = StringMaster.GetString(string.Format("PresentRecieveResultCode-{0}", data.resultCode));
 			cmd_ModalMessage.AdjustSize();
@@ -359,7 +359,7 @@ public class CMD_ModalPresentBox : CMD
 		this.SetAfterReceiveParams(data);
 		if (data.prizeReceiveIds.Length > 0)
 		{
-			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.DispLimitResultModal), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.DispLimitResultModal), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage2.Title = StringMaster.GetString("Present-03");
 			cmd_ModalMessage2.Info = this.GetPresentCountDescription(this.receivedPresentCountList);
 			cmd_ModalMessage2.AdjustSize();
@@ -384,7 +384,7 @@ public class CMD_ModalPresentBox : CMD
 	{
 		if (this.limitPresentCountList.Count > 0)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("Present-08");
 			cmd_ModalMessage.Info = StringMaster.GetString("Present-09") + this.GetPresentCountDescription(this.limitPresentCountList);
 			cmd_ModalMessage.AdjustSize();

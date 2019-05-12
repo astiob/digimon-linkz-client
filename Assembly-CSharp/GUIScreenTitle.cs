@@ -111,6 +111,11 @@ public sealed class GUIScreenTitle : GUIScreen
 			GUICollider.EnableAllCollider(string.Empty);
 		}
 		RestrictionInput.EndLoad();
+		if ("0" != tutorialStatus.endFlg)
+		{
+			CMD_BaseSelect.LoadSetting();
+			CMD_ChipSortModal.LoadSetting();
+		}
 		yield break;
 	}
 
@@ -159,26 +164,26 @@ public sealed class GUIScreenTitle : GUIScreen
 	{
 		this.googlePlay.EnableMenu(false);
 		CMD_Takeover.currentMode = CMD_Takeover.MODE.INPUT;
-		GUIMain.ShowCommonDialog(null, "CMD_TakeoverInput");
+		GUIMain.ShowCommonDialog(null, "CMD_TakeoverInput", null);
 	}
 
 	public void OnClickedCacheClear()
 	{
 		this.googlePlay.EnableMenu(false);
-		CMD_CacheClear cmd_CacheClear = GUIMain.ShowCommonDialog(null, "CMD_Cache") as CMD_CacheClear;
+		CMD_CacheClear cmd_CacheClear = GUIMain.ShowCommonDialog(null, "CMD_Cache", null) as CMD_CacheClear;
 		cmd_CacheClear.onSuccessCacheClear = new Action(this.OnClickedScreen);
 	}
 
 	public void OnClickedOption()
 	{
 		this.googlePlay.EnableMenu(false);
-		GUIMain.ShowCommonDialog(null, "CMD_Option");
+		GUIMain.ShowCommonDialog(null, "CMD_Option", null);
 	}
 
 	public void OnClickedContact()
 	{
 		this.googlePlay.EnableMenu(false);
-		GUIMain.ShowCommonDialog(null, "CMD_inquiry");
+		GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
 	}
 
 	private void CancelGameStart()
@@ -306,7 +311,7 @@ public sealed class GUIScreenTitle : GUIScreen
 	{
 		if (GUIManager.IsEnableBackKeyAndroid() && Input.GetKeyDown(KeyCode.Escape))
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.AppQuit), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.AppQuit), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("BackKeyConfirmTitle");
 			cmd_Confirm.Info = StringMaster.GetString("BackKeyConfirmExit");
 			SoundMng.Instance().PlaySE("SEInternal/Common/se_106", 0f, false, true, null, -1, 1f);

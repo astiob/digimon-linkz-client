@@ -15,8 +15,8 @@ public sealed class CMD_Mission : CMD
 	[Header("ミッション選択のタッチ領域")]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[Header("ミッションの段階終了時カットイン演出コントローラ")]
 	[SerializeField]
+	[Header("ミッションの段階終了時カットイン演出コントローラ")]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
@@ -414,7 +414,7 @@ public sealed class CMD_Mission : CMD
 				this.ClosePanel(true);
 			}, null));
 		};
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(action, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(action, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("Mission-07");
 		cmd_ModalMessage.Info = info;
 		cmd_ModalMessage.AdjustSize();

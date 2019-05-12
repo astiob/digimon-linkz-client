@@ -26,7 +26,7 @@ public class PartsQuestDetails : MonoBehaviour
 
 	private void OnClickedDetail()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("PointQuest-1");
 		cmdwebWindow.Url = string.Format(WebAddress.EXT_ADR_POINT_QUEST_DETAIL, this.worldEventId);
 	}

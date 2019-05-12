@@ -54,7 +54,7 @@ namespace AdventureScene
 				string text = digimonInfo.skillEffectSeList[this.uniqueSkillIndex];
 				if (null != component && null != component2 && null != component4 && !string.IsNullOrEmpty(text))
 				{
-					component.PlayAttackAnimation(SkillType.Deathblow, this.uniqueSkillIndex);
+					component.PlayAnimation(CharacterAnimationType.attacks, SkillType.Deathblow, this.uniqueSkillIndex, null, null);
 					component2.transform.position = component.transform.position;
 					component4.transform.position = component.transform.position;
 					AppCoroutine.Start(component2.PlaySkillAnimation(component), new Action(this.OnFinishCommand), false);

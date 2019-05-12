@@ -7,9 +7,5 @@ public class ItemDropResultStore
 
 	public DropBoxType dropBoxType { get; set; }
 
-	public MasterDataMng.AssetCategory dropAssetType { get; set; }
-
-	public int dropNumber { get; set; }
-
 	public bool isRare { get; set; }
 }

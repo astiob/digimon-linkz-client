@@ -4,16 +4,16 @@ using UnityEngine;
 
 public sealed class GUIListPartsMissionSelect : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWの スプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
 	[Header("回数表示")]
 	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[Header("選択してないときの外枠色")]
 	private Color normalFrameColor = Color.white;
 
-	[SerializeField]
 	[Header("選択時の外枠色")]
+	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[Header("残り時間のラベル")]
@@ -44,8 +44,8 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[Header("バッジスプライト")]

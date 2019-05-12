@@ -61,11 +61,6 @@ public class TutorialCreateRestartScreen
 		};
 		for (int k = 0; k < openUI.Count; k++)
 		{
-			if ("CMD_GashaTOP" == openUI[k])
-			{
-				APIRequestTask task = APIUtil.Instance().RequestGashaInfo(GameWebAPI.GA_Req_GashaInfo.Type.TUTORIAL, true);
-				yield return AppCoroutine.Start(task.Run(null, null, null), false);
-			}
 			show = false;
 			controlToGame.OpenCommonDialog(openUI[k], onOpendAction);
 			while (!show)
@@ -98,7 +93,7 @@ public class TutorialCreateRestartScreen
 		if (openConfirmUI.Any((string x) => x == "GASHA_START"))
 		{
 			show = false;
-			controlToGame.OpenCommonDialog("GashaConfirmDialog", onOpendAction);
+			controlToGame.OpenConfirmDialog("GashaConfirmDialog", onOpendAction);
 			while (!show)
 			{
 				yield return null;

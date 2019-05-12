@@ -14,7 +14,7 @@ namespace EvolutionSelect
 
 		private void ShowFailedLockMonster()
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("EvolutionTitle");
 			string arg = string.Empty;
 			if ("2" != this.listPartsRoot.GetEvotuionType())
@@ -30,7 +30,7 @@ namespace EvolutionSelect
 
 		private void ShowConfirmExecution(string title, string info)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.listPartsRoot.OnCloseEvolveDo), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.listPartsRoot.OnCloseEvolveDo), "CMD_Confirm", null) as CMD_Confirm;
 			string monsterName = this.listPartsRoot.Data.md_next.monsterMG.monsterName;
 			cmd_Confirm.Title = title;
 			cmd_Confirm.Info = string.Format("{0}\n\n{1}", monsterName, info);
@@ -45,7 +45,7 @@ namespace EvolutionSelect
 			}
 			else if (!this.listPartsRoot.IsPossessCluster())
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("EvolutionTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("EvolutionFailedTip");
 			}
@@ -63,7 +63,7 @@ namespace EvolutionSelect
 				}
 				else
 				{
-					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage2.Title = StringMaster.GetString("EvolutionTitle");
 					cmd_ModalMessage2.Info = string.Format(StringMaster.GetString("EvolutionFailedLv"), StringMaster.GetString("EvolutionTitle"));
 				}

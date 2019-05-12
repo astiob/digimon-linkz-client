@@ -617,13 +617,13 @@ public class CMD_MealExecution : CMD
 		int userItemNumByItemId = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(50001);
 		if (userItemNumByItemId > 0)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnClickUseHQMeatExec), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnClickUseHQMeatExec), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("UseHQMealTitle");
 			cmd_Confirm.Info = StringMaster.GetString("UseHQMealMessage");
 		}
 		else
 		{
-			CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+			CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 			cmd_ChangePOP_STONE.Title = StringMaster.GetString("BuyHQMealTitle");
 			cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("BuyHQMealMessage"), ConstValue.BUY_HQMEAT_DIGISTONE_NUM);
 			cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnClickBuyHQMeatExec);
@@ -648,7 +648,7 @@ public class CMD_MealExecution : CMD
 		}
 		if (DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point < ConstValue.BUY_HQMEAT_DIGISTONE_NUM)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Shop");
+			GUIMain.ShowCommonDialog(null, "CMD_Shop", null);
 		}
 		else
 		{

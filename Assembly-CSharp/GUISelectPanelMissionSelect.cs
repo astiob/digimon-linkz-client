@@ -5,8 +5,8 @@ public class GUISelectPanelMissionSelect : GUISelectPanelViewPartsUD
 {
 	public bool animationMoving;
 
-	[Header("選択されたパーツのアニメ量 X")]
 	[SerializeField]
+	[Header("選択されたパーツのアニメ量 X")]
 	private float selectPartsAnimX = 25f;
 
 	private int animIndexBK = -1;

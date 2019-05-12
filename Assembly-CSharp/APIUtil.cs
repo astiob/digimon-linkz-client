@@ -152,23 +152,6 @@ public sealed class APIUtil : MonoBehaviour
 		return new APIRequestTask(request, requestRetry);
 	}
 
-	public APIRequestTask RequestGashaInfo(GameWebAPI.GA_Req_GashaInfo.Type type, bool requestRetry = true)
-	{
-		GameWebAPI.RequestGA_GashaInfo requestGA_GashaInfo = new GameWebAPI.RequestGA_GashaInfo();
-		requestGA_GashaInfo.SetSendData = delegate(GameWebAPI.GA_Req_GashaInfo param)
-		{
-			param.isTutorial = (int)type;
-			int countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
-			param.countryCode = countryCode;
-		};
-		requestGA_GashaInfo.OnReceived = delegate(GameWebAPI.RespDataGA_GetGachaInfo response)
-		{
-			CMD_GashaTOP.gachaInfo = response;
-		};
-		GameWebAPI.RequestGA_GashaInfo request = requestGA_GashaInfo;
-		return new APIRequestTask(request, requestRetry);
-	}
-
 	public IEnumerator OAuthLogin(Action<string> onCompleted)
 	{
 		string result = null;
@@ -587,6 +570,7 @@ public sealed class APIUtil : MonoBehaviour
 			param.clear = DataMng.Instance().WD_ReqDngResult.clear;
 			param.aliveInfo = DataMng.Instance().WD_ReqDngResult.aliveInfo;
 			param.clearRound = DataMng.Instance().WD_ReqDngResult.clearRound;
+			param.enemyAliveInfo = DataMng.Instance().WD_ReqDngResult.enemyAliveInfo;
 		};
 		worldResultLogic.OnReceived = delegate(GameWebAPI.RespDataWD_DungeonResult response)
 		{

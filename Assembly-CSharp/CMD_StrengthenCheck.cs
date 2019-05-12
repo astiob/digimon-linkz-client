@@ -10,8 +10,8 @@ public sealed class CMD_StrengthenCheck : CMD
 	[Header("サムネイルのアイコン達")]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
 	[Header("消費クラスタのラベル")]
@@ -22,28 +22,28 @@ public sealed class CMD_StrengthenCheck : CMD
 	[SerializeField]
 	private UILabel beforeLevelLabel;
 
-	[SerializeField]
 	[Header("強化後のレベルのラベル")]
+	[SerializeField]
 	private UILabel afterLevelLabel;
 
-	[Header("上昇値のレベルのラベル")]
 	[SerializeField]
+	[Header("上昇値のレベルのラベル")]
 	private UILabel plusLevelLabel;
 
-	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
+	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]
 	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)

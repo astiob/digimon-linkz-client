@@ -27,24 +27,20 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
 
-	[Header("ステージ効果を表示するフォントテクスチャ")]
-	[SerializeField]
-	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
-
 	private MaterialPropertyBlock materialPropertyBlock;
 
 	private Dictionary<string, string> dictionary;
 
-	[Header("ステージ効果上昇UI")]
 	[SerializeField]
+	[Header("ステージ効果上昇UI")]
 	private UISprite upSprite;
 
-	[SerializeField]
 	[Header("ステージ効果減少UI")]
+	[SerializeField]
 	private UISprite downSprite;
 
-	[SerializeField]
 	[Header("国内用フォントデータ")]
+	[SerializeField]
 	private HitIcon.LanguageFont languageFont;
 
 	[SerializeField]
@@ -233,6 +229,9 @@ public class HitIcon : MonoBehaviour
 				return;
 			case AffectEffect.CountEvasion:
 				this.ShowCountEvasion(data);
+				return;
+			case AffectEffect.Escape:
+				this.ShowEscape(data);
 				return;
 			}
 			NGUITools.SetActiveSelf(base.gameObject, false);
@@ -628,6 +627,15 @@ public class HitIcon : MonoBehaviour
 	private void ShowRecommand(HitIcon.Data data)
 	{
 		data.middleMesh.text = this.GetString("HitIconRecommand");
+		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
+		{
+			data.middleMesh
+		});
+	}
+
+	private void ShowEscape(HitIcon.Data data)
+	{
+		data.middleMesh.text = this.GetString("HitIconEscape");
 		this.ChangeFontTexture(this.standardEffectFontTexture.yellow, new TextMeshPro[]
 		{
 			data.middleMesh

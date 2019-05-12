@@ -41,7 +41,7 @@ namespace Colosseum.DeckUI
 			if (flag)
 			{
 				CMD_ChangeMonster.SelectMonsterData = (this.parentList.GetSelectMonster() as MonsterData);
-				CMD_ChangeMonster cmd_ChangeMonster = GUIMain.ShowCommonDialog(null, "CMD_ChangeMonster") as CMD_ChangeMonster;
+				CMD_ChangeMonster cmd_ChangeMonster = GUIMain.ShowCommonDialog(null, "CMD_ChangeMonster", null) as CMD_ChangeMonster;
 				cmd_ChangeMonster.SetChangedAction(new Action<MonsterUserData>(this.parentList.UpdateList));
 				cmd_ChangeMonster.SetIconColosseumDeck(this.parentList.GetSelectMonster(), this.parentList.GetDeckMonsterList(), this.deckData.SortieLimitList.GetSortieLimitList());
 			}
@@ -53,7 +53,7 @@ namespace Colosseum.DeckUI
 			if (monster != null)
 			{
 				CMD_CharacterDetailed.DataChg = (monster as MonsterData);
-				CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+				CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 				cmd_CharacterDetailed.DisableEvolutionButton();
 			}
 		}

@@ -4,16 +4,16 @@ using UnityEngine;
 
 public sealed class BaseSelectChipCell : MonoBehaviour
 {
-	[Header("サムネイルのテクスチャ")]
 	[SerializeField]
+	[Header("サムネイルのテクスチャ")]
 	private UITexture thumbnailTexture;
 
-	[Header("レア度のスプライト")]
 	[SerializeField]
+	[Header("レア度のスプライト")]
 	private UISprite rareSprite;
 
-	[Header("チップ名のラベル")]
 	[SerializeField]
+	[Header("チップ名のラベル")]
 	private UILabel chipNameLabel;
 
 	[Header("非装着のラベル")]

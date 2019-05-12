@@ -12,12 +12,12 @@ public sealed class MultiConnetionMessage : MonoBehaviour
 	[SerializeField]
 	private UILabel cmdSelectMessageeLocalize;
 
-	[SerializeField]
 	[Header("開始準備中オブジェクト")]
+	[SerializeField]
 	private GameObject prepareStartGO;
 
-	[Header("コマンド入力中オブジェクト")]
 	[SerializeField]
+	[Header("コマンド入力中オブジェクト")]
 	private GameObject commandWaitingGO;
 
 	private string myWaitingCommand = string.Empty;

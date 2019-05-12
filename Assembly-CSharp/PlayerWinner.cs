@@ -15,8 +15,8 @@ public class PlayerWinner : MonoBehaviour
 	[SerializeField]
 	public GameObject nextButtonGO;
 
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
 	[SerializeField]

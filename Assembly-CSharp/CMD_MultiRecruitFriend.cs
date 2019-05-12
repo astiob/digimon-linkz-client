@@ -15,15 +15,15 @@ public class CMD_MultiRecruitFriend : CMD
 	[SerializeField]
 	private GameObject partFriendList;
 
-	[Header("デフォルトメッセージ")]
 	[SerializeField]
+	[Header("デフォルトメッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("全選択ボタン")]
+	[SerializeField]
 	private GameObject goBtnSelectAll;
 
 	[SerializeField]
@@ -191,7 +191,7 @@ public class CMD_MultiRecruitFriend : CMD
 		base.StartCoroutine(request.Run(delegate()
 		{
 			RestrictionInput.EndLoad();
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.CloseModalMessage), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.CloseModalMessage), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("MultiRecruitFriend-05");
 			cmd_ModalMessage.Info = StringMaster.GetString("MultiRecruitFriend-06");
 		}, delegate(Exception noop)

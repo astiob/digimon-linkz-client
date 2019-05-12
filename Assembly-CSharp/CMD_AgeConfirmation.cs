@@ -93,7 +93,7 @@ public class CMD_AgeConfirmation : CMD
 		{
 			return;
 		}
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.SubmitBirthday), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.SubmitBirthday), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("ShopAgeConfirmTitle");
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("ShopAgeConfirmInfo"), this.inYear.value, this.inMonth.value);
 	}
@@ -224,7 +224,7 @@ public class CMD_AgeConfirmation : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
 			this.ClosePanel(true);
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("ShopAgeCompletedTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("ShopAgeCompletedInfo");
 	}

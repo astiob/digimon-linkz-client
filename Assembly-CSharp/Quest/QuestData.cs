@@ -1,6 +1,7 @@
 ﻿using PersistentData;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeSerialize;
 using UnityEngine;
 using WebAPIRequest;
@@ -967,6 +968,19 @@ namespace Quest
 				OnReceived = onResponse
 			};
 			return new APIRequestTask(request, requestRetry);
+		}
+
+		public static void CreateDropAssetList(GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons questStage, List<GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset> dropAssetList)
+		{
+			int i;
+			for (i = 0; i < questStage.dropAssets.Length; i++)
+			{
+				int assetCategoryId = questStage.dropAssets[i].assetCategoryId;
+				if (assetCategoryId != 4 && assetCategoryId != 5 && !dropAssetList.Any((GameWebAPI.RespDataWD_GetDungeonInfo.DropAsset x) => x.assetCategoryId == assetCategoryId && x.assetValue == questStage.dropAssets[i].assetValue))
+				{
+					dropAssetList.Add(questStage.dropAssets[i]);
+				}
+			}
 		}
 
 		public enum WORLD_STATUS

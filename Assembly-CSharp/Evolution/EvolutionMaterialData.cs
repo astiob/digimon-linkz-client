@@ -42,5 +42,22 @@ namespace Evolution
 			GameWebAPI.UserSoulData[] userSoulData = DataMng.Instance().RespDataUS_SoulInfo.userSoulData;
 			return Algorithm.BinarySearch<GameWebAPI.UserSoulData>(userSoulData, materialId, 0, userSoulData.Length - 1, "soulId", 8);
 		}
+
+		public static int GetUserEvolutionMaterialNum(string materialId)
+		{
+			int num = 0;
+			if (DataMng.Instance().RespDataUS_SoulInfo != null && DataMng.Instance().RespDataUS_SoulInfo.userSoulData != null)
+			{
+				for (int i = 0; i < DataMng.Instance().RespDataUS_SoulInfo.userSoulData.Length; i++)
+				{
+					GameWebAPI.UserSoulData userSoulData = DataMng.Instance().RespDataUS_SoulInfo.userSoulData[i];
+					if (userSoulData.soulId == materialId)
+					{
+						num++;
+					}
+				}
+			}
+			return num;
+		}
 	}
 }

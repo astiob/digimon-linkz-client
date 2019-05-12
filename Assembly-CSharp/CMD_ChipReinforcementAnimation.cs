@@ -18,7 +18,7 @@ public sealed class CMD_ChipReinforcementAnimation : CMD
 
 	public static CMD_ChipReinforcementAnimation Create(GameObject parent, GameWebAPI.RespDataMA_ChipM.Chip data, Action<int> callback = null)
 	{
-		CMD_ChipReinforcementAnimation cmd_ChipReinforcementAnimation = GUIMain.ShowCommonDialog(callback, "CMD_Chip_LvUP") as CMD_ChipReinforcementAnimation;
+		CMD_ChipReinforcementAnimation cmd_ChipReinforcementAnimation = GUIMain.ShowCommonDialog(callback, "CMD_Chip_LvUP", null) as CMD_ChipReinforcementAnimation;
 		cmd_ChipReinforcementAnimation.SetParam(data);
 		return cmd_ChipReinforcementAnimation;
 	}

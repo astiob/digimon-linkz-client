@@ -41,7 +41,7 @@ namespace Colosseum.DeckUI
 		{
 			MonsterUserData selectMonster = this.deckData.DeckList.GetSelectMonster();
 			CMD_ChangeMonster.SelectMonsterData = (selectMonster as MonsterData);
-			CMD_ChangeMonster cmd_ChangeMonster = GUIMain.ShowCommonDialog(null, "CMD_ChangeMonster") as CMD_ChangeMonster;
+			CMD_ChangeMonster cmd_ChangeMonster = GUIMain.ShowCommonDialog(null, "CMD_ChangeMonster", null) as CMD_ChangeMonster;
 			cmd_ChangeMonster.SetChangedAction(new Action<MonsterUserData>(this.deckData.DeckList.UpdateList));
 			cmd_ChangeMonster.SetIconColosseumDeck(this.deckData.DeckList.GetSelectMonster(), this.deckData.DeckList.GetDeckMonsterList(), this.deckData.SortieLimitList.GetSortieLimitList());
 		}
@@ -72,31 +72,24 @@ namespace Colosseum.DeckUI
 
 		private void OpenPvPMatchingDialog()
 		{
-			if (MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_MATCHING_TYPE == 1)
+			MatchingConfig matchingConfig = new MatchingConfig
 			{
-				MatchingConfig matchingConfig = new MatchingConfig
+				mockBattleOppoentUserCode = ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode,
+				isMockBattle = ((!("0" == ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode)) ? 1 : 0)
+			};
+			if (null != CMD_PvPTop.Instance)
+			{
+				matchingConfig.isHighCostMainBattle = CMD_PvPTop.Instance.isExtraBattle;
+				if (!matchingConfig.IsMockBattle())
 				{
-					mockBattleOppoentUserCode = ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode,
-					isMockBattle = ((!("0" == ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode)) ? 1 : 0)
-				};
-				if (null != CMD_PvPTop.Instance)
-				{
-					matchingConfig.isHighCostMainBattle = CMD_PvPTop.Instance.isExtraBattle;
-					if (!matchingConfig.IsMockBattle())
-					{
-						matchingConfig.staminaCost = CMD_PvPTop.Instance.NeedStamina;
-					}
-					else
-					{
-						matchingConfig.staminaCost = 0;
-					}
+					matchingConfig.staminaCost = CMD_PvPTop.Instance.NeedStamina;
 				}
-				CMD_ColosseumMatching.Create(matchingConfig);
+				else
+				{
+					matchingConfig.staminaCost = 0;
+				}
 			}
-			else
-			{
-				GUIMain.ShowCommonDialog(null, "CMD_PvPMatchingWait");
-			}
+			CMD_ColosseumMatching.Create(matchingConfig);
 		}
 
 		public void Initialize(ColosseumDeckData data)

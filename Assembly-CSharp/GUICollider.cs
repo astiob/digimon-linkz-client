@@ -42,8 +42,6 @@ public class GUICollider : LocalTween, ITouchEvent
 
 	public Color changeColor = new Color(1f, 0.5f, 0.5f, 1f);
 
-	public int pullDownVal = -1;
-
 	private Color firstColor;
 
 	private Vector3 firstPos;
@@ -357,7 +355,7 @@ public class GUICollider : LocalTween, ITouchEvent
 		GUICollider.disableAllColliderCT = 0;
 	}
 
-	public static void DisableAllCollider(string name)
+	public static void DisableAllCollider(string debugSign)
 	{
 		if (GUICollider.disableAllColliderCT == 0)
 		{
@@ -366,7 +364,7 @@ public class GUICollider : LocalTween, ITouchEvent
 		GUICollider.disableAllColliderCT++;
 	}
 
-	public static void EnableAllCollider(string name)
+	public static void EnableAllCollider(string debugSign)
 	{
 		GUICollider.disableAllColliderCT--;
 		if (GUICollider.disableAllColliderCT < 0)

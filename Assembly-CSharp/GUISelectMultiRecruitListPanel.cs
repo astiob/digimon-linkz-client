@@ -15,7 +15,7 @@ public class GUISelectMultiRecruitListPanel : GUISelectPanelBSPartsUD
 		if (roomInfo.multiRoomList != null)
 		{
 			this.partsCount = roomInfo.multiRoomList.Length;
-			if (base.selectCollider != null)
+			if (null != base.selectCollider)
 			{
 				GUISelectPanelBSPartsUD.PanelBuildData panelBuildData = base.CalcBuildData(1, this.partsCount, 1f, 1f);
 				float startX = panelBuildData.startX;
@@ -24,7 +24,7 @@ public class GUISelectMultiRecruitListPanel : GUISelectPanelBSPartsUD
 				{
 					GameObject gameObject = base.AddBuildPart();
 					GUIListMultiRecruitListParts component = gameObject.GetComponent<GUIListMultiRecruitListParts>();
-					if (component != null)
+					if (null != component)
 					{
 						component.SetOriginalPos(new Vector3(startX, num2, -5f));
 						component.SetParentDialog(parentDialog);

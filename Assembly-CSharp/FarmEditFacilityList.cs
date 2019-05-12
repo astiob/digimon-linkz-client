@@ -7,6 +7,9 @@ using UnityEngine;
 public class FarmEditFacilityList : GUISelectPanelBSPartsLR
 {
 	[SerializeField]
+	private GameObject buttonOffset;
+
+	[SerializeField]
 	private GameObject listArrowLeft;
 
 	[SerializeField]
@@ -16,18 +19,26 @@ public class FarmEditFacilityList : GUISelectPanelBSPartsLR
 
 	public void Initialize()
 	{
-		GUICollider component = base.GetComponent<GUICollider>();
-		BoxCollider component2 = base.GetComponent<BoxCollider>();
-		Vector3 localPosition = component.transform.localPosition;
-		component.SetOriginalPos(base.selectParts.transform.localPosition);
-		component.transform.localPosition = localPosition;
+		UIWidget component = base.transform.parent.GetComponent<UIWidget>();
+		component.ResetAndUpdateAnchors();
 		base.ListWindowViewRect = new Rect
 		{
-			x = component2.size.x * -0.5f,
-			y = component2.size.y * -0.5f,
-			width = component2.size.x,
-			height = component2.size.y
+			x = (float)component.width * -0.5f,
+			y = (float)component.height * -0.5f,
+			width = (float)component.width,
+			height = (float)component.height
 		};
+		BoxCollider component2 = base.GetComponent<BoxCollider>();
+		Vector3 size = component2.size;
+		size.x = base.width;
+		component2.size = size;
+		UIWidget component3 = this.buttonOffset.GetComponent<UIWidget>();
+		component3.ResetAndUpdateAnchors();
+		base.selectParts.transform.localPosition = this.buttonOffset.transform.localPosition;
+		GUICollider component4 = base.GetComponent<GUICollider>();
+		Vector3 localPosition = component4.transform.localPosition;
+		component4.SetOriginalPos(base.selectParts.transform.localPosition);
+		component4.transform.localPosition = localPosition;
 		this.buttonWidth = base.selectCollider.width;
 		base.selectParts.SetActive(false);
 	}

@@ -35,7 +35,7 @@ public sealed class FacilityUpgradeConfirm_MeatFarm : FacilityUpgradeConfirm
 					{
 						this.UpgradeMeatFarm();
 					}
-				}, "CMD_Confirm") as CMD_Confirm;
+				}, "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 				cmd_Confirm.Info = StringMaster.GetString("FacilityUpgradeMeatOver");
 			}
@@ -60,7 +60,7 @@ public sealed class FacilityUpgradeConfirm_MeatFarm : FacilityUpgradeConfirm
 				{
 					base.Upgrade();
 				}
-			}, "CMD_Confirm") as CMD_Confirm;
+			}, "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = StringMaster.GetString("FacilityUpgradeMeatLost");
 		}

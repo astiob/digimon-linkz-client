@@ -68,8 +68,8 @@ public sealed class ConstructionDetail : MonoBehaviour
 	private void UpdatePosition()
 	{
 		Vector3 position = this.farmCamera.WorldToScreenPoint(this.farmObject.transform.position);
-		Camera gUICamera = GUIManager.gUICamera;
-		Vector3 vector = gUICamera.ScreenToWorldPoint(position);
+		Camera orthoCamera = GUIMain.GetOrthoCamera();
+		Vector3 vector = orthoCamera.ScreenToWorldPoint(position);
 		Vector3 position2 = base.transform.position;
 		position2.x = vector.x;
 		position2.y = vector.y;

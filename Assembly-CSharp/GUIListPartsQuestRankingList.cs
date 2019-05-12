@@ -2,93 +2,63 @@
 using System;
 using UnityEngine;
 
-public class GUIListPartsQuestRankingList : GUIListPartBS
+public sealed class GUIListPartsQuestRankingList : GUIListPartBS
 {
-	private const string hexColorOutRange = "#707070B4";
-
-	[Header("ベースのスプライト")]
 	[SerializeField]
+	[Header("ランク帯の背景")]
 	private UISprite spBase;
 
+	[Header("ランク帯の背景装飾")]
 	[SerializeField]
-	[Header("ベースのSabスプライト")]
-	private UISprite spBaseSab;
+	private UISprite spBaseGlow;
 
+	[Header("ランク帯間の線")]
 	[SerializeField]
-	[Header("ベースのLineスプライト")]
 	private UISprite spBaseLine;
 
 	[SerializeField]
-	[Header("ベースのGlowスプライト")]
-	private UISprite spBaseGlow;
+	[Header("ランク帯最低ポイントの背景")]
+	private UISprite spBaseSab;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ランク帯最低ポイント")]
 	private UILabel lbTX_DuelPoint;
 
 	[SerializeField]
 	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
+	[Header("今ココ")]
 	[SerializeField]
-	[Header("ランキング順位")]
 	private GameObject goIsMine;
 
-	private string[] keyData = new string[2];
+	[SerializeField]
+	private GUIListPartsQuestRankingList.RankColorList rankColorList;
 
-	private int valueData;
+	[SerializeField]
+	private Color rankOutBG;
+
+	[SerializeField]
+	private Color rankOutGlow;
+
+	private string[] rankRange = new string[2];
+
+	private int rankRangeMin;
 
 	private bool isMine;
 
-	private string[] hexColors = new string[]
-	{
-		"#FF00BCB4",
-		"#FF5300B4",
-		"#FFA100B4",
-		"#FFF725B4",
-		"#89FF4AB4",
-		"#45FBFFB4",
-		"#702BD1B4"
-	};
-
-	private string[] hexSabColors = new string[]
-	{
-		"#FF18C1FF",
-		"#FF6500FF",
-		"#FFAA0BFF",
-		"#FFF300FF",
-		"#8BFF00C8",
-		"#52FFF1FF",
-		"#6D35CAFF"
-	};
-
-	private string[] hexLineColors = new string[]
-	{
-		"#490438FF",
-		"#4E1C04FF",
-		"#633F00FF",
-		"#848C00FF",
-		"#2D5418FF",
-		"#1D5456FF",
-		"#2A154CFF"
-	};
-
-	private Color[] selectColor;
-
-	private string[] hexColor;
-
 	public override void SetData()
 	{
-		if (CMD_PointQuestRanking.instance != null)
+		if (null != CMD_PointQuestRanking.instance)
 		{
-			this.keyData = CMD_PointQuestRanking.instance.GetPointRankingKey(base.IDX);
-			this.valueData = CMD_PointQuestRanking.instance.GetPointRankingValue(base.IDX);
+			this.rankRange = CMD_PointQuestRanking.instance.GetPointRankingKey(base.IDX);
+			this.rankRangeMin = CMD_PointQuestRanking.instance.GetPointRankingValue(base.IDX);
 			this.isMine = CMD_PointQuestRanking.instance.GetIsMine(base.IDX);
 		}
-		if (CMD_ColosseumRanking.instance != null)
+		if (null != CMD_ColosseumRanking.instance)
 		{
-			this.keyData = CMD_ColosseumRanking.instance.GetRankingKey(base.IDX);
-			this.valueData = CMD_ColosseumRanking.instance.GetRankingValue(base.IDX);
+			this.rankRange = CMD_ColosseumRanking.instance.GetRankingKey(base.IDX);
+			this.rankRangeMin = CMD_ColosseumRanking.instance.GetRankingValue(base.IDX);
 			this.isMine = CMD_ColosseumRanking.instance.GetIsMine(base.IDX);
 		}
 	}
@@ -96,11 +66,6 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	public override void RefreshParts()
 	{
 		this.ShowGUI();
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
 	}
 
 	public override void ShowGUI()
@@ -111,16 +76,7 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 
 	private void ShowData()
 	{
-		this.selectColor = new Color[4];
-		this.hexColor = new string[]
-		{
-			this.hexColors[this.hexColors.Length - 1].ToString(),
-			this.hexSabColors[this.hexSabColors.Length - 1].ToString(),
-			this.hexLineColors[this.hexLineColors.Length - 1].ToString(),
-			"#707070B4"
-		};
-		this.goIsMine.SetActive(false);
-		this.spBaseGlow.gameObject.SetActive(false);
+		GUIListPartsQuestRankingList.RankColorList.RankColor rankColor = this.rankColorList.GetRankColor(base.IDX);
 		if (this.isMine)
 		{
 			if (CMD_ColosseumRanking.instance != null && CMD_ColosseumRanking.instance.dispRankingType != CMD_ColosseumRanking.ColosseumRankingType.THIS_TIME)
@@ -133,37 +89,45 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 			}
 			this.spBaseGlow.gameObject.SetActive(true);
 		}
-		if (base.IDX < this.hexColors.Length - 1)
+		else
 		{
-			this.hexColor[0] = this.hexColors[base.IDX];
-			this.hexColor[1] = this.hexSabColors[base.IDX];
-			this.hexColor[2] = this.hexLineColors[base.IDX];
+			this.goIsMine.SetActive(false);
+			this.spBaseGlow.gameObject.SetActive(false);
 		}
-		ColorUtility.TryParseHtmlString(this.hexColor[0], out this.selectColor[0]);
-		ColorUtility.TryParseHtmlString(this.hexColor[1], out this.selectColor[1]);
-		ColorUtility.TryParseHtmlString(this.hexColor[2], out this.selectColor[2]);
-		ColorUtility.TryParseHtmlString(this.hexColor[3], out this.selectColor[3]);
-		this.spBase.color = this.selectColor[0];
-		this.spBaseGlow.color = this.selectColor[0];
-		this.spBaseSab.color = this.selectColor[1];
-		this.spBaseLine.color = this.selectColor[2];
-		this.lbTX_RankingNumber.effectColor = this.selectColor[2];
-		if (int.Parse(this.keyData[1]) > 0)
+		if (int.Parse(this.rankRange[1]) > 0)
 		{
-			this.lbTX_DuelPoint.text = this.valueData.ToString();
-			this.lbTX_RankingNumber.text = string.Format(StringMaster.GetString("QuestRankingList"), this.keyData[0], this.keyData[1]);
+			this.lbTX_DuelPoint.text = this.rankRangeMin.ToString();
+			if (this.rankRange[0] != this.rankRange[1])
+			{
+				this.lbTX_RankingNumber.text = string.Format(StringMaster.GetString("QuestRankingList"), this.rankRange[0], this.rankRange[1]);
+			}
+			else
+			{
+				this.lbTX_RankingNumber.text = string.Format(StringMaster.GetString("ColosseumRankLabel"), this.rankRange[0]);
+			}
+			this.lbTX_RankingNumber.effectColor = rankColor.textEffect;
 			this.spBaseSab.gameObject.SetActive(true);
 			this.spBaseLine.gameObject.SetActive(true);
+			this.spBase.color = rankColor.rankBG;
+			this.spBaseSab.color = rankColor.minPointBG;
+			this.spBaseLine.color = rankColor.textEffect;
+			if (this.isMine)
+			{
+				this.spBaseGlow.color = rankColor.rankBG;
+			}
 		}
 		else
 		{
-			this.spBase.color = this.selectColor[0];
-			this.lbTX_RankingNumber.effectColor = this.selectColor[3];
 			this.lbTX_DuelPoint.text = string.Empty;
 			this.lbTX_RankingNumber.text = StringMaster.GetString("ColosseumRankOutside");
-			this.spBase.color = this.selectColor[3];
+			this.lbTX_RankingNumber.effectColor = this.rankOutBG;
+			this.spBase.color = this.rankOutBG;
 			this.spBaseSab.gameObject.SetActive(false);
 			this.spBaseLine.gameObject.SetActive(false);
+			if (this.isMine)
+			{
+				this.spBaseGlow.color = this.rankOutGlow;
+			}
 		}
 	}
 
@@ -215,20 +179,63 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 		base.OnTouchEnded(touch, pos, flag);
 	}
 
-	protected virtual void OnTouchEndedProcess()
+	private void OnTouchEndedProcess()
 	{
 	}
 
 	private void OnClickedBtnSelect()
 	{
-		if (CMD_ColosseumRanking.instance != null)
+		if (null != CMD_ColosseumRanking.instance)
 		{
-			CMD_ColosseumRanking.instance.DispRankingList(int.Parse(this.keyData[0]), int.Parse(this.keyData[0]) + 99);
+			CMD_ColosseumRanking.instance.DispRankingList(int.Parse(this.rankRange[0]), int.Parse(this.rankRange[0]) + 99);
 		}
 	}
 
-	protected override void OnDestroy()
+	[Serializable]
+	private struct RankColorList
 	{
-		base.OnDestroy();
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange1;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange2;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange3;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange4;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange5;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange6;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor rankRange7;
+
+		public GUIListPartsQuestRankingList.RankColorList.RankColor GetRankColor(int rankRangeIndex)
+		{
+			switch (rankRangeIndex)
+			{
+			case 0:
+				return this.rankRange1;
+			case 1:
+				return this.rankRange2;
+			case 2:
+				return this.rankRange3;
+			case 3:
+				return this.rankRange4;
+			case 4:
+				return this.rankRange5;
+			case 5:
+				return this.rankRange6;
+			}
+			return this.rankRange7;
+		}
+
+		[Serializable]
+		public struct RankColor
+		{
+			public Color rankBG;
+
+			public Color minPointBG;
+
+			public Color textEffect;
+		}
 	}
 }

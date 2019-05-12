@@ -25,7 +25,7 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 	private GUIMonsterIcon[] enemyMonsterIconList;
 
 	[SerializeField]
-	private List<GameObject> selectNumObjList = new List<GameObject>();
+	private List<GameObject> selectNumObjList;
 
 	[SerializeField]
 	private UILabel timerLabel;
@@ -42,8 +42,8 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject leaderObj;
 
-	[SerializeField]
 	[Header("キャラクターのステータスPanel")]
+	[SerializeField]
 	private StatusPanel statusPanel;
 
 	[SerializeField]
@@ -112,8 +112,8 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject switchSkillPanelBtn;
 
-	[Header("ステータス下のリーダースキル表示")]
 	[SerializeField]
+	[Header("ステータス下のリーダースキル表示")]
 	private MonsterLeaderSkill leaderSkill;
 
 	private MonsterData DataChg;
@@ -130,35 +130,15 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 
 	private MonsterData[] mySelectMonsterDataList = new MonsterData[3];
 
-	private CMD_PvPMatchingWait pvpMatchingWait;
-
 	private ColosseumMatchingEventListener eventListener;
 
-	private float selectLimitTime = (float)MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_PARTY_SELECT_TIME;
+	private float selectLimitTime = 15f;
 
 	private bool timerCountCheck;
 
 	private bool selectDataSend;
 
 	private bool isUpdate;
-
-	public static PVPPartySelect3 CreateInstance(Transform parentTransform)
-	{
-		GameObject original = Resources.Load("UIPrefab/PvP/PVPPartySelect3") as GameObject;
-		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
-		Transform transform = gameObject.transform;
-		transform.parent = parentTransform;
-		transform.localScale = Vector3.one;
-		transform.localPosition = new Vector3(0f, 0f, 0f);
-		transform.localRotation = Quaternion.identity;
-		return gameObject.GetComponent<PVPPartySelect3>();
-	}
-
-	public void SetData(CMD_PvPMatchingWait matching)
-	{
-		this.pvpMatchingWait = matching;
-		this.SetData();
-	}
 
 	public void SetData(ColosseumMatchingEventListener listener)
 	{
@@ -252,24 +232,12 @@ public sealed class PVPPartySelect3 : MonoBehaviour
 		{
 			this.AutoPartySetting();
 		}
-		if (null != this.pvpMatchingWait)
+		int[] array = new int[this.mySelectMonsterDataList.Length];
+		for (int i = 0; i < this.mySelectMonsterDataList.Length; i++)
 		{
-			string[] array = new string[this.mySelectMonsterDataList.Length];
-			for (int i = 0; i < this.mySelectMonsterDataList.Length; i++)
-			{
-				array[i] = this.GetMonsterNumber(this.mySelectMonsterDataList[i]).ToString();
-			}
-			this.pvpMatchingWait.SendPvPEnemyData(array);
+			array[i] = this.GetMonsterNumber(this.mySelectMonsterDataList[i]);
 		}
-		else
-		{
-			int[] array2 = new int[this.mySelectMonsterDataList.Length];
-			for (int j = 0; j < this.mySelectMonsterDataList.Length; j++)
-			{
-				array2[j] = this.GetMonsterNumber(this.mySelectMonsterDataList[j]);
-			}
-			this.eventListener.OnSelectedMonster(array2);
-		}
+		this.eventListener.OnSelectedMonster(array);
 		this.selectButtonSprite.spriteName = "Common02_Btn_Gray_a";
 		this.selectButton.activeCollider = false;
 		this.selectButtonLabel.text = StringMaster.GetString("PvPMonsterSelectButtonOff");

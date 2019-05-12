@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
 	[AddComponentMenu("Image Effects/Camera/Camera Motion Blur")]
+	[ExecuteInEditMode]
 	public class CameraMotionBlur : PostEffectsBase
 	{
 		private static float MAX_RADIUS = 10f;

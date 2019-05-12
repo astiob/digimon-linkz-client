@@ -260,7 +260,7 @@ public sealed class GUIListPartsEvolution : GUIListPartBS
 	private void OnLongPushedMonsterIcon(MonsterData tappedMonsterData)
 	{
 		CMD_CharacterDetailed.DataChg = null;
-		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 		cmd_CharacterDetailed.SetViewNextEvolutionMonster(tappedMonsterData.monsterM.monsterId, CMD_BaseSelect.DataChg.userMonster);
 		cmd_CharacterDetailed.DisableEvolutionButton();
 	}

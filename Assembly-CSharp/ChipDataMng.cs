@@ -88,7 +88,7 @@ public static class ChipDataMng
 		}
 	}
 
-	public static void AddUserChipDataList(List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> ucList)
+	public static void AddUserChipDataList(List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> addUserChipList)
 	{
 		List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list;
 		if (ChipDataMng.userChipData.userChipList != null)
@@ -99,12 +99,25 @@ public static class ChipDataMng
 		{
 			list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>();
 		}
-		for (int i = 0; i < ucList.Count; i++)
-		{
-			list.Add(ucList[i]);
-			ChipDataMng.userChipData.count++;
-		}
+		list.AddRange(addUserChipList);
+		ChipDataMng.userChipData.count += addUserChipList.Count;
 		ChipDataMng.userChipData.userChipList = list.ToArray();
+	}
+
+	public static void AddUserChipList(GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] addUserChipList)
+	{
+		List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list;
+		if (ChipDataMng.userChipData.userChipList != null)
+		{
+			list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(ChipDataMng.userChipData.userChipList);
+		}
+		else
+		{
+			list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>();
+		}
+		list.AddRange(addUserChipList);
+		ChipDataMng.userChipData.userChipList = list.ToArray();
+		ChipDataMng.userChipData.count = list.Count;
 	}
 
 	public static Dictionary<int, GameWebAPI.RespDataMA_ChipM.Chip> GetDictionaryChipM()
@@ -145,9 +158,11 @@ public static class ChipDataMng
 	public static GameWebAPI.RespDataMA_ChipM.Chip GetChipMainData(string chipId)
 	{
 		GameWebAPI.RespDataMA_ChipM.Chip chip = null;
-		ChipDataMng.GetDictionaryChipM().TryGetValue(int.Parse(chipId), out chip);
-		chip = ChipDataMng.SetChipIconPath(chip);
-		chip = ChipDataMng.SetChipSellPrice(chip);
+		if (ChipDataMng.GetDictionaryChipM().TryGetValue(int.Parse(chipId), out chip))
+		{
+			chip = ChipDataMng.SetChipIconPath(chip);
+			chip = ChipDataMng.SetChipSellPrice(chip);
+		}
 		return chip;
 	}
 

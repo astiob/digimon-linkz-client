@@ -68,7 +68,7 @@ public class BattleInitialize : BattleFunctionBase
 			characterParams.SetShadowObject();
 			yield return null;
 		}
-		characterParams.PlayIdleAnimation();
+		characterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 		yield return null;
 		characterParams.Initialize(base.hierarchyData.cameraObject.camera3D);
 		GameObject hasColliderObject = characterParams.collider.gameObject;
@@ -437,6 +437,12 @@ public class BattleInitialize : BattleFunctionBase
 				string hitEffectId58 = "EFF_COM_DOWN";
 				IEnumerator item58 = this.LoadHitEffects(hitEffectId58, AffectEffect.ApDown, false);
 				list.Add(item58);
+			}
+			else if (affectEffect == AffectEffect.Escape)
+			{
+				string hitEffectId59 = "EFF_COM_UP";
+				IEnumerator item59 = this.LoadHitEffects(hitEffectId59, AffectEffect.Escape, true);
+				list.Add(item59);
 			}
 		}
 		return list;

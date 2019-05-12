@@ -26,12 +26,12 @@ public sealed class ChipBaseSelect : MonoBehaviour
 	[Header("チップのセル")]
 	private BaseSelectChipCell[] chipCells;
 
-	[SerializeField]
 	[Header("チップのラベル")]
+	[SerializeField]
 	private UILabel chipLabel;
 
-	[SerializeField]
 	[Header("チップがないメッセージ")]
+	[SerializeField]
 	private UILabel noChipLabel;
 
 	[SerializeField]
@@ -66,7 +66,7 @@ public sealed class ChipBaseSelect : MonoBehaviour
 		{
 			this.SetSelectedCharChg(CMD_BaseSelect.DataChg);
 			callback();
-		}, "CMD_ChipSphere");
+		}, "CMD_ChipSphere", null);
 	}
 
 	private void HideObjecs()

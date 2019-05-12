@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(ParticleSystem))]
 [AddComponentMenu("Digimon Effects/Tools/Particle Controller")]
+[RequireComponent(typeof(ParticleSystem))]
 [DisallowMultipleComponent]
 public class ParticleController : MonoBehaviour
 {

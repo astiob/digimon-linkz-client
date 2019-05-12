@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Anchor")]
+[ExecuteInEditMode]
 public class UIAnchor : MonoBehaviour
 {
 	public Camera uiCamera;

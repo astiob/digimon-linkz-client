@@ -25,7 +25,7 @@ public sealed class CMD_CaptureBonus : CMD
 
 	public static CMD_CaptureBonus Create(string title, string info, Action<int> onCloseAction = null)
 	{
-		return GUIMain.ShowCommonDialog(onCloseAction, "CMD_CaptureBonus") as CMD_CaptureBonus;
+		return GUIMain.ShowCommonDialog(onCloseAction, "CMD_CaptureBonus", null) as CMD_CaptureBonus;
 	}
 
 	public void DialogDataSet(GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] RewardsData)

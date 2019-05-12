@@ -114,7 +114,7 @@ namespace Colosseum.DeckUI
 			if (this.deckMonsterList[this.selectItemIndex] != null)
 			{
 				CMD_CharacterDetailed.DataChg = (this.deckMonsterList[this.selectItemIndex] as MonsterData);
-				CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+				CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 				cmd_CharacterDetailed.DisableEvolutionButton();
 			}
 		}

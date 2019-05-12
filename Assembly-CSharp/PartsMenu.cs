@@ -3,15 +3,12 @@ using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UI.Home;
 using UnityEngine;
 
-public class PartsMenu : MonoBehaviour
+public sealed class PartsMenu : MonoBehaviour
 {
 	public static PartsMenu instance;
-
-	public Vector3 closPos;
-
-	public Vector3 openPos;
 
 	private bool trainingAlertState;
 
@@ -20,57 +17,54 @@ public class PartsMenu : MonoBehaviour
 	private bool evolutionAlertState;
 
 	[SerializeField]
+	private HomeMenuMainParts mainParts;
+
+	[SerializeField]
 	private List<PartsMenuButtonData> buttonDataList;
 
 	[SerializeField]
 	private GUIBannerPanel bannerPanel;
 
 	[SerializeField]
-	private BoxCollider boxPlate;
+	private BoxCollider menuButtonCollider;
 
 	[SerializeField]
-	private BoxCollider menuButtonCollider;
+	private GameObject goMENU_BAR;
+
+	[SerializeField]
+	private GameObject goNEW_ICON;
+
+	[SerializeField]
+	private UILabel ngTX_DATE;
 
 	private float orgPosZ = -300f;
 
-	private bool isShow;
+	private int questUITypeBackup;
 
 	private bool _isShowed;
 
-	public GameObject goMENU_BAR;
-
-	public GameObject goNEW_ICON;
-
-	public GameObject goTX_DATE;
-
-	private UILabel ngTX_DATE;
-
-	public GameObject goROOT;
-
-	private EfcCont ecROOT;
-
-	private int quest_ui_type_bk;
-
-	protected virtual void Awake()
+	private void Awake()
 	{
-		this.ngTX_DATE = this.goTX_DATE.GetComponent<UILabel>();
-		this.ecROOT = this.goROOT.GetComponent<EfcCont>();
-		this.ForceHide(false);
 		GUIManager.SetActCallShowDialog(new Action<CommonDialog>(this.SetZPos));
 		this.SetBtnXYPos();
 		PartsMenu.instance = this;
 	}
 
-	protected virtual void Update()
+	private void Start()
+	{
+		this.ForceHide(false);
+	}
+
+	private void Update()
 	{
 		this.UpdateBackKeyAndroid();
-		if (this.isShow)
+		if (this.mainParts.IsShow())
 		{
 			this.ngTX_DATE.text = DateTime.Now.ToString(StringMaster.GetString("PartsMenu_txt"));
 		}
 	}
 
-	protected virtual void OnDestroy()
+	private void OnDestroy()
 	{
 		GUIManager.SetActCallShowDialog(null);
 		GUIManager.ExtBackKeyReady = true;
@@ -79,32 +73,28 @@ public class PartsMenu : MonoBehaviour
 
 	private void SetBtnXYPos()
 	{
-		if (!false)
+		if (this.buttonDataList != null)
 		{
 			List<Vector3> list = new List<Vector3>();
-			if (this.buttonDataList != null)
+			for (int i = 0; i < this.buttonDataList.Count; i++)
 			{
-				for (int i = 0; i < this.buttonDataList.Count; i++)
+				list.Add(this.buttonDataList[i].go.transform.localPosition);
+				if (i == 7)
 				{
-					Vector3 localPosition = this.buttonDataList[i].go.transform.localPosition;
-					list.Add(localPosition);
-					int num = i;
-					if (num == 7)
-					{
-						this.buttonDataList[i].state = (ConstValue.IS_CHAT_OPEN == 1);
-					}
+					this.buttonDataList[i].state = (1 == ConstValue.IS_CHAT_OPEN);
 				}
-				int num2 = 0;
-				for (int i = 0; i < this.buttonDataList.Count; i++)
+			}
+			int num = 0;
+			for (int j = 0; j < this.buttonDataList.Count; j++)
+			{
+				if (this.buttonDataList[j].state)
 				{
-					if (this.buttonDataList[i].state)
-					{
-						this.buttonDataList[i].go.transform.localPosition = list[num2++];
-					}
-					else
-					{
-						this.buttonDataList[i].go.SetActive(false);
-					}
+					this.buttonDataList[j].go.transform.localPosition = list[num];
+					num++;
+				}
+				else
+				{
+					this.buttonDataList[j].go.SetActive(false);
 				}
 			}
 		}
@@ -113,10 +103,10 @@ public class PartsMenu : MonoBehaviour
 	private void SetZPos(CommonDialog cd)
 	{
 		DepthController component = base.gameObject.GetComponent<DepthController>();
-		if (cd != null)
+		if (null != cd)
 		{
 			CMD component2 = cd.gameObject.GetComponent<CMD>();
-			if (component2 != null && (component2.PartsTitle != null || component2.requestMenu))
+			if (null != component2 && (null != component2.PartsTitle || component2.requestMenu))
 			{
 				float dlgpitch = GUIManager.GetDLGPitch();
 				float z = cd.gameObject.transform.localPosition.z;
@@ -142,22 +132,15 @@ public class PartsMenu : MonoBehaviour
 
 	public void ForceHide(bool sound = true)
 	{
-		this.isShow = true;
-		this.ShowHide(sound);
+		this.HideMainParts(sound);
 	}
 
-	public bool IsOpenSeq()
+	public void Active(bool isActive)
 	{
-		return this.isShow;
-	}
-
-	public void Active(bool flg)
-	{
-		if (flg)
+		if (isActive)
 		{
 			base.gameObject.SetActive(true);
-			CommonDialog topDialogANM = GUIManager.GetTopDialogANM(null, false);
-			this.SetZPos(topDialogANM);
+			this.SetZPos(GUIManager.GetTopDialogANM(null, false));
 		}
 		else
 		{
@@ -165,70 +148,47 @@ public class PartsMenu : MonoBehaviour
 		}
 	}
 
-	private void ShowHide(bool sound = true)
+	private void ShowMainParts()
 	{
-		float time = 0.2f;
-		if (!this.isShow)
+		GUIManager.ExtBackKeyReady = false;
+		if (CMD_CharacterDetailed.Instance != null)
 		{
-			GUIManager.ExtBackKeyReady = false;
-			if (CMD_CharacterDetailed.Instance != null)
-			{
-				CMD_CharacterDetailed.Instance.TranceEffectActiveSet(false);
-			}
-			this.isShow = true;
-			EfcCont efcCont = this.ecROOT;
-			Vector2 vP;
-			vP.x = this.openPos.x;
-			vP.y = this.openPos.y;
-			efcCont.MoveTo(vP, time, new Action<int>(this.EndMoved), iTween.EaseType.linear, 0f);
-			GUICollider.DisableAllCollider("PartsMenu");
-			this.boxPlate.size = new Vector3(1240f, this.boxPlate.size.y, this.boxPlate.size.z);
-			FarmRoot farmRoot = FarmRoot.Instance;
-			if (null != farmRoot)
-			{
-				farmRoot.ClearSettingFarmObject();
-			}
-			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.EnableCollider(false);
-			ClassSingleton<FacePresentAccessor>.Instance.facePresent.EnableCollider(false);
-			GUIFace.instance.EnableCollider(false);
-			GUIFaceIndicator.instance.EnableCollider(false);
-			if (sound)
-			{
-				SoundMng.Instance().TryPlaySE("SEInternal/Common/se_103", 0f, false, true, null, -1);
-			}
+			CMD_CharacterDetailed.Instance.TranceEffectActiveSet(false);
 		}
-		else
+		this.mainParts.Open(new Action<int>(this.EndMoved));
+		GUICollider.DisableAllCollider("PartsMenu");
+		FarmRoot farmRoot = FarmRoot.Instance;
+		if (null != farmRoot)
 		{
-			this.isShow = false;
-			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.EnableCollider(true);
-			ClassSingleton<FacePresentAccessor>.Instance.facePresent.EnableCollider(true);
-			GUIFace.instance.EnableCollider(true);
-			GUIFaceIndicator.instance.EnableCollider(true);
-			EfcCont efcCont = this.ecROOT;
-			Vector2 vP;
-			vP.x = this.closPos.x;
-			vP.y = this.closPos.y;
-			efcCont.MoveTo(vP, time, new Action<int>(this.EndMoved), iTween.EaseType.linear, 0f);
-			GUICollider.DisableAllCollider("PartsMenu");
-			this.boxPlate.size = new Vector3(1136f, this.boxPlate.size.y, this.boxPlate.size.z);
-			if (sound)
-			{
-				SoundMng.Instance().TryPlaySE("SEInternal/Common/se_104", 0f, false, true, null, -1);
-			}
+			farmRoot.ClearSettingFarmObject();
 		}
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.EnableCollider(false);
+		ClassSingleton<FacePresentAccessor>.Instance.facePresent.EnableCollider(false);
+		GUIFace.instance.EnableCollider(false);
+		GUIFaceIndicator.instance.EnableCollider(false);
+	}
+
+	private void HideMainParts(bool sound)
+	{
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.EnableCollider(true);
+		ClassSingleton<FacePresentAccessor>.Instance.facePresent.EnableCollider(true);
+		GUIFace.instance.EnableCollider(true);
+		GUIFaceIndicator.instance.EnableCollider(true);
+		this.mainParts.Close(sound, new Action<int>(this.EndMoved));
+		GUICollider.DisableAllCollider("PartsMenu");
 	}
 
 	private void EndMoved(int i)
 	{
-		if (this.isShow)
+		if (this.mainParts.IsShow())
 		{
-			this.goMENU_BAR.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+			this.goMENU_BAR.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
 			this.goNEW_ICON.SetActive(false);
 			this._isShowed = true;
 		}
 		else
 		{
-			this.goMENU_BAR.transform.localRotation = Quaternion.Euler(0f, 0f, -90f);
+			this.goMENU_BAR.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 			PartsMenu.SetMenuButtonAlertBadge();
 			this._isShowed = false;
 			GUIManager.ExtBackKeyReady = true;
@@ -242,14 +202,21 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnTappedTab()
 	{
-		this.ShowHide(true);
+		if (this.mainParts.IsShow())
+		{
+			this.HideMainParts(true);
+		}
+		else
+		{
+			this.ShowMainParts();
+		}
 	}
 
 	public void OnClickedMeal()
 	{
 		this.ForceHide(true);
-		CommonDialog x = GUIManager.CheckTopDialog("CMD_BaseSelect", null);
-		if (x == null || CMD_BaseSelect.BaseType != CMD_BaseSelect.BASE_TYPE.MEAL)
+		CommonDialog y = GUIManager.CheckTopDialog("CMD_BaseSelect", null);
+		if (null == y || CMD_BaseSelect.BaseType != CMD_BaseSelect.BASE_TYPE.MEAL)
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -262,7 +229,7 @@ public class PartsMenu : MonoBehaviour
 	public void OnClickedTraining()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_ReinforcementTOP", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_ReinforcementTOP", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -274,8 +241,8 @@ public class PartsMenu : MonoBehaviour
 	public void OnClickedTrainingMenu()
 	{
 		this.ForceHide(true);
-		CommonDialog x = GUIManager.CheckTopDialog("CMD_Training_Menu", null);
-		if (x == null)
+		CommonDialog y = GUIManager.CheckTopDialog("CMD_Training_Menu", null);
+		if (null == y)
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -287,8 +254,8 @@ public class PartsMenu : MonoBehaviour
 	public void OnClickedArousal()
 	{
 		this.ForceHide(true);
-		CommonDialog x = GUIManager.CheckTopDialog("CMD_ArousalTOP", null);
-		if (x == null)
+		CommonDialog y = GUIManager.CheckTopDialog("CMD_ArousalTOP", null);
+		if (null == y)
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -302,7 +269,7 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (FarmRoot.Instance.Scenery.GetFacilityCount(22) > 0)
 		{
-			if (GUIManager.CheckTopDialog("CMD_ClearingHouseTOP", null) == null)
+			if (null == GUIManager.CheckTopDialog("CMD_ClearingHouseTOP", null))
 			{
 				GUIManager.CloseAllCommonDialog(delegate
 				{
@@ -321,8 +288,8 @@ public class PartsMenu : MonoBehaviour
 	public void OnClickedEvo()
 	{
 		this.ForceHide(true);
-		CommonDialog x = GUIManager.CheckTopDialog("CMD_BaseSelect", null);
-		if (x == null || CMD_BaseSelect.BaseType != CMD_BaseSelect.BASE_TYPE.EVOLVE)
+		CommonDialog y = GUIManager.CheckTopDialog("CMD_BaseSelect", null);
+		if (null == y || CMD_BaseSelect.BaseType != CMD_BaseSelect.BASE_TYPE.EVOLVE)
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -335,7 +302,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedParty()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_PartyEdit", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_PartyEdit", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -351,43 +318,44 @@ public class PartsMenu : MonoBehaviour
 		this.OnClickedQuestType(0);
 	}
 
-	public void OnClickedQuestType(int quest_ui_type = 0)
+	public void OnClickedQuestType(int uiType)
 	{
 		this.ForceHide(true);
-		this.quest_ui_type_bk = quest_ui_type;
-		if (GUIManager.CheckTopDialog("CMD_QuestSelect", null) == null)
+		this.questUITypeBackup = uiType;
+		if (null == GUIManager.CheckTopDialog("CMD_QuestSelect", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-				List<string> list = new List<string>();
-				list.Add("1");
-				list.Add("3");
-				list.Add("8");
-				ClassSingleton<QuestData>.Instance.GetWorldDungeonInfo(list, new Action<bool>(this.actCBQuest));
+				List<string> worldIdList = new List<string>
+				{
+					"1",
+					"3",
+					"8"
+				};
+				ClassSingleton<QuestData>.Instance.GetWorldDungeonInfo(worldIdList, new Action<bool>(this.OnResponseQuestInfo));
 			});
 		}
 	}
 
-	private void actCBQuest(bool isSuccess)
+	private void OnResponseQuestInfo(bool isSuccess)
 	{
 		if (isSuccess)
 		{
 			this.GetCampaignDataFromServer(delegate
 			{
-				if (this.quest_ui_type_bk == 0)
+				if (this.questUITypeBackup == 0)
 				{
 					this.PartsMenuShowDialog(null, "CMD_QuestSelect");
 				}
-				else if (this.quest_ui_type_bk == 1)
+				else if (this.questUITypeBackup == 1)
 				{
 					RestrictionInput.EndLoad();
 					CMD_QuestTOP.AreaData = ClassSingleton<QuestData>.Instance.GetWorldAreaM_NormalByAreaId("8");
 					CMD cmd = this.PartsMenuShowDialog(null, "CMD_QuestTOP") as CMD;
-					PartsTitleBase partsTitle = cmd.PartsTitle;
-					if (partsTitle != null)
+					if (null != cmd.PartsTitle)
 					{
-						partsTitle.SetReturnAct(delegate(int idx)
+						cmd.PartsTitle.SetReturnAct(delegate(int idx)
 						{
 							cmd.SetCloseAction(delegate(int i)
 							{
@@ -467,7 +435,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClicked_VS()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_PvPTop", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_PvPTop", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -480,9 +448,9 @@ public class PartsMenu : MonoBehaviour
 	{
 		this.ForceHide(true);
 		CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
-		if (topDialog != null)
+		if (null != topDialog)
 		{
-			if (topDialog.name == "CMD_10gashaResult" || topDialog.name == "CMD_ChipGashaResult" || topDialog.name == "CMD_TicketGashaResult")
+			if (topDialog.name == "CMD_MonsterGashaResult" || topDialog.name == "CMD_ChipGashaResult" || topDialog.name == "CMD_TicketGashaResult")
 			{
 				topDialog.ClosePanel(true);
 				return;
@@ -501,7 +469,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedChat()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_ChatTop", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_ChatTop", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -513,7 +481,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedShop()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_Shop", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_Shop", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -530,7 +498,7 @@ public class PartsMenu : MonoBehaviour
 	public void OnClickedFriend()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_FriendTop", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_FriendTop", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -542,7 +510,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedBook()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_PictureBookTOP", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_PictureBookTOP", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -554,7 +522,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedHelp()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_HelpCategory", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_HelpCategory", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -567,7 +535,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedSettings()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_Setting1", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_Setting1", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -579,7 +547,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedInfo()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_NewsALL", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_NewsALL", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -591,7 +559,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedProfile()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_Profile", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_Profile", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -603,7 +571,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedOthers()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_OtherTOP", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_OtherTOP", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -615,7 +583,7 @@ public class PartsMenu : MonoBehaviour
 	private void OnClickedClearingHouse()
 	{
 		this.ForceHide(true);
-		if (GUIManager.CheckTopDialog("CMD_ClearingHouse", null) == null)
+		if (null == GUIManager.CheckTopDialog("CMD_ClearingHouse", null))
 		{
 			GUIManager.CloseAllCommonDialog(delegate
 			{
@@ -624,7 +592,7 @@ public class PartsMenu : MonoBehaviour
 		}
 	}
 
-	private void SetCommonUI()
+	public void SetMenuBanner()
 	{
 		Rect listWindowViewRect = default(Rect);
 		listWindowViewRect.xMin = -445f;
@@ -632,11 +600,6 @@ public class PartsMenu : MonoBehaviour
 		listWindowViewRect.yMin = -310f;
 		listWindowViewRect.yMax = 310f;
 		this.bannerPanel.ListWindowViewRect = listWindowViewRect;
-	}
-
-	public void SetMenuBanner()
-	{
-		this.SetCommonUI();
 		base.StartCoroutine(this.bannerPanel.AllBuild(GUIBannerPanel.Data));
 	}
 
@@ -652,16 +615,15 @@ public class PartsMenu : MonoBehaviour
 
 	public static void SetMenuButtonAlertBadge()
 	{
-		if (PartsMenu.instance != null)
+		if (null != PartsMenu.instance)
 		{
-			bool active = ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.IsBadgeActive() | PartsMenu.instance.trainingAlertState | PartsMenu.instance.clearAlertState | PartsMenu.instance.evolutionAlertState;
-			PartsMenu.instance.goNEW_ICON.SetActive(active);
+			PartsMenu.instance.goNEW_ICON.SetActive(ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.IsBadgeActive() | PartsMenu.instance.trainingAlertState | PartsMenu.instance.clearAlertState | PartsMenu.instance.evolutionAlertState);
 		}
 	}
 
 	public static void SetMenuAlertState(bool state)
 	{
-		if (PartsMenu.instance != null)
+		if (null != PartsMenu.instance)
 		{
 			PartsMenu.instance.trainingAlertState = state;
 		}
@@ -669,7 +631,7 @@ public class PartsMenu : MonoBehaviour
 
 	public static void SetTrainingAlertState(bool state)
 	{
-		if (PartsMenu.instance != null)
+		if (null != PartsMenu.instance)
 		{
 			PartsMenu.instance.trainingAlertState = state;
 		}
@@ -677,7 +639,7 @@ public class PartsMenu : MonoBehaviour
 
 	public static void SetClearAlertState(bool state)
 	{
-		if (PartsMenu.instance != null)
+		if (null != PartsMenu.instance)
 		{
 			PartsMenu.instance.clearAlertState = state;
 		}
@@ -685,7 +647,7 @@ public class PartsMenu : MonoBehaviour
 
 	public static void SetEvolutionAlertState(bool state)
 	{
-		if (PartsMenu.instance != null)
+		if (null != PartsMenu.instance)
 		{
 			PartsMenu.instance.evolutionAlertState = state;
 		}
@@ -693,14 +655,14 @@ public class PartsMenu : MonoBehaviour
 
 	private CommonDialog PartsMenuShowDialog(Action<int> action, string dialogName)
 	{
-		CommonDialog result = GUIManager.ShowCommonDialog(action, true, dialogName, null, null, 0.2f, 0f, 0f, -1f, -1f);
+		CommonDialog result = GUIMain.ShowCommonDialog(action, dialogName, null);
 		GUIMain.AdjustBarrierZ();
 		return result;
 	}
 
 	private void UpdateBackKeyAndroid()
 	{
-		if (!GUICollider.IsAllColliderDisable() && Input.GetKeyDown(KeyCode.Escape) && this._isShowed && this.isShow)
+		if (!GUICollider.IsAllColliderDisable() && Input.GetKeyDown(KeyCode.Escape) && this._isShowed && this.mainParts.IsShow())
 		{
 			this.ForceHide(true);
 			SoundMng.Instance().PlaySE("SEInternal/Common/se_106", 0f, false, true, null, -1, 1f);

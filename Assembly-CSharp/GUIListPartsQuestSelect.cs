@@ -161,7 +161,7 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 	{
 		if (this.areaData.data.worldAreaId == "5")
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_PvPTop");
+			GUIMain.ShowCommonDialog(null, "CMD_PvPTop", null);
 		}
 		else
 		{
@@ -171,7 +171,7 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 				CMD cmd = GUIMain.ShowCommonDialog(delegate(int idx)
 				{
 					CMD_BattleNextChoice.OnCloseQuestTOP(idx);
-				}, "CMD_QuestTOP") as CMD;
+				}, "CMD_QuestTOP", null) as CMD;
 				cmd.SetForceReturnValue(1);
 				PartsTitleBase partsTitle = cmd.PartsTitle;
 				if (partsTitle != null)
@@ -185,7 +185,7 @@ public class GUIListPartsQuestSelect : GUIListPartBS
 			}
 			else
 			{
-				GUIMain.ShowCommonDialog(null, "CMD_QuestTOP");
+				GUIMain.ShowCommonDialog(null, "CMD_QuestTOP", null);
 			}
 		}
 	}

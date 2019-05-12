@@ -3,44 +3,35 @@ using System.Collections;
 
 public class SubStatePlayPassiveEffectFunction : BattleStateBase
 {
-	private CharacterStateControl[] isTargetsStatus;
-
-	private SkillStatus status;
-
-	private AffectEffectProperty currentSuffer;
-
 	private string gettedId = string.Empty;
+
+	private SubStatePlayPassiveEffectFunction.Data data;
 
 	public SubStatePlayPassiveEffectFunction(Action OnExit, Action<EventState> OnExitGotEven) : base(null, OnExit, OnExitGotEven)
 	{
 	}
 
-	protected override void EnabledThisState()
+	public void Init(SubStatePlayPassiveEffectFunction.Data data)
 	{
-		this.isTargetsStatus = (base.battleStateData.sendValues["isTargetsStatus"] as CharacterStateControl[]);
-		this.status = (base.battleStateData.sendValues["status"] as SkillStatus);
-		this.currentSuffer = (base.battleStateData.sendValues["currentSuffer"] as AffectEffectProperty);
+		this.data = data;
 	}
 
 	protected override IEnumerator MainRoutine()
 	{
 		this.gettedId = string.Empty;
-		if (this.status.TryGetPassiveSEID(out this.gettedId))
+		if (this.data.skillStatus.TryGetPassiveSEID(out this.gettedId))
 		{
 			base.stateManager.soundPlayer.TryPlaySE(this.gettedId, 0f, false);
 		}
-		for (int i = 1; i < this.isTargetsStatus.Length; i++)
+		for (int i = 1; i < this.data.targets.Length; i++)
 		{
-			if (!this.isTargetsStatus[i].isDied)
+			if (!this.data.targets[i].isDied)
 			{
-				base.stateManager.threeDAction.PlayIdleAnimationCharactersAction(new CharacterStateControl[]
-				{
-					this.isTargetsStatus[i]
-				});
-				this.status.passiveEffectParams[i].PlayAnimation(this.isTargetsStatus[i].CharacterParams);
+				this.data.targets[i].CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+				this.data.skillStatus.passiveEffectParams[i].PlayAnimation(this.data.targets[i].CharacterParams);
 			}
 		}
-		IEnumerator passiveEffectparams = this.status.passiveEffectParams[0].PlayAnimationCorutine(this.isTargetsStatus[0].CharacterParams);
+		IEnumerator passiveEffectparams = this.data.skillStatus.passiveEffectParams[0].PlayAnimationCorutine(this.data.targets[0].CharacterParams);
 		while (passiveEffectparams.MoveNext())
 		{
 			yield return null;
@@ -50,10 +41,17 @@ public class SubStatePlayPassiveEffectFunction : BattleStateBase
 
 	protected override void DisabledThisState()
 	{
-		foreach (PassiveEffectParams passiveEffectParams2 in this.status.passiveEffectParams)
+		foreach (PassiveEffectParams passiveEffectParams2 in this.data.skillStatus.passiveEffectParams)
 		{
 			passiveEffectParams2.StopAnimation();
 		}
 		base.stateManager.soundPlayer.TryStopSE(this.gettedId, 0f);
+	}
+
+	public class Data
+	{
+		public CharacterStateControl[] targets;
+
+		public SkillStatus skillStatus;
 	}
 }

@@ -17,6 +17,12 @@ namespace Cutscene.UI
 			base.DoAction();
 		}
 
+		public void Show()
+		{
+			this.buttonTexture.enabled = true;
+			this.selfCollider.enabled = true;
+		}
+
 		public void Hide()
 		{
 			this.buttonTexture.enabled = false;

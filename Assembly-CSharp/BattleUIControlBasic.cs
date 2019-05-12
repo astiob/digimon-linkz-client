@@ -281,6 +281,10 @@ public class BattleUIControlBasic : BattleUIControl
 
 	protected void InitSpeedClearRound()
 	{
+		if (!base.stateManager.onServerConnect)
+		{
+			return;
+		}
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		bool flag = null != respData_WorldMultiStartInfo;
 		int num;
@@ -356,10 +360,7 @@ public class BattleUIControlBasic : BattleUIControl
 				base.Destroy(transform.gameObject);
 			}
 		}
-		if (base.ui.rootPanel != null)
-		{
-			base.Destroy(base.ui.rootPanel.gameObject);
-		}
+		base.ui.Destroy();
 	}
 
 	protected void ShowContinueDialog()
@@ -533,9 +534,9 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.battleStartAction.ApplyVSUI(value);
 	}
 
-	public void ApplySkillButtonData(int index, SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl character)
+	public void ApplySkillButtonData(int index, SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl character, int useSkillCount)
 	{
-		base.ui.skillSelectUi.skillButton[index].ApplySkillButtonData(skills, onEnable, onSkillLock, character);
+		base.ui.skillSelectUi.skillButton[index].ApplySkillButtonData(skills, onEnable, onSkillLock, character, useSkillCount);
 	}
 
 	public void ApplySkillButtonColliderActive(int index, bool value)
@@ -610,10 +611,6 @@ public class BattleUIControlBasic : BattleUIControl
 		base.ui.skillSelectUi.skillButton[index].ApplySkillDescriptionEnable(onEnable);
 	}
 
-	public void ApplySkillEnable(int index, bool onEnable)
-	{
-	}
-
 	public int GetSkillButtonLength()
 	{
 		return base.ui.skillSelectUi.skillButton.Length;
@@ -680,9 +677,25 @@ public class BattleUIControlBasic : BattleUIControl
 
 	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 	{
-		HitIcon unActiveHitIcon = this.GetUnActiveHitIcon(index, position);
-		unActiveHitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType);
-		return unActiveHitIcon;
+		int index2 = 0;
+		for (int i = 0; i < base.ui.hitIconObjectInstanced[index].Count; i++)
+		{
+			index2 = i;
+			if (!base.ui.hitIconObjectInstanced[index][i].gameObject.activeSelf)
+			{
+				break;
+			}
+		}
+		HitIcon hitIcon = base.ui.hitIconObjectInstanced[index][index2];
+		hitIcon.transform.localScale = base.uiProperty.hitIconLocalScale;
+		NGUITools.SetActiveSelf(hitIcon.gameObject, true);
+		Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
+		hitIcon.transform.position = new Vector3(vector.x, vector.y, 0f);
+		DepthController component = hitIcon.GetComponent<DepthController>();
+		component.SetWidgetDepth(index);
+		NGUITools.SetActiveSelf(hitIcon.gameObject, true);
+		hitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType);
+		return hitIcon;
 	}
 
 	public void ApplyHideHitIcon()
@@ -729,59 +742,6 @@ public class BattleUIControlBasic : BattleUIControl
 				component.SetTrigger("Play");
 			}
 		}
-	}
-
-	public IEnumerator ApplyDroppedItemMove(Vector3[] startPosition, bool[] isRare)
-	{
-		bool onNormalFlash = false;
-		bool onRareFlash = false;
-		for (int i = 0; i < startPosition.Length; i++)
-		{
-			base.ui.droppingItemObjectInstanced[i].SetActive(true);
-			base.ui.droppingItemObjectInstanced[i].SetRare(isRare[i]);
-			base.ui.droppingItemObjectInstanced[i].ResetToBeginning();
-			Vector3 pos = base.ui.uiCamera.ViewportToWorldPoint(startPosition[i]);
-			pos.Set(pos.x, pos.y, 0f);
-			base.ui.droppingItemObjectInstanced[i].transform.position = pos;
-			Hashtable movedHash = new Hashtable();
-			movedHash.Add("position", base.ui.itemInfoField.GetBoxImagePosition(isRare[i]));
-			movedHash.Add("time", TimeExtension.GetTimeScaleDivided(base.uiProperty.droppingItemMoveDuration));
-			movedHash.Add("easetype", base.uiProperty.droppingItemMoveEaseType);
-			iTween.MoveTo(base.ui.droppingItemObjectInstanced[i].gameObject, movedHash);
-			if (isRare[i])
-			{
-				onRareFlash = true;
-			}
-			else
-			{
-				onNormalFlash = true;
-			}
-		}
-		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(TimeExtension.GetTimeScaleDivided(base.uiProperty.droppingItemMoveDuration), null, null);
-		while (wait.MoveNext())
-		{
-			object obj = wait.Current;
-			yield return obj;
-		}
-		for (int j = 0; j < startPosition.Length; j++)
-		{
-			base.ui.droppingItemObjectInstanced[j].PlayForward();
-		}
-		wait = base.stateManager.time.WaitForCertainPeriodTimeAction(TimeExtension.GetTimeScaleDivided(base.uiProperty.droppingItemUIActionDuration - base.uiProperty.droppingItemMoveDuration), null, null);
-		while (wait.MoveNext())
-		{
-			object obj2 = wait.Current;
-			yield return obj2;
-		}
-		if (onNormalFlash)
-		{
-			base.ui.itemInfoField.TwinkleNormalBox();
-		}
-		if (onRareFlash)
-		{
-			base.ui.itemInfoField.TwinkleRareBox();
-		}
-		yield break;
 	}
 
 	public IEnumerator ApplyDroppedItemMove(Vector3 startPosition, bool isRare, int index = 0)
@@ -861,6 +821,11 @@ public class BattleUIControlBasic : BattleUIControl
 	public void ApplyWarning(SufferStateProperty.SufferType sufferType, CharacterStateControl characterStateControl = null)
 	{
 		base.ui.isWarning.ApplyWarning(sufferType, characterStateControl);
+	}
+
+	public void ApplyWarning(string value, bool isEnemy)
+	{
+		base.ui.isWarning.ApplyWarning(value, isEnemy);
 	}
 
 	public void ApplyDroppedItemNumber(int normalItems, int rareItems)
@@ -1342,28 +1307,6 @@ public class BattleUIControlBasic : BattleUIControl
 	{
 		this.ApplySetAlwaysUIColliders(isEnable);
 		base.battleStateData.isImpossibleShowMenu = !isEnable;
-	}
-
-	public HitIcon GetUnActiveHitIcon(int index, Vector3 position)
-	{
-		int index2 = 0;
-		for (int i = 0; i < base.ui.hitIconObjectInstanced[index].Count; i++)
-		{
-			index2 = i;
-			if (!base.ui.hitIconObjectInstanced[index][i].gameObject.activeSelf)
-			{
-				break;
-			}
-		}
-		HitIcon hitIcon = base.ui.hitIconObjectInstanced[index][index2];
-		hitIcon.transform.localScale = base.uiProperty.hitIconLocalScale;
-		NGUITools.SetActiveSelf(hitIcon.gameObject, true);
-		Vector3 vector = base.ui.uiCamera.ViewportToWorldPoint(position);
-		hitIcon.transform.position = new Vector3(vector.x, vector.y, 0f);
-		DepthController component = hitIcon.GetComponent<DepthController>();
-		component.SetWidgetDepth(index);
-		NGUITools.SetActiveSelf(hitIcon.gameObject, true);
-		return hitIcon;
 	}
 
 	public IEnumerator WaitOpenCloseDialog(bool isOpen, GameObject dialogObject, UIOpenCloseDialog openCloseDialog, Action onFinishedClose = null)

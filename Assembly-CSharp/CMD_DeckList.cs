@@ -5,10 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_DeckList : CMD
+public sealed class CMD_DeckList : CMD
 {
-	[Header("ベース用チップ装備")]
 	[SerializeField]
+	[Header("ベース用チップ装備")]
 	private ChipBaseSelect baseChipBaseSelect;
 
 	[SerializeField]
@@ -139,12 +139,6 @@ public class CMD_DeckList : CMD
 	private GameObject switchSkillPanelBtn;
 
 	[SerializeField]
-	private UILabel ngTX_MN_HAVE;
-
-	[SerializeField]
-	private UILabel ngTX_SORT_DISP;
-
-	[SerializeField]
 	private UISprite selectButton;
 
 	private int statusPage = 1;
@@ -158,9 +152,9 @@ public class CMD_DeckList : CMD
 
 	private GUISelectPanelMonsterIcon csSelectPanelMonsterIcon;
 
-	private GameObject goMN_ICON_CHG_2;
+	private GameObject goMN_ICON_NOW_2;
 
-	private int depth_MN_ICON_CHG_2;
+	private GameObject goMN_ICON_CHG_2;
 
 	private GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray;
 
@@ -173,10 +167,6 @@ public class CMD_DeckList : CMD
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
 
 	private List<MonsterData> targetMonsterList;
-
-	private GameObject goMN_ICON_NOW_2;
-
-	private int depth_MN_ICON_NOW_2;
 
 	public static MonsterData SelectMonsterData { get; set; }
 
@@ -218,7 +208,6 @@ public class CMD_DeckList : CMD
 		this.ShowNowInfo();
 		this.ShowChgInfo();
 		this.ShowEtcInfo();
-		this.ShowHaveMonster();
 		this.SelectButtonActive(false);
 		this.StatusPageChange(false);
 		base.SetOpendAction(new Action<int>(this.OpendAction));
@@ -228,11 +217,11 @@ public class CMD_DeckList : CMD
 
 	private void OpendAction(int i)
 	{
-		if (CMD_PartyEdit.instance != null)
+		if (null != CMD_PartyEdit.instance)
 		{
 			CMD_PartyEdit.instance.ReloadAllCharacters(false);
 		}
-		if (CMD_MultiRecruitPartyWait.Instance != null)
+		if (null != CMD_MultiRecruitPartyWait.Instance)
 		{
 			CMD_MultiRecruitPartyWait.Instance.ReloadAllCharacters(false);
 		}
@@ -240,11 +229,11 @@ public class CMD_DeckList : CMD
 
 	protected override void OnDestroy()
 	{
-		if (CMD_PartyEdit.instance != null && CMD_MultiRecruitPartyWait.Instance == null && !GUIManager.IsCloseAllMode())
+		if (null != CMD_PartyEdit.instance && null == CMD_MultiRecruitPartyWait.Instance && !GUIManager.IsCloseAllMode())
 		{
 			CMD_PartyEdit.instance.ReloadAllCharacters(true);
 		}
-		if (CMD_MultiRecruitPartyWait.Instance != null)
+		if (null != CMD_MultiRecruitPartyWait.Instance)
 		{
 			CMD_MultiRecruitPartyWait.Instance.ReloadAllCharacters(true);
 		}
@@ -276,7 +265,7 @@ public class CMD_DeckList : CMD
 		{
 			this.effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_MultiRecruitPartyWait.StageDataBk.worldDungeonId);
 		}
-		else if (CMD_QuestTOP.instance != null && CMD_QuestTOP.instance.StageDataBk != null)
+		else if (null != CMD_QuestTOP.instance && CMD_QuestTOP.instance.StageDataBk != null)
 		{
 			this.effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
 		}
@@ -407,7 +396,7 @@ public class CMD_DeckList : CMD
 			guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 			UIWidget component = this.goMN_ICON_NOW.GetComponent<UIWidget>();
 			UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
-			if (component != null && component2 != null)
+			if (null != component && null != component2)
 			{
 				int add = component.depth - component2.depth;
 				DepthController component3 = guimonsterIcon.gameObject.GetComponent<DepthController>();
@@ -422,7 +411,7 @@ public class CMD_DeckList : CMD
 	{
 		this.goSelectPanelMonsterIcon = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelMonsterIcon", base.gameObject);
 		this.csSelectPanelMonsterIcon = this.goSelectPanelMonsterIcon.GetComponent<GUISelectPanelMonsterIcon>();
-		if (this.goEFC_RIGHT != null)
+		if (null != this.goEFC_RIGHT)
 		{
 			this.goSelectPanelMonsterIcon.transform.parent = this.goEFC_RIGHT.transform;
 		}
@@ -447,7 +436,7 @@ public class CMD_DeckList : CMD
 		MonsterDataMng.Instance().SetSortLSMessage();
 		this.csSelectPanelMonsterIcon.initLocation = true;
 		Vector3 localScale = this.goMN_ICON_LIST[0].transform.localScale;
-		if (CMD_MultiRecruitPartyWait.Instance != null)
+		if (null != CMD_MultiRecruitPartyWait.Instance)
 		{
 			this.SetDimmByMonsterDataList(list, CMD_DeckList.SelectMonsterData);
 		}
@@ -503,7 +492,7 @@ public class CMD_DeckList : CMD
 	{
 		if (this.DataChg != null)
 		{
-			if (this.goMN_ICON_CHG_2 != null)
+			if (null != this.goMN_ICON_CHG_2)
 			{
 				UnityEngine.Object.DestroyImmediate(this.goMN_ICON_CHG_2);
 			}
@@ -516,7 +505,7 @@ public class CMD_DeckList : CMD
 			guimonsterIcon.SetTouchAct_L(new Action<MonsterData>(this.ActMIconLong));
 			UIWidget component = this.goMN_ICON_CHG.GetComponent<UIWidget>();
 			UIWidget component2 = guimonsterIcon.gameObject.GetComponent<UIWidget>();
-			if (component != null && component2 != null)
+			if (null != component && null != component2)
 			{
 				int add = component.depth - component2.depth;
 				DepthController component3 = guimonsterIcon.gameObject.GetComponent<DepthController>();
@@ -538,7 +527,7 @@ public class CMD_DeckList : CMD
 			icon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconShort));
 		}
 		this.DataChg = null;
-		if (this.goMN_ICON_CHG_2 != null)
+		if (null != this.goMN_ICON_CHG_2)
 		{
 			UnityEngine.Object.DestroyImmediate(this.goMN_ICON_CHG_2);
 		}
@@ -550,15 +539,30 @@ public class CMD_DeckList : CMD
 	private void ActMIconLong(MonsterData md)
 	{
 		CMD_CharacterDetailed.DataChg = md;
-		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(delegate(int i)
+		CMD_CharacterDetailed dl = GUIMain.ShowCommonDialog(delegate(int i)
 		{
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(md);
 			icon.Lock = md.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
-		cmd_CharacterDetailed.DisableEvolutionButton();
-		if (CMD_MultiRecruitPartyWait.Instance != null)
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		dl.DisableEvolutionButton();
+		if (null != CMD_MultiRecruitPartyWait.Instance)
 		{
-			cmd_CharacterDetailed.PartsTitle.DisableCloseBtn(true);
+			dl.PartsTitle.DisableCloseBtn(true);
+		}
+		CMD_BattleNextChoice battleNextChoice = UnityEngine.Object.FindObjectOfType<CMD_BattleNextChoice>();
+		if (null != battleNextChoice)
+		{
+			dl.PartsTitle.SetCloseAct(delegate(int i)
+			{
+				battleNextChoice.ClosePanel(false);
+				CMD_PartyEdit.instance.ClosePanel(false);
+				CMD_DeckList.instance.ClosePanel(false);
+				dl.SetCloseAction(delegate(int x)
+				{
+					CMD_BattleNextChoice.GoToFarm();
+				});
+				dl.ClosePanel(true);
+			});
 		}
 	}
 
@@ -580,7 +584,7 @@ public class CMD_DeckList : CMD
 			}
 		}
 		this.PPMI_Instance.Data = this.DataChg;
-		if (CMD_PartyEdit.instance != null)
+		if (null != CMD_PartyEdit.instance)
 		{
 			List<string> pathL = CMD_PartyEdit.instance.MakeAllCharaPath();
 			AssetDataCacheMng.Instance().RegisterCacheType(pathL, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, false);
@@ -598,10 +602,6 @@ public class CMD_DeckList : CMD
 		RestrictionInput.EndLoad();
 		this.ClosePanel(true);
 		yield break;
-	}
-
-	private void ShowHaveMonster()
-	{
 	}
 
 	private void SelectButtonActive(bool selected)
@@ -655,7 +655,7 @@ public class CMD_DeckList : CMD
 
 	private void OnApplicationPause(bool pauseStatus)
 	{
-		if (CMD_MultiRecruitPartyWait.Instance != null)
+		if (null != CMD_MultiRecruitPartyWait.Instance)
 		{
 			CMD_MultiRecruitPartyWait.Instance.OnApplicationPause(pauseStatus);
 		}

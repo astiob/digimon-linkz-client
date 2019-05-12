@@ -18,9 +18,6 @@ public sealed class CMD_FarewellListRun : CMD
 	private GameObject goTX_MN_HAVE;
 
 	[SerializeField]
-	private GameObject goTX_SORT_DISP;
-
-	[SerializeField]
 	private UILabel cointCount;
 
 	private UILabel ngTX_MN_HAVE;
@@ -32,12 +29,6 @@ public sealed class CMD_FarewellListRun : CMD
 	private UILabel ngTX_MN_HAVE_ADULT;
 
 	private int growingNum;
-
-	[SerializeField]
-	private GameObject goBT_MODE_CHG;
-
-	[SerializeField]
-	private GameObject goTX_MODE_CHG;
 
 	[SerializeField]
 	private GameObject goBT_SELL;
@@ -70,8 +61,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[Header("お別れボタンのラベル")]
 	[SerializeField]
+	[Header("お別れボタンのラベル")]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]
@@ -196,7 +187,7 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void OnTouchSell()
 	{
-		CMD_SaleCheck cmd_SaleCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSale), "CMD_SaleCheck") as CMD_SaleCheck;
+		CMD_SaleCheck cmd_SaleCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSale), "CMD_SaleCheck", null) as CMD_SaleCheck;
 		cmd_SaleCheck.SetParams(this.sellMonsterList, this.ngTX_CHIP_GET.text);
 	}
 
@@ -233,7 +224,7 @@ public sealed class CMD_FarewellListRun : CMD
 				{
 					this.isReceived = true;
 					string @string = StringMaster.GetString("SellRecoverItem");
-					CMD_ModalMessageNoBtn cmd_ModalMessageNoBtn = GUIMain.ShowCommonDialog(null, "CMD_ModalMessageNoBtn") as CMD_ModalMessageNoBtn;
+					CMD_ModalMessageNoBtn cmd_ModalMessageNoBtn = GUIMain.ShowCommonDialog(null, "CMD_ModalMessageNoBtn", null) as CMD_ModalMessageNoBtn;
 					cmd_ModalMessageNoBtn.SetParam(@string);
 					cmd_ModalMessageNoBtn.AdjustSize();
 				}
@@ -322,7 +313,7 @@ public sealed class CMD_FarewellListRun : CMD
 	private void BTSeleOn()
 	{
 		UISprite component = this.goBT_SELL.GetComponent<UISprite>();
-		if (this.sellMonsterList.Count > 0)
+		if (0 < this.sellMonsterList.Count)
 		{
 			this.goBT_SELL.GetComponent<GUICollider>().activeCollider = true;
 			component.spriteName = "Common02_Btn_Red";
@@ -341,7 +332,7 @@ public sealed class CMD_FarewellListRun : CMD
 		this.UpdateDigicoin();
 		this.goSelectPanelMonsterIcon = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelMonsterIconL", base.gameObject);
 		this.csSelectPanelMonsterIcon = this.goSelectPanelMonsterIcon.GetComponent<GUISelectPanelMonsterIcon>();
-		if (this.goEFC_FOOTER != null)
+		if (null != this.goEFC_FOOTER)
 		{
 			this.goSelectPanelMonsterIcon.transform.parent = this.goEFC_FOOTER.transform;
 		}
@@ -360,8 +351,7 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void UpdateDigicoin()
 	{
-		GameWebAPI.RespDataUS_GetPlayerInfo.PlayerInfo playerInfo = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo;
-		this.cointCount.text = StringFormat.Cluster(playerInfo.gamemoney);
+		this.cointCount.text = StringFormat.Cluster(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
 	}
 
 	private void InitMonsterList(bool initLoc = true)
@@ -436,7 +426,7 @@ public sealed class CMD_FarewellListRun : CMD
 		}
 		else if (CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.SELL || CMD_FarewellListRun.Mode == CMD_FarewellListRun.MODE.GARDEN_SELL)
 		{
-			if (this.sellMonsterList.Count < 10)
+			if (10 > this.sellMonsterList.Count)
 			{
 				this.sellMonsterList.Add(tappedMonsterData);
 				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
@@ -453,7 +443,7 @@ public sealed class CMD_FarewellListRun : CMD
 			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(delegate(int selectButtonIndex)
 			{
 				this.CallbackConfirmMove(selectButtonIndex, tappedMonsterData);
-			}, "CMD_Confirm") as CMD_Confirm;
+			}, "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("Garden-03");
 			cmd_Confirm.Info = StringMaster.GetString("Garden-04");
 			cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonYes");
@@ -465,9 +455,9 @@ public sealed class CMD_FarewellListRun : CMD
 	{
 		if (selectButtonIndex == 0)
 		{
-			if (this.growingNum < 3)
+			if (3 > this.growingNum)
 			{
-				if (CMD_DigiGarden.instance != null && this.isOfflineModeFlag)
+				if (null != CMD_DigiGarden.instance && this.isOfflineModeFlag)
 				{
 					this.OfflineMoveDigiGarden();
 				}
@@ -478,7 +468,7 @@ public sealed class CMD_FarewellListRun : CMD
 			}
 			else
 			{
-				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("Garden-03");
 				cmd_ModalMessage.Info = StringMaster.GetString("GardenGrowMax");
 			}
@@ -493,14 +483,14 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			base.SetCloseAction(delegate(int index)
 			{
-				if (CMD_DigiGarden.instance == null)
+				if (null == CMD_DigiGarden.instance)
 				{
-					if (CMD_GashaTOP.instance != null)
+					if (null != CMD_GashaTOP.instance)
 					{
 						CMD_GashaTOP.instance.ClosePanel(true);
 						AppCoroutine.Start(this.OpenDigiGarden(CMD_GashaTOP.instance), false);
 					}
-					else if (CMD_QuestTOP.instance != null)
+					else if (null != CMD_QuestTOP.instance)
 					{
 						CMD_QuestTOP.instance.ClosePanel(true);
 						AppCoroutine.Start(this.OpenDigiGarden(CMD_QuestTOP.instance), false);
@@ -510,7 +500,7 @@ public sealed class CMD_FarewellListRun : CMD
 				{
 					CMD_DigiGarden.instance.DestroyRender3DRT();
 					ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-					CMD_DigiGarden.instance.InitMonsterList(true);
+					CMD_DigiGarden.instance.InitMonsterList();
 				}
 			});
 			RestrictionInput.EndLoad();
@@ -551,7 +541,7 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			yield return null;
 		}
-		GUIMain.ShowCommonDialog(null, "CMD_DigiGarden");
+		GUIMain.ShowCommonDialog(null, "CMD_DigiGarden", null);
 		yield break;
 	}
 
@@ -561,7 +551,7 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			this.targetMonsterList[i].userMonster.growEndDate = ServerDateTime.Now.ToString();
 		}
-		CMD_DigiGarden.instance.InitMonsterList(true);
+		CMD_DigiGarden.instance.InitMonsterList();
 		this.ClosePanel(true);
 	}
 
@@ -589,7 +579,7 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData);
 			icon.Lock = monsterData.userMonster.IsLocked;
-		}, "CMD_CharacterDetailed");
+		}, "CMD_CharacterDetailed", null);
 	}
 
 	private void ActMIconLong(MonsterData tappedMonsterData)
@@ -609,7 +599,7 @@ public sealed class CMD_FarewellListRun : CMD
 			{
 				GUIMonsterIcon icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(tappedMonsterData);
 				this.monsterList.SetGrayOutReturnDetailed(icon, tappedMonsterData, 10 <= this.sellMonsterList.Count);
-			}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+			}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 			if (this.sellMonsterList.Contains(tappedMonsterData))
 			{
 				cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Farewell;
@@ -619,8 +609,7 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private void UpdateChipGet()
 	{
-		int value = this.CalcChipGet();
-		this.ngTX_CHIP_GET.text = StringFormat.Cluster(value);
+		this.ngTX_CHIP_GET.text = StringFormat.Cluster(this.CalcChipGet());
 	}
 
 	private int CalcChipGet()

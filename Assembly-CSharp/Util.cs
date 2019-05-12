@@ -41,22 +41,11 @@ public static class Util
 		transform.localPosition = localPosition;
 	}
 
-	public static void SetLocalZ(this Transform transform, float z)
-	{
-		Vector3 localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, z);
-		transform.localPosition = localPosition;
-	}
-
 	public static void Clear(this Transform transform)
 	{
 		transform.localPosition = Vector3.zero;
 		transform.localScale = Vector3.one;
 		transform.localRotation = Quaternion.identity;
-	}
-
-	public static string Slice(this string aString, int num)
-	{
-		return aString.Substring(num, aString.Length - 1);
 	}
 
 	public static int ToInt32(this string s)
@@ -86,39 +75,6 @@ public static class Util
 		{
 			Transform transform = (Transform)obj;
 			Util.SetLayer(transform.gameObject, mask);
-		}
-	}
-
-	public static void SetSpriteColor(GameObject gO, Color col)
-	{
-		foreach (object obj in gO.transform)
-		{
-			Transform transform = (Transform)obj;
-			Util.SetSpriteColor(transform.gameObject, col);
-		}
-	}
-
-	public static void PauseAnimations(Animation aO, bool flag)
-	{
-		float speed = 1f;
-		if (flag)
-		{
-			speed = 0f;
-		}
-		foreach (object obj in aO)
-		{
-			AnimationState animationState = (AnimationState)obj;
-			animationState.speed = speed;
-		}
-		aO.Sample();
-	}
-
-	public static void SwitchCompornents(GameObject gO, bool flag)
-	{
-		MonoBehaviour[] componentsInChildren = gO.GetComponentsInChildren<MonoBehaviour>();
-		foreach (MonoBehaviour monoBehaviour in componentsInChildren)
-		{
-			monoBehaviour.enabled = flag;
 		}
 	}
 

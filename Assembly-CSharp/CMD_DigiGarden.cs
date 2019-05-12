@@ -6,13 +6,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_DigiGarden : CMD
+public sealed class CMD_DigiGarden : CMD
 {
 	public static CMD_DigiGarden instance;
 
 	public List<GameObject> goMN_LIST;
 
-	public GameObject goSelectPanel;
+	[SerializeField]
+	private GameObject goSelectPanel;
 
 	private GUISelectPanelDigiGarden csSelectPanel;
 
@@ -131,7 +132,7 @@ public class CMD_DigiGarden : CMD
 		base.PartsTitle.SetTitle(StringMaster.GetString("GardenTitle"));
 		this.ResetPushNotice();
 		this.SetCommonUI();
-		this.InitMonsterList(true);
+		this.InitMonsterList();
 		this.fullScreenModelTexPos = (this.listScreenModelTexPos = this.modelUiTex.transform.localPosition);
 		this.fullScreenModelTexPos.y = -800f;
 		this.fadeInTime = 0f;
@@ -145,7 +146,7 @@ public class CMD_DigiGarden : CMD
 		{
 			return;
 		}
-		if (FarmObject_DigiGarden.Instance != null)
+		if (null != FarmObject_DigiGarden.Instance)
 		{
 			FarmObject_DigiGarden.Instance.SetAutoActiveCanEvolveParticle();
 		}
@@ -193,7 +194,7 @@ public class CMD_DigiGarden : CMD
 		this.SetBackground();
 	}
 
-	public void InitMonsterList(bool initLoc = true)
+	public void InitMonsterList()
 	{
 		List<MonsterData> list = MonsterDataMng.Instance().GetMonsterDataList();
 		list = MonsterFilter.Filter(list, MonsterFilterType.GROWING_IN_GARDEN);
@@ -208,11 +209,11 @@ public class CMD_DigiGarden : CMD
 		{
 			this.cautionTextLabel.gameObject.SetActive(false);
 		}
-		if (FarmObject_DigiGarden.Instance != null)
+		if (null != FarmObject_DigiGarden.Instance)
 		{
-			FarmObject_DigiGarden.Instance.SetGrowthPlate(list.Count > 0);
+			FarmObject_DigiGarden.Instance.SetAutoActiveCanEvolveParticle();
 		}
-		this.csSelectPanel.initLocation = initLoc;
+		this.csSelectPanel.initLocation = true;
 		this.goMN_LIST[0].SetActive(true);
 		this.csSelectPanel.AllBuild(list);
 		this.goMN_LIST[0].SetActive(false);
@@ -293,7 +294,7 @@ public class CMD_DigiGarden : CMD
 			return;
 		}
 		this.md_bk = new MonsterData(md);
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBornExec), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBornExec), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("Garden-05");
 		cmd_Confirm.Info = StringMaster.GetString("Garden-06");
 	}
@@ -327,10 +328,10 @@ public class CMD_DigiGarden : CMD
 		base.StartCoroutine(this.StrokingEgg(delegate
 		{
 			CMD_CharacterDetailed.DataChg = this.md_bk;
-			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed");
+			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
 			this.DestroyRender3DRT();
 			ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-			this.InitMonsterList(true);
+			this.InitMonsterList();
 			this.UnLock();
 		}));
 	}
@@ -353,7 +354,7 @@ public class CMD_DigiGarden : CMD
 			this.md_bk = new MonsterData(md);
 			if (timeSpan.TotalSeconds <= 0.0)
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseGrowExec), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseGrowExec), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("EvolutionTitle");
 				cmd_Confirm.Info = StringMaster.GetString("EvolutionConfirmInfo");
 				this.growNeedStone = 0;
@@ -413,7 +414,7 @@ public class CMD_DigiGarden : CMD
 			this.growNeedStone = 1;
 			arg = string.Format(StringMaster.GetString("SystemTimeS"), timeSpan.Seconds.ToString());
 		}
-		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 		cmd_ChangePOP_STONE.Title = StringMaster.GetString("EvolutionTitle");
 		cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnCloseGrowExecYes);
 		cmd_ChangePOP_STONE.OnPushedNoAction = new Action(this.OnCloseGrowExecNo);
@@ -442,7 +443,7 @@ public class CMD_DigiGarden : CMD
 			}
 			else
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("EvolutionTitle");
 				cmd_Confirm.Info = StringMaster.GetString("GashaShortage");
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
@@ -485,7 +486,7 @@ public class CMD_DigiGarden : CMD
 		this.UnLock();
 		if (idx == 0)
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Shop");
+			GUIMain.ShowCommonDialog(null, "CMD_Shop", null);
 		}
 		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = UnityEngine.Object.FindObjectOfType<CMD_ChangePOP_STONE>();
 		if (null != cmd_ChangePOP_STONE)
@@ -623,20 +624,22 @@ public class CMD_DigiGarden : CMD
 
 	private void ChangeDisplayModeToFullScreen()
 	{
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		Vector2 windowSize = uipanel.GetWindowSize();
 		if (this.fullScreenHeaderPos == Vector3.zero)
 		{
 			this.fullScreenHeaderPos = (this.listScreenHeaderPos = this.headerObj.transform.localPosition);
-			this.fullScreenHeaderPos.y = 480f;
+			this.fullScreenHeaderPos.y = windowSize.y;
 		}
 		if (this.fullScreenUiPos == Vector3.zero)
 		{
 			this.fullScreenUiPos = (this.listScreenUiPos = this.scrollPanel.transform.localPosition);
-			this.fullScreenUiPos.x = 1000f;
+			this.fullScreenUiPos.x = windowSize.x;
 		}
 		if (this.fullScreenListButtonPos == Vector3.zero)
 		{
 			this.fullScreenListButtonPos = (this.listScreenListButtonPos = this.listButton.transform.localPosition);
-			this.fullScreenListButtonPos.x = 1000f;
+			this.fullScreenListButtonPos.x = windowSize.x;
 		}
 		this.MoveTo(this.headerObj, this.fullScreenHeaderPos, this.uiAnimationTime, iTween.EaseType.linear, null);
 		this.MoveTo(this.scrollPanel, this.fullScreenUiPos, this.uiAnimationTime, iTween.EaseType.linear, null);
@@ -817,7 +820,7 @@ public class CMD_DigiGarden : CMD
 	public void OnClickListButton()
 	{
 		CMD_FarewellListRun.Mode = CMD_FarewellListRun.MODE.GARDEN;
-		CMD_FarewellListRun cmd_FarewellListRun = GUIMain.ShowCommonDialog(null, "CMD_GardenList") as CMD_FarewellListRun;
+		CMD_FarewellListRun cmd_FarewellListRun = GUIMain.ShowCommonDialog(null, "CMD_GardenList", null) as CMD_FarewellListRun;
 		cmd_FarewellListRun.SetOfflineMode(this.IsOfflineModeFlag);
 	}
 
@@ -863,7 +866,7 @@ public class CMD_DigiGarden : CMD
 		{
 			arg = string.Format(StringMaster.GetString("SystemTimeS"), timeSpan.Seconds.ToString());
 		}
-		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 		cmd_ChangePOP_STONE.Title = StringMaster.GetString("EvolutionTitle");
 		cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OfflineGrow_Step2);
 		cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("Garden-11"), this.growNeedStone.ToString(), arg);
@@ -923,11 +926,11 @@ public class CMD_DigiGarden : CMD
 		{
 			FarmCameraControlForCMD.Off();
 			CMD_CharacterDetailed.DataChg = monsterData;
-			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed");
+			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
 			this.DestroyRender3DRT();
 			if (!this.IsOfflineModeFlag)
 			{
-				this.InitMonsterList(true);
+				this.InitMonsterList();
 				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= this.growNeedStone;
 			}
 			this.UnLock();

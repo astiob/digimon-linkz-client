@@ -7,8 +7,8 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	[SerializeField]
 	private Transform menuPanelTransform;
 
-	[Header("味方のPvP用上に出る文字")]
 	[SerializeField]
+	[Header("味方のPvP用上に出る文字")]
 	private UIWidget _pvpBattleYourPartyUi;
 
 	[Header("敵のPvP用上に出る文字")]
@@ -78,6 +78,11 @@ public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 	{
 		this.menuDialog = dialogRetireTrans.gameObject.AddComponent<MenuDialog>();
 		dialogRetireTrans.SetParent(this.menuPanelTransform);
+		UIWidget component = dialogRetireTrans.GetComponent<UIWidget>();
+		if (component != null)
+		{
+			component.SetAnchor(this.menuPanelTransform);
+		}
 	}
 
 	protected override void CreateStatusObjects()

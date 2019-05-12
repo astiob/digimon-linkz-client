@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Color Adjustments/Color Correction (Curves, Saturation)")]
+	[ExecuteInEditMode]
 	public class ColorCorrectionCurves : PostEffectsBase
 	{
 		public AnimationCurve redChannel = new AnimationCurve(new Keyframe[]

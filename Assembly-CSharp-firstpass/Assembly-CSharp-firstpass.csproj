@@ -62,6 +62,7 @@
     <Compile Include="com\adjust\sdk\JSONLazyCreator.cs" />
     <Compile Include="com\adjust\sdk\JSONNode.cs" />
     <Compile Include="Debug.cs" />
+    <Compile Include="DeviceSafeArea\SafeArea.cs" />
     <Compile Include="ExampleGUI.cs" />
     <Compile Include="LitJson\ArrayMetadata.cs" />
     <Compile Include="LitJson\Condition.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="SmartBeat\SmartBeat.cs" />
     <Compile Include="SmartBeat\SmartBeatBehaviour.cs" />
     <Compile Include="SmartBeat\SmartBeatIOSBinding.cs" />
-    <Compile Include="StringExtensions.cs" />
     <Compile Include="TerminalIdentifier\PlatformUserID.cs" />
     <Compile Include="TimeZone.cs" />
     <Compile Include="TypeSerialize\TypeSerializeHelper.cs" />

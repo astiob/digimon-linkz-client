@@ -14,7 +14,7 @@ namespace Title
 			CMD_AgreementConsent dialog = GUIMain.ShowCommonDialog(delegate(int x)
 			{
 				popupOpen = false;
-			}, "CMD_AgreementConsent") as CMD_AgreementConsent;
+			}, "CMD_AgreementConsent", null) as CMD_AgreementConsent;
 			dialog.SetActionAgreementPopupClosed(delegate(bool x)
 			{
 				this.agreement = x;
@@ -32,7 +32,7 @@ namespace Title
 			CMD_ModalMessage dialog = GUIMain.ShowCommonDialog(delegate(int noop)
 			{
 				popupOpen = false;
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			dialog.Title = StringMaster.GetString("AgreementTitle");
 			dialog.Info = StringMaster.GetString("AgreementChangedInfo");
 			while (popupOpen)

@@ -8,8 +8,8 @@ public class BattleStartAction : MonoBehaviour
 	[Header("タイトル")]
 	private GameObject titleRoot;
 
-	[SerializeField]
 	[Header("味方のリーダースキルのUI")]
+	[SerializeField]
 	private BattleStartAction.LeaderSkillUI playerLeaderSkillUI;
 
 	[Header("敵のリーダースキルのUI")]
@@ -92,8 +92,8 @@ public class BattleStartAction : MonoBehaviour
 		[Header("味方スキル発動ローカライズ")]
 		public UILabel leaderSkillLocalize;
 
-		[SerializeField]
 		[Header("リーダースキルのオブジェクト")]
+		[SerializeField]
 		public GameObject leaderSkillUIPlayer;
 
 		[SerializeField]

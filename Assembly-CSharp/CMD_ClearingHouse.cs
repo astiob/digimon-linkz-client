@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
-public class CMD_ClearingHouse : CMD
+public sealed class CMD_ClearingHouse : CMD
 {
 	[SerializeField]
 	private GUISelectPanelExchange exchangeList;
@@ -89,18 +89,13 @@ public class CMD_ClearingHouse : CMD
 
 	public override void ClosePanel(bool animation = true)
 	{
-		this.CloseAndFarmCamOn(animation);
+		FarmCameraControlForCMD.On();
+		base.ClosePanel(animation);
 		if (this.exchangeList != null)
 		{
 			this.exchangeList.FadeOutAllListParts(null, false);
 			this.exchangeList.SetHideScrollBarAllWays(true);
 		}
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
-	{
-		FarmCameraControlForCMD.On();
-		base.ClosePanel(animation);
 	}
 
 	private void InitExchange(Action<int> f, float sizeX, float sizeY, float aT)
@@ -145,14 +140,15 @@ public class CMD_ClearingHouse : CMD
 		int num = 0;
 		foreach (string key2 in this.itemDictionary.Keys)
 		{
-			this.exchangeConsumeItemInfo = Utility.GetUseExchangeItem(this.exchangeItemDataList[num], MasterDataMng.Instance().RespDataMA_ItemM.itemM);
+			string itemId = this.exchangeItemDataList[num].assetValue;
+			this.exchangeConsumeItemInfo = MasterDataMng.Instance().RespDataMA_ItemM.itemM.SingleOrDefault((GameWebAPI.RespDataMA_GetItemM.ItemM x) => x.itemId == itemId);
 			if (this.exchangeBaseObject.Count > num)
 			{
 				this.exchangeConsumeItemNumLabel[num].text = this.exchangeItemDataList[num].count.ToString();
 			}
 			string assetCategoryId2 = this.exchangeItemDataList[num].assetCategoryId;
 			string consumeAssetValue = this.itemDictionary[key2];
-			MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)assetCategoryId2.ToInt32();
+			MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)int.Parse(assetCategoryId2);
 			if (assetCategory == MasterDataMng.AssetCategory.ITEM)
 			{
 				if (this.exchangeBaseObject.Count > num)
@@ -254,7 +250,7 @@ public class CMD_ClearingHouse : CMD
 			}
 			num++;
 		}
-		if (ClassSingleton<ExchangeWebAPI>.Instance.IsExistAlwaysExchangeInfo(CMD_ClearingHouse.exchangeResultInfo))
+		if (CMD_ClearingHouse.exchangeResultInfo.IsAlways())
 		{
 			this.exchangeLimitLabel.transform.parent.gameObject.SetActive(false);
 		}
@@ -274,7 +270,7 @@ public class CMD_ClearingHouse : CMD
 		int restTimeSeconds = GUIBannerParts.GetRestTimeSeconds(dateTime);
 		GUIBannerParts.SetTimeText(this.exchangeLimitLabel, restTimeSeconds, dateTime);
 		this.exchangeLimitLabel.text = string.Format(StringMaster.GetString("ExchangeTimeLimit"), this.exchangeLimitLabel.text);
-		if (restTimeSeconds <= 0)
+		if (0 >= restTimeSeconds)
 		{
 			base.CancelInvoke("TimeSetting");
 		}
@@ -335,7 +331,7 @@ public class CMD_ClearingHouse : CMD
 		string text2 = this.exchangeConsumeItemName[num];
 		this.consumeNum = (int.Parse(exchangeItem.exchangeConsumeNum) * exchangeItem.numCounter).ToString();
 		string text3 = (this.exchangeConsumeItemInfo == null) ? string.Empty : this.exchangeConsumeItemInfo.unitName;
-		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)exchangeItem.exchangeItemData.assetCategoryId.ToInt32();
+		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)int.Parse(exchangeItem.exchangeItemData.assetCategoryId);
 		CMD_ClearingHouse.IconType iconType = CMD_ClearingHouse.IconType.NON;
 		switch (assetCategory)
 		{
@@ -373,20 +369,15 @@ public class CMD_ClearingHouse : CMD
 			iconType = CMD_ClearingHouse.IconType.TEXTURE;
 			break;
 		}
-		string text4 = exchangeItem.exchangeDetailName;
-		MasterDataMng.AssetCategory assetCategory2 = (MasterDataMng.AssetCategory)exchangeItem.exchangeDetailCategoryID.ToInt32();
-		if (assetCategory2 == MasterDataMng.AssetCategory.MONSTER)
-		{
-			text4 = string.Format(StringMaster.GetString("SystemItemCount"), text4, exchangeItem.exchangeDetailNum);
-		}
+		string exchangeDetailName = exchangeItem.exchangeDetailName;
 		string info = string.Format(StringMaster.GetString("ExchangeConfirmInfo"), new object[]
 		{
 			text2,
 			this.consumeNum,
 			text3,
-			text4
+			exchangeDetailName
 		});
-		CMD_ChangePOP cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP") as CMD_ChangePOP;
+		CMD_ChangePOP cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP", null) as CMD_ChangePOP;
 		cd.Title = StringMaster.GetString("ExchangeConfirmTitle");
 		cd.Info = info;
 		cd.SetPoint(exchangeItem.exchangeItemData.count, int.Parse(this.consumeNum));
@@ -412,7 +403,7 @@ public class CMD_ClearingHouse : CMD
 		base.StartCoroutine(task.Run(delegate
 		{
 			RestrictionInput.EndLoad();
-			if (ClassSingleton<ExchangeWebAPI>.Instance.exchangeErrorCode == string.Empty)
+			if (string.IsNullOrEmpty(ClassSingleton<ExchangeWebAPI>.Instance.exchangeErrorCode))
 			{
 				this.OpenExchangedItemModalMessage(exchangeItem);
 			}
@@ -425,7 +416,7 @@ public class CMD_ClearingHouse : CMD
 
 	private void OpenExchangedItemModalMessage(ExchangeItem exchangeItem)
 	{
-		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)exchangeItem.exchangeItemData.assetCategoryId.ToInt32();
+		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)int.Parse(exchangeItem.exchangeItemData.assetCategoryId);
 		MasterDataMng.AssetCategory assetCategory2 = assetCategory;
 		switch (assetCategory2)
 		{
@@ -459,7 +450,7 @@ public class CMD_ClearingHouse : CMD
 		string exchangeDetailName = exchangeItem.exchangeDetailName;
 		string arg = StringFormat.Cluster(num3 * exchangeItem.numCounter);
 		string info = string.Format(StringMaster.GetString("ExchangeSuccessInfo"), exchangeDetailName, arg);
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.RunReExchangeInfoLogicAPI), "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.RunReExchangeInfoLogicAPI), "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("ExchangeSuccessTitle");
 		cmd_ModalMessage.Info = info;
 		GUIPlayerStatus.RefreshParams_S(true);
@@ -472,27 +463,27 @@ public class CMD_ClearingHouse : CMD
 		{
 		case "E-EX01":
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ExchangeTermTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ExchangeTermInfo");
 			return;
 		}
 		case "E-EX02":
 		{
-			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage2.Title = StringMaster.GetString("ExchangeShortageTitle");
 			cmd_ModalMessage2.Info = StringMaster.GetString("ExchangeShortageInfo");
 			return;
 		}
 		case "E-EX03":
 		{
-			CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage3.Title = StringMaster.GetString("ExchangeLimitTitle");
 			cmd_ModalMessage3.Info = StringMaster.GetString("ExchangeLimitInfo");
 			return;
 		}
 		}
-		CMD_ModalMessage cmd_ModalMessage4 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage4 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage4.Title = StringMaster.GetString("ExchangeFailedTitle");
 		cmd_ModalMessage4.Info = StringMaster.GetString("ExchangeFailedInfo");
 	}
@@ -521,19 +512,9 @@ public class CMD_ClearingHouse : CMD
 
 	private void RefreshInfo()
 	{
-		bool flag = false;
-		foreach (GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result result in ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoLogicData)
+		CMD_ClearingHouse.exchangeResultInfo = ClassSingleton<ExchangeWebAPI>.Instance.EventExchangeInfoList.SingleOrDefault((GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result x) => x.eventExchangeId == CMD_ClearingHouse.exchangeResultInfo.eventExchangeId);
+		if (CMD_ClearingHouse.exchangeResultInfo == null)
 		{
-			if (result.eventExchangeId == CMD_ClearingHouse.exchangeResultInfo.eventExchangeId)
-			{
-				flag = true;
-				CMD_ClearingHouse.exchangeResultInfo = result;
-				break;
-			}
-		}
-		if (!flag)
-		{
-			ClassSingleton<ExchangeWebAPI>.Instance.DeleteExchangeInfoLogicResult(CMD_ClearingHouse.exchangeResultInfo.eventExchangeId);
 			base.SetCloseAction(delegate(int i)
 			{
 				CMD_ClearingHouseTop.instance.Rebuild();
@@ -543,29 +524,29 @@ public class CMD_ClearingHouse : CMD
 		}
 		this.exchangeItemDataList.Clear();
 		Dictionary<string, string> dictionary = new Dictionary<string, string>();
-		for (int j = 0; j < CMD_ClearingHouse.exchangeResultInfo.detail.Length; j++)
+		for (int l = 0; l < CMD_ClearingHouse.exchangeResultInfo.detail.Length; l++)
 		{
-			string assetCategoryId = CMD_ClearingHouse.exchangeResultInfo.detail[j].item.assetCategoryId;
-			string assetValue = CMD_ClearingHouse.exchangeResultInfo.detail[j].item.assetValue;
+			string assetCategoryId = CMD_ClearingHouse.exchangeResultInfo.detail[l].item.assetCategoryId;
+			string assetValue = CMD_ClearingHouse.exchangeResultInfo.detail[l].item.assetValue;
 			string key = assetCategoryId + assetValue;
 			if (!dictionary.ContainsKey(key) || (dictionary.ContainsKey(key) && dictionary[key] != assetValue))
 			{
 				dictionary.Add(key, assetValue);
-				this.exchangeItemDataList.Add(CMD_ClearingHouse.exchangeResultInfo.detail[j].item);
+				this.exchangeItemDataList.Add(CMD_ClearingHouse.exchangeResultInfo.detail[l].item);
 			}
 		}
-		for (int k = 0; k < this.exchangeItemDataList.Count; k++)
+		for (int j = 0; j < this.exchangeItemDataList.Count; j++)
 		{
-			if (this.exchangeBaseObject.Count <= k)
+			if (this.exchangeBaseObject.Count <= j)
 			{
 				break;
 			}
-			this.exchangeConsumeItemNumLabel[k].text = this.exchangeItemDataList[k].count.ToString();
+			this.exchangeConsumeItemNumLabel[j].text = this.exchangeItemDataList[j].count.ToString();
 		}
-		for (int l = 0; l < this.exchangeItemList.Count; l++)
+		for (int k = 0; k < this.exchangeItemList.Count; k++)
 		{
-			this.exchangeItemList[l].ResetNum(CMD_ClearingHouse.exchangeResultInfo.detail[l]);
-			this.exchangeItemList[l].SetButton(CMD_ClearingHouse.exchangeResultInfo.detail[l]);
+			this.exchangeItemList[k].ResetNum(CMD_ClearingHouse.exchangeResultInfo.detail[k]);
+			this.exchangeItemList[k].SetButton(CMD_ClearingHouse.exchangeResultInfo.detail[k]);
 		}
 		GUIExchangeMenu.instance.ReloadResultInfo();
 	}

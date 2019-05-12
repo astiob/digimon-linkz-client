@@ -1,5 +1,4 @@
-﻿using ExchangeData;
-using Master;
+﻿using Master;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -33,14 +32,19 @@ public class ExchangeMenuItem : GUIListPartBS
 
 	private bool IsExchange(GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result.Detail[] details)
 	{
-		foreach (GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result.Detail detail in details)
+		bool result = false;
+		if (details != null)
 		{
-			if (int.Parse(detail.needNum) <= detail.item.count)
+			for (int i = 0; i < details.Length; i++)
 			{
-				return true;
+				if (int.Parse(details[i].needNum) <= details[i].item.count)
+				{
+					result = true;
+					break;
+				}
 			}
 		}
-		return false;
+		return result;
 	}
 
 	public override void ShowGUI()
@@ -52,8 +56,11 @@ public class ExchangeMenuItem : GUIListPartBS
 	private void Init()
 	{
 		this.newSprite.enabled = GUIExchangeMenu.instance.IsNewExchange(this.bannerInfo.eventExchangeId);
-		this.availableMarkSprite.enabled = this.IsExchange(this.bannerInfo.detail);
-		if (ClassSingleton<ExchangeWebAPI>.Instance.IsExistAlwaysExchangeInfo(this.bannerInfo))
+		if (this.IsJumpGoodsList())
+		{
+			this.availableMarkSprite.enabled = this.IsExchange(this.bannerInfo.detail);
+		}
+		if (this.bannerInfo.IsAlways())
 		{
 			this.fukidashiLabel.transform.parent.gameObject.SetActive(false);
 		}
@@ -152,15 +159,22 @@ public class ExchangeMenuItem : GUIListPartBS
 			{
 				if (this.fukidashiLabel.text == StringMaster.GetString("ExchangeCloseTitle"))
 				{
-					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage.Title = StringMaster.GetString("ExchangeCloseTitle");
 					cmd_ModalMessage.Info = StringMaster.GetString("ExchangeCloseInfo");
 					return;
 				}
 				this.newSprite.enabled = false;
 				GUIExchangeMenu.instance.VisitExchange(this.bannerInfo.eventExchangeId);
-				CMD_ClearingHouse.ExchangeResultInfo = this.bannerInfo;
-				GUIMain.ShowCommonDialog(null, "CMD_ClearingHouse");
+				if (this.IsJumpGoodsList())
+				{
+					CMD_ClearingHouse.ExchangeResultInfo = this.bannerInfo;
+					GUIMain.ShowCommonDialog(null, "CMD_ClearingHouse", null);
+				}
+				else
+				{
+					GUIMain.ShowCommonDialog(null, "CMD_GashaTOP", new Action<CommonDialog>(this.SetOpenGashaInfo));
+				}
 			}
 		}
 	}
@@ -177,5 +191,20 @@ public class ExchangeMenuItem : GUIListPartBS
 	public void OffAvailableMark()
 	{
 		this.availableMarkSprite.enabled = false;
+	}
+
+	private void SetOpenGashaInfo(CommonDialog dialog)
+	{
+		CMD_GashaTOP cmd_GashaTOP = dialog as CMD_GashaTOP;
+		if (null != cmd_GashaTOP)
+		{
+			string selectGashaId = (!string.IsNullOrEmpty(this.bannerInfo.jumpGachaId)) ? this.bannerInfo.jumpGachaId : "0";
+			cmd_GashaTOP.SetSelectGashaId(selectGashaId);
+		}
+	}
+
+	private bool IsJumpGoodsList()
+	{
+		return string.IsNullOrEmpty(this.bannerInfo.jumpGachaId) || "0" == this.bannerInfo.jumpGachaId;
 	}
 }

@@ -50,14 +50,24 @@ public class Battle3DAction : BattleFunctionBase
 
 	public IEnumerator SmallToBigTransition(float delayTime, CharacterStateControl cState, AlwaysEffectParams insertCharacterEffect)
 	{
-		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(delayTime, null, null);
-		IEnumerator smooth = this.SmoothIncreaseCharactersAction(base.stateManager.stateProperty.revivalActionSpeed, new CharacterStateControl[]
+		this.HideAllCharactersAction(new CharacterStateControl[]
 		{
 			cState
 		});
-		bool isPlayerd = false;
-		bool isAttackPlayed = false;
-		bool isEndAnimation = false;
+		IEnumerator wait = base.stateManager.time.WaitForCertainPeriodTimeAction(delayTime, null, null);
+		while (wait.MoveNext())
+		{
+			yield return null;
+		}
+		insertCharacterEffect.SetPosition(cState.CharacterParams.transform, null);
+		this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.In);
+		base.stateManager.soundPlayer.TryPlaySE("bt_541", 0f, false);
+		while (insertCharacterEffect.currentState != AlwaysEffectState.Always)
+		{
+			yield return null;
+		}
+		this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.Out);
+		base.stateManager.soundPlayer.TryPlaySE(insertCharacterEffect, AlwaysEffectState.Out);
 		this.ShowAllCharactersAction(new CharacterStateControl[]
 		{
 			cState
@@ -66,36 +76,15 @@ public class Battle3DAction : BattleFunctionBase
 		{
 			cState
 		});
-		this.SmoothIncreaseCharacterInitializeAction(new CharacterStateControl[]
+		IEnumerator smooth = this.SmoothIncreaseCharactersAction(base.stateManager.stateProperty.revivalActionSpeed, new CharacterStateControl[]
 		{
 			cState
 		});
-		while (wait.MoveNext())
+		while (smooth.MoveNext())
 		{
 			yield return null;
 		}
-		insertCharacterEffect.SetPosition(cState.CharacterParams.transform, null);
-		this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.In);
-		base.stateManager.soundPlayer.TryPlaySE("bt_541", 0f, false);
-		while (!isAttackPlayed)
-		{
-			if (insertCharacterEffect.currentState == AlwaysEffectState.Always && !isPlayerd)
-			{
-				this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.Out);
-				base.stateManager.soundPlayer.TryPlaySE(insertCharacterEffect, AlwaysEffectState.Out);
-				isPlayerd = true;
-			}
-			if (isPlayerd && !smooth.MoveNext())
-			{
-				isEndAnimation = true;
-			}
-			if (!isAttackPlayed && isEndAnimation)
-			{
-				cState.CharacterParams.PlayAttackAnimation(SkillType.Attack, 0);
-				isAttackPlayed = true;
-			}
-			yield return isAttackPlayed;
-		}
+		cState.CharacterParams.PlayAnimation(CharacterAnimationType.attacks, SkillType.Attack, 0, null, null);
 		this.StopAlwaysEffectAction(new AlwaysEffectParams[]
 		{
 			insertCharacterEffect
@@ -103,49 +92,65 @@ public class Battle3DAction : BattleFunctionBase
 		yield break;
 	}
 
-	public void SmallToBigTransitionAfter(CharacterStateControl[] characters, IEnumerator[] isPlayedAttackIEnumerator)
-	{
-		List<bool> list = new List<bool>();
-		foreach (IEnumerator enumerator in isPlayedAttackIEnumerator)
-		{
-			list.Add((bool)enumerator.Current);
-		}
-		this.SmallToBigTransitionAfter(characters, list.ToArray());
-	}
-
-	private void SmallToBigTransitionAfter(CharacterStateControl[] characters, bool[] isPlayedAttack)
-	{
-		for (int i = 0; i < characters.Length; i++)
-		{
-			characters[i].CharacterParams.transform.localScale = Vector3.one;
-			if (!isPlayedAttack[i])
-			{
-				characters[i].CharacterParams.PlayAttackAnimation(SkillType.Attack, 0);
-			}
-		}
-	}
-
-	private void SmoothIncreaseCharacterInitializeAction(params CharacterStateControl[] characters)
-	{
-		foreach (CharacterStateControl characterStateControl in characters)
-		{
-			characterStateControl.CharacterParams.transform.localScale = Vector3.zero;
-		}
-	}
-
 	public IEnumerator SmoothIncreaseCharactersAction(float time, params CharacterStateControl[] characters)
 	{
-		this.SmoothIncreaseCharacterInitializeAction(characters);
-		for (float current = 0f; current < time; current += Time.deltaTime)
+		float current = 0f;
+		float endTime = Mathf.Abs(time);
+		bool isRevere = time < 0f;
+		do
 		{
+			current += Time.deltaTime;
 			float duration = TimeExtension.GetTimeScaleDivided(base.stateProperty.revivalActionSpeed);
 			float smoothLevel = Mathf.Clamp01(Mathf.SmoothStep(0f, 1f, current) / duration);
+			if (isRevere)
+			{
+				smoothLevel = 1f - smoothLevel;
+			}
 			foreach (CharacterStateControl c in characters)
 			{
 				c.CharacterParams.transform.localScale = Vector3.one * smoothLevel;
 			}
 			yield return new WaitForEndOfFrame();
 		}
+		while (current < endTime);
+		yield break;
+	}
+
+	public IEnumerator BigToSmallTransition(CharacterStateControl cState, AlwaysEffectParams insertCharacterEffect)
+	{
+		this.ShowAllCharactersAction(new CharacterStateControl[]
+		{
+			cState
+		});
+		this.PlayIdleAnimationActiveCharacterAction(new CharacterStateControl[]
+		{
+			cState
+		});
+		insertCharacterEffect.SetPosition(cState.CharacterParams.transform, null);
+		this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.In);
+		base.stateManager.soundPlayer.TryPlaySE("bt_541", 0f, false);
+		while (insertCharacterEffect.currentState != AlwaysEffectState.Always)
+		{
+			yield return null;
+		}
+		this.PlayAlwaysEffectAction(insertCharacterEffect, AlwaysEffectState.Out);
+		base.stateManager.soundPlayer.TryPlaySE(insertCharacterEffect, AlwaysEffectState.Out);
+		IEnumerator smooth = this.SmoothIncreaseCharactersAction(-base.stateManager.stateProperty.revivalActionSpeed, new CharacterStateControl[]
+		{
+			cState
+		});
+		while (smooth.MoveNext())
+		{
+			yield return null;
+		}
+		this.HideAllCharactersAction(new CharacterStateControl[]
+		{
+			cState
+		});
+		this.StopAlwaysEffectAction(new AlwaysEffectParams[]
+		{
+			insertCharacterEffect
+		});
 		yield break;
 	}
 
@@ -192,18 +197,25 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayIdleAnimationUndeadCharactersAction(params CharacterStateControl[] characters)
 	{
-		this.PlayIdleAnimationCharactersAction(CharacterStateControl.GetAliveCharacters(characters));
+		CharacterStateControl[] aliveCharacters = CharacterStateControl.GetAliveCharacters(characters);
+		foreach (CharacterStateControl characterStateControl in aliveCharacters)
+		{
+			if (!characterStateControl.CharacterParams.gameObject.activeSelf)
+			{
+				characterStateControl.CharacterParams.gameObject.SetActive(true);
+			}
+			this.PlayIdleAnimationInternal(characterStateControl);
+		}
 	}
 
-	public void PlayIdleAnimationCharactersAction(params CharacterStateControl[] characters)
+	public void PlayIdleAnimationActiveCharacterAction(params CharacterStateControl[] characters)
 	{
-		foreach (CharacterParams characterParams in CharacterStateControl.ToParams(characters))
+		foreach (CharacterStateControl characterStateControl in characters)
 		{
-			if (!characterParams.gameObject.activeSelf)
+			if (characterStateControl.CharacterParams.gameObject.activeSelf)
 			{
-				characterParams.gameObject.SetActive(true);
+				this.PlayIdleAnimationInternal(characterStateControl);
 			}
-			this.PlayIdleAnimationInternal(characterParams);
 		}
 	}
 
@@ -344,17 +356,6 @@ public class Battle3DAction : BattleFunctionBase
 		yield break;
 	}
 
-	public void PlayIdleAnimationActiveCharacterAction(params CharacterStateControl[] characters)
-	{
-		foreach (CharacterParams characterParams in CharacterStateControl.ToParams(characters))
-		{
-			if (characterParams.gameObject.activeSelf)
-			{
-				this.PlayIdleAnimationInternal(characterParams);
-			}
-		}
-	}
-
 	public void PlayAnimationCharacterAction(CharacterAnimationType animationType, params CharacterStateControl[] characters)
 	{
 		foreach (CharacterStateControl characterStateControl in characters)
@@ -373,11 +374,11 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayDeadAnimationCharacterAction(Action deathEffectPlay, CharacterStateControl character)
 	{
-		bool flag = base.stateManager.IsLastBattleAndAllDeath();
 		int myIndex = character.myIndex;
 		HitEffectParams hitEffectParams;
 		if (character.isEnemy)
 		{
+			bool flag = base.stateManager.IsLastBattleAndAllDeath();
 			if (flag)
 			{
 				hitEffectParams = base.battleStateData.enemiesLastDeadEffect[myIndex];
@@ -391,18 +392,9 @@ public class Battle3DAction : BattleFunctionBase
 		{
 			hitEffectParams = base.battleStateData.playersDeathEffect[myIndex];
 		}
-		character.CharacterParams.PlayDeadAnimation(hitEffectParams, deathEffectPlay);
-	}
-
-	public void HideDeadCharactersAction(params CharacterStateControl[] characters)
-	{
-		foreach (CharacterStateControl characterStateControl in characters)
-		{
-			if (characterStateControl.isDied)
-			{
-				characterStateControl.CharacterParams.gameObject.SetActive(false);
-			}
-		}
+		CharacterParams characterParams = character.CharacterParams;
+		HitEffectParams hitEffectParams2 = hitEffectParams;
+		characterParams.PlayAnimation(CharacterAnimationType.dead, SkillType.Attack, 0, hitEffectParams2, deathEffectPlay);
 	}
 
 	public void ShowAllCharactersAction(params CharacterStateControl[] characters)
@@ -429,14 +421,6 @@ public class Battle3DAction : BattleFunctionBase
 		}
 	}
 
-	public void HideAllPreloadEnemiesAction()
-	{
-		foreach (CharacterParams characterParams in base.battleStateData.preloadEnemiesParams.GetAllObject())
-		{
-			characterParams.gameObject.SetActive(false);
-		}
-	}
-
 	public IEnumerator MotionResetAliveCharacterAction(params CharacterStateControl[] characters)
 	{
 		bool[] charactersActive = new bool[characters.Length];
@@ -446,7 +430,7 @@ public class Battle3DAction : BattleFunctionBase
 			charactersActive[index] = c.CharacterParams.gameObject.activeSelf;
 			c.CharacterParams.gameObject.SetActive(true);
 			c.CharacterParams.StopAnimation();
-			c.CharacterParams.PlayIdleAnimation();
+			c.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 			index++;
 		}
 		yield return new WaitForEndOfFrame();
@@ -494,21 +478,17 @@ public class Battle3DAction : BattleFunctionBase
 		alwaysEffect.SetPosition(character.CharacterParams.transform, new Vector3?(character.CharacterParams.dropItemOffsetPosition + b));
 	}
 
-	private void PlayIdleAnimationInternal(CharacterParams c)
+	private void PlayIdleAnimationInternal(CharacterStateControl characterStateControl)
 	{
-		if (!c.isActiveAnimation)
+		CharacterAnimationType characterAnimationType = CharacterAnimationType.idle;
+		if (characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Escape))
 		{
-			c.PlayIdleAnimation();
-			return;
+			characterAnimationType = CharacterAnimationType.move;
 		}
-		switch (c.currentAnimationType)
+		if (characterStateControl.CharacterParams.currentAnimationType == CharacterAnimationType.move && characterStateControl.CharacterParams.currentAnimationType != characterAnimationType)
 		{
-		case CharacterAnimationType.dead:
-		case CharacterAnimationType.win:
-		case CharacterAnimationType.eat:
-		case CharacterAnimationType.attacks:
-			c.PlayIdleAnimation();
-			return;
+			characterStateControl.CharacterParams.StopAnimation();
 		}
+		characterStateControl.CharacterParams.PlayAnimation(characterAnimationType, SkillType.Attack, 0, null, null);
 	}
 }

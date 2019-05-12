@@ -13,19 +13,19 @@ namespace BattleStateMachineInternal
 		public Vector3 hitIconLocalScale = new Vector3(1f, 1f, 1f);
 
 		[Header("毒アイコンインスタンスの大きさ.")]
-		public float onPoisonScalingSizeHitIcon = 0.5f;
+		public float onPoisonScalingSizeHitIcon = 0.7f;
 
 		[Header("選択アイコンインスタンスの大きさ.")]
 		public Vector3 manualSelectTargetObjectLocalScale = new Vector3(1f, 1f, 1f);
 
 		[Header("ヒットアイコン生成数.")]
-		public int hitIconLengthTime = 5;
+		public int hitIconLengthTime = 9;
 
 		[Header("ドロップアイテムの出現UI移動完了までの時間.")]
-		public float droppingItemMoveDuration = 1f;
+		public float droppingItemMoveDuration = 0.25f;
 
 		[Header("ドロップアイテムの出現UI演出完了までの時間.")]
-		public float droppingItemUIActionDuration = 1.2f;
+		public float droppingItemUIActionDuration = 0.255f;
 
 		[Header("ドロップアイテムの出現UIイーズタイプ.")]
 		public iTween.EaseType droppingItemMoveEaseType = iTween.EaseType.easeInOutSine;
@@ -34,7 +34,7 @@ namespace BattleStateMachineInternal
 		public float showInitialIntroductionDialogWaitSecond = 1f;
 
 		[Header("初期誘導UI表示後画面切り替えまでの時間.")]
-		public float afterHideInitialIntroductionDialogWaitSecond = 1f;
+		public float afterHideInitialIntroductionDialogWaitSecond = 0.5f;
 
 		[Header("WIN演出のTAP NEXTが表示されるまでの時間 (秒)")]
 		public float winActionShowNextButtonWaitSecond = 1.5f;

@@ -10,18 +10,6 @@ public sealed class CutSceneMain : MonoBehaviour
 
 	private static GameObject goGUI_CAM;
 
-	public static void SetChipGashaTex(UITexture tex)
-	{
-	}
-
-	public static void SetTicketGashaTex(UITexture tex)
-	{
-	}
-
-	public static GameWebAPI.RespDataGA_ExecChip.UserAssetList[] UserAssetList { get; set; }
-
-	public static GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList[] UserTicketList { get; set; }
-
 	public static void FadeReqCutScene(CutsceneDataBase cutsceneData, Action startSceneCallBack, Action endSceneCallBack, Action<int> endFadeInCallBack, float outSec = 0.5f, float inSec = 0.5f)
 	{
 		CutSceneMain.cs_startSceneCallBack = startSceneCallBack;
@@ -34,7 +22,7 @@ public sealed class CutSceneMain : MonoBehaviour
 	private static void ExecCutScene(int i)
 	{
 		GameObject gameObject = GUIMain.GetOrthoCamera().gameObject;
-		if (gameObject != null)
+		if (null != gameObject)
 		{
 			CutSceneMain.goGUI_CAM = gameObject;
 			Camera orthoCamera = GUIMain.GetOrthoCamera();
@@ -51,7 +39,7 @@ public sealed class CutSceneMain : MonoBehaviour
 
 	public static void FadeReqCutSceneEnd()
 	{
-		if (CutSceneMain.goGUI_CAM != null)
+		if (null != CutSceneMain.goGUI_CAM)
 		{
 			Camera component = CutSceneMain.goGUI_CAM.GetComponent<Camera>();
 			component.depth = 8f;

@@ -281,6 +281,8 @@ namespace BattleStateMachineInternal
 				return AffectEffect.HpSettingFixable;
 			case 68:
 				return AffectEffect.HpSettingPercentage;
+			case 69:
+				return AffectEffect.Escape;
 			default:
 				global::Debug.LogError("AffectEffectの値が不正です. (" + value + ")");
 				return AffectEffect.Damage;

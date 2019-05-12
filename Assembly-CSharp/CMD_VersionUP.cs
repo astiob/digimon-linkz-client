@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CMD_VersionUP : CMD_PairSelectBase
+public sealed class CMD_VersionUP : CMD_PairSelectBase
 {
 	[SerializeField]
 	private List<VersionUpItem> verUpItemList;
@@ -49,7 +49,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 	{
 		if (selectButtonIndex == 1)
 		{
-			CMD_VersionUpModal cmd_VersionUpModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_VersionUpModal") as CMD_VersionUpModal;
+			CMD_VersionUpModal cmd_VersionUpModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_VersionUpModal", null) as CMD_VersionUpModal;
 			cmd_VersionUpModal.ShowIcon(this.medList_cache[0].md_next, true);
 			int oldLev = int.Parse(this.baseDigimon.monsterM.maxLevel);
 			int newLev = int.Parse(this.medList_cache[0].md_next.monsterM.maxLevel);
@@ -270,7 +270,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 
 	protected override void OpenCanNotSelectMonsterPop()
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("VersionUpTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("VersionUpCannotVersionUp");
 	}
@@ -486,7 +486,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 				this.almSelectList.Add(this.almHasList_cache[i]);
 			}
 		}
-		this.cmd_AlMightySelect = (GUIMain.ShowCommonDialog(new Action<int>(this.SoulChangeOperation), "CMD_AlMightySelect") as CMD_AlMightySelect);
+		this.cmd_AlMightySelect = (GUIMain.ShowCommonDialog(new Action<int>(this.SoulChangeOperation), "CMD_AlMightySelect", null) as CMD_AlMightySelect);
 		this.cmd_AlMightySelect.MakeList(this.almSelectList, selectedVUpItem.NeedNum, this.CurSelectedSoulId);
 		this.cmd_AlMightySelect.SelectedVersionUpItem = selectedVUpItem;
 	}
@@ -588,7 +588,7 @@ public class CMD_VersionUP : CMD_PairSelectBase
 
 	private void OnTouchedEvoltionItemListBtn()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_EvolutionItemList");
+		GUIMain.ShowCommonDialog(null, "CMD_EvolutionItemList", null);
 	}
 
 	private void SoulChangeOperation(int idx)

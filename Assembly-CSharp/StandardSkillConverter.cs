@@ -158,6 +158,9 @@ public class StandardSkillConverter
 		case StandardSkillConverter.AffectEffect.HpSettingPercentage:
 			result = StandardSkillConverter.ConvertToHpSettingPercentage(subSkillDetails.ToArray());
 			break;
+		case StandardSkillConverter.AffectEffect.Escape:
+			result = StandardSkillConverter.ConvertToEscape(subSkillDetails.ToArray());
+			break;
 		default:
 			UnityEngine.Debug.LogError("Not AffectEffect " + affectEffect);
 			break;
@@ -701,7 +704,6 @@ public class StandardSkillConverter
 		skillDetailM.effect16 = skillDetails[0].subRate.ToInt32();
 		skillDetailM.effect1 = skillDetails[0].continuousRound.ToInt32();
 		skillDetailM.effect2 = skillDetails[0].effect2.ToInt32();
-		skillDetailM.effect3 = skillDetails[0].effect.ToInt32();
 		skillDetailM.effect10 = 10000 * skillDetails[0].effect3.ToInt32();
 		skillDetailM.effect11 = 10000 * skillDetails[0].effect4.ToInt32();
 		for (int i = 0; i < skillDetails.Length; i++)
@@ -885,6 +887,23 @@ public class StandardSkillConverter
 		};
 	}
 
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToEscape(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		{
+			skillId = skillDetails[0].skillId,
+			subId = skillDetails[0].subId,
+			effectType = skillDetails[0].effectType.ToInt32(),
+			hitRate = skillDetails[0].hitRate.ToInt32(),
+			target = skillDetails[0].target.ToInt32(),
+			targetType = skillDetails[0].targetType.ToInt32(),
+			attribute = skillDetails[0].attribute.ToInt32(),
+			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
+			effect1 = skillDetails[0].continuousRound.ToInt32(),
+			effect3 = skillDetails[0].effect.ToInt32()
+		};
+	}
+
 	public enum AffectEffect
 	{
 		PhysicalDamage = 1,
@@ -954,6 +973,7 @@ public class StandardSkillConverter
 		DefenseThroughDamage,
 		SpDefenseThroughDamage,
 		HpSettingFixable,
-		HpSettingPercentage
+		HpSettingPercentage,
+		Escape
 	}
 }

@@ -5,16 +5,16 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/NGUI Sprite")]
 public class UISprite : UIBasicSprite
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIAtlas mAtlas;
 
 	[SerializeField]
 	[HideInInspector]
 	private string mSpriteName;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private bool mFillCenter = true;
 
 	[NonSerialized]

@@ -48,20 +48,23 @@ public sealed class FarmObject_MeatFarm : FarmObject
 				this.meatAnimation = base.StartCoroutine(this.DrawMeat());
 			}
 		}
-		GameObject gameObject = GUIFaceIndicator.instance.transform.FindChild("PlayerStatus/MeatBase/Meat").gameObject;
-		this.meatMain = gameObject.GetComponent<UISprite>();
-		GameObject gameObject2 = base.transform.FindChild("Locator/ModelRoot/Meat/Meat1").gameObject;
-		for (int i = 0; i < 6; i++)
+		GameObject meatIcon = GUIFaceIndicator.instance.GetMeatIcon();
+		if (null != meatIcon)
 		{
-			GameObject gameObject3 = UnityEngine.Object.Instantiate<GameObject>(gameObject2);
-			Vector3 localScale = gameObject3.transform.localScale;
-			gameObject3.transform.SetParent(this.meatMain.transform.parent);
-			gameObject3.transform.localScale = localScale;
-			gameObject3.transform.localRotation = Quaternion.Euler(30f, -130f, 0f);
-			gameObject3.SetActive(false);
-			gameObject3.layer = LayerMask.NameToLayer("UI");
-			gameObject3.GetComponent<MeshRenderer>().material.color = new Color(0.95f, 0.95f, 0.95f);
-			this.meatList.Add(gameObject3);
+			this.meatMain = meatIcon.GetComponent<UISprite>();
+			GameObject gameObject = base.transform.FindChild("Locator/ModelRoot/Meat/Meat1").gameObject;
+			for (int i = 0; i < 6; i++)
+			{
+				GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject);
+				Vector3 localScale = gameObject2.transform.localScale;
+				gameObject2.transform.SetParent(this.meatMain.transform.parent);
+				gameObject2.transform.localScale = localScale;
+				gameObject2.transform.localRotation = Quaternion.Euler(30f, -130f, 0f);
+				gameObject2.SetActive(false);
+				gameObject2.layer = LayerMask.NameToLayer("UI");
+				gameObject2.GetComponent<MeshRenderer>().material.color = new Color(0.95f, 0.95f, 0.95f);
+				this.meatList.Add(gameObject2);
+			}
 		}
 	}
 
@@ -108,14 +111,14 @@ public sealed class FarmObject_MeatFarm : FarmObject
 		int num = int.Parse(facilityMeatFarmMaster.maxMeatNum);
 		if (cropCount >= num)
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("MeatShortCutTitle3");
 			cmd_ModalMessage.Info = StringMaster.GetString("MeatShortCutText3");
 			cmd_ModalMessage.BtnText = "OK";
 		}
 		else
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnTapMeatShortCut), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnTapMeatShortCut), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("MeatShortCutTitle1");
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("MeatShortCutText1"), ConstValue.MEAT_SHORTCUT_DEGISTONE_NUM);
 		}
@@ -128,7 +131,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 			bool flag = FarmUtility.IsShortage(2.ToString(), ConstValue.MEAT_SHORTCUT_DEGISTONE_NUM.ToString());
 			if (flag)
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = string.Format(StringMaster.GetString("SystemShortage"), "デジストーン");
 				cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilityShortcutShortage"), "デジストーン");
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
@@ -143,7 +146,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 				int num = int.Parse(facilityMeatFarmMaster.maxMeatNum);
 				if (cropCount >= num)
 				{
-					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+					CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage.Title = StringMaster.GetString("MeatShortCutTitle3");
 					cmd_ModalMessage.Info = StringMaster.GetString("MeatShortCutText3");
 					cmd_ModalMessage.BtnText = "OK";
@@ -154,7 +157,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 				}
 				else
 				{
-					CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.MeatShortCutSelect), "CMD_Confirm") as CMD_Confirm;
+					CMD_Confirm cmd_Confirm2 = GUIMain.ShowCommonDialog(new Action<int>(this.MeatShortCutSelect), "CMD_Confirm", null) as CMD_Confirm;
 					cmd_Confirm2.Title = StringMaster.GetString("MeatShortCutTitle2");
 					cmd_Confirm2.Info = StringMaster.GetString("MeatShortCutText2");
 				}
@@ -178,7 +181,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 					farmUI.UpdateFacilityButton(null);
 				}
 			};
-			GUIMain.ShowCommonDialog(action, "CMD_Shop");
+			GUIMain.ShowCommonDialog(action, "CMD_Shop", null);
 		}
 	}
 
@@ -226,7 +229,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 					{
 						RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_OFF);
 						this.StartRequestHarvest(cropCount, campaignRate);
-					}, "CMD_ModalMessage") as CMD_ModalMessage;
+					}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 					cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 					cmd_ModalMessage.Info = info;
 				}
@@ -275,7 +278,7 @@ public sealed class FarmObject_MeatFarm : FarmObject
 				@string = StringMaster.GetString("FacilityMeatAlertBuild");
 			}
 			RestrictionInput.EndLoad();
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("FacilityMeatAlertTitle");
 			cmd_ModalMessage.Info = @string;
 		}

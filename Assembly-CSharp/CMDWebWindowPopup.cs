@@ -1,12 +1,11 @@
 ﻿using Master;
-using Neptune.WebView;
 using Quest;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-public class CMDWebWindowPopup : CMDWebWindow
+public sealed class CMDWebWindowPopup : CMDWebWindow
 {
 	public static readonly Dictionary<int, string> linkCategoryTypeToMethod = new Dictionary<int, string>
 	{
@@ -50,7 +49,7 @@ public class CMDWebWindowPopup : CMDWebWindow
 
 	protected override void WindowOpened()
 	{
-		if (this._Url != string.Empty)
+		if (!string.IsNullOrEmpty(this._Url))
 		{
 			this.StartWebView(null);
 		}
@@ -58,27 +57,6 @@ public class CMDWebWindowPopup : CMDWebWindow
 
 	private void StartWebView(string url = null)
 	{
-		List<int> webViewMargin = GUIManager.GetWebViewMargin(230f, -210f, -442f, 442f);
-		CMDWebWindow.webViewObject = new NpWebView();
-		CMDWebWindow.webViewObject.SetHardwareAccelerated(true);
-		CMDWebWindow.webViewObject.SetNpWebViewListener(base.gameObject, this);
-		GameObject gameObject = Singleton<GUIMain>.Instance.gameObject;
-		if (gameObject != null)
-		{
-			Camera component = gameObject.GetComponent<Camera>();
-			int num = component.pixelWidth - (webViewMargin[0] + webViewMargin[2]);
-			int num2 = component.pixelHeight - (webViewMargin[1] + webViewMargin[3]);
-			if (this.isFullscreen)
-			{
-				int width = Screen.width;
-				int num3 = Screen.height - 144;
-				CMDWebWindow.webViewObject.ReSize(0f, 74f, (float)width, (float)num3);
-			}
-			else
-			{
-				CMDWebWindow.webViewObject.ReSize((float)webViewMargin[0], (float)webViewMargin[1], (float)num, (float)num2);
-			}
-		}
 		if (url != null)
 		{
 			this._Url = url;
@@ -144,7 +122,7 @@ public class CMDWebWindowPopup : CMDWebWindow
 	{
 		Action actCallBack = delegate()
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_Shop");
+			GUIMain.ShowCommonDialog(null, "CMD_Shop", null);
 			FarmRoot instance = FarmRoot.Instance;
 			if (null != instance)
 			{
@@ -158,7 +136,7 @@ public class CMDWebWindowPopup : CMDWebWindow
 	{
 		Action actCallBack = delegate()
 		{
-			GUIMain.ShowCommonDialog(null, "CMD_GashaTOP");
+			GUIMain.ShowCommonDialog(null, "CMD_GashaTOP", null);
 			FarmRoot instance = FarmRoot.Instance;
 			if (null != instance)
 			{

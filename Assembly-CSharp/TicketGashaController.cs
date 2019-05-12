@@ -14,21 +14,25 @@ public sealed class TicketGashaController : CutsceneBase
 	[SerializeField]
 	private Camera mainCam;
 
-	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
 	[SerializeField]
+	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
 	private List<GameObject> goCardEfcList;
 
-	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
 	[SerializeField]
+	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]
 	private List<GameObject> goCardAnimList;
 
 	[SerializeField]
-	private AllSkipButtonForGUI allSkipButton;
+	private AllSkipButton allSkipButton;
 
 	[SerializeField]
 	private GameObject animationRoot;
 
 	private Action<RenderTexture> endCallback;
+
+	public string bgmFileName;
+
+	private Vector2 backgroundSize;
 
 	private string[] effectTypeList;
 
@@ -134,7 +138,7 @@ public sealed class TicketGashaController : CutsceneBase
 
 	private void EndCutscene()
 	{
-		RenderTexture renderTexture = new RenderTexture(1200, 1200, 16);
+		RenderTexture renderTexture = new RenderTexture((int)this.backgroundSize.x, (int)this.backgroundSize.y, 16);
 		renderTexture.antiAliasing = 2;
 		this.mainCam.targetTexture = renderTexture;
 		for (int i = 0; i < this.goCardList.Count; i++)
@@ -161,6 +165,8 @@ public sealed class TicketGashaController : CutsceneBase
 		if (!this.animationRoot.gameObject.activeSelf)
 		{
 			this.animationRoot.gameObject.SetActive(true);
+			this.allSkipButton.Show();
+			SoundMng.Instance().PlayGameBGM(this.bgmFileName);
 		}
 	}
 
@@ -187,12 +193,15 @@ public sealed class TicketGashaController : CutsceneBase
 		if (cutsceneDataTicketGasha != null)
 		{
 			this.endCallback = cutsceneDataTicketGasha.endCallback;
+			this.bgmFileName = cutsceneDataTicketGasha.bgmFileName;
+			this.backgroundSize = cutsceneDataTicketGasha.backgroundSize;
 			this.allSkipButton.Initialize();
 			this.allSkipButton.AddAction(delegate
 			{
 				this.frameCT = this.startFadeOutFrame;
 				this.StartFadeOut();
 			});
+			this.allSkipButton.Hide();
 			this.startFadeOutFrame = this.cardAnimIntervalFrame * cutsceneDataTicketGasha.gashaResult.Length + 10;
 			this.effectTypeList = new string[cutsceneDataTicketGasha.gashaResult.Length];
 			for (int i = 0; i < cutsceneDataTicketGasha.gashaResult.Length; i++)

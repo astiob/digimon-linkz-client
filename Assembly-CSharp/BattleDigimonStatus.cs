@@ -77,16 +77,16 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel leaderSkillDescription;
 
-	[Header("特化型")]
 	[SerializeField]
+	[Header("特化型")]
 	private UILabel specificType;
 
-	[SerializeField]
 	[Header("固有技")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill deathblow;
 
-	[Header("継承技1")]
 	[SerializeField]
+	[Header("継承技1")]
 	private BattleDigimonStatus.Skill inheritance1;
 
 	[SerializeField]
@@ -112,24 +112,24 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("友情度ローカライズ")]
 	private UILabel friendLocalize;
 
-	[Header("ATKローカライズ")]
 	[SerializeField]
+	[Header("ATKローカライズ")]
 	private UILabel atkLocalize;
 
-	[SerializeField]
 	[Header("DEFローカライズ")]
+	[SerializeField]
 	private UILabel defLocalize;
 
-	[SerializeField]
 	[Header("SATKローカライズ")]
+	[SerializeField]
 	private UILabel satkLocalize;
 
-	[Header("SDEFローカライズ")]
 	[SerializeField]
+	[Header("SDEFローカライズ")]
 	private UILabel sdefLocalize;
 
-	[Header("SPDローカライズ")]
 	[SerializeField]
+	[Header("SPDローカライズ")]
 	private UILabel spdLocalize;
 
 	[SerializeField]

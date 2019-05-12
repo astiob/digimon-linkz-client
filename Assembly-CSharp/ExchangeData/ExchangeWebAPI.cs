@@ -5,15 +5,12 @@ namespace ExchangeData
 {
 	public class ExchangeWebAPI : ClassSingleton<ExchangeWebAPI>
 	{
-		public GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] EventExchangeInfoLogicData { get; set; }
-
-		public GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] EventExchangeInfoLogicAlwaysData { get; set; }
+		public GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[] EventExchangeInfoList { get; set; }
 
 		public string exchangeErrorCode { get; set; }
 
 		public APIRequestTask AccessEventExchangeInfoLogicAPI()
 		{
-			APIRequestTask apirequestTask = new APIRequestTask();
 			GameWebAPI.EventExchangeInfoLogic eventExchangeInfoLogic = new GameWebAPI.EventExchangeInfoLogic();
 			eventExchangeInfoLogic.SetSendData = delegate(GameWebAPI.ReqDataUS_EventExchangeInfoLogic requestParam)
 			{
@@ -24,13 +21,15 @@ namespace ExchangeData
 			{
 				if (response.result != null && response.result.Count<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>() > 0)
 				{
-					this.EventExchangeInfoLogicData = response.result.ToArray<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>();
-					this.EventExchangeInfoLogicAlwaysData = response.result.Where((GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result x) => int.Parse(x.type) == 1).ToArray<GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result>();
+					this.EventExchangeInfoList = response.result;
+				}
+				else
+				{
+					this.EventExchangeInfoList = new GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result[0];
 				}
 			};
 			GameWebAPI.EventExchangeInfoLogic request = eventExchangeInfoLogic;
-			apirequestTask.Add(new APIRequestTask(request, true));
-			return apirequestTask;
+			return new APIRequestTask(request, true);
 		}
 
 		public APIRequestTask AccessEventExchangeLogicAPI(int detailId, int exchangeNum)
@@ -52,30 +51,6 @@ namespace ExchangeData
 				}
 			};
 			return new APIRequestTask(request, true);
-		}
-
-		public bool IsExistAlwaysExchangeInfo(GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result info)
-		{
-			foreach (GameWebAPI.RespDataMS_EventExchangeInfoLogic.Result result in this.EventExchangeInfoLogicAlwaysData)
-			{
-				if (result == info)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public void DeleteExchangeInfoLogicResult(string eventExchangeId)
-		{
-			for (int i = 0; i < this.EventExchangeInfoLogicData.Length; i++)
-			{
-				if (this.EventExchangeInfoLogicData[i].eventExchangeId == eventExchangeId)
-				{
-					Array.Clear(this.EventExchangeInfoLogicData, i, 1);
-					break;
-				}
-			}
 		}
 	}
 }

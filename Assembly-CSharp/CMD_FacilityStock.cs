@@ -63,6 +63,8 @@ public class CMD_FacilityStock : CMD
 			this.InitFacilityStockList();
 			GUIFace.SetFacilityStockIcon(false);
 			base.Show(this.f_bk, this.sizeX_bk, this.sizeY_bk, this.aT_bk);
+			GUIFace.instance.HideGUI();
+			GUIFaceIndicator.instance.HideLocator(false);
 		}
 	}
 
@@ -73,18 +75,17 @@ public class CMD_FacilityStock : CMD
 		FarmCameraControlForCMD.Off();
 	}
 
-	private void CloseAndFarmCamOn(bool animation)
-	{
-		FarmCameraControlForCMD.On();
-		base.ClosePanel(animation);
-	}
-
 	public override void ClosePanel(bool animation = true)
 	{
 		GUIFace.instance.ShowGUI();
 		GUIFaceIndicator.instance.ShowLocator();
-		GUIFace.ShowLocator();
-		this.CloseAndFarmCamOn(animation);
+		this.CloseAction(animation);
+	}
+
+	private void CloseAction(bool animation)
+	{
+		FarmCameraControlForCMD.On();
+		base.ClosePanel(animation);
 		this.csSelectPanel.FadeOutAllListParts(null, false);
 		this.csSelectPanel.SetHideScrollBarAllWays(true);
 		this.lbTX_EMPTY.gameObject.SetActive(false);
@@ -216,10 +217,7 @@ public class CMD_FacilityStock : CMD
 			farmRoot.farmUI.CreateStockFacilityConfirmation();
 			farmRoot.SetActiveNotTouchObject(false);
 		}
-		this.ClosePanel(true);
-		GUIFace.instance.HideGUI();
-		GUIFace.instance.HideHeaderBtns();
-		GUIFace.HideLocator();
-		GUIFaceIndicator.instance.HideLocator(false);
+		PartsMenu.instance.gameObject.SetActive(false);
+		this.CloseAction(true);
 	}
 }

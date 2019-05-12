@@ -5,12 +5,16 @@ using Neptune.WebView;
 using Quest;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class CMDWebWindow : CMD, INpWebViewListener
 {
 	[SerializeField]
-	private UILabel LB_TXT_TITLE;
+	private UILabel titleLabel;
+
+	[SerializeField]
+	private Rect webViewRect;
 
 	private float defaultBgmVolume;
 
@@ -20,42 +24,37 @@ public class CMDWebWindow : CMD, INpWebViewListener
 
 	private float webWindowOpenWait;
 
-	private string titleText;
-
-	public static CMDWebWindow instance;
-
-	protected bool isFullscreen;
-
 	protected static NpWebView webViewObject;
 
 	protected string _Url = string.Empty;
+
+	public static CMDWebWindow instance;
+
+	public string Url
+	{
+		get
+		{
+			return this._Url;
+		}
+		set
+		{
+			this._Url = value;
+		}
+	}
 
 	public string TitleText
 	{
 		get
 		{
-			return this.titleText;
+			return this.titleLabel.text;
 		}
 		set
 		{
-			this.titleText = value;
+			this.SetTitle(value);
 		}
 	}
 
 	public Action callbackAction { get; set; }
-
-	public bool IsFullscreen
-	{
-		get
-		{
-			return this.isFullscreen;
-		}
-		set
-		{
-			this.isFullscreen = value;
-			PartsMenu.instance.Active(false);
-		}
-	}
 
 	protected override void Awake()
 	{
@@ -68,18 +67,18 @@ public class CMDWebWindow : CMD, INpWebViewListener
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		base.Show(f, sizeX, sizeY, aT);
+		this.SetWebView();
 	}
 
 	protected override void Update()
 	{
 		base.Update();
-		this.LB_TXT_TITLE.text = this.titleText;
 		this.webWindowOpenWait += Time.deltaTime;
 	}
 
 	protected override void WindowOpened()
 	{
-		if (this._Url != string.Empty)
+		if (!string.IsNullOrEmpty(this._Url))
 		{
 			this.StartWebView(null);
 		}
@@ -98,71 +97,98 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		{
 			PartsMenu.instance.Active(true);
 		}
-		if (this._Url != string.Empty)
-		{
-			this.CloseWebView();
-		}
 		if (this.isMute)
 		{
 			SoundMng.Instance().VolumeBGM = this.defaultBgmVolume;
 			this.isMute = false;
 		}
+		if (!string.IsNullOrEmpty(this._Url))
+		{
+			CMDWebWindow.DeleteWebView();
+		}
+		CMDWebWindow.instance = null;
 	}
 
 	public override void ClosePanelNotEndShow(bool animation = true)
 	{
 		base.ClosePanelNotEndShow(animation);
-		if (this._Url != string.Empty)
+		if (!string.IsNullOrEmpty(this._Url))
 		{
-			this.CloseWebView();
+			CMDWebWindow.DeleteWebView();
 		}
 	}
 
-	public string Url
+	public void SetTitle(string title)
 	{
-		get
-		{
-			return this._Url;
-		}
-		set
-		{
-			this._Url = value;
-		}
+		this.titleLabel.text = title;
 	}
 
-	private void OnCloseWebAndStartHTTP(int i)
+	public void SetTitleTrim(string title)
 	{
-		Application.OpenURL(this.Url);
+		this.titleLabel.text = Regex.Replace(title, "\\t|\\n|\\r", string.Empty);
 	}
 
 	private void StartWebView(string url = null)
 	{
-		List<int> webViewMargin = GUIManager.GetWebViewMargin(230f, -290f, -442f, 442f);
-		CMDWebWindow.webViewObject = new NpWebView();
-		CMDWebWindow.webViewObject.SetHardwareAccelerated(true);
-		CMDWebWindow.webViewObject.SetNpWebViewListener(base.gameObject, this);
-		GameObject gameObject = Singleton<GUIMain>.Instance.gameObject;
-		if (gameObject != null)
-		{
-			Camera component = gameObject.GetComponent<Camera>();
-			int num = component.pixelWidth - (webViewMargin[0] + webViewMargin[2]);
-			int num2 = component.pixelHeight - (webViewMargin[1] + webViewMargin[3]);
-			if (this.isFullscreen)
-			{
-				int width = Screen.width;
-				int num3 = Screen.height - 64;
-				CMDWebWindow.webViewObject.ReSize(0f, 74f, (float)width, (float)num3);
-			}
-			else
-			{
-				CMDWebWindow.webViewObject.ReSize((float)webViewMargin[0], (float)webViewMargin[1], (float)num, (float)num2);
-			}
-		}
 		if (url != null)
 		{
 			this._Url = url;
 		}
 		this.WebViewOpen(this._Url);
+	}
+
+	private List<int> GetWebViewMargin(float left, float top, float right, float bottom)
+	{
+		float num = (float)Screen.width;
+		float num2 = (float)Screen.height;
+		UIRoot uiroot = GUIMain.GetUIRoot();
+		if (null != uiroot)
+		{
+			Transform transform = uiroot.transform;
+			float x = transform.localScale.x;
+			float y = transform.localScale.y;
+			left *= x;
+			bottom *= y;
+			right *= x;
+			top *= y;
+		}
+		Camera orthoCamera = GUIMain.GetOrthoCamera();
+		Vector3 zero = Vector3.zero;
+		zero.x = left;
+		zero.y = bottom;
+		Vector3 vector = orthoCamera.WorldToScreenPoint(zero);
+		zero.x = right;
+		zero.y = top;
+		Vector3 vector2 = orthoCamera.WorldToScreenPoint(zero);
+		int item = (int)vector.x;
+		int item2 = (int)(num2 - vector2.y);
+		int item3 = (int)(num - vector2.x);
+		int item4 = (int)vector.y;
+		return new List<int>
+		{
+			item,
+			item2,
+			item3,
+			item4
+		};
+	}
+
+	protected void SetWebView()
+	{
+		CMDWebWindow.webViewObject = new NpWebView();
+		CMDWebWindow.webViewObject.SetHardwareAccelerated(true);
+		CMDWebWindow.webViewObject.SetNpWebViewListener(base.gameObject, this);
+		Transform transform = base.transform;
+		float num = transform.localPosition.x - 8000f;
+		int num2 = Mathf.CeilToInt(this.webViewRect.y + transform.localPosition.y);
+		int num3 = Mathf.CeilToInt(this.webViewRect.y - this.webViewRect.height + transform.localPosition.y);
+		int num4 = Mathf.CeilToInt(this.webViewRect.x + num);
+		int num5 = Mathf.CeilToInt(this.webViewRect.x + this.webViewRect.width + num);
+		List<int> webViewMargin = this.GetWebViewMargin((float)num4, (float)num2, (float)num5, (float)num3);
+		Camera orthoCamera = GUIMain.GetOrthoCamera();
+		int num6 = orthoCamera.pixelWidth - (webViewMargin[0] + webViewMargin[2]);
+		int num7 = orthoCamera.pixelHeight - (webViewMargin[1] + webViewMargin[3]);
+		CMDWebWindow.webViewObject.ReSize((float)webViewMargin[0], (float)webViewMargin[1], (float)num6, (float)num7);
 	}
 
 	protected void WebViewOpen(string url)
@@ -220,6 +246,8 @@ public class CMDWebWindow : CMD, INpWebViewListener
 
 	private void OpenPageByParam(CMDWebWindow.WebParam param)
 	{
+		global::Debug.Log("Tag :" + param.Tag);
+		global::Debug.Log("URL :" + param.Url);
 		string tag = param.Tag;
 		switch (tag)
 		{
@@ -234,7 +262,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 						this.callbackAction();
 					}
 					GUIMain.BarrierOFF();
-					GUIMain.ShowCommonDialog(null, "CMD_GashaTOP");
+					GUIMain.ShowCommonDialog(null, "CMD_GashaTOP", null);
 				});
 			}
 			this.ClosePanel(true);
@@ -266,7 +294,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 						this.callbackAction();
 					}
 					GUIMain.BarrierOFF();
-					GUIMain.ShowCommonDialog(null, "CMD_ClearingHouseTOP");
+					GUIMain.ShowCommonDialog(null, "CMD_ClearingHouseTOP", null);
 				});
 			}
 			this.ClosePanel(true);
@@ -275,17 +303,17 @@ public class CMDWebWindow : CMD, INpWebViewListener
 			this.ToggleBGM(false);
 			break;
 		case "Link":
-		{
-			string text = param.Url;
-			text = this.DecodeUrl(text);
-			this.CloseWebView();
-			this.StartWebView(ConstValue.APP_WEB_DOMAIN + text);
-			if (base.GetActionStatus() == CommonDialog.ACT_STATUS.CLOSING || base.GetActionStatus() == CommonDialog.ACT_STATUS.CLOSED)
+			if (base.GetActionStatus() != CommonDialog.ACT_STATUS.CLOSING && base.GetActionStatus() != CommonDialog.ACT_STATUS.CLOSED)
 			{
-				this.CloseWebView();
+				string text = param.Url;
+				text = this.DecodeUrl(text);
+				if (CMDWebWindow.webViewObject != null)
+				{
+					CMDWebWindow.webViewObject.Close();
+				}
+				this.StartWebView(ConstValue.APP_WEB_DOMAIN + text);
 			}
 			break;
-		}
 		case "ExLink":
 			Application.OpenURL(param.Url);
 			break;
@@ -314,7 +342,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		return url;
 	}
 
-	public void ToggleBGM(bool isForceMute = false)
+	private void ToggleBGM(bool isForceMute = false)
 	{
 		if (!this.isMute || isForceMute)
 		{
@@ -333,16 +361,6 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		}
 	}
 
-	private void CloseWebView()
-	{
-		if (CMDWebWindow.webViewObject != null)
-		{
-			CMDWebWindow.webViewObject.Close();
-			CMDWebWindow.webViewObject.Destroy();
-			CMDWebWindow.webViewObject = null;
-		}
-	}
-
 	protected void actCBQuest(bool isSuccess)
 	{
 		if (isSuccess)
@@ -352,7 +370,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 				GUIMain.BarrierOFF();
 				GUIManager.CloseAllCommonDialog(delegate
 				{
-					GUIMain.ShowCommonDialog(null, "CMD_QuestSelect");
+					GUIMain.ShowCommonDialog(null, "CMD_QuestSelect", null);
 				});
 				if (this.callbackAction != null)
 				{
@@ -367,7 +385,7 @@ public class CMDWebWindow : CMD, INpWebViewListener
 		}
 	}
 
-	public void alertOpenedAction()
+	private void alertOpenedAction()
 	{
 		if (base.GetActionStatus() < CommonDialog.ACT_STATUS.CLOSING)
 		{

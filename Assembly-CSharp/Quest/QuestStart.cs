@@ -11,7 +11,7 @@ namespace Quest
 	{
 		public static void OpenConfirmReplayEvent(Action<int> onClosedAction)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(onClosedAction, "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(onClosedAction, "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = StringMaster.GetString("QuestEventReplayConfirm");
 		}

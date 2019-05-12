@@ -411,7 +411,7 @@ namespace Colosseum.Matching
 			global::Debug.Log("OnReceivedOpponentStartBattleResponse");
 		}
 
-		public void OnExceptionStartBattleResponse(int errorCode)
+		public void OnExceptionStartBattleResponse(string errorCode)
 		{
 			global::Debug.Log("OnExceptionStartBattleResponse");
 			if (this.syncData != null)
@@ -419,7 +419,7 @@ namespace Colosseum.Matching
 				this.syncData.StopSync();
 				this.syncData = null;
 			}
-			this.uiRoot.SetAlertData(errorCode.ToString());
+			this.uiRoot.SetAlertData(errorCode);
 			this.network.CloseSocketNetwork();
 		}
 

@@ -10,36 +10,36 @@ public sealed class ChipSphereIconButton : GUICollider
 
 	private ChipSphereIconButton.Parameter myParameter;
 
-	[SerializeField]
 	[Header("枠のスプライト")]
+	[SerializeField]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("LOOKのオブジェクト")]
+	[SerializeField]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("Chargesのオブジェクト")]
+	[SerializeField]
 	private GameObject chargesGO;
 
-	[SerializeField]
 	[Header("選択中(Chip_choosing)")]
+	[SerializeField]
 	private GameObject choosingGO;
 
 	[SerializeField]
 	[Header("チップの名前/拡張説明")]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("チップの説明ラベル/拡張パッチの個数")]
+	[SerializeField]
 	private UILabel chipDescriptLabel;
 
-	[Header("チップのテクスチャ/枠")]
 	[SerializeField]
+	[Header("チップのテクスチャ/枠")]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("アイテムのスプライト")]
+	[SerializeField]
 	private UISprite itemSprite;
 
 	[SerializeField]

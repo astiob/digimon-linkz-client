@@ -20,7 +20,7 @@ public class BattleCallAction : BattleFunctionBase
 
 	public void SetSkill(int index)
 	{
-		this.SetSkillInternal(index + 1, !base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex].isApShortness(index + 1) && !base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex].currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock));
+		this.SetSkillInternal(index + 1, base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex].isUseSkill(index + 1) && !base.battleStateData.playerCharacters[base.battleStateData.currentSelectCharacterIndex].currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock));
 	}
 
 	private void SetSkillInternal(int index, bool isPossibleSelectSkill = true)
@@ -208,6 +208,7 @@ public class BattleCallAction : BattleFunctionBase
 
 	public void OnRetireCheck()
 	{
+		base.stateManager.uiControl.ApplySetContinueUIColliders(false);
 		base.battleStateData.isShowRetireWindow = true;
 		base.stateManager.uiControl.ApplyShowRetireWindow(true, null);
 		SoundPlayer.PlayButtonEnter();
@@ -219,6 +220,7 @@ public class BattleCallAction : BattleFunctionBase
 		{
 			base.battleStateData.isBattleRetired = true;
 		}
+		base.stateManager.uiControl.ApplySetContinueUIColliders(true);
 		base.battleStateData.isShowRetireWindow = false;
 		base.stateManager.time.SetPlaySpeed(false, false);
 		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
@@ -226,10 +228,13 @@ public class BattleCallAction : BattleFunctionBase
 		SoundPlayer.PlayButtonEnter();
 		base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, true, base.battleStateData.isBattleRetired);
 		base.stateManager.events.CallRetireEvent();
+		base.stateManager.battleUiComponents.dialogRetire.gameObject.SetActive(false);
+		base.stateManager.battleUiComponents.menuDialog.gameObject.SetActive(false);
 	}
 
 	public void OnCancelRetire()
 	{
+		base.stateManager.uiControl.ApplySetContinueUIColliders(true);
 		Action onFinishedAction = delegate()
 		{
 			base.battleStateData.isShowRetireWindow = false;
@@ -309,7 +314,7 @@ public class BattleCallAction : BattleFunctionBase
 		{
 			base.stateManager.callAction.OnHideSpecificTrade();
 		};
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(action, "CMDWebWindow");
+		CommonDialog commonDialog = GUIMain.ShowCommonDialog(action, "CMDWebWindow", null);
 		((CMDWebWindow)commonDialog).TitleText = StringMaster.GetString("ShopRule-02");
 		((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_TRADE;
 		base.battleStateData.isShowSpecificTrade = true;

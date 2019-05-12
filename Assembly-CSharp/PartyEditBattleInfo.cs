@@ -41,18 +41,20 @@ public sealed class PartyEditBattleInfo : MonoBehaviour
 
 	private void InitializeBattleStartButton(CMD_PartyEdit.MODE_TYPE type)
 	{
-		switch (type)
+		if (type != CMD_PartyEdit.MODE_TYPE.SELECT)
 		{
-		case CMD_PartyEdit.MODE_TYPE.SELECT:
-		case CMD_PartyEdit.MODE_TYPE.PVP:
+			if (type != CMD_PartyEdit.MODE_TYPE.MULTI)
+			{
+				this.battleStartButton.SetActive(false);
+			}
+			else
+			{
+				this.battleStartButtonLabel.text = StringMaster.GetString("PartyRecruit");
+			}
+		}
+		else
+		{
 			this.battleStartButtonLabel.text = StringMaster.GetString("PartyBattleStart");
-			break;
-		case CMD_PartyEdit.MODE_TYPE.MULTI:
-			this.battleStartButtonLabel.text = StringMaster.GetString("PartyRecruit");
-			break;
-		default:
-			this.battleStartButton.SetActive(false);
-			break;
 		}
 		this.battleStartButtonCollider = this.battleStartButton.GetComponent<GUICollider>();
 		this.battleStartButtonBackground = this.battleStartButton.GetComponent<UISprite>();

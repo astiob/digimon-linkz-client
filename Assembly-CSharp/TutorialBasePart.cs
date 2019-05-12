@@ -81,5 +81,10 @@ public abstract class TutorialBasePart
 		return false == this.scriptEngine.IsFinished();
 	}
 
+	public void ResumeScript()
+	{
+		this.tutorialCommandAction.ResumeScript();
+	}
+
 	public abstract void FinishTutorial(GameObject observer);
 }

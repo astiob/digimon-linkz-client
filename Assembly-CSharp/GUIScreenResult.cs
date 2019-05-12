@@ -92,7 +92,7 @@ public sealed class GUIScreenResult : GUIScreen
 		}
 		else
 		{
-			this.battleResult = (GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBattleResult), "CMD_BattleResult") as CMD_BattleResult);
+			this.battleResult = (GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBattleResult), "CMD_BattleResult", null) as CMD_BattleResult);
 		}
 	}
 
@@ -109,7 +109,7 @@ public sealed class GUIScreenResult : GUIScreen
 			{
 				GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 			}
-		}, "CMD_Alert") as CMD_Alert;
+		}, "CMD_Alert", null) as CMD_Alert;
 		cmd_Alert.Title = title;
 		cmd_Alert.Info = message;
 		cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
@@ -158,7 +158,7 @@ public sealed class GUIScreenResult : GUIScreen
 					this.actionOpenedFirstClear();
 					this.actionOpenedFirstClear = null;
 				}
-				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_FirstClear");
+				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_FirstClear", null);
 			}
 			else if (this.multiResult != null && this.multiResult.dungeonReward != null && this.multiResult.dungeonReward.clearReward != null)
 			{
@@ -167,7 +167,7 @@ public sealed class GUIScreenResult : GUIScreen
 					this.actionOpenedFirstClear();
 					this.actionOpenedFirstClear = null;
 				}
-				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_FirstClear");
+				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_FirstClear", null);
 			}
 			else
 			{
@@ -204,17 +204,17 @@ public sealed class GUIScreenResult : GUIScreen
 		if (this.isPointQuest)
 		{
 			this.isPointQuest = false;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_PointResult");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_PointResult", null);
 		}
 		else if (this.isFirstLinkBonus)
 		{
 			this.isFirstLinkBonus = false;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_LinkBonus");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_LinkBonus", null);
 		}
 		else if (this.isMultiFriend)
 		{
 			this.isMultiFriend = false;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_MultiResult");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFirstClear), "CMD_MultiResult", null);
 		}
 		else
 		{
@@ -229,7 +229,7 @@ public sealed class GUIScreenResult : GUIScreen
 		return task.Run(delegate
 		{
 			RestrictionInput.EndLoad();
-			CMD_BattleNextChoice cmd_BattleNextChoice = GUIMain.ShowCommonDialog(null, "CMD_BattleNextChoice") as CMD_BattleNextChoice;
+			CMD_BattleNextChoice cmd_BattleNextChoice = GUIMain.ShowCommonDialog(null, "CMD_BattleNextChoice", null) as CMD_BattleNextChoice;
 			cmd_BattleNextChoice.screenResult = this;
 		}, delegate(Exception e)
 		{

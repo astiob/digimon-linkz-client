@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[ExecuteInEditMode]
 [AddComponentMenu("Digimon Effects/Effect Params")]
+[ExecuteInEditMode]
 public class EffectParams : EffectParamsGeneric
 {
 	[SerializeField]

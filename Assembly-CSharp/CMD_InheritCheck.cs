@@ -10,16 +10,16 @@ public sealed class CMD_InheritCheck : CMD
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("デジモンの継承スキル")]
+	[SerializeField]
 	private MonsterLearnSkill monsterSuccessionSkill;
 
 	[Header("消費クラスタのラベル")]
 	[SerializeField]
 	private UILabel useClusterLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
 	[Header("警告のメッセージのラベル")]

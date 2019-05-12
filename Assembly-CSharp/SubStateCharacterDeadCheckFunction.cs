@@ -58,7 +58,7 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 				object obj = wait.Current;
 				yield return obj;
 			}
-			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, false, base.battleStateData.isBattleRetired);
+			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, !this.isContinue, base.battleStateData.isBattleRetired);
 		}
 		yield break;
 	}
@@ -202,7 +202,6 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 		{
 			base.battleStateData.currentWaveNumber++;
 			base.stateManager.uiControl.ApplyWaveAndRound(base.battleStateData.currentWaveNumber, base.battleStateData.currentRoundNumber);
-			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, true, base.battleStateData.isBattleRetired);
 		}
 		this.isContinue = false;
 		yield break;

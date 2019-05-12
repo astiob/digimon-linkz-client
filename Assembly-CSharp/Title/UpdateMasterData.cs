@@ -30,7 +30,7 @@ namespace Title
 			{
 				Loading.Invisible();
 				AppCoroutine.Start(MasterDataMng.Instance().UpdateLocalMasterData(updateInfoList), false);
-				CMD_ShortDownload shortDownload = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload") as CMD_ShortDownload;
+				CMD_ShortDownload shortDownload = GUIMain.ShowCommonDialog(null, "CMD_ShortDownload", null) as CMD_ShortDownload;
 				yield return AppCoroutine.Start(shortDownload.WaitMasterDataDownload(), false);
 				shortDownload.ClosePanel(true);
 				Loading.ResumeDisplay();

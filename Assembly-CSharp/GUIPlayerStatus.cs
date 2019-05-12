@@ -106,7 +106,7 @@ public sealed class GUIPlayerStatus : MonoBehaviour
 
 	private void OpenStoneShop()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_Shop");
+		GUIMain.ShowCommonDialog(null, "CMD_Shop", null);
 		FarmRoot farmRoot = FarmRoot.Instance;
 		if (null != farmRoot)
 		{

@@ -131,7 +131,7 @@ public class CMD_ChatSearch : CMD
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("ChatConfirmTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatIdSearch-04");
 		}

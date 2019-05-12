@@ -21,12 +21,12 @@ namespace UnityEngine.TextReplacer
 		[SerializeField]
 		private string _stringValue;
 
-		[FormerlySerializedAs("_lengthSwichingValue")]
 		[SerializeField]
+		[FormerlySerializedAs("_lengthSwichingValue")]
 		private int _overflowLength;
 
-		[SerializeField]
 		[FormerlySerializedAs("_lengthSwichingValue")]
+		[SerializeField]
 		private int _zeroPaddingLength;
 
 		[SerializeField]

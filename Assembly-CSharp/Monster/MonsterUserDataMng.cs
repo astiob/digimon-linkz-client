@@ -172,6 +172,22 @@ namespace Monster
 			return result;
 		}
 
+		public MonsterData GetNewestMonster()
+		{
+			MonsterData result = null;
+			int num = int.MaxValue;
+			for (int i = 0; i < this.userMonsterList.Count; i++)
+			{
+				int num2 = 0;
+				if (int.TryParse(this.userMonsterList[i].GetMonster().userMonsterId, out num2) && (num == 2147483647 || num2 > num))
+				{
+					num = num2;
+					result = this.userMonsterList[i];
+				}
+			}
+			return result;
+		}
+
 		public int GetMonsterNum()
 		{
 			return this.userMonsterList.Count;

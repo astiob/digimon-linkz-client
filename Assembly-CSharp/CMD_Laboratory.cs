@@ -58,7 +58,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		if (selectButtonIndex == 1)
 		{
 			MonsterEggStatusInfo digitamaStatus = this.CreateDigitamaStatus(this.baseDigimon, this.partnerDigimon);
-			CMD_ResearchModal cmd_ResearchModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_ResearchModal") as CMD_ResearchModal;
+			CMD_ResearchModal cmd_ResearchModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_ResearchModal", null) as CMD_ResearchModal;
 			cmd_ResearchModal.SetChipParams(this.baseDigimon, this.partnerDigimon);
 			cmd_ResearchModal.SetDigitamaStatus(digitamaStatus);
 		}
@@ -282,7 +282,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override void OpenCanNotSelectMonsterPop()
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("LaboratoryNoUltimateTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("LaboratoryNoUltimateInfo");
 	}
@@ -308,7 +308,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override void OpenBaseDigimonNonePop()
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("LaboratoryNotSelectedTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("LaboratoryNotSelectedInfo");
 	}

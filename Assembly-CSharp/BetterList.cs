@@ -191,8 +191,8 @@ public class BetterList<T>
 		return this.buffer;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public void Sort(BetterList<T>.CompareFunc comparer)
 	{
 		int num = 0;

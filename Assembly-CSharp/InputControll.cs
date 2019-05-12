@@ -55,7 +55,7 @@ public sealed class InputControll : MonoBehaviour
 
 	private void Start()
 	{
-		this.uiCamera = Singleton<GUIMain>.Instance.GetComponent<Camera>();
+		this.uiCamera = GUIMain.GetOrthoCamera();
 		this.farmCamera = FarmRoot.Instance.Camera;
 		this.touchState.isDraged = false;
 		this.touchState.state = InputControll.TouchStateType.NONE;
@@ -308,9 +308,9 @@ public sealed class InputControll : MonoBehaviour
 			string tag = raycasts[i].transform.tag;
 			if (tag != null)
 			{
-				if (InputControll.<>f__switch$map3B == null)
+				if (InputControll.<>f__switch$map36 == null)
 				{
-					InputControll.<>f__switch$map3B = new Dictionary<string, int>(4)
+					InputControll.<>f__switch$map36 = new Dictionary<string, int>(4)
 					{
 						{
 							"Farm.Facility",
@@ -331,7 +331,7 @@ public sealed class InputControll : MonoBehaviour
 					};
 				}
 				int num;
-				if (InputControll.<>f__switch$map3B.TryGetValue(tag, out num))
+				if (InputControll.<>f__switch$map36.TryGetValue(tag, out num))
 				{
 					InputControll.TouchObjectType type;
 					switch (num)

@@ -135,6 +135,10 @@ public class CharacterStateControl
 
 	public List<SufferStateProperty> hitSufferList = new List<SufferStateProperty>();
 
+	public bool isEscape;
+
+	public int[] skillUseCounts = new int[0];
+
 	private CharacterStateControlChip chip = CharacterStateControlChip.GetNullObject();
 
 	public bool isMultiAreaRandomDamageSkill;
@@ -399,11 +403,6 @@ public class CharacterStateControl
 		}
 	}
 
-	public void SetCurrentHp(int value)
-	{
-		this._currentHp = value;
-	}
-
 	public int ap
 	{
 		get
@@ -592,6 +591,44 @@ public class CharacterStateControl
 		}
 	}
 
+	private void InitSkillUseCount()
+	{
+		this.skillUseCounts = new int[this._skillStatus.Length];
+		for (int i = 0; i < this.skillUseCounts.Length; i++)
+		{
+			SkillStatus skillStatus = this._skillStatus[i];
+			this.skillUseCounts[i] = skillStatus.useCountValue;
+		}
+	}
+
+	public void AddSkillUseCount(int index, int value)
+	{
+		if (this._skillStatus[index].useCountValue > 0)
+		{
+			this.skillUseCounts[index] += value;
+			if (this.skillUseCounts[index] < 0)
+			{
+				this.skillUseCounts[index] = 0;
+			}
+		}
+	}
+
+	public void ResetSkillUseCountForWave()
+	{
+		this.ResetSkillUseCount("1");
+	}
+
+	private void ResetSkillUseCount(string useCountType)
+	{
+		for (int i = 0; i < this._skillStatus.Length; i++)
+		{
+			if (this._skillStatus[i].useCountType == useCountType)
+			{
+				this.skillUseCounts[i] = this._skillStatus[i].useCountValue;
+			}
+		}
+	}
+
 	public void SetCharacterState(CharacterStateControlStore savedCSC, BattleStateData battleStateData)
 	{
 		this._currentHp = savedCSC.hp;
@@ -605,6 +642,8 @@ public class CharacterStateControl
 		this.isEnemy = savedCSC.isEnemy;
 		this.currentSufferState.Set(savedCSC.currentSufferState);
 		this.randomedSpeed = savedCSC.randomedSpeed;
+		this.isEscape = savedCSC.isEscape;
+		this.skillUseCounts = savedCSC.skillUseCounts;
 		this.chip.SetCharacterState(savedCSC);
 	}
 
@@ -790,23 +829,6 @@ public class CharacterStateControl
 		return list.IndexOf(SkillId);
 	}
 
-	public SkillStatus[] GetRemovedAttackSkillStatus(string attackSkillId)
-	{
-		List<string> list = new List<string>(this.skillIds);
-		int num = list.IndexOf(attackSkillId);
-		if (num < 0)
-		{
-			return this.skillStatus;
-		}
-		list.RemoveAt(num);
-		List<SkillStatus> list2 = new List<SkillStatus>();
-		for (int i = 0; i < list.Count; i++)
-		{
-			list2.Add(this.skillStatus[this.SkillIdToIndexOf(list[i])]);
-		}
-		return list2.ToArray();
-	}
-
 	public bool GetHpRemainingAmoutRange(float minRange, float maxRange)
 	{
 		float num = (float)this.hp / (float)this.extraMaxHp;
@@ -822,6 +844,7 @@ public class CharacterStateControl
 		{
 			this.skillStatus[i] = BattleStateManager.current.hierarchyData.GetSkillStatus(this.skillIds[i]);
 		}
+		this.InitSkillUseCount();
 		if (!PlayerStatus.Match(this._characterStatus))
 		{
 			this.itemDropResult = this.enemyStatus.itemDropResult;
@@ -972,6 +995,13 @@ public class CharacterStateControl
 		this.hp -= this.hp;
 	}
 
+	public void Escape()
+	{
+		this._currentHp = 0;
+		this.isDiedJustBefore = true;
+		this.isEscape = true;
+	}
+
 	public void OnHitDestruct()
 	{
 		this.hp = 1;
@@ -989,8 +1019,9 @@ public class CharacterStateControl
 		}
 		this.HateReset();
 		this._currentHp = this.defaultMaxHpWithLeaderSkill;
-		this.currentSufferState = new HaveSufferState();
 		this.isDiedJustBefore = false;
+		this.isEscape = false;
+		this.currentSufferState.RemoveAllSufferState();
 		this.InitializeSpecialCorrectionStatus();
 		this.chip.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpPercentage);
 		this.chip.OnChipTrigger(EffectStatusBase.EffectTriggerType.HpFixed);
@@ -1016,14 +1047,14 @@ public class CharacterStateControl
 		}
 	}
 
-	public bool isApShortness(int index)
+	public bool isUseSkill(int index)
 	{
-		if (this.skillStatus.Length <= index)
+		if (index < 0 || this.skillStatus.Length <= index)
 		{
 			global::Debug.LogError("Skill Params Out: " + index);
 			return false;
 		}
-		return index != -1 && this.ap < this.skillStatus[index].GetCorrectedAp(this);
+		return this.ap >= this.skillStatus[index].GetCorrectedAp(this) && (this.skillStatus[index].useCountValue <= 0 || this.skillUseCounts[index] > 0);
 	}
 
 	public bool WaveCountInitialize(float hpRevivalLevel)

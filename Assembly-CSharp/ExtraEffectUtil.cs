@@ -111,7 +111,7 @@ public class ExtraEffectUtil
 		return ExtraEffectUtil.CheckExtraStageParams(monsterData, effectArray);
 	}
 
-	public static bool CheckExtraStageParams(MonsterData monsterData, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray)
+	private static bool CheckExtraStageParams(MonsterData monsterData, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray)
 	{
 		EffectStatusBase.ExtraEffectType[] array = new EffectStatusBase.ExtraEffectType[]
 		{
@@ -132,7 +132,7 @@ public class ExtraEffectUtil
 			{
 				for (int j = 1; j <= 3; j++)
 				{
-					ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, monsterData, effectArray, extraEffectType, j);
+					ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, monsterData, effectArray, extraEffectType, j, false);
 					if (num2 != 0)
 					{
 						return true;
@@ -141,7 +141,7 @@ public class ExtraEffectUtil
 			}
 			else
 			{
-				ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, monsterData, effectArray, extraEffectType, 0);
+				ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, monsterData, effectArray, extraEffectType, 0, false);
 				if (num2 != 0)
 				{
 					return true;
@@ -151,10 +151,14 @@ public class ExtraEffectUtil
 		return false;
 	}
 
-	public static void GetExtraEffectFluctuationValue(out int result, out int change, MonsterData monsterData, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray, EffectStatusBase.ExtraEffectType extraEffectType, int skillType = 0)
+	public static void GetExtraEffectFluctuationValue(out int result, out int change, MonsterData monsterData, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray, EffectStatusBase.ExtraEffectType extraEffectType, int skillType = 0, bool isChipValue = true)
 	{
 		int num = (int)ExtraEffectUtil.GetStatusValue(extraEffectType, monsterData, skillType);
-		int extraChipValue = ExtraEffectUtil.GetExtraChipValue(monsterData, extraEffectType);
+		int num2 = 0;
+		if (isChipValue)
+		{
+			num2 = ExtraEffectUtil.GetExtraChipValue(monsterData, extraEffectType);
+		}
 		MonsterData[] party = new MonsterData[]
 		{
 			monsterData
@@ -185,7 +189,7 @@ public class ExtraEffectUtil
 				}
 			}
 		}
-		int num2 = 0;
+		int num3 = 0;
 		AffectEffectProperty affectEffectProperty = null;
 		if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillPower)
 		{
@@ -194,11 +198,11 @@ public class ExtraEffectUtil
 			{
 				affectEffectProperty = affectEffectPropertyListForUtil[0];
 				num = affectEffectProperty.GetPower(null);
-				num2 = ExtraEffectUtil.GetExtraStageValue(num, monsterData, party, effectArray, affectEffectProperty, extraEffectType);
+				num3 = ExtraEffectUtil.GetExtraStageValue(num, monsterData, party, effectArray, affectEffectProperty, extraEffectType);
 			}
 			else
 			{
-				num = num2;
+				num = num3;
 			}
 		}
 		else if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillHit)
@@ -208,24 +212,24 @@ public class ExtraEffectUtil
 			{
 				affectEffectProperty = affectEffectPropertyListForUtil2[0];
 				num = (int)(affectEffectProperty.hitRate * 100f);
-				num2 = ExtraEffectUtil.GetExtraStageValue(num, monsterData, party, effectArray, affectEffectProperty, extraEffectType);
+				num3 = ExtraEffectUtil.GetExtraStageValue(num, monsterData, party, effectArray, affectEffectProperty, extraEffectType);
 			}
 			else
 			{
-				num = num2;
+				num = num3;
 			}
 		}
 		else
 		{
-			num2 = ExtraEffectUtil.GetExtraStageValue(num, monsterData, party, effectArray, affectEffectProperty, extraEffectType);
+			num3 = ExtraEffectUtil.GetExtraStageValue(num, monsterData, party, effectArray, affectEffectProperty, extraEffectType);
 		}
-		result = num2 + extraChipValue;
+		result = num3 + num2;
 		change = 0;
-		if (extraChipValue > 0 || num < num2)
+		if (num2 > 0 || num < num3)
 		{
 			change = 1;
 		}
-		else if (extraChipValue < 0 || num > num2)
+		else if (num2 < 0 || num > num3)
 		{
 			change = -1;
 		}
@@ -361,6 +365,18 @@ public class ExtraEffectUtil
 				if (CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldStageId == worldStageM2.worldStageId)
 				{
 					result = worldStageM2.worldAreaId.ToInt32();
+					break;
+				}
+			}
+		}
+		else if (CMD_QuestTOP.instance == null && CMD_MultiRecruitPartyWait.StageDataBk == null)
+		{
+			GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM3 = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
+			foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM4 in worldStageM3)
+			{
+				if (CMD_PartyEdit.replayMultiStageId == worldStageM4.worldStageId)
+				{
+					result = worldStageM4.worldAreaId.ToInt32();
 					break;
 				}
 			}

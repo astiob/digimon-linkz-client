@@ -13,8 +13,6 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 
 	private const int retireDialogTerm = 10;
 
-	private bool isSyncFinished;
-
 	private bool isSendEvent;
 
 	public static bool isAlreadyLoseBeforeBattle;
@@ -36,11 +34,6 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 	private bool isEnemyFailedAction;
 
 	private IEnumerator enemyFailedAction;
-
-	public void FinishedSync()
-	{
-		this.isSyncFinished = true;
-	}
 
 	protected override string myTCPKey
 	{
@@ -72,16 +65,50 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		if (this.isSendEvent)
 		{
 			yield return this.BattleEndActionTCP();
+			yield return this.BattleEndActionJudgmentCheck();
 			yield return this.BattleEndActionHttp();
 		}
 		else
 		{
 			this.StopSomething();
 			yield return this.BattleEndActionTCP();
+			yield return this.BattleEndActionJudgmentCheck();
 			yield return this.BattleEndActionSync();
 			yield return this.BattleEndActionHttp();
 		}
 		base.stateManager.uiControlPvP.HideLoading();
+		yield break;
+	}
+
+	private IEnumerator BattleEndActionJudgmentCheck()
+	{
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		PvPJudgmentCheck message = new PvPJudgmentCheck
+		{
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
+		};
+		data.Add("080120", message);
+		int count = 0;
+		while (count < 3)
+		{
+			this.returnPvPJudgmentCheck = -1;
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			while (this.returnPvPJudgmentCheck == -1)
+			{
+				yield return null;
+			}
+			if (this.returnPvPJudgmentCheck != 1)
+			{
+				break;
+			}
+			yield return Util.WaitForRealTime(3f);
+			count++;
+			if (count >= 3)
+			{
+				global::Debug.Log(3 + "回試合判定を行いました");
+				break;
+			}
+		}
 		yield break;
 	}
 

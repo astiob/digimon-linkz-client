@@ -5,24 +5,24 @@ using UnityEngine;
 
 public sealed class DialogContinue : MonoBehaviour
 {
-	[Header("特定商取引ボタン")]
 	[SerializeField]
+	[Header("特定商取引ボタン")]
 	private UIButton specificTradeButton;
 
-	[SerializeField]
 	[Header("リタイアボタン")]
+	[SerializeField]
 	private UIButton retireButton;
 
-	[Header("復活ボタン")]
 	[SerializeField]
+	[Header("復活ボタン")]
 	private UIButton revivalButton;
 
 	[Header("所持デジストーンの数")]
 	[SerializeField]
 	private UILabel digistoneNumLabel;
 
-	[SerializeField]
 	[Header("バックグラウンド")]
+	[SerializeField]
 	private GameObject background;
 
 	[Header("デジストーン説明のローカライズ")]
@@ -33,16 +33,16 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("特定商取引ボタンのコライダー")]
 	private Collider specificTradeCollider;
 
-	[Header("リタイアボタンのコライダー")]
 	[SerializeField]
+	[Header("リタイアボタンのコライダー")]
 	private Collider retireButtonCollider;
 
 	[SerializeField]
 	[Header("復活ボタンボタンのコライダー")]
 	private Collider revivalButtonCollider;
 
-	[Header("UIOpenCloseDialog")]
 	[SerializeField]
+	[Header("UIOpenCloseDialog")]
 	public UIOpenCloseDialog openCloseDialog;
 
 	[SerializeField]
@@ -53,16 +53,16 @@ public sealed class DialogContinue : MonoBehaviour
 	[Header("諦めるローカライズ")]
 	private UILabel retireLocalize;
 
-	[Header("コンティニューのタイトルのローカライズ")]
 	[SerializeField]
+	[Header("コンティニューのタイトルのローカライズ")]
 	private UILabel continueTitleLocalize;
 
 	[Header("復活する/ショップへ移動ローカライズ")]
 	[SerializeField]
 	private UILabel revivalOrShopLocalize;
 
-	[Header("所持デジストーンローカライズ")]
 	[SerializeField]
+	[Header("所持デジストーンローカライズ")]
 	private UILabel haveDigistoneLocalize;
 
 	[SerializeField]

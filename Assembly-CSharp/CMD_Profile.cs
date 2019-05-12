@@ -39,9 +39,6 @@ public sealed class CMD_Profile : CMD_ProfileBase
 	[SerializeField]
 	private GameObject playHistoryButton;
 
-	[SerializeField]
-	private GameObject titleSelectButton;
-
 	private Vector3 vOrgSCR_HISTORY = Vector3.zero;
 
 	private Vector3 vPosSCR_HISTORY = Vector3.zero;
@@ -51,37 +48,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 	private Vector3 vPosSCR_TITLE = Vector3.zero;
 
 	[SerializeField]
-	private UILabel userCodeText;
-
-	[SerializeField]
-	private UILabel userNameText;
-
-	[SerializeField]
 	private UITexture titleIcon;
-
-	[SerializeField]
-	private UILabel copyText;
-
-	[SerializeField]
-	private UILabel collectionText;
-
-	[SerializeField]
-	private UILabel commentText;
-
-	[SerializeField]
-	private UILabel editText;
-
-	[SerializeField]
-	private UILabel fullScreenText;
-
-	[SerializeField]
-	private UILabel blockListText;
-
-	[SerializeField]
-	private UILabel playHistoryText;
-
-	[SerializeField]
-	private UILabel titleText;
 
 	protected override void Awake()
 	{
@@ -90,7 +57,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		CMD_Profile.instance = this;
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		GUICollider.DisableAllCollider("CMD_Profile");
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
@@ -107,7 +74,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
 			this.SetTutorialAnyTime("anytime_second_tutorial_profile");
-			this.InitProfile(f, sizeX, sizeY, aT);
+			this.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();
@@ -116,29 +83,9 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		}, null));
 	}
 
-	private void InitProfile(Action<int> f, float sizeX, float sizeY, float aT)
-	{
-		base.Show(f, sizeX, sizeY, aT);
-		this.userCodeText.text = StringMaster.GetString("MyProfile-01");
-		this.userNameText.text = StringMaster.GetString("MyProfile-02");
-		this.copyText.text = StringMaster.GetString("TakeOver-26");
-		this.collectionText.text = StringMaster.GetString("MyProfile-03");
-		this.commentText.text = StringMaster.GetString("MyProfile-04");
-		this.editText.text = StringMaster.GetString("MyProfile-05");
-		this.fullScreenText.text = StringMaster.GetString("CharaDetailsFullScreen");
-		this.blockListText.text = StringMaster.GetString("BlockListTitle");
-		this.playHistoryText.text = StringMaster.GetString("PlayHistoryTitle");
-		this.titleText.text = StringMaster.GetString("EditUserTitle");
-	}
-
-	protected override void dataReload()
-	{
-		this.userProfile = DataMng.Instance().RespDataPRF_Profile;
-	}
-
 	protected override void RefreshComponents()
 	{
-		this.dataReload();
+		this.userProfile = DataMng.Instance().RespDataPRF_Profile;
 		this.labelUserID.text = this.userProfile.userData.userCode;
 		this.labelCollection.text = string.Format(StringMaster.GetString("SystemFraction"), this.userProfile.collection.possessionNum, this.userProfile.collection.totalNum);
 		this.inputComment.value = this.userProfile.userData.description;
@@ -148,7 +95,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	public static void RefreshParams()
 	{
-		if (CMD_Profile.instance != null)
+		if (null != CMD_Profile.instance)
 		{
 			CMD_Profile.instance.RefreshComponents();
 		}
@@ -190,7 +137,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	private bool IsUpdateNickName()
 	{
-		return this.inputNickName.value != string.Empty && this.inputNickName.value != this.userProfile.userData.nickname;
+		return !string.IsNullOrEmpty(this.inputNickName.value) && this.inputNickName.value != this.userProfile.userData.nickname;
 	}
 
 	private bool IsUpdateComment()
@@ -204,7 +151,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		if (!string.IsNullOrEmpty(this.labelUserID.text))
 		{
 			Clipboard.Text = this.labelUserID.text.Replace(" ", string.Empty);
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			if (null != cmd_ModalMessage)
 			{
 				cmd_ModalMessage.Title = StringMaster.GetString("SystemCopy");
@@ -298,7 +245,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 			title = StringMaster.GetString("MyProfile-09");
 			info = StringMaster.GetString("MyProfile-10");
 		}
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(OnCloseConfirm, "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(OnCloseConfirm, "CMD_Confirm", null) as CMD_Confirm;
 		if (null != cmd_Confirm)
 		{
 			cmd_Confirm.Title = title;
@@ -330,7 +277,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 				GUIMain.ShowCommonDialog(delegate(int index)
 				{
 					this.OnReturnBlockList();
-				}, "CMD_BlockList");
+				}, "CMD_BlockList", null);
 			});
 		}
 		else
@@ -339,7 +286,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 			GUIMain.ShowCommonDialog(delegate(int index)
 			{
 				this.OnReturnBlockList();
-			}, "CMD_BlockList");
+			}, "CMD_BlockList", null);
 		}
 		this.characterCameraView.csRender3DRT.gameObject.transform.localScale = Vector3.zero;
 	}
@@ -375,15 +322,13 @@ public sealed class CMD_Profile : CMD_ProfileBase
 		this.googlePlay.EnableMenu(false);
 		if (!this.isOpenScreen)
 		{
-			base.MoveTo(this.OPEN_BLOCK_LIST.transform.parent.gameObject, this.vPosSCR_BLOCK, 0.18f, null, iTween.EaseType.linear);
-			base.MoveTo(this.playHistoryButton, this.vPosSCR_HISTORY, 0.18f, null, iTween.EaseType.linear);
-			base.MoveTo(this.titleSelectButton, this.vPosSCR_TITLE, 0.18f, null, iTween.EaseType.linear);
+			base.MoveTo(this.OPEN_BLOCK_LIST.transform.parent.gameObject, this.vPosSCR_BLOCK, 0.18f, iTween.EaseType.linear);
+			base.MoveTo(this.playHistoryButton, this.vPosSCR_HISTORY, 0.18f, iTween.EaseType.linear);
 		}
 		else
 		{
-			base.MoveTo(this.OPEN_BLOCK_LIST.transform.parent.gameObject, this.vOrgSCR_BLOCK, 0.18f, null, iTween.EaseType.linear);
-			base.MoveTo(this.playHistoryButton, this.vOrgSCR_HISTORY, 0.18f, null, iTween.EaseType.linear);
-			base.MoveTo(this.titleSelectButton, this.vOrgSCR_TITLE, 0.18f, null, iTween.EaseType.linear);
+			base.MoveTo(this.OPEN_BLOCK_LIST.transform.parent.gameObject, this.vOrgSCR_BLOCK, 0.18f, iTween.EaseType.linear);
+			base.MoveTo(this.playHistoryButton, this.vOrgSCR_HISTORY, 0.18f, iTween.EaseType.linear);
 		}
 		base.OnClickedScreen();
 	}
@@ -391,17 +336,18 @@ public sealed class CMD_Profile : CMD_ProfileBase
 	protected override void WindowOpened()
 	{
 		base.WindowOpened();
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		Vector2 windowSize = uipanel.GetWindowSize();
 		this.vOrgSCR_BLOCK = this.OPEN_BLOCK_LIST.transform.parent.localPosition;
 		this.vOrgSCR_HISTORY = this.playHistoryButton.transform.localPosition;
-		this.vOrgSCR_TITLE = this.titleSelectButton.transform.localPosition;
 		this.vPosSCR_BLOCK = this.vOrgSCR_BLOCK;
-		this.vPosSCR_BLOCK.x = 1000f;
+		this.vPosSCR_BLOCK.x = windowSize.x;
 		this.vPosSCR_HISTORY = this.vOrgSCR_HISTORY;
-		this.vPosSCR_HISTORY.x = 1000f;
+		this.vPosSCR_HISTORY.x = windowSize.x;
 		this.vPosSCR_TITLE = this.vOrgSCR_TITLE;
-		this.vPosSCR_TITLE.x = 1000f;
+		this.vPosSCR_TITLE.x = windowSize.x;
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
+		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
 			tutorialObserver.StartSecondTutorial("second_tutorial_profile", new Action(GUIMain.BarrierOFF), delegate
@@ -440,7 +386,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 				GUIMain.ShowCommonDialog(delegate(int index)
 				{
 					this.OnReturnBlockList();
-				}, "CMD_BlockList");
+				}, "CMD_BlockList", null);
 				this.characterCameraView.csRender3DRT.gameObject.transform.localScale = Vector3.zero;
 			}
 		}
@@ -448,7 +394,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	private void OnReturnBlockList()
 	{
-		if (this.characterCameraView.csRender3DRT != null)
+		if (null != this.characterCameraView.csRender3DRT)
 		{
 			this.characterCameraView.csRender3DRT.gameObject.transform.localScale = Vector3.one;
 		}
@@ -456,7 +402,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	private void OnplayHistory()
 	{
-		CMD_PlayHistory cmd_PlayHistory = GUIMain.ShowCommonDialog(null, "CMD_PlayHistory") as CMD_PlayHistory;
+		CMD_PlayHistory cmd_PlayHistory = GUIMain.ShowCommonDialog(null, "CMD_PlayHistory", null) as CMD_PlayHistory;
 		cmd_PlayHistory.SetColosseumInfo(this.colosseumUserStatus);
 	}
 
@@ -466,7 +412,7 @@ public sealed class CMD_Profile : CMD_ProfileBase
 
 	private void OnTitleSelect()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_TitleSelect");
+		GUIMain.ShowCommonDialog(null, "CMD_TitleSelect", null);
 	}
 
 	private enum CheckInputCharResult

@@ -24,8 +24,8 @@ public sealed class CMD_MultiRecruitTop : CMD
 	[Header("全国ラベル")]
 	private UILabel nationwideLebel;
 
-	[SerializeField]
 	[Header("PASSラベル")]
+	[SerializeField]
 	private UILabel passLabel;
 
 	[SerializeField]
@@ -107,14 +107,14 @@ public sealed class CMD_MultiRecruitTop : CMD
 
 	public static CMD_MultiRecruitTop Create()
 	{
-		CMD_MultiRecruitTop cmd_MultiRecruitTop = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop") as CMD_MultiRecruitTop;
+		CMD_MultiRecruitTop cmd_MultiRecruitTop = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop", null) as CMD_MultiRecruitTop;
 		cmd_MultiRecruitTop.SetMultiRecruitList(0);
 		return cmd_MultiRecruitTop;
 	}
 
 	public static CMD_MultiRecruitTop CreateTargetStage(string worldDungeonId)
 	{
-		CMD_MultiRecruitTop cmd_MultiRecruitTop = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop") as CMD_MultiRecruitTop;
+		CMD_MultiRecruitTop cmd_MultiRecruitTop = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitTop", null) as CMD_MultiRecruitTop;
 		cmd_MultiRecruitTop.worldDungeonId = int.Parse(worldDungeonId);
 		cmd_MultiRecruitTop.SetMultiRecruitList(0);
 		return cmd_MultiRecruitTop;
@@ -248,11 +248,11 @@ public sealed class CMD_MultiRecruitTop : CMD
 				DataMng.Instance().GetResultUtilData().SetLastDngReq(this.passInputJoinData.multiRoomInfo.worldDungeonId, "-1", "-1");
 				CMD_MultiRecruitPartyWait.UserType = CMD_MultiRecruitPartyWait.USER_TYPE.MEMBER;
 				CMD_MultiRecruitPartyWait.roomJoinData = this.passInputJoinData;
-				CMD_MultiRecruitPartyWait cmd_MultiRecruitPartyWait = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait") as CMD_MultiRecruitPartyWait;
+				CMD_MultiRecruitPartyWait cmd_MultiRecruitPartyWait = GUIMain.ShowCommonDialog(null, "CMD_MultiRecruitPartyWait", null) as CMD_MultiRecruitPartyWait;
 				cmd_MultiRecruitPartyWait.SetParentDialog(this);
 			}
 			this.passInputJoinData = null;
-		}, "CMD_MultiRecruitPass") as CMD_MultiRecruitPass;
+		}, "CMD_MultiRecruitPass", null) as CMD_MultiRecruitPass;
 		cmd_MultiRecruitPass.SetParentDialog(this);
 	}
 
@@ -261,6 +261,7 @@ public sealed class CMD_MultiRecruitTop : CMD
 		this.csMultiRecruitListPanel = this.partMultiRecruitParent.GetComponent<GUISelectMultiRecruitListPanel>();
 		this.csMultiRecruitListPanel.selectParts = this.partMultiRecruit;
 		this.csMultiRecruitListPanel.ListWindowViewRect = MultiTools.MakeRecruitListRectWindow();
+		this.partMultiRecruit.SetActive(false);
 	}
 
 	private void SetMultiRecruitList(int reqFrom)

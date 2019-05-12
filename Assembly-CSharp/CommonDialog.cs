@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NGUI.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,12 +61,12 @@ public class CommonDialog : GUICollider
 
 	private bool _opened;
 
+	private int originLeftAnchorAbsolute;
+
 	private Action actCallBackLast;
 
 	[SerializeField]
 	protected bool enableAndroidBackKey = true;
-
-	private int backReturnVal = -1;
 
 	public event Action onOpened;
 
@@ -308,9 +309,6 @@ public class CommonDialog : GUICollider
 		this.finish = f;
 		base.gameObject.SetActive(true);
 		Vector3 localPosition = base.transform.localPosition;
-		if (this.touchPanels.Count == 0)
-		{
-		}
 		localPosition.x += this.dialogLocationTable[(int)this.dialogLocation].x;
 		localPosition.y += this.dialogLocationTable[(int)this.dialogLocation].y;
 		base.transform.localPosition = localPosition;
@@ -318,7 +316,7 @@ public class CommonDialog : GUICollider
 		int i = 0;
 		while (i < this.touchPanels.Count)
 		{
-			if (this.touchPanels[i] == null)
+			if (null == this.touchPanels[i])
 			{
 				this.touchPanels.RemoveAt(i);
 			}
@@ -341,11 +339,9 @@ public class CommonDialog : GUICollider
 			break;
 		}
 		this.eventList = new List<Action<Touch, Vector2, bool>>();
-		int num = 0;
-		foreach (GUICollider col in this.touchPanels)
+		for (int j = 0; j < this.touchPanels.Count; j++)
 		{
-			this.AddButtonAction(num, col);
-			num++;
+			this.AddButtonAction(j, this.touchPanels[j]);
 		}
 		this.openWait = this.waitingTime;
 		this.startShow = true;
@@ -419,6 +415,12 @@ public class CommonDialog : GUICollider
 
 	protected void ShowDLG()
 	{
+		UISafeArea component = base.GetComponent<UISafeArea>();
+		if (null != component)
+		{
+			UIWidget component2 = component.GetComponent<UIWidget>();
+			component2.leftAnchor.absolute = this.originLeftAnchorAbsolute;
+		}
 		Vector3 localPosition = base.gameObject.transform.localPosition;
 		localPosition.x = 0f;
 		base.gameObject.transform.localPosition = localPosition;
@@ -426,6 +428,13 @@ public class CommonDialog : GUICollider
 
 	protected void HideDLG()
 	{
+		UISafeArea component = base.GetComponent<UISafeArea>();
+		if (null != component)
+		{
+			UIWidget component2 = component.GetComponent<UIWidget>();
+			this.originLeftAnchorAbsolute = component2.leftAnchor.absolute;
+			component2.leftAnchor.absolute = 8000;
+		}
 		Vector3 localPosition = base.gameObject.transform.localPosition;
 		localPosition.x = 8000f;
 		base.gameObject.transform.localPosition = localPosition;
@@ -508,7 +517,7 @@ public class CommonDialog : GUICollider
 				GUIManager.DeleteCommonDialog(this);
 				if (this.finish != null)
 				{
-					if (this.forceReturnVL > -1)
+					if (-1 < this.forceReturnVL)
 					{
 						this.finish(this.forceReturnVL);
 					}
@@ -550,22 +559,10 @@ public class CommonDialog : GUICollider
 			CommonDialog topDialog2 = GUIManager.GetTopDialog(null, false);
 			if (topDialog2 != null && topDialog2.gameObject.name == base.gameObject.name && this.enableAndroidBackKey && !this.permanentMode && this.act_status == CommonDialog.ACT_STATUS.OPEN && !GUICollider.IsAllColliderDisable())
 			{
-				this.returnVal = this.backReturnVal;
+				this.returnVal = -1;
 				this.ClosePanel(true);
 				SoundMng.Instance().PlaySE("SEInternal/Common/se_106", 0f, false, true, null, -1, 1f);
 			}
-		}
-	}
-
-	public int BackReturnVal
-	{
-		get
-		{
-			return this.backReturnVal;
-		}
-		set
-		{
-			this.backReturnVal = value;
 		}
 	}
 

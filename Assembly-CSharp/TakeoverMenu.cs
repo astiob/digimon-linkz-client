@@ -103,7 +103,7 @@ public class TakeoverMenu : MonoBehaviour
 			{
 				cloudBackup.SaveBackupData();
 			}
-		}, "CMD_BackupModal") as CMD_BackupModal;
+		}, "CMD_BackupModal", null) as CMD_BackupModal;
 		cmd_BackupModal.ChangeButtonToBackupFromTwo();
 		if (this.currentMode == TakeoverMenu.MODE.Input)
 		{

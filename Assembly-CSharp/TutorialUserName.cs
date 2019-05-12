@@ -114,7 +114,7 @@ public sealed class TutorialUserName : MonoBehaviour
 	{
 		GUIManager.ExtBackKeyReady = true;
 		this.myTransform.SetY(3000f);
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.PushedDialog), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.PushedDialog), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("TutorialNameConfirmTitle");
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("TutorialNameConfirmInfo"), this.inputLabel.text);
 		cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonYes");

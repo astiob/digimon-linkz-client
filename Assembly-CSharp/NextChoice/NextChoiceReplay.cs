@@ -105,7 +105,7 @@ namespace NextChoice
 			if (selectButtonIndex == 0)
 			{
 				this.shopBeforeStoneNum = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-				CMD_Shop cmd = GUIMain.ShowCommonDialog(null, "CMD_Shop") as CMD_Shop;
+				CMD_Shop cmd = GUIMain.ShowCommonDialog(null, "CMD_Shop", null) as CMD_Shop;
 				cmd.PartsTitle.SetReturnAct(delegate(int _i_)
 				{
 					cmd.SetCloseAction(delegate(int x)
@@ -147,7 +147,7 @@ namespace NextChoice
 			int point = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 			if (ConstValue.RECOVER_STAMINA_DIGISTONE_NUM <= point)
 			{
-				this.confirmDialogRecoverStamina = (GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE);
+				this.confirmDialogRecoverStamina = (GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE);
 				this.confirmDialogRecoverStamina.Title = StringMaster.GetString("StaminaShortageTitle");
 				this.confirmDialogRecoverStamina.Info = string.Format(StringMaster.GetString("StaminaShortageInfo"), new object[]
 				{
@@ -163,7 +163,7 @@ namespace NextChoice
 			}
 			else
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("StaminaShortageTitle");
 				cmd_Confirm.Info = string.Format(StringMaster.GetString("StaminaShortageGoShop"), ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");

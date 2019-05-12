@@ -102,8 +102,8 @@ namespace BattleStateMachineInternal
 		[Header("WIN演出のWinモーション再生開始までの時間 (秒)")]
 		public float winActionStartMotionWaitSecond = 1.5f;
 
-		[Range(1f, 0f)]
 		[Header("スローモーションの速度倍率")]
+		[Range(1f, 0f)]
 		public float lastAttackSlowMotionSpeed = 0.1f;
 
 		[Header("スローモーション開始までの時間 (秒)")]

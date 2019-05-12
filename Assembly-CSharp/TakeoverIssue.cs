@@ -109,7 +109,7 @@ public class TakeoverIssue : MonoBehaviour
 	private void CopyTakeoverCodeToClipboard()
 	{
 		Clipboard.Text = this.takeoverCodeLabel.text;
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemCopy");
 		cmd_ModalMessage.Info = StringMaster.GetString("TakeOver-09");
 	}
@@ -117,7 +117,7 @@ public class TakeoverIssue : MonoBehaviour
 	private void CopyUserCodeToClipboard()
 	{
 		Clipboard.Text = this.userCodeLabel.text;
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemCopy");
 		cmd_ModalMessage.Info = StringMaster.GetString("MyProfile-06");
 	}

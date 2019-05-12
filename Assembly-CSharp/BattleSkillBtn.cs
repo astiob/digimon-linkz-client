@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BattleSkillBtn : MonoBehaviour
 {
-	[Header("スキルボタンが2つのときの位置")]
 	[SerializeField]
+	[Header("スキルボタンが2つのときの位置")]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
 	[SerializeField]
@@ -21,8 +21,8 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("スキル名")]
 	private UILabel skillName;
 
-	[SerializeField]
 	[Header("スキル説明")]
+	[SerializeField]
 	private UILabel skillDescription;
 
 	[SerializeField]
@@ -33,28 +33,28 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("命中率")]
 	private UILabel hitRate;
 
-	[Header("威力")]
 	[SerializeField]
+	[Header("威力")]
 	private UILabel power;
 
 	[SerializeField]
 	[Header("Tweener1（開く）")]
 	private UITweener rotationEffect1;
 
-	[Header("Tweener2（閉じる）")]
 	[SerializeField]
+	[Header("Tweener2（閉じる）")]
 	private UITweener rotationEffect2;
 
 	[Header("Collider")]
 	[SerializeField]
 	private Collider colliderValue;
 
-	[SerializeField]
 	[Header("HoldPress")]
+	[SerializeField]
 	private HoldPressButton skillDescriptionSwitch;
 
-	[Header("属性アイコン")]
 	[SerializeField]
+	[Header("属性アイコン")]
 	private UISprite attributeSprite;
 
 	[SerializeField]
@@ -65,29 +65,56 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UISprite skillLockSprite;
 
-	[SerializeField]
 	[Header("スキルONボタン")]
+	[SerializeField]
 	private GameObject onSkillButton;
 
-	[SerializeField]
 	[Header("実行ボタンスプライト")]
+	[SerializeField]
 	private UISprite execButtonSprite;
 
-	[Header("スキルOFfボタン")]
 	[SerializeField]
+	[Header("スキルOFfボタン")]
 	private GameObject offSkillButton;
 
-	[SerializeField]
 	[Header("スキルボタンスプライト")]
+	[SerializeField]
 	private UISprite skillButtonSprite;
 
+	[Header("スキル使用回数の掛け算記号")]
+	[SerializeField]
+	private UILabel skillCountMulti;
+
+	[SerializeField]
+	[Header("スキル使用回数の数値")]
+	private UILabel skillCountNum;
+
 	private SkillType skillType;
+
+	private void SetSkillUseCount(int value)
+	{
+		if (this.skillCountMulti == null || this.skillCountNum == null)
+		{
+			return;
+		}
+		if (value >= 0)
+		{
+			this.skillCountMulti.gameObject.SetActive(true);
+			this.skillCountNum.gameObject.SetActive(true);
+			this.skillCountNum.text = value.ToString("D2");
+		}
+		else
+		{
+			this.skillCountMulti.gameObject.SetActive(false);
+			this.skillCountNum.gameObject.SetActive(false);
+		}
+	}
 
 	public void Awake()
 	{
 	}
 
-	public void ApplySkillButtonData(SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl selectCharacter)
+	public void ApplySkillButtonData(SkillStatus skills, bool onEnable, bool onSkillLock, CharacterStateControl selectCharacter, int useCount)
 	{
 		List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
 		List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
@@ -122,6 +149,10 @@ public class BattleSkillBtn : MonoBehaviour
 		else
 		{
 			this.ap.text = StringMaster.GetString("BattleSkillUI-02");
+		}
+		if (skills.useCountValue > 0)
+		{
+			this.SetSkillUseCount(useCount);
 		}
 		this.SetAttributeIcon(skills.attribute);
 		if (onSkillLock)
@@ -161,6 +192,7 @@ public class BattleSkillBtn : MonoBehaviour
 		this.rotationEffect2.transform.localScale = Vector3.one;
 		this.SetColliderActive(true);
 		this.SetButtonType(BattleSkillBtn.Type.Off);
+		this.SetSkillUseCount(-1);
 	}
 
 	public void ApplySkillDescriptionEnable(bool onEnable)

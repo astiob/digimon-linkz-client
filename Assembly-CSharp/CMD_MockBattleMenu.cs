@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CMD_MockBattleMenu : CMD
 {
-	[SerializeField]
 	[Header("アイコン及びボタンのテキスト")]
+	[SerializeField]
 	private UILabel lbBTN_Friend;
 
 	[SerializeField]
@@ -41,12 +41,12 @@ public class CMD_MockBattleMenu : CMD
 
 	private void OnClickedFriend()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_PvPFriend");
+		GUIMain.ShowCommonDialog(null, "CMD_PvPFriend", null);
 	}
 
 	private void OnClickedInputCode()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_PvPMockTargetInputModal");
+		GUIMain.ShowCommonDialog(null, "CMD_PvPMockTargetInputModal", null);
 	}
 
 	private void OnClickedClose()

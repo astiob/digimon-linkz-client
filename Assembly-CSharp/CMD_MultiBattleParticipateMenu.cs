@@ -10,12 +10,12 @@ public class CMD_MultiBattleParticipateMenu : CMD
 	[Header("GameObject：参加")]
 	private GameObject goBtnParticipate;
 
-	[SerializeField]
 	[Header("GameObject：募集")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
-	[Header("Label：参加")]
 	[SerializeField]
+	[Header("Label：参加")]
 	private UILabel lbBtnParticipate;
 
 	[Header("Label：募集")]

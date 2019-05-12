@@ -105,7 +105,7 @@ namespace Enemy.AI
 			}
 			private set
 			{
-				this._minRange = Mathf.Clamp(value, 0f, this.maxRange);
+				this._minRange = value;
 			}
 		}
 
@@ -117,7 +117,7 @@ namespace Enemy.AI
 			}
 			private set
 			{
-				this._minRange = Mathf.Clamp(value, this.minRange, 1f);
+				this._minRange = value;
 			}
 		}
 

@@ -312,12 +312,12 @@ public class FacilityButtonSet : MonoBehaviour
 		};
 		if (flag && 0 < userFacility.level && !isFriendFarm)
 		{
-			CMD_FacilityInfo cmd_FacilityInfo = GUIMain.ShowCommonDialog(action, "CMD_FacilityInfo") as CMD_FacilityInfo;
+			CMD_FacilityInfo cmd_FacilityInfo = GUIMain.ShowCommonDialog(action, "CMD_FacilityInfo", null) as CMD_FacilityInfo;
 			cmd_FacilityInfo.SetFacilityInfo(userFacility);
 		}
 		else
 		{
-			CMD_FacilityInfoNoneEffect cmd_FacilityInfoNoneEffect = GUIMain.ShowCommonDialog(action, "CMD_FacilityInfo_only") as CMD_FacilityInfoNoneEffect;
+			CMD_FacilityInfoNoneEffect cmd_FacilityInfoNoneEffect = GUIMain.ShowCommonDialog(action, "CMD_FacilityInfo_only", null) as CMD_FacilityInfoNoneEffect;
 			cmd_FacilityInfoNoneEffect.SetFacilityInfo(userFacility.facilityId);
 		}
 	}
@@ -348,12 +348,12 @@ public class FacilityButtonSet : MonoBehaviour
 		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)facilityUpgradeMaster.upgradeAssetCategoryId1.ToInt32();
 		if (assetCategory == MasterDataMng.AssetCategory.TIP)
 		{
-			CMD_UpgradeConfirmation cmd_UpgradeConfirmation = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirmation") as CMD_UpgradeConfirmation;
+			CMD_UpgradeConfirmation cmd_UpgradeConfirmation = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirmation", null) as CMD_UpgradeConfirmation;
 			cmd_UpgradeConfirmation.SetUserFacility(userFacility);
 		}
 		else
 		{
-			CMD_UpgradeConfirmationDigistone cmd_UpgradeConfirmationDigistone = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirm_STONE") as CMD_UpgradeConfirmationDigistone;
+			CMD_UpgradeConfirmationDigistone cmd_UpgradeConfirmationDigistone = GUIMain.ShowCommonDialog(null, "CMD_UpgradeConfirm_STONE", null) as CMD_UpgradeConfirmationDigistone;
 			cmd_UpgradeConfirmationDigistone.SetUserFacility(userFacility);
 		}
 	}
@@ -384,7 +384,7 @@ public class FacilityButtonSet : MonoBehaviour
 		}
 		if (flag)
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = string.Format(StringMaster.GetString("SystemShortage"), arg);
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilityShortcutShortage"), arg);
 			cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
@@ -406,7 +406,7 @@ public class FacilityButtonSet : MonoBehaviour
 			GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(shorteningAssetCategoryId);
 			FacilityUpgradeM facilityUpgradeMaster = FarmDataManager.GetFacilityUpgradeMaster(userFacility.facilityId, userFacility.level);
 			GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategoryM = (facilityUpgradeMaster == null) ? null : MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(facilityUpgradeMaster.shorteningAssetCategoryId1);
-			CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+			CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 			cmd_ChangePOP_STONE.Title = StringMaster.GetString("FacilityShortcutTitle");
 			cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnPushedShortCutYesButton);
 			int point = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
@@ -449,7 +449,7 @@ public class FacilityButtonSet : MonoBehaviour
 					farmUI.UpdateFacilityButton(null);
 				}
 			};
-			GUIMain.ShowCommonDialog(action, "CMD_Shop");
+			GUIMain.ShowCommonDialog(action, "CMD_Shop", null);
 		}
 	}
 
@@ -532,7 +532,7 @@ public class FacilityButtonSet : MonoBehaviour
 
 	private void OpenNoNeedShortening(int noop)
 	{
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FacilityShortcutTitle");
 		cmd_ModalMessage.Info = StringMaster.GetString("FacilityShortcutAlready");
 	}
@@ -566,7 +566,7 @@ public class FacilityButtonSet : MonoBehaviour
 		FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(this.farmObject.facilityID);
 		if (facilityMaster.sellFlg == "1")
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedSellYesButton), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedSellYesButton), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilitySaleComfirmInfo"), facilityMaster.facilityName, facilityMaster.sellPrice);
 		}
@@ -616,7 +616,7 @@ public class FacilityButtonSet : MonoBehaviour
 		FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(this.farmObject.facilityID);
 		if (facilityMaster.stockFlg == "1")
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedStockYesButton), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedStockYesButton), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilityStockConfirmInfo"), facilityMaster.facilityName);
 		}

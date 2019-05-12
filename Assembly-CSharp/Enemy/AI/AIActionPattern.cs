@@ -28,12 +28,6 @@ namespace Enemy.AI
 			this._minRange = minRange;
 			this._maxRange = maxRange;
 			this._aiActionClip = new List<AIActionClip>(aiActionClip);
-			float value = 0f;
-			for (int i = 0; i < this._aiActionClip.Count; i++)
-			{
-				this._aiActionClip[i] = new AIActionClip(this._aiActionClip[i].targetSelectRerefence, this._aiActionClip[i].selectingOrder, this._aiActionClip[i].minValue, this._aiActionClip[i].maxValue, Mathf.Clamp01(value), Mathf.Clamp01(this._aiActionClip[i].maxRange), this._aiActionClip[i].useSkillId);
-				value = this._aiActionClip[i].maxRange;
-			}
 		}
 
 		public float minRange
@@ -44,7 +38,7 @@ namespace Enemy.AI
 			}
 			private set
 			{
-				this._minRange = Mathf.Clamp(value, 0f, this.maxRange);
+				this._minRange = value;
 			}
 		}
 
@@ -56,7 +50,7 @@ namespace Enemy.AI
 			}
 			private set
 			{
-				this._minRange = Mathf.Clamp(value, this.minRange, 1f);
+				this._maxRange = value;
 			}
 		}
 
@@ -92,7 +86,7 @@ namespace Enemy.AI
 			{
 				if (this.aiActionClip[i].minRange != this.aiActionClip[i].maxRange)
 				{
-					if (this.aiActionClip[i].minRange <= num && this.aiActionClip[i].maxRange > num)
+					if (this.aiActionClip[i].minRange < num && this.aiActionClip[i].maxRange >= num)
 					{
 						return this.aiActionClip[i];
 					}

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(UISprite))]
 [ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/Sprite Animation")]
+[RequireComponent(typeof(UISprite))]
 public class UISpriteAnimation : MonoBehaviour
 {
 	[SerializeField]
@@ -15,12 +15,12 @@ public class UISpriteAnimation : MonoBehaviour
 	[HideInInspector]
 	protected string mPrefix = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mLoop = true;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mSnap = true;
 
 	protected UISprite mSprite;

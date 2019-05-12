@@ -42,7 +42,7 @@ public class TipsLoading
 		}
 		this.isShow = true;
 		CMD_Tips.DisPlayPlace = DisplayPlace;
-		this.cmdTips = (GUIMain.ShowCommonDialog(null, "CMD_Tips") as CMD_Tips);
+		this.cmdTips = (GUIMain.ShowCommonDialog(null, "CMD_Tips", null) as CMD_Tips);
 	}
 
 	public void StopTipsLoad(bool loadPrefabClose = true)

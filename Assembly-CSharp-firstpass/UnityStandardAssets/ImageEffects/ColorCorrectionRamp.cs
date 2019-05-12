@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Color Adjustments/Color Correction (Ramp)")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Color Adjustments/Color Correction (Ramp)")]
 	public class ColorCorrectionRamp : ImageEffectBase
 	{
 		public Texture textureRamp;

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using UI.Gasha;
 using UnityEngine;
 
-public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
+public sealed class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 {
 	public bool animationMoving;
 
-	[Header("バナーのセルのスケール")]
 	[SerializeField]
+	[Header("バナーのセルのスケール")]
 	private Vector3 bannerScale;
 
 	[Header("選択されたパーツのアニメ量 X")]
@@ -16,6 +17,22 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 
 	private int animIndexBK = -1;
 
+	private Action<int> actionPushedButton;
+
+	public void Create(GameObject selectPartsResouce)
+	{
+		base.selectParts = selectPartsResouce;
+		Vector3 localPosition = base.transform.localPosition;
+		base.ListWindowViewRect = new Rect
+		{
+			xMin = -280f + localPosition.x,
+			xMax = 280f + localPosition.x,
+			yMin = -240f - GUIMain.VerticalSpaceSize,
+			yMax = 250f + GUIMain.VerticalSpaceSize
+		};
+		base.initLocation = true;
+	}
+
 	public bool SetCellAnim(int selectedIndex)
 	{
 		if (selectedIndex == this.animIndexBK)
@@ -23,7 +40,7 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 			return false;
 		}
 		GUIListPartsGashaMain guilistPartsGashaMain = (GUIListPartsGashaMain)this.partObjs[selectedIndex];
-		if (guilistPartsGashaMain != null)
+		if (null != guilistPartsGashaMain)
 		{
 			guilistPartsGashaMain.ResetNew();
 		}
@@ -47,7 +64,7 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 			gameObject.transform.localPosition = new Vector3(this.selectPartsAnimX, gameObject.transform.localPosition.y, gameObject.transform.localPosition.z);
 		}
 		GUIListPartsGashaMain component = gameObject.GetComponent<GUIListPartsGashaMain>();
-		if (component != null)
+		if (null != component)
 		{
 			component.SetBGColor(true);
 		}
@@ -55,7 +72,7 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 		{
 			GameObject gameObject2 = this.partObjs[this.animIndexBK].gameObject;
 			GUIListPartsGashaMain component2 = gameObject2.GetComponent<GUIListPartsGashaMain>();
-			if (component2 != null)
+			if (null != component2)
 			{
 				component2.SetBGColor(false);
 			}
@@ -100,51 +117,60 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 		GUICollider.EnableAllCollider("GUISelectPanelGasha::SetCellAnim_completeMoving");
 	}
 
-	public void AllBuild(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> dts)
+	private void OnPushedGashaButton(int buttonIndex)
+	{
+		if (this.SetCellAnim(buttonIndex) && this.actionPushedButton != null)
+		{
+			this.actionPushedButton(buttonIndex);
+		}
+	}
+
+	public void AllBuild(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaInfoList, Texture[] textureList, Action<int> pushedAction, int selectedButtonIndex, bool isTutorial)
 	{
 		this.animIndexBK = -1;
 		base.InitBuild();
-		this.partsCount = dts.Count;
-		if (base.selectCollider != null)
+		this.partsCount = gashaInfoList.Count;
+		if (null != base.selectCollider)
 		{
+			this.actionPushedButton = pushedAction;
 			GUISelectPanelBSPartsUD.PanelBuildData panelBuildData = base.CalcBuildData(1, this.partsCount, 1f, 1f);
 			float num = panelBuildData.startY;
-			int num2 = 0;
-			int viewIdx = 0;
-			foreach (GameWebAPI.RespDataGA_GetGachaInfo.Result result in dts)
+			for (int i = 0; i < gashaInfoList.Count; i++)
 			{
+				GameWebAPI.RespDataGA_GetGachaInfo.Result result = gashaInfoList[i];
 				GameObject gameObject = base.AddBuildPart();
 				GUIListPartsGashaMain component = gameObject.GetComponent<GUIListPartsGashaMain>();
-				if (component != null)
+				if (null != component)
 				{
 					component.SetOriginalPos(new Vector3(0f, num, -5f));
-					component.Data = result;
+					component.GashaInfo = result;
+					component.ShowGUI(textureList[i]);
 					component.selectPanelA = this;
 					component.AvoidDisableAllCollider = true;
-					if (result.IsLink())
+					component.SetPushedAction(new Action<int>(this.OnPushedGashaButton));
+					if (isTutorial && result.priceType.GetCostAssetsCategory() == MasterDataMng.AssetCategory.LINK_POINT)
 					{
 						component.gameObject.AddComponent<TutorialEmphasizeUI>();
 						TutorialEmphasizeUI component2 = component.gameObject.GetComponent<TutorialEmphasizeUI>();
 						component2.UiName = TutorialEmphasizeUI.UiNameType.TAB2_RIGHT;
 					}
-					if (num2 == viewIdx)
+					if (i == selectedButtonIndex)
 					{
 						component.SetBGColor(true);
 						component.SetFadeInEndCallBack(delegate
 						{
-							this.SetCellAnim(viewIdx);
+							this.SetCellAnim(selectedButtonIndex);
 						});
 					}
 				}
 				num -= panelBuildData.pitchH;
-				num2++;
 			}
 			base.height = panelBuildData.lenH;
-			base.InitMinMaxLocation(viewIdx, 0f);
-			if (!this.partObjs[viewIdx].IsFadeDo())
+			base.InitMinMaxLocation(selectedButtonIndex, 0f);
+			if (!this.partObjs[selectedButtonIndex].IsFadeDo())
 			{
-				this.partObjs[viewIdx].gameObject.SetActive(false);
-				this.SetCellAnim(viewIdx);
+				this.partObjs[selectedButtonIndex].gameObject.SetActive(false);
+				this.SetCellAnim(selectedButtonIndex);
 			}
 		}
 	}
@@ -153,8 +179,11 @@ public class GUISelectPanelGashaMain : GUISelectPanelBSPartsUD
 	{
 		for (int i = 0; i < this.partObjs.Count; i++)
 		{
-			GUIListPartsGashaMain guilistPartsGashaMain = (GUIListPartsGashaMain)this.partObjs[i];
-			guilistPartsGashaMain.ShowAbleCount();
+			GUIListPartsGashaMain guilistPartsGashaMain = this.partObjs[i] as GUIListPartsGashaMain;
+			if (null != guilistPartsGashaMain)
+			{
+				guilistPartsGashaMain.ShowAbleCount();
+			}
 		}
 	}
 }

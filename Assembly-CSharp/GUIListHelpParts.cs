@@ -77,11 +77,11 @@ public class GUIListHelpParts : GUIListPartBS
 		{
 			CMD_HelpList.Data = MasterDataMng.Instance().RespDataMA_HelpM;
 			CMD_HelpList.helpCategoryId = this.helpCategoryId;
-			GUIMain.ShowCommonDialog(null, "CMD_HelpList");
+			GUIMain.ShowCommonDialog(null, "CMD_HelpList", null);
 		}
 		else
 		{
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow");
+			CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null);
 			((CMDWebWindow)commonDialog).TitleText = this.ListData.helpTitle;
 			((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_HELP_DETAIL + this.ListData.helpId;
 		}

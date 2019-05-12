@@ -105,7 +105,7 @@ public class CMD_UpgradeConfirmation : CMD
 		}
 		else if (2 <= FarmUtility.GetBuildFacilityCount())
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("FacilityUpgradeBuildTitle");
 			cmd_ModalMessage.Info = StringMaster.GetString("FacilityUpgradeBuildInfo");
 		}
@@ -128,7 +128,7 @@ public class CMD_UpgradeConfirmation : CMD
 	protected virtual void OpenModalShortageMessage(string categoryId)
 	{
 		GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(categoryId);
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = string.Format(StringMaster.GetString("SystemShortage"), assetCategory.assetTitle);
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FacilityUpgradeFailedShortage"), assetCategory.assetTitle);
 	}

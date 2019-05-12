@@ -93,19 +93,7 @@ namespace CharacterDetailsUI
 		private Transform levelUpParent;
 
 		[SerializeField]
-		private Vector3 levelUpImagePosition;
-
-		[SerializeField]
-		private Vector3 levelUpEffectPosition;
-
-		[SerializeField]
 		private Transform tranceParent;
-
-		[SerializeField]
-		private Vector3 tranceImagePosition;
-
-		[SerializeField]
-		private Vector3 tranceEffectPosition;
 
 		[SerializeField]
 		private ChipBaseSelect chipBaseSelect;
@@ -133,7 +121,7 @@ namespace CharacterDetailsUI
 			int depth = this.windowBackground.depth;
 			depthController.AddWidgetDepth(transform, depth + 10);
 			transform.SetParent(this.levelUpParent);
-			transform.localPosition = this.levelUpImagePosition;
+			transform.localPosition = Vector3.zero;
 			transform.localScale = Vector3.one;
 			Animation component = gameObject.GetComponent<Animation>();
 			component.Play("LevelUp");
@@ -154,7 +142,7 @@ namespace CharacterDetailsUI
 			int depth = this.windowBackground.depth;
 			depthController.AddWidgetDepth(transform, depth + 10);
 			transform.SetParent(this.tranceParent);
-			transform.localPosition = this.tranceImagePosition;
+			transform.localPosition = Vector3.zero;
 			transform.localScale = Vector3.one;
 			Animation component = gameObject.GetComponent<Animation>();
 			component.Play("Awakening");
@@ -414,8 +402,8 @@ namespace CharacterDetailsUI
 			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
 			gameObject.name = "LevelUpParticle";
 			Transform transform = gameObject.transform;
-			transform.SetParent(windowRootTransform);
-			transform.localPosition = this.levelUpEffectPosition;
+			transform.SetParent(this.levelUpParent);
+			transform.localPosition = Vector3.zero;
 			Animation result = this.ShowLevelUpAnimation();
 			SoundMng.Instance().TryPlaySE("SEInternal/Common/se_101", 0f, false, true, null, -1);
 			return result;
@@ -427,8 +415,8 @@ namespace CharacterDetailsUI
 			GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(path, typeof(GameObject)));
 			gameObject.name = "TranceParticle";
 			Transform transform = gameObject.transform;
-			transform.SetParent(windowRootTransform);
-			transform.localPosition = this.tranceEffectPosition;
+			transform.SetParent(this.tranceParent);
+			transform.localPosition = Vector3.zero;
 			Animation result = this.ShowTranceAnimation();
 			SoundMng.Instance().TryPlaySE("SEInternal/Common/se_101", 0f, false, true, null, -1);
 			return result;

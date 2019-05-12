@@ -61,18 +61,6 @@ public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 					this.isEffectPlaying[dropCount] = true;
 					dropCount++;
 					base.battleStateData.itemDropResults.Add(dropResult);
-					MasterDataMng.AssetCategory dropAssetType = dropResult.dropAssetType;
-					if (dropAssetType != MasterDataMng.AssetCategory.TIP)
-					{
-						if (dropAssetType == MasterDataMng.AssetCategory.EXP)
-						{
-							base.battleStateData.currentGettedItemDropExp += dropResult.dropNumber;
-						}
-					}
-					else
-					{
-						base.battleStateData.currentGettedItemDropChip += dropResult.dropNumber;
-					}
 				}
 			}
 			if (gettedItemDropResults.Count > 0)

@@ -128,7 +128,7 @@ public sealed class FarmDigimon : MonoBehaviour
 			this.userMonsterID = monsterData.userMonster.userMonsterId;
 		}
 		this.memoryNextTime = DateTime.MinValue;
-		yield return base.StartCoroutine(this.LoadDigimon(monsterData.monsterMG.monsterGroupId));
+		yield return base.StartCoroutine(this.LoadDigimon(monsterData.monsterMG.modelId));
 		this.ChooseAI();
 		this.hitcheckEnumerator = this.HitCheckBuild();
 		base.StartCoroutine(this.hitcheckEnumerator);
@@ -427,12 +427,12 @@ public sealed class FarmDigimon : MonoBehaviour
 		default:
 		{
 			CharacterParams characterParams3 = this.digimon.GetComponent<CharacterParams>();
-			characterParams3.PlayRevivalAnimationSmooth();
+			characterParams3.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
 			break;
 		}
 		}
 		CharacterParams characterParams4 = this.digimon.GetComponent<CharacterParams>();
-		characterParams4.PlayRevivalAnimationSmooth();
+		characterParams4.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
 		yield return new WaitForSeconds(5f);
 		this.farmDigimonAI.ClearActionParam();
 		this.actionState = FarmDigimon.ActionState.THINKING;
@@ -451,7 +451,7 @@ public sealed class FarmDigimon : MonoBehaviour
 	private void StartIdleAnimation()
 	{
 		CharacterParams component = this.digimon.GetComponent<CharacterParams>();
-		component.PlayIdleAnimation();
+		component.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 	}
 
 	private IEnumerator WaitRoutine(Coroutine routine, Action finished)
@@ -583,7 +583,7 @@ public sealed class FarmDigimon : MonoBehaviour
 			this.faceMark.SetBarrier();
 		}
 		yield return new WaitForSeconds(1f);
-		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP") as CMD_FriendshipStatusUP;
+		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP", null) as CMD_FriendshipStatusUP;
 		cd.SetData(this.monsterData);
 		cd.SetChangeData(this.monsterData.userMonster.monsterId, this.beforeFriendship);
 		yield break;

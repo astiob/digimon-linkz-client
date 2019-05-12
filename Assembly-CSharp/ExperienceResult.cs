@@ -15,8 +15,8 @@ public class ExperienceResult : ResultBase
 
 	private readonly Vector3 BIG_LABEL_SIZE = new Vector3(1.35f, 1.35f, 1f);
 
-	[Header("カウントアップするときのラベルの色")]
 	[SerializeField]
+	[Header("カウントアップするときのラベルの色")]
 	private Color countUpLabelColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -27,28 +27,28 @@ public class ExperienceResult : ResultBase
 	[SerializeField]
 	private BattleResultDigimonInfo[] digimonInfos;
 
-	[Header("デジモンに吸収されるパーティクルを消す")]
 	[SerializeField]
+	[Header("デジモンに吸収されるパーティクルを消す")]
 	private GameObject particleRemover;
 
-	[SerializeField]
 	[Header("取得経験値のラベル")]
+	[SerializeField]
 	private UILabel getExp;
 
 	[SerializeField]
 	[Header("取得経験値の文言ラベル")]
 	private UILabel getExpText;
 
-	[Header("取得クラスタのラベル")]
 	[SerializeField]
+	[Header("取得クラスタのラベル")]
 	private UILabel getCluster;
 
 	[Header("取得クラスタの文言ラベル")]
 	[SerializeField]
 	private UILabel getClusterText;
 
-	[Header("取得友情度【リーダー】のラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】のラベル")]
 	private UILabel getFriendPointForLeader;
 
 	[SerializeField]
@@ -59,8 +59,8 @@ public class ExperienceResult : ResultBase
 	[Header("取得友情度のラベル")]
 	private UILabel getFriendPoint;
 
-	[Header("取得友情度の文言ラベル")]
 	[SerializeField]
+	[Header("取得友情度の文言ラベル")]
 	private UILabel getFriendPointText;
 
 	private ExperienceResult.SkipCount skipCount;
@@ -108,19 +108,19 @@ public class ExperienceResult : ResultBase
 		NGUITools.SetActiveSelf(this.acquisitionGO, false);
 		int num = int.Parse(DataMng.Instance().RespDataMN_DeckList.selectDeckNum) - 1;
 		this.deckData = DataMng.Instance().RespDataMN_DeckList.deckList[num];
-		GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		this.isMulti = (null != respData_WorldMultiStartInfo);
 		if (!this.isMulti)
 		{
-			this.totalExp = respDataWD_DungeonStart.totalExp;
-			this.totalCluster = respDataWD_DungeonStart.totalMoney;
+			GameWebAPI.RespDataWD_DungeonResult respDataWD_DungeonResult = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult;
+			this.totalExp = respDataWD_DungeonResult.totalExp;
+			this.totalCluster = respDataWD_DungeonResult.totalMoney;
 		}
 		else
 		{
-			this.totalExp = respData_WorldMultiStartInfo.totalExp;
-			this.totalCluster = respData_WorldMultiStartInfo.totalMoney;
 			GameWebAPI.RespData_WorldMultiResultInfoLogic respData_WorldMultiResultInfoLogic = ClassSingleton<QuestData>.Instance.RespData_WorldMultiResultInfoLogic;
+			this.totalExp = respData_WorldMultiResultInfoLogic.totalExp;
+			this.totalCluster = respData_WorldMultiResultInfoLogic.totalMoney;
 			if (respData_WorldMultiResultInfoLogic.dungeonReward != null)
 			{
 				if (respData_WorldMultiResultInfoLogic.dungeonReward.luckDrop != null)
@@ -709,7 +709,7 @@ public class ExperienceResult : ResultBase
 	private IEnumerator PopFriendshipUpStatus(MonsterData afterMonsterData)
 	{
 		yield return new WaitForSeconds(1f);
-		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP") as CMD_FriendshipStatusUP;
+		CMD_FriendshipStatusUP cd = GUIMain.ShowCommonDialog(null, "CMD_FriendshipStatusUP", null) as CMD_FriendshipStatusUP;
 		cd.SetData(afterMonsterData);
 		cd.SetChangeData(this.memoryUserMonsterList.monsterId, this.memoryUserMonsterList.friendship);
 		while (cd != null)

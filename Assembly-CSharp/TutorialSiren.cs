@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class TutorialSiren : MonoBehaviour
+public sealed class TutorialSiren : MonoBehaviour
 {
 	private UITexture projectionTexture;
 
@@ -16,6 +16,8 @@ public class TutorialSiren : MonoBehaviour
 		gameObject.transform.localScale = Vector3.one;
 		gameObject.transform.localPosition = Vector3.zero;
 		this.fadeCircle = gameObject.GetComponent<FadeCircle>();
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		this.fadeCircle.Initialize(uipanel.GetWindowSize());
 		this.fadeCircle.StartAnimation();
 		this.SetSirenEffectTexture(this.fadeCircle);
 	}

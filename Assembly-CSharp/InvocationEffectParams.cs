@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[AddComponentMenu("Digimon Effects/Invocation Effect Params")]
 [DisallowMultipleComponent]
+[AddComponentMenu("Digimon Effects/Invocation Effect Params")]
 public class InvocationEffectParams : EffectParamsGeneric
 {
 	[SerializeField]
@@ -17,12 +17,12 @@ public class InvocationEffectParams : EffectParamsGeneric
 	[SerializeField]
 	private string _cameraMotionId;
 
-	[FormerlySerializedAs("hideStage")]
 	[SerializeField]
+	[FormerlySerializedAs("hideStage")]
 	private bool _hideStage;
 
-	[FormerlySerializedAs("hideStageBackgroundColor")]
 	[SerializeField]
+	[FormerlySerializedAs("hideStageBackgroundColor")]
 	private Color _hideStageBackgroundColor = Color.black;
 
 	[SerializeField]
@@ -33,6 +33,9 @@ public class InvocationEffectParams : EffectParamsGeneric
 
 	[SerializeField]
 	private InvocationEffectParams.AttachEffects[] _attachEffects;
+
+	[SerializeField]
+	private bool _isVoice;
 
 	private GameObject _stageObject;
 
@@ -61,6 +64,14 @@ public class InvocationEffectParams : EffectParamsGeneric
 		get
 		{
 			return this._cameraMotionId;
+		}
+	}
+
+	public bool isVoice
+	{
+		get
+		{
+			return this._isVoice;
 		}
 	}
 
@@ -135,7 +146,7 @@ public class InvocationEffectParams : EffectParamsGeneric
 		this._effectAnimation.PlayQueued(this._effectAnimation.clip.name, QueueMode.PlayNow);
 		if (attacker != null && attacker.GetFindAttackMotion(this._motionIndex))
 		{
-			attacker.PlayAttackAnimation(this._attackAnimationType, this._motionIndex);
+			attacker.PlayAnimation(CharacterAnimationType.attacks, this._attackAnimationType, this._motionIndex, null, null);
 			this.CharacterFollowingInitializeInternal(attacker);
 			this.BillboardObjectInitializeInternal(attacker.transform, attacker.RootToCenterDistance());
 			this.ParticheControllerInitializeInternal();

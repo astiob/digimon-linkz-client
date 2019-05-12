@@ -9,11 +9,6 @@ public class BattleLog : BattleFunctionBase
 
 	public void GetBattleFinishedLogData(DataMng.ClearFlag onWin, bool onSlipOutBattle, bool isRetire)
 	{
-		this.WriteLogSingle(onWin, onSlipOutBattle, isRetire);
-	}
-
-	private void WriteLogSingle(DataMng.ClearFlag onWin, bool onSlipOutBattle, bool isRetire)
-	{
 		if (base.onServerConnect && onSlipOutBattle)
 		{
 			bool[] array = new bool[base.battleStateData.playerCharacters.Length];
@@ -21,17 +16,8 @@ public class BattleLog : BattleFunctionBase
 			{
 				array[i] = !base.battleStateData.playerCharacters[i].isDied;
 			}
-			int[][] array2 = new int[base.battleStateData.preloadEnemies.Length][];
-			for (int j = 0; j < base.battleStateData.preloadEnemies.Length; j++)
-			{
-				int[] array3 = new int[base.battleStateData.preloadEnemies[j].Length];
-				for (int k = 0; k < base.battleStateData.preloadEnemies[j].Length; k++)
-				{
-					array3[k] = ((!base.battleStateData.preloadEnemies[j][k].isDied) ? 1 : 0);
-				}
-				array2[j] = array3;
-			}
-			this.SetBattleResult(onWin, array, isRetire, array2);
+			int[][] enemyAliveList = base.battleStateData.GetEnemyAliveList();
+			this.SetBattleResult(onWin, array, isRetire, enemyAliveList);
 		}
 	}
 

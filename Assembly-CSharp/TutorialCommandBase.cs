@@ -30,7 +30,7 @@ public abstract class TutorialCommandBase
 		}
 	}
 
-	protected void ResumeScript()
+	public void ResumeScript()
 	{
 		this.scriptEngine.Resume(this.commandAddress);
 	}

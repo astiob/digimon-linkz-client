@@ -141,6 +141,6 @@ public class CMD_maintenance : CMD
 
 	private void OnInquiryButton()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_inquiry");
+		GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
 	}
 }

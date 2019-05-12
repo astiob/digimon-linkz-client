@@ -680,6 +680,7 @@ public class BattleStateInitialize : BattleStateController
 		this.SetLoadingImage(false);
 		base.stateManager.uiControl.SetTouchEnable(true);
 		base.stateManager.SetBattleScreen(BattleScreen.BattleStartAction);
+		base.stateManager.battleUiComponents.InitSafeArea();
 		yield break;
 	}
 

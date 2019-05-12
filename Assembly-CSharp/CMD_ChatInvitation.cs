@@ -285,7 +285,7 @@ public class CMD_ChatInvitation : CMD
 	{
 		ChatTools.ChatLoadDisplay(false);
 		string text = string.Empty;
-		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 		if (data.inviteUserIds != null)
 		{
@@ -514,7 +514,7 @@ public class CMD_ChatInvitation : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int index)
 		{
 			this.SetGroupInviteUserList(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId);
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("ChatInviteCancel"), ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname);
 	}
@@ -563,7 +563,7 @@ public class CMD_ChatInvitation : CMD
 			this.SetChangeOwnerType();
 			Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, "ChatLog-02", ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
 			base.ClosePanel(true);
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("ChatTransferSuccess"), ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname);
 		CMD_ChatTop.instance.GetUserChatGroupListExec();
@@ -600,7 +600,7 @@ public class CMD_ChatInvitation : CMD
 			{
 				Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, "ChatLog-01", ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
 			}
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 		string format = string.Empty;
 		if (reply == 1)
@@ -648,13 +648,13 @@ public class CMD_ChatInvitation : CMD
 				{
 					this.ChatInviteExec(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, this.inviteIdParamList.ToArray());
 				}
-			}, "CMD_Confirm") as CMD_Confirm;
+			}, "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("ChatLogMenu-08");
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("ChatInvitation-04"), this.inviteIdParamList.Count.ToString());
 		}
 		else
 		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage") as CMD_ModalMessage;
+			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 			cmd_ModalMessage.Info = StringMaster.GetString("ChatInvitation-02");
 		}
@@ -679,7 +679,7 @@ public class CMD_ChatInvitation : CMD
 			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int noop)
 			{
 				this.ClosePanel(true);
-			}, "CMD_ModalMessage") as CMD_ModalMessage;
+			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 			cmd_ModalMessage.Title = title;
 			cmd_ModalMessage.Info = info;
 		});

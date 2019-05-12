@@ -80,7 +80,7 @@ public class CMD_OtherTOP : CMD
 
 	private void OnClickedTermsOfUse()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		if (null != cmdwebWindow)
 		{
 			cmdwebWindow.TitleText = StringMaster.GetString("AgreementTitle");
@@ -90,7 +90,7 @@ public class CMD_OtherTOP : CMD
 
 	private void OnClickedRightsExpression()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		if (null != cmdwebWindow)
 		{
 			cmdwebWindow.TitleText = StringMaster.GetString("OtherRight");
@@ -100,18 +100,18 @@ public class CMD_OtherTOP : CMD
 
 	private void OnClickedPurchaseHistory()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_History");
+		GUIMain.ShowCommonDialog(null, "CMD_History", null);
 	}
 
 	private void OnClickedTakeover()
 	{
 		CMD_Takeover.currentMode = CMD_Takeover.MODE.ISSUE;
-		GUIMain.ShowCommonDialog(null, "CMD_TakeoverIssue");
+		GUIMain.ShowCommonDialog(null, "CMD_TakeoverIssue", null);
 	}
 
 	private void OnClickedContact()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_inquiry");
+		GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
 	}
 
 	private void OnClickedPrivacyOfUse()

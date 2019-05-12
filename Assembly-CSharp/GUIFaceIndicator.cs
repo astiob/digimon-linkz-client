@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GUIFaceIndicator : GUIBase
+public class GUIFaceIndicator : MonoBehaviour
 {
 	public static GUIFaceIndicator instance;
 
@@ -13,7 +13,7 @@ public class GUIFaceIndicator : GUIBase
 	private List<GameObject> goHideLocatorShowList;
 
 	[SerializeField]
-	private UIHeader header;
+	private GameObject meatIcon;
 
 	private List<Vector3> locatorPosList;
 
@@ -21,7 +21,7 @@ public class GUIFaceIndicator : GUIBase
 
 	private float hideLocatorPosX = 10000f;
 
-	protected override void Awake()
+	protected void Awake()
 	{
 		GUIFaceIndicator.instance = this;
 		this.InitLocator();
@@ -43,7 +43,6 @@ public class GUIFaceIndicator : GUIBase
 
 	public void ShowLocator()
 	{
-		this.header.enabled = true;
 		Vector3 localPosition = base.gameObject.transform.localPosition;
 		localPosition.x = 0f;
 		base.gameObject.transform.localPosition = localPosition;
@@ -56,9 +55,8 @@ public class GUIFaceIndicator : GUIBase
 		}
 	}
 
-	public void HideLocator(bool showList = true)
+	public void HideLocator(bool showList)
 	{
-		this.header.enabled = false;
 		Vector3 localPosition = base.gameObject.transform.localPosition;
 		localPosition.x = this.hideLocatorPosX;
 		base.gameObject.transform.localPosition = localPosition;
@@ -76,9 +74,17 @@ public class GUIFaceIndicator : GUIBase
 		this.plusButtonCollider.enabled = isEnable;
 	}
 
-	public override void ShowGUI()
+	public void ShowGUI()
 	{
+		float z = base.transform.localPosition.z;
+		Vector3 localPosition = base.transform.localPosition;
+		localPosition.z = z;
+		base.transform.localPosition = localPosition;
 		this.ShowLocator();
-		base.ShowGUI();
+	}
+
+	public GameObject GetMeatIcon()
+	{
+		return this.meatIcon;
 	}
 }

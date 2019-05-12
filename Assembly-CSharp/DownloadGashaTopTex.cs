@@ -3,15 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DownloadGashaTopTex
+public sealed class DownloadGashaTopTex
 {
 	private readonly float timeoutSeconds = 30f;
 
 	private static DownloadGashaTopTex instance;
 
 	private Texture topTex;
-
-	private Action actCallBackDownload;
 
 	public static DownloadGashaTopTex Instance
 	{
@@ -33,26 +31,26 @@ public class DownloadGashaTopTex
 		}
 	}
 
-	public Coroutine DownloadTexture(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaDataList, Action act = null)
+	public void DownloadTexture(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaInfoList, Action<Texture[]> action)
 	{
-		this.actCallBackDownload = act;
-		return AppCoroutine.Start(this.DownloadTexture_(gashaDataList), false);
+		AppCoroutine.Start(this.DownloadTexture_(gashaInfoList, action), false);
 	}
 
-	private IEnumerator DownloadTexture_(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaDataList)
+	private IEnumerator DownloadTexture_(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaInfoList, Action<Texture[]> action)
 	{
-		for (int i = 0; i < gashaDataList.Count; i++)
+		Texture[] textureList = new Texture[gashaInfoList.Count];
+		for (int i = 0; i < gashaInfoList.Count; i++)
 		{
-			GameWebAPI.RespDataGA_GetGachaInfo.Result gashaData = gashaDataList[i];
-			if (gashaData != null)
+			GameWebAPI.RespDataGA_GetGachaInfo.Result gashaInfo = gashaInfoList[i];
+			if (gashaInfo != null)
 			{
-				yield return AppCoroutine.Start(this.DownloadTex(gashaData.mainImagePath), false);
-				gashaData.tex = this.topTex;
+				yield return AppCoroutine.Start(this.DownloadTex(gashaInfo.mainImagePath), false);
+				textureList[i] = this.topTex;
 			}
 		}
-		if (this.actCallBackDownload != null)
+		if (action != null)
 		{
-			this.actCallBackDownload();
+			action(textureList);
 		}
 		yield break;
 	}

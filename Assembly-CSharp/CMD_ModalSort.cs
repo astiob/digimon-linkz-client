@@ -353,6 +353,7 @@ public class CMD_ModalSort : CMD
 			if (flag2 && this.onChangeSetting != null)
 			{
 				this.onChangeSetting();
+				CMD_BaseSelect.SaveSetting();
 			}
 			this.ClosePanel(true);
 		};

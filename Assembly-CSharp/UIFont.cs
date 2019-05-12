@@ -6,20 +6,20 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UIFont : MonoBehaviour
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Rect mUVRect = new Rect(0f, 0f, 1f, 1f);
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private BMFont mFont = new BMFont();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIAtlas mAtlas;
 
 	[SerializeField]
@@ -34,8 +34,8 @@ public class UIFont : MonoBehaviour
 	[SerializeField]
 	private Font mDynamicFont;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mDynamicFontSize = 16;
 
 	[SerializeField]

@@ -13,20 +13,20 @@ public sealed class CMD_ChipInstalling : CMD
 	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[Header("左下のチップの説明ラベル")]
 	[SerializeField]
+	[Header("左下のチップの説明ラベル")]
 	private UILabel chipDetailLabel;
 
-	[Header("右下の装着するボタンラベル")]
 	[SerializeField]
+	[Header("右下の装着するボタンラベル")]
 	private UILabel executeButtonLabel;
 
-	[SerializeField]
 	[Header("右下の表示切替ボタンラベル")]
+	[SerializeField]
 	private UILabel changeViewLabel;
 
-	[SerializeField]
 	[Header("右下の内容ラベル")]
+	[SerializeField]
 	private UILabel changeViewContentLabel;
 
 	[SerializeField]
@@ -37,12 +37,12 @@ public sealed class CMD_ChipInstalling : CMD
 	[Header("右下の装着するボタンコライダー")]
 	private BoxCollider executeButtonCollider;
 
-	[SerializeField]
 	[Header("右下の表示切替ボタンスプライト")]
+	[SerializeField]
 	private UISprite changeViewButtonSprite;
 
-	[Header("チップ一覧用親")]
 	[SerializeField]
+	[Header("チップ一覧用親")]
 	private GameObject partsSortListBase;
 
 	[Header("チップ空メッセージ")]
@@ -61,7 +61,7 @@ public sealed class CMD_ChipInstalling : CMD
 
 	public static CMD_ChipInstalling Create(GameWebAPI.ReqDataCS_ChipEquipLogic equip, Action<int, GameWebAPI.RespDataMA_ChipM.Chip> successChipCallback)
 	{
-		CMD_ChipInstalling cmd_ChipInstalling = GUIMain.ShowCommonDialog(null, "CMD_ChipInstalling") as CMD_ChipInstalling;
+		CMD_ChipInstalling cmd_ChipInstalling = GUIMain.ShowCommonDialog(null, "CMD_ChipInstalling", null) as CMD_ChipInstalling;
 		cmd_ChipInstalling.equip = equip;
 		cmd_ChipInstalling.successChipCallback = successChipCallback;
 		return cmd_ChipInstalling;

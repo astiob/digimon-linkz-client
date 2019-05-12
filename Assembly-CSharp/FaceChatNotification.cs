@@ -28,7 +28,14 @@ public class FaceChatNotification : GUICollider
 	{
 		ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification = this;
 		this.OnNotificationExec(false);
+		this.StartGetHistoryIdList();
 		base.Awake();
+	}
+
+	protected override void OnDestroy()
+	{
+		this.StopGetHistoryIdList();
+		base.OnDestroy();
 	}
 
 	public void StartGetHistoryIdList()
@@ -275,7 +282,7 @@ public class FaceChatNotification : GUICollider
 		List<string> worldIdList = new List<string>(ChatConstValue.WORLD_ID_LIST);
 		ClassSingleton<QuestData>.Instance.GetWorldDungeonInfo(worldIdList, delegate(bool i)
 		{
-			CMD_ChatTop cmd_ChatTop = GUIMain.ShowCommonDialog(null, "CMD_ChatTop") as CMD_ChatTop;
+			CMD_ChatTop cmd_ChatTop = GUIMain.ShowCommonDialog(null, "CMD_ChatTop", null) as CMD_ChatTop;
 			if (this.isNewMultiRequestRequest)
 			{
 				cmd_ChatTop.ForceSelectTab(CMD_ChatTop.TabType.MULTI);

@@ -28,7 +28,7 @@ public class CMD_AgreementChat : CMD_AgreementConsent
 
 	private void OnClickedAgreementChat()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("ChatLogMenu-05");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_CHAT_NOTICE;
 	}

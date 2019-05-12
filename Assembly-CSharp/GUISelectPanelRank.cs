@@ -45,6 +45,7 @@ public class GUISelectPanelRank : GUISelectPanelBSPartsUD
 						position = component.transform.position;
 					}
 					component.Data = data;
+					component.ShowGUI();
 				}
 				num3++;
 				if (num3 % this.PARTS_CT_MN == 0)

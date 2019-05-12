@@ -18,4 +18,6 @@ public class BattleResult : TCPData<BattleResult>
 	public int uniqueRequestId;
 
 	public int requestStatus;
+
+	public int[][] enemyAliveInfo;
 }

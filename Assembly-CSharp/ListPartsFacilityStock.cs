@@ -58,7 +58,7 @@ public sealed class ListPartsFacilityStock : GUIListPartBS
 
 	private void OnClickedInfo()
 	{
-		CMD_FacilityInfoNoneEffect cmd_FacilityInfoNoneEffect = GUIMain.ShowCommonDialog(null, "CMD_FacilityInfo_only") as CMD_FacilityInfoNoneEffect;
+		CMD_FacilityInfoNoneEffect cmd_FacilityInfoNoneEffect = GUIMain.ShowCommonDialog(null, "CMD_FacilityInfo_only", null) as CMD_FacilityInfoNoneEffect;
 		cmd_FacilityInfoNoneEffect.SetFacilityInfo(this.StockFacility.facilityId);
 	}
 
@@ -67,7 +67,7 @@ public sealed class ListPartsFacilityStock : GUIListPartBS
 		FacilityM facilityMaster = FarmDataManager.GetFacilityMaster(this.StockFacility.facilityId);
 		if (facilityMaster.sellFlg == "1")
 		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedSellYesButton), "CMD_Confirm") as CMD_Confirm;
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnPushedSellYesButton), "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = StringMaster.GetString("SystemConfirm");
 			cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilitySaleComfirmInfo"), facilityMaster.facilityName, facilityMaster.sellPrice);
 		}

@@ -200,7 +200,7 @@ namespace BattleStateMachineInternal
 						{
 							if (characterParams.gameObject.activeInHierarchy)
 							{
-								characterParams.PlayAttackAnimation(SkillType.Attack, 0);
+								characterParams.PlayAnimation(CharacterAnimationType.attacks, SkillType.Attack, 0, null, null);
 							}
 						}
 					};
@@ -236,7 +236,7 @@ namespace BattleStateMachineInternal
 					{
 						if (p.gameObject.activeInHierarchy)
 						{
-							p.PlayIdleAnimation();
+							p.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 						}
 					}
 					yield return new WaitForSeconds(1f);

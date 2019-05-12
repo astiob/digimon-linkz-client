@@ -4,6 +4,6 @@ public class ExchangeButton : FacilityButtonSet
 {
 	private void OnPushedTransitionButtonOfExchange()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_ClearingHouseTOP");
+		GUIMain.ShowCommonDialog(null, "CMD_ClearingHouseTOP", null);
 	}
 }

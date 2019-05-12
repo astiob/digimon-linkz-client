@@ -12,24 +12,24 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("ガシャの背景色")]
+	[SerializeField]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
 	[SerializeField]
 	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
-	[Header("キャンペーンの背景色")]
 	[SerializeField]
+	[Header("キャンペーンの背景色")]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
-	[Header("外枠のスプライト")]
 	[SerializeField]
+	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[SerializeField]
 	[Header("NEWのスプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
 	[SerializeField]
@@ -349,7 +349,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private void InfoShortcut()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = this.Data.name;
 		cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
 	}

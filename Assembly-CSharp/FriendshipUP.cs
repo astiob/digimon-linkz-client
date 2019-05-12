@@ -18,7 +18,7 @@ public class FriendshipUP : MonoBehaviour
 	{
 		FarmRoot instance = FarmRoot.Instance;
 		this.farmCamera = ((!(instance != null)) ? null : instance.Camera);
-		this.mainCamera = Singleton<GUIMain>.Instance.GetComponent<Camera>();
+		this.mainCamera = GUIMain.GetOrthoCamera();
 		base.StartCoroutine(this.DestroyPref(2f));
 	}
 

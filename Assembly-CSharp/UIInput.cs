@@ -29,8 +29,8 @@ public class UIInput : MonoBehaviour
 
 	public string savedAs;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject selectOnTab;
 
 	public Color activeTextColor = Color.white;

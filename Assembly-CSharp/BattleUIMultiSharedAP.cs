@@ -6,12 +6,12 @@ public class BattleUIMultiSharedAP : MonoBehaviour
 {
 	private const int MAX_AP = 16;
 
-	[SerializeField]
 	[Header("APアイコン")]
+	[SerializeField]
 	private SharedApNotes[] apNotes = new SharedApNotes[16];
 
-	[Header("AP値ラベル")]
 	[SerializeField]
+	[Header("AP値ラベル")]
 	private UILabel apLabel;
 
 	[SerializeField]

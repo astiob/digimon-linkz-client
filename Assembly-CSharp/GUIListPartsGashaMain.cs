@@ -1,6 +1,8 @@
 ﻿using Master;
 using System;
+using UI.Gasha;
 using UnityEngine;
+using User;
 
 public sealed class GUIListPartsGashaMain : GUIListPartBS
 {
@@ -8,12 +10,12 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[SerializeField]
 	private UISprite newSprite;
 
-	[Header("回数表示")]
 	[SerializeField]
+	[Header("回数表示")]
 	private UILabel lbAbleCount;
 
-	[Header("選択してないときの背景色")]
 	[SerializeField]
+	[Header("選択してないときの背景色")]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
@@ -32,23 +34,23 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[Header("残り時間のラベル")]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[SerializeField]
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
-	public UITexture bannerTex;
+	[Header("バナーのテクスチャ")]
+	private UITexture bannerTex;
 
-	private GameWebAPI.RespDataGA_GetGachaInfo.Result data;
+	private GameWebAPI.RespDataGA_GetGachaInfo.Result gashaInfo;
 
 	private bool isTouchEndFromChild;
 
@@ -58,16 +60,17 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 
 	private int totalSeconds;
 
-	public GameWebAPI.RespDataGA_GetGachaInfo.Result Data
+	private Action<int> pushedAction;
+
+	public GameWebAPI.RespDataGA_GetGachaInfo.Result GashaInfo
 	{
 		get
 		{
-			return this.data;
+			return this.gashaInfo;
 		}
 		set
 		{
-			this.data = value;
-			this.ShowGUI();
+			this.gashaInfo = value;
 		}
 	}
 
@@ -93,7 +96,7 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	public void ShowAbleCount()
 	{
 		int num = this.CalcAbleCount();
-		if (num > 99)
+		if (99 < num)
 		{
 			num = 99;
 		}
@@ -102,62 +105,21 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 
 	private int CalcAbleCount()
 	{
-		int point = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-		int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.friendPoint);
-		int num2 = 0;
-		int num3;
-		if (this.data.IsRare() || this.data.IsRareChip() || this.data.IsRareTicket())
+		int result = 0;
+		int numberExceptProtectedAssets = UserInventory.GetNumberExceptProtectedAssets(this.gashaInfo.priceType.GetCostAssetsCategory(), this.gashaInfo.priceType.GetCostAssetsValue());
+		GameWebAPI.RespDataGA_GetGachaInfo.Detail detail = this.gashaInfo.details.GetDetail(1);
+		if (detail != null)
 		{
-			num3 = point;
+			result = detail.GetOnceRemainingPlayCount(numberExceptProtectedAssets);
 		}
-		else if (this.data.IsLink() || this.data.IsLinkChip() || this.data.IsLinkTicket())
-		{
-			num3 = num;
-		}
-		else
-		{
-			num3 = 0;
-		}
-		int num4 = 0;
-		if (this.data.isFirstGacha1.total == 1)
-		{
-			num4 = int.Parse(this.data.priceFirst1);
-			if (num4 <= num3)
-			{
-				num2++;
-				num3 -= num4;
-			}
-		}
-		if (this.data.isFirstGacha1.today == 1)
-		{
-			string dailyresetFirst = this.data.dailyresetFirst1;
-			if (dailyresetFirst == "1")
-			{
-				num4 = int.Parse(this.data.priceFirst1);
-			}
-			else if (dailyresetFirst == "0")
-			{
-				num4 = int.Parse(this.data.price);
-			}
-			else
-			{
-				global::Debug.LogError("dailyresetFirst1がおかしいです。");
-			}
-			if (num4 <= num3)
-			{
-				num2++;
-				num3 -= num4;
-			}
-		}
-		num4 = int.Parse(this.data.price);
-		return num2 + num3 / num4;
+		return result;
 	}
 
-	public override void ShowGUI()
+	public void ShowGUI(Texture buttonImage)
 	{
 		base.ShowGUI();
 		this.bgSprite.color = this.normalBGColor;
-		this.restTimeDate = DateTime.Parse(this.data.endTime);
+		this.restTimeDate = DateTime.Parse(this.gashaInfo.endTime);
 		this.totalSeconds = GUIBannerParts.GetRestTimeSeconds(this.restTimeDate);
 		if (this.totalSeconds < 99999999)
 		{
@@ -171,14 +133,14 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 		{
 			base.InvokeRepeating("CountDown", 1f, 1f);
 		}
-		this.bannerTex.mainTexture = this.data.tex;
+		this.bannerTex.mainTexture = buttonImage;
 		this.ShowAbleCount();
 		this.SetNew();
 	}
 
 	private void CountDown()
 	{
-		this.restTimeDate = DateTime.Parse(this.data.endTime);
+		this.restTimeDate = DateTime.Parse(this.gashaInfo.endTime);
 		this.totalSeconds = GUIBannerParts.GetRestTimeSeconds(this.restTimeDate);
 		if (this.totalSeconds < 99999999)
 		{
@@ -188,7 +150,7 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 		{
 			this.timeLabel.text = StringMaster.GetString("GashaRegular");
 		}
-		if (this.totalSeconds <= 0)
+		if (0 >= this.totalSeconds)
 		{
 			base.CancelInvoke("CountDown");
 		}
@@ -233,15 +195,17 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 		}
 		if (flag && !this.selectPanelA.animationMoving)
 		{
-			float z = this.selectPanelA.transform.localPosition.z;
+			Transform transform = this.selectPanelA.transform;
+			float z = transform.localPosition.z;
 			base.OnTouchEnded(touch, pos, flag);
-			this.selectPanelA.transform.SetLocalZ(z);
+			Vector3 localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, z);
+			transform.localPosition = localPosition;
 			if (0 < this.totalSeconds)
 			{
 				float magnitude = (this.beganPostion - pos).magnitude;
-				if (magnitude < 40f && !this.isTouchEndFromChild && CMD_GashaTOP.instance != null && CMD_GashaTOP.instance.csSelectPanelGashaMain.SetCellAnim(base.IDX))
+				if (40f > magnitude && !this.isTouchEndFromChild && this.pushedAction != null)
 				{
-					CMD_GashaTOP.instance.ChangeSelection(base.IDX);
+					this.pushedAction(base.IDX);
 				}
 			}
 		}
@@ -255,32 +219,35 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 
 	private string GetPrefsID()
 	{
-		return "GASHA_BANNER_IS_SHOWED_" + this.Data.gachaId;
+		return "GASHA_BANNER_IS_SHOWED_" + this.GashaInfo.gachaId;
 	}
 
 	private void SetNew()
 	{
-		string prefsID = this.GetPrefsID();
-		if (PlayerPrefs.HasKey(prefsID))
+		if (null != this.newSprite)
 		{
-			if (this.newSprite != null)
+			if (PlayerPrefs.HasKey(this.GetPrefsID()))
 			{
 				this.newSprite.gameObject.SetActive(false);
 			}
-		}
-		else if (this.newSprite != null)
-		{
-			this.newSprite.gameObject.SetActive(true);
+			else
+			{
+				this.newSprite.gameObject.SetActive(true);
+			}
 		}
 	}
 
 	public void ResetNew()
 	{
-		if (this.newSprite != null)
+		if (null != this.newSprite)
 		{
 			this.newSprite.gameObject.SetActive(false);
 		}
-		string prefsID = this.GetPrefsID();
-		PlayerPrefs.SetString(prefsID, DateTime.Now.ToString());
+		PlayerPrefs.SetString(this.GetPrefsID(), DateTime.Now.ToString());
+	}
+
+	public void SetPushedAction(Action<int> action)
+	{
+		this.pushedAction = action;
 	}
 }

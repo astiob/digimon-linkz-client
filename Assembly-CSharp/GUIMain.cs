@@ -2,17 +2,12 @@
 using MonsterIcon;
 using Quest;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GUIMain : Singleton<GUIMain>
 {
 	public static bool USE_NGUI = true;
-
-	public static Camera gUICamera;
-
-	public static Camera mainCamera;
 
 	public static string gUIScreen = string.Empty;
 
@@ -24,20 +19,15 @@ public class GUIMain : Singleton<GUIMain>
 
 	private static Action onFadeBlackLoadScene;
 
-	public GameObject goTXT_DBG00;
+	private static UIRoot parentUIRoot;
 
-	public GameStringsFont gsfTXT_DBG00;
+	private static UIPanel parentUIPanel;
 
 	[SerializeField]
-	private GameObject screenEdgeCurtain;
+	private Camera orthoCamera;
 
-	private static float _verticalSpaceSize = 0f;
-
-	private static UIRoot uiRoot;
-
-	private static Camera __camera;
-
-	private static UICamera uiCamera;
+	[SerializeField]
+	private UICamera uiCamera;
 
 	[SerializeField]
 	private GameObject goMainBarrier;
@@ -97,73 +87,44 @@ public class GUIMain : Singleton<GUIMain>
 	{
 		get
 		{
-			return GUIMain._verticalSpaceSize;
-		}
-		set
-		{
-			GUIMain._verticalSpaceSize = value;
+			float num = GUIMain.parentUIPanel.GetWindowSize().y - (float)GUIMain.parentUIRoot.manualHeight;
+			if (0f < num)
+			{
+				num *= 0.5f;
+			}
+			else
+			{
+				num = 0f;
+			}
+			return num;
 		}
 	}
 
 	public static UIRoot GetUIRoot()
 	{
-		return GUIMain.uiRoot;
+		return GUIMain.parentUIRoot;
+	}
+
+	public static UIPanel GetUIPanel()
+	{
+		return GUIMain.parentUIPanel;
 	}
 
 	public static Camera GetOrthoCamera()
 	{
-		return GUIMain.__camera;
+		return Singleton<GUIMain>.instance.orthoCamera;
 	}
 
 	public static UICamera GetUICamera()
 	{
-		return GUIMain.uiCamera;
+		return Singleton<GUIMain>.instance.uiCamera;
 	}
 
 	private void Awake()
 	{
-		GUIMain.uiRoot = base.gameObject.transform.parent.gameObject.GetComponent<UIRoot>();
-		GUIMain.uiCamera = base.gameObject.GetComponent<UICamera>();
+		GUIMain.parentUIRoot = base.transform.parent.gameObject.GetComponent<UIRoot>();
+		GUIMain.parentUIPanel = GUIMain.parentUIRoot.GetComponent<UIPanel>();
 		GUIMain.self = this;
-		GameObject gameObject = GameObject.Find("GUI/Screen");
-		if (gameObject != null)
-		{
-			UnityEngine.Object.Destroy(gameObject);
-		}
-		GameObject gameObject2 = GameObject.Find("GUI Camera");
-		if (gameObject2 != null)
-		{
-			gameObject2.SetActive(false);
-			GUIMain.gUICamera = gameObject2.GetComponent<Camera>();
-		}
-		gameObject2 = GameObject.Find("Main Camera");
-		if (gameObject2 != null)
-		{
-			GUIMain.mainCamera = gameObject2.GetComponent<Camera>();
-		}
-		gameObject2 = GameObject.Find("GUI");
-		if (gameObject2 != null)
-		{
-			Camera component = gameObject2.GetComponent<Camera>();
-			GUIMain.__camera = component;
-			if (!GUIMain.USE_NGUI)
-			{
-				GUIMain.VerticalSpaceSize = 0f;
-				float num = 1136f;
-				float num2 = 640f;
-				float num3 = (float)component.pixelWidth / (float)component.pixelHeight;
-				float num4 = num / num2;
-				float num5 = num3 / num4;
-				if (num5 <= 1f)
-				{
-					component.orthographicSize /= num5;
-				}
-			}
-			else
-			{
-				this.UpdateVSS();
-			}
-		}
 	}
 
 	private void Start()
@@ -179,32 +140,6 @@ public class GUIMain : Singleton<GUIMain>
 		MonsterIconFactory.SetPartsPool(partsPool);
 	}
 
-	private void UpdateVSS()
-	{
-		float num = 1136f;
-		float num2 = 640f;
-		float num3 = (float)Screen.width;
-		float num4 = (float)Screen.height;
-		if (num4 > num3)
-		{
-			num4 = num3;
-			num3 = num4;
-		}
-		float num5 = num3 / num4;
-		float num6 = num / num2;
-		float num7 = num6 / num5;
-		if (num7 >= 1f)
-		{
-			float num8 = num4;
-			num8 /= num3 / num;
-			GUIMain.VerticalSpaceSize = (num8 - num2) / 2f;
-		}
-		else
-		{
-			GUIMain.VerticalSpaceSize = 0f;
-		}
-	}
-
 	public static int dialogValue
 	{
 		get
@@ -217,9 +152,9 @@ public class GUIMain : Singleton<GUIMain>
 		}
 	}
 
-	public static CommonDialog ShowCommonDialog(Action<int> action, string dialogName)
+	public static CommonDialog ShowCommonDialog(Action<int> action, string dialogName, Action<CommonDialog> actionReady = null)
 	{
-		return GUIManager.ShowCommonDialog(action, true, dialogName, null, null, 0.2f, 0f, 0f, -1f, -1f);
+		return GUIManager.ShowCommonDialog(action, dialogName, actionReady);
 	}
 
 	public static void BarrierReset()
@@ -245,7 +180,7 @@ public class GUIMain : Singleton<GUIMain>
 			GUIMain.mainBarrierPosZStack.Push(localPosition.z);
 		}
 		CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
-		if (topDialog != null)
+		if (null != topDialog)
 		{
 			float num = GUIManager.GetDLGPitch() / 2f;
 			localPosition.z = topDialog.gameObject.transform.localPosition.z + num;
@@ -265,7 +200,7 @@ public class GUIMain : Singleton<GUIMain>
 	{
 		Vector3 localPosition = GUIMain.self.goMainBarrier.transform.localPosition;
 		CommonDialog topDialog = GUIManager.GetTopDialog(null, false);
-		if (topDialog != null)
+		if (null != topDialog)
 		{
 			float num = GUIManager.GetDLGPitch() / 8f * 7f;
 			localPosition.z = topDialog.gameObject.transform.localPosition.z + num;
@@ -282,7 +217,7 @@ public class GUIMain : Singleton<GUIMain>
 		Vector3 localPosition = GUIMain.self.goMainBarrier.transform.localPosition;
 		if (GUIMain.isBarrierON)
 		{
-			if (GUIMain.mainBarrierPosZStack.Count > 0)
+			if (0 < GUIMain.mainBarrierPosZStack.Count)
 			{
 				localPosition.z = GUIMain.mainBarrierPosZStack.Pop();
 			}
@@ -301,30 +236,6 @@ public class GUIMain : Singleton<GUIMain>
 		return GUIMain.isBarrierON;
 	}
 
-	public static void SelectMainCamera()
-	{
-		if (GUIMain.mainCamera != null)
-		{
-			GUIMain.mainCamera.gameObject.SetActive(true);
-		}
-		if (GUIMain.gUICamera != null)
-		{
-			GUIMain.gUICamera.gameObject.SetActive(false);
-		}
-	}
-
-	public static void SelectGUICamera()
-	{
-		if (GUIMain.mainCamera != null)
-		{
-			GUIMain.mainCamera.gameObject.SetActive(false);
-		}
-		if (GUIMain.gUICamera != null)
-		{
-			GUIMain.gUICamera.gameObject.SetActive(true);
-		}
-	}
-
 	public static void ReqScreen(string screenName, string prefabName = "")
 	{
 		if (screenName == GUIMain.gUIScreen)
@@ -332,10 +243,10 @@ public class GUIMain : Singleton<GUIMain>
 			return;
 		}
 		string text = prefabName;
-		string a = string.Empty;
-		if (screenName == "UIColosseum")
+		string b = string.Empty;
+		if ("UIColosseum" == screenName)
 		{
-			a = "UIColosseum";
+			b = "UIColosseum";
 			text = (screenName = "UIHome");
 		}
 		if (string.IsNullOrEmpty(text))
@@ -343,42 +254,42 @@ public class GUIMain : Singleton<GUIMain>
 			text = screenName;
 		}
 		GUIMain.ReqScreenRaw(screenName, text);
-		string b = string.Empty;
+		string b2 = string.Empty;
 		string text2 = screenName;
 		switch (text2)
 		{
 		case "UITitle":
-			b = "bgm_101";
-			goto IL_15B;
+			b2 = "bgm_101";
+			goto IL_156;
 		case "UIHome":
 			GUIMain.nowBgm = string.Empty;
-			b = "bgm_201";
-			goto IL_15B;
+			b2 = "bgm_201";
+			goto IL_156;
 		case "UIShop":
-			goto IL_15B;
+			goto IL_156;
 		case "UIGame":
-			if (GUIMain.nowBgm != string.Empty)
+			if (!string.IsNullOrEmpty(GUIMain.nowBgm))
 			{
 				SoundMng.Instance().StopBGM(0.5f, null);
 				GUIMain.nowBgm = string.Empty;
 			}
-			goto IL_15B;
+			goto IL_156;
 		case "UIIdle":
 			GUIMain.nowBgm = string.Empty;
-			goto IL_15B;
+			goto IL_156;
 		}
-		b = GUIMain.nowBgm;
-		IL_15B:
-		if (a == "UIColosseum")
+		b2 = GUIMain.nowBgm;
+		IL_156:
+		if ("UIColosseum" == b)
 		{
 			GUIMain.nowBgm = string.Empty;
-			b = "bgm_203";
+			b2 = "bgm_203";
 		}
-		if (GUIMain.nowBgm != b)
+		if (GUIMain.nowBgm != b2)
 		{
-			GUIMain.nowBgm = b;
+			GUIMain.nowBgm = b2;
 			string path = string.Empty;
-			if (screenName == "UITitle")
+			if ("UITitle" == screenName)
 			{
 				path = "BGMInternal/" + GUIMain.nowBgm + "/sound";
 			}
@@ -396,7 +307,7 @@ public class GUIMain : Singleton<GUIMain>
 		{
 			GUIMain.nextGUIScreen = screenName;
 			GUIManager.LoadGUI(screenName, prefabName);
-			if (GUIMain.nextGUIScreen == "UIHome" || GUIMain.nextGUIScreen == "UI*****")
+			if ("UIHome" == GUIMain.nextGUIScreen || "UI*****" == GUIMain.nextGUIScreen)
 			{
 				GUIMain.beforeGUIScreen = new Stack<string>();
 			}
@@ -417,17 +328,16 @@ public class GUIMain : Singleton<GUIMain>
 	[SerializeField]
 	private void Update()
 	{
-		this.UpdateVSS();
-		if (GUIMain.nextGUIScreen != null && GUIMain.nextGUIScreen != string.Empty && GUIManager.ReadyGUI(GUIMain.nextGUIScreen))
+		if (GUIMain.nextGUIScreen != null && !string.IsNullOrEmpty(GUIMain.nextGUIScreen) && GUIManager.ReadyGUI(GUIMain.nextGUIScreen))
 		{
-			if (GUIMain.gUIScreen != null && GUIMain.gUIScreen != string.Empty)
+			if (GUIMain.gUIScreen != null && !string.IsNullOrEmpty(GUIMain.gUIScreen))
 			{
 				GUIManager.HideGUI(GUIMain.gUIScreen);
 				if (!GUIMain.backMode_)
 				{
-					if (!(GUIMain.nextGUIScreen == "UIHome") && !(GUIMain.nextGUIScreen == "UI*****"))
+					if (!("UIHome" == GUIMain.nextGUIScreen) && !("UI*****" == GUIMain.nextGUIScreen))
 					{
-						if (!(GUIMain.gUIScreen == "UIRestart") && !(GUIMain.gUIScreen == "UI******"))
+						if (!("UIRestart" == GUIMain.gUIScreen) && !("UI******" == GUIMain.gUIScreen))
 						{
 							GUIMain.beforeGUIScreen.Push(GUIMain.gUIScreen);
 						}
@@ -480,7 +390,7 @@ public class GUIMain : Singleton<GUIMain>
 			GUIManager.DeleteCommonDialog(list[i]);
 			UnityEngine.Object.DestroyImmediate(list[i].gameObject);
 		}
-		if (cd == null)
+		if (null == cd)
 		{
 			GUIManager.HideGUI("CommonDialogBarrier");
 		}
@@ -510,14 +420,14 @@ public class GUIMain : Singleton<GUIMain>
 		GUIMain.onFadeBlackLoadScene = null;
 		FarmSceneryCache.ClearCache();
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
+		if (null != tutorialObserver)
 		{
 			UnityEngine.Object.Destroy(tutorialObserver.gameObject);
 		}
 		TutorialUI tutorialUI = UnityEngine.Object.FindObjectOfType<TutorialUI>();
-		if (tutorialUI != null)
+		if (null != tutorialUI)
 		{
-			if (tutorialUI.gameObject.name == "GUI")
+			if ("GUI" == tutorialUI.gameObject.name)
 			{
 				UnityEngine.Object.Destroy(tutorialUI);
 				string[] array = new string[]
@@ -529,7 +439,7 @@ public class GUIMain : Singleton<GUIMain>
 				foreach (string name in array)
 				{
 					GameObject gameObject = GameObject.Find(name);
-					if (gameObject != null)
+					if (null != gameObject)
 					{
 						UnityEngine.Object.Destroy(gameObject);
 					}
@@ -541,7 +451,7 @@ public class GUIMain : Singleton<GUIMain>
 			}
 		}
 		AppCoroutine appCoroutine = UnityEngine.Object.FindObjectOfType<AppCoroutine>();
-		if (appCoroutine != null)
+		if (null != appCoroutine)
 		{
 			UnityEngine.Object.Destroy(appCoroutine.gameObject);
 		}
@@ -567,7 +477,6 @@ public class GUIMain : Singleton<GUIMain>
 				Action<int> actionEnd_ = new Action<int>(GUIMain.actCallBackBackToTOP);
 				GUIFadeControll.SetLoadInfo(delegate(int x)
 				{
-					Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(true);
 					GUIFadeControll.ActionRestart();
 				}, "Empty", guiName2, string.Empty, actionEnd_, false);
 				GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
@@ -614,7 +523,6 @@ public class GUIMain : Singleton<GUIMain>
 			GUIMain.onFadeBlackLoadScene();
 			GUIMain.onFadeBlackLoadScene = null;
 		}
-		Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(false);
 		GUIFadeControll.ActionRestart();
 	}
 
@@ -706,63 +614,15 @@ public class GUIMain : Singleton<GUIMain>
 					if (num2 == 0)
 					{
 						actionReceived();
-						goto IL_91;
+						return;
 					}
 				}
 			}
 			Singleton<GUIMain>.instance.StartCoroutine(APIUtil.Instance().SendBattleResult(actionReceived));
-			IL_91:
-			Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(true);
 		}, "Empty", screenName, string.Empty, null, false);
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
 		GUIMain.backMode_ = true;
-	}
-
-	private static IEnumerator SendBattleResult(Action remainingSceneChangeAction)
-	{
-		if (!Loading.IsShow())
-		{
-			Loading.Display(Loading.LoadingType.LARGE, false);
-		}
-		GameWebAPI.WorldResultLogic worldResultLogic = new GameWebAPI.WorldResultLogic();
-		worldResultLogic.SetSendData = delegate(GameWebAPI.WD_Req_DngResult param)
-		{
-			param.startId = DataMng.Instance().WD_ReqDngResult.startId;
-			param.dungeonId = DataMng.Instance().WD_ReqDngResult.dungeonId;
-			param.clear = DataMng.Instance().WD_ReqDngResult.clear;
-			int[] aliveInfo = DataMng.Instance().WD_ReqDngResult.aliveInfo;
-			if (aliveInfo != null)
-			{
-				param.aliveInfo = new int[aliveInfo.Length];
-				for (int i = 0; i < aliveInfo.Length; i++)
-				{
-					param.aliveInfo[i] = aliveInfo[i];
-				}
-			}
-		};
-		worldResultLogic.OnReceived = delegate(GameWebAPI.RespDataWD_DungeonResult response)
-		{
-			ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult = response;
-		};
-		GameWebAPI.WorldResultLogic request = worldResultLogic;
-		return request.Run(delegate()
-		{
-			ClassSingleton<BattleDataStore>.Instance.DeleteForSystem();
-			ClassSingleton<QuestData>.Instance.ClearDNGDataCache();
-			if (remainingSceneChangeAction != null)
-			{
-				remainingSceneChangeAction();
-			}
-		}, delegate(Exception nop)
-		{
-			ClassSingleton<QuestData>.Instance.RespDataWD_DungeonResult = null;
-			ClassSingleton<QuestData>.Instance.ClearDNGDataCache();
-			if (remainingSceneChangeAction != null)
-			{
-				remainingSceneChangeAction();
-			}
-		}, null);
 	}
 
 	public static void FadeBlackReqFromSceneForMulti(int startId, string screenName, float outSec = 0.5f, float inSec = 0.5f)
@@ -838,7 +698,6 @@ public class GUIMain : Singleton<GUIMain>
 				}
 				ClassSingleton<QuestData>.Instance.ClearDNGDataCache();
 			}
-			Singleton<GUIMain>.instance.screenEdgeCurtain.SetActive(true);
 		}, "Empty", screenName, string.Empty, null, false);
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
@@ -850,14 +709,6 @@ public class GUIMain : Singleton<GUIMain>
 		if (GUIMain.self.onStartNewScreenEvent != null)
 		{
 			GUIMain.self.onStartNewScreenEvent(newScreenName);
-		}
-	}
-
-	public void SetScreenEdgeCurtain(bool view)
-	{
-		if (this.screenEdgeCurtain.activeSelf != view)
-		{
-			this.screenEdgeCurtain.SetActive(view);
 		}
 	}
 }

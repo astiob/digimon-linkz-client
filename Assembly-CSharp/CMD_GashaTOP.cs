@@ -1,183 +1,166 @@
-﻿using Cutscene;
-using FarmData;
-using Master;
-using Monster;
-using Picturebook;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using Tutorial;
+using UI.Gasha;
 using UnityEngine;
+using User;
 
-public class CMD_GashaTOP : CMD
+public class CMD_GashaTOP : CMD, ITutorialControl
 {
 	public static CMD_GashaTOP instance;
 
-	public static GameWebAPI.RespDataGA_GetGachaInfo gachaInfo;
+	[SerializeField]
+	private GashaUserAssetsInventory userInventory;
 
 	[SerializeField]
-	private GameObject goBTN_SINGLE;
+	private GashaStartButtonEvent startButton;
 
 	[SerializeField]
-	private GameObject goBTN_TEN;
+	private GashaMainInfomation mainInfomation;
 
 	[SerializeField]
-	private GameObject rareGashaBG;
+	private GUISelectPanelGashaMain gashaButtonList;
 
 	[SerializeField]
-	private GameObject linkGashaBG;
+	private GameObject gashaButtonResource;
 
-	[SerializeField]
-	private UILabel ngTX_LINK_POINT;
+	private GashaInfoManager gashaInfoManager;
 
-	[SerializeField]
-	private UILabel ngTX_STONE_NUM;
+	private string defaultShowGashaId;
 
-	private UISprite ngBTN_SINGLE;
+	private int selectGashaButtonIndex;
 
-	private UISprite ngBTN_TEN;
+	private Texture[] gashaButtonTextureList;
 
-	private GUICollider colBTN_SINGLE;
-
-	private GUICollider colBTN_TEN;
-
-	[SerializeField]
-	private GameObject goCAMPAIGN_1;
-
-	[SerializeField]
-	private GameObject goCAMPAIGN_10;
-
-	[SerializeField]
-	private UILabel lbCAMPAIGN_1;
-
-	[SerializeField]
-	private UILabel lbCAMPAIGN_10;
-
-	[SerializeField]
-	private UILabel ngTX_EXP_SINGLE;
-
-	[SerializeField]
-	private UILabel ngTX_EXP_TEN;
-
-	[SerializeField]
-	private UITexture ngTEX_BANNER_B;
-
-	[SerializeField]
-	private UITexture ngTEX_BANNER_B_Link;
-
-	[SerializeField]
-	private GameObject goCAD_ROOT;
-
-	[SerializeField]
-	private UILabel ngTX_ADVENT_CAUTION;
-
-	private GashaTutorialMode gashaTutorialMode = new GashaTutorialMode();
-
-	[SerializeField]
-	private GUISelectPanelGashaEdit csSelectPanelGasha;
-
-	[SerializeField]
-	private GameObject rareParts;
-
-	[SerializeField]
-	private GameObject linkParts;
-
-	[SerializeField]
-	private GameObject goSelectPanelGashaMain;
-
-	[SerializeField]
-	private GameObject goListPartsGashaMain_0;
-
-	public GUISelectPanelGashaMain csSelectPanelGashaMain;
-
-	private Action finishedActionCutScene;
-
-	private Action finishedActionCutScene_2;
-
-	private bool isExecGasha;
-
-	private List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaList;
-
-	private int activeListPartsIDX;
-
-	private GameWebAPI.GA_Req_ExecGacha req_exec_bk;
-
-	private GameWebAPI.RespDataGA_ExecChip chipResult;
-
-	private GameWebAPI.RespDataGA_ExecGacha gachaResult;
-
-	private GameWebAPI.RespDataGA_ExecTicket ticketResult;
-
-	public string SingleNeedCount { get; private set; }
-
-	public string TenNeedCount { get; private set; }
+	private bool isTutorial;
 
 	protected override void Awake()
 	{
 		CMD_GashaTOP.instance = this;
 		base.Awake();
-		this.ngBTN_SINGLE = this.goBTN_SINGLE.GetComponent<UISprite>();
-		this.ngBTN_TEN = this.goBTN_TEN.GetComponent<UISprite>();
-		this.colBTN_SINGLE = this.goBTN_SINGLE.GetComponent<GUICollider>();
-		this.colBTN_TEN = this.goBTN_TEN.GetComponent<GUICollider>();
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
-		base.StartCoroutine(this.InitDLG(f, sizeX, sizeY, aT));
+		base.StartCoroutine(this.InitDLG(closeEvent, sizeX, sizeY, showAnimationTime));
 	}
 
-	private IEnumerator InitDLG(Action<int> f, float sizeX, float sizeY, float aT)
+	private IEnumerator InitDLG(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
-		GameWebAPI.GA_Req_GashaInfo.Type type = GameWebAPI.GA_Req_GashaInfo.Type.NORMAL;
-		if (GashaTutorialMode.TutoExec)
+		int countryCode;
+		if (int.TryParse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN), out countryCode))
 		{
-			type = GameWebAPI.GA_Req_GashaInfo.Type.TUTORIAL;
+			bool requestRetry = this.isTutorial;
+			GameWebAPI.RequestGA_GashaInfo request = new GameWebAPI.RequestGA_GashaInfo
+			{
+				SetSendData = delegate(GameWebAPI.GA_Req_GashaInfo param)
+				{
+					int type;
+					param.isTutorial = type;
+					param.countryCode = countryCode;
+				},
+				OnReceived = delegate(GameWebAPI.RespDataGA_GetGachaInfo response)
+				{
+					this.gashaInfoManager = new GashaInfoManager(response);
+				}
+			};
+			APIRequestTask task = new APIRequestTask(request, requestRetry);
+			yield return base.StartCoroutine(task.Run(delegate
+			{
+				this.OnSuccessRequestGashaInfo(closeEvent, sizeX, sizeY, showAnimationTime);
+			}, new Action<Exception>(this.OnFailedRequestGashaInfo), null));
 		}
-		APIRequestTask task = APIUtil.Instance().RequestGashaInfo(type, false);
-		yield return base.StartCoroutine(task.Run(delegate
+		else
 		{
-			this.OnSuccessRequestGashaInfo(f, sizeX, sizeY, aT);
-		}, new Action<Exception>(this.OnFailedRequestGashaInfo), null));
+			global::Debug.LogError("国コードの取得に失敗.");
+			if (this.isTutorial)
+			{
+				base.SetCloseAction(delegate(int nop)
+				{
+					GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
+				});
+			}
+			else
+			{
+				base.ClosePanel(false);
+			}
+		}
 		yield break;
+	}
+
+	private void OnEnable()
+	{
+		if (base.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
+		{
+			List<int> list = this.gashaInfoManager.RemoveExcessGasha();
+			if (0 < list.Count)
+			{
+				this.CreateGashaButtonList(this.gashaInfoManager.GetInfoList(), this.gashaButtonTextureList, this.selectGashaButtonIndex, this.isTutorial);
+				for (int i = 0; i < list.Count; i++)
+				{
+					if (list[i] == this.selectGashaButtonIndex)
+					{
+						this.selectGashaButtonIndex = 0;
+						break;
+					}
+				}
+				this.gashaButtonList.SetCellAnim(this.selectGashaButtonIndex);
+				this.ChangeSelection(this.selectGashaButtonIndex);
+			}
+			else
+			{
+				this.gashaButtonList.RefreshAbleCount();
+				this.SetGashaDetailed(this.selectGashaButtonIndex);
+			}
+		}
 	}
 
 	private void OnSuccessRequestGashaInfo(Action<int> closeEvent, float sizeX, float sizeY, float showTime)
 	{
-		Singleton<UserDataMng>.Instance.RequestUserStockFacilityDataAPI(delegate(bool flg)
+		Singleton<UserDataMng>.Instance.RequestUserStockFacilityDataAPI(delegate(bool isSuccess)
 		{
-			if (flg)
+			if (isSuccess)
 			{
-				this.InitGashaInfo();
-				if (this.IsValidGashaInfo())
+				if (!this.isTutorial)
 				{
-					DownloadGashaTopTex.Instance.DownloadTexture(this.gashaList, delegate
+					int facilityId = 25;
+					if (!Singleton<UserDataMng>.Instance.ExistInBuildFacility(facilityId) && !Singleton<UserDataMng>.Instance.ExistInUserStockFacility(facilityId))
 					{
-						this.ShowDLG();
-						SoundMng.Instance().PlayGameBGM("bgm_202");
-						RestrictionInput.EndLoad();
-						this.activeListPartsIDX = 0;
-						this.BuildMainList();
-						this.ChangeSelection(this.activeListPartsIDX);
-						this.Show(closeEvent, sizeX, sizeY, showTime);
+						this.gashaInfoManager.RemoveChipGasha();
+					}
+					this.gashaInfoManager.SortInfo();
+				}
+				DownloadGashaTopTex.Instance.DownloadTexture(this.gashaInfoManager.GetInfoList(), delegate(Texture[] textureList)
+				{
+					this.gashaButtonTextureList = textureList;
+					this.ShowDLG();
+					SoundMng.Instance().PlayGameBGM("bgm_202");
+					RestrictionInput.EndLoad();
+					this.mainInfomation.SetTitleParts(this.PartsTitle);
+					this.selectGashaButtonIndex = this.GetDefaultShowGashaIndex(this.gashaInfoManager.GetInfoList());
+					this.gashaButtonList.Create(this.gashaButtonResource);
+					this.CreateGashaButtonList(this.gashaInfoManager.GetInfoList(), this.gashaButtonTextureList, this.selectGashaButtonIndex, this.isTutorial);
+					this.ChangeSelection(this.selectGashaButtonIndex);
+					this.Show(closeEvent, sizeX, sizeY, showTime);
+				});
+			}
+			else
+			{
+				RestrictionInput.EndLoad();
+				if (this.isTutorial)
+				{
+					this.SetCloseAction(delegate(int nop)
+					{
+						GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 					});
 				}
 				else
 				{
-					Loading.Invisible();
-					AlertManager.ShowAlertDialog(delegate(int idx)
-					{
-						this.ClosePanel(false);
-						RestrictionInput.EndLoad();
-					}, "C-GA01");
+					this.ClosePanel(false);
 				}
-			}
-			else
-			{
-				this.ClosePanel(false);
-				RestrictionInput.EndLoad();
 			}
 		});
 	}
@@ -185,14 +168,17 @@ public class CMD_GashaTOP : CMD
 	private void OnFailedRequestGashaInfo(Exception noop)
 	{
 		RestrictionInput.EndLoad();
-		if (GashaTutorialMode.TutoExec)
+		if (this.isTutorial)
 		{
 			base.SetCloseAction(delegate(int nop)
 			{
 				GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 			});
 		}
-		base.ClosePanel(false);
+		else
+		{
+			base.ClosePanel(false);
+		}
 	}
 
 	protected override void WindowOpened()
@@ -201,20 +187,18 @@ public class CMD_GashaTOP : CMD
 		FarmCameraControlForCMD.Off();
 	}
 
-	private void CloseAndFarmCamOn(bool animation)
-	{
-		FarmCameraControlForCMD.On();
-		base.ClosePanel(animation);
-	}
-
 	public override void ClosePanel(bool animation = true)
 	{
-		if (this.isExecGasha && base.gameObject.activeSelf)
+		if (UserHomeInfo.dirtyMyPage && base.gameObject.activeSelf && !this.isTutorial)
 		{
 			base.StartCoroutine(this.RequestMyPageData(animation));
 		}
 		else
 		{
+			if (this.isTutorial)
+			{
+				UserHomeInfo.dirtyMyPage = false;
+			}
 			this.Finalize(animation);
 		}
 	}
@@ -237,1356 +221,99 @@ public class CMD_GashaTOP : CMD
 
 	private void Finalize(bool animation)
 	{
-		if (CMD_10gashaResult.instance != null)
+		if (null != CMD_MonsterGashaResult.instance)
 		{
-			CMD_10gashaResult.instance.ClosePanel(true);
+			CMD_MonsterGashaResult.instance.ClosePanel(true);
 		}
 		SoundMng.Instance().PlayGameBGM("bgm_201");
-		this.csSelectPanelGashaMain.FadeOutAllListParts(null, false);
-		this.CloseAndFarmCamOn(animation);
+		this.gashaButtonList.FadeOutAllListParts(null, false);
+		GUIPlayerStatus.RefreshParams_S(false);
+		FarmCameraControlForCMD.On();
+		base.ClosePanel(animation);
 	}
 
 	protected override void OnDestroy()
 	{
-		this.ReleaseMainTex();
+		if (this.gashaButtonTextureList != null)
+		{
+			for (int i = 0; i < this.gashaButtonTextureList.Length; i++)
+			{
+				this.gashaButtonTextureList[i] = null;
+			}
+			this.gashaButtonTextureList = null;
+		}
 		base.OnDestroy();
 		CMD_GashaTOP.instance = null;
 	}
 
-	private void OnClickedShop()
+	private void CreateGashaButtonList(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaInfoList, Texture[] textureList, int selectedButtonIndex, bool isTutorial)
 	{
-		GUIMain.ShowCommonDialog(delegate(int i)
+		if (!this.gashaButtonResource.activeSelf)
 		{
-			this.ShowPointData();
-			this.ShowAllData(this.activeListPartsIDX);
-			this.csSelectPanelGashaMain.RefreshAbleCount();
-		}, "CMD_Shop");
+			this.gashaButtonResource.SetActive(true);
+		}
+		this.gashaButtonList.AllBuild(gashaInfoList, textureList, new Action<int>(this.ChangeSelection), selectedButtonIndex, isTutorial);
+		this.gashaButtonResource.SetActive(false);
 	}
 
-	private void OnClickedAppear()
+	private void ChangeSelection(int selectGashaIndex)
 	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
-		cmdwebWindow.TitleText = StringMaster.GetString("SystemCaution");
-		if (result.IsLinkChip() || result.IsRareChip())
+		this.selectGashaButtonIndex = selectGashaIndex;
+		GameWebAPI.RespDataGA_GetGachaInfo.Result info = this.gashaInfoManager.GetInfo(selectGashaIndex);
+		if (info != null)
 		{
-			cmdwebWindow.Url = WebAddress.EXT_ADR_CHIP_GASHA_NOTICE + result.gachaId;
-		}
-		else if (result.IsLink() || result.IsRare())
-		{
-			cmdwebWindow.Url = WebAddress.EXT_ADR_GASHA_NOTICE + result.gachaId;
-		}
-		else if (result.IsLinkTicket() || result.IsRareTicket())
-		{
-			cmdwebWindow.Url = WebAddress.EXT_ADR_TICKET_GASHA_NOTICE + result.gachaId;
-		}
-		else
-		{
-			global::Debug.LogError("存在しないガシャ");
+			this.mainInfomation.SetGashaInfo(info);
+			this.SetGashaDetailed(selectGashaIndex);
+			LeadCapture.Instance.SaveCaptureUpdate(this.gashaInfoManager.GetEndTimeList());
 		}
 	}
 
-	private void OnClickedPickUp()
+	private void SetGashaDetailed(int selectGashaIndex)
 	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow");
-		if (result.IsLinkChip() || result.IsRareChip())
+		GameWebAPI.RespDataGA_GetGachaInfo.Result info = this.gashaInfoManager.GetInfo(selectGashaIndex);
+		if (info != null)
 		{
-			((CMDWebWindow)commonDialog).TitleText = Regex.Replace(StringMaster.GetString("ChipGashaLineupCaution"), "\\t|\\n|\\r", string.Empty);
-			((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_CHIP_GASHA_INCIDENCE + result.gachaId;
-		}
-		else if (result.IsLink() || result.IsRare())
-		{
-			((CMDWebWindow)commonDialog).TitleText = Regex.Replace(StringMaster.GetString("GashaLineupCaution"), "\\t|\\n|\\r", string.Empty);
-			((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_GASHA_INCIDENCE + result.gachaId;
-		}
-		else if (result.IsLinkTicket() || result.IsRareTicket())
-		{
-			((CMDWebWindow)commonDialog).TitleText = Regex.Replace(StringMaster.GetString("TicketGashaLineupCaution"), "\\t|\\n|\\r", string.Empty);
-			((CMDWebWindow)commonDialog).Url = WebAddress.EXT_ADR_TICKET_GASHA_INCIDENCE + result.gachaId;
+			this.startButton.SetGashaInfo(info, this.isTutorial);
+			this.startButton.SetPlayButton();
+			this.userInventory.SetGashaPriceType(info.priceType);
 		}
 	}
 
-	private void OnCrickedInfo()
+	public void SetSelectGashaId(string gashaId)
 	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMDWebWindow");
-		((CMDWebWindow)commonDialog).TitleText = result.gachaName;
-		((CMDWebWindow)commonDialog).callbackAction = null;
-		int num = int.Parse(result.gachaId);
-		int num2 = num;
-		((CMDWebWindow)commonDialog).Url = ConstValue.APP_WEB_DOMAIN + ConstValue.WEB_INFO_ADR + num2.ToString();
+		this.defaultShowGashaId = gashaId;
 	}
 
-	private GameWebAPI.RespDataGA_GetGachaInfo.Result GetGashaInfo(int index)
-	{
-		if (this.gashaList.Count > index)
-		{
-			return this.gashaList[index];
-		}
-		return null;
-	}
-
-	public GameWebAPI.RespDataGA_GetGachaInfo.Result GetGashaInfo()
-	{
-		if (this.gashaList.Count > this.activeListPartsIDX)
-		{
-			return this.gashaList[this.activeListPartsIDX];
-		}
-		return null;
-	}
-
-	private void InitGashaInfo()
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result[] result = CMD_GashaTOP.gachaInfo.result;
-		this.gashaList = new List<GameWebAPI.RespDataGA_GetGachaInfo.Result>();
-		for (int i = 0; i < result.Length; i++)
-		{
-			this.gashaList.Add(result[i]);
-		}
-		if (!GashaTutorialMode.TutoExec)
-		{
-			this.gashaList.Sort(new Comparison<GameWebAPI.RespDataGA_GetGachaInfo.Result>(this.Compare_SORT));
-		}
-	}
-
-	private bool IsValidGashaInfo()
-	{
-		return this.gashaList.Count >= 2;
-	}
-
-	private int Compare_SORT(GameWebAPI.RespDataGA_GetGachaInfo.Result x, GameWebAPI.RespDataGA_GetGachaInfo.Result y)
-	{
-		int num = int.Parse(x.dispNum);
-		int num2 = int.Parse(y.dispNum);
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		string startTime = x.startTime;
-		string startTime2 = y.startTime;
-		num = startTime.CompareTo(startTime2);
-		num2 = startTime2.CompareTo(startTime);
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		num = int.Parse(x.gachaId);
-		num2 = int.Parse(y.gachaId);
-		if (num > num2)
-		{
-			return -1;
-		}
-		if (num < num2)
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	private void BuildMainList()
-	{
-		this.csSelectPanelGashaMain = this.goSelectPanelGashaMain.GetComponent<GUISelectPanelGashaMain>();
-		this.csSelectPanelGashaMain.selectParts = this.goListPartsGashaMain_0;
-		Rect rectWindowArea = this.GetRectWindowArea(this.goSelectPanelGashaMain.transform.localPosition);
-		this.csSelectPanelGashaMain.ListWindowViewRect = rectWindowArea;
-		int facilityCount = this.GetFacilityCount(25);
-		if (facilityCount <= 0)
-		{
-			List<GameWebAPI.RespDataGA_GetGachaInfo.Result> list = new List<GameWebAPI.RespDataGA_GetGachaInfo.Result>();
-			for (int i = 0; i < this.gashaList.Count; i++)
-			{
-				if (!this.gashaList[i].IsRareChip() && !this.gashaList[i].IsLinkChip())
-				{
-					list.Add(this.gashaList[i]);
-				}
-			}
-			this.gashaList = list;
-		}
-		this.csSelectPanelGashaMain.initLocation = true;
-		this.csSelectPanelGashaMain.AllBuild(this.gashaList);
-		this.goListPartsGashaMain_0.SetActive(false);
-	}
-
-	private int GetFacilityCount(int facilityID)
-	{
-		FarmRoot farmRoot = FarmRoot.Instance;
-		if (null == farmRoot)
-		{
-			global::Debug.LogError("FarmRoot Not Found");
-			return -1;
-		}
-		int facilityCount = farmRoot.Scenery.GetFacilityCount(facilityID);
-		List<UserFacility> stockFacilityListByfacilityIdAndLevel = Singleton<UserDataMng>.Instance.GetStockFacilityListByfacilityIdAndLevel(facilityID, -1);
-		int count = stockFacilityListByfacilityIdAndLevel.Count;
-		return facilityCount + count;
-	}
-
-	private Rect GetRectWindowArea(Vector3 v3)
-	{
-		return new Rect
-		{
-			xMin = -280f + v3.x,
-			xMax = 280f + v3.x,
-			yMin = -240f - GUIMain.VerticalSpaceSize,
-			yMax = 250f + GUIMain.VerticalSpaceSize
-		};
-	}
-
-	private void ReleaseMainTex()
-	{
-		if (this.gashaList != null)
-		{
-			for (int i = 0; i < this.gashaList.Count; i++)
-			{
-				this.gashaList[i].tex = null;
-			}
-		}
-	}
-
-	public void ChangeSelection(int idx)
-	{
-		this.activeListPartsIDX = idx;
-		GameWebAPI.RespDataGA_GetGachaInfo.Result gashaInfo = this.GetGashaInfo(this.activeListPartsIDX);
-		if (gashaInfo.IsRare() || gashaInfo.IsLink() || gashaInfo.IsRareChip() || gashaInfo.IsLinkChip() || gashaInfo.IsRareTicket() || gashaInfo.IsLinkTicket())
-		{
-			this.InitPanel();
-			this.csSelectPanelGasha.ResetAutoScrollTime();
-			this.csSelectPanelGasha.initLocation = true;
-			this.csSelectPanelGasha.AllBuild(gashaInfo.subImagePath);
-			this.csSelectPanelGasha.selectParts.SetActive(false);
-			if (gashaInfo.IsRare())
-			{
-				base.PartsTitle.SetTitle(StringMaster.GetString("GashaTitleRare"));
-			}
-			else if (gashaInfo.IsLink())
-			{
-				base.PartsTitle.SetTitle(StringMaster.GetString("GashaTitleLink"));
-			}
-			else if (gashaInfo.IsRareChip())
-			{
-				base.PartsTitle.SetTitle(StringMaster.GetString("GashaTitleRare"));
-			}
-			else if (gashaInfo.IsLinkChip())
-			{
-				base.PartsTitle.SetTitle(StringMaster.GetString("GashaTitleLink"));
-			}
-			else if (gashaInfo.IsRareTicket())
-			{
-				base.PartsTitle.SetTitle(StringMaster.GetString("GashaTitleRare"));
-			}
-			else if (gashaInfo.IsLinkTicket())
-			{
-				base.PartsTitle.SetTitle(StringMaster.GetString("GashaTitleLink"));
-			}
-			this.ShowAllData(this.activeListPartsIDX);
-			this.ShowCampaign(this.activeListPartsIDX);
-			this.ShowPlayCount(this.activeListPartsIDX);
-			this.rareParts.SetActive(true);
-			if (gashaInfo.IsRare() || gashaInfo.IsLink())
-			{
-				this.ngTX_ADVENT_CAUTION.text = StringMaster.GetString("GashaLineupCaution");
-			}
-			else if (gashaInfo.IsRareChip() || gashaInfo.IsLinkChip())
-			{
-				this.ngTX_ADVENT_CAUTION.text = StringMaster.GetString("ChipGashaLineupCaution");
-			}
-			else if (gashaInfo.IsRareTicket() || gashaInfo.IsLinkTicket())
-			{
-				this.ngTX_ADVENT_CAUTION.text = StringMaster.GetString("TicketGashaLineupCaution");
-			}
-			if (gashaInfo.IsLink() || gashaInfo.IsLinkChip() || gashaInfo.IsLinkTicket())
-			{
-				this.goCAD_ROOT.SetActive(false);
-			}
-			else
-			{
-				this.goCAD_ROOT.SetActive(true);
-			}
-		}
-		else
-		{
-			global::Debug.LogError("存在しないガシャ");
-		}
-		List<string> list = new List<string>();
-		foreach (GameWebAPI.RespDataGA_GetGachaInfo.Result result in this.gashaList)
-		{
-			list.Add(result.endTime);
-		}
-		LeadCapture.Instance.SaveCaptureUpdate(list);
-		this.ShowPointData();
-	}
-
-	private void InitPanel()
-	{
-		Rect listWindowViewRect = default(Rect);
-		listWindowViewRect.xMin = 117f;
-		listWindowViewRect.xMax = 660f;
-		listWindowViewRect.yMin = -240f;
-		listWindowViewRect.yMax = 240f;
-		this.csSelectPanelGasha.ListWindowViewRect = listWindowViewRect;
-	}
-
-	private void ShowAllData(int index)
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[index];
-		DataMng dataMng = DataMng.Instance();
-		int point = dataMng.RespDataUS_PlayerInfo.playerInfo.point;
-		int num = int.Parse(dataMng.RespDataUS_PlayerInfo.playerInfo.friendPoint);
-		int num2 = 0;
-		if (result.isFirstGacha1.total == 1)
-		{
-			num2 = int.Parse(result.priceFirst1);
-		}
-		else if (result.isFirstGacha1.today == 1)
-		{
-			string dailyresetFirst = result.dailyresetFirst1;
-			if (dailyresetFirst == "1")
-			{
-				num2 = int.Parse(result.priceFirst1);
-			}
-			else if (dailyresetFirst == "0")
-			{
-				num2 = int.Parse(result.price);
-			}
-			else
-			{
-				global::Debug.LogError("dailyresetFirst1がおかしいです。");
-			}
-		}
-		else
-		{
-			num2 = int.Parse(result.price);
-		}
-		int num3 = 0;
-		if (result.isFirstGacha10.total == 1)
-		{
-			num3 = int.Parse(result.priceFirst10);
-		}
-		else if (result.isFirstGacha10.today == 1)
-		{
-			string dailyresetFirst2 = result.dailyresetFirst10;
-			if (dailyresetFirst2 == "1")
-			{
-				num3 = int.Parse(result.priceFirst10);
-			}
-			else if (dailyresetFirst2 == "0")
-			{
-				num3 = int.Parse(result.priceDiscount10);
-			}
-			else
-			{
-				global::Debug.LogError("dailyresetFirst10がおかしいです。");
-			}
-		}
-		else
-		{
-			num3 = int.Parse(result.priceDiscount10);
-		}
-		int num4 = int.Parse(result.totalPlayLimitCount) - int.Parse(result.totalPlayCount);
-		string str = string.Empty;
-		if (result.IsRare() || result.IsRareChip() || result.IsRareTicket())
-		{
-			str = StringMaster.GetString("GashaDigistoneCost");
-		}
-		else if (result.IsLink() || result.IsLinkChip() || result.IsLinkTicket())
-		{
-			str = StringMaster.GetString("GashaLinkpointCost");
-		}
-		this.SingleNeedCount = num2.ToString();
-		this.ngTX_EXP_SINGLE.text = str + this.SingleNeedCount;
-		if (result.IsRare() || result.IsRareChip() || result.IsRareTicket())
-		{
-			if (point < num2)
-			{
-				this.ngBTN_SINGLE.spriteName = "Common02_Btn_Blue";
-				this.colBTN_SINGLE.activeCollider = true;
-			}
-			else
-			{
-				this.ngBTN_SINGLE.spriteName = "Common02_Btn_Blue";
-				this.colBTN_SINGLE.activeCollider = true;
-			}
-		}
-		else if (result.IsLink() || result.IsLinkChip() || result.IsLinkTicket())
-		{
-			if (num < num2)
-			{
-				this.ngBTN_SINGLE.spriteName = "Common02_Btn_Gray";
-				this.colBTN_SINGLE.activeCollider = false;
-			}
-			else
-			{
-				this.ngBTN_SINGLE.spriteName = "Common02_Btn_Blue";
-				this.colBTN_SINGLE.activeCollider = true;
-			}
-		}
-		this.TenNeedCount = num3.ToString();
-		this.ngTX_EXP_TEN.text = str + this.TenNeedCount;
-		if (result.IsRare() || result.IsRareChip() || result.IsRareTicket())
-		{
-			if (point < num3)
-			{
-				this.ngBTN_TEN.spriteName = "Common02_Btn_Red";
-				this.colBTN_TEN.activeCollider = true;
-			}
-			else
-			{
-				this.ngBTN_TEN.spriteName = "Common02_Btn_Red";
-				this.colBTN_TEN.activeCollider = true;
-			}
-		}
-		else if (result.IsLink() || result.IsLinkChip() || result.IsLinkTicket())
-		{
-			if (num < num3)
-			{
-				this.ngBTN_TEN.spriteName = "Common02_Btn_Gray";
-				this.colBTN_TEN.activeCollider = false;
-			}
-			else
-			{
-				this.ngBTN_TEN.spriteName = "Common02_Btn_Red";
-				this.colBTN_TEN.activeCollider = true;
-			}
-		}
-		if (result != null && int.Parse(result.totalPlayLimitCount) > 0)
-		{
-			if (num4 < 1)
-			{
-				this.ngBTN_SINGLE.spriteName = "Common02_Btn_Gray";
-				this.colBTN_SINGLE.activeCollider = false;
-			}
-			if (num4 < 10)
-			{
-				this.ngBTN_TEN.spriteName = "Common02_Btn_Gray";
-				this.colBTN_TEN.activeCollider = false;
-			}
-		}
-	}
-
-	private void ShowCampaign(int idx)
-	{
-		if (GashaTutorialMode.TutoExec)
-		{
-			this.goCAMPAIGN_1.SetActive(false);
-			this.goCAMPAIGN_10.SetActive(false);
-			this.lbCAMPAIGN_1.text = string.Empty;
-			this.lbCAMPAIGN_10.text = string.Empty;
-			return;
-		}
-		bool flag = false;
-		bool flag2 = false;
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[idx];
-		if (result.isFirstGacha1.total == 0 && result.isFirstGacha1.today == 0)
-		{
-			flag = true;
-		}
-		if (result.isFirstGacha10.total == 0 && result.isFirstGacha10.today == 0)
-		{
-			flag2 = true;
-		}
-		if (flag)
-		{
-			string text = result.appealTextDisplayType1;
-			switch (text)
-			{
-			case "0":
-				result.appealText1 = string.Empty;
-				break;
-			case "2":
-			case "3":
-				result.appealText1 = string.Empty;
-				break;
-			}
-		}
-		else
-		{
-			if (result.appealTextDisplayType1 == "0")
-			{
-				result.appealText1 = string.Empty;
-			}
-			if (result.appealTextDisplayType1 == "2" && result.isFirstGacha1.total == 0)
-			{
-				result.appealText1 = string.Empty;
-			}
-		}
-		if (flag2)
-		{
-			string text = result.appealTextDisplayType10;
-			switch (text)
-			{
-			case "0":
-				result.appealText10 = string.Empty;
-				break;
-			case "2":
-			case "3":
-				result.appealText10 = string.Empty;
-				break;
-			}
-		}
-		else
-		{
-			if (result.appealTextDisplayType10 == "0")
-			{
-				result.appealText10 = string.Empty;
-			}
-			if (result.appealTextDisplayType10 == "2" && result.isFirstGacha10.total == 0)
-			{
-				result.appealText10 = string.Empty;
-			}
-		}
-		if (string.IsNullOrEmpty(result.appealText1) || result.appealText1 == "null")
-		{
-			this.goCAMPAIGN_1.SetActive(false);
-			this.lbCAMPAIGN_1.text = string.Empty;
-		}
-		else
-		{
-			this.goCAMPAIGN_1.SetActive(true);
-			this.lbCAMPAIGN_1.text = result.appealText1;
-		}
-		if (string.IsNullOrEmpty(result.appealText10) || result.appealText10 == "null")
-		{
-			this.goCAMPAIGN_10.SetActive(false);
-			this.lbCAMPAIGN_10.text = string.Empty;
-		}
-		else
-		{
-			this.goCAMPAIGN_10.SetActive(true);
-			this.lbCAMPAIGN_10.text = result.appealText10;
-		}
-	}
-
-	private void ShowPlayCount(int idx)
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[idx];
-		int num = int.Parse(result.totalPlayLimitCount);
-		int num2 = num - int.Parse(result.totalPlayCount);
-		if (num2 < 0)
-		{
-			num2 = 0;
-		}
-		if (num > 0)
-		{
-			this.goCAMPAIGN_1.SetActive(true);
-			this.goCAMPAIGN_10.SetActive(true);
-			string @string = StringMaster.GetString("RemainingPlayCount");
-			string text = string.Format(@string, num2 / 1);
-			if (this.lbCAMPAIGN_1.text.Length > 0)
-			{
-				text = text + "\n" + this.lbCAMPAIGN_1.text;
-			}
-			this.lbCAMPAIGN_1.text = text;
-			text = string.Format(@string, num2 / 10);
-			if (this.lbCAMPAIGN_10.text.Length > 0)
-			{
-				text = text + "\n" + this.lbCAMPAIGN_10.text;
-			}
-			this.lbCAMPAIGN_10.text = text;
-		}
-	}
-
-	private void ShowPointData()
-	{
-		GameWebAPI.RespDataUS_GetPlayerInfo.PlayerInfo playerInfo = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo;
-		this.ngTX_LINK_POINT.text = playerInfo.friendPoint;
-		this.ngTX_STONE_NUM.text = playerInfo.point.ToString();
-		GUIPlayerStatus.RefreshParams_S(false);
-	}
-
-	private void ResetStatus(int ct)
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		int num = 0;
-		if (ct == 1)
-		{
-			if (result.isFirstGacha1.total == 1)
-			{
-				num = int.Parse(result.priceFirst1);
-				result.isFirstGacha1.total = 0;
-				result.isFirstGacha1.today = 0;
-			}
-			else if (result.isFirstGacha1.today == 1)
-			{
-				string dailyresetFirst = result.dailyresetFirst1;
-				if (dailyresetFirst == "1")
-				{
-					num = int.Parse(result.priceFirst1);
-				}
-				else if (dailyresetFirst == "0")
-				{
-					num = int.Parse(result.price);
-				}
-				else
-				{
-					global::Debug.LogError("dailyresetFirst1がおかしいです。");
-				}
-				result.isFirstGacha1.today = 0;
-			}
-			else
-			{
-				num = int.Parse(result.price);
-			}
-		}
-		else if (ct == 10)
-		{
-			if (result.isFirstGacha10.total == 1)
-			{
-				num = int.Parse(result.priceFirst10);
-				result.isFirstGacha10.total = 0;
-				result.isFirstGacha10.today = 0;
-			}
-			else if (result.isFirstGacha10.today == 1)
-			{
-				string dailyresetFirst2 = result.dailyresetFirst10;
-				if (dailyresetFirst2 == "1")
-				{
-					num = int.Parse(result.priceFirst10);
-				}
-				else if (dailyresetFirst2 == "0")
-				{
-					num = int.Parse(result.priceDiscount10);
-				}
-				else
-				{
-					global::Debug.LogError("dailyresetFirst10がおかしいです。");
-				}
-				result.isFirstGacha10.today = 0;
-			}
-			else
-			{
-				num = int.Parse(result.priceDiscount10);
-			}
-		}
-		if (result.IsRare() || result.IsRareChip() || result.IsRareTicket())
-		{
-			int num2 = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-			num2 -= num;
-			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point = num2;
-		}
-		else if (result.IsLink() || result.IsLinkChip() || result.IsLinkTicket())
-		{
-			int num3 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.friendPoint);
-			num3 -= num;
-			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.friendPoint = num3.ToString();
-		}
-		this.ShowAllData(this.activeListPartsIDX);
-		if (ct == 1)
-		{
-			this.ShowCampaign(this.activeListPartsIDX);
-		}
-		else if (ct == 10)
-		{
-			this.ShowCampaign(this.activeListPartsIDX);
-		}
-		this.ShowPlayCount(this.activeListPartsIDX);
-		this.ShowPointData();
-	}
-
-	public void OnClickedSingle()
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		bool flag = true;
-		bool flag2 = true;
-		if (result.IsRare() || result.IsLink())
-		{
-			flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_GASHA_1);
-			flag2 = false;
-		}
-		else if (result.IsRareChip() || result.IsLinkChip())
-		{
-			flag = Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_GASHA_1);
-			flag2 = true;
-		}
-		else if (result.IsRareTicket() || result.IsLinkTicket())
-		{
-			flag = false;
-		}
-		if (!flag)
-		{
-			this.req_exec_bk = new GameWebAPI.GA_Req_ExecGacha();
-			this.req_exec_bk.gachaId = int.Parse(result.gachaId);
-			this.req_exec_bk.playCount = 1;
-			this.req_exec_bk.itemCount = this.GetUserPoint(result.IsRare() || result.IsRareChip() || result.IsRareTicket());
-			this.ShowGashaAlert(result.IsRare() || result.IsRareChip() || result.IsRareTicket(), result.gachaName, this.SingleNeedCount, "1");
-		}
-		else if (!flag2)
-		{
-			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
-			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.GASHA);
-		}
-		else
-		{
-			CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
-			cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.GASHA);
-		}
-	}
-
-	public void OnClicked10()
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		bool flag = true;
-		bool flag2 = true;
-		if (result.IsRare() || result.IsLink())
-		{
-			flag = Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_GASHA_10);
-			flag2 = false;
-		}
-		else if (result.IsRareChip() || result.IsLinkChip())
-		{
-			flag = Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_GASHA_10);
-			flag2 = true;
-		}
-		else if (result.IsRareTicket() || result.IsLinkTicket())
-		{
-			flag = false;
-		}
-		int playCount = 10;
-		if (!flag)
-		{
-			this.req_exec_bk = new GameWebAPI.GA_Req_ExecGacha();
-			this.req_exec_bk.gachaId = int.Parse(result.gachaId);
-			this.req_exec_bk.playCount = playCount;
-			this.req_exec_bk.itemCount = this.GetUserPoint(result.IsRare() || result.IsRareChip() || result.IsRareTicket());
-			this.ShowGashaAlert(result.IsRare() || result.IsRareChip() || result.IsRareTicket(), result.gachaName, this.TenNeedCount, playCount.ToString());
-		}
-		else if (!flag2)
-		{
-			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
-			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.GASHA);
-		}
-		else
-		{
-			CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
-			cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.GASHA);
-		}
-	}
-
-	private int GetUserPoint(bool isRare)
+	private int GetDefaultShowGashaIndex(List<GameWebAPI.RespDataGA_GetGachaInfo.Result> gashaInfoList)
 	{
 		int result = 0;
-		if (isRare)
+		if (!string.IsNullOrEmpty(this.defaultShowGashaId))
 		{
-			result = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-		}
-		else
-		{
-			int.TryParse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.friendPoint, out result);
-		}
-		return result;
-	}
-
-	private void ShowGashaAlert(bool isRare, string gashaName, string price, string gashaCount)
-	{
-		DataMng dataMng = DataMng.Instance();
-		int point = dataMng.RespDataUS_PlayerInfo.playerInfo.point;
-		int num = int.Parse(price);
-		bool flag = true;
-		if (point < num && isRare)
-		{
-			flag = false;
-		}
-		if (flag)
-		{
-			string arg = string.Empty;
-			string s = string.Empty;
-			if (isRare)
+			for (int i = 0; i < gashaInfoList.Count; i++)
 			{
-				CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
-				cmd_ChangePOP_STONE.Title = gashaName;
-				arg = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory("2").assetTitle;
-				s = this.ngTX_STONE_NUM.text;
-				cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnPushedGashaConfirmYesButton);
-				if (GashaTutorialMode.TutoExec)
+				if (gashaInfoList[i].gachaId == this.defaultShowGashaId)
 				{
-					this.gashaTutorialMode.UpdateFakeExec(isRare);
-					if (this.gashaTutorialMode.FakeExec)
-					{
-						s = price;
-					}
-				}
-				cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("GashaDigistone"), arg, price, gashaCount);
-				cmd_ChangePOP_STONE.SetDigistone(int.Parse(s), num);
-			}
-			else
-			{
-				CMD_ChangePOP cmd_ChangePOP = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP") as CMD_ChangePOP;
-				cmd_ChangePOP.Title = gashaName;
-				arg = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory("3").assetTitle;
-				s = this.ngTX_LINK_POINT.text;
-				cmd_ChangePOP.OnPushedYesAction = new Action(this.OnPushedGashaConfirmYesButton);
-				if (GashaTutorialMode.TutoExec)
-				{
-					this.gashaTutorialMode.UpdateFakeExec(isRare);
-					if (this.gashaTutorialMode.FakeExec)
-					{
-						s = price;
-					}
-				}
-				cmd_ChangePOP.Info = string.Format(StringMaster.GetString("GashaLinkpoint"), arg, price, gashaCount);
-				cmd_ChangePOP.SetPoint(int.Parse(s), num);
-			}
-		}
-		else
-		{
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
-			cmd_Confirm.Title = gashaName;
-			cmd_Confirm.Info = StringMaster.GetString("GashaShortage");
-			cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
-			cmd_Confirm.BtnTextNo = StringMaster.GetString("SystemButtonClose");
-		}
-	}
-
-	private void OnPushedGashaConfirmYesButton()
-	{
-		this.CheckExecGasha();
-		CMD_ChangePOP cmd_ChangePOP = UnityEngine.Object.FindObjectOfType<CMD_ChangePOP>();
-		if (null != cmd_ChangePOP)
-		{
-			cmd_ChangePOP.ClosePanel(true);
-		}
-		else
-		{
-			CMD_ChangePOP_STONE cmd_ChangePOP_STONE = UnityEngine.Object.FindObjectOfType<CMD_ChangePOP_STONE>();
-			if (null != cmd_ChangePOP_STONE)
-			{
-				cmd_ChangePOP_STONE.ClosePanel(true);
-			}
-		}
-	}
-
-	private void CheckExecGasha()
-	{
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		if (this.gashaTutorialMode.FakeExec)
-		{
-			this.gachaResult = this.gashaTutorialMode.GetFakeGashaResult();
-			this.EndExecGashaSuccess();
-		}
-		else if (result.IsRare() || result.IsLink())
-		{
-			AppCoroutine.Start(this.ExecGashaAPI(), false);
-		}
-		else if (result.IsRareChip() || result.IsLinkChip())
-		{
-			AppCoroutine.Start(this.ExecChipAPI(), false);
-		}
-		else if (result.IsRareTicket() || result.IsLinkTicket())
-		{
-			AppCoroutine.Start(this.ExecTicketAPI(), false);
-		}
-	}
-
-	private void OnCloseConfirmShop(int idx)
-	{
-		if (idx == 0)
-		{
-			GUIMain.ShowCommonDialog(delegate(int i)
-			{
-				this.ShowPointData();
-				if (CMD_10gashaResult.instance != null)
-				{
-					CMD_10gashaResult.instance.ShowPointData();
-				}
-				if (CMD_ChipGashaResult.instance != null)
-				{
-					CMD_ChipGashaResult.instance.ShowPointData();
-				}
-				this.csSelectPanelGashaMain.RefreshAbleCount();
-			}, "CMD_Shop");
-		}
-	}
-
-	public string LinkPointString
-	{
-		get
-		{
-			return this.ngTX_LINK_POINT.text;
-		}
-	}
-
-	public string StoneNumString
-	{
-		get
-		{
-			return this.ngTX_STONE_NUM.text;
-		}
-	}
-
-	public string NeedSingleNumString
-	{
-		get
-		{
-			return this.ngTX_EXP_SINGLE.text;
-		}
-	}
-
-	public string NeedTenNumString
-	{
-		get
-		{
-			return this.ngTX_EXP_TEN.text;
-		}
-	}
-
-	private void ShowUI(bool value)
-	{
-		base.gameObject.transform.FindChild("TitleRoot").gameObject.SetActive(value);
-		base.gameObject.transform.FindChild("EFC_LEFT").gameObject.SetActive(value);
-		base.gameObject.transform.FindChild("EFC_RIGHT").gameObject.SetActive(value);
-		base.gameObject.transform.FindChild("EFC_BG").gameObject.SetActive(value);
-		PartsMenu.instance.gameObject.SetActive(value);
-		GUIFace.instance.gameObject.SetActive(value);
-		GUIFaceIndicator.instance.gameObject.SetActive(value);
-	}
-
-	public static void updateTotalPlayCount(int gachaId, int playCount)
-	{
-		if (CMD_GashaTOP.instance != null && CMD_GashaTOP.instance.gashaList != null)
-		{
-			foreach (GameWebAPI.RespDataGA_GetGachaInfo.Result result in CMD_GashaTOP.instance.gashaList)
-			{
-				if (int.Parse(result.gachaId) == gachaId)
-				{
-					if (result.totalPlayLimitCount == "0")
-					{
-						break;
-					}
-					result.totalPlayCount = (int.Parse(result.totalPlayCount) + playCount).ToString();
+					result = i;
 					break;
 				}
 			}
 		}
+		return result;
 	}
 
-	public static void removeExceededGasha()
+	public void SetTutorialParameter(Dictionary<string, Action> passTutorialAction)
 	{
-		if (CMD_GashaTOP.instance != null && CMD_GashaTOP.instance.gashaList != null)
+		this.isTutorial = true;
+		if (passTutorialAction.ContainsKey("GashaConfirmDialog"))
 		{
-			bool flag = false;
-			for (int i = CMD_GashaTOP.instance.gashaList.Count - 1; i >= 0; i--)
-			{
-				GameWebAPI.RespDataGA_GetGachaInfo.Result result = CMD_GashaTOP.instance.gashaList[i];
-				if (int.Parse(result.totalPlayLimitCount) > 0 && int.Parse(result.totalPlayLimitCount) <= int.Parse(result.totalPlayCount))
-				{
-					CMD_GashaTOP.instance.activeListPartsIDX = ((CMD_GashaTOP.instance.activeListPartsIDX != i) ? CMD_GashaTOP.instance.activeListPartsIDX : 0);
-					CMD_GashaTOP.instance.gashaList.RemoveAt(i);
-					flag = true;
-				}
-			}
-			if (flag)
-			{
-				CMD_GashaTOP.instance.goListPartsGashaMain_0.SetActive(true);
-				CMD_GashaTOP.instance.csSelectPanelGashaMain.AllBuild(CMD_GashaTOP.instance.gashaList);
-				CMD_GashaTOP.instance.goListPartsGashaMain_0.SetActive(false);
-				if (CMD_GashaTOP.instance.csSelectPanelGashaMain.SetCellAnim(CMD_GashaTOP.instance.activeListPartsIDX))
-				{
-					CMD_GashaTOP.instance.ChangeSelection(CMD_GashaTOP.instance.activeListPartsIDX);
-				}
-			}
-		}
-	}
-
-	private IEnumerator ExecChipAPI()
-	{
-		GameWebAPI.RequestGA_ChipExec request = new GameWebAPI.RequestGA_ChipExec
-		{
-			SetSendData = delegate(GameWebAPI.GA_Req_ExecChip param)
-			{
-				param.gachaId = this.req_exec_bk.gachaId;
-				param.playCount = this.req_exec_bk.playCount;
-			},
-			OnReceived = delegate(GameWebAPI.RespDataGA_ExecChip response)
-			{
-				this.chipResult = response;
-				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> userChipList = this.GetUserChipList(this.chipResult.userAssetList);
-				ChipDataMng.AddUserChipDataList(userChipList);
-				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
-			}
-		};
-		yield return AppCoroutine.Start(request.RunOneTime(new Action(this.EndExecChipSuccess), delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-			GUIManager.CloseAllCommonDialog(null);
-		}, null), false);
-		yield break;
-	}
-
-	private List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> GetUserChipList(GameWebAPI.RespDataGA_ExecChip.UserAssetList[] userAssetS)
-	{
-		List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>();
-		for (int i = 0; i < userAssetS.Length; i++)
-		{
-			list.Add(new GameWebAPI.RespDataCS_ChipListLogic.UserChipList
-			{
-				chipId = int.Parse(userAssetS[i].assetValue),
-				userChipId = int.Parse(userAssetS[i].userAssetId),
-				userMonsterId = 0
-			});
-		}
-		return list;
-	}
-
-	private void EndExecChipSuccess()
-	{
-		RestrictionInput.EndLoad();
-		GUICollider.DisableAllCollider("=================================== ExecChipGasha::EndExecChipSuccess");
-		if (!GashaTutorialMode.TutoExec)
-		{
-			this.isExecGasha = true;
-		}
-		if (this.req_exec_bk.playCount < 2)
-		{
-			this.ResetStatus(1);
+			string key2;
+			string key = key2 = "GashaConfirmDialog";
+			Action a = passTutorialAction[key2];
+			passTutorialAction[key] = (Action)Delegate.Combine(a, new Action(this.startButton.OnPushedOneButton));
 		}
 		else
 		{
-			this.ResetStatus(10);
+			passTutorialAction.Add("GashaConfirmDialog", new Action(this.startButton.OnPushedOneButton));
 		}
-		CutsceneDataChipGasha cutsceneDataChipGasha = new CutsceneDataChipGasha
-		{
-			path = "Cutscenes/AssetBundle/ChipGasha/chip_gacha",
-			gashaResult = this.chipResult.userAssetList
-		};
-		cutsceneDataChipGasha.endCallback = delegate(RenderTexture renderTexture)
-		{
-			UITexture txBG = CMD_ChipGashaResult.instance.txBG;
-			txBG.mainTexture = renderTexture;
-			txBG.width = renderTexture.width;
-			txBG.height = renderTexture.height;
-			this.ShowUI(true);
-			CutSceneMain.FadeReqCutSceneEnd();
-			SoundMng.Instance().PlayGameBGM("bgm_202");
-		};
-		CutSceneMain.FadeReqCutScene(cutsceneDataChipGasha, new Action(this.StartChipCutSceneCallBack), null, delegate(int index)
-		{
-			RestrictionInput.EndLoad();
-			if (this.finishedActionCutScene != null)
-			{
-				this.finishedActionCutScene();
-				this.finishedActionCutScene = null;
-			}
-			if (this.finishedActionCutScene_2 != null)
-			{
-				this.finishedActionCutScene_2();
-				this.finishedActionCutScene_2 = null;
-			}
-		}, 0.5f, 0.5f);
-	}
-
-	private void StartChipCutSceneCallBack()
-	{
-		if (this.req_exec_bk.playCount < 2)
-		{
-			SoundMng.Instance().PlayGameBGM("bgm_204");
-		}
-		else
-		{
-			SoundMng.Instance().PlayGameBGM("bgm_205");
-		}
-		this.csSelectPanelGashaMain.RefreshAbleCount();
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> userChipList = this.GetUserChipList(this.chipResult.userAssetList);
-		CMD_ChipGashaResult.UserAssetList = this.chipResult.userAssetList;
-		CMD_ChipGashaResult.DataList = userChipList;
-		if (result.IsRareChip())
-		{
-			CMD_ChipGashaResult.GashaType = ConstValue.RARE_GASHA_TYPE;
-		}
-		else if (result.IsLinkChip())
-		{
-			CMD_ChipGashaResult.GashaType = ConstValue.LINK_GASHA_TYPE;
-		}
-		if (CMD_ChipGashaResult.instance != null)
-		{
-			CMD_ChipGashaResult.instance.ReShow();
-		}
-		else
-		{
-			GUIMain.ShowCommonDialog(null, "CMD_ChipGashaResult");
-		}
-		CMD_ChipGashaResult.RewardsData = this.chipResult.rewards;
-		GUICollider.EnableAllCollider("=================================== CMD_ExecChipGasha::StartChipCutSceneCallBack");
-		CutSceneMain.SetChipGashaTex(CMD_ChipGashaResult.instance.txBG);
-		this.ShowUI(false);
-	}
-
-	private IEnumerator ExecGashaAPI()
-	{
-		GameWebAPI.RequestGA_GashaExec request = new GameWebAPI.RequestGA_GashaExec
-		{
-			SetSendData = delegate(GameWebAPI.GA_Req_ExecGacha param)
-			{
-				param.gachaId = this.req_exec_bk.gachaId;
-				param.playCount = this.req_exec_bk.playCount;
-				param.itemCount = this.req_exec_bk.itemCount;
-			},
-			OnReceived = delegate(GameWebAPI.RespDataGA_ExecGacha response)
-			{
-				this.gachaResult = response;
-				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
-			}
-		};
-		yield return AppCoroutine.Start(request.RunOneTime(delegate()
-		{
-			AppCoroutine.Start(this.GetChipSlotInfo(), false);
-		}, delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-			GUIManager.CloseAllCommonDialog(null);
-		}, null), false);
-		yield break;
-	}
-
-	private IEnumerator GetChipSlotInfo()
-	{
-		GameWebAPI.MonsterSlotInfoListLogic request = ChipDataMng.RequestAPIMonsterSlotInfo(this.gachaResult.userMonsterList);
-		yield return AppCoroutine.Start(request.Run(new Action(this.EndExecGashaSuccess), delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-			this.ClosePanel(true);
-		}, null), false);
-		yield break;
-	}
-
-	private void EndExecGashaSuccess()
-	{
-		ClassSingleton<MonsterUserDataMng>.Instance.AddUserMonsterData(this.gachaResult.userMonsterList);
-		if (!GashaTutorialMode.TutoExec)
-		{
-			this.isExecGasha = true;
-		}
-		GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster[] userMonsterList = this.gachaResult.userMonsterList;
-		if (this.req_exec_bk.playCount < 2)
-		{
-			this.ResetStatus(1);
-		}
-		else
-		{
-			this.ResetStatus(10);
-		}
-		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		string[] array = new string[userMonsterList.Length];
-		string[] array2 = new string[userMonsterList.Length];
-		for (int i = 0; i < userMonsterList.Length; i++)
-		{
-			MonsterUserData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterList[i].userMonsterId);
-			GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = userMonster.GetMonsterMaster().Group;
-			array[i] = group.modelId;
-			array2[i] = group.growStep;
-			if (Convert.ToBoolean(userMonsterList[i].isNew) && !MonsterPicturebookData.ExistPicturebook(group.monsterCollectionId))
-			{
-				MonsterPicturebookData.AddPictureBook(group.monsterCollectionId);
-			}
-		}
-		CutsceneDataGasha cutsceneData = new CutsceneDataGasha
-		{
-			path = "Cutscenes/Gasha",
-			modelIdList = array,
-			growStepList = array2,
-			endCallback = delegate()
-			{
-				this.ShowUI(true);
-				CutSceneMain.FadeReqCutSceneEnd();
-			}
-		};
-		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
-		{
-			RestrictionInput.EndLoad();
-			if (this.finishedActionCutScene != null)
-			{
-				this.finishedActionCutScene();
-				this.finishedActionCutScene = null;
-			}
-			if (this.finishedActionCutScene_2 != null)
-			{
-				this.finishedActionCutScene_2();
-				this.finishedActionCutScene_2 = null;
-			}
-		}, 0.5f, 0.5f);
-	}
-
-	public void SetFinishedActionCutScene(Action action)
-	{
-		this.finishedActionCutScene = action;
-	}
-
-	public void SetFinishedActionCutScene_2(Action action)
-	{
-		this.finishedActionCutScene_2 = action;
-	}
-
-	private void StartCutSceneCallBack()
-	{
-		this.csSelectPanelGashaMain.RefreshAbleCount();
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster[] userMonsterList = this.gachaResult.userMonsterList;
-		CMD_10gashaResult.RewardsData = this.gachaResult.rewards;
-		List<string> list = new List<string>();
-		for (int i = 0; i < userMonsterList.Length; i++)
-		{
-			list.Add(userMonsterList[i].userMonsterId);
-		}
-		List<bool> list2 = new List<bool>();
-		for (int j = 0; j < userMonsterList.Length; j++)
-		{
-			list2.Add(Convert.ToBoolean(userMonsterList[j].isNew));
-		}
-		List<MonsterData> monsterDataListByUserMonsterIDList = this.GetMonsterDataListByUserMonsterIDList(list);
-		CMD_10gashaResult.DataList = monsterDataListByUserMonsterIDList;
-		CMD_10gashaResult.IconNewFlagList = list2;
-		if (result.IsRare())
-		{
-			CMD_10gashaResult.GashaType = ConstValue.RARE_GASHA_TYPE;
-		}
-		else if (result.IsLink())
-		{
-			CMD_10gashaResult.GashaType = ConstValue.LINK_GASHA_TYPE;
-		}
-		if (CMD_10gashaResult.instance != null)
-		{
-			CMD_10gashaResult.instance.ReShow();
-		}
-		else
-		{
-			GUIMain.ShowCommonDialog(null, "CMD_10gashaResult");
-		}
-		if (result.IsRare())
-		{
-			LeadReview leadReview = new LeadReview();
-			leadReview.DisplayDialog(monsterDataListByUserMonsterIDList);
-		}
-		this.ShowUI(false);
-	}
-
-	private List<MonsterData> GetMonsterDataListByUserMonsterIDList(List<string> userMonsterIdList)
-	{
-		List<MonsterData> list = new List<MonsterData>();
-		for (int i = 0; i < userMonsterIdList.Count; i++)
-		{
-			list.Add(MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterIdList[i], false));
-		}
-		return list;
-	}
-
-	private IEnumerator ExecTicketAPI()
-	{
-		GameWebAPI.RequestGA_TicketExec request = new GameWebAPI.RequestGA_TicketExec
-		{
-			SetSendData = delegate(GameWebAPI.GA_Req_ExecTicket param)
-			{
-				param.gachaId = this.req_exec_bk.gachaId;
-				param.playCount = this.req_exec_bk.playCount;
-			},
-			OnReceived = delegate(GameWebAPI.RespDataGA_ExecTicket response)
-			{
-				this.ticketResult = response;
-				CMD_GashaTOP.updateTotalPlayCount(this.req_exec_bk.gachaId, this.req_exec_bk.playCount);
-			}
-		};
-		yield return AppCoroutine.Start(request.RunOneTime(new Action(this.EndExecTicketSuccess), delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-			GUIManager.CloseAllCommonDialog(null);
-		}, null), false);
-		yield break;
-	}
-
-	private void EndExecTicketSuccess()
-	{
-		RestrictionInput.EndLoad();
-		GUICollider.DisableAllCollider("=================================== ExecTicketGasha::EndExecTicketSuccess");
-		if (!GashaTutorialMode.TutoExec)
-		{
-			this.isExecGasha = true;
-		}
-		if (this.req_exec_bk.playCount < 2)
-		{
-			this.ResetStatus(1);
-		}
-		else
-		{
-			this.ResetStatus(10);
-		}
-		CutsceneDataTicketGasha cutsceneDataTicketGasha = new CutsceneDataTicketGasha
-		{
-			path = "Cutscenes/ticketGacha",
-			gashaResult = this.ticketResult.userDungeonTicketList
-		};
-		cutsceneDataTicketGasha.endCallback = delegate(RenderTexture renderTexture)
-		{
-			UITexture txBG = CMD_TicketGashaResult.instance.txBG;
-			txBG.mainTexture = renderTexture;
-			txBG.width = renderTexture.width;
-			txBG.height = renderTexture.height;
-			this.ShowUI(true);
-			CutSceneMain.FadeReqCutSceneEnd();
-			SoundMng.Instance().PlayGameBGM("bgm_202");
-		};
-		CutSceneMain.FadeReqCutScene(cutsceneDataTicketGasha, new Action(this.StartTicketCutSceneCallBack), null, delegate(int index)
-		{
-			RestrictionInput.EndLoad();
-			if (this.finishedActionCutScene != null)
-			{
-				this.finishedActionCutScene();
-				this.finishedActionCutScene = null;
-			}
-			if (this.finishedActionCutScene_2 != null)
-			{
-				this.finishedActionCutScene_2();
-				this.finishedActionCutScene_2 = null;
-			}
-		}, 0.5f, 0.5f);
-	}
-
-	private void StartTicketCutSceneCallBack()
-	{
-		if (this.req_exec_bk.playCount < 2)
-		{
-			SoundMng.Instance().PlayGameBGM("bgm_204");
-		}
-		else
-		{
-			SoundMng.Instance().PlayGameBGM("bgm_205");
-		}
-		this.csSelectPanelGashaMain.RefreshAbleCount();
-		GameWebAPI.RespDataGA_GetGachaInfo.Result result = this.gashaList[this.activeListPartsIDX];
-		CMD_TicketGashaResult.UserDungeonTicketList = this.ticketResult.userDungeonTicketList;
-		if (result.IsRareTicket())
-		{
-			CMD_TicketGashaResult.GashaType = ConstValue.RARE_GASHA_TYPE;
-		}
-		else if (result.IsLinkTicket())
-		{
-			CMD_TicketGashaResult.GashaType = ConstValue.LINK_GASHA_TYPE;
-		}
-		if (CMD_TicketGashaResult.instance != null)
-		{
-			CMD_TicketGashaResult.instance.ReShow();
-		}
-		else
-		{
-			GUIMain.ShowCommonDialog(null, "CMD_TicketGashaResult");
-		}
-		CMD_TicketGashaResult.RewardsData = this.ticketResult.rewards;
-		GUICollider.EnableAllCollider("=================================== CMD_ExecTicketGasha::StartTicketCutSceneCallBack");
-		CutSceneMain.SetTicketGashaTex(CMD_TicketGashaResult.instance.txBG);
-		this.ShowUI(false);
-	}
-
-	public enum MODE
-	{
-		RARE = 1,
-		LINK
 	}
 }

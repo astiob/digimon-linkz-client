@@ -3,7 +3,7 @@ using Monster;
 using System;
 using UnityEngine;
 
-public class GUIListPartsDigiGarden : GUIListPartBS
+public sealed class GUIListPartsDigiGarden : GUIListPartBS
 {
 	public GameObject goMN_ICON;
 
@@ -144,7 +144,7 @@ public class GUIListPartsDigiGarden : GUIListPartBS
 	private void actMIconLong(MonsterData md)
 	{
 		CMD_CharacterDetailed.DataChg = md;
-		GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed");
+		GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
 	}
 
 	public override void OnTouchBegan(Touch touch, Vector2 pos)

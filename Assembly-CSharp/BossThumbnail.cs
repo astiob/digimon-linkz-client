@@ -37,7 +37,7 @@ public sealed class BossThumbnail : GUICollider
 
 	private void OnPushed()
 	{
-		CMD_QuestMonsterPOP cmd_QuestMonsterPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestMonsterPOP") as CMD_QuestMonsterPOP;
+		CMD_QuestMonsterPOP cmd_QuestMonsterPOP = GUIMain.ShowCommonDialog(null, "CMD_QuestMonsterPOP", null) as CMD_QuestMonsterPOP;
 		cmd_QuestMonsterPOP.SetBossDetails(this.bossInfo.monsterId, this.bossInfo.resistanceId);
 	}
 }

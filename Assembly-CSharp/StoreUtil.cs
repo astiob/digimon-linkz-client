@@ -381,7 +381,7 @@ public class StoreUtil : MonoBehaviour
 			{
 				GUIMain.BarrierON(null);
 			}
-		}, "CMD_ModalMessage");
+		}, "CMD_ModalMessage", null);
 		StoreUtil.StoneStoreData stoneStoreDataFromProductId = this.GetStoneStoreDataFromProductId(this._productId);
 		if (!this.isFromStart)
 		{

@@ -63,20 +63,20 @@ public class UIPopupList : UIWidgetContainer
 	[HideInInspector]
 	protected UIPanel mPanel;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UISprite mBackground;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UISprite mHighlight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UILabel mHighlightedLabel;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected List<UILabel> mLabelList = new List<UILabel>();
 
 	[HideInInspector]
@@ -89,24 +89,24 @@ public class UIPopupList : UIWidgetContainer
 	[NonSerialized]
 	protected int mOpenFrame;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string functionName = "OnSelectionChange";
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float textScale;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIFont font;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UILabel textLabel;
 
 	private UIPopupList.LegacyEvent mLegacyEvent;

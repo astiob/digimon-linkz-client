@@ -15,8 +15,8 @@ public class BattleMenu : MonoBehaviour
 	[SerializeField]
 	private MenuDialog menuDialog;
 
-	[SerializeField]
 	[Header("DialogHelpのGameObject")]
+	[SerializeField]
 	public GameObject helpDialogGO;
 
 	[Header("Menu/PanelのTransform")]
@@ -29,8 +29,11 @@ public class BattleMenu : MonoBehaviour
 		transform.SetParent(parent);
 		transform.localPosition = Vector3.right;
 		transform.localScale = Vector3.one;
-		this.SetupAnchor(this.helpBGWidget, parent);
-		this.SetupAnchor(this.menuBGWidget, parent);
+		UIPanel component = transform.GetComponent<UIPanel>();
+		if (component != null)
+		{
+			component.SetAnchor(parent);
+		}
 		return this.menuDialog;
 	}
 

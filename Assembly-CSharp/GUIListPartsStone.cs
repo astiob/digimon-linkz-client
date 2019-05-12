@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class GUIListPartsStone : GUIListPartBS
+public sealed class GUIListPartsStone : GUIListPartBS
 {
 	[SerializeField]
 	private UISprite ngBASE;
@@ -57,19 +57,13 @@ public class GUIListPartsStone : GUIListPartBS
 		set
 		{
 			this.data = value;
-			this.ShowGUI();
 		}
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
 	}
 
 	public void ChangeSprite(string sprName)
 	{
 		UISprite component = base.gameObject.GetComponent<UISprite>();
-		if (component != null)
+		if (null != component)
 		{
 			component.spriteName = sprName;
 		}
@@ -95,7 +89,7 @@ public class GUIListPartsStone : GUIListPartBS
 	{
 		Action<Texture2D> callback = delegate(Texture2D texture)
 		{
-			if (texture != null)
+			if (null != texture)
 			{
 				this.ngTEX_BANNER.mainTexture = texture;
 				this.ngICON.gameObject.SetActive(false);
@@ -117,7 +111,7 @@ public class GUIListPartsStone : GUIListPartBS
 	{
 		yield return AssetDataMng.Instance().LoadObject(path, delegate(UnityEngine.Object obj)
 		{
-			if (obj != null)
+			if (null != obj)
 			{
 				Texture2D mainTexture = obj as Texture2D;
 				this.ngTEX_BANNER.mainTexture = mainTexture;
@@ -154,13 +148,13 @@ public class GUIListPartsStone : GUIListPartBS
 		this.totalSeconds = GUIBannerParts.GetRestTimeSeconds(this.restTimeDate);
 		if (this.data.countDownDispFlg)
 		{
-			if (this.totalSeconds >= 99999999)
+			if (99999999 <= this.totalSeconds)
 			{
 				this.totalSeconds = GUIBannerParts.GetRestTimeOneDaySeconds(this.restTimeDate);
 			}
 			GUIBannerParts.SetTimeTextForDayOfWeek(this.ngTX_TIME_LIMIT, this.totalSeconds, this.restTimeDate, false);
 		}
-		else if (this.totalSeconds < 99999999)
+		else if (99999999 > this.totalSeconds)
 		{
 			GUIBannerParts.SetTimeText(this.ngTX_TIME_LIMIT, this.totalSeconds, this.restTimeDate);
 		}
@@ -168,7 +162,7 @@ public class GUIListPartsStone : GUIListPartBS
 		{
 			this.ngTX_TIME_LIMIT.text = string.Empty;
 		}
-		if (this.data.countDownDispFlg || this.ngTX_TIME_LIMIT.text != string.Empty)
+		if (this.data.countDownDispFlg || !string.IsNullOrEmpty(this.ngTX_TIME_LIMIT.text))
 		{
 			if (0 < this.totalSeconds)
 			{
@@ -185,7 +179,7 @@ public class GUIListPartsStone : GUIListPartBS
 	private void CountDown()
 	{
 		this.totalSeconds = GUIBannerParts.GetRestTimeSeconds(this.restTimeDate);
-		if (this.totalSeconds >= 99999999)
+		if (99999999 <= this.totalSeconds)
 		{
 			this.totalSeconds = GUIBannerParts.GetRestTimeOneDaySeconds(this.restTimeDate);
 		}
@@ -197,7 +191,7 @@ public class GUIListPartsStone : GUIListPartBS
 		{
 			GUIBannerParts.SetTimeText(this.ngTX_TIME_LIMIT, this.totalSeconds, this.restTimeDate);
 		}
-		if (this.totalSeconds <= 0)
+		if (0 >= this.totalSeconds)
 		{
 			this.ngTX_TIME_LIMIT.text = StringMaster.GetString("ExchangeCloseTitle");
 			base.CancelInvoke("CountDown");
@@ -257,20 +251,10 @@ public class GUIListPartsStone : GUIListPartBS
 	{
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
-	}
-
 	private void OnClickedDetail()
 	{
 		CMD_ModalItemPackDetail.Data = this.Data;
-		GUIMain.ShowCommonDialog(null, "CMD_ModalItemPackDetail");
+		GUIMain.ShowCommonDialog(null, "CMD_ModalItemPackDetail", null);
 	}
 
 	private void OnClickedPurchase()
@@ -300,7 +284,7 @@ public class GUIListPartsStone : GUIListPartBS
 
 	private void AgreementConfirmation()
 	{
-		CMD_AgreementConfirmation cmd_AgreementConfirmation = GUIMain.ShowCommonDialog(null, "CMD_AgreementConfirmation") as CMD_AgreementConfirmation;
+		CMD_AgreementConfirmation cmd_AgreementConfirmation = GUIMain.ShowCommonDialog(null, "CMD_AgreementConfirmation", null) as CMD_AgreementConfirmation;
 		cmd_AgreementConfirmation.SetActionAgreementPopupClosed(delegate(bool result)
 		{
 			if (result)
@@ -326,7 +310,7 @@ public class GUIListPartsStone : GUIListPartBS
 				StoreInit.Instance().SetStatusToDoneInit();
 				AlertManager.ShowAlertDialog(delegate(int nop)
 				{
-					if (CMD_Shop.instance != null)
+					if (null != CMD_Shop.instance)
 					{
 						CMD_Shop.instance.ClosePanel(true);
 					}
@@ -356,16 +340,16 @@ public class GUIListPartsStone : GUIListPartBS
 	{
 		bool isFinished = false;
 		Action<bool> onFnished = null;
-		if (CMD_Shop.instance != null)
+		if (null != CMD_Shop.instance)
 		{
 			onFnished = delegate(bool isSuccess)
 			{
 				if (onCompleted != null)
 				{
-					if (isSuccess && this.data.limitCount > 0)
+					if (isSuccess && 0 < this.data.limitCount)
 					{
 						this.data.purchasedCount++;
-						if (this.data.purchasedCount >= this.data.limitCount && CMD_Shop.instance != null)
+						if (this.data.purchasedCount >= this.data.limitCount && null != CMD_Shop.instance)
 						{
 							CMD_Shop.instance.DeleteListParts(base.IDX);
 						}
@@ -394,7 +378,7 @@ public class GUIListPartsStone : GUIListPartBS
 	{
 		if (string.IsNullOrEmpty(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.birthday))
 		{
-			this.ageConfDialog = (CMD_AgeConfirmation)GUIMain.ShowCommonDialog(new Action<int>(this.CompleteAgeConfirmd), "CMD_AgeConfirmation");
+			this.ageConfDialog = (GUIMain.ShowCommonDialog(new Action<int>(this.CompleteAgeConfirmd), "CMD_AgeConfirmation", null) as CMD_AgeConfirmation);
 			return true;
 		}
 		return false;
@@ -402,7 +386,8 @@ public class GUIListPartsStone : GUIListPartBS
 
 	private bool CheckMaxDigistoneCount()
 	{
-		bool flag = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point + this.Data.num > ConstValue.MAX_DIGISTONE_COUNT;
+		int num = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point + this.Data.num;
+		bool flag = ConstValue.MAX_DIGISTONE_COUNT < num;
 		if (flag && AlertManager.CheckDialogMessage("C-SH06"))
 		{
 			AlertManager.ShowAlertDialog(null, "C-SH06");

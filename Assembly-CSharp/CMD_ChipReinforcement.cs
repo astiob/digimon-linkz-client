@@ -27,7 +27,7 @@ public sealed class CMD_ChipReinforcement : CMD
 
 	public static CMD_ChipReinforcement Create(Action<int> callback = null)
 	{
-		return GUIMain.ShowCommonDialog(callback, "CMD_ChipReinforced") as CMD_ChipReinforcement;
+		return GUIMain.ShowCommonDialog(callback, "CMD_ChipReinforced", null) as CMD_ChipReinforcement;
 	}
 
 	protected override void WindowOpened()
@@ -46,7 +46,7 @@ public sealed class CMD_ChipReinforcement : CMD
 		base.ClosePanel(animation);
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		GUICollider.DisableAllCollider("CMD_ChipReinforced");
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
@@ -73,13 +73,12 @@ public sealed class CMD_ChipReinforcement : CMD
 		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), num, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
 		base.ShowDLG();
 		base.SetTutorialAnyTime("anytime_second_tutorial_chip_reinforcement");
-		base.Show(f, sizeX, sizeY, aT);
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 		RestrictionInput.EndLoad();
 	}
 
 	private void OnShortTouchChip(GUIListChipParts.Data data)
 	{
-		global::Debug.LogWarning("ShortTouch " + data.userChip.userChipId);
 		Action<int> callback = delegate(int result)
 		{
 			if (result > 0)

@@ -93,10 +93,7 @@ public class SubStatePlayChipEffect : BattleStateController
 					{
 						cameraKey = "skillA";
 					}
-					base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(new CharacterStateControl[]
-					{
-						list[0]
-					});
+					list[0].CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 					base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, list[0]);
 					base.stateManager.cameraControl.SetTime(cameraKey, 1f);
 				}
@@ -108,10 +105,8 @@ public class SubStatePlayChipEffect : BattleStateController
 					if (result2.chipPlayType != SubStatePlayChipEffect.ChipPlayType.None)
 					{
 						result2.characterStateControl.CharacterParams.gameObject.SetActive(true);
-						base.stateManager.threeDAction.PlayIdleAnimationCharactersAction(new CharacterStateControl[]
-						{
-							result2.characterStateControl
-						});
+						result2.characterStateControl.CharacterParams.StopAnimation();
+						result2.characterStateControl.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 					}
 				}
 				IEnumerator chipWait = this.PlayChipEffectPerformance(resultList);
@@ -139,7 +134,10 @@ public class SubStatePlayChipEffect : BattleStateController
 					if (!character2.isDied)
 					{
 						character2.CharacterParams.gameObject.SetActive(true);
-						character2.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+						base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(new CharacterStateControl[]
+						{
+							character2
+						});
 					}
 					else
 					{

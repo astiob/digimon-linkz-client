@@ -137,14 +137,13 @@ public static class FarmDataManager
 		return null;
 	}
 
-	public static FacilityM GetFacilityMasterByReleaseId(int releaseId)
+	public static FacilityM GetFacilityMasterByReleaseId(string releaseId)
 	{
 		if (FarmDataManager.facilityMaster != null)
 		{
-			string b = releaseId.ToString();
 			for (int i = 0; i < FarmDataManager.facilityMaster.Count; i++)
 			{
-				if (FarmDataManager.facilityMaster[i].releaseId == b)
+				if (FarmDataManager.facilityMaster[i].releaseId == releaseId)
 				{
 					return FarmDataManager.facilityMaster[i];
 				}

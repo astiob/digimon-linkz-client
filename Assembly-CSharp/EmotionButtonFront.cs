@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class EmotionButtonFront : MonoBehaviour
 {
-	[SerializeField]
 	[Header("エモーションを開くボタン")]
+	[SerializeField]
 	private UIButton openEmotionButton;
 
-	[SerializeField]
 	[Header("スタンプのラベル")]
+	[SerializeField]
 	private UILabel stampLabel;
 
 	[SerializeField]

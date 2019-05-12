@@ -98,7 +98,6 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 		this.ui.dialogRetire.AddEvent(new Action(this.inputPvP.OnClickPvPRetireDialogOkButton), new Action(base.input.OnClickRetireDialogCancelButton));
 		this.ui.initialInduction.AddEvent(new Action(base.input.OnClickCloseInitialInductionButton));
 		BattleInputUtility.AddEvent(this.ui.winNextButton.onClick, new Action(base.input.OnClickSkipWinnerAction));
-		BattleInputUtility.AddEvent(this.ui.loseNextButton.onClick, new Action(base.input.OnClickSkipWinnerAction));
 		IEnumerator hitIconInitialize = base.stateManager.uiControl.HitIconInitialize();
 		while (hitIconInitialize.MoveNext())
 		{

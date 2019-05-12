@@ -9,8 +9,8 @@ public class MultiBattleDialog : MonoBehaviour
 
 	private int nowTime = 10;
 
-	[SerializeField]
 	[Header("内容ラベル")]
+	[SerializeField]
 	private UILabel messageLabel;
 
 	[SerializeField]
@@ -29,8 +29,8 @@ public class MultiBattleDialog : MonoBehaviour
 	[SerializeField]
 	private UIComponentSkinner uiCompornentSkinner;
 
-	[Header("背景オブジェクト")]
 	[SerializeField]
+	[Header("背景オブジェクト")]
 	private GameObject[] bg;
 
 	[SerializeField]
@@ -61,7 +61,7 @@ public class MultiBattleDialog : MonoBehaviour
 	{
 		get
 		{
-			if (!BattleStateManager.current.onServerConnect)
+			if (BattleStateManager.current == null || !BattleStateManager.current.onServerConnect)
 			{
 				return 15;
 			}

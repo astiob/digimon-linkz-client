@@ -191,7 +191,7 @@ public class CMD_FriendTop : CMD
 	private void OnClickedSearch()
 	{
 		global::Debug.Log("============================================= FRIEND TOP SEARCH TAPPED!!");
-		GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedSearch), "CMD_PartsFriendIDSearch");
+		GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedSearch), "CMD_PartsFriendIDSearch", null);
 	}
 
 	private void OnClosedSearch(int idx)
@@ -241,13 +241,13 @@ public class CMD_FriendTop : CMD
 			{
 				CMD_PartsFriendCheckScreen.Data = this.selectFriendData;
 				CMD_PartsFriendCheckScreen.Exp = StringMaster.GetString("FriendSearch-05");
-				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSearchAndOpenProfile), "CMD_PartsFriendCheckScreen");
+				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSearchAndOpenProfile), "CMD_PartsFriendCheckScreen", null);
 			}
 			else
 			{
 				CMD_PartsFriendCheckScreen.Data = this.selectFriendData;
 				CMD_PartsFriendCheckScreen.Exp = StringMaster.GetString("FriendSearch-04");
-				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSearchAndReq), "CMD_PartsFriendCheckScreen");
+				GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseSearchAndReq), "CMD_PartsFriendCheckScreen", null);
 			}
 		}
 		RestrictionInput.EndLoad();
@@ -504,7 +504,7 @@ public class CMD_FriendTop : CMD
 		{
 		case 1:
 		{
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrend), "CMD_PartsFriendMENU1");
+			CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrend), "CMD_PartsFriendMENU1", null);
 			commonDialog.gameObject.transform.FindChild("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
 			commonDialog.gameObject.transform.FindChild("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-15");
 			commonDialog.gameObject.transform.FindChild("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
@@ -513,7 +513,7 @@ public class CMD_FriendTop : CMD
 		}
 		case 2:
 		{
-			CommonDialog commonDialog2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendReq), "CMD_PartsFriendMENU2");
+			CommonDialog commonDialog2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendReq), "CMD_PartsFriendMENU2", null);
 			commonDialog2.gameObject.transform.FindChild("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
 			commonDialog2.gameObject.transform.FindChild("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-17");
 			commonDialog2.gameObject.transform.FindChild("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
@@ -522,7 +522,7 @@ public class CMD_FriendTop : CMD
 		}
 		case 3:
 		{
-			CommonDialog commonDialog3 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendUnAprv), "CMD_PartsFriendMENU3");
+			CommonDialog commonDialog3 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendUnAprv), "CMD_PartsFriendMENU3", null);
 			commonDialog3.gameObject.transform.FindChild("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
 			commonDialog3.gameObject.transform.FindChild("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("FriendApproval-04");
 			commonDialog3.gameObject.transform.FindChild("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("FriendApproval-03");
@@ -646,7 +646,7 @@ public class CMD_FriendTop : CMD
 		{
 			CMD_PartsFriendCheckScreen.Data = this.selectFriendData;
 			CMD_PartsFriendCheckScreen.Exp = StringMaster.GetString("Friend-11");
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBreakConfirm), "CMD_PartsFriendCheckScreen");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBreakConfirm), "CMD_PartsFriendCheckScreen", null);
 		}
 		else if (idx == 3)
 		{
@@ -695,7 +695,7 @@ public class CMD_FriendTop : CMD
 		{
 			CMD_PartsFriendCheckScreen.Data = this.selectFriendData;
 			CMD_PartsFriendCheckScreen.Exp = StringMaster.GetString("FriendApply-07");
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendReqCancelConfirm), "CMD_PartsFriendCheckScreen");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendReqCancelConfirm), "CMD_PartsFriendCheckScreen", null);
 		}
 		else if (idx == 3)
 		{
@@ -744,13 +744,13 @@ public class CMD_FriendTop : CMD
 		{
 			CMD_PartsFriendCheckScreen.Data = this.selectFriendData;
 			CMD_PartsFriendCheckScreen.Exp = StringMaster.GetString("FriendApproval-14");
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendApproveConfirm), "CMD_PartsFriendCheckScreen");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendApproveConfirm), "CMD_PartsFriendCheckScreen", null);
 		}
 		else if (idx == 2)
 		{
 			CMD_PartsFriendCheckScreen.Data = this.selectFriendData;
 			CMD_PartsFriendCheckScreen.Exp = StringMaster.GetString("FriendApproval-09");
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendRejectConfirm), "CMD_PartsFriendCheckScreen");
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendRejectConfirm), "CMD_PartsFriendCheckScreen", null);
 		}
 		else if (idx == 4)
 		{
@@ -833,7 +833,7 @@ public class CMD_FriendTop : CMD
 				});
 			};
 		}
-		CMD_ProfileFriend cmd_ProfileFriend = GUIMain.ShowCommonDialog(action, "CMD_ProfileFriend") as CMD_ProfileFriend;
+		CMD_ProfileFriend cmd_ProfileFriend = GUIMain.ShowCommonDialog(action, "CMD_ProfileFriend", null) as CMD_ProfileFriend;
 		cmd_ProfileFriend.SetLastLoginTime(this.selectUserlastLoginTime);
 	}
 
@@ -990,28 +990,28 @@ public class CMD_FriendTop : CMD
 
 	private void FriendReleaseTouchEnded(Touch touch, Vector2 pos, bool flag)
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBreakConfirm), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendBreakConfirm), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("Friend-07");
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("Friend-08"), this.selectFriendDict.Count);
 	}
 
 	private void ApplyReleaseTouchEnded(Touch touch, Vector2 pos, bool flag)
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendReqCancelConfirm), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendReqCancelConfirm), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("FriendApply-03");
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("FriendApply-04"), this.selectFriendDict.Count);
 	}
 
 	private void AcceptTouchEnded(Touch touch, Vector2 pos, bool flag)
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendApproveConfirm), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendApproveConfirm), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("FriendApproval-10");
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("FriendApproval-11"), this.selectFriendDict.Count);
 	}
 
 	private void RejectTouchEnded(Touch touch, Vector2 pos, bool flag)
 	{
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendRejectConfirm), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFriendRejectConfirm), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = StringMaster.GetString("FriendApproval-05");
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("FriendApproval-06"), this.selectFriendDict.Count);
 	}
@@ -1023,7 +1023,7 @@ public class CMD_FriendTop : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
 			this.OnCorrespondCommonRecieve();
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("Friend-09");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("Friend-10"), this.selectFriendDict.Count);
 	}
@@ -1035,7 +1035,7 @@ public class CMD_FriendTop : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
 			this.OnCorrespondCommonRecieve();
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FriendApply-05");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FriendApply-06"), this.selectFriendDict.Count);
 	}
@@ -1047,7 +1047,7 @@ public class CMD_FriendTop : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
 			this.OnCorrespondCommonRecieve();
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FriendApproval-12");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FriendApproval-13"), this.selectFriendDict.Count);
 	}
@@ -1059,7 +1059,7 @@ public class CMD_FriendTop : CMD
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int nop)
 		{
 			this.OnCorrespondCommonRecieve();
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("FriendApproval-07");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("FriendApproval-08"), this.selectFriendDict.Count);
 	}

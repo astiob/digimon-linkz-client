@@ -493,14 +493,18 @@ public class TutorialCommandAction : TutorialCommandBase
 
 	private void WaitOpenDigimonDetail()
 	{
-		TutorialControlToGame.WaitOpenDetailWindowType waitOpenDetailUI = (TutorialControlToGame.WaitOpenDetailWindowType)this.scriptEngine.GetWaitOpenDetailUI();
-		if (waitOpenDetailUI == TutorialControlToGame.WaitOpenDetailWindowType.GASHA_DETAIL_UI)
+		int waitOpenDetailUI = this.scriptEngine.GetWaitOpenDetailUI();
+		int num = waitOpenDetailUI;
+		if (num != 0)
 		{
-			this.controlToGame.WaitOpenedForGashaCharacterDetailWindow(new Action(base.ResumeScript));
+			if (num == 1)
+			{
+				this.controlToGame.WaitOpenedForDigiGardenCharacterDetailWindow(new Action(base.ResumeScript));
+			}
 		}
-		else if (waitOpenDetailUI == TutorialControlToGame.WaitOpenDetailWindowType.EVOLUTION_DETAIL_UI)
+		else
 		{
-			this.controlToGame.WaitOpenedForDigiGardenCharacterDetailWindow(new Action(base.ResumeScript));
+			this.controlToGame.RemoveActionRegistFromOutside("GashaConfirmDialog");
 		}
 	}
 

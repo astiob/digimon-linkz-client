@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GUISelectPanelQuestRanking : GUISelectPanelViewPartsUD
 {
-	[SerializeField]
 	[Header("ポイントクエスト用パーツ")]
+	[SerializeField]
 	private GameObject pqSelectParts;
 
 	public override GameObject selectParts

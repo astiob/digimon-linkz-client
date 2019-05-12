@@ -35,7 +35,7 @@ public class CMD_UpgradeConfirmationDigistone : CMD_UpgradeConfirmation
 	protected override void OpenModalShortageMessage(string categoryId)
 	{
 		GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(categoryId);
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
 		cmd_Confirm.Title = string.Format(StringMaster.GetString("SystemShortage"), assetCategory.assetTitle);
 		cmd_Confirm.Info = string.Format(StringMaster.GetString("FacilityUpgradeFailedShortage"), assetCategory.assetTitle);
 		cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
@@ -62,12 +62,12 @@ public class CMD_UpgradeConfirmationDigistone : CMD_UpgradeConfirmation
 				farmUI.UpdateFacilityButton(null);
 			}
 		};
-		GUIMain.ShowCommonDialog(action, "CMD_Shop");
+		GUIMain.ShowCommonDialog(action, "CMD_Shop", null);
 	}
 
 	private void OnClickedLegalSpecificButton()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow") as CMDWebWindow;
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
 		cmdwebWindow.TitleText = StringMaster.GetString("ShopRule-02");
 		cmdwebWindow.Url = WebAddress.EXT_ADR_TRADE;
 	}

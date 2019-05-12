@@ -11,8 +11,8 @@ public class TweenCameraTargetFunction : MonoBehaviour
 	[SerializeField]
 	private Transform _allyCameraPosition;
 
-	[Range(1f, 179f)]
 	[SerializeField]
+	[Range(1f, 179f)]
 	private float _fieldOfView = 65f;
 
 	private bool _isBigBoss;

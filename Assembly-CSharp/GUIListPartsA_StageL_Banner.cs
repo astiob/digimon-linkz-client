@@ -11,8 +11,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("NEWのGameObject")]
 	private GameObject goNEW;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[SerializeField]
@@ -23,48 +23,48 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("選択してないときの外枠色")]
 	private Color normalFrameColor = Color.white;
 
-	[Header("選択時の外枠色")]
 	[SerializeField]
+	[Header("選択時の外枠色")]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[Header("背景のスプライト")]
 	[SerializeField]
+	[Header("背景のスプライト")]
 	private UISprite bgSprite;
 
 	[SerializeField]
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[Header("バナーのテクスチャ")]
 	[SerializeField]
+	[Header("バナーのテクスチャ")]
 	public UITexture bannerTex;
 
 	[SerializeField]
 	[Header("オープンの時の色")]
 	private Color openBannerCol;
 
-	[SerializeField]
 	[Header("クローズの時の色")]
+	[SerializeField]
 	private Color closeBannerCol;
 
-	[SerializeField]
 	[Header("オープンしてないを示す鍵")]
+	[SerializeField]
 	private GameObject goCloseKey;
 
 	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("クリアのマークの画像")]
+	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
 	[Header("ステージギミック表記Obj")]
@@ -335,7 +335,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 				{
 					int useStoneNum = int.Parse(this.worldStageData.worldStageM.forceOpenNum);
 					int hasStoneNum = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-					CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
+					CMD_ChangePOP_STONE cd = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
 					cd.Title = StringMaster.GetString("QuestUnlockTitle");
 					cd.OnPushedYesAction = delegate()
 					{
@@ -346,7 +346,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 								GUIMain.ShowCommonDialog(delegate(int i)
 								{
 									GUIPlayerStatus.RefreshParams_S(false);
-								}, "CMD_Shop");
+								}, "CMD_Shop", null);
 							});
 							cd.ClosePanel(true);
 						}
@@ -413,7 +413,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(delegate(int i)
 			{
 				GUIManager.CloseAllCommonDialog(null);
-			}, "CMD_Alert") as CMD_Alert;
+			}, "CMD_Alert", null) as CMD_Alert;
 			cmd_Alert.Title = StringMaster.GetString("QuestEventTitle");
 			cmd_Alert.Info = StringMaster.GetString("QuestEventInfo");
 			cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);

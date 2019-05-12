@@ -79,7 +79,7 @@ public sealed class BattleResultFriendReqInfo : MonoBehaviour
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int index)
 		{
 			this.ButtonSetActive(BattleResultFriendReqInfo.FRIEND_TYPE.APPLYING);
-		}, "CMD_ModalMessage") as CMD_ModalMessage;
+		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		if (null != cmd_ModalMessage)
 		{
 			cmd_ModalMessage.Title = StringMaster.GetString("Profile-13");

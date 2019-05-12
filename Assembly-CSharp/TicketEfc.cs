@@ -2,36 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TicketEfc : MonoBehaviour
+public sealed class TicketEfc : MonoBehaviour
 {
-	[SerializeField]
 	[Header("サムネイル TEX")]
+	[SerializeField]
 	public UITexture ngTICKET_THUMB;
 
-	[SerializeField]
 	[Header("チケット TEX")]
-	public UITexture ngTICKET;
-
-	[Header("パーティクル OBJ")]
 	[SerializeField]
-	public GameObject goPARTICLE;
+	private UITexture ngTICKET;
+
+	[SerializeField]
+	[Header("パーティクル OBJ")]
+	private GameObject goPARTICLE;
 
 	[SerializeField]
 	[Header("NEW スプライト")]
 	public UISprite spNew;
 
-	[SerializeField]
 	[Header("枚数ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_TICKET_NUM;
 
 	private int playFrameCT;
 
 	private bool isPlaying;
 
+	private ParticleSystem[] ticketShowEffectList;
+
 	private List<Vector3> vvList;
 
 	private void Awake()
 	{
+		global::Debug.Assert(null != this.ngTXT_TICKET_NUM, "TicketEfc.ngTXT_TICKET_NUM == null");
 		this.playFrameCT = 0;
 		this.isPlaying = false;
 		this.goPARTICLE.SetActive(false);
@@ -55,7 +58,15 @@ public class TicketEfc : MonoBehaviour
 				this.ngTICKET.gameObject.SetActive(false);
 				this.ngTICKET_THUMB.gameObject.SetActive(true);
 			}
-			if (++this.playFrameCT > 8000)
+			for (int i = 0; i < this.ticketShowEffectList.Length; i++)
+			{
+				if (null != this.ticketShowEffectList[i] && this.ticketShowEffectList[i].gameObject.activeSelf && !this.ticketShowEffectList[i].isPlaying)
+				{
+					this.ticketShowEffectList[i].gameObject.SetActive(false);
+				}
+			}
+			this.playFrameCT++;
+			if (8000 < this.playFrameCT)
 			{
 				this.playFrameCT = 8000;
 			}
@@ -66,6 +77,7 @@ public class TicketEfc : MonoBehaviour
 	{
 		if (!this.isPlaying)
 		{
+			this.ticketShowEffectList = new ParticleSystem[3];
 			for (int i = 0; i < 3; i++)
 			{
 				GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.goPARTICLE);
@@ -74,6 +86,7 @@ public class TicketEfc : MonoBehaviour
 				gameObject.transform.parent = base.transform;
 				gameObject.transform.localPosition = this.vvList[i];
 				gameObject.transform.localScale = localScale;
+				this.ticketShowEffectList[i] = gameObject.GetComponent<ParticleSystem>();
 			}
 			this.isPlaying = true;
 		}

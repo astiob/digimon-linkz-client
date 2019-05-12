@@ -46,11 +46,6 @@ public class CMD_Picturebook : CMD
 
 	public override void ClosePanel(bool animation = true)
 	{
-		this.CloseAndFarmCamOn(animation);
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
-	{
 		FarmCameraControlForCMD.On();
 		base.ClosePanel(animation);
 	}

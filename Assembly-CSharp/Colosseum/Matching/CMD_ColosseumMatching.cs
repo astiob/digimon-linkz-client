@@ -148,7 +148,7 @@ namespace Colosseum.Matching
 			}
 			else
 			{
-				CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_ColosseumMatching");
+				CommonDialog commonDialog = GUIMain.ShowCommonDialog(null, "CMD_ColosseumMatching", null);
 				cmd_ColosseumMatching = commonDialog.GetComponent<CMD_ColosseumMatching>();
 				cmd_ColosseumMatching.matchingEventListener = cmd_ColosseumMatching.GetComponent<ColosseumMatchingEventListener>();
 				cmd_ColosseumMatching.matchingEventListener.SetInstance(cmd_ColosseumMatching, matchingConfig, colosseumMatchingInfo, dungeonId, cmd_ColosseumMatching.modelAnimation);
@@ -178,7 +178,6 @@ namespace Colosseum.Matching
 			this.versusInfoUI.AnimaObjectActiveSet(false);
 			base.SetCloseAction(delegate(int x)
 			{
-				ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StopGetHistoryIdList();
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
 				RestrictionInput.SetDisplayObject(this.versusInfoUI.gameObject);
 				this.versusInfoUI = null;

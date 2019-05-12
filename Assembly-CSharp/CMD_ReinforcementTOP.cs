@@ -39,8 +39,8 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private UILabel possessionClusterLabel;
 
-	[SerializeField]
 	[Header("消費クラスタ")]
+	[SerializeField]
 	private UILabel useClusterLabel;
 
 	[SerializeField]
@@ -49,12 +49,9 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private GUICollider clBTN_DECIDE;
 
+	[SerializeField]
 	[Header("決定ラベル")]
-	[SerializeField]
 	private UILabelEx decideLabel;
-
-	[SerializeField]
-	private UILabel ngTX_MN_HAVE;
 
 	[SerializeField]
 	private UILabel luckUpChance;
@@ -161,31 +158,28 @@ public sealed class CMD_ReinforcementTOP : CMD
 	public override void ClosePanel(bool animation = true)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-		this.CloseAndFarmCamOn(animation);
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
-	{
-		if (base.gameObject == null || !base.gameObject.activeSelf)
+		if (null == base.gameObject || !base.gameObject.activeSelf)
 		{
 			FarmCameraControlForCMD.On();
 			base.ClosePanel(animation);
 			RestrictionInput.EndLoad();
-			return;
 		}
-		APIRequestTask task = DataMng.Instance().RequestMyPageData(false);
-		AppCoroutine.Start(task.Run(delegate
+		else
 		{
-			ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
-			FarmCameraControlForCMD.On();
-			this.ClosePanel(animation);
-			RestrictionInput.EndLoad();
-		}, delegate(Exception nop)
-		{
-			FarmCameraControlForCMD.On();
-			this.ClosePanel(animation);
-			RestrictionInput.EndLoad();
-		}, null), false);
+			APIRequestTask task = DataMng.Instance().RequestMyPageData(false);
+			AppCoroutine.Start(task.Run(delegate
+			{
+				ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
+				FarmCameraControlForCMD.On();
+				this.ClosePanel(animation);
+				RestrictionInput.EndLoad();
+			}, delegate(Exception nop)
+			{
+				FarmCameraControlForCMD.On();
+				this.ClosePanel(animation);
+				RestrictionInput.EndLoad();
+			}, null), false);
+		}
 	}
 
 	protected override void WindowClosed()
@@ -199,7 +193,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		base.WindowOpened();
 		FarmCameraControlForCMD.Off();
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
-		if (tutorialObserver != null)
+		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
 			tutorialObserver.StartSecondTutorial("second_tutorial_reinforcement", new Action(GUIMain.BarrierOFF), delegate
@@ -219,7 +213,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 
 	private void OnTouchDecide()
 	{
-		CMD_StrengthenCheck cmd_StrengthenCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseReinforce), "CMD_StrengthenCheck") as CMD_StrengthenCheck;
+		CMD_StrengthenCheck cmd_StrengthenCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseReinforce), "CMD_StrengthenCheck", null) as CMD_StrengthenCheck;
 		string text = this.useClusterLabel.text;
 		string text2 = this.ngTX_LEV_S_CHG.text;
 		string text3 = this.ngTX_LEV_S_AFTER.text;
@@ -248,16 +242,13 @@ public sealed class CMD_ReinforcementTOP : CMD
 		{
 			return;
 		}
-		if (result > 0)
+		if (0 < result)
 		{
 			RestrictionInput.EndLoad();
 			DataMng.Instance().CampaignErrorCloseAllCommonDialog(result == 1, delegate
 			{
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-				DataMng.Instance().ReloadCampaign(delegate
-				{
-					RestrictionInput.EndLoad();
-				});
+				DataMng.Instance().ReloadCampaign(new Action(RestrictionInput.EndLoad));
 			});
 			RestrictionInput.EndLoad();
 			return;
@@ -387,15 +378,15 @@ public sealed class CMD_ReinforcementTOP : CMD
 			DataMng.ExperienceInfo experienceInfo3 = dataMng.GetExperienceInfo(num2 + (int)num4);
 			if (this.baseDigimon != null)
 			{
-				int num5 = Mathf.Clamp(experienceInfo3.lev, 1, this.baseDigimon.monsterM.maxLevel.ToInt32());
+				int num5 = Mathf.Clamp(experienceInfo3.lev, 1, int.Parse(this.baseDigimon.monsterM.maxLevel));
 				text2 = num5.ToString();
 				this.monsterBasicInfo.UpdateExpGauge(this.baseDigimon, experienceInfo3);
 				num = num5 - experienceInfo2.lev;
-				if (num > 0)
+				if (0 < num)
 				{
 					this.ngTX_LEV_S_PLUS.color = ConstValue.PLUS_COLOR;
 				}
-				else if (num < 0)
+				else if (0 > num)
 				{
 					this.ngTX_LEV_S_PLUS.color = ConstValue.MINUS_COLOR;
 				}
@@ -430,7 +421,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 	{
 		this.goSelectPanelMonsterIcon = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelMonsterIcon", base.gameObject);
 		this.csSelectPanelMonsterIcon = this.goSelectPanelMonsterIcon.GetComponent<GUISelectPanelMonsterIcon>();
-		if (this.goEFC_RIGHT != null)
+		if (null != this.goEFC_RIGHT)
 		{
 			this.goSelectPanelMonsterIcon.transform.parent = this.goEFC_RIGHT.transform;
 		}
@@ -497,7 +488,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 					this.leftLargeMonsterIcon.Lock = tappedMonsterData.userMonster.IsLocked;
 				}
 			}
-		}, "CMD_CharacterDetailed") as CMD_CharacterDetailed;
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
 		if (this.partnerMonsterList.Contains(tappedMonsterData))
 		{
 			cmd_CharacterDetailed.Mode = CMD_CharacterDetailed.LockMode.Reinforcement;
@@ -595,16 +586,14 @@ public sealed class CMD_ReinforcementTOP : CMD
 
 	private void ShiftPartnerIcon(int index)
 	{
-		int i;
-		for (i = 0; i < this.partnerMonsterList.Count; i++)
+		for (int i = 0; i < this.partnerMonsterList.Count; i++)
 		{
 			this.partnerIconList[i].gameObject.transform.localPosition = this.goMN_ICON_MAT_LIST[i].transform.localPosition;
 			this.goMN_ICON_MAT_LIST[i].SetActive(false);
 		}
-		while (i < this.goMN_ICON_MAT_LIST.Count)
+		for (int j = this.partnerMonsterList.Count; j < this.goMN_ICON_MAT_LIST.Count; j++)
 		{
-			this.goMN_ICON_MAT_LIST[i].SetActive(true);
-			i++;
+			this.goMN_ICON_MAT_LIST[j].SetActive(true);
 		}
 	}
 
@@ -616,7 +605,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 	private void BtnCont()
 	{
 		bool flag = false;
-		if (this.baseDigimon != null && this.partnerMonsterList.Count > 0)
+		if (this.baseDigimon != null && 0 < this.partnerMonsterList.Count)
 		{
 			int num = this.CalcClusterForReinforcement(this.GetReinforcementCost(this.partnerMonsterList));
 			int num2 = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
@@ -730,7 +719,7 @@ public sealed class CMD_ReinforcementTOP : CMD
 		{
 			if (partnerTribeList[i] == baseTribe)
 			{
-				int growStep = int.Parse(partnerGrowStepList[i]);
+				GrowStep growStep = (GrowStep)int.Parse(partnerGrowStepList[i]);
 				if (MonsterGrowStepData.IsGrowingScope(growStep))
 				{
 					num = Mathf.Max(num, 7);
