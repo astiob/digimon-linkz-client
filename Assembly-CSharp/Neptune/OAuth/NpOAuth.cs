@@ -174,6 +174,8 @@ namespace Neptune.OAuth
 			Dictionary<string, string> headersDic = this.SetHeaderCommon(authHeader);
 			headersDic.Add("X-AppVer", this.X_AppVer);
 			NpDebugLog.Log(this.X_AppVer);
+			headersDic.Add("X-TimeZone", global::TimeZone.GetTimezoneName());
+			headersDic.Add("X-Lang", CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
 			Dictionary<string, object> postDic = new Dictionary<string, object>();
 			postDic.Add("x_uuid", uuid);
 			OAuthConnect oAuthConnect = new OAuthConnect(_behaviour, new Action<WWW>(this.OnHttpResponse), this.timeOut, new Action(this.OnTimeOutErr));

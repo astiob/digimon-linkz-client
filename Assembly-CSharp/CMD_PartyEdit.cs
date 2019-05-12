@@ -37,11 +37,11 @@ public sealed class CMD_PartyEdit : CMD
 
 	public static CMD_PartyEdit instance;
 
-	public static string replayMultiStageId;
+	public static string replayMultiStageId = string.Empty;
 
-	public static string replayMultiAreaId;
+	public static string replayMultiAreaId = string.Empty;
 
-	public static string replayMultiDungeonId;
+	public static string replayMultiDungeonId = string.Empty;
 
 	public static CMD_PartyEdit.MODE_TYPE ModeType { get; set; }
 

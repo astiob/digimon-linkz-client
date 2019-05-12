@@ -27,8 +27,8 @@ public class GUISelectPanelViewPartsUD : GUISelectPanelViewUD
 	[SerializeField]
 	protected int PARTS_CT_MN = 1;
 
-	[SerializeField]
 	[Header("リサイクルビュー Y MAX")]
+	[SerializeField]
 	protected float fRecycleViewMaxY = 500f;
 
 	[SerializeField]

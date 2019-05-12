@@ -55,4 +55,6 @@ public static class PlayerPrefsKeys
 	public const string COLOSSEUM_TOP_NOTICE_CODE = "ColosseumTopNoticeCode";
 
 	public const string PLAYER_COUNTRY_CODE = "PlayerCountryCode";
+
+	public const string IS_SIGN_OUT_GOOGLE = "IsSignOutGoogle";
 }
