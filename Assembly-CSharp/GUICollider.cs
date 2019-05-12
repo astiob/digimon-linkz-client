@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 [AddComponentMenu("GUI/Collider")]
@@ -95,12 +96,6 @@ public class GUICollider : LocalTween, ITouchEvent
 	private bool sendMoveFromChild;
 
 	protected BoxCollider boxCollider;
-
-	public event Action<Touch, Vector2> onTouchBegan;
-
-	public event Action<Touch, Vector2> onTouchMoved;
-
-	public event Action<Touch, Vector2, bool> onTouchEnded;
 
 	public void SetOriginalPos(Vector3 v3)
 	{
@@ -215,6 +210,15 @@ public class GUICollider : LocalTween, ITouchEvent
 			return this.removePhase_;
 		}
 	}
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public event Action<Touch, Vector2> onTouchBegan;
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public event Action<Touch, Vector2> onTouchMoved;
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public event Action<Touch, Vector2, bool> onTouchEnded;
 
 	public void ClearAllEventAction()
 	{

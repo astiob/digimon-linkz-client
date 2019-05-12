@@ -6,13 +6,13 @@ namespace UnityEngine.Networking
 	{
 		internal const short kMaxLocalPlayers = 8;
 
-		public const int MaxPlayersPerClient = 32;
-
 		public short playerControllerId = -1;
 
 		public NetworkIdentity unetView;
 
 		public GameObject gameObject;
+
+		public const int MaxPlayersPerClient = 32;
 
 		public PlayerController()
 		{

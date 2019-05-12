@@ -33,8 +33,8 @@ public sealed class ChipGashaController : CutsceneBase
 	[SerializeField]
 	private GameObject goPartsRainbow;
 
-	[SerializeField]
 	[Header("フェードアウト開始フレーム")]
+	[SerializeField]
 	private int startFadeOutFrame;
 
 	[Header("メインカメラ")]
@@ -150,55 +150,32 @@ public sealed class ChipGashaController : CutsceneBase
 			while (i < gashaResult.Length)
 			{
 				string effectType = gashaResult[i].effectType;
-				string text = effectType;
-				if (text == null)
+				if (effectType == null || effectType == "1")
 				{
-					goto IL_EE;
-				}
-				if (ChipGashaController.<>f__switch$map9 == null)
-				{
-					ChipGashaController.<>f__switch$map9 = new Dictionary<string, int>(3)
-					{
-						{
-							"1",
-							0
-						},
-						{
-							"2",
-							1
-						},
-						{
-							"3",
-							2
-						}
-					};
-				}
-				int num;
-				if (!ChipGashaController.<>f__switch$map9.TryGetValue(text, out num))
-				{
-					goto IL_EE;
+					goto IL_B7;
 				}
 				GameObject effect;
-				switch (num)
+				if (!(effectType == "2"))
 				{
-				default:
-					goto IL_EE;
-				case 1:
-					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsYellow);
-					break;
-				case 2:
+					if (!(effectType == "3"))
+					{
+						goto IL_B7;
+					}
 					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsRainbow);
-					break;
 				}
-				IL_121:
+				else
+				{
+					effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsYellow);
+				}
+				IL_EA:
 				this.SetEffectLocator(this.goLocatorList[i], effect);
 				effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsLight);
 				this.SetEffectLocator(this.goLightLocatorList[i], effect);
 				i++;
 				continue;
-				IL_EE:
+				IL_B7:
 				effect = UnityEngine.Object.Instantiate<GameObject>(this.goPartsBlue);
-				goto IL_121;
+				goto IL_EA;
 			}
 			for (int j = gashaResult.Length; j < this.goLocatorList.Count; j++)
 			{

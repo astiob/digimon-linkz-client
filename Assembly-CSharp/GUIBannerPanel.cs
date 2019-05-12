@@ -66,11 +66,19 @@ public sealed class GUIBannerPanel : GUISelectPanelBSPartsUD
 
 	public void RefreshNewAlert()
 	{
-		List<GUIListPartBS> partObjs = this.partObjs;
-		foreach (GUIListPartBS guilistPartBS in partObjs)
+		foreach (GUIListPartBS guilistPartBS in this.partObjs)
 		{
 			GUIBannerParts guibannerParts = (GUIBannerParts)guilistPartBS;
 			guibannerParts.SetNew();
+		}
+	}
+
+	public void SetMenuShowFlag(bool showFlag)
+	{
+		foreach (GUIListPartBS guilistPartBS in this.partObjs)
+		{
+			GUIBannerParts guibannerParts = (GUIBannerParts)guilistPartBS;
+			guibannerParts.SetMenuShowFlag(showFlag);
 		}
 	}
 }

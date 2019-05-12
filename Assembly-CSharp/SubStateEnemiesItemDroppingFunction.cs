@@ -34,19 +34,19 @@ public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 		int normalCount = 0;
 		this.isEffectPlaying.Clear();
 		Dictionary<CharacterStateControl, Dictionary<int, SubStateEnemiesItemDroppingFunction.ItemDropResultData>> droppedCharacterData = new Dictionary<CharacterStateControl, Dictionary<int, SubStateEnemiesItemDroppingFunction.ItemDropResultData>>();
-		foreach (CharacterStateControl characters in this.currentDeathCharacters)
+		foreach (CharacterStateControl characterStateControl in this.currentDeathCharacters)
 		{
-			if (!characters.isEnemy)
+			if (!characterStateControl.isEnemy)
 			{
 				yield break;
 			}
-			Dictionary<int, SubStateEnemiesItemDroppingFunction.ItemDropResultData> gettedItemDropResults = new Dictionary<int, SubStateEnemiesItemDroppingFunction.ItemDropResultData>();
-			foreach (ItemDropResult dropResult in characters.itemDropResult)
+			Dictionary<int, SubStateEnemiesItemDroppingFunction.ItemDropResultData> dictionary = new Dictionary<int, SubStateEnemiesItemDroppingFunction.ItemDropResultData>();
+			foreach (ItemDropResult itemDropResult in characterStateControl.itemDropResult)
 			{
-				if (dropResult.isDropped)
+				if (itemDropResult.isDropped)
 				{
-					int effectIndex = 0;
-					if (dropResult.isRare)
+					int effectIndex;
+					if (itemDropResult.isRare)
 					{
 						effectIndex = rareCount;
 						rareCount++;
@@ -56,16 +56,16 @@ public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 						effectIndex = normalCount;
 						normalCount++;
 					}
-					SubStateEnemiesItemDroppingFunction.ItemDropResultData data = new SubStateEnemiesItemDroppingFunction.ItemDropResultData(dropResult, effectIndex);
-					gettedItemDropResults.Add(dropCount, data);
+					SubStateEnemiesItemDroppingFunction.ItemDropResultData value = new SubStateEnemiesItemDroppingFunction.ItemDropResultData(itemDropResult, effectIndex);
+					dictionary.Add(dropCount, value);
 					this.isEffectPlaying[dropCount] = true;
 					dropCount++;
-					base.battleStateData.itemDropResults.Add(dropResult);
+					base.battleStateData.itemDropResults.Add(itemDropResult);
 				}
 			}
-			if (gettedItemDropResults.Count > 0)
+			if (dictionary.Count > 0)
 			{
-				droppedCharacterData.Add(characters, gettedItemDropResults);
+				droppedCharacterData.Add(characterStateControl, dictionary);
 			}
 		}
 		if (droppedCharacterData.Count == 0)
@@ -78,9 +78,9 @@ public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 			object obj = wait.Current;
 			yield return obj;
 		}
-		foreach (CharacterStateControl droppedCharacter in droppedCharacterData.Keys)
+		foreach (CharacterStateControl characterStateControl2 in droppedCharacterData.Keys)
 		{
-			base.StartCoroutine(this.PlayEffect(droppedCharacter, droppedCharacterData[droppedCharacter]));
+			base.StartCoroutine(this.PlayEffect(characterStateControl2, droppedCharacterData[characterStateControl2]));
 		}
 		while (this.isPlay())
 		{

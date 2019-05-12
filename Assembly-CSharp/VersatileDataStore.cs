@@ -6,7 +6,9 @@ public class VersatileDataStore
 
 	public string worldDungeonId { get; set; }
 
-	public int randomSeed { get; set; }
-
 	public string hashCode { get; set; }
+
+	public string randomState { get; set; }
+
+	public int randomSeed { get; set; }
 }

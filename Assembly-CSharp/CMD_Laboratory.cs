@@ -4,6 +4,7 @@ using Master;
 using Monster;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_Laboratory : CMD_PairSelectBase
@@ -11,13 +12,28 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	[SerializeField]
 	private LaboratoryPartsStatusDetail digitamaDetail;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache2;
+
 	protected override void ShowSecondTutorial()
 	{
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
 		if (tutorialObserver != null)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_laboratory", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_laboratory";
+			if (CMD_Laboratory.<>f__mg$cache0 == null)
+			{
+				CMD_Laboratory.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_Laboratory.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_Laboratory");
 			});
@@ -29,61 +45,83 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		base.SetTutorialAnyTime("anytime_second_tutorial_laboratory");
 	}
 
-	protected override void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
+	private void OnPushDecide()
 	{
-		cd.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
-		cd.SetExp(StringMaster.GetString("LaboratoryResearchAlertInfo"));
-		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
-		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
-	}
-
-	protected override void SetTextConfirmBaseVersionUp(CMD_ResearchModalAlert cd)
-	{
-		cd.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
-		cd.SetExp(StringMaster.GetString("LaboratoryResearchAlertInfo3"));
-		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
-		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
-	}
-
-	protected override void SetTextConfirmPartnerVersionUp(CMD_ResearchModalAlert cd)
-	{
-		cd.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
-		cd.SetExp(StringMaster.GetString("LaboratoryResearchAlertInfo2"));
-		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
-		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
-	}
-
-	protected override void OpenConfirmTargetParameter(int selectButtonIndex)
-	{
-		if (selectButtonIndex == 1)
+		CMD_ResearchModalAlert popup = null;
+		if (MonsterStatusData.IsVersionUp(this.baseDigimon.GetMonsterMaster().Simple.rare))
 		{
-			MonsterEggStatusInfo digitamaStatus = this.CreateDigitamaStatus(this.baseDigimon, this.partnerDigimon);
-			CMD_ResearchModal cmd_ResearchModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_ResearchModal", null) as CMD_ResearchModal;
-			cmd_ResearchModal.SetChipParams(this.baseDigimon, this.partnerDigimon);
-			cmd_ResearchModal.SetDigitamaStatus(digitamaStatus);
+			popup = this.OpenAlertTargetMonster(this.baseDigimon, StringMaster.GetString("LaboratoryResearchAlertInfo3"));
 		}
-	}
-
-	protected override void DoExec(int result)
-	{
-		if (result == -1)
+		if (null != popup)
 		{
-			return;
-		}
-		if (result > 0)
-		{
-			RestrictionInput.EndLoad();
-			DataMng.Instance().CampaignErrorCloseAllCommonDialog(result == 1, delegate
+			popup.SetActionYesButton(delegate
 			{
-				RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-				DataMng.Instance().ReloadCampaign(delegate
+				popup.SetCloseAction(delegate(int noop)
 				{
-					RestrictionInput.EndLoad();
+					this.CheckPartnerMonster();
 				});
 			});
-			RestrictionInput.EndLoad();
-			return;
 		}
+		else
+		{
+			this.CheckPartnerMonster();
+		}
+	}
+
+	private void CheckPartnerMonster()
+	{
+		CMD_ResearchModalAlert popup = null;
+		if (MonsterStatusData.IsVersionUp(this.partnerDigimon.GetMonsterMaster().Simple.rare))
+		{
+			popup = this.OpenAlertTargetMonster(this.partnerDigimon, StringMaster.GetString("LaboratoryResearchAlertInfo2"));
+		}
+		else if (MonsterStatusData.IsArousal(this.partnerDigimon.monsterM.rare))
+		{
+			popup = this.OpenAlertTargetMonster(this.partnerDigimon, StringMaster.GetString("LaboratoryResearchAlertInfo"));
+		}
+		if (null != popup)
+		{
+			popup.SetActionYesButton(delegate
+			{
+				popup.SetCloseAction(delegate(int noop)
+				{
+					this.OpenConfirmResearch();
+				});
+			});
+		}
+		else
+		{
+			this.OpenConfirmResearch();
+		}
+	}
+
+	private CMD_ResearchModalAlert OpenAlertTargetMonster(MonsterData monsterData, string description)
+	{
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(null, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
+		cmd_ResearchModalAlert.SetTitle(StringMaster.GetString("LaboratoryResearchAlertTitle"));
+		cmd_ResearchModalAlert.SetExp(description);
+		cmd_ResearchModalAlert.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
+		cmd_ResearchModalAlert.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
+		cmd_ResearchModalAlert.SetDigimonIcon(monsterData);
+		cmd_ResearchModalAlert.AdjustSize();
+		return cmd_ResearchModalAlert;
+	}
+
+	private void OpenConfirmResearch()
+	{
+		MonsterEggStatusInfo digitamaStatus = this.CreateDigitamaStatus(this.baseDigimon);
+		CMD_ResearchModal cmd_ResearchModal = GUIMain.ShowCommonDialog(null, "CMD_ResearchModal", null) as CMD_ResearchModal;
+		cmd_ResearchModal.SetAlertEquipChip(this.baseDigimon, this.partnerDigimon);
+		cmd_ResearchModal.SetDigitamaStatus(digitamaStatus);
+		cmd_ResearchModal.SetActionYesButton(delegate
+		{
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			this.DoExec();
+		});
+	}
+
+	private void DoExec()
+	{
 		this.useClusterBK = this.CalcCluster();
 		GameWebAPI.RequestMN_MonsterCombination requestMN_MonsterCombination = new GameWebAPI.RequestMN_MonsterCombination();
 		requestMN_MonsterCombination.SetSendData = delegate(GameWebAPI.MN_Req_Labo param)
@@ -114,9 +152,18 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	{
 		int num = int.Parse(this.baseDigimon.userMonster.friendship);
 		int friendshipMaxValue = MonsterFriendshipData.GetFriendshipMaxValue(this.baseDigimon.monsterMG.growStep);
-		bool upArousal = num >= friendshipMaxValue;
-		bool isAwakening = num == friendshipMaxValue;
-		bool hasChip = this.ResetChipAfterExec();
+		bool isArousal = num >= friendshipMaxValue;
+		bool isResetEquipChip = false;
+		if (this.baseDigimon.GetChipEquip().IsAttachedChip())
+		{
+			isResetEquipChip = true;
+			base.RemoveEquipChip(false, this.baseDigimon.userMonster.userMonsterId);
+		}
+		if (this.partnerDigimon.GetChipEquip().IsAttachedChip())
+		{
+			isResetEquipChip = true;
+			base.RemoveEquipChip(false, this.partnerDigimon.userMonster.userMonsterId);
+		}
 		string[] userMonsterIdList = new string[]
 		{
 			this.baseDigimon.userMonster.userMonsterId,
@@ -127,99 +174,53 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonsterData = this.GetUserMonsterData();
 		MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterData.userMonsterId);
-		CutsceneDataFusion cutsceneData = new CutsceneDataFusion
+		CutsceneDataFusion cutsceneDataFusion = new CutsceneDataFusion();
+		cutsceneDataFusion.path = "Cutscenes/Fusion";
+		cutsceneDataFusion.baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
+		cutsceneDataFusion.materialModelId = this.partnerDigimon.GetMonsterMaster().Group.modelId;
+		cutsceneDataFusion.eggModelId = ClassSingleton<EvolutionData>.Instance.GetEggType(userMonster.userMonster.monsterEvolutionRouteId);
+		cutsceneDataFusion.upArousal = isArousal;
+		CutsceneDataFusion cutsceneDataFusion2 = cutsceneDataFusion;
+		if (CMD_Laboratory.<>f__mg$cache1 == null)
 		{
-			path = "Cutscenes/Fusion",
-			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
-			materialModelId = this.partnerDigimon.GetMonsterMaster().Group.modelId,
-			eggModelId = ClassSingleton<EvolutionData>.Instance.GetEggType(userMonster.userMonster.monsterEvolutionRouteId),
-			upArousal = upArousal,
-			endCallback = delegate()
-			{
-				CutSceneMain.FadeReqCutSceneEnd();
-				if (null != this.characterDetailed)
-				{
-					this.DisableCutinButton(this.characterDetailed.transform);
-				}
-				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-				if (null != partsMenu)
-				{
-					partsMenu.SetEnableMenuButton(false);
-				}
-			}
-		};
+			CMD_Laboratory.<>f__mg$cache1 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+		}
+		cutsceneDataFusion2.endCallback = CMD_Laboratory.<>f__mg$cache1;
+		CutsceneDataFusion cutsceneData = cutsceneDataFusion;
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(base.StartCutSceneCallBack), null, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, delegate()
 		{
-			if (PartsUpperCutinController.Instance != null)
-			{
-				if (isAwakening)
-				{
-					PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.ResearchComplete, delegate
-					{
-						PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.AwakeningComplete, delegate
-						{
-							this.ShowStoreChipDialog(hasChip);
-						});
-					});
-				}
-				else
-				{
-					PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.ResearchComplete, delegate
-					{
-						this.ShowStoreChipDialog(hasChip);
-					});
-				}
-			}
-			if (!hasChip)
+			this.OnStartCutScene(isArousal, isResetEquipChip);
+		}, delegate()
+		{
+			this.characterDetailed.StartAnimation();
+			if (!isResetEquipChip)
 			{
 				RestrictionInput.EndLoad();
-				this.EnableCutinButton();
-				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-				if (null != partsMenu)
-				{
-					partsMenu.SetEnableMenuButton(true);
-				}
 			}
 		}, 0.5f, 0.5f);
 	}
 
-	private bool ResetChipAfterExec()
+	private void OnStartCutScene(bool isArousal, bool isResetEquipChip)
 	{
-		bool result = this.baseDigimon.GetChipEquip().IsAttachedChip() || this.partnerDigimon.GetChipEquip().IsAttachedChip();
-		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(this.baseDigimon.userMonster.userMonsterId);
-		if (monsterChipList != null)
+		base.RemoveBaseDigimon();
+		base.RemovePartnerDigimon();
+		this.ClearTargetStatus();
+		DataMng.Instance().US_PlayerInfoSubChipNum(this.useClusterBK);
+		base.UpdateClusterNum();
+		GUIPlayerStatus.RefreshParams_S(false);
+		string userMonsterId = this.GetUserMonsterData().userMonsterId;
+		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
+		Action endCutin = null;
+		if (isResetEquipChip)
 		{
-			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in monsterChipList)
+			if (CMD_Laboratory.<>f__mg$cache2 == null)
 			{
-				if (userChipList.userMonsterId == int.Parse(this.baseDigimon.userMonster.userMonsterId))
-				{
-					userChipList.userMonsterId = 0;
-				}
+				CMD_Laboratory.<>f__mg$cache2 = new Action(RestrictionInput.EndLoad);
 			}
+			endCutin = CMD_Laboratory.<>f__mg$cache2;
 		}
-		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList2 = ChipDataMng.GetMonsterChipList(this.partnerDigimon.userMonster.userMonsterId);
-		if (monsterChipList2 != null)
-		{
-			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList2 in monsterChipList2)
-			{
-				if (userChipList2.userMonsterId == int.Parse(this.partnerDigimon.userMonster.userMonsterId))
-				{
-					userChipList2.userMonsterId = 0;
-				}
-			}
-		}
-		return result;
-	}
-
-	protected override string GetTitle()
-	{
-		return StringMaster.GetString("LaboratoryTitle");
-	}
-
-	protected override string GetStoreChipInfo()
-	{
-		return StringMaster.GetString("LaboratoryCautionChip");
+		this.characterDetailed = CMD_CharacterDetailed.CreateWindow(monsterDataByUserMonsterID, isArousal, isResetEquipChip, endCutin);
 	}
 
 	protected override void ClearTargetStatus()
@@ -230,11 +231,6 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 	protected override GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList GetUserMonsterData()
 	{
 		return DataMng.Instance().RespDataMN_LaboExec.userMonster;
-	}
-
-	protected override void AddButton()
-	{
-		CMD_CharacterDetailed.AddButton = CMD_CharacterDetailed.ButtonType.Garden;
 	}
 
 	protected override int CalcCluster()
@@ -255,7 +251,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 
 	protected override void SetTargetStatus()
 	{
-		MonsterEggStatusInfo digitamaStatus = this.CreateDigitamaStatus(this.baseDigimon, this.partnerDigimon);
+		MonsterEggStatusInfo digitamaStatus = this.CreateDigitamaStatus(this.baseDigimon);
 		this.digitamaDetail.SetDigitamaStatus(digitamaStatus);
 	}
 
@@ -302,10 +298,6 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.LABO;
 	}
 
-	protected override void OnBaseSelected()
-	{
-	}
-
 	protected override void OpenBaseDigimonNonePop()
 	{
 		CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
@@ -313,7 +305,7 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		cmd_ModalMessage.Info = StringMaster.GetString("LaboratoryNotSelectedInfo");
 	}
 
-	private MonsterEggStatusInfo CreateDigitamaStatus(MonsterData baseData, MonsterData partnerData)
+	private MonsterEggStatusInfo CreateDigitamaStatus(MonsterData baseData)
 	{
 		MonsterEggStatusInfo monsterEggStatusInfo = new MonsterEggStatusInfo();
 		monsterEggStatusInfo.rare = baseData.monsterM.rare;
@@ -330,84 +322,36 @@ public sealed class CMD_Laboratory : CMD_PairSelectBase
 		{
 			monsterEggStatusInfo.isArousal = true;
 		}
-		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster = baseData.userMonster;
-		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList userMonster2 = partnerData.userMonster;
-		int goldMedalCount = this.GetGoldMedalCount(userMonster, userMonster2);
-		monsterEggStatusInfo.hpAbilityFlg = this.GetCandidateMedal(userMonster.hpAbilityFlg, userMonster2.hpAbilityFlg, goldMedalCount);
-		monsterEggStatusInfo.attackAbilityFlg = this.GetCandidateMedal(userMonster.attackAbilityFlg, userMonster2.attackAbilityFlg, goldMedalCount);
-		monsterEggStatusInfo.defenseAbilityFlg = this.GetCandidateMedal(userMonster.defenseAbilityFlg, userMonster2.defenseAbilityFlg, goldMedalCount);
-		monsterEggStatusInfo.spAttackAbilityFlg = this.GetCandidateMedal(userMonster.spAttackAbilityFlg, userMonster2.spAttackAbilityFlg, goldMedalCount);
-		monsterEggStatusInfo.spDefenseAbilityFlg = this.GetCandidateMedal(userMonster.spDefenseAbilityFlg, userMonster2.spDefenseAbilityFlg, goldMedalCount);
-		monsterEggStatusInfo.speedAbilityFlg = this.GetCandidateMedal(userMonster.speedAbilityFlg, userMonster2.speedAbilityFlg, goldMedalCount);
+		monsterEggStatusInfo.hpAbilityFlg = this.GetCandidateMedal(baseData.userMonster.hpAbilityFlg);
+		monsterEggStatusInfo.attackAbilityFlg = this.GetCandidateMedal(baseData.userMonster.attackAbilityFlg);
+		monsterEggStatusInfo.defenseAbilityFlg = this.GetCandidateMedal(baseData.userMonster.defenseAbilityFlg);
+		monsterEggStatusInfo.spAttackAbilityFlg = this.GetCandidateMedal(baseData.userMonster.spAttackAbilityFlg);
+		monsterEggStatusInfo.spDefenseAbilityFlg = this.GetCandidateMedal(baseData.userMonster.spDefenseAbilityFlg);
+		monsterEggStatusInfo.speedAbilityFlg = this.GetCandidateMedal(baseData.userMonster.speedAbilityFlg);
 		monsterEggStatusInfo.luck = baseData.userMonster.luck;
 		return monsterEggStatusInfo;
 	}
 
-	private ConstValue.CandidateMedal GetCandidateMedal(string baseMedalType, string partnerMedalType, int goldMedalCount)
+	private ConstValue.CandidateMedal GetCandidateMedal(string baseMedalType)
 	{
-		int num = baseMedalType.ToInt32();
-		int num2 = partnerMedalType.ToInt32();
+		int num = int.Parse(baseMedalType);
 		ConstValue.CandidateMedal result = ConstValue.CandidateMedal.NONE;
-		if (num == 1)
+		if (num != 1)
 		{
-			if (ConstValue.MAX_GOLD_MEDAL_COUNT < goldMedalCount)
+			if (num == 2)
 			{
-				result = ConstValue.CandidateMedal.GOLD_OR_SILVER;
-			}
-			else
-			{
-				result = ConstValue.CandidateMedal.GOLD;
+				result = ConstValue.CandidateMedal.SILVER;
 			}
 		}
-		else if (num2 == 1)
+		else
 		{
-			result = ConstValue.CandidateMedal.GOLD_OR_SILVER;
-		}
-		else if (num == 2)
-		{
-			result = ConstValue.CandidateMedal.SILVER;
-		}
-		else if (num2 == 2)
-		{
-			result = ConstValue.CandidateMedal.SILVER_OR_NONE;
+			result = ConstValue.CandidateMedal.GOLD;
 		}
 		return result;
 	}
 
-	private int GetGoldMedalCount(GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList baseUserMonsterData, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList partnerUserMonsterData)
+	protected override string GetTitle()
 	{
-		int num = 0;
-		if (this.IsGoldMedal(baseUserMonsterData.hpAbilityFlg, partnerUserMonsterData.hpAbilityFlg))
-		{
-			num++;
-		}
-		if (this.IsGoldMedal(baseUserMonsterData.attackAbilityFlg, partnerUserMonsterData.attackAbilityFlg))
-		{
-			num++;
-		}
-		if (this.IsGoldMedal(baseUserMonsterData.defenseAbilityFlg, partnerUserMonsterData.defenseAbilityFlg))
-		{
-			num++;
-		}
-		if (this.IsGoldMedal(baseUserMonsterData.spAttackAbilityFlg, partnerUserMonsterData.spAttackAbilityFlg))
-		{
-			num++;
-		}
-		if (this.IsGoldMedal(baseUserMonsterData.spDefenseAbilityFlg, partnerUserMonsterData.spDefenseAbilityFlg))
-		{
-			num++;
-		}
-		if (this.IsGoldMedal(baseUserMonsterData.speedAbilityFlg, partnerUserMonsterData.speedAbilityFlg))
-		{
-			num++;
-		}
-		return num;
-	}
-
-	private bool IsGoldMedal(string baseMedalType, string partnerMedalType)
-	{
-		int num = baseMedalType.ToInt32();
-		int num2 = partnerMedalType.ToInt32();
-		return num == 1 || num2 == 1;
+		return StringMaster.GetString("LaboratoryTitle");
 	}
 }

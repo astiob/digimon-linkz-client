@@ -30,24 +30,15 @@ public sealed class GUIListPartsDigiGarden : GUIListPartBS
 
 	private bool isTouchEndFromChild;
 
-	private float restTimeUpdateTime;
-
 	private GameObject goMN_ICON_CHG_2;
+
+	private float restTimeUpdateTime;
 
 	private Vector2 startPostion;
 
-	public MonsterData Data
-	{
-		get
-		{
-			return this.data;
-		}
-		set
-		{
-			this.data = value;
-			this.ShowGUI();
-		}
-	}
+	private Action<CMD, string, string> onBorn;
+
+	private Action<MonsterData> onPushEvolutionButton;
 
 	protected override void Awake()
 	{
@@ -59,21 +50,17 @@ public sealed class GUIListPartsDigiGarden : GUIListPartBS
 		this.canEvolveParticle.SetActive(false);
 	}
 
-	public void ChangeSprite(string sprName)
+	public void Initialize(MonsterData monsterData)
 	{
-		UISprite component = base.gameObject.GetComponent<UISprite>();
-		if (component != null)
-		{
-			component.spriteName = sprName;
-			component.MakePixelPerfect();
-		}
-	}
-
-	public override void ShowGUI()
-	{
-		base.ShowGUI();
+		this.data = monsterData;
 		this.ShowIcon();
 		this.ShowDetail();
+	}
+
+	public void SetCallback(Action<CMD, string, string> bornAction, Action<MonsterData> pushEvolutionButton)
+	{
+		this.onBorn = bornAction;
+		this.onPushEvolutionButton = pushEvolutionButton;
 	}
 
 	private void ShowIcon()
@@ -123,7 +110,8 @@ public sealed class GUIListPartsDigiGarden : GUIListPartBS
 			{
 				if (monsterEvolutionRouteM2.monsterEvolutionRouteId == this.data.userMonster.monsterEvolutionRouteId)
 				{
-					text = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterEvolutionRouteM2.eggMonsterId).Group.monsterName;
+					MonsterClientMaster monsterMasterByMonsterGroupId = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterEvolutionRouteM2.eggMonsterId);
+					text = monsterMasterByMonsterGroupId.Group.monsterName;
 				}
 			}
 			this.ngTX_NAME.text = text;
@@ -198,24 +186,29 @@ public sealed class GUIListPartsDigiGarden : GUIListPartBS
 
 	private void OnClickedBtnSelect()
 	{
-		if (this.data.userMonster.IsEgg())
+		if (CMD_DigiGarden.instance != null)
 		{
-			if (CMD_DigiGarden.instance != null)
+			if (this.data.userMonster.IsEgg())
 			{
-				CMD_DigiGarden.instance.BornExec(this.data);
-			}
-		}
-		else if (CMD_DigiGarden.instance != null)
-		{
-			if (!CMD_DigiGarden.instance.IsOfflineModeFlag)
-			{
-				CMD_DigiGarden.instance.GrowExec(this.data);
+				this.OpenConfirmBorn();
 			}
 			else
 			{
-				CMD_DigiGarden.instance.OfflineGrow(this.data);
+				this.onPushEvolutionButton(this.data);
 			}
 		}
+	}
+
+	private void OpenConfirmBorn()
+	{
+		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(null, "CMD_Confirm", null) as CMD_Confirm;
+		cmd_Confirm.Title = StringMaster.GetString("Garden-05");
+		cmd_Confirm.Info = StringMaster.GetString("Garden-06");
+		cmd_Confirm.SetActionYesButton(delegate(CMD cmd)
+		{
+			string eggModelId = MonsterObject.GetEggModelId(this.data.userMonster.monsterEvolutionRouteId);
+			this.onBorn(cmd, this.data.userMonster.userMonsterId, eggModelId);
+		});
 	}
 
 	protected override void Update()

@@ -1,6 +1,7 @@
 ﻿using FarmData;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class FarmSceneryCache : MonoBehaviour
@@ -11,12 +12,19 @@ public sealed class FarmSceneryCache : MonoBehaviour
 
 	private bool existCached;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
 	public static void SetCacheAction(FarmScenery scenery)
 	{
 		if (null == FarmSceneryCache.farmSceneryReference)
 		{
 			FarmSceneryCache.farmSceneryReference = scenery;
-			GUIMain.SetAction_FadeBlackLoadScene(new Action(FarmSceneryCache.ExecutionCache));
+			if (FarmSceneryCache.<>f__mg$cache0 == null)
+			{
+				FarmSceneryCache.<>f__mg$cache0 = new Action(FarmSceneryCache.ExecutionCache);
+			}
+			GUIMain.SetAction_FadeBlackLoadScene(FarmSceneryCache.<>f__mg$cache0);
 		}
 	}
 

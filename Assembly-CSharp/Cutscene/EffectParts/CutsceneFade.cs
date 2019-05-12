@@ -13,9 +13,6 @@ namespace Cutscene.EffectParts
 		private float fadeOutSpeed;
 
 		[SerializeField]
-		private GUISprite fadeSprite;
-
-		[SerializeField]
 		private UITexture fadeImage;
 
 		private CutsceneFade.FadeInfo fadeInfo;
@@ -23,27 +20,13 @@ namespace Cutscene.EffectParts
 		public void Initialize()
 		{
 			this.fadeInfo = default(CutsceneFade.FadeInfo);
-			if (null != this.fadeSprite)
-			{
-				UIPanel uipanel = GUIMain.GetUIPanel();
-				Vector2 windowSize = uipanel.GetWindowSize();
-				this.fadeSprite.SetBoardSize(windowSize.x, windowSize.y);
-			}
 		}
 
 		public void UpdateFade()
 		{
 			if (this.fadeInfo.isActive)
 			{
-				Color color;
-				if (null != this.fadeSprite)
-				{
-					color = this.fadeSprite.GetColor();
-				}
-				else
-				{
-					color = this.fadeImage.color;
-				}
+				Color color = this.fadeImage.color;
 				color.a += this.fadeInfo.speed * Time.deltaTime;
 				if (color.a < 0f || 1f < color.a)
 				{
@@ -55,14 +38,7 @@ namespace Cutscene.EffectParts
 					}
 				}
 				color.a = Mathf.Clamp01(color.a);
-				if (null != this.fadeSprite)
-				{
-					this.fadeSprite.SetColor(color);
-				}
-				else
-				{
-					this.fadeImage.color = color;
-				}
+				this.fadeImage.color = color;
 			}
 		}
 

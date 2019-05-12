@@ -5,9 +5,9 @@ namespace System
 {
 	/// <summary>Represents assembly binding information that can be added to an instance of <see cref="T:System.AppDomain" />.</summary>
 	/// <filterpriority>2</filterpriority>
+	[ComVisible(true)]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("27FFF232-A7A8-40DD-8D4A-734AD59fCD41")]
-	[ComVisible(true)]
 	public interface IAppDomainSetup
 	{
 		/// <summary>Gets or sets the name of the directory containing the application.</summary>

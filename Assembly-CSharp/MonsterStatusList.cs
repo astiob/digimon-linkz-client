@@ -86,7 +86,7 @@ public class MonsterStatusList : MonoBehaviour
 		this.friendshipLabel.text = "0";
 	}
 
-	public void SetValues(MonsterData monsterData, bool setBaseStatus = false)
+	public void SetValues(MonsterData monsterData, bool setBaseStatus = false, bool showMaxLuck = false)
 	{
 		if (!setBaseStatus)
 		{
@@ -107,7 +107,15 @@ public class MonsterStatusList : MonoBehaviour
 			this.magicDefenceLabel.text = statusValue.magicDefense.ToString();
 			this.speedLabel.text = statusValue.speed.ToString();
 		}
-		this.luckLabel.text = monsterData.userMonster.luck;
+		GameWebAPI.RespDataMA_GetMonsterMS.MonsterM simple = MonsterMaster.GetMonsterMasterByMonsterId(monsterData.userMonster.monsterId).Simple;
+		if (showMaxLuck)
+		{
+			this.luckLabel.text = string.Format(StringMaster.GetString("SystemFraction"), monsterData.userMonster.luck, simple.maxLuck);
+		}
+		else
+		{
+			this.luckLabel.text = monsterData.userMonster.luck.ToString();
+		}
 		if (!this.disableFriendshipMaxValue)
 		{
 			this.friendshipLabel.text = MonsterFriendshipData.GetMaxFriendshipFormat(monsterData.userMonster.friendship, monsterData.monsterMG.growStep);

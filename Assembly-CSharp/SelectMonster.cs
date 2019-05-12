@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public sealed class SelectMonster : MonoBehaviour
@@ -30,12 +31,25 @@ public sealed class SelectMonster : MonoBehaviour
 			return;
 		}
 		obj.layer = newLayer;
-		foreach (object obj2 in obj.transform)
+		IEnumerator enumerator = obj.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj2;
-			if (!(null == transform))
+			while (enumerator.MoveNext())
 			{
-				this.SetLayerRecursively(transform.gameObject, newLayer);
+				object obj2 = enumerator.Current;
+				Transform transform = (Transform)obj2;
+				if (!(null == transform))
+				{
+					this.SetLayerRecursively(transform.gameObject, newLayer);
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
 			}
 		}
 	}

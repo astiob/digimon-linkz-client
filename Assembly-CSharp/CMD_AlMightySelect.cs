@@ -39,7 +39,7 @@ public class CMD_AlMightySelect : CMD
 		this.NeedNum = needNum;
 		this.CurSelectedSoulId = curSelectedSoulId;
 		this.almSelectList = dtList;
-		this.csSelectPanelViewPartsUD.AllBuild(this.almSelectList.Count, true, 1f, 1f, null, this);
+		this.csSelectPanelViewPartsUD.AllBuild(this.almSelectList.Count, true, 1f, 1f, null, this, true);
 	}
 
 	public void SetSelected(string soulId)

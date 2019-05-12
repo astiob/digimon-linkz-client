@@ -42,7 +42,7 @@ public class GUISelectPanelChipList : GUISelectPanelViewPartsUD
 			GUISelectPanelChipList.partsDataList.Add(data);
 		}
 		base.initLocation = true;
-		base.AllBuild(dataList.Length, true, 1f, 1f, null, null);
+		base.AllBuild(dataList.Length, true, 1f, 1f, null, null, true);
 	}
 
 	public void RefreshList(int partsCount)

@@ -22,10 +22,10 @@ namespace UnityEngine.Networking.NetworkSystem
 		public override void Serialize(NetworkWriter writer)
 		{
 			writer.Write((ushort)this.scripts.Length);
-			foreach (CRCMessageEntry crcmessageEntry in this.scripts)
+			for (int i = 0; i < this.scripts.Length; i++)
 			{
-				writer.Write(crcmessageEntry.name);
-				writer.Write(crcmessageEntry.channel);
+				writer.Write(this.scripts[i].name);
+				writer.Write(this.scripts[i].channel);
 			}
 		}
 	}

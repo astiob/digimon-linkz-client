@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 public class OptionSetting
 {
@@ -29,6 +31,9 @@ public class OptionSetting
 	private static OptionSetting instance;
 
 	private Dictionary<string, int> optionList;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	private OptionSetting()
 	{
@@ -86,14 +91,19 @@ public class OptionSetting
 		PushNotice.Instance.IsRecieveEndBuildingPushNotice = (this.optionList[OptionSetting.pushBuildedKey] == 1);
 		PushNotice.Instance.IsRecieveStaminaMaxPushNotice = (this.optionList[OptionSetting.pushStaminaMaxKey] == 1);
 		PushNotice.Instance.IsRecieveGardenPushNotice = true;
-		GameWebAPI.RequestUS_RegisterOptionInfo request = new GameWebAPI.RequestUS_RegisterOptionInfo
+		GameWebAPI.RequestUS_RegisterOptionInfo requestUS_RegisterOptionInfo = new GameWebAPI.RequestUS_RegisterOptionInfo
 		{
 			SetSendData = delegate(GameWebAPI.US_Req_RegisterOptionInfo param)
 			{
 				param.optionList = this.optionList;
 			}
 		};
-		AppCoroutine.Start(request.Run(new Action(RestrictionInput.EndLoad), null, null), false);
+		RequestBase request = requestUS_RegisterOptionInfo;
+		if (OptionSetting.<>f__mg$cache0 == null)
+		{
+			OptionSetting.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		AppCoroutine.Start(request.Run(OptionSetting.<>f__mg$cache0, null, null), false);
 	}
 
 	private void SaveSoundVolume()

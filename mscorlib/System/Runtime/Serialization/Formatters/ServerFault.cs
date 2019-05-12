@@ -5,8 +5,8 @@ using System.Runtime.Remoting.Metadata;
 namespace System.Runtime.Serialization.Formatters
 {
 	/// <summary>Contains information for a server fault. This class cannot be inherited.</summary>
-	[ComVisible(true)]
 	[SoapType]
+	[ComVisible(true)]
 	[Serializable]
 	public sealed class ServerFault
 	{

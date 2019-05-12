@@ -1297,8 +1297,8 @@ namespace System.Reflection
 
 		/// <summary>Gets the host context with which the assembly was loaded.</summary>
 		/// <returns>An <see cref="T:System.Int64" /> value that indicates the host context with which the assembly was loaded, if any.</returns>
-		[ComVisible(false)]
 		[MonoTODO("Always returns zero")]
+		[ComVisible(false)]
 		public long HostContext
 		{
 			get

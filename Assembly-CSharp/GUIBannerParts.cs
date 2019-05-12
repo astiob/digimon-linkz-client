@@ -4,12 +4,12 @@ using UnityEngine;
 
 public sealed class GUIBannerParts : GUIListPartBS
 {
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
 	[Header("ガシャの背景色")]
@@ -20,12 +20,12 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("キャンペーンの背景色")]
+	[SerializeField]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]
@@ -41,8 +41,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private UISprite newSprite;
 
-	[SerializeField]
 	[Header("NEWをコントロールする")]
+	[SerializeField]
 	private bool doNewControl;
 
 	private static readonly int DAY_HOUR = 24;
@@ -52,6 +52,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	private static readonly int HOUR_SECONDS = 3600;
 
 	private static readonly int MINUTES_SECONDS = 60;
+
+	private bool menuShowFlag;
 
 	public GameWebAPI.RespDataMA_BannerM.BannerM Data { get; set; }
 
@@ -77,7 +79,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 		GUIBannerParts.LinkCategoryType result = GUIBannerParts.LinkCategoryType.None;
 		try
 		{
-			result = (GUIBannerParts.LinkCategoryType)((int)Enum.Parse(typeof(GUIBannerParts.LinkCategoryType), this.Data.linkCategoryType));
+			result = (GUIBannerParts.LinkCategoryType)Enum.Parse(typeof(GUIBannerParts.LinkCategoryType), this.Data.linkCategoryType);
 		}
 		catch (ArgumentException)
 		{
@@ -119,7 +121,7 @@ public sealed class GUIBannerParts : GUIListPartBS
 			this.MethodToInvoke = "ScheduleShortcut";
 			break;
 		default:
-			global::Debug.LogError("ER : ===== 想定外遷移 =====");
+			global::Debug.LogError("error : バナーマスタ , linkCategoryType =" + (int)this.ConvertStringToEnum());
 			break;
 		}
 		this.restTimeDate = DateTime.Parse(this.Data.endTime);
@@ -181,8 +183,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 		if (restTimeSeconds <= 0)
 		{
 			base.CancelInvoke("CountDown");
-			this.CallBackClass = base.gameObject;
-			this.MethodToInvoke = "CheckUpdateTime";
+			this.CallBackClass = null;
+			this.MethodToInvoke = string.Empty;
 		}
 	}
 
@@ -352,15 +354,21 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private void InfoShortcut()
 	{
-		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
-		cmdwebWindow.TitleText = this.Data.name;
-		cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
+		if (this.menuShowFlag)
+		{
+			CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
+			cmdwebWindow.TitleText = this.Data.name;
+			cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
+		}
 	}
 
 	private void ScheduleShortcut()
 	{
-		this.InfoShortcut();
-		PartsMenu.instance.RefreshMenuBannerNewAlert();
+		if (this.menuShowFlag)
+		{
+			this.InfoShortcut();
+			PartsMenu.instance.RefreshMenuBannerNewAlert();
+		}
 	}
 
 	public void OnBannerReceived(Texture2D texture)
@@ -374,6 +382,11 @@ public sealed class GUIBannerParts : GUIListPartBS
 			this.bannerImage.mainTexture = texture;
 		}
 		this.SetAction();
+	}
+
+	public void SetMenuShowFlag(bool showFlag)
+	{
+		this.menuShowFlag = showFlag;
 	}
 
 	private enum LinkCategoryType

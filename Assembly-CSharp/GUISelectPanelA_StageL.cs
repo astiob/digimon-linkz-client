@@ -138,10 +138,7 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 			{
 				viewIdx = dts.Count - int.Parse(nextDungeon.worldStageId);
 			}
-			if (viewIdx < 0)
-			{
-				global::Debug.LogError("本来来ない筈だが,エラーを発見できる様に…");
-			}
+			global::Debug.Assert(0 <= viewIdx, "Error : viewIdx の値が不正");
 			foreach (QuestData.WorldStageData worldStageData in dts)
 			{
 				GameObject gameObject = base.AddBuildPart();
@@ -197,10 +194,7 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 			{
 				viewIdx = dts.Count - int.Parse(nextDungeon.worldStageId);
 			}
-			if (viewIdx < 0)
-			{
-				global::Debug.LogError("本来来ない筈だが,エラーを発見できる様に…");
-			}
+			global::Debug.Assert(0 <= viewIdx, "Error : viewIdx の値が不正");
 			foreach (QuestData.WorldStageData worldStageData in dts)
 			{
 				GameObject gameObject = base.AddBuildPart();
@@ -290,6 +284,7 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 				if (component != null)
 				{
 					component.WorldStageData = worldStageData;
+					component.ShowGUI();
 					component.selectPanelA = this;
 					CampaignLabelQuest component2 = component.GetComponent<CampaignLabelQuest>();
 					component2.AreaId = worldStageData.worldStageM.worldStageId;

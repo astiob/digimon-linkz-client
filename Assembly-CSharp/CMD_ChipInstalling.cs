@@ -17,8 +17,8 @@ public sealed class CMD_ChipInstalling : CMD
 	[SerializeField]
 	private UILabel chipDetailLabel;
 
-	[SerializeField]
 	[Header("右下の装着するボタンラベル")]
+	[SerializeField]
 	private UILabel executeButtonLabel;
 
 	[Header("右下の表示切替ボタンラベル")]
@@ -29,20 +29,20 @@ public sealed class CMD_ChipInstalling : CMD
 	[SerializeField]
 	private UILabel changeViewContentLabel;
 
-	[SerializeField]
 	[Header("右下の装着するボタンスプライト")]
+	[SerializeField]
 	private UISprite executeButtonSprite;
 
-	[SerializeField]
 	[Header("右下の装着するボタンコライダー")]
+	[SerializeField]
 	private BoxCollider executeButtonCollider;
 
 	[Header("右下の表示切替ボタンスプライト")]
 	[SerializeField]
 	private UISprite changeViewButtonSprite;
 
-	[SerializeField]
 	[Header("チップ一覧用親")]
+	[SerializeField]
 	private GameObject partsSortListBase;
 
 	[Header("チップ空メッセージ")]
@@ -170,7 +170,7 @@ public sealed class CMD_ChipInstalling : CMD
 		CMD_InstallingPOP.Create(this.equip, this.selectedChip, delegate
 		{
 			this.successChipCallback(this.equip.userChipId, this.selectedChip);
-			base.ClosePanel(true);
+			this.<ClosePanel>__BaseCallProxy0(true);
 		});
 	}
 

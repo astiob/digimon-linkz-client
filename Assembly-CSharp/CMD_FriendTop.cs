@@ -13,16 +13,6 @@ public class CMD_FriendTop : CMD
 
 	private const int ACCEPT_LIST_TAB = 3;
 
-	private const string BUTTON_LOCK_SPRITE = "Common02_Btn_BaseG";
-
-	private const string BUTTON_POSITIVE_SPRITE = "Common02_Btn_BaseON1";
-
-	private const string BUTTON_NEGATIVE_SPRITE = "Common02_Btn_BaseON2";
-
-	private const string BUTTON_ON_SPRITE = "Common02_Btn_SupportRed";
-
-	private const string BUTTON_CANCEL_SPRITE = "Common02_Btn_BaseOFF";
-
 	public static CMD_FriendTop instance;
 
 	[SerializeField]
@@ -87,6 +77,16 @@ public class CMD_FriendTop : CMD
 
 	private int currentListNum;
 
+	private const string BUTTON_LOCK_SPRITE = "Common02_Btn_BaseG";
+
+	private const string BUTTON_POSITIVE_SPRITE = "Common02_Btn_BaseON1";
+
+	private const string BUTTON_NEGATIVE_SPRITE = "Common02_Btn_BaseON2";
+
+	private const string BUTTON_ON_SPRITE = "Common02_Btn_SupportRed";
+
+	private const string BUTTON_CANCEL_SPRITE = "Common02_Btn_BaseOFF";
+
 	private GameWebAPI.FriendList selectFriendData;
 
 	public CMD_ProfileFriend.OperationType ProfOpeType { get; set; }
@@ -115,15 +115,15 @@ public class CMD_FriendTop : CMD
 		task.Add(BlockManager.instance().RequestBlockList(false));
 		yield return AppCoroutine.Start(task.Run(delegate
 		{
-			base.ShowDLG();
+			this.ShowDLG();
 			this.InitData();
 			this.SetCommonUI();
 			this.InitTab();
 			this.ShowFriendCount();
-			base.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception noop)
 		{
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null), false);
 		RestrictionInput.EndLoad();
 		yield break;
@@ -410,26 +410,32 @@ public class CMD_FriendTop : CMD
 	{
 		List<GameWebAPI.FriendList> list = null;
 		string text = string.Empty;
-		switch (idx)
+		if (idx != 1)
 		{
-		case 1:
+			if (idx != 2)
+			{
+				if (idx == 3)
+				{
+					base.PartsTitle.SetTitle(StringMaster.GetString("FriendTitle") + StringMaster.GetString("Friend-03"));
+					list = this.friendUnAproveList;
+					text = StringMaster.GetString("FriendApproval-02");
+					this.goPartsSearchButton.SetActive(false);
+				}
+			}
+			else
+			{
+				base.PartsTitle.SetTitle(StringMaster.GetString("FriendTitle") + StringMaster.GetString("Friend-02"));
+				list = this.friendReqList;
+				text = StringMaster.GetString("FriendApply-02");
+				this.goPartsSearchButton.SetActive(false);
+			}
+		}
+		else
+		{
 			base.PartsTitle.SetTitle(StringMaster.GetString("FriendTitle"));
 			list = this.friendList;
 			text = StringMaster.GetString("Friend-01");
 			this.goPartsSearchButton.SetActive(true);
-			break;
-		case 2:
-			base.PartsTitle.SetTitle(StringMaster.GetString("FriendTitle") + StringMaster.GetString("Friend-02"));
-			list = this.friendReqList;
-			text = StringMaster.GetString("FriendApply-02");
-			this.goPartsSearchButton.SetActive(false);
-			break;
-		case 3:
-			base.PartsTitle.SetTitle(StringMaster.GetString("FriendTitle") + StringMaster.GetString("Friend-03"));
-			list = this.friendUnAproveList;
-			text = StringMaster.GetString("FriendApproval-02");
-			this.goPartsSearchButton.SetActive(false);
-			break;
 		}
 		this.currentListNum = list.Count;
 		if (this.currentListNum == 0)
@@ -447,7 +453,9 @@ public class CMD_FriendTop : CMD
 		this.csSelectPanel.initLocation = true;
 		this.csSelectPanel.StartFadeEfcCT = 0;
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-		AppCoroutine.Start(this.csSelectPanel.AllBuild(list, 0f, afterWaitTime, delegate
+		GUISelectPanelFriend guiselectPanelFriend = this.csSelectPanel;
+		List<GameWebAPI.FriendList> dts = list;
+		AppCoroutine.Start(guiselectPanelFriend.AllBuild(dts, 0f, afterWaitTime, delegate
 		{
 			RestrictionInput.EndLoad();
 		}), false);
@@ -500,55 +508,55 @@ public class CMD_FriendTop : CMD
 
 	private void ListPartsMenuOperate(int curSel)
 	{
-		switch (curSel)
+		if (curSel != 1)
 		{
-		case 1:
-		{
-			CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrend), "CMD_PartsFriendMENU1", null);
-			commonDialog.gameObject.transform.FindChild("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
-			commonDialog.gameObject.transform.FindChild("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-15");
-			commonDialog.gameObject.transform.FindChild("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
-			commonDialog.gameObject.transform.FindChild("PartsBtn03/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-14");
-			break;
-		}
-		case 2:
-		{
-			CommonDialog commonDialog2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendReq), "CMD_PartsFriendMENU2", null);
-			commonDialog2.gameObject.transform.FindChild("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
-			commonDialog2.gameObject.transform.FindChild("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-17");
-			commonDialog2.gameObject.transform.FindChild("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
-			commonDialog2.gameObject.transform.FindChild("PartsBtn03/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-14");
-			break;
-		}
-		case 3:
-		{
-			CommonDialog commonDialog3 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendUnAprv), "CMD_PartsFriendMENU3", null);
-			commonDialog3.gameObject.transform.FindChild("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
-			commonDialog3.gameObject.transform.FindChild("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("FriendApproval-04");
-			commonDialog3.gameObject.transform.FindChild("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("FriendApproval-03");
-			commonDialog3.gameObject.transform.FindChild("PartsBtn03/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
-			commonDialog3.gameObject.transform.FindChild("PartsBtn04/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-14");
-			bool flag = BlockManager.instance().CheckBlock(this.selectFriendData.userData.userId);
-			if (flag)
+			if (curSel != 2)
 			{
-				Transform[] array = new Transform[]
+				if (curSel == 3)
 				{
-					commonDialog3.gameObject.transform.FindChild("PartsBtn00"),
-					commonDialog3.gameObject.transform.FindChild("PartsBtn01")
-				};
-				foreach (Transform transform in array)
-				{
-					BoxCollider component = transform.GetComponent<BoxCollider>();
-					component.enabled = false;
-					UIWidget[] componentsInChildren = transform.GetComponentsInChildren<UIWidget>();
-					foreach (UIWidget uiwidget in componentsInChildren)
+					CommonDialog commonDialog = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendUnAprv), "CMD_PartsFriendMENU3", null);
+					commonDialog.gameObject.transform.Find("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
+					commonDialog.gameObject.transform.Find("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("FriendApproval-04");
+					commonDialog.gameObject.transform.Find("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("FriendApproval-03");
+					commonDialog.gameObject.transform.Find("PartsBtn03/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
+					commonDialog.gameObject.transform.Find("PartsBtn04/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-14");
+					bool flag = BlockManager.instance().CheckBlock(this.selectFriendData.userData.userId);
+					if (flag)
 					{
-						uiwidget.color = Color.gray;
+						Transform[] array = new Transform[]
+						{
+							commonDialog.gameObject.transform.Find("PartsBtn00"),
+							commonDialog.gameObject.transform.Find("PartsBtn01")
+						};
+						foreach (Transform transform in array)
+						{
+							BoxCollider component = transform.GetComponent<BoxCollider>();
+							component.enabled = false;
+							UIWidget[] componentsInChildren = transform.GetComponentsInChildren<UIWidget>();
+							foreach (UIWidget uiwidget in componentsInChildren)
+							{
+								uiwidget.color = Color.gray;
+							}
+						}
 					}
 				}
 			}
-			break;
+			else
+			{
+				CommonDialog commonDialog2 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrendReq), "CMD_PartsFriendMENU2", null);
+				commonDialog2.gameObject.transform.Find("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
+				commonDialog2.gameObject.transform.Find("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-17");
+				commonDialog2.gameObject.transform.Find("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
+				commonDialog2.gameObject.transform.Find("PartsBtn03/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-14");
+			}
 		}
+		else
+		{
+			CommonDialog commonDialog3 = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseFrend), "CMD_PartsFriendMENU1", null);
+			commonDialog3.gameObject.transform.Find("PartsBtn00/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-16");
+			commonDialog3.gameObject.transform.Find("PartsBtn01/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-15");
+			commonDialog3.gameObject.transform.Find("PartsBtn02/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("SystemButtonClose");
+			commonDialog3.gameObject.transform.Find("PartsBtn03/TXT_BTN").GetComponent<UILabel>().text = StringMaster.GetString("Friend-14");
 		}
 	}
 
@@ -560,22 +568,29 @@ public class CMD_FriendTop : CMD
 			csParts.ChangeSelectItem(false);
 			if (this.selectFriendDict.Count == 0)
 			{
-				switch (this.currentSelectMode)
+				CMD_FriendTop.SELECT_MODE select_MODE = this.currentSelectMode;
+				if (select_MODE != CMD_FriendTop.SELECT_MODE.FRIEND_RELEASE)
 				{
-				case CMD_FriendTop.SELECT_MODE.FRIEND_RELEASE:
+					if (select_MODE != CMD_FriendTop.SELECT_MODE.REQ_RELEASE)
+					{
+						if (select_MODE == CMD_FriendTop.SELECT_MODE.ACCEPT_REJECT)
+						{
+							this.spSelectButton1.spriteName = "Common02_Btn_BaseG";
+							this.spSelectButton2.spriteName = "Common02_Btn_BaseG";
+							this.coSelectButton1.GetComponent<Collider>().enabled = false;
+							this.coSelectButton2.GetComponent<Collider>().enabled = false;
+						}
+					}
+					else
+					{
+						this.spSelectButton1.spriteName = "Common02_Btn_BaseG";
+						this.coSelectButton1.GetComponent<Collider>().enabled = false;
+					}
+				}
+				else
+				{
 					this.spSelectButton1.spriteName = "Common02_Btn_BaseG";
 					this.coSelectButton1.GetComponent<Collider>().enabled = false;
-					break;
-				case CMD_FriendTop.SELECT_MODE.REQ_RELEASE:
-					this.spSelectButton1.spriteName = "Common02_Btn_BaseG";
-					this.coSelectButton1.GetComponent<Collider>().enabled = false;
-					break;
-				case CMD_FriendTop.SELECT_MODE.ACCEPT_REJECT:
-					this.spSelectButton1.spriteName = "Common02_Btn_BaseG";
-					this.spSelectButton2.spriteName = "Common02_Btn_BaseG";
-					this.coSelectButton1.GetComponent<Collider>().enabled = false;
-					this.coSelectButton2.GetComponent<Collider>().enabled = false;
-					break;
 				}
 			}
 			else if (this.selectFriendDict.Count == 9)
@@ -597,22 +612,29 @@ public class CMD_FriendTop : CMD
 			csParts.ChangeSelectItem(true);
 			if (this.selectFriendDict.Count == 1)
 			{
-				switch (this.currentSelectMode)
+				CMD_FriendTop.SELECT_MODE select_MODE2 = this.currentSelectMode;
+				if (select_MODE2 != CMD_FriendTop.SELECT_MODE.FRIEND_RELEASE)
 				{
-				case CMD_FriendTop.SELECT_MODE.FRIEND_RELEASE:
+					if (select_MODE2 != CMD_FriendTop.SELECT_MODE.REQ_RELEASE)
+					{
+						if (select_MODE2 == CMD_FriendTop.SELECT_MODE.ACCEPT_REJECT)
+						{
+							this.spSelectButton1.spriteName = "Common02_Btn_BaseON1";
+							this.spSelectButton2.spriteName = "Common02_Btn_BaseON2";
+							this.coSelectButton1.GetComponent<Collider>().enabled = true;
+							this.coSelectButton2.GetComponent<Collider>().enabled = true;
+						}
+					}
+					else
+					{
+						this.spSelectButton1.spriteName = "Common02_Btn_BaseON2";
+						this.coSelectButton1.GetComponent<Collider>().enabled = true;
+					}
+				}
+				else
+				{
 					this.spSelectButton1.spriteName = "Common02_Btn_BaseON2";
 					this.coSelectButton1.GetComponent<Collider>().enabled = true;
-					break;
-				case CMD_FriendTop.SELECT_MODE.REQ_RELEASE:
-					this.spSelectButton1.spriteName = "Common02_Btn_BaseON2";
-					this.coSelectButton1.GetComponent<Collider>().enabled = true;
-					break;
-				case CMD_FriendTop.SELECT_MODE.ACCEPT_REJECT:
-					this.spSelectButton1.spriteName = "Common02_Btn_BaseON1";
-					this.spSelectButton2.spriteName = "Common02_Btn_BaseON2";
-					this.coSelectButton1.GetComponent<Collider>().enabled = true;
-					this.coSelectButton2.GetComponent<Collider>().enabled = true;
-					break;
 				}
 			}
 			else if (this.selectFriendDict.Count == 10)
@@ -936,33 +958,39 @@ public class CMD_FriendTop : CMD
 		this.coSelectButton1.onTouchEnded -= this.AcceptTouchEnded;
 		this.coSelectButton1.onTouchEnded -= this.RejectTouchEnded;
 		this.spSelectModeButton.spriteName = "Common02_Btn_BaseOFF";
-		switch (curentTabIdx)
+		if (curentTabIdx != 1)
 		{
-		case 1:
+			if (curentTabIdx != 2)
+			{
+				if (curentTabIdx == 3)
+				{
+					this.currentSelectMode = CMD_FriendTop.SELECT_MODE.ACCEPT_REJECT;
+					this.coSelectButton1.gameObject.SetActive(true);
+					this.coSelectButton2.gameObject.SetActive(true);
+					this.coSelectButton1.GetComponent<Collider>().enabled = false;
+					this.coSelectButton2.GetComponent<Collider>().enabled = false;
+					this.coSelectButton1.onTouchEnded += this.AcceptTouchEnded;
+					this.coSelectButton2.onTouchEnded += this.RejectTouchEnded;
+					this.ngSelectButton1.text = StringMaster.GetString("FriendApproval-04");
+					this.ngSelectButton2.text = StringMaster.GetString("FriendApproval-03");
+				}
+			}
+			else
+			{
+				this.currentSelectMode = CMD_FriendTop.SELECT_MODE.REQ_RELEASE;
+				this.coSelectButton1.gameObject.SetActive(true);
+				this.coSelectButton1.GetComponent<Collider>().enabled = false;
+				this.coSelectButton1.onTouchEnded += this.ApplyReleaseTouchEnded;
+				this.ngSelectButton1.text = StringMaster.GetString("FriendApply-05");
+			}
+		}
+		else
+		{
 			this.currentSelectMode = CMD_FriendTop.SELECT_MODE.FRIEND_RELEASE;
 			this.coSelectButton1.gameObject.SetActive(true);
 			this.coSelectButton1.GetComponent<Collider>().enabled = false;
 			this.coSelectButton1.onTouchEnded += this.FriendReleaseTouchEnded;
 			this.ngSelectButton1.text = StringMaster.GetString("Friend-06");
-			break;
-		case 2:
-			this.currentSelectMode = CMD_FriendTop.SELECT_MODE.REQ_RELEASE;
-			this.coSelectButton1.gameObject.SetActive(true);
-			this.coSelectButton1.GetComponent<Collider>().enabled = false;
-			this.coSelectButton1.onTouchEnded += this.ApplyReleaseTouchEnded;
-			this.ngSelectButton1.text = StringMaster.GetString("FriendApply-05");
-			break;
-		case 3:
-			this.currentSelectMode = CMD_FriendTop.SELECT_MODE.ACCEPT_REJECT;
-			this.coSelectButton1.gameObject.SetActive(true);
-			this.coSelectButton2.gameObject.SetActive(true);
-			this.coSelectButton1.GetComponent<Collider>().enabled = false;
-			this.coSelectButton2.GetComponent<Collider>().enabled = false;
-			this.coSelectButton1.onTouchEnded += this.AcceptTouchEnded;
-			this.coSelectButton2.onTouchEnded += this.RejectTouchEnded;
-			this.ngSelectButton1.text = StringMaster.GetString("FriendApproval-04");
-			this.ngSelectButton2.text = StringMaster.GetString("FriendApproval-03");
-			break;
 		}
 	}
 

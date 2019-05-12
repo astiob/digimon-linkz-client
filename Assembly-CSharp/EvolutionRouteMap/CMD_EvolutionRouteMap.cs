@@ -19,20 +19,22 @@ namespace EvolutionRouteMap
 		[SerializeField]
 		private GUI_EvolutionRouteMapList afterList;
 
+		[SerializeField]
+		private GameObject topButton;
+
 		private EvolutionRouteMapData routeMapData;
 
 		private bool openEvolutionDiagram;
 
 		private MonsterIcon monsterIconSource;
 
-		private static void SetDialog(GameObject parentDialog, MonsterClientMaster monsterMaster)
+		private static EvolutionDiagramData.IconMonster CreateMonsterData(MonsterClientMaster monsterMaster)
 		{
-			EvolutionDiagramData.IconMonster monsterData = new EvolutionDiagramData.IconMonster
+			return new EvolutionDiagramData.IconMonster
 			{
 				collectionId = int.Parse(monsterMaster.Group.monsterCollectionId),
 				master = monsterMaster
 			};
-			CMD_EvolutionRouteMap.CreateDialog(parentDialog, monsterData);
 		}
 
 		private void OnPushedReturnTopButton()
@@ -92,7 +94,7 @@ namespace EvolutionRouteMap
 				AppCoroutine.Start(task.Run(delegate
 				{
 					RestrictionInput.EndLoad();
-					CMD_EvolutionRouteMap.SetDialog(parentDialog, monsterMaster);
+					CMD_EvolutionRouteMap.CreateDialog(parentDialog, CMD_EvolutionRouteMap.CreateMonsterData(monsterMaster));
 				}, delegate(Exception noop)
 				{
 					RestrictionInput.EndLoad();
@@ -100,7 +102,7 @@ namespace EvolutionRouteMap
 			}
 			else
 			{
-				CMD_EvolutionRouteMap.SetDialog(parentDialog, monsterMaster);
+				CMD_EvolutionRouteMap.CreateDialog(parentDialog, CMD_EvolutionRouteMap.CreateMonsterData(monsterMaster));
 			}
 		}
 
@@ -111,6 +113,7 @@ namespace EvolutionRouteMap
 			CMD_EvolutionRouteMap cmd_EvolutionRouteMap = CMDWrapper.LoadPrefab<CMD_EvolutionRouteMap>("CMD_EvolutionRouteMap");
 			cmd_EvolutionRouteMap.parentDialogGameObject = parentDialog;
 			cmd_EvolutionRouteMap.routeMapData = evolutionRouteMapData;
+			cmd_EvolutionRouteMap.topButton.SetActive(null != parentDialog);
 			cmd_EvolutionRouteMap.Show();
 		}
 

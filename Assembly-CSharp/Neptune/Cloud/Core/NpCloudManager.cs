@@ -1,6 +1,7 @@
 ﻿using Neptune.Common;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Neptune.Cloud.Core
 {
@@ -17,6 +18,12 @@ namespace Neptune.Cloud.Core
 		private NpCloudRoomSystem mRoomSystem;
 
 		private static NpCloudManager instance;
+
+		[CompilerGenerated]
+		private static Converter<string, int> <>f__mg$cache0;
+
+		[CompilerGenerated]
+		private static Converter<string, int> <>f__mg$cache1;
 
 		private NpCloudManager(INpCloudManager listener)
 		{
@@ -230,11 +237,11 @@ namespace Neptune.Cloud.Core
 				string text = array2[1];
 				if (text == null)
 				{
-					goto IL_2DC;
+					goto IL_2EA;
 				}
-				if (NpCloudManager.<>f__switch$map4 == null)
+				if (NpCloudManager.<>f__switch$map0 == null)
 				{
-					NpCloudManager.<>f__switch$map4 = new Dictionary<string, int>(8)
+					NpCloudManager.<>f__switch$map0 = new Dictionary<string, int>(8)
 					{
 						{
 							string.Empty,
@@ -271,9 +278,9 @@ namespace Neptune.Cloud.Core
 					};
 				}
 				int num;
-				if (!NpCloudManager.<>f__switch$map4.TryGetValue(text, out num))
+				if (!NpCloudManager.<>f__switch$map0.TryGetValue(text, out num))
 				{
-					goto IL_2DC;
+					goto IL_2EA;
 				}
 				switch (num)
 				{
@@ -286,9 +293,19 @@ namespace Neptune.Cloud.Core
 					else if (array2[0].Equals(NpCloudValueType.finduser.ToString()))
 					{
 						NPCloudReceiveParameter<NpCloudReceiveFindUserParameter> npcloudReceiveParameter3 = NpMessagePack.Unpack<NPCloudReceiveParameter<NpCloudReceiveFindUserParameter>>(array);
-						List<int> on = npcloudReceiveParameter3.body.on.ConvertAll<int>((string x) => int.Parse(x));
-						List<int> off = npcloudReceiveParameter3.body.off.ConvertAll<int>((string x) => int.Parse(x));
-						this.mListener.OnFindUser(on, off);
+						List<string> on = npcloudReceiveParameter3.body.on;
+						if (NpCloudManager.<>f__mg$cache0 == null)
+						{
+							NpCloudManager.<>f__mg$cache0 = new Converter<string, int>(int.Parse);
+						}
+						List<int> on2 = on.ConvertAll<int>(NpCloudManager.<>f__mg$cache0);
+						List<string> off = npcloudReceiveParameter3.body.off;
+						if (NpCloudManager.<>f__mg$cache1 == null)
+						{
+							NpCloudManager.<>f__mg$cache1 = new Converter<string, int>(int.Parse);
+						}
+						List<int> off2 = off.ConvertAll<int>(NpCloudManager.<>f__mg$cache1);
+						this.mListener.OnFindUser(on2, off2);
 					}
 					continue;
 				case 1:
@@ -300,10 +317,12 @@ namespace Neptune.Cloud.Core
 				case 3:
 					receiveData = NpMessagePack.Unpack<NPCloudReceiveParameter<List<RoomMsgLog>>>(array);
 					break;
+				case 4:
+					goto IL_2EA;
 				default:
-					goto IL_2DC;
+					goto IL_2EA;
 				}
-				IL_2FE:
+				IL_30C:
 				for (int j = 0; j < this.mListenerlist.Count; j++)
 				{
 					if (this.mListenerlist[j].Receive(array2[1], receiveData, requestParameter.resTime))
@@ -311,10 +330,10 @@ namespace Neptune.Cloud.Core
 					}
 				}
 				continue;
-				IL_2DC:
+				IL_2EA:
 				NPCloudReceiveParameter<Dictionary<string, object>> npcloudReceiveParameter4 = NpMessagePack.Unpack<NPCloudReceiveParameter<Dictionary<string, object>>>(array);
 				this.mListener.OnCtrlResponse(array2[1], npcloudReceiveParameter4.body);
-				goto IL_2FE;
+				goto IL_30C;
 			}
 		}
 

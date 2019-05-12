@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Neptune.Cloud
 {
-	public class NpCloud : INpCloudHandlerSystem, INpCloudManager
+	public class NpCloud : INpCloudManager, INpCloudHandlerSystem
 	{
 		private INpCloud mListener;
 
@@ -608,18 +608,21 @@ namespace Neptune.Cloud
 				}
 				else
 				{
-					switch (this.mCloudType)
+					NpCloud.Type type = this.mCloudType;
+					if (type != NpCloud.Type.None)
 					{
-					case NpCloud.Type.Connecting:
-						if (this.mConnectAsyncAction != null && this.mIsConnectAsync)
+						if (type != NpCloud.Type.Connecting)
+						{
+							if (type == NpCloud.Type.Idle)
+							{
+								this.ManagerInstance.Update();
+							}
+						}
+						else if (this.mConnectAsyncAction != null && this.mIsConnectAsync)
 						{
 							this.mCloudType = NpCloud.Type.Idle;
 							this.mConnectAsyncAction(this.mIsConnectAsyncResult);
 						}
-						break;
-					case NpCloud.Type.Idle:
-						this.ManagerInstance.Update();
-						break;
 					}
 				}
 			}

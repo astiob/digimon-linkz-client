@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace com.adjust.sdk
@@ -136,21 +137,34 @@ namespace com.adjust.sdk
 
 		public static void WriteJsonResponseDictionary(JSONClass jsonObject, Dictionary<string, object> output)
 		{
-			foreach (object obj in jsonObject)
+			IEnumerator enumerator = jsonObject.GetEnumerator();
+			try
 			{
-				KeyValuePair<string, JSONNode> keyValuePair = (KeyValuePair<string, JSONNode>)obj;
-				JSONClass asObject = keyValuePair.Value.AsObject;
-				string key = keyValuePair.Key;
-				if (asObject == null)
+				while (enumerator.MoveNext())
 				{
-					string value = keyValuePair.Value.Value;
-					output.Add(key, value);
+					object obj = enumerator.Current;
+					KeyValuePair<string, JSONNode> keyValuePair = (KeyValuePair<string, JSONNode>)obj;
+					JSONClass asObject = keyValuePair.Value.AsObject;
+					string key = keyValuePair.Key;
+					if (asObject == null)
+					{
+						string value = keyValuePair.Value.Value;
+						output.Add(key, value);
+					}
+					else
+					{
+						Dictionary<string, object> dictionary = new Dictionary<string, object>();
+						output.Add(key, dictionary);
+						AdjustUtils.WriteJsonResponseDictionary(asObject, dictionary);
+					}
 				}
-				else
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
 				{
-					Dictionary<string, object> dictionary = new Dictionary<string, object>();
-					output.Add(key, dictionary);
-					AdjustUtils.WriteJsonResponseDictionary(asObject, dictionary);
+					disposable.Dispose();
 				}
 			}
 		}

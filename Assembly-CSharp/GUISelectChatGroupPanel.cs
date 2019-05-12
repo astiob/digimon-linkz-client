@@ -64,8 +64,10 @@ public class GUISelectChatGroupPanel : GUISelectPanelBSPartsUD
 			float num = panelBuildData.startY;
 			if (this.dataList != null)
 			{
-				foreach (GameWebAPI.ResponseData_ChatGroupList.lists dt in this.dataList)
+				GameWebAPI.ResponseData_ChatGroupList.lists[] array = this.dataList;
+				for (int i = 0; i < array.Length; i++)
 				{
+					GameWebAPI.ResponseData_ChatGroupList.lists dt = array[i];
 					int num2 = 0;
 					if (BlockManager.instance().blockList != null && flag)
 					{

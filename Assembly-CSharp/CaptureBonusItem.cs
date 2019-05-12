@@ -42,23 +42,52 @@ public class CaptureBonusItem : MonoBehaviour
 				}
 			}
 			arg = monsterData.monsterMG.monsterName;
-			goto IL_30D;
+			break;
 		}
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			arg = text;
 			this.iconSprite.gameObject.SetActive(true);
 			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
-			goto IL_30D;
+			break;
 		case MasterDataMng.AssetCategory.LINK_POINT:
 			arg = text;
 			this.iconSprite.gameObject.SetActive(true);
 			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
-			goto IL_30D;
+			break;
 		case MasterDataMng.AssetCategory.TIP:
 			this.iconSprite.gameObject.SetActive(true);
 			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
 			arg = text;
-			goto IL_30D;
+			break;
+		default:
+			switch (assetCategoryId)
+			{
+			case MasterDataMng.AssetCategory.MEAT:
+				this.iconSprite.gameObject.SetActive(true);
+				this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
+				arg = text;
+				goto IL_2FA;
+			case MasterDataMng.AssetCategory.SOUL:
+			{
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(RewardsData.assetValue);
+				arg = soul.soulName;
+				NGUIUtil.ChangeUITextureFromFile(this.iconTexture, this.GetTexturePath(assetCategoryId, RewardsData.assetValue), false);
+				this.iconTexture.gameObject.SetActive(true);
+				goto IL_2FA;
+			}
+			case MasterDataMng.AssetCategory.FACILITY_KEY:
+				arg = text;
+				goto IL_2FA;
+			case MasterDataMng.AssetCategory.CHIP:
+			{
+				GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(RewardsData.assetValue);
+				ChipDataMng.MakePrefabByChipData(chipMainData, this.iconSprite.gameObject, this.iconSprite.transform.localPosition, this.iconSprite.transform.localScale, null, -1, -1, true);
+				arg = chipMainData.name;
+				goto IL_2FA;
+			}
+			}
+			arg = StringMaster.GetString("Present-10");
+			break;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(RewardsData.assetValue);
@@ -68,34 +97,10 @@ public class CaptureBonusItem : MonoBehaviour
 				NGUIUtil.ChangeUITextureFromFile(this.iconTexture, this.GetTexturePath(assetCategoryId, RewardsData.assetValue), false);
 				this.iconTexture.gameObject.SetActive(true);
 			}
-			goto IL_30D;
-		}
-		case MasterDataMng.AssetCategory.MEAT:
-			this.iconSprite.gameObject.SetActive(true);
-			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
-			arg = text;
-			goto IL_30D;
-		case MasterDataMng.AssetCategory.SOUL:
-		{
-			GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(RewardsData.assetValue);
-			arg = soul.soulName;
-			NGUIUtil.ChangeUITextureFromFile(this.iconTexture, this.GetTexturePath(assetCategoryId, RewardsData.assetValue), false);
-			this.iconTexture.gameObject.SetActive(true);
-			goto IL_30D;
-		}
-		case MasterDataMng.AssetCategory.FACILITY_KEY:
-			arg = text;
-			goto IL_30D;
-		case MasterDataMng.AssetCategory.CHIP:
-		{
-			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(RewardsData.assetValue);
-			ChipDataMng.MakePrefabByChipData(chipMainData, this.iconSprite.gameObject, this.iconSprite.transform.localPosition, this.iconSprite.transform.localScale, null, -1, -1, true);
-			arg = chipMainData.name;
-			goto IL_30D;
+			break;
 		}
 		}
-		arg = StringMaster.GetString("Present-10");
-		IL_30D:
+		IL_2FA:
 		return string.Format(StringMaster.GetString("CaptureBonusItem"), arg, RewardsData.count);
 	}
 

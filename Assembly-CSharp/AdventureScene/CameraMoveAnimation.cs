@@ -26,10 +26,10 @@ namespace AdventureScene
 			{
 				float num = this.animationTime / this.currentTime;
 				num = Mathf.Clamp01(num);
-				float new_x = Mathf.Lerp(this.startPosition.x, this.endPosition.x, num);
-				float new_y = Mathf.Lerp(this.startPosition.y, this.endPosition.y, num);
-				float new_z = Mathf.Lerp(this.startPosition.z, this.endPosition.z, num);
-				this.currentPosition.Set(new_x, new_y, new_z);
+				float newX = Mathf.Lerp(this.startPosition.x, this.endPosition.x, num);
+				float newY = Mathf.Lerp(this.startPosition.y, this.endPosition.y, num);
+				float newZ = Mathf.Lerp(this.startPosition.z, this.endPosition.z, num);
+				this.currentPosition.Set(newX, newY, newZ);
 				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.camera3D.transform.localPosition = this.currentPosition;
 				return false;
 			}

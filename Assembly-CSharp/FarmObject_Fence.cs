@@ -14,8 +14,8 @@ public sealed class FarmObject_Fence : FarmObject
 	protected override void Awake()
 	{
 		base.Awake();
-		this.meshFilter = base.transform.FindChild("Locator/ModelRoot/farm_item_05").GetComponent<MeshFilter>();
-		this.meshRenderer = base.transform.FindChild("Locator/ModelRoot/farm_item_05").GetComponent<MeshRenderer>();
+		this.meshFilter = base.transform.Find("Locator/ModelRoot/farm_item_05").GetComponent<MeshFilter>();
+		this.meshRenderer = base.transform.Find("Locator/ModelRoot/farm_item_05").GetComponent<MeshRenderer>();
 		this.Init();
 	}
 

@@ -14,36 +14,36 @@ public sealed class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private GashaStartButtonEvent startButton;
 
-	[SerializeField]
 	[Header("アイコン中心位置")]
+	[SerializeField]
 	private GameObject goICON_CENTER_POS;
 
-	[SerializeField]
 	[Header("アイコンオフセット XY")]
+	[SerializeField]
 	private Vector2 iconOffset;
 
-	[SerializeField]
 	[Header("アイコンX方向の数")]
+	[SerializeField]
 	private int iconNumX;
 
-	[SerializeField]
 	[Header("アイコン登場時間(フレーム数)")]
+	[SerializeField]
 	private int showChipInterval = 16;
 
 	[Header("アイコンルート)")]
 	[SerializeField]
 	private GameObject goICON_ROOT;
 
-	[SerializeField]
 	[Header("シングルキャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTen;
 
-	[SerializeField]
 	[Header("TOPへボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTOP;
 
 	[Header("シングルキャプチャボタンGUICollider")]
@@ -58,16 +58,16 @@ public sealed class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private GameObject goEFC_WHITE;
 
-	[SerializeField]
 	[Header("GOLD エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_GOLD;
 
-	[SerializeField]
 	[Header("RAINBOW エフェクト")]
+	[SerializeField]
 	private GameObject goEFC_RAINBOW;
 
-	[SerializeField]
 	[Header("BG TEX")]
+	[SerializeField]
 	public UITexture txBG;
 
 	private List<TicketEfc> ticketEffectList;
@@ -154,17 +154,21 @@ public sealed class CMD_TicketGashaResult : CMD
 	private TicketEfc CreateTicketEffect(string effectType, Transform parentTransform, Vector3 effectPosition)
 	{
 		GameObject original;
-		switch (effectType)
+		if (effectType != null && !(effectType == "1"))
 		{
-		case "2":
-			original = this.goEFC_GOLD;
-			goto IL_9B;
-		case "3":
-			original = this.goEFC_RAINBOW;
-			goto IL_9B;
+			if (effectType == "2")
+			{
+				original = this.goEFC_GOLD;
+				goto IL_61;
+			}
+			if (effectType == "3")
+			{
+				original = this.goEFC_RAINBOW;
+				goto IL_61;
+			}
 		}
 		original = this.goEFC_WHITE;
-		IL_9B:
+		IL_61:
 		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
 		Vector3 localScale = gameObject.transform.localScale;
 		gameObject.SetActive(true);

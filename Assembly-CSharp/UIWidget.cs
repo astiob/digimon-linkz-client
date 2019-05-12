@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Widget")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Widget")]
 public class UIWidget : UIRect
 {
 	[HideInInspector]
@@ -22,9 +22,13 @@ public class UIWidget : UIRect
 	[SerializeField]
 	protected int mHeight = 100;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected int mDepth;
+
+	[HideInInspector]
+	[SerializeField]
+	protected int mManualDepth;
 
 	public UIWidget.OnDimensionsChanged onChange;
 
@@ -377,6 +381,18 @@ public class UIWidget : UIRect
 		}
 	}
 
+	public int manualDepth
+	{
+		get
+		{
+			return this.mManualDepth;
+		}
+		set
+		{
+			this.mManualDepth = value;
+		}
+	}
+
 	public int raycastDepth
 	{
 		get
@@ -710,6 +726,40 @@ public class UIWidget : UIRect
 			return -1;
 		}
 		return (material.GetInstanceID() >= material2.GetInstanceID()) ? 1 : -1;
+	}
+
+	[DebuggerHidden]
+	[DebuggerStepThrough]
+	public static int ManualDepthCompareFunc(UIWidget left, UIWidget right)
+	{
+		if (left.manualDepth < right.manualDepth)
+		{
+			return -1;
+		}
+		if (left.manualDepth > right.manualDepth)
+		{
+			return 1;
+		}
+		Material material = left.material;
+		Material material2 = right.material;
+		if (material == material2)
+		{
+			return 0;
+		}
+		if (material == null)
+		{
+			return 1;
+		}
+		if (material2 == null)
+		{
+			return -1;
+		}
+		return (material.GetInstanceID() >= material2.GetInstanceID()) ? 1 : -1;
+	}
+
+	public void SetDepthFromManualDepth()
+	{
+		this.mDepth = this.mManualDepth;
 	}
 
 	public Bounds CalculateBounds()
@@ -1193,16 +1243,16 @@ public class UIWidget : UIRect
 		BottomRight
 	}
 
+	public delegate void OnDimensionsChanged();
+
+	public delegate void OnPostFillCallback(UIWidget widget, int bufferOffset, BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color32> cols);
+
 	public enum AspectRatioSource
 	{
 		Free,
 		BasedOnWidth,
 		BasedOnHeight
 	}
-
-	public delegate void OnDimensionsChanged();
-
-	public delegate void OnPostFillCallback(UIWidget widget, int bufferOffset, BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color32> cols);
 
 	public delegate bool HitCheck(Vector3 worldPos);
 }

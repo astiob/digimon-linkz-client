@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	/// <summary>Provides the managed definition of the IConnectionPointContainer interface.</summary>
-	[Guid("b196b284-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("b196b284-bab4-101a-b69c-00aa00341d07")]
 	[ComImport]
 	public interface IConnectionPointContainer
 	{

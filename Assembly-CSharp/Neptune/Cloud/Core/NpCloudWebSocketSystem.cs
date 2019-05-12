@@ -155,7 +155,7 @@ namespace Neptune.Cloud.Core
 				{
 					return;
 				}
-				WebSocket obj = this.mSocket;
+				object obj = this.mSocket;
 				lock (obj)
 				{
 					if (!this.mSocket.Ping())
@@ -182,7 +182,7 @@ namespace Neptune.Cloud.Core
 		protected override void Exit(short exitCode)
 		{
 			base.ExitReceiveLoop();
-			WebSocket obj = this.mSocket;
+			object obj = this.mSocket;
 			lock (obj)
 			{
 				if (this.mSocket != null)

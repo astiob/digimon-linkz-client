@@ -63,39 +63,44 @@ namespace User
 				Debug.LogError("未実装");
 				break;
 			default:
-				if (category != MasterDataMng.AssetCategory.MONSTER)
+				if (category != MasterDataMng.AssetCategory.CHIP)
 				{
-					if (category != MasterDataMng.AssetCategory.ITEM)
+					if (category != MasterDataMng.AssetCategory.DUNGEON_TICKET)
 					{
-						num = UserInventory.GetNumber(category);
-					}
-					else
-					{
-						int itemId = 0;
-						if (int.TryParse(assetsValue, out itemId))
+						if (category != MasterDataMng.AssetCategory.MONSTER)
 						{
-							num = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(itemId);
+							if (category != MasterDataMng.AssetCategory.ITEM)
+							{
+								num = UserInventory.GetNumber(category);
+							}
+							else
+							{
+								int itemId = 0;
+								if (int.TryParse(assetsValue, out itemId))
+								{
+									num = Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(itemId);
+								}
+							}
+						}
+						else
+						{
+							int num2 = 0;
+							if (string.IsNullOrEmpty(assetsValue) || "0" == assetsValue)
+							{
+								num = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum();
+							}
+							else if (int.TryParse(assetsValue, out num2))
+							{
+								Debug.LogError("未実装");
+							}
 						}
 					}
-				}
-				else
-				{
-					int num2 = 0;
-					if (string.IsNullOrEmpty(assetsValue) || "0" == assetsValue)
-					{
-						num = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum();
-					}
-					else if (int.TryParse(assetsValue, out num2))
+					else
 					{
 						Debug.LogError("未実装");
 					}
 				}
-				break;
-			case MasterDataMng.AssetCategory.SOUL:
-				num = EvolutionMaterialData.GetUserEvolutionMaterialNum(assetsValue);
-				break;
-			case MasterDataMng.AssetCategory.CHIP:
-				if (ChipDataMng.userChipData != null && ChipDataMng.userChipData.userChipList != null)
+				else if (ChipDataMng.userChipData != null && ChipDataMng.userChipData.userChipList != null)
 				{
 					if (string.IsNullOrEmpty(assetsValue) || "0" == assetsValue)
 					{
@@ -118,8 +123,8 @@ namespace User
 					}
 				}
 				break;
-			case MasterDataMng.AssetCategory.DUNGEON_TICKET:
-				Debug.LogError("未実装");
+			case MasterDataMng.AssetCategory.SOUL:
+				num = EvolutionMaterialData.GetUserEvolutionMaterialNum(assetsValue);
 				break;
 			}
 			Debug.Assert(-1 != num, "アセット所持数の取得に失敗.");
@@ -246,17 +251,21 @@ namespace User
 
 		public static void CalculateNumber(MasterDataMng.AssetCategory category, string assetsValue, int value)
 		{
-			switch (category)
+			if (category != MasterDataMng.AssetCategory.DIGI_STONE)
 			{
-			case MasterDataMng.AssetCategory.DIGI_STONE:
-				if (DataMng.Instance().RespDataUS_PlayerInfo != null && DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
+				if (category != MasterDataMng.AssetCategory.LINK_POINT)
 				{
-					DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= value;
-					Debug.Assert(0 <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point, "デジストーンが負の値になりました");
+					if (category == MasterDataMng.AssetCategory.ITEM)
+					{
+						int itemId = 0;
+						if (int.TryParse(assetsValue, out itemId))
+						{
+							Singleton<UserDataMng>.Instance.UpdateUserItemNum(itemId, -value);
+							Debug.Assert(0 <= Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(itemId), "アイテム所持数が負の値になりました");
+						}
+					}
 				}
-				break;
-			case MasterDataMng.AssetCategory.LINK_POINT:
-				if (DataMng.Instance().RespDataUS_PlayerInfo != null && DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
+				else if (DataMng.Instance().RespDataUS_PlayerInfo != null && DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
 				{
 					int num = 0;
 					if (int.TryParse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.friendPoint, out num))
@@ -266,17 +275,11 @@ namespace User
 						Debug.Assert(0 <= num, "リンクポイントが負の値になりました");
 					}
 				}
-				break;
-			case MasterDataMng.AssetCategory.ITEM:
-			{
-				int itemId = 0;
-				if (int.TryParse(assetsValue, out itemId))
-				{
-					Singleton<UserDataMng>.Instance.UpdateUserItemNum(itemId, -value);
-					Debug.Assert(0 <= Singleton<UserDataMng>.Instance.GetUserItemNumByItemId(itemId), "アイテム所持数が負の値になりました");
-				}
-				break;
 			}
+			else if (DataMng.Instance().RespDataUS_PlayerInfo != null && DataMng.Instance().RespDataUS_PlayerInfo.playerInfo != null)
+			{
+				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= value;
+				Debug.Assert(0 <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point, "デジストーンが負の値になりました");
 			}
 		}
 	}

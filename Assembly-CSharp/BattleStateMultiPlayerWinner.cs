@@ -51,9 +51,9 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 		}
 		float startTime = Time.time;
 		base.stateManager.soundPlayer.TryStopBGM();
-		foreach (AlwaysEffectParams a in base.battleStateData.revivalReservedEffect)
+		foreach (AlwaysEffectParams alwaysEffectParams in base.battleStateData.revivalReservedEffect)
 		{
-			a.gameObject.SetActive(false);
+			alwaysEffectParams.gameObject.SetActive(false);
 		}
 		base.stateManager.threeDAction.ShowAliveCharactersAction(base.battleStateData.GetTotalCharacters());
 		IEnumerator motionResetAliveCharacterAction = base.stateManager.threeDAction.MotionResetAliveCharacterAction(base.battleStateData.playerCharacters);
@@ -77,11 +77,11 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 		CharacterStateControl cameraTargetCharacter = base.battleStateData.playerCharacters[base.battleStateData.lastAttackPlayerCharacterIndex];
 		if (cameraTargetCharacter.isDied)
 		{
-			for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
+			for (int j = 0; j < base.battleStateData.playerCharacters.Length; j++)
 			{
-				if (!base.battleStateData.playerCharacters[i].isDied)
+				if (!base.battleStateData.playerCharacters[j].isDied)
 				{
-					cameraTargetCharacter = base.battleStateData.playerCharacters[i];
+					cameraTargetCharacter = base.battleStateData.playerCharacters[j];
 				}
 			}
 		}

@@ -18,8 +18,6 @@ public sealed class DataMng : MonoBehaviour
 
 	private GameWebAPI.RespDataUS_GetPlayerInfo resp_data_us_playerinfo;
 
-	private GameWebAPI.RespDataUS_GetSoulInfo resp_data_us_soulinfo;
-
 	private GameWebAPI.RespDataFR_FriendList resp_data_fr_friendlist;
 
 	private GameWebAPI.RespDataFR_FriendRequestList resp_data_fr_friendrequestlist;
@@ -214,19 +212,7 @@ public sealed class DataMng : MonoBehaviour
 		this.RespDataUS_PlayerInfo.playerInfo.gamemoney = num.ToString();
 	}
 
-	public GameWebAPI.RespDataUS_GetSoulInfo RespDataUS_SoulInfo
-	{
-		get
-		{
-			return this.resp_data_us_soulinfo;
-		}
-		set
-		{
-			this.resp_data_us_soulinfo = value;
-		}
-	}
-
-	public GameWebAPI.RespDataUS_GetGardenInfo RespDataUS_GardenInfo { get; set; }
+	public GameWebAPI.RespDataUS_GetSoulInfo RespDataUS_SoulInfo { get; set; }
 
 	public GameWebAPI.RespDataFR_FriendList RespDataFR_FriendList
 	{

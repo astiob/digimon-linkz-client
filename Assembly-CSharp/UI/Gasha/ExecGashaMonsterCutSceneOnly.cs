@@ -34,10 +34,10 @@ namespace UI.Gasha
 			int[] userMonsterIdList = new int[gashaResult.userMonsterList.Length];
 			for (int i = 0; i < gashaResult.userMonsterList.Length; i++)
 			{
-				int userMonsterId = 0;
-				if (int.TryParse(gashaResult.userMonsterList[i].userMonsterId, out userMonsterId))
+				int num = 0;
+				if (int.TryParse(gashaResult.userMonsterList[i].userMonsterId, out num))
 				{
-					userMonsterIdList[i] = userMonsterId;
+					userMonsterIdList[i] = num;
 				}
 			}
 			base.UpdateUserAssetsInventory(playGashaRequestParam.playCount);

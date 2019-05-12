@@ -4,9 +4,9 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Provides a set of services for registering and unregistering managed assemblies for use from COM.</summary>
-	[Guid("475e398f-8afa-43a7-a3be-f4ef8d6787c9")]
 	[ClassInterface(ClassInterfaceType.None)]
 	[ComVisible(true)]
+	[Guid("475e398f-8afa-43a7-a3be-f4ef8d6787c9")]
 	public class RegistrationServices : IRegistrationServices
 	{
 		/// <summary>Returns the GUID of the COM category that contains the managed classes.</summary>
@@ -122,8 +122,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[MonoTODO("implement")]
 		[ComVisible(false)]
+		[MonoTODO("implement")]
 		public virtual void UnregisterTypeForComClients(int cookie)
 		{
 			throw new NotImplementedException();

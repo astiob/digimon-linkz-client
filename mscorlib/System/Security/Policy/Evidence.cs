@@ -8,8 +8,8 @@ using System.Security.Permissions;
 namespace System.Security.Policy
 {
 	/// <summary>Defines the set of information that constitutes input to security policy decisions. This class cannot be inherited.</summary>
-	[MonoTODO("Serialization format not compatible with .NET")]
 	[ComVisible(true)]
+	[MonoTODO("Serialization format not compatible with .NET")]
 	[Serializable]
 	public sealed class Evidence : IEnumerable, ICollection
 	{

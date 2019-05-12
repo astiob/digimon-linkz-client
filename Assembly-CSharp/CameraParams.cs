@@ -29,20 +29,20 @@ public class CameraParams : MonoBehaviour
 	private bool _onLoopAnimation;
 
 	[FormerlySerializedAs("fieldOfView")]
-	[Range(1f, 179f)]
 	[SerializeField]
+	[Range(1f, 179f)]
 	private float _fieldOfView = 60f;
 
-	[SerializeField]
 	[FormerlySerializedAs("cameraAnimation")]
+	[SerializeField]
 	private Animation _cameraAnimation;
 
-	[SerializeField]
 	[FormerlySerializedAs("animationEndStop")]
+	[SerializeField]
 	private bool _animationEndStop = true;
 
-	[SerializeField]
 	[FormerlySerializedAs("endTime")]
+	[SerializeField]
 	private float _endTime = 3f;
 
 	[FormerlySerializedAs("cameraTarget")]
@@ -53,8 +53,8 @@ public class CameraParams : MonoBehaviour
 	[SerializeField]
 	private Transform _cameraLookTarget;
 
-	[SerializeField]
 	[FormerlySerializedAs("onPossibleInverse")]
+	[SerializeField]
 	private bool _onPossibleInverse;
 
 	[SerializeField]
@@ -439,8 +439,8 @@ public class CameraParams : MonoBehaviour
 			}
 			else
 			{
-				float endtimeCurrent = TimeExtension.GetTimeScaleDivided(endTimeCache);
-				if (endtimeCurrent < timeWait)
+				float timeScaleDivided = TimeExtension.GetTimeScaleDivided(endTimeCache);
+				if (timeScaleDivided < timeWait)
 				{
 					onEndAnimation = true;
 				}

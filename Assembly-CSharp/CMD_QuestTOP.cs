@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CMD_QuestTOP : CMD
@@ -36,16 +37,16 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private GameObject[] clipObjects;
 
-	[SerializeField]
 	[Header("ポイントクエスト用 ROOT")]
+	[SerializeField]
 	private GameObject goPartsPointROOT;
 
-	[SerializeField]
 	[Header("ポイントクエスト用（ランキングなし） ROOT")]
+	[SerializeField]
 	private GameObject goPartsPointWithoutRankingROOT;
 
-	[SerializeField]
 	[Header("詳細ボタン用 ROOT")]
+	[SerializeField]
 	private GameObject goPartsDetailsROOT;
 
 	[Header("ポイントクエスト用 BG")]
@@ -56,8 +57,8 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private GameObject goScheduleBannerROOT;
 
-	[SerializeField]
 	[Header("降臨エリア用 スケジュールバナー")]
+	[SerializeField]
 	private GameObject goScheduleBannerParts;
 
 	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
@@ -89,6 +90,9 @@ public class CMD_QuestTOP : CMD
 	private int needLife;
 
 	private PartsQuestPoint partsQuestPoint;
+
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache0;
 
 	public static QuestData.WorldAreaData AreaData { get; set; }
 
@@ -210,7 +214,11 @@ public class CMD_QuestTOP : CMD
 		}
 		base.SetCloseAction(delegate(int idx)
 		{
-			CMD cmd = GUIMain.ShowCommonDialog(new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP), "CMD_QuestSelect", null) as CMD;
+			if (CMD_QuestTOP.<>f__mg$cache0 == null)
+			{
+				CMD_QuestTOP.<>f__mg$cache0 = new Action<int>(CMD_BattleNextChoice.OnCloseQuestTOP);
+			}
+			CMD cmd = GUIMain.ShowCommonDialog(CMD_QuestTOP.<>f__mg$cache0, "CMD_QuestSelect", null) as CMD;
 			cmd.SetForceReturnValue(1);
 		});
 		this.ClosePanel(false);
@@ -351,23 +359,40 @@ public class CMD_QuestTOP : CMD
 	private string GetAnyTimeQuestTopTutorialFileName(string worldAreaId)
 	{
 		string result = string.Empty;
-		switch (worldAreaId)
+		if (worldAreaId != null)
 		{
-		case "1":
-			result = "anytime_second_tutorial_quest";
-			break;
-		case "2":
-			result = "anytime_second_tutorial_quest_week";
-			break;
-		case "3":
-			result = "anytime_second_tutorial_quest_advent";
-			break;
-		case "8":
-			result = string.Empty;
-			break;
-		case "9":
-			result = "anytime_second_tutorial_quest_beginner";
-			break;
+			if (!(worldAreaId == "1"))
+			{
+				if (!(worldAreaId == "2"))
+				{
+					if (!(worldAreaId == "3"))
+					{
+						if (!(worldAreaId == "8"))
+						{
+							if (worldAreaId == "9")
+							{
+								result = "anytime_second_tutorial_quest_beginner";
+							}
+						}
+						else
+						{
+							result = string.Empty;
+						}
+					}
+					else
+					{
+						result = "anytime_second_tutorial_quest_advent";
+					}
+				}
+				else
+				{
+					result = "anytime_second_tutorial_quest_week";
+				}
+			}
+			else
+			{
+				result = "anytime_second_tutorial_quest";
+			}
 		}
 		return result;
 	}
@@ -413,7 +438,7 @@ public class CMD_QuestTOP : CMD
 		this.goSelectPanelA_StageL = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelA_StageL", base.gameObject);
 		this.csSelectPanelA_StageL = this.goSelectPanelA_StageL.GetComponent<GUISelectPanelA_StageL>();
 		int depth = this.txEVENT_BG.gameObject.GetComponent<UIWidget>().depth - 1;
-		DepthController.SetWidgetDepth_2(this.csSelectPanelA_StageL.transform, depth);
+		DepthController.SetWidgetDepth_Static(this.csSelectPanelA_StageL.transform, depth);
 		if (CMD_QuestTOP.AreaData.data.type == "3" || CMD_QuestTOP.AreaData.data.type == "4")
 		{
 			GameObject gameObject = UnityEngine.Object.Instantiate(Resources.Load("UISelectPanelParam/SelectPanelParamUD_A_StageL_Point")) as GameObject;
@@ -485,7 +510,7 @@ public class CMD_QuestTOP : CMD
 		this.goSelectPanelS_DungeonR = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelS_DungeonR", base.gameObject);
 		this.csSelectPanelS_DungeonR = this.goSelectPanelS_DungeonR.GetComponent<GUISelectPanelS_DungeonR>();
 		int depth = this.txEVENT_BG.gameObject.GetComponent<UIWidget>().depth - 1;
-		DepthController.SetWidgetDepth_2(this.csSelectPanelS_DungeonR.transform, depth);
+		DepthController.SetWidgetDepth_Static(this.csSelectPanelS_DungeonR.transform, depth);
 		Vector3 localPosition = this.goLP_DNG.transform.localPosition;
 		this.goSelectPanelS_DungeonR.transform.localPosition.y = localPosition.x;
 		GUICollider component = this.goSelectPanelS_DungeonR.GetComponent<GUICollider>();
@@ -566,7 +591,7 @@ public class CMD_QuestTOP : CMD
 
 	public string StageNumBk { get; private set; }
 
-	public GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfoBk { get; private set; }
+	private GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfoBk { get; set; }
 
 	public void OnClickedDungeon(QuestData.WorldDungeonData data, string stageNum, GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfo = null)
 	{
@@ -576,17 +601,26 @@ public class CMD_QuestTOP : CMD
 		if (data.worldDungeonM.IsSoloMulti())
 		{
 			CMD_QuestDetailedPOP.CampaignInfo = campaignInfo;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestDetailedPOP", null);
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestDetailedPOP", new Action<CommonDialog>(this.OnReadyQuestDetailedPopup));
 		}
 		else if (data.worldDungeonM.IsMultiOnly())
 		{
 			CMD_QuestDetailedPOP.CampaignInfo = campaignInfo;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestMultiDetailedPOP), "CMD_QuestMultiDetailedPOP", null);
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestMultiDetailedPOP), "CMD_QuestMultiDetailedPOP", new Action<CommonDialog>(this.OnReadyQuestDetailedPopup));
 		}
 		else if (data.worldDungeonM.IsSoloOnly())
 		{
 			CMD_QuestDetailedPOP.CampaignInfo = campaignInfo;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestSoloDetailedPOP", null);
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseQuestDetailedPOP), "CMD_QuestSoloDetailedPOP", new Action<CommonDialog>(this.OnReadyQuestDetailedPopup));
+		}
+	}
+
+	private void OnReadyQuestDetailedPopup(CommonDialog dialog)
+	{
+		CMD_QuestDetailedPOP cmd_QuestDetailedPOP = dialog as CMD_QuestDetailedPOP;
+		if (null != cmd_QuestDetailedPOP)
+		{
+			cmd_QuestDetailedPOP.SetQuestData(CMD_QuestTOP.AreaData.data.worldAreaId, this.StageDataBk, this.StageNumBk);
 		}
 	}
 
@@ -645,14 +679,14 @@ public class CMD_QuestTOP : CMD
 	private bool CanPlayDungeonOver()
 	{
 		bool result = true;
-		int count = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON;
+		int count = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON;
 		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(count))
 		{
 			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit", null) as CMD_UpperLimit;
 			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
 			result = false;
 		}
-		else if (Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
+		else if (Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_SPACE_TOEXEC_DUNGEON))
 		{
 			CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip", null) as CMD_UpperlimitChip;
 			cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
@@ -727,7 +761,7 @@ public class CMD_QuestTOP : CMD
 		{
 			return;
 		}
-		if (idx == 0 || idx == 10 || idx == 20)
+		if (idx == 1 || idx == 10 || idx == 20)
 		{
 			if (!ClassSingleton<PlayLimit>.Instance.PlayLimitCheck(this.StageDataBk.dungeon, delegate(int _idx)
 			{
@@ -754,22 +788,22 @@ public class CMD_QuestTOP : CMD
 				ClassSingleton<PlayLimit>.Instance.SetTicketNumCont(this.StageDataBk.dungeon, ConstValue.PLAYLIMIT_USE_COUNT);
 			}
 		}
-		if (idx != 0)
+		if (idx != 1)
 		{
-			if (idx != 10)
+			if (idx != 20)
 			{
-				if (idx == 20)
+				if (idx == 10)
 				{
-					if (!this.CanPlayDungeonStamina())
-					{
-						return;
-					}
-					this.OnTapMultiRecruitButton();
+					this.OnTapMultiParticipateButton();
 				}
 			}
 			else
 			{
-				this.OnTapMultiParticipateButton();
+				if (!this.CanPlayDungeonStamina())
+				{
+					return;
+				}
+				this.OnTapMultiRecruitButton();
 			}
 		}
 		else
@@ -782,7 +816,7 @@ public class CMD_QuestTOP : CMD
 			{
 				ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
 				CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.SELECT;
-				CMD_PartyEdit cmd_PartyEdit = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit", null) as CMD_PartyEdit;
+				CMD_PartyEdit cmd_PartyEdit = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit", new Action<CommonDialog>(this.OnReadyPartyEdit)) as CMD_PartyEdit;
 				cmd_PartyEdit.parentCMD = this;
 			}
 			else
@@ -791,6 +825,16 @@ public class CMD_QuestTOP : CMD
 				cmd_ModalMessage.Title = StringMaster.GetString("StaminaShortageTitle");
 				cmd_ModalMessage.Info = StringMaster.GetString("QuestStaminaShortage");
 			}
+		}
+	}
+
+	private void OnReadyPartyEdit(CommonDialog dialog)
+	{
+		CMD_PartyEdit cmd_PartyEdit = dialog as CMD_PartyEdit;
+		if (null != cmd_PartyEdit)
+		{
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.StageDataBk.worldDungeonM;
+			cmd_PartyEdit.SetQuestId(CMD_QuestTOP.AreaData.data.worldAreaId, worldDungeonM.worldStageId, worldDungeonM.worldDungeonId);
 		}
 	}
 
@@ -827,19 +871,16 @@ public class CMD_QuestTOP : CMD
 				ClassSingleton<PlayLimit>.Instance.SetTicketNumCont(this.StageDataBk.dungeon, ConstValue.PLAYLIMIT_USE_COUNT);
 			}
 		}
-		if (selectButtonIndex != 10)
+		if (selectButtonIndex != 20)
 		{
-			if (selectButtonIndex == 20)
+			if (selectButtonIndex == 10)
 			{
-				if (this.CanPlayDungeonStamina())
-				{
-					this.OnTapMultiRecruitButton();
-				}
+				this.OnTapMultiParticipateButton();
 			}
 		}
-		else
+		else if (this.CanPlayDungeonStamina())
 		{
-			this.OnTapMultiParticipateButton();
+			this.OnTapMultiRecruitButton();
 		}
 	}
 
@@ -862,10 +903,11 @@ public class CMD_QuestTOP : CMD
 	{
 		if (this.needLife <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina)
 		{
-			ClassSingleton<QuestData>.Instance.SelectDungeon = this.StageDataBk.worldDungeonM;
-			DataMng.Instance().GetResultUtilData().SetLastDngReq(this.StageDataBk.worldDungeonM.worldDungeonId, "-1", this.StageDataBk.dungeon.userDungeonTicketId);
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeonM = this.StageDataBk.worldDungeonM;
+			ClassSingleton<QuestData>.Instance.SelectDungeon = worldDungeonM;
+			DataMng.Instance().GetResultUtilData().SetLastDngReq(worldDungeonM.worldDungeonId, "-1", this.StageDataBk.dungeon.userDungeonTicketId);
 			CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
-			GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit", null);
+			GUIMain.ShowCommonDialog(new Action<int>(this.OnClosePartySelect), "CMD_PartyEdit", new Action<CommonDialog>(this.OnReadyPartyEdit));
 		}
 		else
 		{

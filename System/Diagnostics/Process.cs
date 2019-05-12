@@ -12,7 +12,7 @@ namespace System.Diagnostics
 {
 	/// <summary>Provides access to local and remote processes and enables you to start and stop local system processes.</summary>
 	/// <filterpriority>1</filterpriority>
-	[System.ComponentModel.Designer("System.Diagnostics.Design.ProcessDesigner, System.Design, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[System.ComponentModel.Designer("System.Diagnostics.Design.ProcessDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	[System.ComponentModel.DefaultEvent("Exited")]
 	[System.ComponentModel.DefaultProperty("StartInfo")]
 	[MonitoringDescription("Represents a system process")]
@@ -2124,10 +2124,20 @@ namespace System.Diagnostics
 
 			private StringBuilder sb = new StringBuilder();
 
+			private Encoding outputEncoding;
+
 			public Process.AsyncReadHandler ReadHandler;
 
 			public ProcessAsyncReader(Process process, IntPtr handle, bool err_out)
 			{
+				if (err_out)
+				{
+					this.outputEncoding = (process.StartInfo.StandardOutputEncoding ?? Console.Out.Encoding);
+				}
+				else
+				{
+					this.outputEncoding = (process.StartInfo.StandardErrorEncoding ?? Console.Out.Encoding);
+				}
 				this.process = process;
 				this.handle = handle;
 				this.stream = new FileStream(handle, FileAccess.Read, false);
@@ -2153,7 +2163,7 @@ namespace System.Diagnostics
 					{
 						try
 						{
-							this.sb.Append(Encoding.Default.GetString(this.buffer, 0, num));
+							this.sb.Append(this.outputEncoding.GetString(this.buffer, 0, num));
 						}
 						catch
 						{

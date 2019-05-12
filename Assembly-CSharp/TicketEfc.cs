@@ -8,20 +8,20 @@ public sealed class TicketEfc : MonoBehaviour
 	[SerializeField]
 	public UITexture ngTICKET_THUMB;
 
-	[SerializeField]
 	[Header("チケット TEX")]
+	[SerializeField]
 	private UITexture ngTICKET;
 
 	[Header("パーティクル OBJ")]
 	[SerializeField]
 	private GameObject goPARTICLE;
 
-	[SerializeField]
 	[Header("NEW スプライト")]
+	[SerializeField]
 	public UISprite spNew;
 
-	[SerializeField]
 	[Header("枚数ラベル")]
+	[SerializeField]
 	public UILabel ngTXT_TICKET_NUM;
 
 	private int playFrameCT;

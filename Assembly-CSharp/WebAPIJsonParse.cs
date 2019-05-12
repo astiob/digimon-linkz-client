@@ -167,22 +167,37 @@ public class WebAPIJsonParse : MonoBehaviour
 
 	public static string GetBody(string json)
 	{
-		int num = json.IndexOf("resData");
-		num = json.IndexOf(":", num);
-		num++;
-		if ("null" == json.Substring(num, "null".Length))
+		string result;
+		try
 		{
-			return string.Empty;
+			int num = json.IndexOf("resData");
+			num = json.IndexOf(":", num);
+			num++;
+			if ("null" == json.Substring(num, "null".Length))
+			{
+				result = string.Empty;
+			}
+			else
+			{
+				num = json.IndexOf(":", num);
+				num++;
+				int num2 = WebAPIJsonParse.SkipBody(json, num + 1);
+				string text = json.Substring(num, num2 - num);
+				if ("null" == text.Substring(0, "null".Length))
+				{
+					result = string.Empty;
+				}
+				else
+				{
+					result = text.Trim();
+				}
+			}
 		}
-		num = json.IndexOf(":", num);
-		num++;
-		int num2 = WebAPIJsonParse.SkipBody(json, num + 1);
-		string text = json.Substring(num, num2 - num);
-		if ("null" == text.Substring(0, "null".Length))
+		catch (Exception ex)
 		{
-			return string.Empty;
+			throw new JsonException(ex.ToString());
 		}
-		return text.Trim();
+		return result;
 	}
 
 	private static int SkipBody(string json, int startScope)

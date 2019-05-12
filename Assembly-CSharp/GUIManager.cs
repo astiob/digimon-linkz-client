@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class GUIManager : Singleton<GUIManager>
@@ -13,6 +16,8 @@ public class GUIManager : Singleton<GUIManager>
 	private static Dictionary<Collider, ITouchEvent> colliders = new Dictionary<Collider, ITouchEvent>();
 
 	private static Dictionary<int, ITouchEvent> spriteSelected = new Dictionary<int, ITouchEvent>();
+
+	private static List<ITouchEvent> touchs = new List<ITouchEvent>();
 
 	public static bool enebleMultiInput = false;
 
@@ -52,7 +57,11 @@ public class GUIManager : Singleton<GUIManager>
 
 	public static List<ITouchEvent> selectButtons;
 
-	public event Action ActCallBackCloseAllCMD;
+	[CompilerGenerated]
+	private static Comparison<CommonDialog> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Comparison<CommonDialog> <>f__mg$cache1;
 
 	public bool UseOutsideTouchControl { get; set; }
 
@@ -67,6 +76,9 @@ public class GUIManager : Singleton<GUIManager>
 			GUIManager.enebleMultiInput = value;
 		}
 	}
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public event Action ActCallBackCloseAllCMD;
 
 	public static void AllInit()
 	{
@@ -600,10 +612,23 @@ public class GUIManager : Singleton<GUIManager>
 		{
 			component.depth += add;
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			GUIManager.AddWidgetDepth(tm2, add);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				GUIManager.AddWidgetDepth(tm2, add);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -615,10 +640,23 @@ public class GUIManager : Singleton<GUIManager>
 			component.depth = dpth;
 		}
 		dpth++;
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			GUIManager.SetWidgetDepth(tm2, dpth);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				GUIManager.SetWidgetDepth(tm2, dpth);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 		dpth--;
 	}
@@ -634,10 +672,23 @@ public class GUIManager : Singleton<GUIManager>
 				component.color = col;
 			}
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			GUIManager.SetColorAll(tm2, col);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				GUIManager.SetColorAll(tm2, col);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -777,31 +828,41 @@ public class GUIManager : Singleton<GUIManager>
 		}
 		else
 		{
-			list.Sort(new Comparison<CommonDialog>(GUIManager.CompareDLG_Z));
+			List<CommonDialog> list2 = list;
+			if (GUIManager.<>f__mg$cache0 == null)
+			{
+				GUIManager.<>f__mg$cache0 = new Comparison<CommonDialog>(GUIManager.CompareDLG_Z);
+			}
+			list2.Sort(GUIManager.<>f__mg$cache0);
 			GUIManager.closeAllMode = true;
 			for (int i = 0; i < list.Count; i++)
 			{
 				if (i == list.Count - 1)
 				{
 					list[i].ClosePanel(true);
-					List<CommonDialog> list2 = new List<CommonDialog>();
+					List<CommonDialog> list3 = new List<CommonDialog>();
 					foreach (string key2 in GUIManager.commonDialogs.Keys)
 					{
 						if (!GUIManager.commonDialogs[key2].IsClosing())
 						{
-							list2.Add(GUIManager.commonDialogs[key2]);
+							list3.Add(GUIManager.commonDialogs[key2]);
 						}
 					}
-					list2.Sort(new Comparison<CommonDialog>(GUIManager.CompareDLG_Z));
-					for (int j = 0; j < list2.Count; j++)
+					List<CommonDialog> list4 = list3;
+					if (GUIManager.<>f__mg$cache1 == null)
+					{
+						GUIManager.<>f__mg$cache1 = new Comparison<CommonDialog>(GUIManager.CompareDLG_Z);
+					}
+					list4.Sort(GUIManager.<>f__mg$cache1);
+					for (int j = 0; j < list3.Count; j++)
 					{
 						float num = GUIManager.DLG_START_Z + GUIManager.DLG_PITCH_Z * (float)j;
-						Vector3 localPosition = list2[j].gameObject.transform.localPosition;
-						int add = -(int)(num - list2[j].gameObject.transform.localPosition.z);
-						GUIManager.AddWidgetDepth(list2[j].gameObject.transform, add);
+						Vector3 localPosition = list3[j].gameObject.transform.localPosition;
+						int add = -(int)(num - list3[j].gameObject.transform.localPosition.z);
+						GUIManager.AddWidgetDepth(list3[j].gameObject.transform, add);
 						localPosition.z = num;
-						list2[j].SetOriginalPos(localPosition);
-						if (j == list2.Count - 1)
+						list3[j].SetOriginalPos(localPosition);
+						if (j == list3.Count - 1)
 						{
 							GUIBase guibase = GUIManager.guiBases["CommonDialogBarrier"];
 							localPosition = guibase.gameObject.transform.localPosition;
@@ -811,7 +872,7 @@ public class GUIManager : Singleton<GUIManager>
 							UISprite component = guibase.gameObject.GetComponent<UISprite>();
 							if (component != null)
 							{
-								component.color = list2[j].barrierColor;
+								component.color = list3[j].barrierColor;
 							}
 						}
 					}
@@ -909,11 +970,11 @@ public class GUIManager : Singleton<GUIManager>
 		{
 			return true;
 		}
-		foreach (Collider key in GUIManager.colliders.Keys)
+		foreach (KeyValuePair<Collider, ITouchEvent> keyValuePair in GUIManager.colliders)
 		{
-			if (GUIManager.colliders.ContainsKey(key))
+			if (keyValuePair.Value != null)
 			{
-				GUICollider guicollider = (GUICollider)GUIManager.colliders[key];
+				GUICollider guicollider = keyValuePair.Value as GUICollider;
 				if (guicollider != null && guicollider.isTouching)
 				{
 					return true;
@@ -1123,7 +1184,7 @@ public class GUIManager : Singleton<GUIManager>
 	public static List<ITouchEvent> getButtonForScreenPositions(Vector2 touchPosition)
 	{
 		Camera orthoCamera = GUIMain.GetOrthoCamera();
-		List<ITouchEvent> list = new List<ITouchEvent>();
+		GUIManager.touchs.Clear();
 		Ray ray = orthoCamera.ScreenPointToRay(new Vector3(touchPosition.x, touchPosition.y, 0f));
 		RaycastHit[] array = Physics.RaycastAll(ray);
 		if (array.Length > 0)
@@ -1134,12 +1195,12 @@ public class GUIManager : Singleton<GUIManager>
 				if (GUIManager.colliders.TryGetValue(array[i].collider, out touchEvent))
 				{
 					touchEvent.distance = array[i].distance;
-					list.Add(touchEvent);
+					GUIManager.touchs.Add(touchEvent);
 				}
 			}
-			list.Sort((ITouchEvent x, ITouchEvent y) => Math.Sign(x.distance - y.distance));
+			GUIManager.touchs.Sort((ITouchEvent x, ITouchEvent y) => Math.Sign(x.distance - y.distance));
 		}
-		return list;
+		return GUIManager.touchs;
 	}
 
 	public static GameObject GetParentObject(GameObject go)

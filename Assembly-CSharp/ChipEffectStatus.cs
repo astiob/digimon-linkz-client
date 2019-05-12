@@ -1,6 +1,7 @@
 ﻿using BattleStateMachineInternal;
 using Monster;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -507,15 +508,28 @@ public class ChipEffectStatus : EffectStatusBase
 		if (currentSufferState != null)
 		{
 			list.AddRange(ChipEffectStatus.GetChipEffectList(chipEffects, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, 0, isEnemy, effectType));
-			foreach (object obj in Enum.GetValues(typeof(SufferStateProperty.SufferType)))
+			IEnumerator enumerator2 = Enum.GetValues(typeof(SufferStateProperty.SufferType)).GetEnumerator();
+			try
 			{
-				SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)((int)obj);
-				if (sufferType != SufferStateProperty.SufferType.Null)
+				while (enumerator2.MoveNext())
 				{
-					if (currentSufferState.FindSufferState(sufferType))
+					object obj = enumerator2.Current;
+					SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)obj;
+					if (sufferType != SufferStateProperty.SufferType.Null)
 					{
-						list.AddRange(ChipEffectStatus.GetChipEffectList(chipEffects, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, (int)sufferType, isEnemy, effectType));
+						if (currentSufferState.FindSufferState(sufferType))
+						{
+							list.AddRange(ChipEffectStatus.GetChipEffectList(chipEffects, targetType, EffectStatusBase.ExtraTargetSubType.Suffer, (int)sufferType, isEnemy, effectType));
+						}
 					}
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator2 as IDisposable)) != null)
+				{
+					disposable.Dispose();
 				}
 			}
 		}
@@ -668,8 +682,9 @@ public class ChipEffectStatus : EffectStatusBase
 		foreach (ExtraEffectStatus extraEffectStatus in extraEffectStatusList)
 		{
 			bool flag2 = true;
-			foreach (MonsterData chipActer in chipPlayers)
+			for (int i = 0; i < chipPlayers.Length; i++)
 			{
+				MonsterData chipActer = chipPlayers[i];
 				if (chipActer != null)
 				{
 					ChipEffectStatus.TargetType targetType;

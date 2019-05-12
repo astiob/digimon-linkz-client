@@ -6,8 +6,8 @@ public sealed class CMD_InstallingPOP : CMD
 {
 	private Action _successCallback;
 
-	[SerializeField]
 	[Header("タイトルラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
 	[Header("チップテクスチャ")]
@@ -34,8 +34,8 @@ public sealed class CMD_InstallingPOP : CMD
 	[SerializeField]
 	private UILabel chipDescLabel;
 
-	[SerializeField]
 	[Header("チップ装着メッセージラベル")]
+	[SerializeField]
 	private UILabel chipAlertLabel;
 
 	private GameWebAPI.ReqDataCS_ChipEquipLogic equip;
@@ -123,29 +123,21 @@ public sealed class CMD_InstallingPOP : CMD
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		this.equip.act = 1;
-		GameWebAPI.ChipEquipLogic request = ChipDataMng.RequestAPIChipEquip(this.equip, new Action<int, GameWebAPI.RequestMonsterList>(this.EndAttachment));
-		Action<Exception> onFailed = delegate(Exception noop)
+		GameWebAPI.ChipEquipLogic request = ChipDataMng.RequestAPIChipEquip(this.equip, new Action<int>(this.EndAttachment));
+		base.StartCoroutine(request.Run(null, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 			GUIMain.BarrierOFF();
-		};
-		base.StartCoroutine(request.Run(null, onFailed, null));
+		}, null));
 	}
 
-	private void EndAttachment(int resultCode, GameWebAPI.RequestMonsterList subRequest)
+	private void EndAttachment(int resultCode)
 	{
 		if (resultCode == 1)
 		{
 			this.successCallback();
-			base.StartCoroutine(subRequest.Run(delegate()
-			{
-				RestrictionInput.EndLoad();
-				base.ClosePanel(true);
-			}, delegate(Exception noop)
-			{
-				RestrictionInput.EndLoad();
-				GUIMain.BarrierOFF();
-			}, null));
+			RestrictionInput.EndLoad();
+			base.ClosePanel(true);
 		}
 		else
 		{
@@ -168,7 +160,7 @@ public sealed class CMD_InstallingPOP : CMD
 		string message = string.Format(StringMaster.GetString("ChipDataMismatchMesage"), resultCode);
 		AlertManager.ShowModalMessage(delegate(int modal)
 		{
-			base.ClosePanel(true);
+			this.<ClosePanel>__BaseCallProxy0(true);
 		}, @string, message, AlertManager.ButtonActionType.Close, false);
 	}
 

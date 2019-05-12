@@ -418,17 +418,6 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		return new APIRequestTask(request, requestRetry);
 	}
 
-	public APIRequestTask RequestGardenInfo(bool requestRetry = true)
-	{
-		GameWebAPI.RequestUS_GetGardenInfo requestUS_GetGardenInfo = new GameWebAPI.RequestUS_GetGardenInfo();
-		requestUS_GetGardenInfo.OnReceived = delegate(GameWebAPI.RespDataUS_GetGardenInfo response)
-		{
-			DataMng.Instance().RespDataUS_GardenInfo = response;
-		};
-		GameWebAPI.RequestUS_GetGardenInfo request = requestUS_GetGardenInfo;
-		return new APIRequestTask(request, requestRetry);
-	}
-
 	public bool ExistInBuildFacility(int facilityId)
 	{
 		bool result = false;

@@ -50,7 +50,7 @@ namespace Cutscene
 		private void RingSetPositionSetter()
 		{
 			CharacterParams component = this.afterMonster.GetComponent<CharacterParams>();
-			this.digimojiRing.localPosition = component.characterCenterTarget.localPosition;
+			this.digimojiRing.position = component.characterCenterTarget.position;
 		}
 
 		private void SoudPlayer1()

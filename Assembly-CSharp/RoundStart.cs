@@ -12,20 +12,20 @@ public class RoundStart : MonoBehaviour
 	[SerializeField]
 	protected UIComponentSkinner apHpUpRootSkinner;
 
-	[SerializeField]
 	[Header("ラウンドのローカライズ")]
+	[SerializeField]
 	protected UILabel roundLocalize;
 
-	[SerializeField]
 	[Header("AP UPローカライズ(片方の時)")]
+	[SerializeField]
 	protected UILabel onlyApUpLocalize;
 
 	[Header("AP UPローカライズ(両方)")]
 	[SerializeField]
 	protected UILabel apUpLocalize;
 
-	[SerializeField]
 	[Header("HP回復ローカライズ(片方の時)")]
+	[SerializeField]
 	protected UILabel onlyHpRecoverLocalize;
 
 	[Header("HP回復ローカライズ(両方)")]

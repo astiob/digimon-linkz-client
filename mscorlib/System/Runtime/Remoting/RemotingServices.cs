@@ -598,8 +598,8 @@ namespace System.Runtime.Remoting
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="Infrastructure" />
 		/// </PermissionSet>
 		[Obsolete("It existed for only internal use in .NET and unimplemented in mono")]
-		[Conditional("REMOTING_PERF")]
 		[MonoTODO]
+		[Conditional("REMOTING_PERF")]
 		public static void LogRemotingStage(int stage)
 		{
 			throw new NotImplementedException();

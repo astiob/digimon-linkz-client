@@ -243,11 +243,38 @@ namespace Quest
 			for (int i = 0; i < worldIdList.Count; i++)
 			{
 				string worldId = worldIdList[i];
-				string worldId2 = worldId;
-				switch (worldId2)
+				if (worldId != null)
 				{
-				case "1":
-					if (this.dngDataCacheList.ContainsKey(worldIdList[i]))
+					if (!(worldId == "1"))
+					{
+						if (!(worldId == "3"))
+						{
+							if (worldId == "8")
+							{
+								this.ResetWorldAreaActiveFlg("8");
+								RequestBase item = new GameWebAPI.RequestWD_WorldTicketDungeonInfo
+								{
+									OnReceived = delegate(GameWebAPI.RespDataWD_GetDungeonInfo response)
+									{
+										this.AddWD_DngInfoDataList(worldId, response);
+									}
+								};
+								list.Add(item);
+							}
+						}
+						else
+						{
+							RequestBase item = new GameWebAPI.RequestWD_WorldEventDungeonInfo
+							{
+								OnReceived = delegate(GameWebAPI.RespDataWD_GetDungeonInfo response)
+								{
+									this.AddWD_DngInfoDataList(worldId, response);
+								}
+							};
+							list.Add(item);
+						}
+					}
+					else if (this.dngDataCacheList.ContainsKey(worldIdList[i]))
 					{
 						this.AddWD_DngInfoDataList(worldIdList[i], this.dngDataCacheList[worldIdList[i]]);
 					}
@@ -267,32 +294,6 @@ namespace Quest
 						};
 						list.Add(item);
 					}
-					break;
-				case "3":
-				{
-					RequestBase item = new GameWebAPI.RequestWD_WorldEventDungeonInfo
-					{
-						OnReceived = delegate(GameWebAPI.RespDataWD_GetDungeonInfo response)
-						{
-							this.AddWD_DngInfoDataList(worldId, response);
-						}
-					};
-					list.Add(item);
-					break;
-				}
-				case "8":
-				{
-					this.ResetWorldAreaActiveFlg("8");
-					RequestBase item = new GameWebAPI.RequestWD_WorldTicketDungeonInfo
-					{
-						OnReceived = delegate(GameWebAPI.RespDataWD_GetDungeonInfo response)
-						{
-							this.AddWD_DngInfoDataList(worldId, response);
-						}
-					};
-					list.Add(item);
-					break;
-				}
 				}
 			}
 			if (list.Count > 0)
@@ -1015,6 +1016,21 @@ namespace Quest
 					dropAssetList.Add(questStage.dropAssets[i]);
 				}
 			}
+		}
+
+		public static GameWebAPI.ResponseWorldStageForceOpenMaster.ForceOpen GetQuestForceOpen(int worldStageId)
+		{
+			GameWebAPI.ResponseWorldStageForceOpenMaster.ForceOpen result = null;
+			GameWebAPI.ResponseWorldStageForceOpenMaster worldStageForceOpenMaster = MasterDataMng.Instance().WorldStageForceOpenMaster;
+			for (int i = 0; i < worldStageForceOpenMaster.worldStageForceOpenM.Length; i++)
+			{
+				if (worldStageForceOpenMaster.worldStageForceOpenM[i].worldStageId == worldStageId)
+				{
+					result = worldStageForceOpenMaster.worldStageForceOpenM[i];
+					break;
+				}
+			}
+			return result;
 		}
 
 		public enum WORLD_STATUS

@@ -2,8 +2,10 @@
 using Quest;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
+using WebAPIRequest;
 
 public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 {
@@ -53,6 +55,9 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 
 	private TextMeshPro textMeshPro;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
 	public int positionNumber { get; set; }
 
 	private void Start()
@@ -90,7 +95,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 		CMD_MultiRecruitPartyWait.Instance.ClearStExchange();
 		this.baseMonster = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(base.Data.userMonster.userMonsterId, false);
 		CMD_DeckList.SelectMonsterData = this.baseMonster;
-		CMD_DeckList cmd_DeckList = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedDeckList), "CMD_DeckList", null) as CMD_DeckList;
+		CMD_DeckList cmd_DeckList = GUIMain.ShowCommonDialog(new Action<int>(this.OnClosedDeckList), "CMD_DeckList", new Action<CommonDialog>(base.OnReadyDeckList)) as CMD_DeckList;
 		cmd_DeckList.PartsTitle.DisableCloseBtn(true);
 		cmd_DeckList.PPMI_Instance = this;
 		cmd_DeckList.ppmiList = new List<PartsPartyMonsInfo>();
@@ -108,7 +113,7 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 		{
 			if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
 			{
-				GameWebAPI.MultiRoomUpdate request = new GameWebAPI.MultiRoomUpdate
+				GameWebAPI.MultiRoomUpdate multiRoomUpdate = new GameWebAPI.MultiRoomUpdate
 				{
 					SetSendData = delegate(GameWebAPI.ReqData_MultiRoomUpdate param)
 					{
@@ -116,7 +121,12 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 						param.user_monster_id = int.Parse(base.Data.userMonster.userMonsterId);
 					}
 				};
-				base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception nop)
+				RequestBase request = multiRoomUpdate;
+				if (PartsMultiRecruitMonsInfo.<>f__mg$cache0 == null)
+				{
+					PartsMultiRecruitMonsInfo.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+				}
+				base.StartCoroutine(request.RunOneTime(PartsMultiRecruitMonsInfo.<>f__mg$cache0, delegate(Exception nop)
 				{
 					RestrictionInput.EndLoad();
 				}, null));

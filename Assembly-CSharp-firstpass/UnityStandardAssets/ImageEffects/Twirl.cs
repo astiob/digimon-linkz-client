@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Displacement/Twirl")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Displacement/Twirl")]
 	public class Twirl : ImageEffectBase
 	{
 		public Vector2 radius = new Vector2(0.3f, 0.3f);

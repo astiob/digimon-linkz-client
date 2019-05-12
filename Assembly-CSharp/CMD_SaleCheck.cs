@@ -6,24 +6,20 @@ using UnityEngine;
 
 public sealed class CMD_SaleCheck : CMD
 {
-	[SerializeField]
 	[Header("サムネイルのアイコン達")]
+	[SerializeField]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
 	[Header("タイトルのラベル")]
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("取得クラスタのタイトルラベル")]
-	[SerializeField]
-	private UILabel getClusterTitleLabel;
-
-	[SerializeField]
 	[Header("取得クラスタのラベル")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
 	[Header("警告のメッセージのラベル")]
@@ -38,15 +34,9 @@ public sealed class CMD_SaleCheck : CMD
 	[SerializeField]
 	private GameObject btnGroup;
 
-	public override void ClosePanel(bool animation = true)
-	{
-		base.ClosePanel(animation);
-	}
-
 	public void SetParams(List<MonsterData> selectedMonsterDataList, string getCluster)
 	{
 		this.titleLabel.text = StringMaster.GetString("SaleConfirmTitle");
-		this.getClusterTitleLabel.text = StringMaster.GetString("SaleConfirmGain");
 		this.normalMessageLabel.text = StringMaster.GetString("SaleConfirmInfo");
 		bool flag = MonsterUserDataMng.AnyChipEquipMonster(selectedMonsterDataList);
 		bool flag2 = MonsterUserDataMng.AnyHighGrowStepMonster(selectedMonsterDataList);
@@ -105,13 +95,12 @@ public sealed class CMD_SaleCheck : CMD
 	public void SetParams(List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> selectedUserChipList, string getCluster)
 	{
 		this.titleLabel.text = StringMaster.GetString("ChipSaleCheck-01");
-		this.getClusterTitleLabel.text = StringMaster.GetString("SaleConfirmGain");
 		this.normalMessageLabel.text = StringMaster.GetString("ChipSaleCheck-02");
 		bool flag = false;
 		for (int i = 0; i < selectedUserChipList.Count; i++)
 		{
 			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(selectedUserChipList[i].chipId.ToString());
-			if (chipMainData.rank.ToInt32() >= 7)
+			if (int.Parse(chipMainData.rank) >= 7)
 			{
 				flag = true;
 			}
@@ -119,11 +108,6 @@ public sealed class CMD_SaleCheck : CMD
 		}
 		this.warningMessageLabel.text = ((!flag) ? string.Empty : string.Format(StringMaster.GetString("ChipSaleCheck-03"), "A"));
 		this.getClusterLabel.text = getCluster;
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
 	}
 
 	private void CreateIcon(int index, MonsterData md, GameObject goEmpty)

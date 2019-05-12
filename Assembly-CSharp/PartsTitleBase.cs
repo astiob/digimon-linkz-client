@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PartsTitleBase : UtilForCMD
 {
-	private const string RETURN_SPRITE_NAME = "Common02_Btn_ReturnON";
-
 	[SerializeField]
 	private UILabel ngTXT_TITLE;
 
@@ -32,6 +30,8 @@ public class PartsTitleBase : UtilForCMD
 	private Action<int> actCallBackClose;
 
 	private Action<int> actCallBackTutorial;
+
+	private const string RETURN_SPRITE_NAME = "Common02_Btn_ReturnON";
 
 	protected override void Awake()
 	{

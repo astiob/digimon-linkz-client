@@ -21,17 +21,16 @@ namespace WebAPIRequest
 			yield return webApi.StartCoroutine(webApi.StartAPIRequest(this.apiId, sendJson, response));
 			try
 			{
-				string receiveJson = webApi.GetResponseJson(response);
-				this.ToObject(receiveJson, true);
+				string responseJson = webApi.GetResponseJson(response);
+				this.ToObject(responseJson, true);
 			}
 			catch (WebAPIException ex)
 			{
-				WebAPIException exception = ex;
-				if (exception != null)
+				if (ex != null)
 				{
-					exception.apiId = this.apiId;
+					ex.apiId = this.apiId;
 				}
-				throw exception;
+				throw ex;
 			}
 			yield break;
 		}

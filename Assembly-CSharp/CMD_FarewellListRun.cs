@@ -5,12 +5,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_FarewellListRun : CMD
 {
-	private const int FAREWELL_LIMIT = 10;
-
 	[SerializeField]
 	private List<GameObject> goMN_ICON_LIST;
 
@@ -61,8 +60,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[SerializeField]
 	[Header("お別れボタンのラベル")]
+	[SerializeField]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]
@@ -76,6 +75,8 @@ public sealed class CMD_FarewellListRun : CMD
 
 	private GUISelectPanelMonsterIcon csSelectPanelMonsterIcon;
 
+	private const int FAREWELL_LIMIT = 10;
+
 	private int chip_bak;
 
 	private List<MonsterData> sellMonsterList;
@@ -87,6 +88,9 @@ public sealed class CMD_FarewellListRun : CMD
 	private HouseGardenMonsterList monsterList;
 
 	private bool isReceived;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public static CMD_FarewellListRun.MODE Mode { private get; set; }
 
@@ -131,7 +135,13 @@ public sealed class CMD_FarewellListRun : CMD
 			if (tutorialObserver != null)
 			{
 				GUIMain.BarrierON(null);
-				tutorialObserver.StartSecondTutorial("second_tutorial_house", new Action(GUIMain.BarrierOFF), delegate
+				TutorialObserver tutorialObserver2 = tutorialObserver;
+				string tutorialName = "second_tutorial_house";
+				if (CMD_FarewellListRun.<>f__mg$cache0 == null)
+				{
+					CMD_FarewellListRun.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+				}
+				tutorialObserver2.StartSecondTutorial(tutorialName, CMD_FarewellListRun.<>f__mg$cache0, delegate
 				{
 					GUICollider.EnableAllCollider("CMD_FarewellListRun");
 				});
@@ -239,9 +249,8 @@ public sealed class CMD_FarewellListRun : CMD
 	private void EndSale(GameWebAPI.RespDataMN_SaleExec response)
 	{
 		string[] userMonsterIdList = this.sellMonsterList.Select((MonsterData x) => x.userMonster.userMonsterId).ToArray<string>();
+		ChipDataMng.GetUserChipSlotData().RemoveMonsterChipData(userMonsterIdList);
 		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
-		ChipDataMng.DeleteEquipChip(userMonsterIdList);
-		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 		this.InitMonsterList(false);
 		this.sellMonsterList.Clear();
@@ -392,6 +401,7 @@ public sealed class CMD_FarewellListRun : CMD
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
 		this.csSelectPanelMonsterIcon.ScrollBarPosX = 458f;
 		this.csSelectPanelMonsterIcon.ScrollBarBGPosX = 458f;
+		this.csSelectPanelMonsterIcon.ClearIconDungeonBonus();
 		BtnSort[] componentsInChildren = base.GetComponentsInChildren<BtnSort>(true);
 		this.sortButton = componentsInChildren[0];
 		this.sortButton.OnChangeSortType = new Action(this.OnChangeSortSetting);
@@ -619,15 +629,6 @@ public sealed class CMD_FarewellListRun : CMD
 		{
 			num += this.sellMonsterList[i].GetPrice();
 		}
-		for (int j = 0; j < this.sellMonsterList.Count; j++)
-		{
-			foreach (GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip in this.sellMonsterList[j].GetSlotEquip())
-			{
-				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(equip.userChipId);
-				GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(userChip.chipId.ToString());
-				num += chipMainData.GetSellPrice();
-			}
-		}
 		return num;
 	}
 
@@ -730,11 +731,11 @@ public sealed class CMD_FarewellListRun : CMD
 			{
 				ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 				RestrictionInput.EndLoad();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy0(animation);
 			}, delegate(Exception nop)
 			{
 				RestrictionInput.EndLoad();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy0(animation);
 			}, null));
 		}
 		else

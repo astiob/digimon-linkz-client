@@ -35,11 +35,10 @@ namespace UnityEngine.UI
 
 		public static void Register(IClipper c)
 		{
-			if (c == null)
+			if (c != null)
 			{
-				return;
+				ClipperRegistry.instance.m_Clippers.AddUnique(c);
 			}
-			ClipperRegistry.instance.m_Clippers.AddUnique(c);
 		}
 
 		public static void Unregister(IClipper c)

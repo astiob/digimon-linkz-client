@@ -189,6 +189,26 @@ namespace com.adjust.sdk
 			}
 		}
 
+		public static implicit operator JSONNode(string s)
+		{
+			return new JSONData(s);
+		}
+
+		public static implicit operator string(JSONNode d)
+		{
+			return (!(d == null)) ? d.Value : null;
+		}
+
+		public static bool operator ==(JSONNode a, object b)
+		{
+			return (b == null && a is JSONLazyCreator) || object.ReferenceEquals(a, b);
+		}
+
+		public static bool operator !=(JSONNode a, object b)
+		{
+			return !(a == b);
+		}
+
 		public override bool Equals(object obj)
 		{
 			return object.ReferenceEquals(this, obj);
@@ -204,8 +224,7 @@ namespace com.adjust.sdk
 			string text = string.Empty;
 			foreach (char c in aText)
 			{
-				char c2 = c;
-				switch (c2)
+				switch (c)
 				{
 				case '\b':
 					text += "\\b";
@@ -217,9 +236,9 @@ namespace com.adjust.sdk
 					text += "\\n";
 					break;
 				default:
-					if (c2 != '"')
+					if (c != '"')
 					{
-						if (c2 != '\\')
+						if (c != '\\')
 						{
 							text += c;
 						}
@@ -265,80 +284,83 @@ namespace com.adjust.sdk
 				default:
 					switch (c)
 					{
-					case ' ':
-						goto IL_333;
-					default:
-						switch (c)
+					case '[':
+						if (flag)
 						{
-						case '[':
-							if (flag)
+							text += aJSON[i];
+							goto IL_45C;
+						}
+						stack.Push(new JSONArray());
+						if (jsonnode != null)
+						{
+							text2 = text2.Trim();
+							if (jsonnode is JSONArray)
 							{
-								text += aJSON[i];
-								goto IL_467;
+								jsonnode.Add(stack.Peek());
 							}
-							stack.Push(new JSONArray());
-							if (jsonnode != null)
+							else if (text2 != string.Empty)
 							{
-								text2 = text2.Trim();
-								if (jsonnode is JSONArray)
-								{
-									jsonnode.Add(stack.Peek());
-								}
-								else if (text2 != string.Empty)
-								{
-									jsonnode.Add(text2, stack.Peek());
-								}
+								jsonnode.Add(text2, stack.Peek());
 							}
-							text2 = string.Empty;
-							text = string.Empty;
-							jsonnode = stack.Peek();
-							goto IL_467;
-						case '\\':
-							i++;
-							if (flag)
+						}
+						text2 = string.Empty;
+						text = string.Empty;
+						jsonnode = stack.Peek();
+						goto IL_45C;
+					case '\\':
+						i++;
+						if (flag)
+						{
+							char c2 = aJSON[i];
+							switch (c2)
 							{
-								char c2 = aJSON[i];
-								char c3 = c2;
-								switch (c3)
+							case 'r':
+								text += '\r';
+								break;
+							default:
+								if (c2 != 'b')
 								{
-								case 'n':
-									text += '\n';
-									break;
-								default:
-									if (c3 != 'b')
+									if (c2 != 'f')
 									{
-										if (c3 != 'f')
+										if (c2 != 'n')
 										{
 											text += c2;
 										}
 										else
 										{
-											text += '\f';
+											text += '\n';
 										}
 									}
 									else
 									{
-										text += '\b';
+										text += '\f';
 									}
-									break;
-								case 'r':
-									text += '\r';
-									break;
-								case 't':
-									text += '\t';
-									break;
-								case 'u':
+								}
+								else
 								{
-									string s = aJSON.Substring(i + 1, 4);
-									text += (char)int.Parse(s, NumberStyles.AllowHexSpecifier);
-									i += 4;
-									break;
+									text += '\b';
 								}
-								}
+								break;
+							case 't':
+								text += '\t';
+								break;
+							case 'u':
+							{
+								string s = aJSON.Substring(i + 1, 4);
+								text += (char)int.Parse(s, NumberStyles.AllowHexSpecifier);
+								i += 4;
+								break;
 							}
-							goto IL_467;
-						case ']':
-							break;
+							}
+						}
+						goto IL_45C;
+					case ']':
+						break;
+					default:
+						switch (c)
+						{
+						case ' ':
+							goto IL_333;
 						default:
 							switch (c)
 							{
@@ -346,7 +368,7 @@ namespace com.adjust.sdk
 								if (flag)
 								{
 									text += aJSON[i];
-									goto IL_467;
+									goto IL_45C;
 								}
 								stack.Push(new JSONClass());
 								if (jsonnode != null)
@@ -364,30 +386,30 @@ namespace com.adjust.sdk
 								text2 = string.Empty;
 								text = string.Empty;
 								jsonnode = stack.Peek();
-								goto IL_467;
+								goto IL_45C;
 							default:
 								if (c != ',')
 								{
 									if (c != ':')
 									{
 										text += aJSON[i];
-										goto IL_467;
+										goto IL_45C;
 									}
 									if (flag)
 									{
 										text += aJSON[i];
-										goto IL_467;
+										goto IL_45C;
 									}
 									text2 = text;
 									text = string.Empty;
-									goto IL_467;
+									goto IL_45C;
 								}
 								else
 								{
 									if (flag)
 									{
 										text += aJSON[i];
-										goto IL_467;
+										goto IL_45C;
 									}
 									if (text != string.Empty)
 									{
@@ -402,52 +424,52 @@ namespace com.adjust.sdk
 									}
 									text2 = string.Empty;
 									text = string.Empty;
-									goto IL_467;
+									goto IL_45C;
 								}
 								break;
 							case '}':
 								break;
 							}
 							break;
-						}
-						if (flag)
-						{
-							text += aJSON[i];
-						}
-						else
-						{
-							if (stack.Count == 0)
-							{
-								throw new Exception("JSON Parse: Too many closing brackets");
-							}
-							stack.Pop();
-							if (text != string.Empty)
-							{
-								text2 = text2.Trim();
-								if (jsonnode is JSONArray)
-								{
-									jsonnode.Add(text);
-								}
-								else if (text2 != string.Empty)
-								{
-									jsonnode.Add(text2, text);
-								}
-							}
-							text2 = string.Empty;
-							text = string.Empty;
-							if (stack.Count > 0)
-							{
-								jsonnode = stack.Peek();
-							}
+						case '"':
+							flag ^= true;
+							goto IL_45C;
 						}
 						break;
-					case '"':
-						flag ^= true;
-						break;
+					}
+					if (flag)
+					{
+						text += aJSON[i];
+					}
+					else
+					{
+						if (stack.Count == 0)
+						{
+							throw new Exception("JSON Parse: Too many closing brackets");
+						}
+						stack.Pop();
+						if (text != string.Empty)
+						{
+							text2 = text2.Trim();
+							if (jsonnode is JSONArray)
+							{
+								jsonnode.Add(text);
+							}
+							else if (text2 != string.Empty)
+							{
+								jsonnode.Add(text2, text);
+							}
+						}
+						text2 = string.Empty;
+						text = string.Empty;
+						if (stack.Count > 0)
+						{
+							jsonnode = stack.Peek();
+						}
 					}
 					break;
 				}
-				IL_467:
+				IL_45C:
 				i++;
 				continue;
 				IL_333:
@@ -455,7 +477,7 @@ namespace com.adjust.sdk
 				{
 					text += aJSON[i];
 				}
-				goto IL_467;
+				goto IL_45C;
 			}
 			if (flag)
 			{
@@ -563,26 +585,6 @@ namespace com.adjust.sdk
 			{
 				Position = 0L
 			});
-		}
-
-		public static implicit operator JSONNode(string s)
-		{
-			return new JSONData(s);
-		}
-
-		public static implicit operator string(JSONNode d)
-		{
-			return (!(d == null)) ? d.Value : null;
-		}
-
-		public static bool operator ==(JSONNode a, object b)
-		{
-			return (b == null && a is JSONLazyCreator) || object.ReferenceEquals(a, b);
-		}
-
-		public static bool operator !=(JSONNode a, object b)
-		{
-			return !(a == b);
 		}
 	}
 }

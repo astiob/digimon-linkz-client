@@ -487,16 +487,24 @@ public class SufferStateProperty
 		return num;
 	}
 
-	public void SetNull()
+	public void SetNull(bool isRevival = false)
 	{
 		foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
 		{
 			foreach (SufferStateProperty.Data data in list)
 			{
-				if (!data.isParmanent)
+				if (data.removeOptionType == SufferStateProperty.RemoveOptionType.None)
 				{
 					data.isActive = false;
 					data.currentKeepRound = -1;
+				}
+				else if (data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
+				{
+					if (data.removeOptionType == SufferStateProperty.RemoveOptionType.NotForRevival && !isRevival)
+					{
+						data.isActive = false;
+						data.currentKeepRound = -1;
+					}
 				}
 			}
 		}
@@ -524,7 +532,7 @@ public class SufferStateProperty
 		{
 			foreach (SufferStateProperty.Data data in list)
 			{
-				if (data.isActive && !data.isParmanent)
+				if (data.isActive && data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
 				{
 					data.currentKeepRound += value;
 					if (data.currentKeepRound < 0)
@@ -549,7 +557,7 @@ public class SufferStateProperty
 	{
 		foreach (SufferStateProperty.Data data in datas)
 		{
-			if (data.isActive && !data.isParmanent)
+			if (data.isActive && data.removeOptionType != SufferStateProperty.RemoveOptionType.Not)
 			{
 				data.currentKeepRound += value;
 				if (data.currentKeepRound <= 0)
@@ -600,6 +608,25 @@ public class SufferStateProperty
 		}
 	}
 
+	public bool isMiss
+	{
+		get
+		{
+			bool result = false;
+			foreach (List<SufferStateProperty.Data> list in this.dataDictionary.Values)
+			{
+				foreach (SufferStateProperty.Data data in list)
+				{
+					if (data.isActive)
+					{
+						result = data.isMiss;
+					}
+				}
+			}
+			return result;
+		}
+	}
+
 	public SufferStateProperty.DamageRateResult GetCaseDamageRate(AffectEffectProperty affectEffectProperty, CharacterStateControl characterStateControl)
 	{
 		SufferStateProperty.DamageRateResult damageRateResult = new SufferStateProperty.DamageRateResult();
@@ -634,7 +661,7 @@ public class SufferStateProperty
 						{
 							num = ((!(characterStateControl != null)) ? 0 : characterStateControl.characterDatas.tribe.ToInt32());
 						}
-						damageRateResult.damageRate += array[num];
+						damageRateResult.damageRate += ((!affectEffectProperty.canUseAttribute) ? 0f : array[num]);
 						if (array[num] != 0f)
 						{
 							damageRateResult.dataList.Add(data);
@@ -677,6 +704,14 @@ public class SufferStateProperty
 	}
 
 	[Serializable]
+	public enum RemoveOptionType
+	{
+		None,
+		Not,
+		NotForRevival
+	}
+
+	[Serializable]
 	public enum SufferType
 	{
 		Null,
@@ -715,7 +750,8 @@ public class SufferStateProperty
 		Regenerate,
 		TurnEvasion,
 		CountEvasion,
-		Escape
+		Escape,
+		InstantDeath
 	}
 
 	[Serializable]
@@ -800,6 +836,10 @@ public class SufferStateProperty
 
 		public bool isEscape;
 
+		public bool isMiss;
+
+		public SufferStateProperty.RemoveOptionType removeOptionType;
+
 		public Data()
 		{
 		}
@@ -816,6 +856,7 @@ public class SufferStateProperty
 			}
 			this.isActive = true;
 			this.generationStartTiming = lastGenerationStartTiming;
+			this.removeOptionType = affectProperty.removeOptionType;
 			switch (affectProperty.type)
 			{
 			case AffectEffect.AttackUp:
@@ -981,6 +1022,10 @@ public class SufferStateProperty
 				this.maxValue = affectProperty.maxValue;
 				this.setType = affectProperty.sufferSetType;
 				break;
+			case AffectEffect.InstantDeath:
+				this.sufferType = SufferStateProperty.SufferType.InstantDeath;
+				this.isMiss = affectProperty.isMiss;
+				break;
 			case AffectEffect.Confusion:
 				this.sufferType = SufferStateProperty.SufferType.Confusion;
 				this.keepRoundNumber = affectProperty.keepRoundNumber;
@@ -1116,14 +1161,6 @@ public class SufferStateProperty
 				this.currentKeepRound = affectProperty.escapeRound;
 				this.escapeRate = affectProperty.escapeRate;
 				break;
-			}
-		}
-
-		public bool isParmanent
-		{
-			get
-			{
-				return this.keepRoundNumber >= 100 || this.currentKeepRound >= 100;
 			}
 		}
 

@@ -16,6 +16,9 @@ public class ToleranceIcon : MonoBehaviour
 	[SerializeField]
 	private GameObject drainIcon;
 
+	[SerializeField]
+	private GameObject disabled;
+
 	private UIWidget uiWidget;
 
 	private Coroutine animationCoroutine;
@@ -44,8 +47,9 @@ public class ToleranceIcon : MonoBehaviour
 		this.uiWidget.alpha = 1f;
 		this.defaultIcon.SetActive(iconType == Strength.None);
 		this.strongIcon.SetActive(iconType == Strength.Weak);
-		this.weakIcon.SetActive(iconType == Strength.Strong || iconType == Strength.Invalid);
+		this.weakIcon.SetActive(iconType == Strength.Strong);
 		this.drainIcon.SetActive(iconType == Strength.Drain);
+		this.disabled.SetActive(iconType == Strength.Invalid);
 	}
 
 	public void SetToleranceIcon(Strength[] iconTypes)

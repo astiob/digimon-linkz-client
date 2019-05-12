@@ -7,8 +7,8 @@ public class PlayerWinner : MonoBehaviour
 	[SerializeField]
 	private UIButton nextButton;
 
-	[SerializeField]
 	[Header("Nextボタンのコライダー")]
+	[SerializeField]
 	private Collider nextButtonCollider;
 
 	[Header("NextボタンのGameObject")]

@@ -5,8 +5,8 @@ namespace System
 {
 	/// <summary>Used to set the default loader optimization policy for the main method of an executable application.</summary>
 	/// <filterpriority>1</filterpriority>
-	[AttributeUsage(AttributeTargets.Method)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Method)]
 	public sealed class LoaderOptimizationAttribute : Attribute
 	{
 		private LoaderOptimization lo;

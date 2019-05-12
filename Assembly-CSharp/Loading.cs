@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Loading : MonoBehaviour
+public sealed class Loading : MonoBehaviour
 {
 	[SerializeField]
 	private GameObject smallLoading;
@@ -18,8 +18,6 @@ public class Loading : MonoBehaviour
 
 	public static Loading Instance;
 
-	private bool isResumeDisplay;
-
 	public static void Initialize(Transform parentTransform)
 	{
 		if (null == Loading.Instance)
@@ -32,11 +30,6 @@ public class Loading : MonoBehaviour
 			gameObject.transform.localRotation = Quaternion.identity;
 			Loading.Instance = gameObject.GetComponent<Loading>();
 			Loading.Instance.mask.enabled = false;
-			GameObject gameObject2 = NativeLoading.Instance.gameObject;
-			if (null != gameObject2)
-			{
-				gameObject2.transform.parent = Loading.Instance.transform;
-			}
 		}
 	}
 
@@ -60,12 +53,20 @@ public class Loading : MonoBehaviour
 	public static void Invisible()
 	{
 		Loading.Instance.SetMaskActive(false);
-		NativeLoading.Instance.StopAnimation();
+		if (Loading.Instance.smallLoading.activeSelf || Loading.Instance.largeLoading.activeSelf)
+		{
+			Loading.Instance.smallLoading.SetActive(false);
+			Loading.Instance.largeLoading.SetActive(false);
+		}
+		else
+		{
+			global::Debug.Log("<color=blue>Loading 消去済み</color>");
+		}
 	}
 
 	public static bool IsShow()
 	{
-		return NativeLoading.Instance.IsLoading;
+		return Loading.Instance.smallLoading.activeSelf || Loading.Instance.largeLoading.activeSelf;
 	}
 
 	private void StartLoading(Loading.LoadingType type, bool isMask)
@@ -73,12 +74,12 @@ public class Loading : MonoBehaviour
 		if (this.loadingType == Loading.LoadingType.SMALL)
 		{
 			this.SetMaskActive(this.enableMask);
-			NativeLoading.Instance.StartAnimation(NativeLoading.LoadingType.Short);
+			this.SetLoadingActive(this.smallLoading);
 		}
 		else if (this.loadingType == Loading.LoadingType.LARGE)
 		{
 			this.SetMaskActive(this.enableMask);
-			NativeLoading.Instance.StartAnimation(NativeLoading.LoadingType.Long);
+			this.SetLoadingActive(this.largeLoading);
 		}
 	}
 
@@ -94,37 +95,16 @@ public class Loading : MonoBehaviour
 		}
 	}
 
-	private void OnApplicationPause(bool isPause)
+	private void SetLoadingActive(GameObject loading)
 	{
-		if (isPause)
+		if (!loading.activeSelf)
 		{
-			if (NativeLoading.Instance.IsLoading)
-			{
-				this.isResumeDisplay = true;
-				NativeLoading.Instance.StopAnimation();
-			}
-		}
-		else if (this.isResumeDisplay)
-		{
-			this.isResumeDisplay = false;
-			if (this.loadingType == Loading.LoadingType.SMALL)
-			{
-				NativeLoading.Instance.StartAnimation(NativeLoading.LoadingType.Short);
-			}
-			else if (this.loadingType == Loading.LoadingType.LARGE)
-			{
-				NativeLoading.Instance.StartAnimation(NativeLoading.LoadingType.Long);
-			}
+			loading.SetActive(true);
 		}
 		else
 		{
-			ServerDateTime.UpdateServerDateTime();
+			global::Debug.Log("<color=blue>Loading 表示済み</color>");
 		}
-	}
-
-	private void OnApplicationQuit()
-	{
-		NativeLoading.Instance.StopAnimation();
 	}
 
 	public enum LoadingType

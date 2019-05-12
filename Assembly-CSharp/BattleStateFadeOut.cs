@@ -45,5 +45,6 @@ public class BattleStateFadeOut : BattleStateController
 		base.hierarchyData.RemoveAllCachedObjects();
 		base.stateManager.uiControl.RemoveAllCachedUI();
 		base.stateManager.soundManager.ReleaseAudio();
+		BattleEffectManager.Instance.Destroy();
 	}
 }

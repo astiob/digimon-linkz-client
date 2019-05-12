@@ -158,13 +158,13 @@ public class CMD_ChatInvitation : CMD
 		yield return base.StartCoroutine(task.Run(delegate
 		{
 			RestrictionInput.EndLoad();
-			base.ShowDLG();
+			this.ShowDLG();
 			this.MakeInviteData();
-			base.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 		yield break;
 	}
@@ -182,10 +182,9 @@ public class CMD_ChatInvitation : CMD
 		GameWebAPI.FriendList[] array = DataMng.Instance().RespDataFR_FriendList.friendList;
 		GameWebAPI.FriendList[] array2 = array;
 		int i = 0;
-		GameWebAPI.FriendList obj;
 		while (i < array2.Length)
 		{
-			obj = array2[i];
+			GameWebAPI.FriendList obj = array2[i];
 			if (this.allMemberData.member.memberList == null)
 			{
 				goto IL_83;
@@ -393,10 +392,9 @@ public class CMD_ChatInvitation : CMD
 		this.handoverListData = new List<GameWebAPI.ResponseData_ChatUserList.respUserList>();
 		GameWebAPI.ResponseData_ChatUserList.respUserList[] memberList = tmpList.memberList;
 		int i = 0;
-		GameWebAPI.ResponseData_ChatUserList.respUserList obj;
 		while (i < memberList.Length)
 		{
-			obj = memberList[i];
+			GameWebAPI.ResponseData_ChatUserList.respUserList obj = memberList[i];
 			if (BlockManager.instance().blockList == null)
 			{
 				goto IL_6E;
@@ -562,7 +560,7 @@ public class CMD_ChatInvitation : CMD
 		{
 			this.SetChangeOwnerType();
 			Singleton<TCPUtil>.Instance.SendSystemMessegeAlreadyConnected(ClassSingleton<ChatData>.Instance.CurrentChatInfo.groupId, "ChatLog-02", ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname, null);
-			base.ClosePanel(true);
+			this.<ClosePanel>__BaseCallProxy1(true);
 		}, "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage.Title = StringMaster.GetString("SystemConfirm");
 		cmd_ModalMessage.Info = string.Format(StringMaster.GetString("ChatTransferSuccess"), ClassSingleton<ChatData>.Instance.CurrentChatInfo.targetNickname);

@@ -1,4 +1,5 @@
 ﻿using Monster;
+using Quest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,10 @@ public sealed class PartyEditPartyMember : MonoBehaviour
 
 	private GUISelectPanelPartyEdit listRoot;
 
-	private void InitializeList(CMD_PartyEdit cmdPartyEdit)
+	private void InitializeList()
 	{
 		GameObject gameObject = GUIManager.LoadCommonGUI("SelectListPanel/SelectListPanelPartyEdit", base.gameObject);
 		this.listRoot = gameObject.GetComponent<GUISelectPanelPartyEdit>();
-		this.listRoot.partyEdit = cmdPartyEdit;
 		if (null != this.listRootParent)
 		{
 			gameObject.transform.parent = this.listRootParent.transform;
@@ -36,13 +36,13 @@ public sealed class PartyEditPartyMember : MonoBehaviour
 		this.listRoot.ListWindowViewRect = listWindowViewRect;
 	}
 
-	private void SetMonsterList()
+	private void SetMonsterList(CMD_PartyEdit partyEdit, QuestBonusPack questBonus, QuestBonusTargetCheck checker)
 	{
 		GameWebAPI.RespDataMN_GetDeckList.DeckList[] deckList = DataMng.Instance().RespDataMN_DeckList.deckList;
 		string selectDeckNum = DataMng.Instance().RespDataMN_DeckList.selectDeckNum;
-		int selectedIndexRev = selectDeckNum.ToInt32() - 1;
+		int selectedIndexRev = int.Parse(selectDeckNum) - 1;
 		this.listRoot.initLocation = true;
-		this.listRoot.AllBuild(deckList.ToList<GameWebAPI.RespDataMN_GetDeckList.DeckList>());
+		this.listRoot.AllBuild(deckList.ToList<GameWebAPI.RespDataMN_GetDeckList.DeckList>(), partyEdit, questBonus, checker);
 		this.listRoot.SetSelectedIndexRev(selectedIndexRev);
 		this.listParts.SetActive(false);
 	}
@@ -85,10 +85,10 @@ public sealed class PartyEditPartyMember : MonoBehaviour
 		return this.listRoot.fastSetPartObjs.Count - (partyNo + 1);
 	}
 
-	public void SetView(CMD_PartyEdit cmdPartyEdit)
+	public void SetView(CMD_PartyEdit partyEdit, QuestBonusPack questBonus, QuestBonusTargetCheck checker)
 	{
-		this.InitializeList(cmdPartyEdit);
-		this.SetMonsterList();
+		this.InitializeList();
+		this.SetMonsterList(partyEdit, questBonus, checker);
 	}
 
 	public void SetChangeMonsterEvent(Action onChangeMonster)

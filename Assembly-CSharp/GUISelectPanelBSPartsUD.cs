@@ -576,6 +576,10 @@ public class GUISelectPanelBSPartsUD : GUISelectPanelBSUD
 			if (base.isActiveAndEnabled)
 			{
 				bool flag = !this.hideNonMoveScrollBar || base.maxLocate != base.minLocate;
+				if (this.partObjs == null || this.partObjs.Count == 0)
+				{
+					flag = false;
+				}
 				this._scrollBar.SetActive(flag);
 				this._scrollBarBG.SetActive(flag);
 				if (flag)

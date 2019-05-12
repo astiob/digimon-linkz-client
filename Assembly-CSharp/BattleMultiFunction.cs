@@ -4,7 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 public class BattleMultiFunction : BattleMultiBasicFunction
 {
@@ -21,6 +23,15 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 	private bool isSendConnectionRecover;
 
 	private List<RevivalData> revivalDataList = new List<RevivalData>();
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Func<string, int> <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Func<string, int> <>f__mg$cache2;
 
 	public bool isMyTurn { get; private set; }
 
@@ -107,8 +118,8 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 
 	protected override IEnumerator ResumeTCP()
 	{
-		IEnumerator hidingCountDown = this.HidingCountDown(this.GetOwnerPlayer().userStatus.userId);
-		AppCoroutine.Start(hidingCountDown, false);
+		IEnumerator routine = this.HidingCountDown(this.GetOwnerPlayer().userStatus.userId);
+		AppCoroutine.Start(routine, false);
 		this.isMultiBattleResume = false;
 		Dictionary<string, object> data = new Dictionary<string, object>();
 		MultiMemberResume message = new MultiMemberResume
@@ -287,8 +298,10 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 					yield return null;
 				}
 				List<string> failedUserIdlist = new List<string>();
-				foreach (GameWebAPI.RespData_MultiRoomStatusInfoLogic.StatusInfo.Member member in info.member)
+				GameWebAPI.RespData_MultiRoomStatusInfoLogic.StatusInfo.Member[] member2 = info.member;
+				for (int i = 0; i < member2.Length; i++)
 				{
+					GameWebAPI.RespData_MultiRoomStatusInfoLogic.StatusInfo.Member member = member2[i];
 					if (member.onlineStatus == 0 && !this.multiUsers.Any((MultiBattleData.PvPUserData x) => x.userStatus.userId != member.userId))
 					{
 						failedUserIdlist.Add(member.userId);
@@ -325,7 +338,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 	private IEnumerator RunRoomStatusInfo(Action<GameWebAPI.RespData_MultiRoomStatusInfoLogic.StatusInfo> callback)
 	{
 		int multiRoomId = DataMng.Instance().RespData_WorldMultiStartInfo.multiRoomId.ToInt32();
-		GameWebAPI.MultiRoomStatusInfoLogic request = new GameWebAPI.MultiRoomStatusInfoLogic
+		GameWebAPI.MultiRoomStatusInfoLogic multiRoomStatusInfoLogic = new GameWebAPI.MultiRoomStatusInfoLogic
 		{
 			SetSendData = delegate(GameWebAPI.ReqData_MultiRoomStatusInfoLogic param)
 			{
@@ -344,7 +357,12 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				}
 			}
 		};
-		return request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request = multiRoomStatusInfoLogic;
+		if (BattleMultiFunction.<>f__mg$cache0 == null)
+		{
+			BattleMultiFunction.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		return request.Run(BattleMultiFunction.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null);
@@ -454,11 +472,11 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			bool isTimeOut = sendTotalWaitTime >= maxWaitingCount;
 			bool isConfirm = this.confirmationChecks[tcpMessageType].Count == base.otherUserCount;
 			int failedCount = 0;
-			foreach (string otherUsersId in base.GetOtherUsersId())
+			foreach (string a in base.GetOtherUsersId())
 			{
-				foreach (string failedMember in this.failedMembers)
+				foreach (string b in this.failedMembers)
 				{
-					if (otherUsersId == failedMember)
+					if (a == b)
 					{
 						failedCount++;
 					}
@@ -482,14 +500,14 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			sendTotalWaitTime += Time.unscaledDeltaTime;
 			yield return null;
 		}
-		LastConfirmationData lastConfirmationMessage = new LastConfirmationData
+		LastConfirmationData message2 = new LastConfirmationData
 		{
 			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, tcpMessageType),
 			tcpMessageType = tcpMessageType.ToInteger(),
 			failedPlayerUserIds = this.failedMembers.Distinct<string>().ToArray<string>()
 		};
-		base.SendMessageForSyncDisconnected(TCPMessageType.LastConfirmation, lastConfirmationMessage);
+		base.SendMessageForSyncDisconnected(TCPMessageType.LastConfirmation, message2);
 		this.confirmationChecks[tcpMessageType].Clear();
 		yield break;
 		yield break;
@@ -554,15 +572,15 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		bool isOwner = false;
 		if (tcpMessageType == TCPMessageType.RandomSeedSync || tcpMessageType == TCPMessageType.EnemyTurnSync || tcpMessageType == TCPMessageType.Retire || tcpMessageType == TCPMessageType.Continue || tcpMessageType == TCPMessageType.RevivalCancel || tcpMessageType == TCPMessageType.ConnectionRecover || tcpMessageType == TCPMessageType.AdventureScene)
 		{
-			MultiBattleData.PvPUserData activePlayer = this.GetOwnerPlayer();
-			userId = activePlayer.userStatus.userId;
-			isOwner = activePlayer.isOwner;
+			MultiBattleData.PvPUserData ownerPlayer = this.GetOwnerPlayer();
+			userId = ownerPlayer.userStatus.userId;
+			isOwner = ownerPlayer.isOwner;
 		}
 		else if (tcpMessageType == TCPMessageType.Attack)
 		{
-			MultiBattleData.PvPUserData activePlayer2 = base.GetPlayerByUserId(this.multiUsers[base.CurrentEnemyMyIndex].userStatus.userId);
-			userId = activePlayer2.userStatus.userId;
-			isOwner = activePlayer2.isOwner;
+			MultiBattleData.PvPUserData playerByUserId = base.GetPlayerByUserId(this.multiUsers[base.CurrentEnemyMyIndex].userStatus.userId);
+			userId = playerByUserId.userStatus.userId;
+			isOwner = playerByUserId.isOwner;
 		}
 		float waitingCount = 0f;
 		for (;;)
@@ -573,9 +591,9 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			}
 			bool isTimeOut = waitingCount >= maxWaitingCount;
 			bool senderFailed = false;
-			foreach (string failedMember in this.failedMembers)
+			foreach (string b in this.failedMembers)
 			{
-				if (userId == failedMember)
+				if (userId == b)
 				{
 					senderFailed = true;
 					break;
@@ -585,11 +603,11 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			{
 				if (tcpMessageType == TCPMessageType.Attack && !isOwner)
 				{
-					CharacterStateControl attacker = base.battleStateData.playerCharacters[base.CurrentEnemyMyIndex];
-					int tempAP = attacker.ap;
-					attacker.ap = 0;
-					base.stateManager.targetSelect.AutoPlayCharacterAndSkillSelectFunction(attacker);
-					attacker.ap = tempAP;
+					CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[base.CurrentEnemyMyIndex];
+					int ap = characterStateControl.ap;
+					characterStateControl.ap = 0;
+					base.stateManager.targetSelect.AutoPlayCharacterAndSkillSelectFunction(characterStateControl);
+					characterStateControl.ap = ap;
 					base.battleStateData.onSkillTrigger = true;
 				}
 				IEnumerator check = this.DisconnectAction(userId, isOwner, null);
@@ -606,11 +624,11 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			waitingCount += Time.unscaledDeltaTime;
 			yield return null;
 		}
-		foreach (string failedMember2 in this.failedMembers)
+		foreach (string failedMember in this.failedMembers)
 		{
-			if (userId != failedMember2)
+			if (userId != failedMember)
 			{
-				IEnumerator check2 = this.DisconnectAction(failedMember2, false, null);
+				IEnumerator check2 = this.DisconnectAction(failedMember, false, null);
 				while (check2.MoveNext())
 				{
 					object obj2 = check2.Current;
@@ -640,13 +658,13 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			{
 				this.failedMembers.Add(userId);
 			}
-			foreach (MultiBattleData.PvPUserData multiUser in this.multiUsers)
+			foreach (MultiBattleData.PvPUserData pvPUserData in this.multiUsers)
 			{
-				foreach (string failedMember in this.failedMembers)
+				foreach (string b in this.failedMembers)
 				{
-					if (multiUser.userStatus.userId == failedMember)
+					if (pvPUserData.userStatus.userId == b)
 					{
-						this.mustOpenMemberFailedDialogMessage = this.mustOpenMemberFailedDialogMessage + string.Format(StringMaster.GetString("BattleUI-29"), multiUser.userStatus.nickname) + "\n";
+						this.mustOpenMemberFailedDialogMessage = this.mustOpenMemberFailedDialogMessage + string.Format(StringMaster.GetString("BattleUI-29"), pvPUserData.userStatus.nickname) + "\n";
 						break;
 					}
 				}
@@ -709,7 +727,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			object obj = wait.Current;
 			yield return obj;
 		}
-		UnityEngine.Random.seed = seed;
+		UnityEngine.Random.InitState(seed);
 		this.ConnectionRecover(failedUserIds);
 		yield break;
 	}
@@ -728,7 +746,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			{
 				connectionRecoverData.randomSeed
 			});
-			UnityEngine.Random.seed = connectionRecoverData.randomSeed;
+			UnityEngine.Random.InitState(connectionRecoverData.randomSeed);
 			this.ConnectionRecover(connectionRecoverData.failedUserIds);
 			this.recieveChecks[TCPMessageType.ConnectionRecover] = true;
 		};
@@ -1344,7 +1362,16 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		if (base.IsOwner)
 		{
 			string[] userMonsterIds = base.hierarchyData.usePlayerCharacters.Select((PlayerStatus item) => item.userMonsterId).ToArray<string>();
-			Dictionary<string, object> data2 = this.CreateResultData(base.battleStateData.playerCharacters, userMonsterIds, base.hierarchyData.startId.ToInt32(), 1, base.GetOtherUsersId().Select((string item) => item.ToInt32()).ToList<int>());
+			CharacterStateControl[] playerCharacters = base.battleStateData.playerCharacters;
+			string[] userMonsterIds2 = userMonsterIds;
+			int startId = base.hierarchyData.startId.ToInt32();
+			int clearFlag = 1;
+			IEnumerable<string> otherUsersId = base.GetOtherUsersId();
+			if (BattleMultiFunction.<>f__mg$cache1 == null)
+			{
+				BattleMultiFunction.<>f__mg$cache1 = new Func<string, int>(Util.ToInt32);
+			}
+			Dictionary<string, object> data2 = this.CreateResultData(playerCharacters, userMonsterIds2, startId, clearFlag, otherUsersId.Select(BattleMultiFunction.<>f__mg$cache1).ToList<int>());
 			float waitWinTime = 0f;
 			do
 			{
@@ -1422,7 +1449,16 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 	{
 		float waitRetireTime = 0f;
 		string[] userMonsterIds = base.hierarchyData.usePlayerCharacters.Select((PlayerStatus item) => item.userMonsterId).ToArray<string>();
-		Dictionary<string, object> data = this.CreateResultData(base.battleStateData.playerCharacters, userMonsterIds, base.hierarchyData.startId.ToInt32(), 0, base.GetOtherUsersId().Select((string item) => item.ToInt32()).ToList<int>());
+		CharacterStateControl[] playerCharacters = base.battleStateData.playerCharacters;
+		string[] userMonsterIds2 = userMonsterIds;
+		int startId = base.hierarchyData.startId.ToInt32();
+		int clearFlag = 0;
+		IEnumerable<string> otherUsersId = base.GetOtherUsersId();
+		if (BattleMultiFunction.<>f__mg$cache2 == null)
+		{
+			BattleMultiFunction.<>f__mg$cache2 = new Func<string, int>(Util.ToInt32);
+		}
+		Dictionary<string, object> data = this.CreateResultData(playerCharacters, userMonsterIds2, startId, clearFlag, otherUsersId.Select(BattleMultiFunction.<>f__mg$cache2).ToList<int>());
 		for (;;)
 		{
 			while (this.isDisconnected)

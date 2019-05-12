@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class GUIListPartsAlMightySelect : GUIListPartBS
 {
-	[SerializeField]
 	[Header("素材アイコン")]
+	[SerializeField]
 	public UITexture texIcon;
 
 	[Header("選択アイコン")]
@@ -17,8 +17,8 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 	[SerializeField]
 	public UISprite spNumPlate;
 
-	[SerializeField]
 	[Header("個数表示")]
+	[SerializeField]
 	public UILabel lbNum;
 
 	private Vector2 beganPosition;

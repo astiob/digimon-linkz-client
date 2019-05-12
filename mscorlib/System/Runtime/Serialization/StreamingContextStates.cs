@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Serialization
 {
 	/// <summary>Defines a set of flags that specifies the source or destination context for the stream during serialization.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum StreamingContextStates
 	{

@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Rendering/Sun Shafts")]
 	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Rendering/Sun Shafts")]
 	public class SunShafts : PostEffectsBase
 	{
 		public SunShafts.SunShaftsResolution resolution = SunShafts.SunShaftsResolution.Normal;

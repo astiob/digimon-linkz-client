@@ -37,7 +37,7 @@ public class CMD_FriendshipStatusUP : CMD
 	{
 		this.goMN_DescriptionTXT.text = string.Format(StringMaster.GetString("CharaTapFriendshipUp"), monsterData.monsterMG.monsterName);
 		this.monsterBasicInfo.SetMonsterData(monsterData);
-		this.monsterStatusList.SetValues(monsterData, false);
+		this.monsterStatusList.SetValues(monsterData, false, false);
 		this.monsterMedalList.SetValues(monsterData.userMonster);
 		Transform transform = this.goMN_ICON_NOW.transform;
 		GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(monsterData, transform.localScale, transform.localPosition, transform.parent, true, false);

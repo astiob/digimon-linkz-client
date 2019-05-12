@@ -205,7 +205,7 @@ namespace System.Net.Sockets
 					{
 						socket.connected = true;
 					}
-					if (num4 < list.Count)
+					if (list != null && num4 < list.Count)
 					{
 						while ((Socket)list[num4] != socket)
 						{
@@ -4526,7 +4526,7 @@ namespace System.Net.Sockets
 
 		internal int Receive_nochecks(byte[] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
-			if (this.protocol_type == ProtocolType.Udp)
+			if (this.protocol_type == ProtocolType.Udp && Environment.SocketSecurityEnabled)
 			{
 				IPAddress address = IPAddress.Any;
 				if (this.address_family == AddressFamily.InterNetworkV6)

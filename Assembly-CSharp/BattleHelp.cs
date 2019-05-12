@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class BattleHelp : BattleFunctionBase
@@ -13,6 +14,9 @@ public class BattleHelp : BattleFunctionBase
 	private List<string> imageNames = new List<string>();
 
 	private bool helpLoaded;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	private BattleUIComponents ui
 	{
@@ -98,7 +102,15 @@ public class BattleHelp : BattleFunctionBase
 			SoundPlayer.PlayButtonEnter();
 			base.battleStateData.isShowHelp = true;
 			NGUITools.SetActiveSelf(this.ui.helpDialog.gameObject, true);
-			base.StartCoroutine(this.tutorialUI.ImageWindow.OpenWindow(this.imageNames, false, new Action(this.CloseWindow), new Action(SoundPlayer.PlayButtonCancel)));
+			TutorialImageWindow imageWindow = this.tutorialUI.ImageWindow;
+			List<string> pageResourcesNames = this.imageNames;
+			bool isDisplayThumbnail = false;
+			Action closedAction = new Action(this.CloseWindow);
+			if (BattleHelp.<>f__mg$cache0 == null)
+			{
+				BattleHelp.<>f__mg$cache0 = new Action(SoundPlayer.PlayButtonCancel);
+			}
+			base.StartCoroutine(imageWindow.OpenWindow(pageResourcesNames, isDisplayThumbnail, closedAction, BattleHelp.<>f__mg$cache0));
 		}
 		else
 		{

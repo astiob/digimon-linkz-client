@@ -50,7 +50,7 @@ public struct MouseTouch
 		result.fingerId = 2;
 		if (lastMousePosition != null)
 		{
-			result.deltaPosition = Input.mousePosition - lastMousePosition.Value;
+			result.deltaPosition = Input.mousePosition - ((lastMousePosition == null) ? default(Vector3) : lastMousePosition.GetValueOrDefault());
 		}
 		if (mouseState == MouseState.DownThisFrame)
 		{

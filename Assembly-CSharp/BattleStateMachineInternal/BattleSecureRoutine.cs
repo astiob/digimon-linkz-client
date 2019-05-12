@@ -113,14 +113,14 @@ namespace BattleStateMachineInternal
 				yield return null;
 			}
 			GameObject hudUI = null;
-			foreach (UIRoot uiRoot in this.rootList)
+			foreach (UIRoot uiroot in this.rootList)
 			{
-				if (!(uiRoot == null))
+				if (!(uiroot == null))
 				{
-					Transform hudObj = this.GetFindObject("HUD", uiRoot.transform);
-					if (!(hudObj == null))
+					Transform findObject = this.GetFindObject("HUD", uiroot.transform);
+					if (!(findObject == null))
 					{
-						hudUI = hudObj.gameObject;
+						hudUI = findObject.gameObject;
 						break;
 					}
 				}
@@ -142,6 +142,8 @@ namespace BattleStateMachineInternal
 			}
 			bool isThreeSecondWait = false;
 			this.state = BattleSecureRoutine.RoutineState.LongTapWait;
+			CameraParams cameraParams;
+			CharacterParams[] characters;
 			while (!(helpUI == null) && !(retrieUI == null) && !(menuUI == null))
 			{
 				if (this.manager.hierarchyData.on2xSpeedPlay || this.manager.hierarchyData.onAutoPlay != 0)
@@ -151,8 +153,8 @@ namespace BattleStateMachineInternal
 				}
 				if (!isThreeSecondWait && Input.GetMouseButton(0))
 				{
-					Vector3 vP = this.uiCamera.ScreenToViewportPoint(Input.mousePosition);
-					if (vP.x <= 0.9f || vP.y <= 0.9f)
+					Vector3 vector = this.uiCamera.ScreenToViewportPoint(Input.mousePosition);
+					if (vector.x <= 0.9f || vector.y <= 0.9f)
 					{
 						this.MyDestroy();
 						yield break;
@@ -166,8 +168,8 @@ namespace BattleStateMachineInternal
 				if (isThreeSecondWait && Input.GetMouseButtonDown(0))
 				{
 					this.state = BattleSecureRoutine.RoutineState.LongTapWait;
-					Vector3 vP2 = this.uiCamera.ScreenToViewportPoint(Input.mousePosition);
-					if (vP2.x >= 0.1f || vP2.y >= 0.1f)
+					Vector3 vector2 = this.uiCamera.ScreenToViewportPoint(Input.mousePosition);
+					if (vector2.x >= 0.1f || vector2.y >= 0.1f)
 					{
 						this.MyDestroy();
 						yield break;
@@ -185,8 +187,8 @@ namespace BattleStateMachineInternal
 				}
 				if (next)
 				{
-					CharacterParams[] characters = UnityEngine.Object.FindObjectsOfType<CharacterParams>();
-					CameraParams cameraParams = CameraParams.current;
+					characters = UnityEngine.Object.FindObjectsOfType<CharacterParams>();
+					cameraParams = CameraParams.current;
 					if (cameraParams == null)
 					{
 						this.MyDestroy();
@@ -196,11 +198,11 @@ namespace BattleStateMachineInternal
 					Action PlayAnimation = delegate()
 					{
 						cameraParams.PlayCameraShake();
-						foreach (CharacterParams characterParams in characters)
+						foreach (CharacterParams characterParams2 in characters)
 						{
-							if (characterParams.gameObject.activeInHierarchy)
+							if (characterParams2.gameObject.activeInHierarchy)
 							{
-								characterParams.PlayAnimation(CharacterAnimationType.attacks, SkillType.Attack, 0, null, null);
+								characterParams2.PlayAnimation(CharacterAnimationType.attacks, SkillType.Attack, 0, null, null);
 							}
 						}
 					};
@@ -232,11 +234,11 @@ namespace BattleStateMachineInternal
 						ChangeLightColor();
 						yield return new WaitForSeconds(bpmWait * 0.5f);
 					}
-					foreach (CharacterParams p in characters)
+					foreach (CharacterParams characterParams in characters)
 					{
-						if (p.gameObject.activeInHierarchy)
+						if (characterParams.gameObject.activeInHierarchy)
 						{
-							p.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+							characterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 						}
 					}
 					yield return new WaitForSeconds(1f);

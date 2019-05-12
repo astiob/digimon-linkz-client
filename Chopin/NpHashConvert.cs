@@ -10,23 +10,23 @@ namespace CROOZ.Chopin.Core
 			{
 			case 0:
 			{
-				\uE00F uE00F = new \uE00F();
-				return uE00F.\uE002(data);
-			}
-			case 1:
-			{
 				\uE010 uE = new \uE010();
 				return uE.\uE002(data);
 			}
-			case 2:
+			case 1:
 			{
 				\uE011 uE2 = new \uE011();
 				return uE2.\uE002(data);
 			}
+			case 2:
+			{
+				\uE012 uE3 = new \uE012();
+				return uE3.\uE002(data);
+			}
 			case 3:
 			{
-				\uE011 uE3 = new \uE011();
-				return uE3.\uE002(data);
+				\uE012 uE4 = new \uE012();
+				return uE4.\uE002(data);
 			}
 			default:
 				return null;

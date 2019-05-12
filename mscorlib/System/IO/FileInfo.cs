@@ -111,8 +111,8 @@ namespace System.IO
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true" />
 		/// </PermissionSet>
-		[MonoLimitation("File encryption isn't supported (even on NTFS).")]
 		[ComVisible(false)]
+		[MonoLimitation("File encryption isn't supported (even on NTFS).")]
 		public void Encrypt()
 		{
 			throw new NotSupportedException(Locale.GetText("File encryption isn't supported on any file system."));
@@ -129,8 +129,8 @@ namespace System.IO
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true" />
 		/// </PermissionSet>
-		[ComVisible(false)]
 		[MonoLimitation("File encryption isn't supported (even on NTFS).")]
+		[ComVisible(false)]
 		public void Decrypt()
 		{
 			throw new NotSupportedException(Locale.GetText("File encryption isn't supported on any file system."));

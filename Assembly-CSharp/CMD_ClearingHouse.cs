@@ -180,57 +180,56 @@ public sealed class CMD_ClearingHouse : CMD
 					this.exchangeConsumeItemName.Add(assetCategory2.assetTitle);
 				}
 				string text = string.Empty;
-				MasterDataMng.AssetCategory assetCategory3 = assetCategory;
-				switch (assetCategory3)
+				switch (assetCategory)
 				{
-				case MasterDataMng.AssetCategory.MEAT:
-					text = "Common02_Icon_Meat";
+				case MasterDataMng.AssetCategory.DIGI_STONE:
+					text = "Common02_ShopList_1";
 					this.exchangeItemPathList.Add(text);
 					break;
-				case MasterDataMng.AssetCategory.SOUL:
-					this.exchangeConsumeItemTexturePath = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(consumeAssetValue);
-					if (this.exchangeBaseObject.Count > num)
-					{
-						this.exchangeConsumeTexture[num].enabled = true;
-						NGUIUtil.ChangeUITextureFromFile(this.exchangeConsumeTexture[num], this.exchangeConsumeItemTexturePath, false);
-					}
-					this.exchangeItemPathList.Add(this.exchangeConsumeItemTexturePath);
+				case MasterDataMng.AssetCategory.LINK_POINT:
+					text = "Common02_Icon_Link";
+					this.exchangeItemPathList.Add(text);
+					break;
+				case MasterDataMng.AssetCategory.TIP:
+					text = "Common02_Icon_Chip";
+					this.exchangeItemPathList.Add(text);
 					break;
 				default:
-					switch (assetCategory3)
+					switch (assetCategory)
 					{
-					case MasterDataMng.AssetCategory.DIGI_STONE:
-						text = "Common02_ShopList_1";
+					case MasterDataMng.AssetCategory.MEAT:
+						text = "Common02_Icon_Meat";
 						this.exchangeItemPathList.Add(text);
 						break;
-					case MasterDataMng.AssetCategory.LINK_POINT:
-						text = "Common02_Icon_Link";
-						this.exchangeItemPathList.Add(text);
-						break;
-					case MasterDataMng.AssetCategory.TIP:
-						text = "Common02_Icon_Chip";
-						this.exchangeItemPathList.Add(text);
-						break;
-					}
-					break;
-				case MasterDataMng.AssetCategory.DUNGEON_TICKET:
-				{
-					GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => consumeAssetValue == x.dungeonTicketId);
-					if (dungeonTicketM != null)
-					{
-						this.exchangeConsumeItemTexturePath = dungeonTicketM.img;
-						this.exchangeItemPathList.Add(this.exchangeConsumeItemTexturePath);
+					case MasterDataMng.AssetCategory.SOUL:
+						this.exchangeConsumeItemTexturePath = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(consumeAssetValue);
 						if (this.exchangeBaseObject.Count > num)
 						{
 							this.exchangeConsumeTexture[num].enabled = true;
-							if (dungeonTicketM != null)
+							NGUIUtil.ChangeUITextureFromFile(this.exchangeConsumeTexture[num], this.exchangeConsumeItemTexturePath, false);
+						}
+						this.exchangeItemPathList.Add(this.exchangeConsumeItemTexturePath);
+						break;
+					case MasterDataMng.AssetCategory.DUNGEON_TICKET:
+					{
+						GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => consumeAssetValue == x.dungeonTicketId);
+						if (dungeonTicketM != null)
+						{
+							this.exchangeConsumeItemTexturePath = dungeonTicketM.img;
+							this.exchangeItemPathList.Add(this.exchangeConsumeItemTexturePath);
+							if (this.exchangeBaseObject.Count > num)
 							{
-								NGUIUtil.ChangeUITextureFromFile(this.exchangeConsumeTexture[num], this.exchangeConsumeItemTexturePath, false);
+								this.exchangeConsumeTexture[num].enabled = true;
+								if (dungeonTicketM != null)
+								{
+									NGUIUtil.ChangeUITextureFromFile(this.exchangeConsumeTexture[num], this.exchangeConsumeItemTexturePath, false);
+								}
 							}
 						}
+						break;
+					}
 					}
 					break;
-				}
 				}
 				if (this.exchangeBaseObject.Count > num)
 				{
@@ -417,14 +416,13 @@ public sealed class CMD_ClearingHouse : CMD
 	private void OpenExchangedItemModalMessage(ExchangeItem exchangeItem)
 	{
 		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)int.Parse(exchangeItem.exchangeItemData.assetCategoryId);
-		MasterDataMng.AssetCategory assetCategory2 = assetCategory;
-		switch (assetCategory2)
+		switch (assetCategory)
 		{
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= int.Parse(this.consumeNum);
 			break;
 		default:
-			if (assetCategory2 == MasterDataMng.AssetCategory.MEAT)
+			if (assetCategory == MasterDataMng.AssetCategory.MEAT)
 			{
 				int num = int.Parse(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.meatNum) - int.Parse(this.consumeNum);
 				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.meatNum = num.ToString();
@@ -459,29 +457,29 @@ public sealed class CMD_ClearingHouse : CMD
 	private void ExchangeErrorPopup()
 	{
 		string exchangeErrorCode = ClassSingleton<ExchangeWebAPI>.Instance.exchangeErrorCode;
-		switch (exchangeErrorCode)
+		if (exchangeErrorCode != null)
 		{
-		case "E-EX01":
-		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
-			cmd_ModalMessage.Title = StringMaster.GetString("ExchangeTermTitle");
-			cmd_ModalMessage.Info = StringMaster.GetString("ExchangeTermInfo");
-			return;
-		}
-		case "E-EX02":
-		{
-			CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
-			cmd_ModalMessage2.Title = StringMaster.GetString("ExchangeShortageTitle");
-			cmd_ModalMessage2.Info = StringMaster.GetString("ExchangeShortageInfo");
-			return;
-		}
-		case "E-EX03":
-		{
-			CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
-			cmd_ModalMessage3.Title = StringMaster.GetString("ExchangeLimitTitle");
-			cmd_ModalMessage3.Info = StringMaster.GetString("ExchangeLimitInfo");
-			return;
-		}
+			if (exchangeErrorCode == "E-EX01")
+			{
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
+				cmd_ModalMessage.Title = StringMaster.GetString("ExchangeTermTitle");
+				cmd_ModalMessage.Info = StringMaster.GetString("ExchangeTermInfo");
+				return;
+			}
+			if (exchangeErrorCode == "E-EX02")
+			{
+				CMD_ModalMessage cmd_ModalMessage2 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
+				cmd_ModalMessage2.Title = StringMaster.GetString("ExchangeShortageTitle");
+				cmd_ModalMessage2.Info = StringMaster.GetString("ExchangeShortageInfo");
+				return;
+			}
+			if (exchangeErrorCode == "E-EX03")
+			{
+				CMD_ModalMessage cmd_ModalMessage3 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
+				cmd_ModalMessage3.Title = StringMaster.GetString("ExchangeLimitTitle");
+				cmd_ModalMessage3.Info = StringMaster.GetString("ExchangeLimitInfo");
+				return;
+			}
 		}
 		CMD_ModalMessage cmd_ModalMessage4 = GUIMain.ShowCommonDialog(new Action<int>(this.ErrorPopUIClose), "CMD_ModalMessage", null) as CMD_ModalMessage;
 		cmd_ModalMessage4.Title = StringMaster.GetString("ExchangeFailedTitle");

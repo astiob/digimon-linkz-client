@@ -2,15 +2,15 @@
 using CharacterModelUI;
 using DeviceSafeArea;
 using Master;
-using Monster;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(DigimonModelPlayer))]
 public sealed class CMD_CharacterDetailed : CMD
 {
+	private ICharacterDetailsUIAnimation uiAnimation;
+
 	private static CMD_CharacterDetailed instance;
 
 	[SerializeField]
@@ -18,9 +18,6 @@ public sealed class CMD_CharacterDetailed : CMD
 
 	[SerializeField]
 	private StatusUpAnimation statusAnime;
-
-	[SerializeField]
-	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
 	private UITexture renderTextureObject;
@@ -56,11 +53,194 @@ public sealed class CMD_CharacterDetailed : CMD
 
 	private bool isOpenScreen;
 
-	private bool enablePageChange = true;
-
-	private CMD_CharacterDetailed.Timer timer = new CMD_CharacterDetailed.Timer();
-
 	private Action<int> movedAct;
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, bool isResetEquipChip, Action endCutin)
+	{
+		CMD_CharacterDetailed.DataChg = monster;
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsVersionUp characterDetailsVersionUp = new CharacterDetailsVersionUp();
+		characterDetailsVersionUp.Initialize(sortingOrder, cmd_CharacterDetailed.transform, isResetEquipChip, endCutin);
+		cmd_CharacterDetailed.uiAnimation = characterDetailsVersionUp;
+		cmd_CharacterDetailed.uiAnimation.OnOpenWindow();
+		return cmd_CharacterDetailed;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, Action endCutin, bool isSuccessInheritance, bool isResetEquipChip)
+	{
+		CMD_CharacterDetailed.DataChg = monster;
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsMedalInheritance characterDetailsMedalInheritance = new CharacterDetailsMedalInheritance();
+		characterDetailsMedalInheritance.Initialize(sortingOrder, cmd_CharacterDetailed.transform, isSuccessInheritance, isResetEquipChip, endCutin);
+		cmd_CharacterDetailed.uiAnimation = characterDetailsMedalInheritance;
+		cmd_CharacterDetailed.uiAnimation.OnOpenWindow();
+		return cmd_CharacterDetailed;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster)
+	{
+		CMD_CharacterDetailed.DataChg = monster;
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsGardenEvolution characterDetailsGardenEvolution = new CharacterDetailsGardenEvolution();
+		characterDetailsGardenEvolution.Initialize(sortingOrder, cmd_CharacterDetailed.transform);
+		cmd_CharacterDetailed.uiAnimation = characterDetailsGardenEvolution;
+		cmd_CharacterDetailed.uiAnimation.OnOpenWindow();
+		return cmd_CharacterDetailed;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, bool isArousal, bool isResetEquipChip, Action endCutin)
+	{
+		CMD_CharacterDetailed.DataChg = monster;
+		CMD_CharacterDetailed.AddButton = CMD_CharacterDetailed.ButtonType.Garden;
+		CMD_CharacterDetailed cmd_CharacterDetailed = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsLaboratory characterDetailsLaboratory = new CharacterDetailsLaboratory();
+		characterDetailsLaboratory.Initialize(sortingOrder, cmd_CharacterDetailed.transform, isArousal, isResetEquipChip, endCutin);
+		cmd_CharacterDetailed.uiAnimation = characterDetailsLaboratory;
+		cmd_CharacterDetailed.uiAnimation.OnOpenWindow();
+		return cmd_CharacterDetailed;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, string evolutionType, bool reviewFirstUltima, bool reviewFirstEvolution, Action endCutin)
+	{
+		CMD_CharacterDetailed.DataChg = monster;
+		CMD_CharacterDetailed window = GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsEvolution characterDetailsEvolution = new CharacterDetailsEvolution();
+		characterDetailsEvolution.Initialize(sortingOrder, window.transform, evolutionType, delegate
+		{
+			window.characterCameraView.csRender3DRT.SetAnimation(CharacterAnimationType.win);
+			if (endCutin != null)
+			{
+				endCutin();
+			}
+			if (reviewFirstUltima)
+			{
+				LeadReview.ShowReviewConfirm(LeadReview.MessageType.FIRST_EVOLUTION, null, false);
+			}
+			else if (reviewFirstEvolution)
+			{
+				LeadReview.ShowReviewConfirm(LeadReview.MessageType.FIRST_ULTIMA_EVOLUTION, null, false);
+			}
+		});
+		window.uiAnimation = characterDetailsEvolution;
+		window.uiAnimation.OnOpenWindow();
+		return window;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monster, Action onClose, int statusPage)
+	{
+		CMD_CharacterDetailed.DataChg = monster;
+		CMD_CharacterDetailed window = GUIMain.ShowCommonDialog(delegate(int nop)
+		{
+			onClose();
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		window.statusList.SetPage(statusPage);
+		window.statusList.EnablePage(false);
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsInheritance characterDetailsInheritance = new CharacterDetailsInheritance();
+		characterDetailsInheritance.Initialize(sortingOrder, window.transform, delegate
+		{
+			window.characterCameraView.csRender3DRT.SetAnimation(CharacterAnimationType.win);
+			window.statusList.EnablePage(true);
+		});
+		window.uiAnimation = characterDetailsInheritance;
+		window.uiAnimation.OnOpenWindow();
+		return window;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monsterData, Action closeAction, string uniqueResistanceId, string oldResistanceIds, string newResistanceIds)
+	{
+		CMD_CharacterDetailed.DataChg = monsterData;
+		CMD_CharacterDetailed window = GUIMain.ShowCommonDialog(delegate(int i)
+		{
+			if (closeAction != null)
+			{
+				closeAction();
+			}
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		window.statusList.EnablePage(false);
+		CharacterDetailsResistanceParameter param = new CharacterDetailsResistanceParameter
+		{
+			uniqueResistanceId = uniqueResistanceId,
+			oldResistanceIds = oldResistanceIds,
+			newResistanceIds = newResistanceIds
+		};
+		CharacterDetailsResistance characterDetailsResistance = new CharacterDetailsResistance();
+		characterDetailsResistance.Initialize(window.transform, window.statusList.GetResistance(), param, delegate
+		{
+			window.characterCameraView.csRender3DRT.SetAnimation(CharacterAnimationType.win);
+		}, delegate
+		{
+			window.statusList.EnablePage(true);
+		});
+		window.uiAnimation = characterDetailsResistance;
+		window.uiAnimation.OnOpenWindow();
+		return window;
+	}
+
+	public static CMD_CharacterDetailed CreateWindow(MonsterData monsterData, Action closeAction, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList beforeMonsterParam, string resultExp, int upLuck)
+	{
+		CMD_CharacterDetailed.DataChg = monsterData;
+		CMD_CharacterDetailed window = GUIMain.ShowCommonDialog(delegate(int i)
+		{
+			if (closeAction != null)
+			{
+				closeAction();
+			}
+		}, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed;
+		window.statusList.EnablePage(false);
+		CharacterDetailsReinforcementParam characterDetailsReinforcementParam = new CharacterDetailsReinforcementParam
+		{
+			beforeMonster = beforeMonsterParam,
+			upLuckValue = upLuck
+		};
+		DataMng.ExperienceInfo experienceInfo = DataMng.Instance().GetExperienceInfo(int.Parse(resultExp));
+		characterDetailsReinforcementParam.afterLevel = experienceInfo.lev;
+		UIPanel uipanel = GUIMain.GetUIPanel();
+		int sortingOrder = uipanel.sortingOrder;
+		CharacterDetailsReinforcement characterDetailsReinforcement = new CharacterDetailsReinforcement();
+		characterDetailsReinforcement.Initialize(sortingOrder, window.transform, window.statusList.GetReinforcement(), window.statusAnime, characterDetailsReinforcementParam, delegate
+		{
+			window.characterCameraView.csRender3DRT.SetAnimation(CharacterAnimationType.win);
+		}, delegate
+		{
+			window.statusList.EnablePage(true);
+		});
+		window.uiAnimation = characterDetailsReinforcement;
+		window.uiAnimation.OnOpenWindow();
+		return window;
+	}
+
+	public void StartAnimation()
+	{
+		this.uiAnimation.StartAnimation();
+	}
+
+	public void OnOpenMenuReceiver()
+	{
+		if (this.uiAnimation != null)
+		{
+			this.uiAnimation.OnOpenMenu();
+		}
+	}
+
+	public void OnCloseMenuReceiver()
+	{
+		if (this.uiAnimation != null)
+		{
+			this.uiAnimation.OnCloseMenu();
+		}
+	}
 
 	public static CMD_CharacterDetailed Instance
 	{
@@ -91,6 +271,7 @@ public sealed class CMD_CharacterDetailed : CMD
 	{
 		base.PartsTitle.SetTitle(StringMaster.GetString("CharaDetailsTitle"));
 		this.ShowChgInfo();
+		this.statusList.EnablePage(true);
 		base.Show(f, sizeX, sizeY, aT);
 	}
 
@@ -98,6 +279,11 @@ public sealed class CMD_CharacterDetailed : CMD
 	{
 		base.WindowOpened();
 		FarmCameraControlForCMD.Off();
+		UIWidget component = this.renderTextureObject.GetComponent<UIWidget>();
+		if (null != component)
+		{
+			component.updateAnchors = UIRect.AnchorUpdate.OnStart;
+		}
 	}
 
 	protected override void Update()
@@ -106,10 +292,6 @@ public sealed class CMD_CharacterDetailed : CMD
 		if (this.characterCameraView != null)
 		{
 			this.characterCameraView.Update(Time.deltaTime);
-		}
-		if (this.timer != null)
-		{
-			this.timer.Update(Time.deltaTime);
 		}
 	}
 
@@ -120,76 +302,12 @@ public sealed class CMD_CharacterDetailed : CMD
 		base.ClosePanel(animation);
 	}
 
-	public void TranceEffectActiveSet(bool active)
-	{
-		this.statusList.TranceEffectActiveSet(active);
-	}
-
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
 		CMD_CharacterDetailed.DataChg = null;
 		CMD_CharacterDetailed.AddButton = CMD_CharacterDetailed.ButtonType.None;
 		this.characterCameraView.Destroy();
-	}
-
-	public IEnumerator StartReinforcementEffect(string newExp, GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList oldUserMonster, int upLuck)
-	{
-		this.enablePageChange = false;
-		int oldLevel = int.Parse(oldUserMonster.level);
-		this.statusAnime.Initialize(oldUserMonster, oldLevel);
-		this.statusAnime.userMonster = oldUserMonster;
-		this.statusAnime.defaultLevel = oldLevel;
-		DataMng.ExperienceInfo expInfo = DataMng.Instance().GetExperienceInfo(int.Parse(newExp));
-		this.statusAnime.DisplayDifference(expInfo.lev, upLuck);
-		if (expInfo.lev > oldLevel)
-		{
-			yield return this.cutinController.PlayAnimator(PartsUpperCutinController.AnimeType.LevelUp, null);
-		}
-		if (upLuck > 0)
-		{
-			yield return this.cutinController.PlayAnimator(PartsUpperCutinController.AnimeType.LuckUp, null);
-		}
-		if (expInfo.lev > oldLevel)
-		{
-			this.characterCameraView.csRender3DRT.SetAnimation(CharacterAnimationType.win);
-			Animation levelUpAnimtion = this.statusList.ShowLevelUpParticle(base.transform);
-			this.timer.Set(levelUpAnimtion.clip.length, delegate
-			{
-				this.enablePageChange = true;
-			});
-		}
-		else
-		{
-			this.enablePageChange = true;
-		}
-		yield break;
-	}
-
-	public void ShowByArousal(string uniqueResistanceId, string oldResistanceIds, string newResistanceIds)
-	{
-		this.enablePageChange = false;
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(uniqueResistanceId);
-		List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceListByJson = MonsterResistanceData.GetUniqueResistanceListByJson(oldResistanceIds);
-		GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM oldResistance = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceListByJson);
-		GameObject tranceEffectObject = this.statusList.GetTranceEffectObject(oldResistance, newResistanceIds);
-		UIPanel uipanel = this.cutinController.GetComponent<UIPanel>();
-		if (null == uipanel)
-		{
-			uipanel = this.cutinController.gameObject.AddComponent<UIPanel>();
-		}
-		this.statusList.StartTranceEffect(tranceEffectObject, uipanel);
-		this.cutinController.PlayAnimator(PartsUpperCutinController.AnimeType.ResistanceChange, new Action(this.OnFinishTranceCutin));
-	}
-
-	private void OnFinishTranceCutin()
-	{
-		this.characterCameraView.csRender3DRT.SetAnimation(CharacterAnimationType.win);
-		Animation animation = this.statusList.ShowTranceParticle(base.transform);
-		this.timer.Set(animation.clip.length, delegate
-		{
-			this.enablePageChange = true;
-		});
 	}
 
 	private void ShowChgInfo()
@@ -330,14 +448,6 @@ public sealed class CMD_CharacterDetailed : CMD
 		}
 	}
 
-	private void PageChange()
-	{
-		if (this.enablePageChange)
-		{
-			this.statusList.NextPage();
-		}
-	}
-
 	public void OnDisplayDrag(Vector2 Delta)
 	{
 		this.characterCameraView.OnDisplayDrag(Delta);
@@ -377,34 +487,5 @@ public sealed class CMD_CharacterDetailed : CMD
 		None,
 		Return,
 		Garden
-	}
-
-	private class Timer
-	{
-		private float currentTime;
-
-		private float maxTime;
-
-		private Action callback;
-
-		public void Set(float time, Action callback)
-		{
-			this.currentTime = 0f;
-			this.maxTime = time;
-			this.callback = callback;
-		}
-
-		public void Update(float dt)
-		{
-			if (this.currentTime >= this.maxTime)
-			{
-				return;
-			}
-			if ((this.currentTime += dt) > this.maxTime)
-			{
-				this.callback();
-				this.callback = null;
-			}
-		}
 	}
 }

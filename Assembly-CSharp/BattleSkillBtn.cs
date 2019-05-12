@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BattleSkillBtn : MonoBehaviour
 {
-	[SerializeField]
 	[Header("スキルボタンが2つのときの位置")]
+	[SerializeField]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
 	[Header("スキルボタンが3つのときの位置")]
@@ -17,36 +17,36 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UIButton button;
 
-	[SerializeField]
 	[Header("スキル名")]
+	[SerializeField]
 	private UILabel skillName;
 
-	[SerializeField]
 	[Header("スキル説明")]
+	[SerializeField]
 	private UILabel skillDescription;
 
-	[SerializeField]
 	[Header("必要AP数")]
+	[SerializeField]
 	private UILabel ap;
 
-	[SerializeField]
 	[Header("命中率")]
+	[SerializeField]
 	private UILabel hitRate;
 
 	[Header("威力")]
 	[SerializeField]
 	private UILabel power;
 
-	[SerializeField]
 	[Header("Tweener1（開く）")]
+	[SerializeField]
 	private UITweener rotationEffect1;
 
 	[Header("Tweener2（閉じる）")]
 	[SerializeField]
 	private UITweener rotationEffect2;
 
-	[SerializeField]
 	[Header("Collider")]
+	[SerializeField]
 	private Collider colliderValue;
 
 	[Header("HoldPress")]
@@ -65,24 +65,24 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private UISprite skillLockSprite;
 
-	[SerializeField]
 	[Header("スキルONボタン")]
+	[SerializeField]
 	private GameObject onSkillButton;
 
-	[SerializeField]
 	[Header("実行ボタンスプライト")]
+	[SerializeField]
 	private UISprite execButtonSprite;
 
 	[Header("スキルOFfボタン")]
 	[SerializeField]
 	private GameObject offSkillButton;
 
-	[SerializeField]
 	[Header("スキルボタンスプライト")]
+	[SerializeField]
 	private UISprite skillButtonSprite;
 
-	[SerializeField]
 	[Header("スキル使用回数の掛け算記号")]
+	[SerializeField]
 	private UILabel skillCountMulti;
 
 	[Header("スキル使用回数の数値")]
@@ -246,9 +246,33 @@ public class BattleSkillBtn : MonoBehaviour
 
 	public void SetButtonType(BattleSkillBtn.Type type)
 	{
-		switch (type)
+		if (type != BattleSkillBtn.Type.On)
 		{
-		case BattleSkillBtn.Type.On:
+			if (type != BattleSkillBtn.Type.Off)
+			{
+				if (type == BattleSkillBtn.Type.Invalid)
+				{
+					this.onSkillButton.SetActive(false);
+					this.offSkillButton.SetActive(true);
+					this.skillButtonSprite.spriteName = "Battle_Skillbtn_g";
+				}
+			}
+			else
+			{
+				this.onSkillButton.SetActive(false);
+				this.offSkillButton.SetActive(true);
+				if (this.skillType == SkillType.Attack)
+				{
+					this.skillButtonSprite.spriteName = "Battle_Attackbtn";
+				}
+				else
+				{
+					this.skillButtonSprite.spriteName = "Battle_Skillbtn";
+				}
+			}
+		}
+		else
+		{
 			this.onSkillButton.SetActive(true);
 			this.offSkillButton.SetActive(false);
 			if (this.skillType == SkillType.Attack)
@@ -259,24 +283,6 @@ public class BattleSkillBtn : MonoBehaviour
 			{
 				this.skillButtonSprite.spriteName = "Battle_Skillbtn";
 			}
-			break;
-		case BattleSkillBtn.Type.Off:
-			this.onSkillButton.SetActive(false);
-			this.offSkillButton.SetActive(true);
-			if (this.skillType == SkillType.Attack)
-			{
-				this.skillButtonSprite.spriteName = "Battle_Attackbtn";
-			}
-			else
-			{
-				this.skillButtonSprite.spriteName = "Battle_Skillbtn";
-			}
-			break;
-		case BattleSkillBtn.Type.Invalid:
-			this.onSkillButton.SetActive(false);
-			this.offSkillButton.SetActive(true);
-			this.skillButtonSprite.spriteName = "Battle_Skillbtn_g";
-			break;
 		}
 	}
 

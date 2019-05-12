@@ -5,11 +5,11 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the public members of the <see cref="T:System.Reflection.MethodInfo" /> class to unmanaged code.</summary>
-	[ComVisible(true)]
-	[CLSCompliant(false)]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[CLSCompliant(false)]
 	[Guid("FFCC1B5D-ECB8-38DD-9B01-3DC8ABC2AA5F")]
 	[TypeLibImportClass(typeof(MethodInfo))]
+	[ComVisible(true)]
 	public interface _MethodInfo
 	{
 		/// <summary>Provides COM objects with version-independent access to the <see cref="M:System.Object.Equals(System.Object)" /> method.</summary>

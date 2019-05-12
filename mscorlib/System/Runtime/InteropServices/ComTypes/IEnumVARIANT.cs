@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	/// <summary>Manages the definition of the IEnumVARIANT interface.</summary>
-	[Guid("00020404-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("00020404-0000-0000-c000-000000000046")]
 	[ComImport]
 	public interface IEnumVARIANT
 	{

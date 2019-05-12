@@ -34,6 +34,7 @@ namespace SwitchParts
 		[Serializable]
 		private sealed class SwitchInfo
 		{
+			[SerializeField]
 			public string spriteName;
 		}
 	}

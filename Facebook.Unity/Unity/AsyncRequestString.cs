@@ -80,7 +80,7 @@ namespace Facebook.Unity
 				this.callback(new GraphResult(www));
 			}
 			www.Dispose();
-			UnityEngine.Object.Destroy(this);
+			Object.Destroy(this);
 			yield break;
 		}
 

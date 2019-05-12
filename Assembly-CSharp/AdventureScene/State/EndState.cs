@@ -4,9 +4,9 @@ namespace AdventureScene.State
 {
 	public sealed class EndState : BaseState
 	{
-		private const int FADE_WAIT_FRAME_COUNT = 2;
-
 		private EndState.Step step;
+
+		private const int FADE_WAIT_FRAME_COUNT = 2;
 
 		private int fadeWaitFrameCount;
 
@@ -19,9 +19,28 @@ namespace AdventureScene.State
 		public override bool Update()
 		{
 			bool result = true;
-			switch (this.step)
+			EndState.Step step = this.step;
+			if (step != EndState.Step.END_ACTION)
 			{
-			case EndState.Step.END_ACTION:
+				if (step != EndState.Step.WAIT_FADE)
+				{
+					if (step == EndState.Step.END)
+					{
+						this.resultCode = ResultCode.SUCCESS;
+						result = false;
+					}
+				}
+				else
+				{
+					this.fadeWaitFrameCount--;
+					if (0 >= this.fadeWaitFrameCount)
+					{
+						this.step = EndState.Step.END;
+					}
+				}
+			}
+			else
+			{
 				if (ClassSingleton<AdventureSceneData>.Instance.sceneEndAction != null)
 				{
 					ClassSingleton<AdventureSceneData>.Instance.sceneEndAction();
@@ -29,18 +48,6 @@ namespace AdventureScene.State
 				ClassSingleton<AdventureSceneData>.Instance.adventureCamera.camera3D.enabled = false;
 				ClassSingleton<AdventureSceneData>.Instance.scriptObjectRoot.SetActive(false);
 				this.step = EndState.Step.WAIT_FADE;
-				break;
-			case EndState.Step.WAIT_FADE:
-				this.fadeWaitFrameCount--;
-				if (0 >= this.fadeWaitFrameCount)
-				{
-					this.step = EndState.Step.END;
-				}
-				break;
-			case EndState.Step.END:
-				this.resultCode = ResultCode.SUCCESS;
-				result = false;
-				break;
 			}
 			return result;
 		}

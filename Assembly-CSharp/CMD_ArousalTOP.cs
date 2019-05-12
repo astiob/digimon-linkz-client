@@ -7,6 +7,7 @@ using ResistanceTrance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class CMD_ArousalTOP : CMD
@@ -62,16 +63,16 @@ public sealed class CMD_ArousalTOP : CMD
 	[SerializeField]
 	private UILabel _ngTX_DECIDE;
 
-	[SerializeField]
 	[Header("チップ装備の処理は分離")]
+	[SerializeField]
 	private ChipBaseSelect chipBaseSelect;
 
 	[Header("パートナーデジモンのラベル")]
 	[SerializeField]
 	private UILabel partnerTitleLabel;
 
-	[SerializeField]
 	[Header("決定ボタンのラベル")]
+	[SerializeField]
 	private UILabel buttonSubmitLabel;
 
 	[SerializeField]
@@ -135,6 +136,12 @@ public sealed class CMD_ArousalTOP : CMD
 
 	private TranceResistanceMonsterList monsterList;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
 	private MonsterData baseDigimon { get; set; }
 
 	protected override void Awake()
@@ -175,7 +182,7 @@ public sealed class CMD_ArousalTOP : CMD
 			RestrictionInput.EndLoad();
 			this.ShowDLG();
 			this.SetTutorialAnyTime("anytime_second_tutorial_arousal");
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();
@@ -192,7 +199,13 @@ public sealed class CMD_ArousalTOP : CMD
 		if (null != tutorialObserver)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_arousal", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_arousal";
+			if (CMD_ArousalTOP.<>f__mg$cache0 == null)
+			{
+				CMD_ArousalTOP.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_ArousalTOP.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_ArousalTOP");
 			});
@@ -257,6 +270,7 @@ public sealed class CMD_ArousalTOP : CMD
 		this._csSelectPanelMonsterIcon.initLocation = initLoc;
 		Vector3 localScale = this._goMN_ICON_LIST[0].transform.localScale;
 		this._csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+		this._csSelectPanelMonsterIcon.ClearIconDungeonBonus();
 		this.sortButton.SortTargetMonsterList = this.targetMonsterList;
 	}
 
@@ -902,7 +916,8 @@ public sealed class CMD_ArousalTOP : CMD
 
 	private void OnTouchDecide()
 	{
-		CMD_ArousalCheck cmd_ArousalCheck = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseArousal), "CMD_ArousalCheck", null) as CMD_ArousalCheck;
+		CMD_ArousalCheck cmd_ArousalCheck = GUIMain.ShowCommonDialog(null, "CMD_ArousalCheck", null) as CMD_ArousalCheck;
+		cmd_ArousalCheck.SetActionYesButton(new Action<CMD>(this.OnPushConfirmYesButton));
 		bool isGrowStepMax;
 		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE)
 		{
@@ -916,58 +931,63 @@ public sealed class CMD_ArousalTOP : CMD
 		cmd_ArousalCheck.SetParams(this.baseDigimon, this.partnerMonsterList, isGrowStepMax);
 	}
 
-	private void OnCloseArousal(int selectButton)
+	private void OnPushConfirmYesButton(CMD confirmPopup)
 	{
-		if (selectButton == 0)
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		this.oldResistanceIds = this.baseDigimon.userMonster.tranceResistance;
+		string userMonsterId = this.baseDigimon.userMonster.userMonsterId;
+		string materialUserMonsterId = string.Empty;
+		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE)
 		{
-			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-			this.oldResistanceIds = this.baseDigimon.userMonster.tranceResistance;
-			string baseUserMonsterId = this.baseDigimon.userMonster.userMonsterId;
-			string materialUserMonsterId = string.Empty;
-			if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.ATTRIBUTE)
+			List<GameWebAPI.RespDataMA_GetMonsterTranceM.MonsterTranceM> list;
+			if (AttributeResistance.GetResistanceTrance(this.baseDigimon.userMonster.monsterId, out list))
 			{
-				List<GameWebAPI.RespDataMA_GetMonsterTranceM.MonsterTranceM> list;
-				if (AttributeResistance.GetResistanceTrance(this.baseDigimon.userMonster.monsterId, out list))
-				{
-					materialUserMonsterId = baseUserMonsterId;
-				}
-				else
-				{
-					materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
-				}
+				materialUserMonsterId = userMonsterId;
 			}
 			else
 			{
-				this.oldResistanceIds = this.baseDigimon.userMonster.tranceStatusAilment;
-				if (this.IsGrowStepMax(this.baseDigimon))
-				{
-					materialUserMonsterId = baseUserMonsterId;
-				}
-				else
-				{
-					materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
-				}
+				materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
 			}
-			GameWebAPI.RequestMN_MonsterTrance requestMN_MonsterTrance = new GameWebAPI.RequestMN_MonsterTrance();
-			requestMN_MonsterTrance.SetSendData = delegate(GameWebAPI.MN_Req_Trunce param)
-			{
-				param.baseUserMonsterId = int.Parse(baseUserMonsterId);
-				param.materialUserMonsterId = int.Parse(materialUserMonsterId);
-				param.type = (int)this.arousalSelectState;
-			};
-			requestMN_MonsterTrance.OnReceived = delegate(GameWebAPI.RespDataMN_TrunceExec response)
-			{
-				ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
-			};
-			GameWebAPI.RequestMN_MonsterTrance request = requestMN_MonsterTrance;
-			base.StartCoroutine(request.Run(delegate()
-			{
-				this.EndTrunce(materialUserMonsterId);
-			}, delegate(Exception noop)
-			{
-				RestrictionInput.EndLoad();
-			}, null));
 		}
+		else
+		{
+			this.oldResistanceIds = this.baseDigimon.userMonster.tranceStatusAilment;
+			if (this.IsGrowStepMax(this.baseDigimon))
+			{
+				materialUserMonsterId = userMonsterId;
+			}
+			else
+			{
+				materialUserMonsterId = this.partnerMonsterList.FirstOrDefault<MonsterData>().userMonster.userMonsterId;
+			}
+		}
+		confirmPopup.SetCloseAction(delegate(int noop)
+		{
+			this.RequestResistance(materialUserMonsterId);
+		});
+	}
+
+	private void RequestResistance(string materialUserMonsterId)
+	{
+		GameWebAPI.RequestMN_MonsterTrance requestMN_MonsterTrance = new GameWebAPI.RequestMN_MonsterTrance();
+		requestMN_MonsterTrance.SetSendData = delegate(GameWebAPI.MN_Req_Trunce param)
+		{
+			param.baseUserMonsterId = int.Parse(this.baseDigimon.userMonster.userMonsterId);
+			param.materialUserMonsterId = int.Parse(materialUserMonsterId);
+			param.type = (int)this.arousalSelectState;
+		};
+		requestMN_MonsterTrance.OnReceived = delegate(GameWebAPI.RespDataMN_TrunceExec response)
+		{
+			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
+		};
+		GameWebAPI.RequestMN_MonsterTrance request = requestMN_MonsterTrance;
+		base.StartCoroutine(request.Run(delegate()
+		{
+			this.EndTrunce(materialUserMonsterId);
+		}, delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null));
 	}
 
 	private bool IsGrowStepMax(MonsterData monster)
@@ -1000,27 +1020,25 @@ public sealed class CMD_ArousalTOP : CMD
 			userMonsterId
 		};
 		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
-		ChipDataMng.DeleteEquipChip(userMonsterIdList);
-		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlot(userMonsterId);
+		ChipDataMng.GetUserChipSlotData().RemoveChipData(userMonsterId, true);
 	}
 
 	private void StartCutScene()
 	{
-		string newResistance = this.baseDigimon.userMonster.tranceResistance;
-		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.RESISTANCE)
+		CutsceneDataAwakening cutsceneDataAwakening = new CutsceneDataAwakening();
+		cutsceneDataAwakening.path = "Cutscenes/Awakening";
+		cutsceneDataAwakening.modelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
+		CutsceneDataAwakening cutsceneDataAwakening2 = cutsceneDataAwakening;
+		if (CMD_ArousalTOP.<>f__mg$cache1 == null)
 		{
-			newResistance = this.baseDigimon.userMonster.tranceStatusAilment;
+			CMD_ArousalTOP.<>f__mg$cache1 = new Action(CutSceneMain.FadeReqCutSceneEnd);
 		}
-		CutsceneDataAwakening cutsceneData = new CutsceneDataAwakening
-		{
-			path = "Cutscenes/Awakening",
-			modelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
-			endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-		};
+		cutsceneDataAwakening2.endCallback = CMD_ArousalTOP.<>f__mg$cache1;
+		CutsceneDataAwakening cutsceneData = cutsceneDataAwakening;
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), null, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), delegate()
 		{
-			this.detailWindow.ShowByArousal(this.baseDigimon.monsterM.resistanceId, this.oldResistanceIds, newResistance);
+			this.detailWindow.StartAnimation();
 			this.baseDigimon = null;
 			this.BtnCont();
 			RestrictionInput.EndLoad();
@@ -1061,7 +1079,17 @@ public sealed class CMD_ArousalTOP : CMD
 		{
 			this.InitMonsterList(false, true);
 		}
-		this.detailWindow = this.ShowDetail(this.baseDigimon);
+		string newResistanceIds = this.baseDigimon.userMonster.tranceResistance;
+		if (this.arousalSelectState == CMD_ArousalTOP.ArousalSelectState.RESISTANCE)
+		{
+			newResistanceIds = this.baseDigimon.userMonster.tranceStatusAilment;
+		}
+		MonsterData monster = this.baseDigimon;
+		this.detailWindow = CMD_CharacterDetailed.CreateWindow(this.baseDigimon, delegate()
+		{
+			icon = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monster);
+			icon.Lock = monster.userMonster.IsLocked;
+		}, this.baseDigimon.monsterM.resistanceId, this.oldResistanceIds, newResistanceIds);
 		this.ShowChgInfo();
 		this.monsterList.ClearGrayOutIconPartyUsedMonster();
 		this.monsterList.ClearIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);

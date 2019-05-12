@@ -77,8 +77,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel leaderSkillDescription;
 
-	[SerializeField]
 	[Header("特化型")]
+	[SerializeField]
 	private UILabel specificType;
 
 	[Header("固有技")]
@@ -96,28 +96,28 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UISprite arousalIcon;
 
-	[SerializeField]
 	[Header("各才能メダルの表示切り替え")]
+	[SerializeField]
 	private MonsterMedalList MonsterMedalList;
 
-	[SerializeField]
 	[Header("Lvローカライズ")]
+	[SerializeField]
 	private UILabel lvLocalize;
 
-	[SerializeField]
 	[Header("HPローカライズ")]
+	[SerializeField]
 	private UILabel hpLocalize;
 
-	[SerializeField]
 	[Header("友情度ローカライズ")]
+	[SerializeField]
 	private UILabel friendLocalize;
 
 	[Header("ATKローカライズ")]
 	[SerializeField]
 	private UILabel atkLocalize;
 
-	[SerializeField]
 	[Header("DEFローカライズ")]
+	[SerializeField]
 	private UILabel defLocalize;
 
 	[Header("SATKローカライズ")]
@@ -128,20 +128,20 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel sdefLocalize;
 
-	[SerializeField]
 	[Header("SPDローカライズ")]
+	[SerializeField]
 	private UILabel spdLocalize;
 
-	[SerializeField]
 	[Header("Luckローカライズ")]
+	[SerializeField]
 	private UILabel luckLocalize;
 
-	[SerializeField]
 	[Header("リーダースキルローカライズ")]
+	[SerializeField]
 	private UILabel lSkillLocalize;
 
-	[SerializeField]
 	[Header("装着チップ")]
+	[SerializeField]
 	private ChipIcon[] chipIcons;
 
 	private void Awake()
@@ -200,6 +200,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			this.leaderSkillName.text = StringMaster.GetString("SystemNone");
 			this.leaderSkillDescription.text = string.Empty;
 		}
+		characterStatus.InitializeSkillExtraStatus();
 		if (characterStatus.skillStatus.Length > 1)
 		{
 			this.deathblow.name.text = characterStatus.skillStatus[1].name;

@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Indicates the COM alias for a parameter or field type.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+	[ComVisible(true)]
 	public sealed class ComAliasNameAttribute : Attribute
 	{
 		private string val;

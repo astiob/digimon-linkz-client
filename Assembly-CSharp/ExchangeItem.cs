@@ -9,18 +9,6 @@ using UnityEngine;
 
 public class ExchangeItem : GUIListPartBS
 {
-	private const string SP_NAME_PLUS = "Common02_Meal_UP";
-
-	private const string SP_NAME_MINUS = "Common02_Meal_Down";
-
-	private const string SP_NAME_PLUS_GRAY = "Common02_Meal_UP_G";
-
-	private const string SP_NAME_MINUS_GRAY = "Common02_Meal_Down_G";
-
-	private const int chipTexWidth = 128;
-
-	private const int chipTexHeight = 128;
-
 	[SerializeField]
 	private UILabel titleLabel;
 
@@ -96,6 +84,18 @@ public class ExchangeItem : GUIListPartBS
 
 	[SerializeField]
 	private UILabel numCountLabel;
+
+	private const string SP_NAME_PLUS = "Common02_Meal_UP";
+
+	private const string SP_NAME_MINUS = "Common02_Meal_Down";
+
+	private const string SP_NAME_PLUS_GRAY = "Common02_Meal_UP_G";
+
+	private const string SP_NAME_MINUS_GRAY = "Common02_Meal_Down_G";
+
+	private const int chipTexWidth = 128;
+
+	private const int chipTexHeight = 128;
 
 	private int updateExCT;
 
@@ -300,20 +300,78 @@ public class ExchangeItem : GUIListPartBS
 			{
 				component4.enabled = false;
 			}
-			goto IL_588;
+			break;
 		}
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			text = "Common02_LB_Stone";
 			this.exchangeDetailName = text2;
-			goto IL_588;
+			break;
 		case MasterDataMng.AssetCategory.LINK_POINT:
 			text = "Common02_LB_Link";
 			this.exchangeDetailName = text2;
-			goto IL_588;
+			break;
 		case MasterDataMng.AssetCategory.TIP:
 			text = "Common02_LB_Chip";
 			this.exchangeDetailName = text2;
-			goto IL_588;
+			break;
+		default:
+			switch (assetCategory2)
+			{
+			case MasterDataMng.AssetCategory.MEAT:
+				text = "Common02_item_meat";
+				this.exchangeDetailName = text2;
+				goto IL_567;
+			case MasterDataMng.AssetCategory.SOUL:
+			{
+				this.exchangeDetailName = text2;
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(exchangeInfo.assetValue);
+				value = soul.soulName;
+				this.viewIconTexture.gameObject.SetActive(true);
+				string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(exchangeInfo.assetValue);
+				NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, evolveItemIconPathByID, false);
+				this.viewIcon.gameObject.SetActive(false);
+				goto IL_567;
+			}
+			case MasterDataMng.AssetCategory.FACILITY_KEY:
+			{
+				this.viewIconTexture.gameObject.SetActive(true);
+				this.viewIcon.gameObject.SetActive(false);
+				FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(exchangeInfo.assetValue);
+				FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
+				FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
+				NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, facilityMasterByReleaseId.GetIconPath(), false);
+				FacilityKeyM facilityKeyMaster = FarmDataManager.GetFacilityKeyMaster(exchangeInfo.assetValue);
+				if (facilityKeyMaster != null)
+				{
+					this.exchangeDetailName = facilityKeyMaster.facilityKeyName;
+				}
+				goto IL_567;
+			}
+			case MasterDataMng.AssetCategory.CHIP:
+			{
+				GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(exchangeInfo.assetValue);
+				ChipDataMng.MakePrefabByChipData(chipMainData, this.viewIcon.gameObject, this.viewIcon.gameObject.transform.localPosition, this.viewIcon.gameObject.transform.localScale, null, 128, 128, false);
+				this.exchangeDetailName = chipMainData.name;
+				this.viewIcon.gameObject.SetActive(false);
+				goto IL_567;
+			}
+			case MasterDataMng.AssetCategory.DUNGEON_TICKET:
+			{
+				this.viewIconTexture.gameObject.SetActive(true);
+				this.viewIcon.gameObject.SetActive(false);
+				GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => exchangeInfo.assetValue == x.dungeonTicketId);
+				if (dungeonTicketM != null)
+				{
+					global::Debug.Log(dungeonTicketM.img);
+					NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, dungeonTicketM.img, false);
+					this.exchangeDetailName = dungeonTicketM.name;
+				}
+				goto IL_567;
+			}
+			}
+			text = string.Empty;
+			this.exchangeDetailName = StringMaster.GetString("Present-10");
+			break;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(exchangeInfo.assetValue);
@@ -325,63 +383,10 @@ public class ExchangeItem : GUIListPartBS
 				string largeImagePath = itemM.GetLargeImagePath();
 				NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, largeImagePath, false);
 			}
-			goto IL_588;
-		}
-		case MasterDataMng.AssetCategory.MEAT:
-			text = "Common02_item_meat";
-			this.exchangeDetailName = text2;
-			goto IL_588;
-		case MasterDataMng.AssetCategory.SOUL:
-		{
-			this.exchangeDetailName = text2;
-			GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(exchangeInfo.assetValue);
-			value = soul.soulName;
-			this.viewIconTexture.gameObject.SetActive(true);
-			string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(exchangeInfo.assetValue);
-			NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, evolveItemIconPathByID, false);
-			this.viewIcon.gameObject.SetActive(false);
-			goto IL_588;
-		}
-		case MasterDataMng.AssetCategory.FACILITY_KEY:
-		{
-			this.viewIconTexture.gameObject.SetActive(true);
-			this.viewIcon.gameObject.SetActive(false);
-			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(exchangeInfo.assetValue);
-			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
-			NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, facilityMasterByReleaseId.GetIconPath(), false);
-			FacilityKeyM facilityKeyMaster = FarmDataManager.GetFacilityKeyMaster(exchangeInfo.assetValue);
-			if (facilityKeyMaster != null)
-			{
-				this.exchangeDetailName = facilityKeyMaster.facilityKeyName;
-			}
-			goto IL_588;
-		}
-		case MasterDataMng.AssetCategory.CHIP:
-		{
-			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(exchangeInfo.assetValue);
-			ChipDataMng.MakePrefabByChipData(chipMainData, this.viewIcon.gameObject, this.viewIcon.gameObject.transform.localPosition, this.viewIcon.gameObject.transform.localScale, null, 128, 128, false);
-			this.exchangeDetailName = chipMainData.name;
-			this.viewIcon.gameObject.SetActive(false);
-			goto IL_588;
-		}
-		case MasterDataMng.AssetCategory.DUNGEON_TICKET:
-		{
-			this.viewIconTexture.gameObject.SetActive(true);
-			this.viewIcon.gameObject.SetActive(false);
-			GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => exchangeInfo.assetValue == x.dungeonTicketId);
-			if (dungeonTicketM != null)
-			{
-				global::Debug.Log(dungeonTicketM.img);
-				NGUIUtil.ChangeUITextureFromFile(this.viewIconTexture, dungeonTicketM.img, false);
-				this.exchangeDetailName = dungeonTicketM.name;
-			}
-			goto IL_588;
+			break;
 		}
 		}
-		text = string.Empty;
-		this.exchangeDetailName = StringMaster.GetString("Present-10");
-		IL_588:
+		IL_567:
 		if (!string.IsNullOrEmpty(text) && assetCategory2 != MasterDataMng.AssetCategory.MONSTER)
 		{
 			this.viewIcon.spriteName = text;
@@ -424,19 +429,60 @@ public class ExchangeItem : GUIListPartBS
 		{
 		case MasterDataMng.AssetCategory.MONSTER:
 			text = string.Empty;
-			goto IL_2B6;
+			break;
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			text = "Common02_Icon_Stone";
 			this.exchangeViewIcon.gameObject.SetActive(true);
-			goto IL_2B6;
+			break;
 		case MasterDataMng.AssetCategory.LINK_POINT:
 			text = "Common02_LB_Link";
 			this.exchangeViewIcon.gameObject.SetActive(true);
-			goto IL_2B6;
+			break;
 		case MasterDataMng.AssetCategory.TIP:
 			text = "Common02_LB_Chip";
 			this.exchangeViewIcon.gameObject.SetActive(true);
-			goto IL_2B6;
+			break;
+		default:
+			switch (assetCategory)
+			{
+			case MasterDataMng.AssetCategory.MEAT:
+				text = "Common02_item_meat";
+				this.exchangeViewIcon.gameObject.SetActive(true);
+				goto IL_29E;
+			case MasterDataMng.AssetCategory.SOUL:
+			{
+				this.exchangeViewTexture.gameObject.SetActive(true);
+				string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(exchangeInfo.item.assetValue);
+				NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, evolveItemIconPathByID, false);
+				goto IL_29E;
+			}
+			case MasterDataMng.AssetCategory.FACILITY_KEY:
+			{
+				FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(exchangeInfo.item.assetValue);
+				FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
+				FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
+				this.exchangeViewTexture.gameObject.SetActive(true);
+				NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, facilityMasterByReleaseId.GetIconPath(), false);
+				goto IL_29E;
+			}
+			case MasterDataMng.AssetCategory.CHIP:
+				goto IL_29E;
+			case MasterDataMng.AssetCategory.DUNGEON_TICKET:
+			{
+				GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => exchangeInfo.item.assetValue == x.dungeonTicketId);
+				if (dungeonTicketM != null)
+				{
+					global::Debug.Log(dungeonTicketM.img);
+					this.exchangeViewTexture.gameObject.SetActive(true);
+					NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, dungeonTicketM.img, false);
+					this.exchangeDetailName = dungeonTicketM.name;
+				}
+				goto IL_29E;
+			}
+			}
+			text = string.Empty;
+			this.exchangeDetailName = StringMaster.GetString("Present-10");
+			break;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(exchangeInfo.item.assetValue);
@@ -446,46 +492,10 @@ public class ExchangeItem : GUIListPartBS
 				string largeImagePath = itemM.GetLargeImagePath();
 				NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, largeImagePath, false);
 			}
-			goto IL_2B6;
-		}
-		case MasterDataMng.AssetCategory.MEAT:
-			text = "Common02_item_meat";
-			this.exchangeViewIcon.gameObject.SetActive(true);
-			goto IL_2B6;
-		case MasterDataMng.AssetCategory.SOUL:
-		{
-			this.exchangeViewTexture.gameObject.SetActive(true);
-			string evolveItemIconPathByID = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(exchangeInfo.item.assetValue);
-			NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, evolveItemIconPathByID, false);
-			goto IL_2B6;
-		}
-		case MasterDataMng.AssetCategory.FACILITY_KEY:
-		{
-			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(exchangeInfo.item.assetValue);
-			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
-			this.exchangeViewTexture.gameObject.SetActive(true);
-			NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, facilityMasterByReleaseId.GetIconPath(), false);
-			goto IL_2B6;
-		}
-		case MasterDataMng.AssetCategory.CHIP:
-			goto IL_2B6;
-		case MasterDataMng.AssetCategory.DUNGEON_TICKET:
-		{
-			GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => exchangeInfo.item.assetValue == x.dungeonTicketId);
-			if (dungeonTicketM != null)
-			{
-				global::Debug.Log(dungeonTicketM.img);
-				this.exchangeViewTexture.gameObject.SetActive(true);
-				NGUIUtil.ChangeUITextureFromFile(this.exchangeViewTexture, dungeonTicketM.img, false);
-				this.exchangeDetailName = dungeonTicketM.name;
-			}
-			goto IL_2B6;
+			break;
 		}
 		}
-		text = string.Empty;
-		this.exchangeDetailName = StringMaster.GetString("Present-10");
-		IL_2B6:
+		IL_29E:
 		if (!string.IsNullOrEmpty(text) && assetCategory != MasterDataMng.AssetCategory.MONSTER)
 		{
 			this.exchangeViewIcon.spriteName = text;
@@ -633,37 +643,42 @@ public class ExchangeItem : GUIListPartBS
 		case MasterDataMng.AssetCategory.TIP:
 			CMD_QuestItemPOP.Create(assetCategory2);
 			break;
+		default:
+			switch (assetCategory)
+			{
+			case MasterDataMng.AssetCategory.SOUL:
+			{
+				GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(this.exchangeInfoData.assetValue);
+				CMD_QuestItemPOP.Create(soul);
+				break;
+			}
+			case MasterDataMng.AssetCategory.FACILITY_KEY:
+			{
+				FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(this.exchangeInfoData.assetValue);
+				FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
+				FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
+				CMD_QuestItemPOP.Create(facilityConditionM, this.exchangeInfoData.assetValue, facilityMasterByReleaseId);
+				break;
+			}
+			case MasterDataMng.AssetCategory.CHIP:
+			{
+				GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(this.exchangeInfoData.assetValue);
+				CMD_QuestItemPOP.Create(chipMainData);
+				break;
+			}
+			case MasterDataMng.AssetCategory.DUNGEON_TICKET:
+			{
+				string ticketValue = this.exchangeInfoData.assetValue;
+				GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM data = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => x.dungeonTicketId == ticketValue);
+				CMD_QuestItemPOP.Create(data);
+				break;
+			}
+			}
+			break;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(this.exchangeInfoData.assetValue);
 			CMD_QuestItemPOP.Create(itemM);
-			break;
-		}
-		case MasterDataMng.AssetCategory.SOUL:
-		{
-			GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(this.exchangeInfoData.assetValue);
-			CMD_QuestItemPOP.Create(soul);
-			break;
-		}
-		case MasterDataMng.AssetCategory.FACILITY_KEY:
-		{
-			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(this.exchangeInfoData.assetValue);
-			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
-			CMD_QuestItemPOP.Create(facilityConditionM, this.exchangeInfoData.assetValue, facilityMasterByReleaseId);
-			break;
-		}
-		case MasterDataMng.AssetCategory.CHIP:
-		{
-			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(this.exchangeInfoData.assetValue);
-			CMD_QuestItemPOP.Create(chipMainData);
-			break;
-		}
-		case MasterDataMng.AssetCategory.DUNGEON_TICKET:
-		{
-			string ticketValue = this.exchangeInfoData.assetValue;
-			GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM data = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => x.dungeonTicketId == ticketValue);
-			CMD_QuestItemPOP.Create(data);
 			break;
 		}
 		}

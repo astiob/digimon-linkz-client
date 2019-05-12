@@ -19,8 +19,6 @@ public sealed class CMD_DigiGarden : CMD
 
 	private Action finishedActionCutScene;
 
-	private MonsterData md_bk;
-
 	private readonly Vector3 eggPos_1 = new Vector3(-1.12f, 0f, -1.03f);
 
 	private readonly Vector3 eggPos_2 = new Vector3(1.07f, 0f, 0.67f);
@@ -215,7 +213,7 @@ public sealed class CMD_DigiGarden : CMD
 		}
 		this.csSelectPanel.initLocation = true;
 		this.goMN_LIST[0].SetActive(true);
-		this.csSelectPanel.AllBuild(list);
+		this.csSelectPanel.AllBuild(list, new Action<CMD, string, string>(this.OnBornExec), new Action<MonsterData>(this.OnPushEvolutionButton));
 		this.goMN_LIST[0].SetActive(false);
 		this.modelUiTex.gameObject.SetActive(list.Count != 0);
 		int num = 0;
@@ -234,237 +232,274 @@ public sealed class CMD_DigiGarden : CMD
 		int num3 = 0;
 		foreach (MonsterData monsterData2 in list)
 		{
-			DigimonActionInGarden digimonActionInGarden = this.Show3dModel(monsterData2, this.modelUiTex, false);
-			if (monsterData2.userMonster.eggFlg == "1")
+			if (monsterData2.userMonster.IsEgg())
 			{
+				string eggModelId = MonsterObject.GetEggModelId(monsterData2.userMonster.monsterEvolutionRouteId);
+				CommonRender3DRT commonRender3DRT = this.CreateRender3DRT(true, eggModelId, this.modelUiTex);
+				this.SetRender3Dcamera(true, commonRender3DRT, false);
+				DigimonActionInGarden digimonActionInGarden = this.AttachActionScript(commonRender3DRT.gameObject, true);
+				this.charaActList.Add(digimonActionInGarden);
 				this.eggControllerList[num2].CallMethodOnClick = this.callMeyhodsOnEggClick[num3];
-				switch (num)
+				if (num != 1)
 				{
-				case 1:
-					digimonActionInGarden.SetPosition(this.eggPos_1);
-					break;
-				case 2:
-				{
-					num2++;
-					int num4 = num2;
-					if (num4 != 1)
+					if (num != 2)
 					{
-						if (num4 == 2)
+						if (num == 3)
 						{
-							digimonActionInGarden.SetPosition(this.eggPos_2);
+							num2++;
+							if (num2 != 1)
+							{
+								if (num2 != 2)
+								{
+									if (num2 == 3)
+									{
+										digimonActionInGarden.SetPosition(this.eggPos_3);
+									}
+								}
+								else
+								{
+									digimonActionInGarden.SetPosition(this.eggPos_2);
+								}
+							}
+							else
+							{
+								digimonActionInGarden.SetPosition(this.eggPos_1);
+							}
 						}
 					}
 					else
 					{
-						digimonActionInGarden.SetPosition(this.eggPos_1);
+						num2++;
+						if (num2 != 1)
+						{
+							if (num2 == 2)
+							{
+								digimonActionInGarden.SetPosition(this.eggPos_2);
+							}
+						}
+						else
+						{
+							digimonActionInGarden.SetPosition(this.eggPos_1);
+						}
 					}
-					break;
 				}
-				case 3:
-					num2++;
-					switch (num2)
-					{
-					case 1:
-						digimonActionInGarden.SetPosition(this.eggPos_1);
-						break;
-					case 2:
-						digimonActionInGarden.SetPosition(this.eggPos_2);
-						break;
-					case 3:
-						digimonActionInGarden.SetPosition(this.eggPos_3);
-						break;
-					}
-					break;
+				else
+				{
+					digimonActionInGarden.SetPosition(this.eggPos_1);
 				}
 				digimonActionInGarden.SetDefaultAnimation(this.eggLoopAnimClipList[num3]);
 			}
 			else
 			{
-				digimonActionInGarden.RandomPosition();
-				digimonActionInGarden.WalkAction();
+				CommonRender3DRT commonRender3DRT2 = this.CreateRender3DRT(false, monsterData2.GetMonsterMaster().Group.modelId, this.modelUiTex);
+				this.SetRender3Dcamera(false, commonRender3DRT2, false);
+				DigimonActionInGarden digimonActionInGarden2 = this.AttachActionScript(commonRender3DRT2.gameObject, false);
+				this.charaActList.Add(digimonActionInGarden2);
+				digimonActionInGarden2.RandomPosition();
+				digimonActionInGarden2.WalkAction();
 			}
 			num3++;
 		}
 	}
 
-	public void BornExec(MonsterData md)
+	private void OnBornExec(CMD confirmPopup, string userMonsterId, string eggModelId)
 	{
-		if (!this.Lock())
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+		confirmPopup.SetCloseAction(delegate(int noop)
 		{
-			return;
-		}
-		this.md_bk = new MonsterData(md);
-		CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseBornExec), "CMD_Confirm", null) as CMD_Confirm;
-		cmd_Confirm.Title = StringMaster.GetString("Garden-05");
-		cmd_Confirm.Info = StringMaster.GetString("Garden-06");
+			this.RequestBorn(userMonsterId, eggModelId);
+		});
 	}
 
-	private void OnCloseBornExec(int idx)
+	private void RequestBorn(string userMonsterId, string eggModelId)
 	{
-		if (idx == 0)
+		GameWebAPI.RequestMN_MonsterHatching requestMN_MonsterHatching = new GameWebAPI.RequestMN_MonsterHatching();
+		requestMN_MonsterHatching.SetSendData = delegate(GameWebAPI.MN_Req_Born param)
 		{
-			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-			GameWebAPI.RequestMN_MonsterHatching requestMN_MonsterHatching = new GameWebAPI.RequestMN_MonsterHatching();
-			requestMN_MonsterHatching.SetSendData = delegate(GameWebAPI.MN_Req_Born param)
-			{
-				param.userMonsterId = this.md_bk.userMonster.userMonsterId;
-			};
-			requestMN_MonsterHatching.OnReceived = delegate(GameWebAPI.RespDataMN_BornExec response)
-			{
-				ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
-			};
-			GameWebAPI.RequestMN_MonsterHatching request = requestMN_MonsterHatching;
-			base.StartCoroutine(request.Run(new Action(this.EndBornSuccess), new Action<Exception>(this.EndBornFailed), null));
-		}
-		else
+			param.userMonsterId = userMonsterId;
+		};
+		requestMN_MonsterHatching.OnReceived = delegate(GameWebAPI.RespDataMN_BornExec response)
 		{
-			this.UnLock();
-		}
+			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
+		};
+		GameWebAPI.RequestMN_MonsterHatching request = requestMN_MonsterHatching;
+		base.StartCoroutine(request.Run(delegate()
+		{
+			this.EndBornSuccess(userMonsterId, eggModelId);
+		}, delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null));
 	}
 
-	private void EndBornSuccess()
+	private void EndBornSuccess(string userMonsterId, string eggModelId)
 	{
 		RestrictionInput.EndLoad();
-		base.StartCoroutine(this.StrokingEgg(delegate
+		this.Lock();
+		base.StartCoroutine(this.StrokingEgg(userMonsterId, eggModelId, delegate(MonsterData afterMonsterData)
 		{
-			CMD_CharacterDetailed.DataChg = this.md_bk;
-			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
 			this.DestroyRender3DRT();
+			CMD_CharacterDetailed.DataChg = afterMonsterData;
+			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
 			ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
 			this.InitMonsterList();
 			this.UnLock();
 		}));
 	}
 
-	private void EndBornFailed(Exception noop)
+	private void OnPushEvolutionButton(MonsterData monsterData)
 	{
-		this.UnLock();
-	}
-
-	public void GrowExec(MonsterData md)
-	{
-		if (!this.Lock())
-		{
-			return;
-		}
 		if (!this.IsOfflineModeFlag)
 		{
-			DateTime d = DateTime.Parse(md.userMonster.growEndDate);
+			DateTime d = DateTime.Parse(monsterData.userMonster.growEndDate);
 			TimeSpan timeSpan = d - ServerDateTime.Now;
-			this.md_bk = new MonsterData(md);
 			if (timeSpan.TotalSeconds <= 0.0)
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseGrowExec), "CMD_Confirm", null) as CMD_Confirm;
+				this.growNeedStone = 0;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(null, "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("EvolutionTitle");
 				cmd_Confirm.Info = StringMaster.GetString("EvolutionConfirmInfo");
-				this.growNeedStone = 0;
+				cmd_Confirm.SetActionYesButton(delegate(CMD confirmPopup)
+				{
+					this.OnPushEvolutionConfirmYesButton(confirmPopup, monsterData);
+				});
 			}
 			else
 			{
-				base.StartCoroutine(this.GrowExecInfoAPI(timeSpan));
+				base.StartCoroutine(this.GrowExecInfoAPI(monsterData, timeSpan));
 			}
 		}
 		else
 		{
-			MonsterData oldestMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetOldestMonster();
-			this.OfflineGrow(oldestMonster);
+			this.OpenConfirmShortenTime(this.OfflineGrowNeedStone, TimeSpan.Parse(this.OfflineTimeUntilEvolution), delegate(CMD confirmPopup)
+			{
+				this.OfflineGrow_Step2(monsterData);
+			});
 		}
 	}
 
-	private IEnumerator GrowExecInfoAPI(TimeSpan timeSpan)
+	private IEnumerator GrowExecInfoAPI(MonsterData monsterData, TimeSpan timeSpan)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
-		APIRequestTask task = Singleton<UserDataMng>.Instance.RequestGardenInfo(true);
-		return task.Run(delegate
+		GameWebAPI.RespDataUS_GetGardenInfo gardenInfoList = null;
+		GameWebAPI.RequestUS_GetGardenInfo request = new GameWebAPI.RequestUS_GetGardenInfo
 		{
-			this.GrowExecConfirm(timeSpan);
+			OnReceived = delegate(GameWebAPI.RespDataUS_GetGardenInfo response)
+			{
+				gardenInfoList = response;
+			}
+		};
+		return request.Run(delegate()
+		{
+			int shortenTimeValue = this.GetShortenTimeValue(gardenInfoList, monsterData.userMonster.userMonsterId);
+			this.growNeedStone = this.GetCostEvolution(shortenTimeValue, timeSpan);
+			this.OpenConfirmShortenTime(this.growNeedStone, timeSpan, delegate(CMD confirmPopup)
+			{
+				this.OnPushEvolutionConfirmYesButton(confirmPopup, monsterData);
+				confirmPopup.ClosePanel(true);
+			});
 			RestrictionInput.EndLoad();
 		}, null, null);
 	}
 
-	private void GrowExecConfirm(TimeSpan timeSpan)
+	private int GetShortenTimeValue(GameWebAPI.RespDataUS_GetGardenInfo gardenInfoList, string userMonsterId)
 	{
-		GameWebAPI.RespDataUS_GetGardenInfo respDataUS_GardenInfo = DataMng.Instance().RespDataUS_GardenInfo;
-		string arg = string.Empty;
-		this.growNeedStone = 0;
-		int num = 0;
-		foreach (GameWebAPI.GardenInfo.MonsterInfo monsterInfo in respDataUS_GardenInfo.gardenInfo.monster)
+		int result = 0;
+		foreach (GameWebAPI.GardenInfo.MonsterInfo monsterInfo in gardenInfoList.gardenInfo.monster)
 		{
-			if (this.md_bk.userMonster.userMonsterId == monsterInfo.userMonsterId.ToString())
+			if (userMonsterId == monsterInfo.userMonsterId.ToString())
 			{
-				num = ((!MonsterGrowStepData.IsChild1Scope(monsterInfo.growStep)) ? respDataUS_GardenInfo.gardenInfo.time2 : respDataUS_GardenInfo.gardenInfo.time1);
+				if (MonsterGrowStepData.IsChild1Scope(monsterInfo.growStep))
+				{
+					result = gardenInfoList.gardenInfo.time1;
+				}
+				else
+				{
+					result = gardenInfoList.gardenInfo.time2;
+				}
 			}
 		}
+		return result;
+	}
+
+	private int GetCostEvolution(int shortenTime, TimeSpan timeSpan)
+	{
+		int num = 0;
 		if (timeSpan.Hours > 0)
 		{
-			this.growNeedStone = ((timeSpan.Hours % num != 0) ? (timeSpan.Hours / num + 1) : (timeSpan.Hours / num));
-			if (timeSpan.Minutes > 0 || timeSpan.Seconds > 0)
+			if (timeSpan.Hours % shortenTime == 0)
 			{
-				this.growNeedStone++;
+				num = timeSpan.Hours / shortenTime;
 			}
+			else
+			{
+				num = timeSpan.Hours / shortenTime + 1;
+			}
+		}
+		if (timeSpan.Minutes > 0 || timeSpan.Seconds > 0)
+		{
+			num++;
+		}
+		return num;
+	}
+
+	private void OpenConfirmShortenTime(int cost, TimeSpan timeSpan, Action<CMD> pushYesButton)
+	{
+		string arg = string.Empty;
+		if (timeSpan.Hours > 0)
+		{
 			arg = string.Format(StringMaster.GetString("SystemTimeHM"), timeSpan.Hours.ToString(), timeSpan.Minutes.ToString());
 		}
 		else if (timeSpan.Minutes > 0)
 		{
-			this.growNeedStone = 1;
 			arg = string.Format(StringMaster.GetString("SystemTimeMS"), timeSpan.Minutes.ToString(), timeSpan.Seconds.ToString());
 		}
 		else
 		{
-			this.growNeedStone = 1;
 			arg = string.Format(StringMaster.GetString("SystemTimeS"), timeSpan.Seconds.ToString());
 		}
-		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
-		cmd_ChangePOP_STONE.Title = StringMaster.GetString("EvolutionTitle");
-		cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnCloseGrowExecYes);
-		cmd_ChangePOP_STONE.OnPushedNoAction = new Action(this.OnCloseGrowExecNo);
-		cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("Garden-11"), this.growNeedStone.ToString(), arg);
-		cmd_ChangePOP_STONE.SetDigistone(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point, this.growNeedStone);
-		cmd_ChangePOP_STONE.BtnTextYes = StringMaster.GetString("SystemButtonYes");
-	}
-
-	private void OnCloseGrowExecYes()
-	{
-		this.OnCloseGrowExec(0);
-	}
-
-	private void OnCloseGrowExecNo()
-	{
-		this.OnCloseGrowExec(1);
-	}
-
-	private void OnCloseGrowExec(int idx)
-	{
-		if (idx == 0)
+		CMD_ChangePOP_STONE popup = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
+		popup.Title = StringMaster.GetString("EvolutionTitle");
+		popup.OnPushedYesAction = delegate()
 		{
-			if (this.growNeedStone <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point)
+			pushYesButton(popup);
+		};
+		popup.Info = string.Format(StringMaster.GetString("Garden-11"), cost.ToString(), arg);
+		popup.SetDigistone(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point, cost);
+	}
+
+	private void OnPushEvolutionConfirmYesButton(CMD confirmPopup, MonsterData monsterData)
+	{
+		if (this.growNeedStone <= DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point)
+		{
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			confirmPopup.SetCloseAction(delegate(int noop)
 			{
-				this.ExecGrow();
-			}
-			else
+				this.ExecGrow(monsterData);
+			});
+		}
+		else
+		{
+			confirmPopup.SetCloseAction(delegate(int noop)
 			{
-				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm", null) as CMD_Confirm;
+				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(null, "CMD_Confirm", null) as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("EvolutionTitle");
 				cmd_Confirm.Info = StringMaster.GetString("GashaShortage");
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
 				cmd_Confirm.BtnTextNo = StringMaster.GetString("SystemButtonClose");
-			}
-		}
-		else
-		{
-			this.UnLock();
+				cmd_Confirm.SetActionYesButton(new Action<CMD>(this.OnPushConfirmShopButton));
+			});
 		}
 	}
 
-	private void ExecGrow()
+	private void ExecGrow(MonsterData monsterData)
 	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		DateTime d = DateTime.Parse(this.md_bk.userMonster.growEndDate);
+		DateTime d = DateTime.Parse(monsterData.userMonster.growEndDate);
 		double timeSpan = (double)((int)(d - ServerDateTime.Now).TotalSeconds);
 		GameWebAPI.RequestMN_MonsterEvolutionInGarden requestMN_MonsterEvolutionInGarden = new GameWebAPI.RequestMN_MonsterEvolutionInGarden();
 		requestMN_MonsterEvolutionInGarden.SetSendData = delegate(GameWebAPI.MN_Req_Grow param)
 		{
-			param.userMonsterId = this.md_bk.userMonster.userMonsterId;
+			param.userMonsterId = monsterData.userMonster.userMonsterId;
 			param.shorteningFlg = ((timeSpan <= 0.0) ? 0 : 1);
 			param.stone = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 		};
@@ -473,40 +508,35 @@ public sealed class CMD_DigiGarden : CMD
 			ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
 		};
 		GameWebAPI.RequestMN_MonsterEvolutionInGarden request = requestMN_MonsterEvolutionInGarden;
-		base.StartCoroutine(request.Run(new Action(this.EndGrowSuccess), new Action<Exception>(this.EndGrowFailed), null));
-		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = UnityEngine.Object.FindObjectOfType<CMD_ChangePOP_STONE>();
-		if (null != cmd_ChangePOP_STONE)
+		MonsterClientMaster monsterMaster = monsterData.GetMonsterMaster();
+		string beforeMonsterModelId = monsterMaster.Group.modelId;
+		string beforeMonsterGrowStep = monsterMaster.Group.growStep;
+		base.StartCoroutine(request.Run(delegate()
 		{
-			cmd_ChangePOP_STONE.ClosePanel(true);
-		}
+			this.EndGrowSuccess(monsterData.GetMonster().userMonsterId, beforeMonsterModelId, beforeMonsterGrowStep);
+		}, delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null));
 	}
 
-	private void OnCloseConfirmShop(int idx)
+	private void OnPushConfirmShopButton(CMD confirmPopup)
 	{
-		this.UnLock();
-		if (idx == 0)
+		confirmPopup.SetCloseAction(delegate(int noop)
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_Shop", null);
-		}
-		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = UnityEngine.Object.FindObjectOfType<CMD_ChangePOP_STONE>();
-		if (null != cmd_ChangePOP_STONE)
-		{
-			cmd_ChangePOP_STONE.ClosePanel(true);
-		}
+		});
 	}
 
-	private void EndGrowSuccess()
+	private void EndGrowSuccess(string userMonsterId, string beforeModelId, string beforeGrowStep)
 	{
-		MonsterClientMaster monsterMaster = this.md_bk.GetMonsterMaster();
-		string modelId = monsterMaster.Group.modelId;
-		string growStep = monsterMaster.Group.growStep;
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		this.md_bk = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(this.md_bk.GetMonster().userMonsterId);
-		monsterMaster = this.md_bk.GetMonsterMaster();
+		MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterId);
+		MonsterClientMaster monsterMaster = userMonster.GetMonsterMaster();
 		CutsceneDataEvolution cutsceneDataEvolution = new CutsceneDataEvolution();
 		cutsceneDataEvolution.path = "Cutscenes/Evolution";
-		cutsceneDataEvolution.beforeModelId = modelId;
-		cutsceneDataEvolution.beforeGrowStep = growStep;
+		cutsceneDataEvolution.beforeModelId = beforeModelId;
+		cutsceneDataEvolution.beforeGrowStep = beforeGrowStep;
 		cutsceneDataEvolution.afterModelId = monsterMaster.Group.modelId;
 		cutsceneDataEvolution.afterGrowStep = monsterMaster.Group.growStep;
 		cutsceneDataEvolution.endCallback = delegate()
@@ -516,13 +546,7 @@ public sealed class CMD_DigiGarden : CMD
 		};
 		CutsceneDataEvolution cutsceneData = cutsceneDataEvolution;
 		Loading.Invisible();
-		this.CallEvolutionCutScene(this.md_bk, cutsceneData);
-	}
-
-	private void EndGrowFailed(Exception noop)
-	{
-		RestrictionInput.EndLoad();
-		this.UnLock();
+		this.CallEvolutionCutScene(userMonster, cutsceneData);
 	}
 
 	private void SetBackground()
@@ -550,40 +574,46 @@ public sealed class CMD_DigiGarden : CMD
 		this.backgroundCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Cutscene"));
 	}
 
-	private DigimonActionInGarden Show3dModel(MonsterData CharaData, UITexture DisplayUiTex, bool IsUseDirection = false)
+	private void SetRender3Dcamera(bool isEgg, CommonRender3DRT render3DRT, bool isStroke)
 	{
-		CommonRender3DRT commonRender3DRT = this.CreateRender3DRT(CharaData, DisplayUiTex);
-		Camera componentInChildren = commonRender3DRT.GetComponentInChildren<Camera>();
+		Camera componentInChildren = render3DRT.GetComponentInChildren<Camera>();
 		componentInChildren.fieldOfView = 30f;
-		if (IsUseDirection)
+		Transform transform = componentInChildren.transform;
+		if (isStroke)
 		{
-			commonRender3DRT.transform.localPosition = new Vector3(0f, 10000f);
-			componentInChildren.transform.localPosition += new Vector3(0f, 0.75f, componentInChildren.transform.localPosition.z);
+			render3DRT.transform.localPosition = new Vector3(0f, 10000f);
+			transform.localPosition += new Vector3(0f, 0.75f, transform.localPosition.z);
 		}
 		else
 		{
 			componentInChildren.useOcclusionCulling = true;
-			componentInChildren.transform.localPosition = ((!(CharaData.userMonster.eggFlg != "1")) ? new Vector3(componentInChildren.transform.localPosition.x, this.backgroundCamera.transform.localPosition.y, componentInChildren.transform.localPosition.z * 2f) : this.digiCameraPos);
-			componentInChildren.transform.localEulerAngles = new Vector3(this.backgroundCamera.transform.localEulerAngles.x, (!(CharaData.userMonster.eggFlg != "1")) ? 0f : -155f);
+			Transform transform2 = this.backgroundCamera.transform;
+			if (!isEgg)
+			{
+				transform.localPosition = this.digiCameraPos;
+				transform.localEulerAngles = new Vector3(transform2.localEulerAngles.x, -155f);
+			}
+			else
+			{
+				transform.localPosition = new Vector3(transform.localPosition.x, transform2.localPosition.y, transform.localPosition.z * 2f);
+				transform.localEulerAngles = new Vector3(transform2.localEulerAngles.x, 0f);
+			}
 		}
-		return this.AttachActionScript(commonRender3DRT.gameObject, CharaData.userMonster.eggFlg != "1");
 	}
 
-	private CommonRender3DRT CreateRender3DRT(MonsterData charaData, UITexture displayUiTex)
+	private CommonRender3DRT CreateRender3DRT(bool isEgg, string modelId, UITexture displayUiTex)
 	{
 		GameObject gameObject = GUIManager.LoadCommonGUI("Render3D/Render3DRT", null);
 		gameObject.name = "DigiGarden3dStudio_" + this.charaActList.Count.ToString();
 		CommonRender3DRT component = gameObject.GetComponent<CommonRender3DRT>();
-		if (!charaData.userMonster.IsEgg())
+		string filePath = MonsterObject.GetFilePath(modelId);
+		if (!isEgg)
 		{
-			string filePath = MonsterObject.GetFilePath(charaData.GetMonsterMaster().Group.modelId);
 			component.LoadChara(filePath, 0f, 4000f, 0f, 0f, true);
 		}
 		else
 		{
-			string eggModelId = MonsterObject.GetEggModelId(charaData.userMonster.monsterEvolutionRouteId);
-			string filePath2 = MonsterObject.GetFilePath(eggModelId);
-			component.LoadEgg(filePath2, 0f, 4000f, 0f);
+			component.LoadEgg(filePath, 0f, 4000f, 0f);
 		}
 		gameObject = UnityEngine.Object.Instantiate<GameObject>(this.digiShadow.gameObject);
 		GardenShadow component2 = gameObject.GetComponent<GardenShadow>();
@@ -593,21 +623,19 @@ public sealed class CMD_DigiGarden : CMD
 		return component;
 	}
 
-	private DigimonActionInGarden AttachActionScript(GameObject TargetParentObj, bool IsChildrenHaveCharacterParams = true)
+	private DigimonActionInGarden AttachActionScript(GameObject TargetParentObj, bool isEgg)
 	{
 		DigimonActionInGarden digimonActionInGarden;
-		if (IsChildrenHaveCharacterParams)
+		if (!isEgg)
 		{
 			CharacterParams componentInChildren = TargetParentObj.transform.GetComponentInChildren<CharacterParams>();
 			digimonActionInGarden = componentInChildren.gameObject.AddComponent<DigimonActionInGarden>();
-			this.charaActList.Add(digimonActionInGarden);
 			digimonActionInGarden.Initialize(componentInChildren);
 		}
 		else
 		{
 			Animation componentInChildren2 = TargetParentObj.transform.GetComponentInChildren<Animation>();
 			digimonActionInGarden = componentInChildren2.gameObject.AddComponent<DigimonActionInGarden>();
-			this.charaActList.Add(digimonActionInGarden);
 			digimonActionInGarden.Initialize(componentInChildren2);
 		}
 		return digimonActionInGarden;
@@ -693,22 +721,23 @@ public sealed class CMD_DigiGarden : CMD
 		}
 	}
 
-	private IEnumerator StrokingEgg(Action OnStroked)
+	private IEnumerator StrokingEgg(string userMonsterId, string eggModelId, Action<MonsterData> OnStroked)
 	{
 		PartsMenu.instance.gameObject.SetActive(false);
-		foreach (PicturebookDetailController obj in this.eggControllerList)
+		foreach (PicturebookDetailController picturebookDetailController in this.eggControllerList)
 		{
-			obj.gameObject.SetActive(false);
+			picturebookDetailController.gameObject.SetActive(false);
 		}
 		this.MoveTo(this.modelUiTex.gameObject, this.fullScreenModelTexPos, 0.18f, iTween.EaseType.linear, null);
 		this.ChangeDisplayModeToFullScreen();
 		this.displayModeButtonLabel.transform.parent.gameObject.SetActive(false);
 		this.strokeUiTex.gameObject.SetActive(true);
 		this.isStrokeEnd = false;
-		DigimonActionInGarden digimonAct = this.Show3dModel(this.md_bk, this.strokeUiTex, true);
+		CommonRender3DRT render3DRT = this.CreateRender3DRT(true, eggModelId, this.strokeUiTex);
+		this.SetRender3Dcamera(true, render3DRT, true);
+		DigimonActionInGarden digimonAct = this.AttachActionScript(render3DRT.gameObject, true);
 		digimonAct.transform.localPosition = Vector3.zero;
 		digimonAct.transform.localScale = new Vector3(2f, 2f, 2f);
-		this.charaActList.Remove(digimonAct);
 		while (!this.isStrokeEnd)
 		{
 			yield return null;
@@ -717,12 +746,12 @@ public sealed class CMD_DigiGarden : CMD
 		digimonAct.gameObject.SetActive(false);
 		yield return new WaitForSeconds(1.2f);
 		UnityEngine.Object.Destroy(digimonAct.transform.parent.gameObject);
-		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		this.md_bk = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(this.md_bk.userMonster.userMonsterId, false);
-		DigimonActionInGarden newDigimonAct = this.Show3dModel(this.md_bk, this.strokeUiTex, true);
+		MonsterData afterMonsterData = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterId);
+		render3DRT = this.CreateRender3DRT(false, afterMonsterData.GetMonsterMaster().Group.modelId, this.strokeUiTex);
+		this.SetRender3Dcamera(false, render3DRT, true);
+		DigimonActionInGarden newDigimonAct = this.AttachActionScript(render3DRT.gameObject, false);
 		newDigimonAct.transform.localPosition = Vector3.zero;
 		newDigimonAct.transform.localScale = new Vector3(2f, 2f, 2f);
-		this.charaActList.Remove(newDigimonAct);
 		yield return new WaitForSeconds(2f);
 		this.strokeUiTex.gameObject.SetActive(false);
 		newDigimonAct.transform.parent.gameObject.SetActive(false);
@@ -732,10 +761,10 @@ public sealed class CMD_DigiGarden : CMD
 		this.displayModeButtonLabel.transform.parent.gameObject.SetActive(true);
 		this.isStrokeEnd = false;
 		this.particle.SetActive(false);
-		OnStroked();
-		foreach (PicturebookDetailController obj2 in this.eggControllerList)
+		OnStroked(afterMonsterData);
+		foreach (PicturebookDetailController picturebookDetailController2 in this.eggControllerList)
 		{
-			obj2.gameObject.SetActive(true);
+			picturebookDetailController2.gameObject.SetActive(true);
 		}
 		PartsMenu.instance.gameObject.SetActive(true);
 		yield break;
@@ -848,63 +877,38 @@ public sealed class CMD_DigiGarden : CMD
 	{
 	}
 
-	public void OfflineGrow(MonsterData md)
+	private void OfflineGrow_Step2(MonsterData monsterData)
 	{
-		this.md_bk = new MonsterData(md);
-		TimeSpan timeSpan = TimeSpan.Parse(this.OfflineTimeUntilEvolution);
-		string arg = string.Empty;
-		this.growNeedStone = this.OfflineGrowNeedStone;
-		if (timeSpan.Hours > 0)
-		{
-			arg = string.Format(StringMaster.GetString("SystemTimeHM"), timeSpan.Hours.ToString(), timeSpan.Minutes.ToString());
-		}
-		else if (timeSpan.Minutes > 0)
-		{
-			arg = string.Format(StringMaster.GetString("SystemTimeMS"), timeSpan.Minutes.ToString(), timeSpan.Seconds.ToString());
-		}
-		else
-		{
-			arg = string.Format(StringMaster.GetString("SystemTimeS"), timeSpan.Seconds.ToString());
-		}
-		CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE", null) as CMD_ChangePOP_STONE;
-		cmd_ChangePOP_STONE.Title = StringMaster.GetString("EvolutionTitle");
-		cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OfflineGrow_Step2);
-		cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("Garden-11"), this.growNeedStone.ToString(), arg);
-		cmd_ChangePOP_STONE.SetDigistone(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point, this.growNeedStone);
-	}
-
-	private void OfflineGrow_Step2()
-	{
-		MonsterClientMaster monsterMaster = this.md_bk.GetMonsterMaster();
+		MonsterClientMaster monsterMaster = monsterData.GetMonsterMaster();
 		string modelId = monsterMaster.Group.modelId;
 		string growStep = monsterMaster.Group.growStep;
-		string userMonsterId = this.md_bk.GetMonster().userMonsterId;
-		string monsterEvolutionRouteId = this.md_bk.GetMonster().monsterEvolutionRouteId;
+		string userMonsterId = monsterData.GetMonster().userMonsterId;
+		string monsterEvolutionRouteId = monsterData.GetMonster().monsterEvolutionRouteId;
 		foreach (GameWebAPI.RespDataMA_GetMonsterEvolutionRouteM.MonsterEvolutionRouteM monsterEvolutionRouteM2 in MasterDataMng.Instance().RespDataMA_MonsterEvolutionRouteM.monsterEvolutionRouteM)
 		{
 			if (monsterEvolutionRouteId == monsterEvolutionRouteM2.monsterEvolutionRouteId)
 			{
-				this.md_bk = MonsterDataMng.Instance().CreateMonsterDataByMID(monsterEvolutionRouteM2.growthMonsterId);
+				monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(monsterEvolutionRouteM2.growthMonsterId);
 				break;
 			}
 		}
 		MonsterDataMng.Instance().GetMonsterDataList()[0].userMonster.growEndDate = string.Empty;
-		this.md_bk.userMonster.ex = "0";
-		this.md_bk.userMonster.hpAbilityFlg = "0";
-		this.md_bk.userMonster.attackAbilityFlg = "0";
-		this.md_bk.userMonster.defenseAbilityFlg = "0";
-		this.md_bk.userMonster.spAttackAbilityFlg = "0";
-		this.md_bk.userMonster.spDefenseAbilityFlg = "0";
-		this.md_bk.userMonster.speedAbilityFlg = "0";
-		this.md_bk.userMonster.friendship = "0";
-		StatusValue statusValue = MonsterStatusData.GetStatusValue(this.md_bk.userMonster.monsterId, this.md_bk.userMonster.level);
+		monsterData.userMonster.ex = "0";
+		monsterData.userMonster.hpAbilityFlg = "0";
+		monsterData.userMonster.attackAbilityFlg = "0";
+		monsterData.userMonster.defenseAbilityFlg = "0";
+		monsterData.userMonster.spAttackAbilityFlg = "0";
+		monsterData.userMonster.spDefenseAbilityFlg = "0";
+		monsterData.userMonster.speedAbilityFlg = "0";
+		monsterData.userMonster.friendship = "0";
+		StatusValue statusValue = MonsterStatusData.GetStatusValue(monsterData.userMonster.monsterId, monsterData.userMonster.level);
 		statusValue.luck = 1;
-		this.md_bk.SetStatus(statusValue);
-		this.md_bk.userMonster.userMonsterId = userMonsterId;
-		ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(this.md_bk.userMonster);
+		monsterData.SetStatus(statusValue);
+		monsterData.userMonster.userMonsterId = userMonsterId;
+		ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(monsterData.userMonster);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		this.md_bk = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterId);
-		monsterMaster = this.md_bk.GetMonsterMaster();
+		monsterData = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(userMonsterId);
+		monsterMaster = monsterData.GetMonsterMaster();
 		CutsceneDataEvolution cutsceneDataEvolution = new CutsceneDataEvolution();
 		cutsceneDataEvolution.path = "Cutscenes/Evolution";
 		cutsceneDataEvolution.beforeModelId = modelId;
@@ -917,26 +921,25 @@ public sealed class CMD_DigiGarden : CMD
 			CutSceneMain.FadeReqCutSceneEnd();
 		};
 		CutsceneDataEvolution cutsceneData = cutsceneDataEvolution;
-		this.CallEvolutionCutScene(this.md_bk, cutsceneData);
+		this.CallEvolutionCutScene(monsterData, cutsceneData);
 	}
 
 	private void CallEvolutionCutScene(MonsterData monsterData, CutsceneDataEvolution cutsceneData)
 	{
-		CutSceneMain.FadeReqCutScene(cutsceneData, delegate
+		CMD_CharacterDetailed detailedWindow = null;
+		CutSceneMain.FadeReqCutScene(cutsceneData, delegate()
 		{
 			FarmCameraControlForCMD.Off();
-			CMD_CharacterDetailed.DataChg = monsterData;
-			GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null);
+			detailedWindow = CMD_CharacterDetailed.CreateWindow(monsterData);
 			this.DestroyRender3DRT();
 			if (!this.IsOfflineModeFlag)
 			{
 				this.InitMonsterList();
 				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point -= this.growNeedStone;
 			}
-			this.UnLock();
-		}, null, delegate(int index)
+		}, delegate()
 		{
-			PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.EvolutionComplete, null);
+			detailedWindow.StartAnimation();
 			RestrictionInput.EndLoad();
 			if (this.finishedActionCutScene != null)
 			{

@@ -60,6 +60,11 @@ public class CMD_AgreementConsent : CMD
 		base.ClosePanel(true);
 	}
 
+	public override void ClosePanel(bool animation = true)
+	{
+		this.Close(false);
+	}
+
 	private void OnAgreementNG()
 	{
 		this.Close(false);

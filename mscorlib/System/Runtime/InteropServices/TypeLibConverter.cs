@@ -5,9 +5,9 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Provides a set of services that convert a managed assembly to a COM type library and vice versa.</summary>
-	[ComVisible(true)]
 	[Guid("f1c3bf79-c3e4-11d3-88e7-00902754c43a")]
 	[ClassInterface(ClassInterfaceType.None)]
+	[ComVisible(true)]
 	public sealed class TypeLibConverter : ITypeLibConverter
 	{
 		/// <summary>Converts an assembly to a COM type library.</summary>

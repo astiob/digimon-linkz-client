@@ -43,7 +43,7 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 		this.favoriteDeckNo = int.Parse(favoriteDeckNum);
 		this.favoriteButtonCollider = this.favoriteButton.GetComponent<GUICollider>();
 		this.favoriteButtonBackground = this.favoriteButton.GetComponent<UISprite>();
-		if (type != CMD_PartyEdit.MODE_TYPE.SELECT && type != CMD_PartyEdit.MODE_TYPE.MULTI)
+		if (type != CMD_PartyEdit.MODE_TYPE.MULTI && type != CMD_PartyEdit.MODE_TYPE.SELECT)
 		{
 			if (!this.favoriteButton.activeSelf)
 			{
@@ -117,6 +117,7 @@ public sealed class PartyEditPartyInfo : MonoBehaviour
 	[Serializable]
 	private sealed class ViewInfo
 	{
+		[SerializeField]
 		public Vector2 statusChangeButton;
 
 		[SerializeField]

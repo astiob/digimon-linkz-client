@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace UnityEngine.EventSystems
 {
@@ -13,6 +14,13 @@ namespace UnityEngine.EventSystems
 
 		[SerializeField]
 		protected LayerMask m_EventMask = -1;
+
+		[SerializeField]
+		protected int m_MaxRayIntersections = 0;
+
+		protected int m_LastMaxRayIntersections = 0;
+
+		private RaycastHit[] m_Hits;
 
 		protected PhysicsRaycaster()
 		{
@@ -58,39 +66,80 @@ namespace UnityEngine.EventSystems
 			}
 		}
 
+		public int maxRayIntersections
+		{
+			get
+			{
+				return this.m_MaxRayIntersections;
+			}
+			set
+			{
+				this.m_MaxRayIntersections = value;
+			}
+		}
+
+		protected void ComputeRayAndDistance(PointerEventData eventData, out Ray ray, out float distanceToClipPlane)
+		{
+			ray = this.eventCamera.ScreenPointToRay(eventData.position);
+			float z = ray.direction.z;
+			distanceToClipPlane = ((!Mathf.Approximately(0f, z)) ? Mathf.Abs((this.eventCamera.farClipPlane - this.eventCamera.nearClipPlane) / z) : float.PositiveInfinity);
+		}
+
 		public override void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
 		{
-			if (this.eventCamera == null)
+			if (!(this.eventCamera == null) && this.eventCamera.pixelRect.Contains(eventData.position))
 			{
-				return;
-			}
-			Ray ray = this.eventCamera.ScreenPointToRay(eventData.position);
-			float maxDistance = this.eventCamera.farClipPlane - this.eventCamera.nearClipPlane;
-			RaycastHit[] array = Physics.RaycastAll(ray, maxDistance, this.finalEventMask);
-			if (array.Length > 1)
-			{
-				Array.Sort<RaycastHit>(array, (RaycastHit r1, RaycastHit r2) => r1.distance.CompareTo(r2.distance));
-			}
-			if (array.Length != 0)
-			{
-				int i = 0;
-				int num = array.Length;
-				while (i < num)
+				Ray r;
+				float f;
+				this.ComputeRayAndDistance(eventData, out r, out f);
+				int num;
+				if (this.m_MaxRayIntersections == 0)
 				{
-					RaycastResult item = new RaycastResult
+					if (ReflectionMethodsCache.Singleton.raycast3DAll == null)
 					{
-						gameObject = array[i].collider.gameObject,
-						module = this,
-						distance = array[i].distance,
-						worldPosition = array[i].point,
-						worldNormal = array[i].normal,
-						screenPosition = eventData.position,
-						index = (float)resultAppendList.Count,
-						sortingLayer = 0,
-						sortingOrder = 0
-					};
-					resultAppendList.Add(item);
-					i++;
+						return;
+					}
+					this.m_Hits = ReflectionMethodsCache.Singleton.raycast3DAll(r, f, this.finalEventMask);
+					num = this.m_Hits.Length;
+				}
+				else
+				{
+					if (ReflectionMethodsCache.Singleton.getRaycastNonAlloc == null)
+					{
+						return;
+					}
+					if (this.m_LastMaxRayIntersections != this.m_MaxRayIntersections)
+					{
+						this.m_Hits = new RaycastHit[this.m_MaxRayIntersections];
+						this.m_LastMaxRayIntersections = this.m_MaxRayIntersections;
+					}
+					num = ReflectionMethodsCache.Singleton.getRaycastNonAlloc(r, this.m_Hits, f, this.finalEventMask);
+				}
+				if (num > 1)
+				{
+					Array.Sort<RaycastHit>(this.m_Hits, (RaycastHit r1, RaycastHit r2) => r1.distance.CompareTo(r2.distance));
+				}
+				if (num != 0)
+				{
+					int i = 0;
+					int num2 = num;
+					while (i < num2)
+					{
+						RaycastResult item = new RaycastResult
+						{
+							gameObject = this.m_Hits[i].collider.gameObject,
+							module = this,
+							distance = this.m_Hits[i].distance,
+							worldPosition = this.m_Hits[i].point,
+							worldNormal = this.m_Hits[i].normal,
+							screenPosition = eventData.position,
+							index = (float)resultAppendList.Count,
+							sortingLayer = 0,
+							sortingOrder = 0
+						};
+						resultAppendList.Add(item);
+						i++;
+					}
 				}
 			}
 		}

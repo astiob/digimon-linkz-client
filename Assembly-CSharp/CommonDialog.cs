@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class CommonDialog : GUICollider
@@ -29,6 +30,8 @@ public class CommonDialog : GUICollider
 
 	protected Action<int> finish;
 
+	private Action windowClosedAction;
+
 	protected Action<int> opened;
 
 	public CommonDialog.ReturnOrder returnOrder = CommonDialog.ReturnOrder.SortName;
@@ -44,6 +47,10 @@ public class CommonDialog : GUICollider
 	private bool isColliderDisable;
 
 	public Color barrierColor = new Color(1f, 1f, 1f, 0.784313738f);
+
+	private int originLeftAnchorAbsolute;
+
+	private Action actCallBackLast;
 
 	private List<GUICollider> touchPanels = new List<GUICollider>();
 
@@ -61,14 +68,8 @@ public class CommonDialog : GUICollider
 
 	private bool _opened;
 
-	private int originLeftAnchorAbsolute;
-
-	private Action actCallBackLast;
-
 	[SerializeField]
 	protected bool enableAndroidBackKey = true;
-
-	public event Action onOpened;
 
 	public CommonDialog.ACT_STATUS GetActionStatus()
 	{
@@ -83,6 +84,11 @@ public class CommonDialog : GUICollider
 	public void SetCloseAction(Action<int> act)
 	{
 		this.finish = act;
+	}
+
+	public void SetWindowClosedAction(Action action)
+	{
+		this.windowClosedAction = action;
 	}
 
 	public bool ClosePanelRecursive { get; set; }
@@ -101,12 +107,28 @@ public class CommonDialog : GUICollider
 		{
 			component.depth += add;
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			this.AddWidgetDepth(tm2, add);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				this.AddWidgetDepth(tm2, add);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public event Action onOpened;
 
 	public List<GUICollider> TouchPanels
 	{
@@ -124,14 +146,27 @@ public class CommonDialog : GUICollider
 		}
 		this.startPos = base.transform.localPosition;
 		base.Awake();
-		foreach (object obj in base.transform)
+		IEnumerator enumerator = base.transform.GetEnumerator();
+		try
 		{
-			Transform tm = (Transform)obj;
-			this.SearchChild(tm);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm = (Transform)obj;
+				this.SearchChild(tm);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 		if (this.touchPanels.Count == 0)
 		{
-			this.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
+			base.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 			{
 				if (flag && !this.permanentMode)
 				{
@@ -151,10 +186,23 @@ public class CommonDialog : GUICollider
 		{
 			this.touchPanels.Add(component);
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			this.SearchChild(tm2);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				this.SearchChild(tm2);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -464,6 +512,10 @@ public class CommonDialog : GUICollider
 	protected virtual void WindowClosed()
 	{
 		this.act_status = CommonDialog.ACT_STATUS.CLOSED;
+		if (this.windowClosedAction != null)
+		{
+			this.windowClosedAction();
+		}
 	}
 
 	public void SetLastCallBack(Action act)

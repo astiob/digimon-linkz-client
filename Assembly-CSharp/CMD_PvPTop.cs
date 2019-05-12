@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CMD_PvPTop : CMD
@@ -130,16 +131,16 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel lbRewardPercentage;
 
-	[SerializeField]
 	[Header("スケジュール")]
+	[SerializeField]
 	private GameObject goTimeSchedule;
 
 	[Header("以下,○回目ラベル(昇順)")]
 	[SerializeField]
 	private UILabel[] spanTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] startTimeLabelArray = new UILabel[0];
 
 	[Header("以下,タイムスケジュールの'~'ラベル(昇順)")]
@@ -219,6 +220,9 @@ public class CMD_PvPTop : CMD
 	[HideInInspector]
 	public bool isExtraBattle;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
 	public static CMD_PvPTop Instance
 	{
 		get
@@ -281,7 +285,7 @@ public class CMD_PvPTop : CMD
 			if (isSuccess)
 			{
 				this.ShowDLG();
-				this.Show(f, sizeX, sizeY, aT);
+				this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 				if (GUIScreenHome.isManualScreenFadeIn)
 				{
 					this.StartCoroutine(this.FadeIn());
@@ -293,7 +297,7 @@ public class CMD_PvPTop : CMD
 			}
 			else
 			{
-				this.ClosePanel(false);
+				this.<ClosePanel>__BaseCallProxy1(false);
 				RestrictionInput.EndLoad();
 			}
 		}));
@@ -331,7 +335,12 @@ public class CMD_PvPTop : CMD
 			yield return null;
 		}
 		yield return new WaitForSeconds(0.5f);
-		base.StartCoroutine(screenHome.StartScreenFadeIn(new Action(RestrictionInput.EndLoad)));
+		GUIScreenHome guiscreenHome = screenHome;
+		if (CMD_PvPTop.<>f__mg$cache0 == null)
+		{
+			CMD_PvPTop.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		base.StartCoroutine(guiscreenHome.StartScreenFadeIn(CMD_PvPTop.<>f__mg$cache0));
 		yield break;
 	}
 
@@ -434,11 +443,26 @@ public class CMD_PvPTop : CMD
 
 	private IEnumerator SetUserEntryStatus(GameWebAPI.RespData_ColosseumUserStatusLogic colosseumStatus, Action<bool, GameWebAPI.RespData_ColosseumUserStatusLogic> onFinished)
 	{
+		CMD_PvPTop.<SetUserEntryStatus>c__Iterator2.<SetUserEntryStatus>c__AnonStorey9 <SetUserEntryStatus>c__AnonStorey = new CMD_PvPTop.<SetUserEntryStatus>c__Iterator2.<SetUserEntryStatus>c__AnonStorey9();
 		bool isSuccess = true;
 		APIRequestTask task = null;
-		switch (colosseumStatus.GetResultCodeEnum)
+		<SetUserEntryStatus>c__AnonStorey.status = colosseumStatus;
+		GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode getResultCodeEnum = colosseumStatus.GetResultCodeEnum;
+		if (getResultCodeEnum != GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.NOT_ENTRY)
 		{
-		case GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.NOT_ENTRY:
+			if (getResultCodeEnum == GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.BATTLE_INTERRUPTION || getResultCodeEnum == GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.BATTLE_INTERRUPTION_WIN)
+			{
+				GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleResult result = PvPUtility.GetBattleResult(colosseumStatus.GetResultCodeEnum);
+				task = PvPUtility.RequestColosseumBattleEnd(result, GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleMode.NORMAL_BATTLE);
+				task.Add(PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, delegate(GameWebAPI.RespData_ColosseumUserStatusLogic res)
+				{
+					PvPUtility.SetPvPTopNoticeCode(res);
+					<SetUserEntryStatus>c__AnonStorey.status = res;
+				}));
+				yield return base.StartCoroutine(task.Run(null, null, null));
+			}
+		}
+		else
 		{
 			GameWebAPI.RespDataCL_ColosseumEntry entry = null;
 			task = PvPUtility.RequestColosseumEntry(DataMng.Instance().RespData_ColosseumInfo, delegate(GameWebAPI.RespDataCL_ColosseumEntry res)
@@ -446,24 +470,9 @@ public class CMD_PvPTop : CMD
 				entry = res;
 			}, false, false);
 			yield return base.StartCoroutine(task.Run(null, null, null));
-			isSuccess = PvPUtility.CopyUserEntryStatus(colosseumStatus, entry);
-			break;
+			isSuccess = PvPUtility.CopyUserEntryStatus(<SetUserEntryStatus>c__AnonStorey.status, entry);
 		}
-		case GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.BATTLE_INTERRUPTION:
-		case GameWebAPI.RespData_ColosseumUserStatusLogic.ResultCode.BATTLE_INTERRUPTION_WIN:
-		{
-			GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleResult result = PvPUtility.GetBattleResult(colosseumStatus.GetResultCodeEnum);
-			task = PvPUtility.RequestColosseumBattleEnd(result, GameWebAPI.ReqData_ColosseumBattleEndLogic.BattleMode.NORMAL_BATTLE);
-			task.Add(PvPUtility.RequestColosseumUserStatus(PvPUtility.RequestUserStatusType.MY, delegate(GameWebAPI.RespData_ColosseumUserStatusLogic res)
-			{
-				PvPUtility.SetPvPTopNoticeCode(res);
-				GameWebAPI.RespData_ColosseumUserStatusLogic status = res;
-			}));
-			yield return base.StartCoroutine(task.Run(null, null, null));
-			break;
-		}
-		}
-		onFinished(isSuccess, colosseumStatus);
+		onFinished(isSuccess, <SetUserEntryStatus>c__AnonStorey.status);
 		yield break;
 	}
 
@@ -688,7 +697,7 @@ public class CMD_PvPTop : CMD
 				else if (DateTime.Parse(colosseum.openTime) < ServerDateTime.Now && ServerDateTime.Now < DateTime.Parse(colosseum.closeTime) && dateTime2 < ServerDateTime.Now)
 				{
 					this.endDateTime = new DateTime?(dateTime2);
-					if (dateTime3 != null && (dateTime3 != null && ServerDateTime.Now < dateTime3.Value))
+					if (dateTime3 != null && ServerDateTime.Now < dateTime3)
 					{
 						this.nextDateTime = dateTime3;
 					}
@@ -726,7 +735,7 @@ public class CMD_PvPTop : CMD
 					":",
 					timeSpan.Seconds.ToString("00")
 				});
-				goto IL_1D6;
+				goto IL_1DD;
 			}
 		}
 		if (this.lastTimeObj.activeSelf)
@@ -758,7 +767,7 @@ public class CMD_PvPTop : CMD
 				return;
 			}
 		}
-		IL_1D6:
+		IL_1DD:
 		if (this.isAggregate)
 		{
 			return;
@@ -900,7 +909,7 @@ public class CMD_PvPTop : CMD
 				else
 				{
 					DateTime? dateTime3 = this.endDateTime;
-					if (dateTime3 != null && ServerDateTime.Now < dateTime3.Value)
+					if (ServerDateTime.Now < dateTime3)
 					{
 						DateTime now = ServerDateTime.Now;
 						DateTime? dateTime4 = this.nextDateTime;
@@ -1206,7 +1215,7 @@ public class CMD_PvPTop : CMD
 		if (dateTime != null)
 		{
 			DateTime? dateTime2 = this.cancelPenaltyDateTime;
-			if (dateTime2 != null && ServerDateTime.Now < dateTime2.Value)
+			if (ServerDateTime.Now < dateTime2)
 			{
 				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("ColosseumPenaltyTitle");
@@ -1224,7 +1233,7 @@ public class CMD_PvPTop : CMD
 		if (dateTime != null)
 		{
 			DateTime? dateTime2 = this.cancelPenaltyDateTime;
-			if (dateTime2 != null && ServerDateTime.Now < dateTime2.Value)
+			if (ServerDateTime.Now < dateTime2)
 			{
 				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
 				cmd_ModalMessage.Title = StringMaster.GetString("ColosseumPenaltyTitle");

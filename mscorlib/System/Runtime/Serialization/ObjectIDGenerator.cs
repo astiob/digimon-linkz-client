@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Serialization
 {
 	/// <summary>Generates IDs for objects.</summary>
-	[MonoTODO("Serialization format not compatible with.NET")]
 	[ComVisible(true)]
+	[MonoTODO("Serialization format not compatible with.NET")]
 	[Serializable]
 	public class ObjectIDGenerator
 	{

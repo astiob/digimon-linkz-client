@@ -4,10 +4,10 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the public members of the <see cref="T:System.Reflection.EventInfo" /> class to unmanaged code.</summary>
-	[Guid("9DE59C64-D889-35A1-B897-587D74469E5B")]
-	[TypeLibImportClass(typeof(EventInfo))]
 	[CLSCompliant(false)]
 	[ComVisible(true)]
+	[TypeLibImportClass(typeof(EventInfo))]
+	[Guid("9DE59C64-D889-35A1-B897-587D74469E5B")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface _EventInfo
 	{

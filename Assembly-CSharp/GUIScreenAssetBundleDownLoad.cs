@@ -172,8 +172,8 @@ public sealed class GUIScreenAssetBundleDownLoad : GUIScreen
 		AssetDataMng assetDataMng = AssetDataMng.Instance();
 		if (!assetDataMng.IsAssetBundleDownloading())
 		{
-			int count = assetDataMng.GetDownloadAssetBundleCount(string.Empty);
-			assetDataMng.StartDownloadAssetBundle(count, 4);
+			int downloadAssetBundleCount = assetDataMng.GetDownloadAssetBundleCount(string.Empty);
+			assetDataMng.StartDownloadAssetBundle(downloadAssetBundleCount, 4);
 		}
 		yield return base.StartCoroutine(this.UpdateProgressBar());
 		yield break;

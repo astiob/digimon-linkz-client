@@ -64,8 +64,9 @@ namespace UnityEngine.Networking
 		{
 			if (this.m_PendingPlayers.ContainsKey(connectionId))
 			{
-				foreach (NetworkMigrationManager.PendingPlayerInfo pendingPlayerInfo in this.m_PendingPlayers[connectionId].players)
+				for (int i = 0; i < this.m_PendingPlayers[connectionId].players.Count; i++)
 				{
+					NetworkMigrationManager.PendingPlayerInfo pendingPlayerInfo = this.m_PendingPlayers[connectionId].players[i];
 					if (pendingPlayerInfo.netId == netId && pendingPlayerInfo.playerControllerId == playerControllerId)
 					{
 						return pendingPlayerInfo.obj;
@@ -254,7 +255,7 @@ namespace UnityEngine.Networking
 				NetworkConnection networkConnection = NetworkServer.connections[i];
 				if (networkConnection != null)
 				{
-					networkConnection.Send(17, peerAuthorityMessage);
+					networkConnection.Send(18, peerAuthorityMessage);
 				}
 			}
 		}
@@ -268,7 +269,7 @@ namespace UnityEngine.Networking
 			this.m_Client = newClient;
 			this.m_MatchInfo = newMatchInfo;
 			newClient.RegisterHandlerSafe(11, new NetworkMessageDelegate(this.OnPeerInfo));
-			newClient.RegisterHandlerSafe(17, new NetworkMessageDelegate(this.OnPeerClientAuthority));
+			newClient.RegisterHandlerSafe(18, new NetworkMessageDelegate(this.OnPeerClientAuthority));
 			NetworkIdentity.clientAuthorityCallback = new NetworkIdentity.ClientAuthorityCallback(this.AssignAuthorityCallback);
 		}
 
@@ -278,43 +279,44 @@ namespace UnityEngine.Networking
 			{
 				Debug.Log("NetworkMigrationManager DisablePlayerObjects");
 			}
-			if (this.m_Peers == null)
+			if (this.m_Peers != null)
 			{
-				return;
-			}
-			foreach (PeerInfoMessage peerInfoMessage in this.m_Peers)
-			{
-				if (peerInfoMessage.playerIds != null)
+				for (int i = 0; i < this.m_Peers.Length; i++)
 				{
-					foreach (PeerInfoPlayer peerInfoPlayer in peerInfoMessage.playerIds)
+					PeerInfoMessage peerInfoMessage = this.m_Peers[i];
+					if (peerInfoMessage.playerIds != null)
 					{
-						if (LogFilter.logDev)
+						for (int j = 0; j < peerInfoMessage.playerIds.Length; j++)
 						{
-							Debug.Log(string.Concat(new object[]
+							PeerInfoPlayer peerInfoPlayer = peerInfoMessage.playerIds[j];
+							if (LogFilter.logDev)
 							{
-								"DisablePlayerObjects disable player for ",
-								peerInfoMessage.address,
-								" netId:",
-								peerInfoPlayer.netId,
-								" control:",
-								peerInfoPlayer.playerControllerId
-							}));
-						}
-						GameObject gameObject = ClientScene.FindLocalObject(peerInfoPlayer.netId);
-						if (gameObject != null)
-						{
-							gameObject.SetActive(false);
-							this.AddPendingPlayer(gameObject, peerInfoMessage.connectionId, peerInfoPlayer.netId, peerInfoPlayer.playerControllerId);
-						}
-						else if (LogFilter.logWarn)
-						{
-							Debug.LogWarning(string.Concat(new object[]
+								Debug.Log(string.Concat(new object[]
+								{
+									"DisablePlayerObjects disable player for ",
+									peerInfoMessage.address,
+									" netId:",
+									peerInfoPlayer.netId,
+									" control:",
+									peerInfoPlayer.playerControllerId
+								}));
+							}
+							GameObject gameObject = ClientScene.FindLocalObject(peerInfoPlayer.netId);
+							if (gameObject != null)
 							{
-								"DisablePlayerObjects didnt find player Conn:",
-								peerInfoMessage.connectionId,
-								" NetId:",
-								peerInfoPlayer.netId
-							}));
+								gameObject.SetActive(false);
+								this.AddPendingPlayer(gameObject, peerInfoMessage.connectionId, peerInfoPlayer.netId, peerInfoPlayer.playerControllerId);
+							}
+							else if (LogFilter.logWarn)
+							{
+								Debug.LogWarning(string.Concat(new object[]
+								{
+									"DisablePlayerObjects didnt find player Conn:",
+									peerInfoMessage.connectionId,
+									" NetId:",
+									peerInfoPlayer.netId
+								}));
+							}
 						}
 					}
 				}
@@ -323,81 +325,81 @@ namespace UnityEngine.Networking
 
 		public void SendPeerInfo()
 		{
-			if (!this.m_HostMigration)
+			if (this.m_HostMigration)
 			{
-				return;
-			}
-			PeerListMessage peerListMessage = new PeerListMessage();
-			List<PeerInfoMessage> list = new List<PeerInfoMessage>();
-			for (int i = 0; i < NetworkServer.connections.Count; i++)
-			{
-				NetworkConnection networkConnection = NetworkServer.connections[i];
-				if (networkConnection != null)
+				PeerListMessage peerListMessage = new PeerListMessage();
+				List<PeerInfoMessage> list = new List<PeerInfoMessage>();
+				for (int i = 0; i < NetworkServer.connections.Count; i++)
 				{
-					PeerInfoMessage peerInfoMessage = new PeerInfoMessage();
-					string address;
-					int port;
-					NetworkID networkID;
-					NodeID nodeID;
-					byte b;
-					NetworkTransport.GetConnectionInfo(NetworkServer.serverHostId, networkConnection.connectionId, out address, out port, out networkID, out nodeID, out b);
-					peerInfoMessage.connectionId = networkConnection.connectionId;
-					peerInfoMessage.port = port;
-					if (i == 0)
+					NetworkConnection networkConnection = NetworkServer.connections[i];
+					if (networkConnection != null)
 					{
-						peerInfoMessage.port = NetworkServer.listenPort;
-						peerInfoMessage.isHost = true;
-						peerInfoMessage.address = "<host>";
-					}
-					else
-					{
-						peerInfoMessage.address = address;
-						peerInfoMessage.isHost = false;
-					}
-					List<PeerInfoPlayer> list2 = new List<PeerInfoPlayer>();
-					foreach (PlayerController playerController in networkConnection.playerControllers)
-					{
-						if (playerController != null && playerController.unetView != null)
+						PeerInfoMessage peerInfoMessage = new PeerInfoMessage();
+						string address;
+						int port;
+						NetworkID networkID;
+						NodeID nodeID;
+						byte b;
+						NetworkTransport.GetConnectionInfo(NetworkServer.serverHostId, networkConnection.connectionId, out address, out port, out networkID, out nodeID, out b);
+						peerInfoMessage.connectionId = networkConnection.connectionId;
+						peerInfoMessage.port = port;
+						if (i == 0)
 						{
-							PeerInfoPlayer item;
-							item.netId = playerController.unetView.netId;
-							item.playerControllerId = playerController.unetView.playerControllerId;
-							list2.Add(item);
+							peerInfoMessage.port = NetworkServer.listenPort;
+							peerInfoMessage.isHost = true;
+							peerInfoMessage.address = "<host>";
 						}
-					}
-					if (networkConnection.clientOwnedObjects != null)
-					{
-						foreach (NetworkInstanceId netId in networkConnection.clientOwnedObjects)
+						else
 						{
-							GameObject gameObject = NetworkServer.FindLocalObject(netId);
-							if (!(gameObject == null))
+							peerInfoMessage.address = address;
+							peerInfoMessage.isHost = false;
+						}
+						List<PeerInfoPlayer> list2 = new List<PeerInfoPlayer>();
+						for (int j = 0; j < networkConnection.playerControllers.Count; j++)
+						{
+							PlayerController playerController = networkConnection.playerControllers[j];
+							if (playerController != null && playerController.unetView != null)
 							{
-								NetworkIdentity component = gameObject.GetComponent<NetworkIdentity>();
-								if (component.playerControllerId == -1)
+								PeerInfoPlayer item;
+								item.netId = playerController.unetView.netId;
+								item.playerControllerId = playerController.unetView.playerControllerId;
+								list2.Add(item);
+							}
+						}
+						if (networkConnection.clientOwnedObjects != null)
+						{
+							foreach (NetworkInstanceId netId in networkConnection.clientOwnedObjects)
+							{
+								GameObject gameObject = NetworkServer.FindLocalObject(netId);
+								if (!(gameObject == null))
 								{
-									PeerInfoPlayer item2;
-									item2.netId = netId;
-									item2.playerControllerId = -1;
-									list2.Add(item2);
+									NetworkIdentity component = gameObject.GetComponent<NetworkIdentity>();
+									if (component.playerControllerId == -1)
+									{
+										PeerInfoPlayer item2;
+										item2.netId = netId;
+										item2.playerControllerId = -1;
+										list2.Add(item2);
+									}
 								}
 							}
 						}
+						if (list2.Count > 0)
+						{
+							peerInfoMessage.playerIds = list2.ToArray();
+						}
+						list.Add(peerInfoMessage);
 					}
-					if (list2.Count > 0)
-					{
-						peerInfoMessage.playerIds = list2.ToArray();
-					}
-					list.Add(peerInfoMessage);
 				}
-			}
-			peerListMessage.peers = list.ToArray();
-			for (int j = 0; j < NetworkServer.connections.Count; j++)
-			{
-				NetworkConnection networkConnection2 = NetworkServer.connections[j];
-				if (networkConnection2 != null)
+				peerListMessage.peers = list.ToArray();
+				for (int k = 0; k < NetworkServer.connections.Count; k++)
 				{
-					peerListMessage.oldServerConnectionId = networkConnection2.connectionId;
-					networkConnection2.Send(11, peerListMessage);
+					NetworkConnection networkConnection2 = NetworkServer.connections[k];
+					if (networkConnection2 != null)
+					{
+						peerListMessage.oldServerConnectionId = networkConnection2.connectionId;
+						networkConnection2.Send(11, peerListMessage);
+					}
 				}
 			}
 		}
@@ -409,52 +411,52 @@ namespace UnityEngine.Networking
 			{
 				Debug.Log("OnPeerClientAuthority for netId:" + peerAuthorityMessage.netId);
 			}
-			if (this.m_Peers == null)
+			if (this.m_Peers != null)
 			{
-				return;
-			}
-			foreach (PeerInfoMessage peerInfoMessage in this.m_Peers)
-			{
-				if (peerInfoMessage.connectionId == peerAuthorityMessage.connectionId)
+				for (int i = 0; i < this.m_Peers.Length; i++)
 				{
-					if (peerInfoMessage.playerIds == null)
+					PeerInfoMessage peerInfoMessage = this.m_Peers[i];
+					if (peerInfoMessage.connectionId == peerAuthorityMessage.connectionId)
 					{
-						peerInfoMessage.playerIds = new PeerInfoPlayer[0];
-					}
-					if (peerAuthorityMessage.authorityState)
-					{
-						foreach (PeerInfoPlayer peerInfoPlayer in peerInfoMessage.playerIds)
+						if (peerInfoMessage.playerIds == null)
 						{
-							if (peerInfoPlayer.netId == peerAuthorityMessage.netId)
-							{
-								return;
-							}
+							peerInfoMessage.playerIds = new PeerInfoPlayer[0];
 						}
-						PeerInfoPlayer item = default(PeerInfoPlayer);
-						item.netId = peerAuthorityMessage.netId;
-						item.playerControllerId = -1;
-						peerInfoMessage.playerIds = new List<PeerInfoPlayer>(peerInfoMessage.playerIds)
+						if (peerAuthorityMessage.authorityState)
 						{
-							item
-						}.ToArray();
-					}
-					else
-					{
-						for (int k = 0; k < peerInfoMessage.playerIds.Length; k++)
-						{
-							if (peerInfoMessage.playerIds[k].netId == peerAuthorityMessage.netId)
+							for (int j = 0; j < peerInfoMessage.playerIds.Length; j++)
 							{
-								List<PeerInfoPlayer> list = new List<PeerInfoPlayer>(peerInfoMessage.playerIds);
-								list.RemoveAt(k);
-								peerInfoMessage.playerIds = list.ToArray();
-								break;
+								if (peerInfoMessage.playerIds[j].netId == peerAuthorityMessage.netId)
+								{
+									return;
+								}
+							}
+							PeerInfoPlayer item = default(PeerInfoPlayer);
+							item.netId = peerAuthorityMessage.netId;
+							item.playerControllerId = -1;
+							peerInfoMessage.playerIds = new List<PeerInfoPlayer>(peerInfoMessage.playerIds)
+							{
+								item
+							}.ToArray();
+						}
+						else
+						{
+							for (int k = 0; k < peerInfoMessage.playerIds.Length; k++)
+							{
+								if (peerInfoMessage.playerIds[k].netId == peerAuthorityMessage.netId)
+								{
+									List<PeerInfoPlayer> list = new List<PeerInfoPlayer>(peerInfoMessage.playerIds);
+									list.RemoveAt(k);
+									peerInfoMessage.playerIds = list.ToArray();
+									break;
+								}
 							}
 						}
 					}
 				}
+				GameObject go = ClientScene.FindLocalObject(peerAuthorityMessage.netId);
+				this.OnAuthorityUpdated(go, peerAuthorityMessage.connectionId, peerAuthorityMessage.authorityState);
 			}
-			GameObject go = ClientScene.FindLocalObject(peerAuthorityMessage.netId);
-			this.OnAuthorityUpdated(go, peerAuthorityMessage.connectionId, peerAuthorityMessage.authorityState);
 		}
 
 		private void OnPeerInfo(NetworkMessage netMsg)
@@ -517,130 +519,153 @@ namespace UnityEngine.Networking
 						reconnectMessage.playerControllerId
 					}));
 				}
-				return;
 			}
-			if (gameObject.activeSelf)
+			else if (gameObject.activeSelf)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("OnReconnectMessage connId=" + reconnectMessage.oldConnectionId + " player already active?");
 				}
-				return;
-			}
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("OnReconnectMessage: player=" + gameObject);
-			}
-			NetworkReader networkReader = null;
-			if (reconnectMessage.msgSize != 0)
-			{
-				networkReader = new NetworkReader(reconnectMessage.msgData);
-			}
-			if (reconnectMessage.playerControllerId != -1)
-			{
-				if (networkReader == null)
-				{
-					this.OnServerReconnectPlayer(netMsg.conn, gameObject, reconnectMessage.oldConnectionId, reconnectMessage.playerControllerId);
-				}
-				else
-				{
-					this.OnServerReconnectPlayer(netMsg.conn, gameObject, reconnectMessage.oldConnectionId, reconnectMessage.playerControllerId, networkReader);
-				}
 			}
 			else
 			{
-				this.OnServerReconnectObject(netMsg.conn, gameObject, reconnectMessage.oldConnectionId);
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("OnReconnectMessage: player=" + gameObject);
+				}
+				NetworkReader networkReader = null;
+				if (reconnectMessage.msgSize != 0)
+				{
+					networkReader = new NetworkReader(reconnectMessage.msgData);
+				}
+				if (reconnectMessage.playerControllerId != -1)
+				{
+					if (networkReader == null)
+					{
+						this.OnServerReconnectPlayer(netMsg.conn, gameObject, reconnectMessage.oldConnectionId, reconnectMessage.playerControllerId);
+					}
+					else
+					{
+						this.OnServerReconnectPlayer(netMsg.conn, gameObject, reconnectMessage.oldConnectionId, reconnectMessage.playerControllerId, networkReader);
+					}
+				}
+				else
+				{
+					this.OnServerReconnectObject(netMsg.conn, gameObject, reconnectMessage.oldConnectionId);
+				}
 			}
 		}
 
 		public bool ReconnectObjectForConnection(NetworkConnection newConnection, GameObject oldObject, int oldConnectionId)
 		{
+			bool result;
 			if (!NetworkServer.active)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("ReconnectObjectForConnection must have active server");
 				}
-				return false;
+				result = false;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log(string.Concat(new object[]
+				if (LogFilter.logDebug)
 				{
-					"ReconnectObjectForConnection: oldConnId=",
-					oldConnectionId,
-					" obj=",
-					oldObject,
-					" conn:",
-					newConnection
-				}));
-			}
-			if (!this.m_PendingPlayers.ContainsKey(oldConnectionId))
-			{
-				if (LogFilter.logError)
-				{
-					Debug.LogError("ReconnectObjectForConnection oldConnId=" + oldConnectionId + " not found.");
+					Debug.Log(string.Concat(new object[]
+					{
+						"ReconnectObjectForConnection: oldConnId=",
+						oldConnectionId,
+						" obj=",
+						oldObject,
+						" conn:",
+						newConnection
+					}));
 				}
-				return false;
-			}
-			oldObject.SetActive(true);
-			oldObject.GetComponent<NetworkIdentity>().SetNetworkInstanceId(new NetworkInstanceId(0u));
-			if (!NetworkServer.SpawnWithClientAuthority(oldObject, newConnection))
-			{
-				if (LogFilter.logError)
+				if (!this.m_PendingPlayers.ContainsKey(oldConnectionId))
 				{
-					Debug.LogError("ReconnectObjectForConnection oldConnId=" + oldConnectionId + " SpawnWithClientAuthority failed.");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("ReconnectObjectForConnection oldConnId=" + oldConnectionId + " not found.");
+					}
+					result = false;
 				}
-				return false;
+				else
+				{
+					oldObject.SetActive(true);
+					oldObject.GetComponent<NetworkIdentity>().SetNetworkInstanceId(new NetworkInstanceId(0u));
+					if (!NetworkServer.SpawnWithClientAuthority(oldObject, newConnection))
+					{
+						if (LogFilter.logError)
+						{
+							Debug.LogError("ReconnectObjectForConnection oldConnId=" + oldConnectionId + " SpawnWithClientAuthority failed.");
+						}
+						result = false;
+					}
+					else
+					{
+						result = true;
+					}
+				}
 			}
-			return true;
+			return result;
 		}
 
 		public bool ReconnectPlayerForConnection(NetworkConnection newConnection, GameObject oldPlayer, int oldConnectionId, short playerControllerId)
 		{
+			bool result;
 			if (!NetworkServer.active)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("ReconnectPlayerForConnection must have active server");
 				}
-				return false;
+				result = false;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log(string.Concat(new object[]
+				if (LogFilter.logDebug)
 				{
-					"ReconnectPlayerForConnection: oldConnId=",
-					oldConnectionId,
-					" player=",
-					oldPlayer,
-					" conn:",
-					newConnection
-				}));
-			}
-			if (!this.m_PendingPlayers.ContainsKey(oldConnectionId))
-			{
-				if (LogFilter.logError)
-				{
-					Debug.LogError("ReconnectPlayerForConnection oldConnId=" + oldConnectionId + " not found.");
+					Debug.Log(string.Concat(new object[]
+					{
+						"ReconnectPlayerForConnection: oldConnId=",
+						oldConnectionId,
+						" player=",
+						oldPlayer,
+						" conn:",
+						newConnection
+					}));
 				}
-				return false;
-			}
-			oldPlayer.SetActive(true);
-			NetworkServer.Spawn(oldPlayer);
-			if (!NetworkServer.AddPlayerForConnection(newConnection, oldPlayer, playerControllerId))
-			{
-				if (LogFilter.logError)
+				if (!this.m_PendingPlayers.ContainsKey(oldConnectionId))
 				{
-					Debug.LogError("ReconnectPlayerForConnection oldConnId=" + oldConnectionId + " AddPlayerForConnection failed.");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("ReconnectPlayerForConnection oldConnId=" + oldConnectionId + " not found.");
+					}
+					result = false;
 				}
-				return false;
+				else
+				{
+					oldPlayer.SetActive(true);
+					NetworkServer.Spawn(oldPlayer);
+					if (!NetworkServer.AddPlayerForConnection(newConnection, oldPlayer, playerControllerId))
+					{
+						if (LogFilter.logError)
+						{
+							Debug.LogError("ReconnectPlayerForConnection oldConnId=" + oldConnectionId + " AddPlayerForConnection failed.");
+						}
+						result = false;
+					}
+					else
+					{
+						if (NetworkServer.localClientActive)
+						{
+							this.SendPeerInfo();
+						}
+						result = true;
+					}
+				}
 			}
-			if (NetworkServer.localClientActive)
-			{
-				this.SendPeerInfo();
-			}
-			return true;
+			return result;
 		}
 
 		public bool LostHostOnClient(NetworkConnection conn)
@@ -649,41 +674,49 @@ namespace UnityEngine.Networking
 			{
 				Debug.Log("NetworkMigrationManager client OnDisconnectedFromHost");
 			}
+			bool result;
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("LostHostOnClient: Host migration not supported on WebGL");
 				}
-				return false;
+				result = false;
 			}
-			if (this.m_Client == null)
+			else if (this.m_Client == null)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("NetworkMigrationManager LostHostOnHost client was never initialized.");
 				}
-				return false;
+				result = false;
 			}
-			if (!this.m_HostMigration)
+			else if (!this.m_HostMigration)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("NetworkMigrationManager LostHostOnHost migration not enabled.");
 				}
-				return false;
+				result = false;
 			}
-			this.m_DisconnectedFromHost = true;
-			this.DisablePlayerObjects();
-			byte b;
-			NetworkTransport.Disconnect(this.m_Client.hostId, this.m_Client.connection.connectionId, out b);
-			if (this.m_OldServerConnectionId != -1)
+			else
 			{
-				NetworkMigrationManager.SceneChangeOption sceneChangeOption;
-				this.OnClientDisconnectedFromHost(conn, out sceneChangeOption);
-				return sceneChangeOption == NetworkMigrationManager.SceneChangeOption.StayInOnlineScene;
+				this.m_DisconnectedFromHost = true;
+				this.DisablePlayerObjects();
+				byte b;
+				NetworkTransport.Disconnect(this.m_Client.hostId, this.m_Client.connection.connectionId, out b);
+				if (this.m_OldServerConnectionId != -1)
+				{
+					NetworkMigrationManager.SceneChangeOption sceneChangeOption;
+					this.OnClientDisconnectedFromHost(conn, out sceneChangeOption);
+					result = (sceneChangeOption == NetworkMigrationManager.SceneChangeOption.StayInOnlineScene);
+				}
+				else
+				{
+					result = false;
+				}
 			}
-			return false;
+			return result;
 		}
 
 		public void LostHostOnHost()
@@ -698,20 +731,21 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("LostHostOnHost: Host migration not supported on WebGL");
 				}
-				return;
 			}
-			this.OnServerHostShutdown();
-			if (this.m_Peers == null)
+			else
 			{
-				if (LogFilter.logError)
+				this.OnServerHostShutdown();
+				if (this.m_Peers == null)
 				{
-					Debug.LogError("NetworkMigrationManager LostHostOnHost no peers");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("NetworkMigrationManager LostHostOnHost no peers");
+					}
 				}
-				return;
-			}
-			if (this.m_Peers.Length != 1)
-			{
-				this.m_HostWasShutdown = true;
+				else if (this.m_Peers.Length != 1)
+				{
+					this.m_HostWasShutdown = true;
+				}
 			}
 		}
 
@@ -723,6 +757,7 @@ namespace UnityEngine.Networking
 			}
 			NetworkServer.RegisterHandler(47, new NetworkMessageDelegate(this.OnServerReconnectPlayerMessage));
 			NetworkClient networkClient = NetworkServer.BecomeHost(this.m_Client, port, this.m_MatchInfo, this.oldServerConnectionId, this.peers);
+			bool result;
 			if (networkClient != null)
 			{
 				if (NetworkManager.singleton != null)
@@ -738,13 +773,17 @@ namespace UnityEngine.Networking
 				this.RemovePendingPlayer(this.m_OldServerConnectionId);
 				this.Reset(-1);
 				this.SendPeerInfo();
-				return true;
+				result = true;
 			}
-			if (LogFilter.logError)
+			else
 			{
-				Debug.LogError("NetworkServer.BecomeHost failed");
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkServer.BecomeHost failed");
+				}
+				result = false;
 			}
-			return false;
+			return result;
 		}
 
 		protected virtual void OnClientDisconnectedFromHost(NetworkConnection conn, out NetworkMigrationManager.SceneChangeOption sceneChange)
@@ -797,6 +836,7 @@ namespace UnityEngine.Networking
 
 		public virtual bool FindNewHost(out PeerInfoMessage newHostInfo, out bool youAreNewHost)
 		{
+			bool result;
 			if (this.m_Peers == null)
 			{
 				if (LogFilter.logError)
@@ -805,52 +845,63 @@ namespace UnityEngine.Networking
 				}
 				newHostInfo = null;
 				youAreNewHost = false;
-				return false;
+				result = false;
 			}
-			if (LogFilter.logDev)
+			else
 			{
-				Debug.Log("NetworkMigrationManager FindLowestHost");
-			}
-			newHostInfo = new PeerInfoMessage();
-			newHostInfo.connectionId = 50000;
-			newHostInfo.address = string.Empty;
-			newHostInfo.port = 0;
-			int num = -1;
-			youAreNewHost = false;
-			if (this.m_Peers == null)
-			{
-				return false;
-			}
-			foreach (PeerInfoMessage peerInfoMessage in this.m_Peers)
-			{
-				if (peerInfoMessage.connectionId != 0)
+				if (LogFilter.logDev)
 				{
-					if (!peerInfoMessage.isHost)
+					Debug.Log("NetworkMigrationManager FindLowestHost");
+				}
+				newHostInfo = new PeerInfoMessage();
+				newHostInfo.connectionId = 50000;
+				newHostInfo.address = "";
+				newHostInfo.port = 0;
+				int num = -1;
+				youAreNewHost = false;
+				if (this.m_Peers == null)
+				{
+					result = false;
+				}
+				else
+				{
+					for (int i = 0; i < this.m_Peers.Length; i++)
 					{
-						if (peerInfoMessage.isYou)
+						PeerInfoMessage peerInfoMessage = this.m_Peers[i];
+						if (peerInfoMessage.connectionId != 0)
 						{
-							num = peerInfoMessage.connectionId;
+							if (!peerInfoMessage.isHost)
+							{
+								if (peerInfoMessage.isYou)
+								{
+									num = peerInfoMessage.connectionId;
+								}
+								if (peerInfoMessage.connectionId < newHostInfo.connectionId)
+								{
+									newHostInfo = peerInfoMessage;
+								}
+							}
 						}
-						if (peerInfoMessage.connectionId < newHostInfo.connectionId)
+					}
+					if (newHostInfo.connectionId == 50000)
+					{
+						result = false;
+					}
+					else
+					{
+						if (newHostInfo.connectionId == num)
 						{
-							newHostInfo = peerInfoMessage;
+							youAreNewHost = true;
 						}
+						if (LogFilter.logDev)
+						{
+							Debug.Log("FindNewHost new host is " + newHostInfo.address);
+						}
+						result = true;
 					}
 				}
 			}
-			if (newHostInfo.connectionId == 50000)
-			{
-				return false;
-			}
-			if (newHostInfo.connectionId == num)
-			{
-				youAreNewHost = true;
-			}
-			if (LogFilter.logDev)
-			{
-				Debug.Log("FindNewHost new host is " + newHostInfo.address);
-			}
-			return true;
+			return result;
 		}
 
 		private void OnGUIHost()
@@ -861,56 +912,61 @@ namespace UnityEngine.Networking
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
 				GUI.Label(new Rect((float)this.m_OffsetX, (float)num, 200f, 40f), "Host Migration not supported for WebGL");
-				return;
-			}
-			if (this.m_WaitingReconnectToNewHost)
-			{
-				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Reconnect as Client"))
-				{
-					this.Reset(0);
-					if (NetworkManager.singleton != null)
-					{
-						NetworkManager.singleton.networkAddress = GUI.TextField(new Rect((float)(this.m_OffsetX + 100), (float)num, 95f, 20f), NetworkManager.singleton.networkAddress);
-						NetworkManager.singleton.StartClient();
-					}
-					else
-					{
-						Debug.LogWarning("MigrationManager Old Host Reconnect - No NetworkManager.");
-					}
-				}
-				num += 25;
 			}
 			else
 			{
-				bool flag;
-				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Pick New Host") && this.FindNewHost(out this.m_NewHostInfo, out flag))
+				if (this.m_WaitingReconnectToNewHost)
 				{
-					this.m_NewHostAddress = this.m_NewHostInfo.address;
-					if (flag)
+					if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Reconnect as Client"))
 					{
-						Debug.LogWarning("MigrationManager FindNewHost - new host is self?");
+						this.Reset(0);
+						if (NetworkManager.singleton != null)
+						{
+							NetworkManager.singleton.networkAddress = GUI.TextField(new Rect((float)(this.m_OffsetX + 100), (float)num, 95f, 20f), NetworkManager.singleton.networkAddress);
+							NetworkManager.singleton.StartClient();
+						}
+						else
+						{
+							Debug.LogWarning("MigrationManager Old Host Reconnect - No NetworkManager.");
+						}
 					}
-					else
-					{
-						this.m_WaitingReconnectToNewHost = true;
-					}
-				}
-				num += 25;
-			}
-			if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Leave Game"))
-			{
-				if (NetworkManager.singleton != null)
-				{
-					NetworkManager.singleton.SetupMigrationManager(null);
-					NetworkManager.singleton.StopHost();
+					num += 25;
 				}
 				else
 				{
-					Debug.LogWarning("MigrationManager Old Host LeaveGame - No NetworkManager.");
+					if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Pick New Host"))
+					{
+						bool flag;
+						if (this.FindNewHost(out this.m_NewHostInfo, out flag))
+						{
+							this.m_NewHostAddress = this.m_NewHostInfo.address;
+							if (flag)
+							{
+								Debug.LogWarning("MigrationManager FindNewHost - new host is self?");
+							}
+							else
+							{
+								this.m_WaitingReconnectToNewHost = true;
+							}
+						}
+					}
+					num += 25;
 				}
-				this.Reset(-1);
+				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Leave Game"))
+				{
+					if (NetworkManager.singleton != null)
+					{
+						NetworkManager.singleton.SetupMigrationManager(null);
+						NetworkManager.singleton.StopHost();
+					}
+					else
+					{
+						Debug.LogWarning("MigrationManager Old Host LeaveGame - No NetworkManager.");
+					}
+					this.Reset(-1);
+				}
+				num += 25;
 			}
-			num += 25;
 		}
 
 		private void OnGUIClient()
@@ -921,93 +977,95 @@ namespace UnityEngine.Networking
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
 				GUI.Label(new Rect((float)this.m_OffsetX, (float)num, 200f, 40f), "Host Migration not supported for WebGL");
-				return;
-			}
-			if (this.m_WaitingToBecomeNewHost)
-			{
-				GUI.Label(new Rect((float)this.m_OffsetX, (float)num, 200f, 40f), "You are the new host");
-				num += 25;
-				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Start As Host"))
-				{
-					if (NetworkManager.singleton != null)
-					{
-						this.BecomeNewHost(NetworkManager.singleton.networkPort);
-					}
-					else
-					{
-						Debug.LogWarning("MigrationManager Client BecomeNewHost - No NetworkManager.");
-					}
-				}
-				num += 25;
-			}
-			else if (this.m_WaitingReconnectToNewHost)
-			{
-				GUI.Label(new Rect((float)this.m_OffsetX, (float)num, 200f, 40f), "New host is " + this.m_NewHostAddress);
-				num += 25;
-				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Reconnect To New Host"))
-				{
-					this.Reset(this.m_OldServerConnectionId);
-					if (NetworkManager.singleton != null)
-					{
-						NetworkManager.singleton.networkAddress = this.m_NewHostAddress;
-						NetworkManager.singleton.client.ReconnectToNewHost(this.m_NewHostAddress, NetworkManager.singleton.networkPort);
-					}
-					else
-					{
-						Debug.LogWarning("MigrationManager Client reconnect - No NetworkManager.");
-					}
-				}
-				num += 25;
 			}
 			else
 			{
-				bool flag;
-				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Pick New Host") && this.FindNewHost(out this.m_NewHostInfo, out flag))
+				if (this.m_WaitingToBecomeNewHost)
 				{
-					this.m_NewHostAddress = this.m_NewHostInfo.address;
-					if (flag)
+					GUI.Label(new Rect((float)this.m_OffsetX, (float)num, 200f, 40f), "You are the new host");
+					num += 25;
+					if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Start As Host"))
 					{
-						this.m_WaitingToBecomeNewHost = true;
+						if (NetworkManager.singleton != null)
+						{
+							this.BecomeNewHost(NetworkManager.singleton.networkPort);
+						}
+						else
+						{
+							Debug.LogWarning("MigrationManager Client BecomeNewHost - No NetworkManager.");
+						}
 					}
-					else
-					{
-						this.m_WaitingReconnectToNewHost = true;
-					}
+					num += 25;
 				}
-				num += 25;
-			}
-			if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Leave Game"))
-			{
-				if (NetworkManager.singleton != null)
+				else if (this.m_WaitingReconnectToNewHost)
 				{
-					NetworkManager.singleton.SetupMigrationManager(null);
-					NetworkManager.singleton.StopHost();
+					GUI.Label(new Rect((float)this.m_OffsetX, (float)num, 200f, 40f), "New host is " + this.m_NewHostAddress);
+					num += 25;
+					if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Reconnect To New Host"))
+					{
+						this.Reset(this.m_OldServerConnectionId);
+						if (NetworkManager.singleton != null)
+						{
+							NetworkManager.singleton.networkAddress = this.m_NewHostAddress;
+							NetworkManager.singleton.client.ReconnectToNewHost(this.m_NewHostAddress, NetworkManager.singleton.networkPort);
+						}
+						else
+						{
+							Debug.LogWarning("MigrationManager Client reconnect - No NetworkManager.");
+						}
+					}
+					num += 25;
 				}
 				else
 				{
-					Debug.LogWarning("MigrationManager Client LeaveGame - No NetworkManager.");
+					if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Pick New Host"))
+					{
+						bool flag;
+						if (this.FindNewHost(out this.m_NewHostInfo, out flag))
+						{
+							this.m_NewHostAddress = this.m_NewHostInfo.address;
+							if (flag)
+							{
+								this.m_WaitingToBecomeNewHost = true;
+							}
+							else
+							{
+								this.m_WaitingReconnectToNewHost = true;
+							}
+						}
+					}
+					num += 25;
 				}
-				this.Reset(-1);
+				if (GUI.Button(new Rect((float)this.m_OffsetX, (float)num, 200f, 20f), "Leave Game"))
+				{
+					if (NetworkManager.singleton != null)
+					{
+						NetworkManager.singleton.SetupMigrationManager(null);
+						NetworkManager.singleton.StopHost();
+					}
+					else
+					{
+						Debug.LogWarning("MigrationManager Client LeaveGame - No NetworkManager.");
+					}
+					this.Reset(-1);
+				}
+				num += 25;
 			}
-			num += 25;
 		}
 
 		private void OnGUI()
 		{
-			if (!this.m_ShowGUI)
+			if (this.m_ShowGUI)
 			{
-				return;
+				if (this.m_HostWasShutdown)
+				{
+					this.OnGUIHost();
+				}
+				else if (this.m_DisconnectedFromHost && this.m_OldServerConnectionId != -1)
+				{
+					this.OnGUIClient();
+				}
 			}
-			if (this.m_HostWasShutdown)
-			{
-				this.OnGUIHost();
-				return;
-			}
-			if (!this.m_DisconnectedFromHost)
-			{
-				return;
-			}
-			this.OnGUIClient();
 		}
 
 		public enum SceneChangeOption

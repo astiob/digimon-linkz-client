@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class UISpriteEx : UISprite
+public sealed class UISpriteEx : UISprite
 {
 	[SerializeField]
 	private string baseSpriteName = string.Empty;

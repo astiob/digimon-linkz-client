@@ -3,6 +3,8 @@ using MonsterIcon;
 using Quest;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class GUIMain : Singleton<GUIMain>
@@ -40,7 +42,11 @@ public class GUIMain : Singleton<GUIMain>
 
 	private static Action actCallBackBattle;
 
-	public event Action<string> onStartNewScreenEvent;
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache1;
 
 	protected static GUIMain self
 	{
@@ -255,31 +261,40 @@ public class GUIMain : Singleton<GUIMain>
 		}
 		GUIMain.ReqScreenRaw(screenName, text);
 		string b2 = string.Empty;
-		string text2 = screenName;
-		switch (text2)
+		if (screenName != null)
 		{
-		case "UITitle":
-			b2 = "bgm_101";
-			goto IL_156;
-		case "UIHome":
-			GUIMain.nowBgm = string.Empty;
-			b2 = "bgm_201";
-			goto IL_156;
-		case "UIShop":
-			goto IL_156;
-		case "UIGame":
-			if (!string.IsNullOrEmpty(GUIMain.nowBgm))
+			if (screenName == "UITitle")
 			{
-				SoundMng.Instance().StopBGM(0.5f, null);
-				GUIMain.nowBgm = string.Empty;
+				b2 = "bgm_101";
+				goto IL_11A;
 			}
-			goto IL_156;
-		case "UIIdle":
-			GUIMain.nowBgm = string.Empty;
-			goto IL_156;
+			if (screenName == "UIHome")
+			{
+				GUIMain.nowBgm = string.Empty;
+				b2 = "bgm_201";
+				goto IL_11A;
+			}
+			if (screenName == "UIShop")
+			{
+				goto IL_11A;
+			}
+			if (screenName == "UIGame")
+			{
+				if (!string.IsNullOrEmpty(GUIMain.nowBgm))
+				{
+					SoundMng.Instance().StopBGM(0.5f, null);
+					GUIMain.nowBgm = string.Empty;
+				}
+				goto IL_11A;
+			}
+			if (screenName == "UIIdle")
+			{
+				GUIMain.nowBgm = string.Empty;
+				goto IL_11A;
+			}
 		}
 		b2 = GUIMain.nowBgm;
-		IL_156:
+		IL_11A:
 		if ("UIColosseum" == b)
 		{
 			GUIMain.nowBgm = string.Empty;
@@ -473,12 +488,20 @@ public class GUIMain : Singleton<GUIMain>
 		{
 			if (GUIMain.gUIScreen != guiName)
 			{
-				string guiName2 = guiName;
-				Action<int> actionEnd_ = new Action<int>(GUIMain.actCallBackBackToTOP);
-				GUIFadeControll.SetLoadInfo(delegate(int x)
+				Action<int> action = delegate(int x)
 				{
 					GUIFadeControll.ActionRestart();
-				}, "Empty", guiName2, string.Empty, actionEnd_, false);
+				};
+				string guiName2 = guiName;
+				Action<int> action_ = action;
+				string aploadName_ = "Empty";
+				string loadGUIName_ = guiName2;
+				string empty = string.Empty;
+				if (GUIMain.<>f__mg$cache0 == null)
+				{
+					GUIMain.<>f__mg$cache0 = new Action<int>(GUIMain.actCallBackBackToTOP);
+				}
+				GUIFadeControll.SetLoadInfo(action_, aploadName_, loadGUIName_, empty, GUIMain.<>f__mg$cache0, false);
 				GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 				GUIManager.LoadCommonGUI("Effect/FADE_W", GUIMain.self.gameObject);
 			}
@@ -506,7 +529,13 @@ public class GUIMain : Singleton<GUIMain>
 			ClassSingleton<GUIMonsterIconList>.Instance.AllDelete();
 		}
 		GUICollider.DisableAllCollider("GUIMain");
-		GUIFadeControll.SetLoadInfo(new Action<int>(GUIMain.ShiftGUI), SceneName, "UIIdle", string.Empty, actionEnd, false);
+		if (GUIMain.<>f__mg$cache1 == null)
+		{
+			GUIMain.<>f__mg$cache1 = new Action<int>(GUIMain.ShiftGUI);
+		}
+		Action<int> action_ = GUIMain.<>f__mg$cache1;
+		string loadGUIName_ = "UIIdle";
+		GUIFadeControll.SetLoadInfo(action_, SceneName, loadGUIName_, string.Empty, actionEnd, false);
 		GUIFadeControll.SetFadeInfo(outSec, 0f, inSec, 1f);
 		BattleStateManager.onAutoServerConnect = true;
 		ServerDateTime.isUpdateServerDateTime = false;
@@ -541,42 +570,19 @@ public class GUIMain : Singleton<GUIMain>
 		GUIMain.beforeGUIScreen = new Stack<string>();
 		GUICollider.DisableAllCollider("GUIMain");
 		Action actionReceived = null;
-		string screenName2 = screenName;
-		if (screenName2 != null)
+		if (screenName != null)
 		{
-			if (GUIMain.<>f__switch$map1A == null)
+			if (screenName == "UIResult" || screenName == "UIPvPResult")
 			{
-				GUIMain.<>f__switch$map1A = new Dictionary<string, int>(3)
+				actionReceived = delegate()
 				{
-					{
-						"UIResult",
-						0
-					},
-					{
-						"UIPvPResult",
-						0
-					},
-					{
-						"UIHome",
-						1
-					}
+					GUIFadeControll.ActionRestart();
+					GUIMain.OnNewScreenStart(screenName);
 				};
+				goto IL_C3;
 			}
-			int num;
-			if (GUIMain.<>f__switch$map1A.TryGetValue(screenName2, out num))
+			if (!(screenName == "UIHome"))
 			{
-				if (num == 0)
-				{
-					actionReceived = delegate()
-					{
-						GUIFadeControll.ActionRestart();
-						GUIMain.OnNewScreenStart(screenName);
-					};
-					goto IL_E0;
-				}
-				if (num != 1)
-				{
-				}
 			}
 		}
 		inSec = 0f;
@@ -587,7 +593,7 @@ public class GUIMain : Singleton<GUIMain>
 			TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.TitleToFarm, true);
 			GUIFadeControll.LoadGUIAll();
 		};
-		IL_E0:
+		IL_C3:
 		Time.timeScale = 1f;
 		GUIFadeControll.SetLoadInfo(delegate(int x)
 		{
@@ -595,27 +601,12 @@ public class GUIMain : Singleton<GUIMain>
 			{
 				GUIMain.actCallBackBattle();
 			}
-			string screenName3 = screenName;
-			if (screenName3 != null)
+			if (screenName != null)
 			{
-				if (GUIMain.<>f__switch$map1C == null)
+				if (screenName == "UIPvPResult")
 				{
-					GUIMain.<>f__switch$map1C = new Dictionary<string, int>(1)
-					{
-						{
-							"UIPvPResult",
-							0
-						}
-					};
-				}
-				int num2;
-				if (GUIMain.<>f__switch$map1C.TryGetValue(screenName3, out num2))
-				{
-					if (num2 == 0)
-					{
-						actionReceived();
-						return;
-					}
+					actionReceived();
+					return;
 				}
 			}
 			Singleton<GUIMain>.instance.StartCoroutine(APIUtil.Instance().SendBattleResult(actionReceived));
@@ -631,43 +622,20 @@ public class GUIMain : Singleton<GUIMain>
 		GUICollider.DisableAllCollider("GUIMain");
 		Action actionReceived = null;
 		bool isResult = false;
-		string screenName2 = screenName;
-		if (screenName2 != null)
+		if (screenName != null)
 		{
-			if (GUIMain.<>f__switch$map1D == null)
+			if (screenName == "UIResult" || screenName == "UIPvPResult")
 			{
-				GUIMain.<>f__switch$map1D = new Dictionary<string, int>(3)
+				isResult = true;
+				actionReceived = delegate()
 				{
-					{
-						"UIResult",
-						0
-					},
-					{
-						"UIPvPResult",
-						0
-					},
-					{
-						"UIHome",
-						1
-					}
+					GUIFadeControll.ActionRestart();
+					GUIMain.OnNewScreenStart(screenName);
 				};
+				goto IL_D8;
 			}
-			int num;
-			if (GUIMain.<>f__switch$map1D.TryGetValue(screenName2, out num))
+			if (!(screenName == "UIHome"))
 			{
-				if (num == 0)
-				{
-					isResult = true;
-					actionReceived = delegate()
-					{
-						GUIFadeControll.ActionRestart();
-						GUIMain.OnNewScreenStart(screenName);
-					};
-					goto IL_F5;
-				}
-				if (num != 1)
-				{
-				}
 			}
 		}
 		inSec = 0f;
@@ -678,7 +646,7 @@ public class GUIMain : Singleton<GUIMain>
 			TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.TitleToFarm, true);
 			GUIFadeControll.LoadGUIAll();
 		};
-		IL_F5:
+		IL_D8:
 		Time.timeScale = 1f;
 		GUIFadeControll.SetLoadInfo(delegate(int x)
 		{
@@ -703,6 +671,9 @@ public class GUIMain : Singleton<GUIMain>
 		GUIManager.LoadCommonGUI("Effect/FADE_B", GUIMain.self.gameObject);
 		GUIMain.backMode_ = true;
 	}
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public event Action<string> onStartNewScreenEvent;
 
 	private static void OnNewScreenStart(string newScreenName)
 	{

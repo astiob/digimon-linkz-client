@@ -4,9 +4,9 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.EventBuilder" /> class to unmanaged code.</summary>
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[ComVisible(true)]
 	[TypeLibImportClass(typeof(EventBuilder))]
+	[ComVisible(true)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[CLSCompliant(false)]
 	[Guid("AADABA99-895D-3D65-9760-B1F12621FAE8")]
 	public interface _EventBuilder

@@ -4,11 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 public class AssetBundleMng : MonoBehaviour
 {
 	private static AssetBundleMng instance;
+
+	private Dictionary<string, AssetBundle> loadedAssetBundleDic = new Dictionary<string, AssetBundle>();
 
 	private bool isWaitDiskSpaceCheck;
 
@@ -38,8 +41,9 @@ public class AssetBundleMng : MonoBehaviour
 
 	private void Awake()
 	{
-		Caching.expirationDelay = 12960000;
-		Caching.maximumAvailableDiskSpace = 4294967296L;
+		Cache defaultCache = Caching.defaultCache;
+		defaultCache.maximumAvailableStorageSpace = 4294967296L;
+		defaultCache.expirationDelay = 12960000;
 		AssetBundleMng.instance = this;
 		this.LoadVersionInfo();
 	}
@@ -144,10 +148,11 @@ public class AssetBundleMng : MonoBehaviour
 				}
 				else
 				{
-					bool flag = Caching.IsVersionCached(text, recordVersion);
+					Hash128 hash = new Hash128(0u, 0u, 0u, (uint)recordVersion);
+					bool flag = Caching.IsVersionCached(text, hash);
 					if (flag)
 					{
-						Caching.MarkAsUsed(text, recordVersion);
+						Caching.MarkAsUsed(text, hash);
 						action = delegate()
 						{
 							abdlI.actEndCallBack(null, abdlI);
@@ -167,10 +172,15 @@ public class AssetBundleMng : MonoBehaviour
 			base.StartCoroutine(this.DownLoad(action));
 			return abdlI;
 		}
-		bool flag2 = Caching.IsVersionCached(text, 1);
+		Hash128 hash2 = new Hash128(0u, 0u, 0u, 1u);
+		bool flag2 = Caching.IsVersionCached(text, hash2);
 		if (flag2)
 		{
-			abdlI.www = WWW.LoadFromCacheOrDownload(text, 1, 0u);
+			abdlI.www = WWW.LoadFromCacheOrDownload(text, hash2, 0u);
+			while (!abdlI.www.isDone)
+			{
+				Thread.Sleep(1);
+			}
 			return abdlI;
 		}
 		abdlI.ver = recordVersion;
@@ -247,7 +257,7 @@ public class AssetBundleMng : MonoBehaviour
 				}
 				else if (!string.IsNullOrEmpty(resultWWW.error))
 				{
-					if (!forceDL)
+					if (!forceDL && this.isOpenAlert(resultWWW.error))
 					{
 						this.OpenAlert();
 					}
@@ -391,13 +401,14 @@ public class AssetBundleMng : MonoBehaviour
 						".unity3d?",
 						AssetDataMng.assetVersion
 					});
-					if (!Caching.IsVersionCached(url, recordVersion))
+					Hash128 hash = new Hash128(0u, 0u, 0u, (uint)recordVersion);
+					if (!Caching.IsVersionCached(url, hash))
 					{
 						num++;
 					}
 					else
 					{
-						Caching.MarkAsUsed(url, recordVersion);
+						Caching.MarkAsUsed(url, hash);
 					}
 				}
 			}
@@ -478,10 +489,10 @@ public class AssetBundleMng : MonoBehaviour
 
 	public bool LoadObjectASync(AssetBundleInfoData abid, string resourceName, Action<UnityEngine.Object> actEnd)
 	{
-		AssetBundleMng.<LoadObjectASync>c__AnonStorey279 <LoadObjectASync>c__AnonStorey = new AssetBundleMng.<LoadObjectASync>c__AnonStorey279();
+		AssetBundleMng.<LoadObjectASync>c__AnonStorey7 <LoadObjectASync>c__AnonStorey = new AssetBundleMng.<LoadObjectASync>c__AnonStorey7();
 		<LoadObjectASync>c__AnonStorey.resourceName = resourceName;
 		<LoadObjectASync>c__AnonStorey.actEnd = actEnd;
-		<LoadObjectASync>c__AnonStorey.<>f__this = this;
+		<LoadObjectASync>c__AnonStorey.$this = this;
 		<LoadObjectASync>c__AnonStorey.abiList = abid.assetBundleInfoList;
 		bool flag = false;
 		int m;
@@ -499,7 +510,7 @@ public class AssetBundleMng : MonoBehaviour
 			{
 				this.DownLoad_OneAssetBundleData(abid.name, abid.ver, abid.abPath, <LoadObjectASync>c__AnonStorey.abiList[m], delegate(AssetBundle ab, AB_DownLoadInfo abdlI)
 				{
-					UnityEngine.Object obj = this.FindObjectAndUnloadAB(abdlI, <LoadObjectASync>c__AnonStorey.abiList[m], <LoadObjectASync>c__AnonStorey.resourceName);
+					UnityEngine.Object obj = <LoadObjectASync>c__AnonStorey.$this.FindObjectAndUnloadAB(abdlI, <LoadObjectASync>c__AnonStorey.abiList[m], <LoadObjectASync>c__AnonStorey.resourceName);
 					if (<LoadObjectASync>c__AnonStorey.actEnd != null)
 					{
 						<LoadObjectASync>c__AnonStorey.actEnd(obj);
@@ -569,6 +580,10 @@ public class AssetBundleMng : MonoBehaviour
 			typeFromHandle = typeof(Font);
 			break;
 		}
+		if (this.loadedAssetBundleDic.ContainsKey(abi.abName))
+		{
+			this.loadedAssetBundleDic[abi.abName].Unload(false);
+		}
 		UnityEngine.Object @object = abdlI.www.assetBundle.LoadAsset(objName, typeFromHandle);
 		if (@object == null && objName.IndexOf("/") != -1)
 		{
@@ -627,7 +642,14 @@ public class AssetBundleMng : MonoBehaviour
 				@object = array2[i];
 			}
 		}
-		abdlI.www.assetBundle.Unload(false);
+		if (typeFromHandle != typeof(AudioClip))
+		{
+			abdlI.www.assetBundle.Unload(false);
+		}
+		else
+		{
+			this.loadedAssetBundleDic.AddOrReplace(abi.abName, abdlI.www.assetBundle);
+		}
 		if (abdlI.www.error != null)
 		{
 			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(null, "CMD_Alert", null) as CMD_Alert;
@@ -834,5 +856,10 @@ public class AssetBundleMng : MonoBehaviour
 	public List<AB_DownLoadInfo> GetODLStreamList()
 	{
 		return this.abdlI_ODLStreamList;
+	}
+
+	private bool isOpenAlert(string msg)
+	{
+		return msg != "Received no data in response";
 	}
 }

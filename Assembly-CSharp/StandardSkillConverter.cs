@@ -139,6 +139,7 @@ public class StandardSkillConverter
 			result = StandardSkillConverter.ConvertToCountEvasion(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.ReferenceTargetHpRate:
+		case StandardSkillConverter.AffectEffect.RefHpRateNonAttribute:
 			result = StandardSkillConverter.ConvertToReferenceTargetHpRate(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.ApDrain:
@@ -160,6 +161,9 @@ public class StandardSkillConverter
 			break;
 		case StandardSkillConverter.AffectEffect.Escape:
 			result = StandardSkillConverter.ConvertToEscape(subSkillDetails.ToArray());
+			break;
+		case StandardSkillConverter.AffectEffect.Nothing:
+			result = StandardSkillConverter.ConvertToDamage(subSkillDetails.ToArray());
 			break;
 		default:
 			UnityEngine.Debug.LogError("Not AffectEffect " + affectEffect);
@@ -678,15 +682,14 @@ public class StandardSkillConverter
 
 	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToCaseDamageRateForRound(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
 	{
-		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM skillDetailM = StandardSkillConverter.ConvertToCaseDamageRate(skillDetails);
-		skillDetailM.effect1 = skillDetails[0].continuousRound.ToInt32();
-		return skillDetailM;
+		return StandardSkillConverter.ConvertToCaseDamageRate(skillDetails);
 	}
 
 	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToCaseDamageRateForCount(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
 	{
 		GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM skillDetailM = StandardSkillConverter.ConvertToCaseDamageRate(skillDetails);
 		skillDetailM.effect1 = skillDetails[0].motionCount.ToInt32();
+		skillDetailM.effect15 = 10000 * skillDetails[0].continuousRound.ToInt32();
 		return skillDetailM;
 	}
 
@@ -701,8 +704,9 @@ public class StandardSkillConverter
 		skillDetailM.targetType = skillDetails[0].targetType.ToInt32();
 		skillDetailM.attribute = skillDetails[0].attribute.ToInt32();
 		skillDetailM.isMissTrough = skillDetails[0].isMissTrough.ToInt32();
-		skillDetailM.effect16 = skillDetails[0].subRate.ToInt32();
 		skillDetailM.effect1 = skillDetails[0].continuousRound.ToInt32();
+		skillDetailM.effect15 = 10000 * skillDetails[0].motionCount.ToInt32();
+		skillDetailM.effect16 = skillDetails[0].subRate.ToInt32();
 		skillDetailM.effect2 = skillDetails[0].effect2.ToInt32();
 		skillDetailM.effect10 = 10000 * skillDetails[0].effect3.ToInt32();
 		skillDetailM.effect11 = 10000 * skillDetails[0].effect4.ToInt32();
@@ -974,6 +978,8 @@ public class StandardSkillConverter
 		SpDefenseThroughDamage,
 		HpSettingFixable,
 		HpSettingPercentage,
-		Escape
+		Escape,
+		Nothing,
+		RefHpRateNonAttribute
 	}
 }

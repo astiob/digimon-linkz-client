@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Indicates which IDispatch implementation the common language runtime uses when exposing dual interfaces and dispinterfaces to COM.</summary>
-	[ComVisible(true)]
 	[Obsolete]
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+	[ComVisible(true)]
 	public sealed class IDispatchImplAttribute : Attribute
 	{
 		private IDispatchImplType Impl;

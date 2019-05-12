@@ -6,8 +6,6 @@ namespace UnityEngine.UI
 	[AddComponentMenu("UI/Effects/Shadow", 14)]
 	public class Shadow : BaseMeshEffect
 	{
-		private const float kMaxEffectDistance = 600f;
-
 		[SerializeField]
 		private Color m_EffectColor = new Color(0f, 0f, 0f, 0.5f);
 
@@ -16,6 +14,8 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private bool m_UseGraphicAlpha = true;
+
+		private const float kMaxEffectDistance = 600f;
 
 		protected Shadow()
 		{
@@ -61,14 +61,13 @@ namespace UnityEngine.UI
 				{
 					value.y = -600f;
 				}
-				if (this.m_EffectDistance == value)
+				if (!(this.m_EffectDistance == value))
 				{
-					return;
-				}
-				this.m_EffectDistance = value;
-				if (base.graphic != null)
-				{
-					base.graphic.SetVerticesDirty();
+					this.m_EffectDistance = value;
+					if (base.graphic != null)
+					{
+						base.graphic.SetVerticesDirty();
+					}
 				}
 			}
 		}
@@ -121,16 +120,15 @@ namespace UnityEngine.UI
 
 		public override void ModifyMesh(VertexHelper vh)
 		{
-			if (!this.IsActive())
+			if (this.IsActive())
 			{
-				return;
+				List<UIVertex> list = ListPool<UIVertex>.Get();
+				vh.GetUIVertexStream(list);
+				this.ApplyShadow(list, this.effectColor, 0, list.Count, this.effectDistance.x, this.effectDistance.y);
+				vh.Clear();
+				vh.AddUIVertexTriangleStream(list);
+				ListPool<UIVertex>.Release(list);
 			}
-			List<UIVertex> list = ListPool<UIVertex>.Get();
-			vh.GetUIVertexStream(list);
-			this.ApplyShadow(list, this.effectColor, 0, list.Count, this.effectDistance.x, this.effectDistance.y);
-			vh.Clear();
-			vh.AddUIVertexTriangleStream(list);
-			ListPool<UIVertex>.Release(list);
 		}
 	}
 }

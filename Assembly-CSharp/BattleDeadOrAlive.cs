@@ -32,9 +32,9 @@ public class BattleDeadOrAlive : BattleFunctionBase
 			base.battleStateData.isShowRevivalWindow = false;
 			BattleStateManager.current.uiControl.ApplyEnableCharacterRevivalWindow(false, false, null);
 			base.battleStateData.isRevivalReservedCharacter[revivalCharacterIndex] = true;
-			AlwaysEffectParams revivalReservedEffect = base.battleStateData.revivalReservedEffect[revivalCharacterIndex];
-			base.stateManager.threeDAction.PlayAlwaysEffectAction(revivalReservedEffect, AlwaysEffectState.In);
-			base.stateManager.soundPlayer.TryPlaySE(revivalReservedEffect, AlwaysEffectState.In);
+			AlwaysEffectParams alwaysEffect = base.battleStateData.revivalReservedEffect[revivalCharacterIndex];
+			base.stateManager.threeDAction.PlayAlwaysEffectAction(alwaysEffect, AlwaysEffectState.In);
+			base.stateManager.soundPlayer.TryPlaySE(alwaysEffect, AlwaysEffectState.In);
 			SoundPlayer.PlayButtonEnter();
 			base.battleStateData.turnUseDigiStoneCount++;
 		}

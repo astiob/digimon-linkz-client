@@ -775,7 +775,7 @@ public class GUIMonsterIcon : GUIListPartBS
 		component.transform.parent = parent;
 		component.transform.localScale = vScl;
 		component.transform.localPosition = vPos;
-		DepthController.SetWidgetDepth_2(component.transform, depth);
+		DepthController.SetWidgetDepth_Static(component.transform, depth);
 		component.SetQuestionIcon();
 		return component;
 	}
@@ -861,12 +861,9 @@ public class GUIMonsterIcon : GUIListPartBS
 	public static bool GetIconGrayOutType(MonsterSortType type)
 	{
 		bool result = true;
-		switch (type)
+		if (type == MonsterSortType.DATE || type == MonsterSortType.LEVEL)
 		{
-		case MonsterSortType.DATE:
-		case MonsterSortType.LEVEL:
 			result = false;
-			break;
 		}
 		return result;
 	}

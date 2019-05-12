@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[AddComponentMenu("Image Effects/Rendering/Global Fog")]
 	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Rendering/Global Fog")]
 	internal class GlobalFog : PostEffectsBase
 	{
 		[Tooltip("Apply distance-based fog?")]
@@ -90,12 +90,12 @@ namespace UnityStandardAssets.ImageEffects
 			bool flag = fogMode == FogMode.Linear;
 			float num3 = (!flag) ? 0f : (fogEndDistance - fogStartDistance);
 			float num4 = (Mathf.Abs(num3) <= 0.0001f) ? 0f : (1f / num3);
-			Vector4 vector5;
-			vector5.x = fogDensity * 1.2011224f;
-			vector5.y = fogDensity * 1.442695f;
-			vector5.z = ((!flag) ? 0f : (-num4));
-			vector5.w = ((!flag) ? 0f : (fogEndDistance * num4));
-			this.fogMaterial.SetVector("_SceneFogParams", vector5);
+			Vector4 value;
+			value.x = fogDensity * 1.2011224f;
+			value.y = fogDensity * 1.442695f;
+			value.z = ((!flag) ? 0f : (-num4));
+			value.w = ((!flag) ? 0f : (fogEndDistance * num4));
+			this.fogMaterial.SetVector("_SceneFogParams", value);
 			this.fogMaterial.SetVector("_SceneFogMode", new Vector4((float)fogMode, (float)((!this.useRadialDistance) ? 0 : 1), 0f, 0f));
 			int passNr;
 			if (this.distanceFog && this.heightFog)

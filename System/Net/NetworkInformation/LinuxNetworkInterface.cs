@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation
@@ -29,11 +30,10 @@ namespace System.Net.NetworkInformation
 			this.iface_flags_path = this.iface_path + "flags";
 		}
 
-		[DllImport("libc")]
-		private static extern int getifaddrs(out IntPtr ifap);
-
-		[DllImport("libc")]
-		private static extern void freeifaddrs(IntPtr ifap);
+		static LinuxNetworkInterface()
+		{
+			LinuxNetworkInterface.InitializeInterfaceAddresses();
+		}
 
 		internal string IfacePath
 		{
@@ -43,22 +43,32 @@ namespace System.Net.NetworkInformation
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void InitializeInterfaceAddresses();
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern int GetInterfaceAddresses(out IntPtr ifap);
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void FreeInterfaceAddresses(IntPtr ifap);
+
 		public static NetworkInterface[] ImplGetAllNetworkInterfaces()
 		{
 			Dictionary<string, LinuxNetworkInterface> dictionary = new Dictionary<string, LinuxNetworkInterface>();
 			IntPtr intPtr;
-			if (LinuxNetworkInterface.getifaddrs(out intPtr) != 0)
+			if (LinuxNetworkInterface.GetInterfaceAddresses(out intPtr) != 0)
 			{
 				throw new SystemException("getifaddrs() failed");
 			}
 			try
 			{
 				IntPtr intPtr2 = intPtr;
+				int num = 0;
 				while (intPtr2 != IntPtr.Zero)
 				{
 					ifaddrs ifaddrs = (ifaddrs)Marshal.PtrToStructure(intPtr2, typeof(ifaddrs));
 					IPAddress ipaddress = IPAddress.None;
-					string ifa_name = ifaddrs.ifa_name;
+					string text = ifaddrs.ifa_name;
 					int index = -1;
 					byte[] array = null;
 					NetworkInterfaceType networkInterfaceType = NetworkInterfaceType.Unknown;
@@ -107,43 +117,50 @@ namespace System.Net.NetworkInformation
 										if (linuxArpHardware == LinuxArpHardware.ATM)
 										{
 											networkInterfaceType = NetworkInterfaceType.Atm;
-											goto IL_27A;
+											goto IL_27D;
 										}
 										if (linuxArpHardware == LinuxArpHardware.SLIP)
 										{
 											networkInterfaceType = NetworkInterfaceType.Slip;
-											goto IL_27A;
+											goto IL_27D;
 										}
 										if (linuxArpHardware != LinuxArpHardware.PPP)
 										{
-											goto IL_27A;
+											goto IL_27D;
 										}
 										networkInterfaceType = NetworkInterfaceType.Ppp;
-										goto IL_27A;
+										goto IL_27D;
 									case LinuxArpHardware.PRONET:
 										networkInterfaceType = NetworkInterfaceType.TokenRing;
-										goto IL_27A;
+										goto IL_27D;
 									}
 									networkInterfaceType = NetworkInterfaceType.Ethernet;
-									goto IL_27A;
+									goto IL_27D;
 								case LinuxArpHardware.LOOPBACK:
 									networkInterfaceType = NetworkInterfaceType.Loopback;
 									array = null;
-									goto IL_27A;
+									goto IL_27D;
 								case LinuxArpHardware.FDDI:
 									networkInterfaceType = NetworkInterfaceType.Fddi;
-									goto IL_27A;
+									goto IL_27D;
 								}
 								networkInterfaceType = NetworkInterfaceType.Tunnel;
 							}
 						}
 					}
-					IL_27A:
+					IL_27D:
 					LinuxNetworkInterface linuxNetworkInterface = null;
-					if (!dictionary.TryGetValue(ifa_name, out linuxNetworkInterface))
+					if (string.IsNullOrEmpty(text))
 					{
-						linuxNetworkInterface = new LinuxNetworkInterface(ifa_name);
-						dictionary.Add(ifa_name, linuxNetworkInterface);
+						string str = "\0";
+						int num2;
+						num = (num2 = num + 1);
+						text = str + num2.ToString();
+					}
+					if (!dictionary.TryGetValue(text, out linuxNetworkInterface))
+					{
+						linuxNetworkInterface = new LinuxNetworkInterface(text);
+						dictionary.Add(text, linuxNetworkInterface);
 					}
 					if (!ipaddress.Equals(IPAddress.None))
 					{
@@ -162,14 +179,14 @@ namespace System.Net.NetworkInformation
 			}
 			finally
 			{
-				LinuxNetworkInterface.freeifaddrs(intPtr);
+				LinuxNetworkInterface.FreeInterfaceAddresses(intPtr);
 			}
 			NetworkInterface[] array2 = new NetworkInterface[dictionary.Count];
-			int num = 0;
+			int num3 = 0;
 			foreach (NetworkInterface networkInterface in dictionary.Values)
 			{
-				array2[num] = networkInterface;
-				num++;
+				array2[num3] = networkInterface;
+				num3++;
 			}
 			return array2;
 		}

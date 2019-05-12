@@ -8,7 +8,8 @@ public static class ParticleScaler
 	public static void ScaleByTransform(ParticleSystem particles, float scale, bool includeChildren = true)
 	{
 		particles.transform.localScale = particles.transform.localScale * scale;
-		particles.gravityModifier *= scale;
+		ParticleSystem.MainModule mainModule;
+		particles.main.gravityModifierMultiplier = mainModule.gravityModifierMultiplier * scale;
 		if (includeChildren)
 		{
 			ParticleSystem[] componentsInChildren = particles.GetComponentsInChildren<ParticleSystem>();
@@ -18,7 +19,8 @@ public static class ParticleScaler
 				if (!(componentsInChildren[num] == particles))
 				{
 					componentsInChildren[num].transform.localScale = componentsInChildren[num].transform.localScale * scale;
-					componentsInChildren[num].gravityModifier *= scale;
+					ParticleSystem.MainModule mainModule2;
+					componentsInChildren[num].main.gravityModifierMultiplier = mainModule2.gravityModifierMultiplier * scale;
 				}
 			}
 		}
@@ -51,9 +53,10 @@ public static class ParticleScaler
 		{
 			particles.transform.localPosition *= scale;
 		}
-		particles.startSize *= scale;
-		particles.gravityModifier *= scale;
-		particles.startSpeed *= scale;
+		ParticleSystem.MainModule main = particles.main;
+		main.startSizeMultiplier *= scale;
+		main.gravityModifierMultiplier *= scale;
+		main.startSpeedMultiplier *= scale;
 	}
 
 	private static void ScaleCurve(AnimationCurve curve, float scale)

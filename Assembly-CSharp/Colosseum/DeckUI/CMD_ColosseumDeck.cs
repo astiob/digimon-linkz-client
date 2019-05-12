@@ -75,7 +75,7 @@ namespace Colosseum.DeckUI
 			AppCoroutine.Start(task.Run(delegate
 			{
 				RestrictionInput.EndLoad();
-				this.ClosePanel(animation);
+				this.<ClosePanel>__BaseCallProxy0(animation);
 			}, null, null), false);
 		}
 

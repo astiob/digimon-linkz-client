@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class GUIPageIndicator : MonoBehaviour
 {
-	private const float PARTS_PITCH = 30f;
-
 	[Header("●のゲームオブジェクトのNGUIスプライトの指定")]
 	[SerializeField]
 	private UISprite spParts;
 
-	[SerializeField]
 	[Header("オンの時のスプライト名")]
+	[SerializeField]
 	private string onSpriteName;
 
-	[SerializeField]
 	[Header("オフの時のスプライト名")]
+	[SerializeField]
 	private string offSpriteName;
+
+	private const float PARTS_PITCH = 30f;
 
 	private int nowIdx;
 

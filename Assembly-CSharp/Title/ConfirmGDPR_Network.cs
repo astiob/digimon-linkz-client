@@ -28,17 +28,24 @@ namespace Title
 		public ConfirmGDPR_Network.GDPRWebPageType GetWebPageType(GameWebAPI.ResponseGdprInfo.Details details)
 		{
 			ConfirmGDPR_Network.GDPRWebPageType result = ConfirmGDPR_Network.GDPRWebPageType.NONE;
-			switch (details.type)
+			int type = details.type;
+			if (type != 1)
 			{
-			case 1:
+				if (type != 2)
+				{
+					if (type == 3)
+					{
+						result = ConfirmGDPR_Network.GDPRWebPageType.ANALYTICS;
+					}
+				}
+				else
+				{
+					result = ConfirmGDPR_Network.GDPRWebPageType.AD_TARGET;
+				}
+			}
+			else
+			{
 				result = ConfirmGDPR_Network.GDPRWebPageType.TOP_PAGE;
-				break;
-			case 2:
-				result = ConfirmGDPR_Network.GDPRWebPageType.AD_TARGET;
-				break;
-			case 3:
-				result = ConfirmGDPR_Network.GDPRWebPageType.ANALYTICS;
-				break;
 			}
 			return result;
 		}
@@ -90,8 +97,7 @@ namespace Title
 
 		public IEnumerator Send(APIRequestTask request, Action completed, Func<Exception, APIRequestTask, IEnumerator> alert)
 		{
-			Func<Exception, IEnumerator> onAlert = (Exception ex) => alert(ex, request);
-			return request.Run(completed, null, onAlert);
+			return request.Run(completed, null, (Exception ex) => alert(ex, request));
 		}
 
 		public enum GDPRWebPageType

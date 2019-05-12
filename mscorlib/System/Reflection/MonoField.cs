@@ -92,9 +92,16 @@ namespace System.Reflection
 
 		public override object GetValue(object obj)
 		{
-			if (!this.IsStatic && obj == null)
+			if (!this.IsStatic)
 			{
-				throw new TargetException("Non-static field requires a target");
+				if (obj == null)
+				{
+					throw new TargetException("Non-static field requires a target");
+				}
+				if (!this.DeclaringType.IsAssignableFrom(obj.GetType()))
+				{
+					throw new ArgumentException(string.Format("Field {0} defined on type {1} is not a field on the target object which is of type {2}.", this.Name, this.DeclaringType, obj.GetType()), "obj");
+				}
 			}
 			if (!this.IsLiteral)
 			{
@@ -113,9 +120,16 @@ namespace System.Reflection
 
 		public override void SetValue(object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
 		{
-			if (!this.IsStatic && obj == null)
+			if (!this.IsStatic)
 			{
-				throw new TargetException("Non-static field requires a target");
+				if (obj == null)
+				{
+					throw new TargetException("Non-static field requires a target");
+				}
+				if (!this.DeclaringType.IsAssignableFrom(obj.GetType()))
+				{
+					throw new ArgumentException(string.Format("Field {0} defined on type {1} is not a field on the target object which is of type {2}.", this.Name, this.DeclaringType, obj.GetType()), "obj");
+				}
 			}
 			if (this.IsLiteral)
 			{

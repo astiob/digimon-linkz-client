@@ -4,11 +4,11 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.CustomAttributeBuilder" /> class to unmanaged code.</summary>
-	[ComVisible(true)]
-	[CLSCompliant(false)]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("BE9ACCE8-AAFF-3B91-81AE-8211663F5CAD")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[CLSCompliant(false)]
 	[TypeLibImportClass(typeof(CustomAttributeBuilder))]
+	[ComVisible(true)]
 	public interface _CustomAttributeBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class UtilForCMD : MonoBehaviour
@@ -24,10 +25,23 @@ public class UtilForCMD : MonoBehaviour
 		{
 			component.CallBackClass = base.gameObject;
 		}
-		foreach (object obj in tm)
+		IEnumerator enumerator = tm.GetEnumerator();
+		try
 		{
-			Transform tm2 = (Transform)obj;
-			this.DisableCMD_CallBack(tm2);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform tm2 = (Transform)obj;
+				this.DisableCMD_CallBack(tm2);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 

@@ -60,7 +60,7 @@ namespace CharacterModelUI
 			transform.localScale = Vector3.one;
 			transform.localPosition = this.modelViewPosition;
 			transform.localRotation = Quaternion.identity;
-			DepthController.SetWidgetDepth_2(transform, this.modelViewDepth + baseDepth);
+			DepthController.SetWidgetDepth_Static(transform, this.modelViewDepth + baseDepth);
 			this.modelViewer = gameObject.GetComponent<UI_CharacterModelViewer>();
 			Animator component = this.animationRoot.GetComponent<Animator>();
 			this.openAnimationEvent = component.GetBehaviour<ModelViewerOpenAnimationEvent>();

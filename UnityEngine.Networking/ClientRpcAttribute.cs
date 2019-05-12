@@ -5,6 +5,6 @@ namespace UnityEngine.Networking
 	[AttributeUsage(AttributeTargets.Method)]
 	public class ClientRpcAttribute : Attribute
 	{
-		public int channel;
+		public int channel = 0;
 	}
 }

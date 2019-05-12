@@ -4,6 +4,7 @@ using Quest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UI.PartyEdit;
 using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
@@ -95,35 +96,33 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject goL_CLIP;
 
-	[SerializeField]
 	[Header("右クリップのOBJ")]
+	[SerializeField]
 	private GameObject goR_CLIP;
 
 	[SerializeField]
 	private UISprite leaderMark;
 
-	[SerializeField]
 	[Header("クリッピングオブジェクト")]
+	[SerializeField]
 	private GameObject clipObject;
 
 	[SerializeField]
-	private GameObject spButton;
+	private PartyEditQuestBonusButton bonusButton;
+
+	protected QuestBonusPack questBonusPack;
+
+	protected QuestBonusTargetCheck bonusTargetCheck;
 
 	private float minScreenX;
 
 	private float maxScreenX;
 
-	private QuestData.WorldDungeonData d_data;
-
-	private List<string> bonusListText = new List<string>();
-
-	private CMD_SPBonusList spBonusPop;
-
 	private GUISelectPanelBSLR selectPanelLR;
 
-	private int RENDER_W = 320;
+	private const int RENDER_W = 320;
 
-	private int RENDER_H = 378;
+	private const int RENDER_H = 378;
 
 	private int updateCharaCT = 2;
 
@@ -146,23 +145,18 @@ public class PartsPartyMonsInfo : GUICollider
 	{
 		base.OnDestroy();
 		this.ReleaseCharacter();
-		if (this.spBonusPop != null)
-		{
-			this.spBonusPop.ClosePanel(true);
-		}
 	}
 
 	public virtual void OnTapedMonster()
 	{
-		if (this.selectPanelLR != null && !this.selectPanelLR.IsStopRev())
-		{
-			return;
-		}
 		if (this.selectPanelLR != null)
 		{
+			if (!this.selectPanelLR.IsStopRev())
+			{
+				return;
+			}
 			this.selectPanelLR.SetScrollSpeed(0f);
 		}
-		global::Debug.Log("================================================== TAP MONS = " + base.gameObject.name);
 		CMD_DeckList.SelectMonsterData = this.Data;
 		CMD_DeckList dl = GUIMain.ShowCommonDialog(delegate(int i)
 		{
@@ -170,7 +164,7 @@ public class PartsPartyMonsInfo : GUICollider
 			{
 				this.guiListPartsPartyEdit.OnChanged();
 			}
-		}, "CMD_DeckList", null) as CMD_DeckList;
+		}, "CMD_DeckList", new Action<CommonDialog>(this.OnReadyDeckList)) as CMD_DeckList;
 		dl.PPMI_Instance = this;
 		CMD_BattleNextChoice battleNextChoice = UnityEngine.Object.FindObjectOfType<CMD_BattleNextChoice>();
 		if (battleNextChoice != null)
@@ -192,12 +186,28 @@ public class PartsPartyMonsInfo : GUICollider
 		this.HideStatusPanel();
 	}
 
+	protected void OnReadyDeckList(CommonDialog dialog)
+	{
+		CMD_DeckList cmd_DeckList = dialog as CMD_DeckList;
+		if (null != cmd_DeckList)
+		{
+			cmd_DeckList.SetQuestBonus(this.questBonusPack, this.bonusTargetCheck);
+		}
+	}
+
 	private void UpdateActive()
 	{
 		if (this.selectPanelLR == null && this.guiListPartsPartyEdit.gameObject.transform.parent != null)
 		{
 			this.selectPanelLR = this.guiListPartsPartyEdit.gameObject.transform.parent.GetComponent<GUISelectPanelBSLR>();
 		}
+	}
+
+	public void SetQuestBonus(QuestBonusPack questBonus, QuestBonusTargetCheck checker)
+	{
+		this.questBonusPack = questBonus;
+		this.bonusTargetCheck = checker;
+		this.bonusButton.Initialize(questBonus, checker);
 	}
 
 	public override void ShowGUI()
@@ -264,7 +274,7 @@ public class PartsPartyMonsInfo : GUICollider
 		this.csRender3DRT = gameObject.GetComponent<CommonRender3DRT>();
 		string filePath = MonsterObject.GetFilePath(this.Data.GetMonsterMaster().Group.modelId);
 		this.csRender3DRT.LoadChara(filePath, this.v3Chara.x, this.v3Chara.y, 0.1f, 0f, false);
-		this.renderTex = this.csRender3DRT.SetRenderTarget(this.RENDER_W, this.RENDER_H, 16);
+		this.renderTex = this.csRender3DRT.SetRenderTarget(320, 378, 16);
 		this.ngTargetTex.gameObject.SetActive(true);
 		this.ngTargetTex.mainTexture = this.renderTex;
 		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM monsterMG = this.Data.monsterMG;
@@ -363,7 +373,7 @@ public class PartsPartyMonsInfo : GUICollider
 			if (component != null)
 			{
 				one.x += (float)(component.width / 2);
-				one.x -= (float)this.RENDER_W / 2f;
+				one.x -= 160f;
 			}
 			one.x *= uiroot.gameObject.transform.localScale.x;
 			this.minScreenX = orthoCamera.WorldToScreenPoint(one).x;
@@ -372,7 +382,7 @@ public class PartsPartyMonsInfo : GUICollider
 			if (component != null)
 			{
 				one.x -= (float)(component.width / 2);
-				one.x += (float)this.RENDER_W / 2f;
+				one.x += 160f;
 			}
 			one.x *= uiroot.gameObject.transform.localScale.x;
 			this.maxScreenX = orthoCamera.WorldToScreenPoint(one).x;
@@ -439,162 +449,8 @@ public class PartsPartyMonsInfo : GUICollider
 		this.monsterBasicInfo.SetMonsterData(this.Data);
 		this.monsterMedalList.SetValues(this.Data.userMonster);
 		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] gimmickEffectArray = this.SetStageGimmick();
-		string value = string.Empty;
-		string text = string.Empty;
-		string text2 = string.Empty;
-		if (CMD_QuestTOP.instance != null)
-		{
-			if (CMD_QuestTOP.instance.StageDataBk != null)
-			{
-				text = CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldStageId;
-				text2 = CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId;
-				GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM[] worldStageM = MasterDataMng.Instance().RespDataMA_WorldStageM.worldStageM;
-				foreach (GameWebAPI.RespDataMA_GetWorldStageM.WorldStageM worldStageM2 in worldStageM)
-				{
-					if (text == worldStageM2.worldStageId)
-					{
-						value = worldStageM2.worldAreaId;
-						break;
-					}
-				}
-			}
-		}
-		else if (CMD_MultiRecruitPartyWait.Instance != null)
-		{
-			if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
-			{
-				value = CMD_MultiRecruitPartyWait.roomCreateData.multiRoomInfo.worldAreaId;
-				text = CMD_MultiRecruitPartyWait.roomCreateData.multiRoomInfo.worldStageId;
-				text2 = CMD_MultiRecruitPartyWait.roomCreateData.multiRoomInfo.worldDungeonId;
-			}
-			else
-			{
-				value = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo.worldAreaId;
-				text = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo.worldStageId;
-				text2 = CMD_MultiRecruitPartyWait.roomJoinData.multiRoomInfo.worldDungeonId;
-			}
-		}
-		else if (CMD_QuestTOP.instance == null && CMD_MultiRecruitPartyWait.Instance == null)
-		{
-			value = CMD_PartyEdit.replayMultiAreaId;
-			text = CMD_PartyEdit.replayMultiStageId;
-			text2 = CMD_PartyEdit.replayMultiDungeonId;
-		}
-		this.bonusListText.Clear();
-		if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(text) || string.IsNullOrEmpty(text2))
-		{
-			this.spButton.SetActive(false);
-		}
-		else if (CMD_PartyEdit.ModeType == CMD_PartyEdit.MODE_TYPE.EDIT)
-		{
-			this.spButton.SetActive(false);
-		}
-		else if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(text2))
-		{
-			List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> list = new List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>();
-			GameWebAPI.RespDataMA_EventPointBonusM respDataMA_EventPointBonusMaster = MasterDataMng.Instance().RespDataMA_EventPointBonusMaster;
-			for (int j = 0; j < respDataMA_EventPointBonusMaster.eventPointBonusM.Length; j++)
-			{
-				if (respDataMA_EventPointBonusMaster.eventPointBonusM[j].worldDungeonId.Equals(text2) && respDataMA_EventPointBonusMaster.eventPointBonusM[j].effectType != "0")
-				{
-					list.Add(respDataMA_EventPointBonusMaster.eventPointBonusM[j]);
-				}
-			}
-			List<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> extraEffectDataList = DataMng.Instance().StageGimmick.GetExtraEffectDataList(text, text2);
-			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectM = MasterDataMng.Instance().RespDataMA_ChipEffectMaster.chipEffectM;
-			List<string> list2 = new List<string>();
-			List<GameWebAPI.RespDataMA_ChipM.Chip> list3 = new List<GameWebAPI.RespDataMA_ChipM.Chip>();
-			List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect> list4 = new List<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
-			if (chipEffectM.Length > 0)
-			{
-				for (int k = 0; k < chipEffectM.Length; k++)
-				{
-					if (chipEffectM[k].effectTrigger.Equals("11") && chipEffectM[k].effectTriggerValue.Equals(value))
-					{
-						GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(chipEffectM[k].chipId);
-						if (chipMainData != null && !list2.Contains(chipEffectM[k].chipId))
-						{
-							list4.Add(chipEffectM[k]);
-							list3.Add(chipMainData);
-							list2.Add(chipEffectM[k].chipId);
-						}
-					}
-				}
-			}
-			int[] chipIdList = this.Data.GetChipEquip().GetChipIdList();
-			List<int> list5 = new List<int>();
-			list5.AddRange(chipIdList);
-			list5.Sort((int a, int b) => a - b);
-			List<GameWebAPI.RespDataMA_ChipM.Chip> list6 = new List<GameWebAPI.RespDataMA_ChipM.Chip>();
-			for (int l = 0; l < list5.Count; l++)
-			{
-				GameWebAPI.RespDataMA_ChipM.Chip chipMainData2 = ChipDataMng.GetChipMainData(list5[l].ToString());
-				list6.Add(chipMainData2);
-				for (int m = 0; m < list3.Count; m++)
-				{
-					if (list5[l] == int.Parse(list3[m].chipId))
-					{
-						GameWebAPI.RespDataMA_ChipM.Chip chipMainData3 = ChipDataMng.GetChipMainData(list3[m].chipId);
-						if (chipMainData3 != null)
-						{
-							this.bonusListText.Add(chipMainData3.name);
-						}
-					}
-				}
-			}
-			list.Sort((GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus a, GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus b) => int.Parse(a.targetSubType) - int.Parse(b.targetSubType));
-			extraEffectDataList.Sort((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM a, GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM b) => int.Parse(a.targetSubType) - int.Parse(b.targetSubType));
-			List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> list7 = list.FindAll((GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus a) => a.targetSubType.Equals("6"));
-			list.RemoveAll((GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus a) => a.targetSubType.Equals("6"));
-			List<string> list8 = new List<string>();
-			for (int n = 0; n < list7.Count; n++)
-			{
-				bool flag2 = true;
-				for (int num = 0; num < list4.Count; num++)
-				{
-					if (list4[num].chipId.Equals(list7[n].targetValue))
-					{
-						flag2 = false;
-					}
-				}
-				if (flag2)
-				{
-					for (int num2 = 0; num2 < list6.Count; num2++)
-					{
-						GameWebAPI.RespDataMA_ChipM.Chip chipMainData4 = ChipDataMng.GetChipMainData(list7[n].targetValue);
-						if (chipMainData4 != null && float.Parse(list7[n].effectValue) >= 0f && chipMainData4.chipId.Equals(list6[num2].chipId) && !list8.Contains(chipMainData4.chipId))
-						{
-							this.bonusListText.Add(chipMainData4.name);
-							list8.Add(chipMainData4.chipId);
-						}
-					}
-				}
-			}
-			for (int num3 = 0; num3 < list.Count; num3++)
-			{
-				bool flag3 = ExtraEffectUtil.CheckExtraParams(this.Data, list[num3]);
-				if (flag3)
-				{
-					this.bonusListText.Add(list[num3].detail);
-				}
-			}
-			for (int num4 = 0; num4 < extraEffectDataList.Count; num4++)
-			{
-				bool flag4 = ExtraEffectUtil.CheckExtraStageParams(this.Data, extraEffectDataList[num4]);
-				if (flag4)
-				{
-					this.bonusListText.Add(extraEffectDataList[num4].detail);
-				}
-			}
-			if (this.bonusListText.Count > 0)
-			{
-				this.spButton.SetActive(true);
-			}
-			else
-			{
-				this.spButton.SetActive(false);
-			}
-		}
+		this.bonusButton.SetTargetMonster(this.Data);
+		this.bonusButton.SetActive();
 		this.monsterGimickEffectStatusList.SetValues(this.Data, gimmickEffectArray);
 		this.monsterResistanceList.SetValues(this.Data);
 		this.SetSortieLimitCondition(this.Data);
@@ -628,20 +484,11 @@ public class PartsPartyMonsInfo : GUICollider
 		this.statusPanel.ResetUI();
 	}
 
-	public void SpEffectButton()
-	{
-		this.spBonusPop = (GUIMain.ShowCommonDialog(null, "CMD_SPBonusList", null) as CMD_SPBonusList);
-		if (this.spBonusPop != null)
-		{
-			this.spBonusPop.SetViewData(this.bonusListText);
-		}
-	}
-
 	public void SpButtonActive(bool active)
 	{
-		if (this.spButton != null)
+		if (null != this.bonusButton)
 		{
-			this.spButton.SetActive(active);
+			this.bonusButton.gameObject.SetActive(active);
 		}
 	}
 

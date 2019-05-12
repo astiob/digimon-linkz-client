@@ -5,10 +5,10 @@ namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.ConstructorBuilder" /> class to unmanaged code.</summary>
 	[ComVisible(true)]
-	[TypeLibImportClass(typeof(ConstructorBuilder))]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid("ED3E4384-D7E2-3FA7-8FFD-8940D330519A")]
+	[TypeLibImportClass(typeof(ConstructorBuilder))]
 	[CLSCompliant(false)]
+	[Guid("ED3E4384-D7E2-3FA7-8FFD-8940D330519A")]
 	public interface _ConstructorBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

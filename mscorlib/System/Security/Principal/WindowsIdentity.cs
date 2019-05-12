@@ -347,8 +347,8 @@ namespace System.Security.Principal
 
 		/// <summary>Gets the security identifier (SID) for the token owner.</summary>
 		/// <returns>A <see cref="T:System.Security.Principal.SecurityIdentifier" /> object for the token owner.</returns>
-		[MonoTODO("not implemented")]
 		[ComVisible(false)]
+		[MonoTODO("not implemented")]
 		public SecurityIdentifier Owner
 		{
 			get
@@ -359,8 +359,8 @@ namespace System.Security.Principal
 
 		/// <summary>Gets the security identifier (SID) for the user.</summary>
 		/// <returns>A <see cref="T:System.Security.Principal.SecurityIdentifier" /> object for the user.</returns>
-		[MonoTODO("not implemented")]
 		[ComVisible(false)]
+		[MonoTODO("not implemented")]
 		public SecurityIdentifier User
 		{
 			get

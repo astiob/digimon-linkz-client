@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class UnityObjectPooler<Object>
 {
-	private const string SplitKey = "#";
-
 	private Dictionary<string, Object> objects = new Dictionary<string, Object>();
+
+	private const string SplitKey = "#";
 
 	public Object GetObject(string key)
 	{

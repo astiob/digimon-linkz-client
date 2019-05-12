@@ -89,5 +89,28 @@ namespace Chip
 			this.monsterSlotInfoList.TryGetValue(key, out result);
 			return result;
 		}
+
+		public void RemoveMonsterChipData(string[] userMonsterIdList)
+		{
+			foreach (string userMonsterIdList2 in userMonsterIdList)
+			{
+				this.RemoveChipData(userMonsterIdList2, false);
+			}
+			this.DeleteMonsterSlotList(userMonsterIdList);
+		}
+
+		public void RemoveChipData(string userMonsterIdList, bool delete = true)
+		{
+			ChipClientSlotInfo slotInfo = this.GetSlotInfo(userMonsterIdList);
+			foreach (ChipClientEquip chipClientEquip in slotInfo.GetChipEquip())
+			{
+				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(chipClientEquip.userChipId);
+				userChip.resetUserMonsterID();
+			}
+			if (delete)
+			{
+				this.DeleteMonsterSlot(userMonsterIdList);
+			}
+		}
 	}
 }

@@ -72,25 +72,32 @@ public sealed class FadeCircle : ScreenEffectBase
 
 	private void UpdateValue(float min, float max, float duration, ref FadeCircle.RunTimeAnimationInfo runTimeInfo, Action<float> setAction)
 	{
-		switch (runTimeInfo.state)
+		FadeCircle.AnimeState state = runTimeInfo.state;
+		if (state != FadeCircle.AnimeState.PLAY)
 		{
-		case FadeCircle.AnimeState.PLAY:
+			if (state != FadeCircle.AnimeState.REVERSE)
+			{
+				if (state == FadeCircle.AnimeState.STOP)
+				{
+					runTimeInfo.state = FadeCircle.AnimeState.NONE;
+				}
+			}
+			else
+			{
+				if (this.PlayReverse(ref runTimeInfo.delay, ref runTimeInfo.value, min, max, ref runTimeInfo.elapse, duration))
+				{
+					runTimeInfo.state = FadeCircle.AnimeState.PLAY;
+				}
+				setAction(runTimeInfo.value);
+			}
+		}
+		else
+		{
 			if (this.PlayForward(ref runTimeInfo.delay, ref runTimeInfo.value, min, max, ref runTimeInfo.elapse, duration))
 			{
 				runTimeInfo.state = FadeCircle.AnimeState.REVERSE;
 			}
 			setAction(runTimeInfo.value);
-			break;
-		case FadeCircle.AnimeState.REVERSE:
-			if (this.PlayReverse(ref runTimeInfo.delay, ref runTimeInfo.value, min, max, ref runTimeInfo.elapse, duration))
-			{
-				runTimeInfo.state = FadeCircle.AnimeState.PLAY;
-			}
-			setAction(runTimeInfo.value);
-			break;
-		case FadeCircle.AnimeState.STOP:
-			runTimeInfo.state = FadeCircle.AnimeState.NONE;
-			break;
 		}
 	}
 
@@ -189,12 +196,12 @@ public sealed class FadeCircle : ScreenEffectBase
 		[Range(0f, 1f)]
 		public float min;
 
-		[Range(0f, 1f)]
 		[SerializeField]
+		[Range(0f, 1f)]
 		public float max;
 
-		[Range(0.5f, 5f)]
 		[SerializeField]
+		[Range(0.5f, 5f)]
 		public float blinkingSpeed;
 
 		[SerializeField]

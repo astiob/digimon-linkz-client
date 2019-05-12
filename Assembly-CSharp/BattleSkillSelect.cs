@@ -12,48 +12,48 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	public EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーション送信機能（PvP）")]
+	[SerializeField]
 	public EmotionSenderMulti emotionSenderPvP;
 
 	[Header("ボタンオブジェクト")]
 	[SerializeField]
 	public GameObject monsterButtonRoot;
 
-	[SerializeField]
 	[Header("残りターン/マルチバトルのみ")]
+	[SerializeField]
 	public RemainingTurn remainingTurnMiddle;
 
-	[SerializeField]
 	[Header("スキルボタンの親オブジェクト/マルチバトルのみ")]
+	[SerializeField]
 	public GameObject skillButtonRoot;
 
-	[SerializeField]
 	[Header("コライダー")]
+	[SerializeField]
 	private Collider[] colliderValues;
 
-	[SerializeField]
 	[Header("タッチ判定")]
+	[SerializeField]
 	public UITouchChecker[] touchChecker;
 
-	[SerializeField]
 	[Header("スキル説明1の命中率のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc1HitRateLocalize;
 
 	[Header("スキル説明2の命中率のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc2HitRateLocalize;
 
-	[SerializeField]
 	[Header("スキル説明3の命中率のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc3HitRateLocalize;
 
 	[Header("スキル説明1の威力のローカライズ")]
 	[SerializeField]
 	private UILabel skillDesc1PowerLocalize;
 
-	[SerializeField]
 	[Header("スキル説明2の威力のローカライズ")]
+	[SerializeField]
 	private UILabel skillDesc2PowerLocalize;
 
 	[Header("スキル説明3の威力のローカライズ")]
@@ -64,16 +64,16 @@ public class BattleSkillSelect : MonoBehaviour
 	[SerializeField]
 	private Transform leftParent;
 
-	[SerializeField]
 	[Header("スキルボタン")]
+	[SerializeField]
 	public BattleSkillBtn[] skillButton;
 
 	[Header("デジモンボタン")]
 	[SerializeField]
 	public BattleMonsterButton[] monsterButton;
 
-	[SerializeField]
 	[Header("アタックタイマー")]
+	[SerializeField]
 	public AttackTime attackTime;
 
 	private void Awake()

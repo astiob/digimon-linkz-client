@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Specifies the version number of an exported type library.</summary>
-	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
 	public sealed class TypeLibVersionAttribute : Attribute
 	{
 		private int major;

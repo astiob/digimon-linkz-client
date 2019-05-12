@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[ExecuteInEditMode]
-	[AddComponentMenu("Image Effects/Color Adjustments/Tonemapping")]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Color Adjustments/Tonemapping")]
 	public class Tonemapping : PostEffectsBase
 	{
 		public Tonemapping.TonemapperType type = Tonemapping.TonemapperType.Photographic;

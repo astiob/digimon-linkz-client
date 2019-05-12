@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.CompilerServices
 {
 	/// <summary>Indicates that the default value for the attributed field or parameter is an instance of <see cref="T:System.Runtime.InteropServices.DispatchWrapper" />, where the <see cref="P:System.Runtime.InteropServices.DispatchWrapper.WrappedObject" /> is null.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+	[ComVisible(true)]
 	[Serializable]
 	public sealed class IDispatchConstantAttribute : CustomConstantAttribute
 	{

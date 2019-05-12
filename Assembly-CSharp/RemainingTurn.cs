@@ -13,8 +13,8 @@ public sealed class RemainingTurn : MonoBehaviour
 	[SerializeField]
 	private UILabel remainingLabel;
 
-	[SerializeField]
 	[Header("ターン(右下用/真ん中メッセージ)")]
+	[SerializeField]
 	private UILabel turnLabel;
 
 	[Header("あなたのターンです(真ん中メッセージ)")]

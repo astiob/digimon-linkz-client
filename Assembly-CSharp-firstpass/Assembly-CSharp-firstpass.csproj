@@ -99,6 +99,373 @@
     <Compile Include="TimeZone.cs" />
     <Compile Include="TypeSerialize\TypeSerializeHelper.cs" />
     <Compile Include="UIDontDestroy.cs" />
+    <Compile Include="UniRx\AnimationCurveReactiveProperty.cs" />
+    <Compile Include="UniRx\AotSafeExtensions.cs" />
+    <Compile Include="UniRx\AsyncMessageBroker.cs" />
+    <Compile Include="UniRx\AsyncOperationExtensions.cs" />
+    <Compile Include="UniRx\AsyncReactiveCommand.2.cs" />
+    <Compile Include="UniRx\AsyncReactiveCommand.cs" />
+    <Compile Include="UniRx\AsyncReactiveCommandExtensions.cs" />
+    <Compile Include="UniRx\AsyncSubject.cs" />
+    <Compile Include="UniRx\BehaviorSubject.cs" />
+    <Compile Include="UniRx\BooleanDisposable.cs" />
+    <Compile Include="UniRx\BooleanNotifier.cs" />
+    <Compile Include="UniRx\BoolReactiveProperty.cs" />
+    <Compile Include="UniRx\BoundsReactiveProperty.cs" />
+    <Compile Include="UniRx\ByteReactiveProperty.cs" />
+    <Compile Include="UniRx\CancellationToken.cs" />
+    <Compile Include="UniRx\CollectionAddEvent.cs" />
+    <Compile Include="UniRx\CollectionMoveEvent.cs" />
+    <Compile Include="UniRx\CollectionRemoveEvent.cs" />
+    <Compile Include="UniRx\CollectionReplaceEvent.cs" />
+    <Compile Include="UniRx\ColorReactiveProperty.cs" />
+    <Compile Include="UniRx\CompositeDisposable.cs" />
+    <Compile Include="UniRx\CountChangedStatus.cs" />
+    <Compile Include="UniRx\CountNotifier.cs" />
+    <Compile Include="UniRx\Diagnostics\LogEntry.cs" />
+    <Compile Include="UniRx\Diagnostics\LogEntryExtensions.cs" />
+    <Compile Include="UniRx\Diagnostics\Logger.cs" />
+    <Compile Include="UniRx\Diagnostics\ObservableDebugExtensions.cs" />
+    <Compile Include="UniRx\Diagnostics\ObservableLogger.cs" />
+    <Compile Include="UniRx\Diagnostics\UnityDebugSink.cs" />
+    <Compile Include="UniRx\DictionaryAddEvent.cs" />
+    <Compile Include="UniRx\DictionaryDisposable.cs" />
+    <Compile Include="UniRx\DictionaryRemoveEvent.cs" />
+    <Compile Include="UniRx\DictionaryReplaceEvent.cs" />
+    <Compile Include="UniRx\Disposable.cs" />
+    <Compile Include="UniRx\DisposableExtensions.cs" />
+    <Compile Include="UniRx\DoubleReactiveProperty.cs" />
+    <Compile Include="UniRx\EventPattern.2.cs" />
+    <Compile Include="UniRx\EventPattern.cs" />
+    <Compile Include="UniRx\FloatReactiveProperty.cs" />
+    <Compile Include="UniRx\FrameCountType.cs" />
+    <Compile Include="UniRx\FrameCountTypeExtensions.cs" />
+    <Compile Include="UniRx\FrameInterval.cs" />
+    <Compile Include="UniRx\IAsyncMessageBroker.cs" />
+    <Compile Include="UniRx\IAsyncMessagePublisher.cs" />
+    <Compile Include="UniRx\IAsyncMessageReceiver.cs" />
+    <Compile Include="UniRx\IAsyncReactiveCommand.cs" />
+    <Compile Include="UniRx\ICancelable.cs" />
+    <Compile Include="UniRx\IConnectableObservable.cs" />
+    <Compile Include="UniRx\ICustomYieldInstructionErrorHandler.cs" />
+    <Compile Include="UniRx\IEventPattern.cs" />
+    <Compile Include="UniRx\IGroupedObservable.cs" />
+    <Compile Include="UniRx\IMessageBroker.cs" />
+    <Compile Include="UniRx\IMessagePublisher.cs" />
+    <Compile Include="UniRx\IMessageReceiver.cs" />
+    <Compile Include="UniRx\InspectorDisplayAttribute.cs" />
+    <Compile Include="UniRx\InternalUtil\AsyncLock.cs" />
+    <Compile Include="UniRx\InternalUtil\DisposedObserver.cs" />
+    <Compile Include="UniRx\InternalUtil\EmptyObserver.cs" />
+    <Compile Include="UniRx\InternalUtil\ImmutableList.cs" />
+    <Compile Include="UniRx\InternalUtil\ListObserver.cs" />
+    <Compile Include="UniRx\InternalUtil\MicroCoroutine.cs" />
+    <Compile Include="UniRx\InternalUtil\PriorityQueue.cs" />
+    <Compile Include="UniRx\InternalUtil\ScheduledItem.cs" />
+    <Compile Include="UniRx\InternalUtil\SchedulerQueue.cs" />
+    <Compile Include="UniRx\InternalUtil\ThreadSafeQueueWorker.cs" />
+    <Compile Include="UniRx\InternalUtil\ThrowObserver.cs" />
+    <Compile Include="UniRx\IntReactiveProperty.cs" />
+    <Compile Include="UniRx\IObservable.cs" />
+    <Compile Include="UniRx\IObserver.2.cs" />
+    <Compile Include="UniRx\IObserver.cs" />
+    <Compile Include="UniRx\IOptimizedObservable.cs" />
+    <Compile Include="UniRx\IPresenter.cs" />
+    <Compile Include="UniRx\IProgress.cs" />
+    <Compile Include="UniRx\IReactiveCollection.cs" />
+    <Compile Include="UniRx\IReactiveCommand.cs" />
+    <Compile Include="UniRx\IReactiveDictionary.cs" />
+    <Compile Include="UniRx\IReactiveProperty.cs" />
+    <Compile Include="UniRx\IReadOnlyReactiveCollection.cs" />
+    <Compile Include="UniRx\IReadOnlyReactiveDictionary.cs" />
+    <Compile Include="UniRx\IReadOnlyReactiveProperty.cs" />
+    <Compile Include="UniRx\IScheduler.cs" />
+    <Compile Include="UniRx\ISchedulerLongRunning.cs" />
+    <Compile Include="UniRx\ISchedulerPeriodic.cs" />
+    <Compile Include="UniRx\ISchedulerQueueing.cs" />
+    <Compile Include="UniRx\IStructuralComparable.cs" />
+    <Compile Include="UniRx\IStructuralEquatable.cs" />
+    <Compile Include="UniRx\ISubject.2.cs" />
+    <Compile Include="UniRx\ISubject.cs" />
+    <Compile Include="UniRx\ITuple.cs" />
+    <Compile Include="UniRx\LazyTask.2.cs" />
+    <Compile Include="UniRx\LazyTask.cs" />
+    <Compile Include="UniRx\LazyTaskExtensions.cs" />
+    <Compile Include="UniRx\LongReactiveProperty.cs" />
+    <Compile Include="UniRx\MainThreadDispatcher.cs" />
+    <Compile Include="UniRx\MainThreadDispatchType.cs" />
+    <Compile Include="UniRx\MessageBroker.cs" />
+    <Compile Include="UniRx\MultilineReactivePropertyAttribute.cs" />
+    <Compile Include="UniRx\MultipleAssignmentDisposable.cs" />
+    <Compile Include="UniRx\Notification.2.cs" />
+    <Compile Include="UniRx\Notification.cs" />
+    <Compile Include="UniRx\NotificationKind.cs" />
+    <Compile Include="UniRx\Observable.cs" />
+    <Compile Include="UniRx\ObservableExtensions.cs" />
+    <Compile Include="UniRx\ObservableWWW.cs" />
+    <Compile Include="UniRx\ObservableYieldInstruction.cs" />
+    <Compile Include="UniRx\ObserveExtensions.cs" />
+    <Compile Include="UniRx\Observer.cs" />
+    <Compile Include="UniRx\ObserverExtensions.cs" />
+    <Compile Include="UniRx\Operators\AggregateObservable.2.cs" />
+    <Compile Include="UniRx\Operators\AggregateObservable.3.cs" />
+    <Compile Include="UniRx\Operators\AggregateObservable.cs" />
+    <Compile Include="UniRx\Operators\AmbObservable.cs" />
+    <Compile Include="UniRx\Operators\AsObservableObservable.cs" />
+    <Compile Include="UniRx\Operators\AsSingleUnitObservableObservable.cs" />
+    <Compile Include="UniRx\Operators\AsUnitObservableObservable.cs" />
+    <Compile Include="UniRx\Operators\BatchFrameObservable.2.cs" />
+    <Compile Include="UniRx\Operators\BatchFrameObservable.cs" />
+    <Compile Include="UniRx\Operators\BufferObservable.2.cs" />
+    <Compile Include="UniRx\Operators\BufferObservable.cs" />
+    <Compile Include="UniRx\Operators\CastObservable.cs" />
+    <Compile Include="UniRx\Operators\CatchObservable.2.cs" />
+    <Compile Include="UniRx\Operators\CatchObservable.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestFunc.2.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestFunc.3.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestFunc.4.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestFunc.5.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestFunc.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.2.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.3.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.4.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.5.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.6.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.7.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObservable.cs" />
+    <Compile Include="UniRx\Operators\CombineLatestObserver.cs" />
+    <Compile Include="UniRx\Operators\ConcatObservable.cs" />
+    <Compile Include="UniRx\Operators\ContinueWithObservable.cs" />
+    <Compile Include="UniRx\Operators\CreateObservable.2.cs" />
+    <Compile Include="UniRx\Operators\CreateObservable.cs" />
+    <Compile Include="UniRx\Operators\CreateSafeObservable.cs" />
+    <Compile Include="UniRx\Operators\DefaultIfEmptyObservable.cs" />
+    <Compile Include="UniRx\Operators\DeferObservable.cs" />
+    <Compile Include="UniRx\Operators\DelayFrameObservable.cs" />
+    <Compile Include="UniRx\Operators\DelayFrameSubscriptionObservable.cs" />
+    <Compile Include="UniRx\Operators\DelayObservable.cs" />
+    <Compile Include="UniRx\Operators\DelaySubscriptionObservable.cs" />
+    <Compile Include="UniRx\Operators\DematerializeObservable.cs" />
+    <Compile Include="UniRx\Operators\DistinctObservable.2.cs" />
+    <Compile Include="UniRx\Operators\DistinctObservable.cs" />
+    <Compile Include="UniRx\Operators\DistinctUntilChangedObservable.2.cs" />
+    <Compile Include="UniRx\Operators\DistinctUntilChangedObservable.cs" />
+    <Compile Include="UniRx\Operators\DoObservable.cs" />
+    <Compile Include="UniRx\Operators\DoObserverObservable.cs" />
+    <Compile Include="UniRx\Operators\DoOnCancelObservable.cs" />
+    <Compile Include="UniRx\Operators\DoOnCompletedObservable.cs" />
+    <Compile Include="UniRx\Operators\DoOnErrorObservable.cs" />
+    <Compile Include="UniRx\Operators\DoOnSubscribeObservable.cs" />
+    <Compile Include="UniRx\Operators\DoOnTerminateObservable.cs" />
+    <Compile Include="UniRx\Operators\EmptyObservable.cs" />
+    <Compile Include="UniRx\Operators\FinallyObservable.cs" />
+    <Compile Include="UniRx\Operators\FirstObservable.cs" />
+    <Compile Include="UniRx\Operators\ForEachAsyncObservable.cs" />
+    <Compile Include="UniRx\Operators\FrameIntervalObservable.cs" />
+    <Compile Include="UniRx\Operators\FrameTimeIntervalObservable.cs" />
+    <Compile Include="UniRx\Operators\FromCoroutineObservable.cs" />
+    <Compile Include="UniRx\Operators\FromEventObservable.2.cs" />
+    <Compile Include="UniRx\Operators\FromEventObservable.3.cs" />
+    <Compile Include="UniRx\Operators\FromEventObservable.cs" />
+    <Compile Include="UniRx\Operators\FromEventObservable_.cs" />
+    <Compile Include="UniRx\Operators\FromEventPatternObservable.cs" />
+    <Compile Include="UniRx\Operators\FromMicroCoroutineObservable.cs" />
+    <Compile Include="UniRx\Operators\GroupByObservable.cs" />
+    <Compile Include="UniRx\Operators\GroupedObservable.cs" />
+    <Compile Include="UniRx\Operators\ICombineLatestObservable.cs" />
+    <Compile Include="UniRx\Operators\IgnoreElementsObservable.cs" />
+    <Compile Include="UniRx\Operators\ImmediateReturnObservable.cs" />
+    <Compile Include="UniRx\Operators\ImmutableEmptyObservable.cs" />
+    <Compile Include="UniRx\Operators\ImmutableNeverObservable.cs" />
+    <Compile Include="UniRx\Operators\ImmutableReturnFalseObservable.cs" />
+    <Compile Include="UniRx\Operators\ImmutableReturnInt32Observable.cs" />
+    <Compile Include="UniRx\Operators\ImmutableReturnTrueObservable.cs" />
+    <Compile Include="UniRx\Operators\ImmutableReturnUnitObservable.cs" />
+    <Compile Include="UniRx\Operators\ISelect.cs" />
+    <Compile Include="UniRx\Operators\IZipLatestObservable.cs" />
+    <Compile Include="UniRx\Operators\IZipObservable.cs" />
+    <Compile Include="UniRx\Operators\LastObservable.cs" />
+    <Compile Include="UniRx\Operators\MaterializeObservable.cs" />
+    <Compile Include="UniRx\Operators\MergeObservable.cs" />
+    <Compile Include="UniRx\Operators\NeverObservable.cs" />
+    <Compile Include="UniRx\Operators\NthCombineLatestObserverBase.cs" />
+    <Compile Include="UniRx\Operators\NthZipLatestObserverBase.cs" />
+    <Compile Include="UniRx\Operators\NthZipObserverBase.cs" />
+    <Compile Include="UniRx\Operators\ObserveOnObservable.cs" />
+    <Compile Include="UniRx\Operators\OfTypeObservable.cs" />
+    <Compile Include="UniRx\Operators\OperatorObservableBase.cs" />
+    <Compile Include="UniRx\Operators\OperatorObserverBase.cs" />
+    <Compile Include="UniRx\Operators\PairwiseObservable.2.cs" />
+    <Compile Include="UniRx\Operators\PairwiseObservable.cs" />
+    <Compile Include="UniRx\Operators\RangeObservable.cs" />
+    <Compile Include="UniRx\Operators\RefCountObservable.cs" />
+    <Compile Include="UniRx\Operators\RepeatObservable.cs" />
+    <Compile Include="UniRx\Operators\RepeatSafeObservable.cs" />
+    <Compile Include="UniRx\Operators\RepeatUntilObservable.cs" />
+    <Compile Include="UniRx\Operators\ReturnObservable.cs" />
+    <Compile Include="UniRx\Operators\SampleFrameObservable.cs" />
+    <Compile Include="UniRx\Operators\SampleObservable.2.cs" />
+    <Compile Include="UniRx\Operators\SampleObservable.cs" />
+    <Compile Include="UniRx\Operators\ScanObservable.2.cs" />
+    <Compile Include="UniRx\Operators\ScanObservable.cs" />
+    <Compile Include="UniRx\Operators\SelectManyObservable.2.cs" />
+    <Compile Include="UniRx\Operators\SelectManyObservable.cs" />
+    <Compile Include="UniRx\Operators\SelectObservable.cs" />
+    <Compile Include="UniRx\Operators\SelectWhereObservable.cs" />
+    <Compile Include="UniRx\Operators\SingleObservable.cs" />
+    <Compile Include="UniRx\Operators\SkipObservable.cs" />
+    <Compile Include="UniRx\Operators\SkipUntilObservable.cs" />
+    <Compile Include="UniRx\Operators\SkipWhileObservable.cs" />
+    <Compile Include="UniRx\Operators\StartObservable.cs" />
+    <Compile Include="UniRx\Operators\StartWithObservable.cs" />
+    <Compile Include="UniRx\Operators\SubscribeOnMainThreadObservable.cs" />
+    <Compile Include="UniRx\Operators\SubscribeOnObservable.cs" />
+    <Compile Include="UniRx\Operators\SwitchObservable.cs" />
+    <Compile Include="UniRx\Operators\SynchronizedObserver.cs" />
+    <Compile Include="UniRx\Operators\SynchronizeObservable.cs" />
+    <Compile Include="UniRx\Operators\TakeLastObservable.cs" />
+    <Compile Include="UniRx\Operators\TakeObservable.cs" />
+    <Compile Include="UniRx\Operators\TakeUntilObservable.cs" />
+    <Compile Include="UniRx\Operators\TakeWhileObservable.cs" />
+    <Compile Include="UniRx\Operators\ThrottleFirstFrameObservable.cs" />
+    <Compile Include="UniRx\Operators\ThrottleFirstObservable.cs" />
+    <Compile Include="UniRx\Operators\ThrottleFrameObservable.cs" />
+    <Compile Include="UniRx\Operators\ThrottleObservable.cs" />
+    <Compile Include="UniRx\Operators\ThrowObservable.cs" />
+    <Compile Include="UniRx\Operators\TimeIntervalObservable.cs" />
+    <Compile Include="UniRx\Operators\TimeoutFrameObservable.cs" />
+    <Compile Include="UniRx\Operators\TimeoutObservable.cs" />
+    <Compile Include="UniRx\Operators\TimerObservable.cs" />
+    <Compile Include="UniRx\Operators\TimestampObservable.cs" />
+    <Compile Include="UniRx\Operators\ToArrayObservable.cs" />
+    <Compile Include="UniRx\Operators\ToListObservable.cs" />
+    <Compile Include="UniRx\Operators\ToObservableObservable.cs" />
+    <Compile Include="UniRx\Operators\Wait.cs" />
+    <Compile Include="UniRx\Operators\WhenAllObservable.2.cs" />
+    <Compile Include="UniRx\Operators\WhenAllObservable.cs" />
+    <Compile Include="UniRx\Operators\WhereObservable.cs" />
+    <Compile Include="UniRx\Operators\WhereSelectObservable.cs" />
+    <Compile Include="UniRx\Operators\WithLatestFromObservable.cs" />
+    <Compile Include="UniRx\Operators\ZipFunc.2.cs" />
+    <Compile Include="UniRx\Operators\ZipFunc.3.cs" />
+    <Compile Include="UniRx\Operators\ZipFunc.4.cs" />
+    <Compile Include="UniRx\Operators\ZipFunc.5.cs" />
+    <Compile Include="UniRx\Operators\ZipFunc.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestFunc.2.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestFunc.3.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestFunc.4.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestFunc.5.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestFunc.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.2.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.3.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.4.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.5.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.6.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.7.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObservable.cs" />
+    <Compile Include="UniRx\Operators\ZipLatestObserver.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.2.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.3.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.4.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.5.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.6.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.7.cs" />
+    <Compile Include="UniRx\Operators\ZipObservable.cs" />
+    <Compile Include="UniRx\Operators\ZipObserver.cs" />
+    <Compile Include="UniRx\OptimizedObservableExtensions.cs" />
+    <Compile Include="UniRx\Pair.cs" />
+    <Compile Include="UniRx\PresenterBase.2.cs" />
+    <Compile Include="UniRx\PresenterBase.cs" />
+    <Compile Include="UniRx\Progress.cs" />
+    <Compile Include="UniRx\QuaternionReactiveProperty.cs" />
+    <Compile Include="UniRx\RangeReactivePropertyAttribute.cs" />
+    <Compile Include="UniRx\ReactiveCollection.cs" />
+    <Compile Include="UniRx\ReactiveCollectionExtensions.cs" />
+    <Compile Include="UniRx\ReactiveCommand.2.cs" />
+    <Compile Include="UniRx\ReactiveCommand.cs" />
+    <Compile Include="UniRx\ReactiveCommandExtensions.cs" />
+    <Compile Include="UniRx\ReactiveDictionary.cs" />
+    <Compile Include="UniRx\ReactiveDictionaryExtensions.cs" />
+    <Compile Include="UniRx\ReactiveProperty.cs" />
+    <Compile Include="UniRx\ReactivePropertyExtensions.cs" />
+    <Compile Include="UniRx\ReadOnlyReactiveProperty.cs" />
+    <Compile Include="UniRx\RectReactiveProperty.cs" />
+    <Compile Include="UniRx\RefCountDisposable.cs" />
+    <Compile Include="UniRx\ReplaySubject.cs" />
+    <Compile Include="UniRx\ScheduledDisposable.cs" />
+    <Compile Include="UniRx\ScheduledNotifier.cs" />
+    <Compile Include="UniRx\Scheduler.cs" />
+    <Compile Include="UniRx\SerialDisposable.cs" />
+    <Compile Include="UniRx\SingleAssignmentDisposable.cs" />
+    <Compile Include="UniRx\StableCompositeDisposable.cs" />
+    <Compile Include="UniRx\StringReactiveProperty.cs" />
+    <Compile Include="UniRx\Stubs.2.cs" />
+    <Compile Include="UniRx\Stubs.3.cs" />
+    <Compile Include="UniRx\Stubs.4.cs" />
+    <Compile Include="UniRx\Stubs.cs" />
+    <Compile Include="UniRx\Subject.cs" />
+    <Compile Include="UniRx\SubjectExtensions.cs" />
+    <Compile Include="UniRx\TimeInterval.cs" />
+    <Compile Include="UniRx\Timestamped.2.cs" />
+    <Compile Include="UniRx\Timestamped.cs" />
+    <Compile Include="UniRx\Toolkit\AsyncObjectPool.cs" />
+    <Compile Include="UniRx\Toolkit\ObjectPool.cs" />
+    <Compile Include="UniRx\Triggers\ObservableAnimatorTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableBeginDragTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableCancelTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableCanvasGroupChangedTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableCollision2DTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableCollisionTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableDeselectTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableDestroyTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableDragTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableDropTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableEnableTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableEndDragTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableEventTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableFixedUpdateTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableInitializePotentialDragTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableLateUpdateTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableMoveTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableParticleTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservablePointerClickTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservablePointerDownTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservablePointerEnterTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservablePointerExitTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservablePointerUpTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableRectTransformTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableScrollTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableSelectTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableStateMachineTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableSubmitTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableTransformChangedTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableTrigger2DTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableTriggerBase.cs" />
+    <Compile Include="UniRx\Triggers\ObservableTriggerExtensions.cs" />
+    <Compile Include="UniRx\Triggers\ObservableTriggerTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableUpdateSelectedTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableUpdateTrigger.cs" />
+    <Compile Include="UniRx\Triggers\ObservableVisibleTrigger.cs" />
+    <Compile Include="UniRx\Tuple.2.cs" />
+    <Compile Include="UniRx\Tuple.3.cs" />
+    <Compile Include="UniRx\Tuple.4.cs" />
+    <Compile Include="UniRx\Tuple.5.cs" />
+    <Compile Include="UniRx\Tuple.6.cs" />
+    <Compile Include="UniRx\Tuple.7.cs" />
+    <Compile Include="UniRx\Tuple.8.cs" />
+    <Compile Include="UniRx\Tuple.9.cs" />
+    <Compile Include="UniRx\Tuple.cs" />
+    <Compile Include="UniRx\Unit.cs" />
+    <Compile Include="UniRx\UnityEqualityComparer.cs" />
+    <Compile Include="UniRx\UnityEventExtensions.cs" />
+    <Compile Include="UniRx\UnityGraphicExtensions.cs" />
+    <Compile Include="UniRx\UnityUIComponentExtensions.cs" />
+    <Compile Include="UniRx\Vector2ReactiveProperty.cs" />
+    <Compile Include="UniRx\Vector3ReactiveProperty.cs" />
+    <Compile Include="UniRx\Vector4ReactiveProperty.cs" />
+    <Compile Include="UniRx\WebRequestExtensions.cs" />
+    <Compile Include="UniRx\WWWErrorException.cs" />
+    <Compile Include="UniRx\YieldInstructionCache.cs" />
     <Compile Include="UnityStandardAssets\ImageEffects\AAMode.cs" />
     <Compile Include="UnityStandardAssets\ImageEffects\Antialiasing.cs" />
     <Compile Include="UnityStandardAssets\ImageEffects\Bloom.cs" />
@@ -145,25 +512,49 @@
     <Compile Include="UnityStandardAssets\ImageEffects\Vortex.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mscorlib\mscorlib.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
-      <Name>mscorlib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
       <Name>System</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
-      <Name>UnityEngine</Name>
+    <ProjectReference Include="..\UnityEngine.AnimationModule\UnityEngine.AnimationModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</Project>
+      <Name>UnityEngine.AnimationModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797B}</Project>
+      <Name>UnityEngine.CoreModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.Physics2DModule\UnityEngine.Physics2DModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857989}</Project>
+      <Name>UnityEngine.Physics2DModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.PhysicsModule\UnityEngine.PhysicsModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798A}</Project>
+      <Name>UnityEngine.PhysicsModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.ScreenCaptureModule\UnityEngine.ScreenCaptureModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798B}</Project>
+      <Name>UnityEngine.ScreenCaptureModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857997}</Project>
+      <Name>UnityEngine.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UnityWebRequestModule\UnityEngine.UnityWebRequestModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799E}</Project>
+      <Name>UnityEngine.UnityWebRequestModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UnityWebRequestWWWModule\UnityEngine.UnityWebRequestWWWModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A0}</Project>
+      <Name>UnityEngine.UnityWebRequestWWWModule</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

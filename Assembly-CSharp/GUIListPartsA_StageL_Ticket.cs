@@ -7,12 +7,12 @@ using UnityEngine;
 
 public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 {
-	[SerializeField]
 	[Header("選択時の背景色")]
+	[SerializeField]
 	private Color backgroundColor = Util.convertColor(255f, 200f, 0f, 30f);
 
-	[SerializeField]
 	[Header("非選択時の背景色 (有償) ")]
+	[SerializeField]
 	private Color backgroundColorOff_Paid = Util.convertColor(180f, 0f, 0f, 230f);
 
 	[Header("非選択時の背景色 (無償・有効期限なし) ")]
@@ -23,20 +23,20 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[SerializeField]
 	private Color backgroundColorOff_Limit = Util.convertColor(0f, 180f, 0f, 230f);
 
-	[SerializeField]
 	[Header("サムネイル")]
+	[SerializeField]
 	private UITexture ngTICKET_THUMBNAIL;
 
 	[Header("背景のスプライト")]
 	[SerializeField]
 	private UISprite background;
 
-	[SerializeField]
 	[Header("チケット名ラベル")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_NAME;
 
-	[SerializeField]
 	[Header("チケット数ラベル")]
+	[SerializeField]
 	private UILabel ngTXT_TICKET_NUM;
 
 	[Header("チケット有効期限")]
@@ -47,8 +47,8 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 	[SerializeField]
 	private UILabel ngTXT_TICKET_UPDATE_TIME;
 
-	[SerializeField]
 	[Header("ステージギミック表記Obj")]
+	[SerializeField]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -272,7 +272,7 @@ public class GUIListPartsA_StageL_Ticket : GUIListPartBS
 			{
 				xx,
 				yy
-			}).Where(<>__TranspIdent3 => <>__TranspIdent3.xx.worldDungeonM.worldDungeonId == <>__TranspIdent3.yy.Key && <>__TranspIdent3.xx.status != 1).Select(<>__TranspIdent3 => <>__TranspIdent3.xx);
+			}).Where(<>__TranspIdent4 => <>__TranspIdent4.xx.worldDungeonM.worldDungeonId == <>__TranspIdent4.yy.Key && <>__TranspIdent4.xx.status != 1).Select(<>__TranspIdent4 => <>__TranspIdent4.xx);
 			if (source.Count<QuestData.WorldDungeonData>() != 0)
 			{
 				this.stateLabelColor.Add(new Color(1f, 0.94f, 0f));

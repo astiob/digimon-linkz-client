@@ -37,10 +37,10 @@ namespace WebAPIRequest
 			yield return webApi.StartCoroutine(GameWebAPI.Instance().StartAPIRequest("API List", sendJson, response));
 			try
 			{
-				string receiveJson = GameWebAPI.Instance().GetResponseJson(response);
+				string responseJson = GameWebAPI.Instance().GetResponseJson(response);
 				try
 				{
-					Dictionary<string, string> responseList = WebAPIJsonParse.GetResponseList(this.requestList, receiveJson);
+					Dictionary<string, string> responseList = WebAPIJsonParse.GetResponseList(this.requestList, responseJson);
 					for (int i = 0; i < this.requestList.Count; i++)
 					{
 						if (responseList.ContainsKey(this.requestList[i].apiId))
@@ -51,14 +51,12 @@ namespace WebAPIRequest
 				}
 				catch (JsonException ex)
 				{
-					JsonException error = ex;
-					throw new WebAPIException(WWWResponse.LocalErrorStatus.LOCAL_ERROR_JSONPARSE, error.Message);
+					throw new WebAPIException(WWWResponse.LocalErrorStatus.LOCAL_ERROR_JSONPARSE, ex.Message);
 				}
 			}
 			catch (WebAPIException ex2)
 			{
-				WebAPIException exception = ex2;
-				throw exception;
+				throw ex2;
 			}
 			yield break;
 		}

@@ -1,19 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityExtension;
 
-[RequireComponent(typeof(CapsuleCollider))]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(CapsuleCollider))]
 public class CharacterParams : MonoBehaviour
 {
 	public const float DeathEffectGenerationInterval = 1f;
 
 	private const float HUDDistance = 0.15f;
-
-	private const float AnimationCrossFadeLength = 0.5f;
-
-	private const float StartAnimationCrossFadeLength = 0.5f;
 
 	private const string QueueName = " - Queued Clone";
 
@@ -55,6 +52,9 @@ public class CharacterParams : MonoBehaviour
 
 	[SerializeField]
 	private CharacterParams.AttachEffectLocators[] _attachEffectLocators;
+
+	[SerializeField]
+	private float AnimationCrossFadeLength = 0.5f;
 
 	private float _hudHeightCache = float.NegativeInfinity;
 
@@ -439,7 +439,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.idle.wrapMode = WrapMode.Loop;
 			this._characterAnimation.clip = this._clips.idle;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.hit:
 			if (!this._clips.hit)
 			{
@@ -447,7 +447,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.hit.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.hit;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.dead:
 			if (!this._clips.down)
 			{
@@ -455,7 +455,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.down.wrapMode = WrapMode.ClampForever;
 			this._characterAnimation.clip = this._clips.down;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.guard:
 			if (!this._clips.guard)
 			{
@@ -463,7 +463,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.guard.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.guard;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.revival:
 			if (!this._clips.revival)
 			{
@@ -471,7 +471,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.revival.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.revival;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.win:
 			if (!this._clips.win)
 			{
@@ -479,7 +479,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.win.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.win;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.eat:
 			if (!this._clips.eat)
 			{
@@ -487,7 +487,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.eat.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.eat;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.move:
 			if (!this._clips.move)
 			{
@@ -502,7 +502,7 @@ public class CharacterParams : MonoBehaviour
 				this._clips.move.wrapMode = WrapMode.Loop;
 			}
 			this._characterAnimation.clip = this._clips.move;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.down:
 			if (!this._clips.down)
 			{
@@ -510,7 +510,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.down.wrapMode = WrapMode.ClampForever;
 			this._characterAnimation.clip = this._clips.down;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.getup:
 			if (!this._clips.getup)
 			{
@@ -518,7 +518,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.getup.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.getup;
-			goto IL_3D4;
+			goto IL_3CD;
 		case CharacterAnimationType.strongHit:
 			if (!this._clips.down)
 			{
@@ -526,7 +526,7 @@ public class CharacterParams : MonoBehaviour
 			}
 			this._clips.down.wrapMode = WrapMode.Once;
 			this._characterAnimation.clip = this._clips.down;
-			goto IL_3D4;
+			goto IL_3CD;
 		}
 		AnimationClip attackClip = this._clips.GetAttackClip(attackType, motionIndex);
 		if (!attackClip)
@@ -542,7 +542,7 @@ public class CharacterParams : MonoBehaviour
 			attackClip.wrapMode = WrapMode.Once;
 		}
 		this._characterAnimation.clip = attackClip;
-		IL_3D4:
+		IL_3CD:
 		if (BattleStateManager.current != null)
 		{
 			this.SetEscapeRotation(this.currentAnimationType == CharacterAnimationType.move);
@@ -553,7 +553,7 @@ public class CharacterParams : MonoBehaviour
 			{
 				if (isSmooth)
 				{
-					this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, 0.5f, QueueMode.PlayNow);
+					this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, this.AnimationCrossFadeLength, QueueMode.PlayNow);
 				}
 				else
 				{
@@ -561,7 +561,7 @@ public class CharacterParams : MonoBehaviour
 				}
 				if (this._clips.idle != null)
 				{
-					this._characterAnimation.CrossFadeQueued(this._clips.idle.name, 0.5f, QueueMode.CompleteOthers);
+					this._characterAnimation.CrossFadeQueued(this._clips.idle.name, this.AnimationCrossFadeLength, QueueMode.CompleteOthers);
 				}
 			}
 			else if (this._characterAnimation.clip.wrapMode == WrapMode.Loop)
@@ -570,7 +570,7 @@ public class CharacterParams : MonoBehaviour
 				{
 					if (isSmooth)
 					{
-						this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, 0.5f, QueueMode.PlayNow);
+						this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, this.AnimationCrossFadeLength, QueueMode.PlayNow);
 					}
 					else
 					{
@@ -584,12 +584,12 @@ public class CharacterParams : MonoBehaviour
 					{
 						queue = QueueMode.PlayNow;
 					}
-					this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, 0.5f, queue);
+					this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, this.AnimationCrossFadeLength, queue);
 				}
 			}
 			else if (isSmooth)
 			{
-				this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, 0.5f, QueueMode.PlayNow);
+				this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, this.AnimationCrossFadeLength, QueueMode.PlayNow);
 			}
 			else
 			{
@@ -600,28 +600,41 @@ public class CharacterParams : MonoBehaviour
 		{
 			if (isSmooth)
 			{
-				this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, 0.5f, QueueMode.PlayNow);
+				this._characterAnimation.CrossFadeQueued(this._characterAnimation.clip.name, this.AnimationCrossFadeLength, QueueMode.PlayNow);
 			}
 			else
 			{
 				this._characterAnimation.PlayQueued(this._characterAnimation.clip.name, QueueMode.PlayNow);
 			}
-			foreach (object obj in this._characterAnimation)
+			IEnumerator enumerator = this._characterAnimation.GetEnumerator();
+			try
 			{
-				AnimationState animationState = obj as AnimationState;
-				if (animationState.name.Replace(" - Queued Clone", string.Empty).Equals(this._characterAnimation.clip.name))
+				while (enumerator.MoveNext())
 				{
-					animationState.wrapMode = this._clips.getup.wrapMode;
+					object obj = enumerator.Current;
+					AnimationState animationState = obj as AnimationState;
+					if (animationState.name.Replace(" - Queued Clone", string.Empty).Equals(this._characterAnimation.clip.name))
+					{
+						animationState.wrapMode = this._clips.getup.wrapMode;
+					}
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
 				}
 			}
 			if (this._clips.getup)
 			{
 				this._clips.getup.wrapMode = WrapMode.Once;
-				this._characterAnimation.CrossFadeQueued(this._clips.getup.name, 0.5f, QueueMode.CompleteOthers);
+				this._characterAnimation.CrossFadeQueued(this._clips.getup.name, this.AnimationCrossFadeLength, QueueMode.CompleteOthers);
 			}
 			if (this._clips.idle != null)
 			{
-				this._characterAnimation.CrossFadeQueued(this._clips.idle.name, 0.5f, QueueMode.CompleteOthers);
+				this._characterAnimation.CrossFadeQueued(this._clips.idle.name, this.AnimationCrossFadeLength, QueueMode.CompleteOthers);
 			}
 		}
 		this.SetActiveRenderers(true);

@@ -29,7 +29,7 @@ namespace MonsterPicturebook
 			transform.localScale = Vector3.one;
 			transform.name = "DetailedInfo";
 			UIWidget component = this.viewParentObject.GetComponent<UIWidget>();
-			DepthController.AddWidgetDepth_2(transform, component.depth);
+			DepthController.AddWidgetDepth_Static(transform, component.depth);
 			return gameObject.GetComponent<UI_PictureDetailedInfo>();
 		}
 	}

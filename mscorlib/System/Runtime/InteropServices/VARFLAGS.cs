@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.VARFLAGS" /> instead.</summary>
-	[Flags]
 	[Obsolete]
+	[Flags]
 	[Serializable]
 	public enum VARFLAGS
 	{

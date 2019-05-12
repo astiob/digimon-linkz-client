@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Remoting
 {
 	/// <summary>Wraps marshal-by-value object references, allowing them to be returned through an indirection.</summary>
-	[ClassInterface(ClassInterfaceType.AutoDual)]
 	[ComVisible(true)]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class ObjectHandle : MarshalByRefObject, IObjectHandle
 	{
 		private object _wrapped;

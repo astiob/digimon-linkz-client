@@ -10,7 +10,13 @@ namespace System
 	[Serializable]
 	public abstract class TimeZone
 	{
-		private static TimeZone currentTimeZone = new CurrentSystemTimeZone(DateTime.GetNow());
+		private static TimeZone currentTimeZone;
+
+		[NonSerialized]
+		private static object tz_lock = new object();
+
+		[NonSerialized]
+		private static long timezone_check;
 
 		/// <summary>Gets the time zone of the current computer.</summary>
 		/// <returns>A <see cref="T:System.TimeZone" /> object that represents the current local time zone.</returns>
@@ -19,7 +25,19 @@ namespace System
 		{
 			get
 			{
-				return TimeZone.currentTimeZone;
+				long now = DateTime.GetNow();
+				object obj = TimeZone.tz_lock;
+				TimeZone result;
+				lock (obj)
+				{
+					if (TimeZone.currentTimeZone == null || now - TimeZone.timezone_check > 600000000L)
+					{
+						TimeZone.currentTimeZone = new CurrentSystemTimeZone(now);
+						TimeZone.timezone_check = now;
+					}
+					result = TimeZone.currentTimeZone;
+				}
+				return result;
 			}
 		}
 

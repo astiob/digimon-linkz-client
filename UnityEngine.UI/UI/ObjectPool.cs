@@ -41,7 +41,7 @@ namespace UnityEngine.UI
 			T t;
 			if (this.m_Stack.Count == 0)
 			{
-				t = ((default(T) == null) ? Activator.CreateInstance<T>() : default(T));
+				t = Activator.CreateInstance<T>();
 				this.countAll++;
 			}
 			else

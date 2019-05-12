@@ -90,7 +90,7 @@ public sealed class CMD_Shop : CMD
 				StoreInit.Instance().SetStatusToDoneInit();
 				AlertManager.ShowAlertDialog(delegate(int i)
 				{
-					base.ClosePanel(false);
+					this.<ClosePanel>__BaseCallProxy0(false);
 				}, "C-SH05");
 			}
 			else if (DataMng.Instance().RespDataSH_Info.isOverDigiStone == 1)
@@ -100,7 +100,7 @@ public sealed class CMD_Shop : CMD
 				{
 					AlertManager.ShowAlertDialog(delegate(int i)
 					{
-						base.ClosePanel(false);
+						this.<ClosePanel>__BaseCallProxy0(false);
 					}, "C-SH06");
 				}
 			}

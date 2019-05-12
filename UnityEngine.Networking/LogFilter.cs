@@ -6,6 +6,8 @@ namespace UnityEngine.Networking
 	{
 		internal const int Developer = 0;
 
+		internal const int SetInScripting = -1;
+
 		public const int Debug = 1;
 
 		public const int Info = 2;
@@ -16,6 +18,7 @@ namespace UnityEngine.Networking
 
 		public const int Fatal = 5;
 
+		[Obsolete("Use LogFilter.currentLogLevel instead")]
 		public static LogFilter.FilterLevel current = LogFilter.FilterLevel.Info;
 
 		private static int s_CurrentLogLevel = 2;
@@ -87,7 +90,8 @@ namespace UnityEngine.Networking
 			Info,
 			Warn,
 			Error,
-			Fatal
+			Fatal,
+			SetInScripting = -1
 		}
 	}
 }

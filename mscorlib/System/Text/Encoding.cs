@@ -617,7 +617,7 @@ namespace System.Text
 						{
 							try
 							{
-								Encoding.i18nAssembly = Assembly.Load("I18N, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
+								Encoding.i18nAssembly = Assembly.Load("I18N, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
 							}
 							catch (NotImplementedException)
 							{

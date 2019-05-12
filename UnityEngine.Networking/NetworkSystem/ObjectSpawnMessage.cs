@@ -12,12 +12,19 @@ namespace UnityEngine.Networking.NetworkSystem
 
 		public byte[] payload;
 
+		public Quaternion rotation;
+
 		public override void Deserialize(NetworkReader reader)
 		{
 			this.netId = reader.ReadNetworkId();
 			this.assetId = reader.ReadNetworkHash128();
 			this.position = reader.ReadVector3();
 			this.payload = reader.ReadBytesAndSize();
+			uint num = 16u;
+			if ((long)reader.Length - (long)((ulong)reader.Position) >= (long)((ulong)num))
+			{
+				this.rotation = reader.ReadQuaternion();
+			}
 		}
 
 		public override void Serialize(NetworkWriter writer)
@@ -26,6 +33,7 @@ namespace UnityEngine.Networking.NetworkSystem
 			writer.Write(this.assetId);
 			writer.Write(this.position);
 			writer.WriteBytesFull(this.payload);
+			writer.Write(this.rotation);
 		}
 	}
 }

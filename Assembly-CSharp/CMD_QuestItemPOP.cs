@@ -62,23 +62,30 @@ public class CMD_QuestItemPOP : CMD
 
 	public void SetParam(GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM data)
 	{
-		switch (int.Parse(data.assetCategoryId))
+		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)int.Parse(data.assetCategoryId);
+		if (assetCategory != MasterDataMng.AssetCategory.DIGI_STONE)
 		{
-		case 2:
+			if (assetCategory != MasterDataMng.AssetCategory.LINK_POINT)
+			{
+				if (assetCategory == MasterDataMng.AssetCategory.TIP)
+				{
+					this.titleLabel.text = data.assetTitle;
+					this.textLabel.text = StringMaster.GetString("TipDetileText");
+					this.iconSprite.spriteName = "Common02_LB_Chip";
+				}
+			}
+			else
+			{
+				this.titleLabel.text = data.assetTitle;
+				this.textLabel.text = StringMaster.GetString("LinkPointDetileText");
+				this.iconSprite.spriteName = "Common02_LB_Link";
+			}
+		}
+		else
+		{
 			this.titleLabel.text = data.assetTitle;
 			this.textLabel.text = StringMaster.GetString("DigistoneDetileText");
 			this.iconSprite.spriteName = "Common02_LB_Stone";
-			break;
-		case 3:
-			this.titleLabel.text = data.assetTitle;
-			this.textLabel.text = StringMaster.GetString("LinkPointDetileText");
-			this.iconSprite.spriteName = "Common02_LB_Link";
-			break;
-		case 4:
-			this.titleLabel.text = data.assetTitle;
-			this.textLabel.text = StringMaster.GetString("TipDetileText");
-			this.iconSprite.spriteName = "Common02_LB_Chip";
-			break;
 		}
 		this.iconSprite.depth = this.iconTexture.depth;
 		this.iconSprite.gameObject.SetActive(true);

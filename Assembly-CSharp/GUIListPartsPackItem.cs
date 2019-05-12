@@ -8,8 +8,8 @@ public class GUIListPartsPackItem : GUIListPartBS
 	[SerializeField]
 	private UITexture ItemIcon;
 
-	[SerializeField]
 	[Header("アイテムネーム")]
+	[SerializeField]
 	private UILabel lbTX_ItemName;
 
 	[Header("アイテム個数")]

@@ -4,15 +4,15 @@ namespace UnityEngine.Networking
 {
 	internal class NetBuffer
 	{
+		private byte[] m_Buffer;
+
+		private uint m_Pos;
+
 		private const int k_InitialSize = 64;
 
 		private const float k_GrowthFactor = 1.5f;
 
 		private const int k_BufferSizeWarning = 134217728;
-
-		private byte[] m_Buffer;
-
-		private uint m_Pos;
 
 		public NetBuffer()
 		{
@@ -29,6 +29,14 @@ namespace UnityEngine.Networking
 			get
 			{
 				return this.m_Pos;
+			}
+		}
+
+		public int Length
+		{
+			get
+			{
+				return this.m_Buffer.Length;
 			}
 		}
 
@@ -57,27 +65,6 @@ namespace UnityEngine.Networking
 			while ((uint)num < count)
 			{
 				buffer[(int)num] = this.m_Buffer[(int)((UIntPtr)(this.m_Pos + (uint)num))];
-				num += 1;
-			}
-			this.m_Pos += count;
-		}
-
-		public void ReadChars(char[] buffer, uint count)
-		{
-			if ((ulong)(this.m_Pos + count) > (ulong)((long)this.m_Buffer.Length))
-			{
-				throw new IndexOutOfRangeException(string.Concat(new object[]
-				{
-					"NetworkReader:ReadChars out of range: (",
-					count,
-					") ",
-					this.ToString()
-				}));
-			}
-			ushort num = 0;
-			while ((uint)num < count)
-			{
-				buffer[(int)num] = (char)this.m_Buffer[(int)((UIntPtr)(this.m_Pos + (uint)num))];
 				num += 1;
 			}
 			this.m_Pos += count;
@@ -133,7 +120,7 @@ namespace UnityEngine.Networking
 			this.WriteCheckForSpace((ushort)num);
 			if (targetOffset == 0 && (int)count == buffer.Length)
 			{
-				buffer.CopyTo(this.m_Buffer, (long)((ulong)this.m_Pos));
+				buffer.CopyTo(this.m_Buffer, (int)this.m_Pos);
 			}
 			else
 			{
@@ -153,7 +140,7 @@ namespace UnityEngine.Networking
 			this.WriteCheckForSpace(count);
 			if ((int)count == buffer.Length)
 			{
-				buffer.CopyTo(this.m_Buffer, (long)((ulong)this.m_Pos));
+				buffer.CopyTo(this.m_Buffer, (int)this.m_Pos);
 			}
 			else
 			{
@@ -167,22 +154,21 @@ namespace UnityEngine.Networking
 
 		private void WriteCheckForSpace(ushort count)
 		{
-			if ((ulong)(this.m_Pos + (uint)count) < (ulong)((long)this.m_Buffer.Length))
+			if ((ulong)(this.m_Pos + (uint)count) >= (ulong)((long)this.m_Buffer.Length))
 			{
-				return;
-			}
-			int num = (int)((float)this.m_Buffer.Length * 1.5f);
-			while ((ulong)(this.m_Pos + (uint)count) >= (ulong)((long)num))
-			{
-				num = (int)((float)num * 1.5f);
-				if (num > 134217728)
+				int num = (int)Math.Ceiling((double)((float)this.m_Buffer.Length * 1.5f));
+				while ((ulong)(this.m_Pos + (uint)count) >= (ulong)((long)num))
 				{
-					Debug.LogWarning("NetworkBuffer size is " + num + " bytes!");
+					num = (int)Math.Ceiling((double)((float)num * 1.5f));
+					if (num > 134217728)
+					{
+						Debug.LogWarning("NetworkBuffer size is " + num + " bytes!");
+					}
 				}
+				byte[] array = new byte[num];
+				this.m_Buffer.CopyTo(array, 0);
+				this.m_Buffer = array;
 			}
-			byte[] array = new byte[num];
-			this.m_Buffer.CopyTo(array, 0);
-			this.m_Buffer = array;
 		}
 
 		public void FinishMessage()

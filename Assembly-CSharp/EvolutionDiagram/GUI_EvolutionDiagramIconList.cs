@@ -7,10 +7,10 @@ namespace EvolutionDiagram
 {
 	public sealed class GUI_EvolutionDiagramIconList : CMDRecycleViewUDWrapper
 	{
-		private const int RECYCLE_SECTOR_NUM = 2;
-
 		[SerializeField]
 		private CMD_EvolutionDiagram dialogRoot;
+
+		private const int RECYCLE_SECTOR_NUM = 2;
 
 		private List<EvolutionDiagramData.IconMonster> evolutionMonsterList;
 

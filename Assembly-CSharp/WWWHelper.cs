@@ -23,7 +23,14 @@ public class WWWHelper
 	{
 		this.url = url;
 		this.postData = postData;
-		this.headers = headers;
+		if (headers == null)
+		{
+			this.headers = new Dictionary<string, string>();
+		}
+		else
+		{
+			this.headers = headers;
+		}
 		this.timeoutSeconds = timeoutSeconds;
 	}
 
@@ -69,8 +76,14 @@ public class WWWHelper
 			{
 				if (isTimeOut == WWWHelper.TimeOut.NO)
 				{
-					Texture2D arg = (!string.IsNullOrEmpty(www.error)) ? null : www.texture;
-					onFinished(arg, www.error, isTimeOut);
+					Texture2D texture2D = null;
+					byte[] bytes = www.bytes;
+					if (string.IsNullOrEmpty(www.error) && bytes != null)
+					{
+						texture2D = new Texture2D(2, 2, TextureFormat.ARGB32, false, false);
+						texture2D.LoadImage(bytes, false);
+					}
+					onFinished(texture2D, www.error, isTimeOut);
 				}
 				else
 				{
@@ -150,7 +163,8 @@ public class WWWHelper
 
 	public IEnumerator StartDownloadAssetBundle(Action<WWW> onStarted, Action<WWW> onFinished)
 	{
-		WWW www = WWW.LoadFromCacheOrDownload(this.url, this.version, this.crc);
+		Hash128 versionHash = new Hash128(0u, 0u, 0u, (uint)this.version);
+		WWW www = WWW.LoadFromCacheOrDownload(this.url, versionHash, this.crc);
 		if (onStarted != null)
 		{
 			onStarted(www);

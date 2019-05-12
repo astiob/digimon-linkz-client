@@ -21,9 +21,9 @@ namespace DeviceSafeArea
 
 		public static Vector2 GetDeviceScreenSize()
 		{
-			float new_x = (float)Screen.width;
-			float new_y = (float)Screen.height;
-			SafeArea.tempDeviceScreenSize.Set(new_x, new_y);
+			float newX = (float)Screen.width;
+			float newY = (float)Screen.height;
+			SafeArea.tempDeviceScreenSize.Set(newX, newY);
 			return SafeArea.tempDeviceScreenSize;
 		}
 	}

@@ -27,33 +27,45 @@ public sealed class CMD_UpperlimitChip : CMD
 
 	public void SetType(CMD_UpperlimitChip.MessageType type)
 	{
-		switch (type)
+		if (type != CMD_UpperlimitChip.MessageType.GASHA)
 		{
-		case CMD_UpperlimitChip.MessageType.GASHA:
+			if (type != CMD_UpperlimitChip.MessageType.PRESENTS)
+			{
+				if (type == CMD_UpperlimitChip.MessageType.QUEST)
+				{
+					this.message.text = StringMaster.GetString("ChipOverQuest");
+				}
+			}
+			else
+			{
+				this.message.text = StringMaster.GetString("ChipOverPresent");
+			}
+		}
+		else
+		{
 			this.message.text = StringMaster.GetString("ChipOverGasha");
-			break;
-		case CMD_UpperlimitChip.MessageType.PRESENTS:
-			this.message.text = StringMaster.GetString("ChipOverPresent");
-			break;
-		case CMD_UpperlimitChip.MessageType.QUEST:
-			this.message.text = StringMaster.GetString("ChipOverQuest");
-			break;
 		}
 	}
 
 	public void SetNoticeMessage(LimitOverNoticeType type)
 	{
-		switch (type)
+		if (type != LimitOverNoticeType.GASHA)
 		{
-		case LimitOverNoticeType.GASHA:
+			if (type != LimitOverNoticeType.PRESENTS)
+			{
+				if (type == LimitOverNoticeType.QUEST)
+				{
+					this.message.text = StringMaster.GetString("ChipOverQuest");
+				}
+			}
+			else
+			{
+				this.message.text = StringMaster.GetString("ChipOverPresent");
+			}
+		}
+		else
+		{
 			this.message.text = StringMaster.GetString("ChipOverGasha");
-			break;
-		case LimitOverNoticeType.PRESENTS:
-			this.message.text = StringMaster.GetString("ChipOverPresent");
-			break;
-		case LimitOverNoticeType.QUEST:
-			this.message.text = StringMaster.GetString("ChipOverQuest");
-			break;
 		}
 	}
 

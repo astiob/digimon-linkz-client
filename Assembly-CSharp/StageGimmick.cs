@@ -20,8 +20,10 @@ public class StageGimmick
 
 	private void CreateDataDic()
 	{
-		foreach (GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeon in MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM)
+		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM[] worldDungeonM = MasterDataMng.Instance().RespDataMA_WorldDungeonM.worldDungeonM;
+		for (int i = 0; i < worldDungeonM.Length; i++)
 		{
+			GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM worldDungeon = worldDungeonM[i];
 			IEnumerable<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM> enumerable = MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectManageM.worldDungeonExtraEffectManageM.Where((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM xx) => xx.worldDungeonId == worldDungeon.worldDungeonId);
 			foreach (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectManageM.WorldDungeonExtraEffectManageM worldDungeonExtraEffectManageM in enumerable)
 			{
@@ -73,6 +75,17 @@ public class StageGimmick
 	public List<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> GetExtraEffectDataList(string StageID, string DungeonID)
 	{
 		return this.GetExtraEffectDataList(this.GetExtraEffectIDList(StageID, DungeonID));
+	}
+
+	public List<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> GetExtraEffectUpBonusList(string stageID, string dungeonID)
+	{
+		List<string> extraEffectIDList = this.GetExtraEffectIDList(stageID, dungeonID);
+		IEnumerable<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM> source = MasterDataMng.Instance().RespDataMA_WorldDungeonExtraEffectM.worldDungeonExtraEffectM.SelectMany((GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM xx) => extraEffectIDList, (GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM xx, string yy) => new
+		{
+			xx,
+			yy
+		}).Where(<>__TranspIdent2 => <>__TranspIdent2.xx.worldDungeonExtraEffectId == <>__TranspIdent2.yy).Where(<>__TranspIdent2 => int.Parse(<>__TranspIdent2.xx.effectValue) > 0).Select(<>__TranspIdent2 => <>__TranspIdent2.xx);
+		return source.ToList<GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM>();
 	}
 
 	public bool IsMatch(List<string> ExtraEffectIDList, MonsterData MonsterData)

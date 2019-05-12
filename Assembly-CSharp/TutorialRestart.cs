@@ -72,11 +72,11 @@ public sealed class TutorialRestart : TutorialCommandBase
 		if (levelIndex > 0)
 		{
 			List<string> downloadList = new List<string>();
-			for (int i = 0; i <= levelIndex - 1; i++)
+			for (int j = 0; j <= levelIndex - 1; j++)
 			{
-				if (manager.GetDownloadAssetBundleCount(assetNameList[i]) > 0)
+				if (manager.GetDownloadAssetBundleCount(assetNameList[j]) > 0)
 				{
-					downloadList.Add(assetNameList[i]);
+					downloadList.Add(assetNameList[j]);
 				}
 			}
 			string[] levels = downloadList.ToArray();
@@ -102,12 +102,12 @@ public sealed class TutorialRestart : TutorialCommandBase
 					yield return null;
 				}
 				bool isEndDownload = false;
-				for (int j = 0; j < levels.Length; j++)
+				for (int i = 0; i < levels.Length; i++)
 				{
-					if (0 < manager.GetDownloadAssetBundleCount(levels[j]))
+					if (0 < manager.GetDownloadAssetBundleCount(levels[i]))
 					{
 						isEndDownload = false;
-						this.controlToGame.StartDownload(levels[j], delegate
+						this.controlToGame.StartDownload(levels[i], delegate
 						{
 							isEndDownload = true;
 						});
@@ -366,20 +366,33 @@ public sealed class TutorialRestart : TutorialCommandBase
 		if (!this.skipStatus.invalidRestart)
 		{
 			string type = this.scriptEngine.GetUiInfo().type;
-			switch (type)
+			if (type != null)
 			{
-			case "SHORTCUT":
-				this.tutorialStatus.openConfirmUI.Add("SHORTCUT");
-				break;
-			case "GASHA_START":
-				this.tutorialStatus.openConfirmUI.Add("GASHA_START");
-				break;
-			case "MEAL_DIGI":
-				this.tutorialStatus.selectUI.Add("MEAL_DIGI");
-				break;
-			case "MEAL_OK":
-				this.tutorialStatus.selectUI.Clear();
-				break;
+				if (!(type == "SHORTCUT"))
+				{
+					if (!(type == "GASHA_START"))
+					{
+						if (!(type == "MEAL_DIGI"))
+						{
+							if (type == "MEAL_OK")
+							{
+								this.tutorialStatus.selectUI.Clear();
+							}
+						}
+						else
+						{
+							this.tutorialStatus.selectUI.Add("MEAL_DIGI");
+						}
+					}
+					else
+					{
+						this.tutorialStatus.openConfirmUI.Add("GASHA_START");
+					}
+				}
+				else
+				{
+					this.tutorialStatus.openConfirmUI.Add("SHORTCUT");
+				}
 			}
 		}
 	}

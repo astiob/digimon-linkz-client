@@ -201,9 +201,9 @@ public class TutorialCommandAction : TutorialCommandBase
 			if (this.isApplicationResume)
 			{
 				this.isApplicationResume = false;
-				double restTime = this.waitFinishedTime - this.waitCurrentTime;
+				double num = this.waitFinishedTime - this.waitCurrentTime;
 				this.waitCurrentTime = (double)Time.unscaledTime;
-				this.waitFinishedTime = restTime + (double)Time.unscaledTime;
+				this.waitFinishedTime = num + (double)Time.unscaledTime;
 			}
 			else if (waitStartUnscaledTime <= Time.unscaledTime)
 			{
@@ -211,9 +211,9 @@ public class TutorialCommandAction : TutorialCommandBase
 			}
 			else
 			{
-				double restTime2 = this.waitFinishedTime - this.waitCurrentTime;
+				double num2 = this.waitFinishedTime - this.waitCurrentTime;
 				this.waitCurrentTime = (double)Time.unscaledTime;
-				this.waitFinishedTime = restTime2 + (double)Time.unscaledTime;
+				this.waitFinishedTime = num2 + (double)Time.unscaledTime;
 			}
 		}
 		base.ResumeScript();
@@ -494,10 +494,9 @@ public class TutorialCommandAction : TutorialCommandBase
 	private void WaitOpenDigimonDetail()
 	{
 		int waitOpenDetailUI = this.scriptEngine.GetWaitOpenDetailUI();
-		int num = waitOpenDetailUI;
-		if (num != 0)
+		if (waitOpenDetailUI != 0)
 		{
-			if (num == 1)
+			if (waitOpenDetailUI == 1)
 			{
 				this.controlToGame.WaitOpenedForDigiGardenCharacterDetailWindow(new Action(base.ResumeScript));
 			}

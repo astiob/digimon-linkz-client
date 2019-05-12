@@ -89,8 +89,8 @@ public class SubStateMultiCharacterRevivalFunction : SubStateCharacterRevivalFun
 		{
 			if (base.stateManager.multiFunction.IsRevivalCancel(i))
 			{
-				string userId = base.stateManager.multiFunction.GetRevivalUserId(i);
-				revivalCancelUserIdList.Add(userId);
+				string revivalUserId = base.stateManager.multiFunction.GetRevivalUserId(i);
+				revivalCancelUserIdList.Add(revivalUserId);
 			}
 		}
 		base.stateManager.uiControlMulti.ShowLoading(false);
@@ -118,9 +118,9 @@ public class SubStateMultiCharacterRevivalFunction : SubStateCharacterRevivalFun
 		}
 		else
 		{
-			foreach (string revivalCancelUserId in revivalCancelUserIdList)
+			foreach (string userId in revivalCancelUserIdList)
 			{
-				base.stateManager.multiFunction.RemoveRevivalData(revivalCancelUserId);
+				base.stateManager.multiFunction.RemoveRevivalData(userId);
 			}
 		}
 		base.stateManager.uiControl.SetTouchEnable(true);

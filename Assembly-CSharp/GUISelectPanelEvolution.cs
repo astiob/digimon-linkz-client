@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GUISelectPanelEvolution : GUISelectPanelBSPartsUD
+public sealed class GUISelectPanelEvolution : GUISelectPanelBSPartsUD
 {
-	public void AllBuild(List<EvolutionData.MonsterEvolveData> evolveDataList)
+	public void AllBuild(List<EvolutionData.MonsterEvolveData> evolveDataList, CMD_Evolution evolutionWindow, Action<EvolutionData.MonsterEvolveData, int> onEvolution)
 	{
 		base.InitBuild();
 		this.partsCount = evolveDataList.Count;
@@ -23,6 +23,8 @@ public class GUISelectPanelEvolution : GUISelectPanelBSPartsUD
 				{
 					component.SetOriginalPos(new Vector3(startX, num, -5f));
 					component.Data = evolveDataList[i];
+					component.Initialize(onEvolution);
+					component.ShowGUI();
 				}
 				num -= panelBuildData.pitchH;
 				num2++;

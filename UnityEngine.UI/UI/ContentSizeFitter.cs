@@ -3,16 +3,16 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
-	[ExecuteInEditMode]
 	[AddComponentMenu("Layout/Content Size Fitter", 141)]
+	[ExecuteInEditMode]
 	[RequireComponent(typeof(RectTransform))]
-	public class ContentSizeFitter : UIBehaviour, ILayoutController, ILayoutSelfController
+	public class ContentSizeFitter : UIBehaviour, ILayoutSelfController, ILayoutController
 	{
 		[SerializeField]
-		protected ContentSizeFitter.FitMode m_HorizontalFit;
+		protected ContentSizeFitter.FitMode m_HorizontalFit = ContentSizeFitter.FitMode.Unconstrained;
 
 		[SerializeField]
-		protected ContentSizeFitter.FitMode m_VerticalFit;
+		protected ContentSizeFitter.FitMode m_VerticalFit = ContentSizeFitter.FitMode.Unconstrained;
 
 		[NonSerialized]
 		private RectTransform m_Rect;
@@ -89,16 +89,18 @@ namespace UnityEngine.UI
 			if (fitMode == ContentSizeFitter.FitMode.Unconstrained)
 			{
 				this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.None);
-				return;
-			}
-			this.m_Tracker.Add(this, this.rectTransform, (axis != 0) ? DrivenTransformProperties.SizeDeltaY : DrivenTransformProperties.SizeDeltaX);
-			if (fitMode == ContentSizeFitter.FitMode.MinSize)
-			{
-				this.rectTransform.SetSizeWithCurrentAnchors((RectTransform.Axis)axis, LayoutUtility.GetMinSize(this.m_Rect, axis));
 			}
 			else
 			{
-				this.rectTransform.SetSizeWithCurrentAnchors((RectTransform.Axis)axis, LayoutUtility.GetPreferredSize(this.m_Rect, axis));
+				this.m_Tracker.Add(this, this.rectTransform, (axis != 0) ? DrivenTransformProperties.SizeDeltaY : DrivenTransformProperties.SizeDeltaX);
+				if (fitMode == ContentSizeFitter.FitMode.MinSize)
+				{
+					this.rectTransform.SetSizeWithCurrentAnchors((RectTransform.Axis)axis, LayoutUtility.GetMinSize(this.m_Rect, axis));
+				}
+				else
+				{
+					this.rectTransform.SetSizeWithCurrentAnchors((RectTransform.Axis)axis, LayoutUtility.GetPreferredSize(this.m_Rect, axis));
+				}
 			}
 		}
 
@@ -115,11 +117,10 @@ namespace UnityEngine.UI
 
 		protected void SetDirty()
 		{
-			if (!this.IsActive())
+			if (this.IsActive())
 			{
-				return;
+				LayoutRebuilder.MarkLayoutForRebuild(this.rectTransform);
 			}
-			LayoutRebuilder.MarkLayoutForRebuild(this.rectTransform);
 		}
 
 		public enum FitMode

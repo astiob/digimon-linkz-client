@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PlayerWinnerController : MonoBehaviour
 {
-	[SerializeField]
 	[Header("サークルオブジェクト")]
+	[SerializeField]
 	private Transform[] circles = new Transform[0];
 
 	[Header("サークルの回転制御")]

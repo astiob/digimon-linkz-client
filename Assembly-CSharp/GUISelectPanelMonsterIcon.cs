@@ -9,6 +9,8 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 {
 	public static GUISelectPanelMonsterIcon instance;
 
+	private Func<MonsterData, bool> actionCheckEnablePush;
+
 	private float valueA_Min = -1f;
 
 	private float valueA_Max = 1f;
@@ -26,8 +28,6 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 	private Action<MonsterData> actS_bak;
 
 	private Vector3 vScl_bak;
-
-	private Func<MonsterData, bool> actionCheckEnablePush;
 
 	public CMD_BaseSelect.BASE_TYPE BaseType { private get; set; }
 
@@ -171,15 +171,6 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 		float startX = panelBuildData.startX;
 		int num3 = 0;
 		UIWidget component = base.gameObject.GetComponent<UIWidget>();
-		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray = null;
-		if (CMD_MultiRecruitPartyWait.StageDataBk != null)
-		{
-			effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_MultiRecruitPartyWait.StageDataBk.worldDungeonId);
-		}
-		else if (CMD_QuestTOP.instance != null && CMD_QuestTOP.instance.StageDataBk != null)
-		{
-			effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
-		}
 		foreach (MonsterData monsterData2 in monsterDataList)
 		{
 			GUIMonsterIcon icon3 = ClassSingleton<GUIMonsterIconList>.Instance.GetIcon(monsterData2);
@@ -192,7 +183,6 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 			float x = startX + panelBuildData.pitchW * (float)(num3 % this.PARTS_CT_MN);
 			icon3.SetOriginalPos(new Vector3(x, num2, -5f));
 			icon3.SetParent();
-			icon3.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(monsterData2, effectArray);
 			if (component != null)
 			{
 				DepthController component2 = gameObject.GetComponent<DepthController>();
@@ -228,6 +218,35 @@ public class GUISelectPanelMonsterIcon : GUISelectPanelBSPartsUD
 	public void ReAllBuild(List<MonsterData> dts)
 	{
 		this.AllBuild(dts, this.vScl_bak, this.actL_bak, this.actS_bak, true);
+	}
+
+	public void ClearIconDungeonBonus()
+	{
+		for (int i = 0; i < this.partObjs.Count; i++)
+		{
+			GUIMonsterIcon guimonsterIcon = this.partObjs[i] as GUIMonsterIcon;
+			if (null != guimonsterIcon)
+			{
+				guimonsterIcon.Gimmick = false;
+			}
+		}
+	}
+
+	public void SetIconDungeonBonus(QuestBonusPack bonus, QuestBonusTargetCheck checker)
+	{
+		QuestBonusPack questBonusPack = new QuestBonusPack();
+		for (int i = 0; i < this.partObjs.Count; i++)
+		{
+			GUIMonsterIcon guimonsterIcon = this.partObjs[i] as GUIMonsterIcon;
+			if (null != guimonsterIcon)
+			{
+				MonsterData data = guimonsterIcon.Data;
+				questBonusPack.bonusChipIds = QuestBonusFilter.GetActivateBonusChips(data, bonus.bonusChipIds);
+				questBonusPack.eventBonuses = QuestBonusFilter.GetActivateEventBonuses(checker, data, bonus.eventBonuses);
+				questBonusPack.dungeonBonuses = QuestBonusFilter.GetActivateDungeonBonuses(checker, data, bonus.dungeonBonuses);
+				guimonsterIcon.Gimmick = questBonusPack.ExistBonus();
+			}
+		}
 	}
 
 	public void SetIconSortieLimitParts(List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> limitList)

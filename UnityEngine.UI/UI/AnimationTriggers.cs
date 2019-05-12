@@ -23,8 +23,8 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private string m_HighlightedTrigger = "Highlighted";
 
-		[SerializeField]
 		[FormerlySerializedAs("pressedTrigger")]
+		[SerializeField]
 		private string m_PressedTrigger = "Pressed";
 
 		[FormerlySerializedAs("disabledTrigger")]

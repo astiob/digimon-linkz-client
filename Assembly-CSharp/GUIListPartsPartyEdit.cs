@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quest;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,14 +29,14 @@ public class GUIListPartsPartyEdit : GUIListPartBS
 		this.deckList = data;
 	}
 
-	public override void ShowGUI()
+	public void SetUI(QuestBonusPack questBonus, QuestBonusTargetCheck checker)
 	{
-		base.ShowGUI();
 		PartsPartyMonsInfo[] array = this.CreateMonsterInfo();
 		this.ppmiList = new List<PartsPartyMonsInfo>();
 		GameWebAPI.RespDataMN_GetDeckList.MonsterList[] monsterList = this.deckList.monsterList;
 		for (int i = 0; i < monsterList.Length; i++)
 		{
+			array[i].SetQuestBonus(questBonus, checker);
 			array[i].Data = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(monsterList[i].userMonsterId, false);
 			array[i].ShowGUI();
 			this.ppmiList.Add(array[i]);

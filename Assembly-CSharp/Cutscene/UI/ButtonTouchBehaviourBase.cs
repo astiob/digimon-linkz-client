@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Cutscene.UI
@@ -8,6 +9,7 @@ namespace Cutscene.UI
 	{
 		protected BoxCollider selfCollider;
 
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		protected event Action onTouch;
 
 		protected void DoAction()
@@ -28,12 +30,12 @@ namespace Cutscene.UI
 
 		public void AddAction(Action action)
 		{
-			this.onTouch = (Action)Delegate.Combine(this.onTouch, action);
+			this.onTouch += action;
 		}
 
 		public void RemoveAction(Action action)
 		{
-			this.onTouch = (Action)Delegate.Remove(this.onTouch, action);
+			this.onTouch -= action;
 		}
 	}
 }

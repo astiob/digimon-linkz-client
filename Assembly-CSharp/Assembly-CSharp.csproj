@@ -103,7 +103,6 @@
     <Compile Include="Algorithm.cs" />
     <Compile Include="ALMLConstants.cs" />
     <Compile Include="AlphaTweener.cs" />
-    <Compile Include="AlphaTweenerController.cs" />
     <Compile Include="AlwaysEffectParams.cs" />
     <Compile Include="AlwaysEffectParamsRelay.cs" />
     <Compile Include="AlwaysEffectState.cs" />
@@ -157,6 +156,7 @@
     <Compile Include="BattleDigimonEnemyStatus.cs" />
     <Compile Include="BattleDigimonStatus.cs" />
     <Compile Include="BattleDigimonStatusBase.cs" />
+    <Compile Include="BattleEffectManager.cs" />
     <Compile Include="BattleEvent.cs" />
     <Compile Include="BattleExtraEffectUI.cs" />
     <Compile Include="BattleFadeout.cs" />
@@ -310,9 +310,23 @@
     <Compile Include="CharacterAnimationType.cs" />
     <Compile Include="CharacterDatas.cs" />
     <Compile Include="CharacterDeadEffect.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsEvolution.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsGardenEvolution.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsInheritance.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsLaboratory.cs" />
     <Compile Include="CharacterDetailsUI\CharacterDetailsLeftUI.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsMedalInheritance.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsProtection.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsReinforcement.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsReinforcementParam.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsResistance.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsResistanceParameter.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterDetailsVersionUp.cs" />
     <Compile Include="CharacterDetailsUI\CharacterSkillInfo.cs" />
     <Compile Include="CharacterDetailsUI\CharacterStatusList.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterStatusReinforcement.cs" />
+    <Compile Include="CharacterDetailsUI\CharacterStatusResistance.cs" />
+    <Compile Include="CharacterDetailsUI\ICharacterDetailsUIAnimation.cs" />
     <Compile Include="CharacterFollowingTarget.cs" />
     <Compile Include="CharacterMiniStatusUI\StatusPanelViewControl.cs" />
     <Compile Include="CharacterMiniStatusUI\UI_ExtraCommonSkillParts.cs" />
@@ -482,9 +496,7 @@
     <Compile Include="CMD_QuestDetailedPOP.cs" />
     <Compile Include="CMD_QuestItemPOP.cs" />
     <Compile Include="CMD_QuestMonsterPOP.cs" />
-    <Compile Include="CMD_QuestMultiDetailedPOP.cs" />
     <Compile Include="CMD_QuestSelect.cs" />
-    <Compile Include="CMD_QuestSoloDetailedPOP.cs" />
     <Compile Include="CMD_QuestTOP.cs" />
     <Compile Include="CMD_RankModal.cs" />
     <Compile Include="CMD_ReinforcementTOP.cs" />
@@ -618,6 +630,7 @@
     <Compile Include="DigiHouseButton.cs" />
     <Compile Include="DigimonActionInGarden.cs" />
     <Compile Include="DigimonModelPlayer.cs" />
+    <Compile Include="DkLog.cs" />
     <Compile Include="DLLevelInfo.cs" />
     <Compile Include="DLProgressInfo.cs" />
     <Compile Include="DMMain.cs" />
@@ -638,6 +651,7 @@
     <Compile Include="EffectNumbers.cs" />
     <Compile Include="EffectParams.cs" />
     <Compile Include="EffectParamsGeneric.cs" />
+    <Compile Include="EffectPool.cs" />
     <Compile Include="EffectStatusBase.cs" />
     <Compile Include="EffectTarget.cs" />
     <Compile Include="EFFECT_BASE_KEY_FRAME.cs" />
@@ -924,7 +938,6 @@
     <Compile Include="GUISelectPanelMissionSelect.cs" />
     <Compile Include="GUISelectPanelMonsterIcon.cs" />
     <Compile Include="GUISelectPanelPartyEdit.cs" />
-    <Compile Include="GUISelectPanelPicturebookIcon.cs" />
     <Compile Include="GUISelectPanelQuestRanking.cs" />
     <Compile Include="GUISelectPanelRank.cs" />
     <Compile Include="GUISelectPanelStone.cs" />
@@ -1004,6 +1017,7 @@
     <Compile Include="Master\MasterId.cs" />
     <Compile Include="Master\MA_AbilityUpgradeM.cs" />
     <Compile Include="Master\MA_AssetCategoryMaster.cs" />
+    <Compile Include="Master\MA_AssetSalesBonusMaster.cs" />
     <Compile Include="Master\MA_ChipEffectMaster.cs" />
     <Compile Include="Master\MA_ChipMaster.cs" />
     <Compile Include="Master\MA_CodeMaster.cs" />
@@ -1031,6 +1045,7 @@
     <Compile Include="Master\MA_MessageMaster.cs" />
     <Compile Include="Master\MA_MessageStringMaster.cs" />
     <Compile Include="Master\MA_MonsterArousalMaster.cs" />
+    <Compile Include="Master\MA_MonsterAutoLoadChipMaster.cs" />
     <Compile Include="Master\MA_MonsterEvolutionMaster.cs" />
     <Compile Include="Master\MA_MonsterEvolutionMaterialMaster.cs" />
     <Compile Include="Master\MA_MonsterEvolutionRouteMaster.cs" />
@@ -1063,6 +1078,7 @@
     <Compile Include="Master\MA_WorldEventAreaMaster.cs" />
     <Compile Include="Master\MA_WorldEventMaster.cs" />
     <Compile Include="Master\MA_WorldMaster.cs" />
+    <Compile Include="Master\MA_WorldStageForceOpenMaster.cs" />
     <Compile Include="Master\MA_WorldStageMaster.cs" />
     <Compile Include="Master\MA_WorldStageOptionRewardMaster.cs" />
     <Compile Include="Master\MA_WorldStageRewardMaster.cs" />
@@ -1121,7 +1137,6 @@
     <Compile Include="MonsterList\TranceResistance\TranceResistanceIconGrayOut.cs" />
     <Compile Include="MonsterList\TranceResistance\TranceResistanceMonsterList.cs" />
     <Compile Include="MonsterMedalList.cs" />
-    <Compile Include="MonsterMedalRateList.cs" />
     <Compile Include="MonsterPicturebook\CMD_PicturebookDetailedInfo.cs" />
     <Compile Include="MonsterPicturebook\PicturebookDetailedInfo.cs" />
     <Compile Include="MonsterPicturebook\PicturebookModelViewTransition.cs" />
@@ -1135,6 +1150,7 @@
     <Compile Include="Monster\GrowStep.cs" />
     <Compile Include="Monster\Model\EggModel.cs" />
     <Compile Include="Monster\MonsterArousalData.cs" />
+    <Compile Include="Monster\MonsterAutoLoadChipData.cs" />
     <Compile Include="Monster\MonsterChipEquipData.cs" />
     <Compile Include="Monster\MonsterClientMaster.cs" />
     <Compile Include="Monster\MonsterDetailedFilterType.cs" />
@@ -1189,10 +1205,8 @@
     <Compile Include="MultiTabData.cs" />
     <Compile Include="MultiUser.cs" />
     <Compile Include="MultiUserComparer.cs" />
-    <Compile Include="NativeLoading.cs" />
     <Compile Include="NativeMessageDialog.cs" />
     <Compile Include="NativeNSLog.cs" />
-    <Compile Include="NativeSpriteAnimation.cs" />
     <Compile Include="Neptune\Cloud\ConditionOperator.cs" />
     <Compile Include="Neptune\Cloud\Core\INpCloudHandlerSystem.cs" />
     <Compile Include="Neptune\Cloud\Core\INpCloudManager.cs" />
@@ -1316,6 +1330,7 @@
     <Compile Include="Network\Socket\ISocketConnectionSyncListener.cs" />
     <Compile Include="Network\Socket\ISocketReceiveCallback.cs" />
     <Compile Include="NextChoice\NextChoiceReplay.cs" />
+    <Compile Include="NextChoice\RecruitmentBoardButton.cs" />
     <Compile Include="NGUIDebug.cs" />
     <Compile Include="NGUIDepth.cs" />
     <Compile Include="NGUIMath.cs" />
@@ -1378,6 +1393,8 @@
     <Compile Include="PassiveEffectParams.cs" />
     <Compile Include="PicturebookDetailController.cs" />
     <Compile Include="PicturebookDetailStatus.cs" />
+    <Compile Include="PicturebookItem.cs" />
+    <Compile Include="PicturebookMonsterIcon.cs" />
     <Compile Include="Picturebook\MonsterPicturebookData.cs" />
     <Compile Include="PingData.cs" />
     <Compile Include="PlayerPrefsExtentions.cs" />
@@ -1419,6 +1436,10 @@
     <Compile Include="QuestSecondTutorial.cs" />
     <Compile Include="QuestTOPAccessor.cs" />
     <Compile Include="Quest\PlayLimit.cs" />
+    <Compile Include="Quest\QuestBonus.cs" />
+    <Compile Include="Quest\QuestBonusFilter.cs" />
+    <Compile Include="Quest\QuestBonusPack.cs" />
+    <Compile Include="Quest\QuestBonusTargetCheck.cs" />
     <Compile Include="Quest\QuestData.cs" />
     <Compile Include="Quest\QuestEventInfoList.cs" />
     <Compile Include="Quest\QuestStart.cs" />
@@ -1515,6 +1536,7 @@
     <Compile Include="SubStateEnemiesItemDroppingFunction.cs" />
     <Compile Include="SubStateEnemyTurnStartAction.cs" />
     <Compile Include="SubStateInitialIntroducionFunction.cs" />
+    <Compile Include="SubStateInstantDeathFunction.cs" />
     <Compile Include="SubStateMultiAreaRandomDamageHitFunction.cs" />
     <Compile Include="SubStateMultiCharacterDeadCheckFunction.cs" />
     <Compile Include="SubStateMultiCharacterRevivalFunction.cs" />
@@ -1578,6 +1600,7 @@
     <Compile Include="TicketGashaController.cs" />
     <Compile Include="TiledTexture.cs" />
     <Compile Include="TimeExtension.cs" />
+    <Compile Include="TimeProfiler.cs" />
     <Compile Include="TimeUtility.cs" />
     <Compile Include="TipsLoading.cs" />
     <Compile Include="TipsQuestSelect.cs" />
@@ -1769,18 +1792,23 @@
     <Compile Include="UIWidget.cs" />
     <Compile Include="UIWidgetContainer.cs" />
     <Compile Include="UIWrapContent.cs" />
+    <Compile Include="UI\Chip\ChipSaleButton.cs" />
     <Compile Include="UI\Common\Background.cs" />
+    <Compile Include="UI\Common\FactoryAssetCategoryDetailPopup.cs" />
     <Compile Include="UI\Common\FactoryLimitOverNotice.cs" />
     <Compile Include="UI\Common\FactoryPayConfirmNotice.cs" />
     <Compile Include="UI\Common\IPayConfirmNotice.cs" />
     <Compile Include="UI\Common\LimitOverNoticeType.cs" />
+    <Compile Include="UI\Common\MonsterMedalIcon.cs" />
     <Compile Include="UI\Common\PartsFooterTab.cs" />
     <Compile Include="UI\Common\PartsFooterTabBackground.cs" />
     <Compile Include="UI\Common\PartsFooterTabTopParts.cs" />
     <Compile Include="UI\Common\PartsHeader.cs" />
+    <Compile Include="UI\Common\UIAssetName.cs" />
     <Compile Include="UI\Common\UIAssetsIcon.cs" />
     <Compile Include="UI\Common\UIAssetsNumber.cs" />
     <Compile Include="UI\Common\UIAssetsNumberComma.cs" />
+    <Compile Include="UI\Common\UIToggleAlphaTween.cs" />
     <Compile Include="UI\FadeController.cs" />
     <Compile Include="UI\Gasha\ExecGashaBase.cs" />
     <Compile Include="UI\Gasha\ExecGashaChip.cs" />
@@ -1795,10 +1823,21 @@
     <Compile Include="UI\Gasha\GashaStartButtonEvent.cs" />
     <Compile Include="UI\Gasha\GashaUserAssetsInventory.cs" />
     <Compile Include="UI\Home\HomeMenuMainParts.cs" />
+    <Compile Include="UI\MedalInheritance\MonsterMedalInheritanceIcon.cs" />
     <Compile Include="UI\MonsterInfoParts\MonsterBasicInfoExtensions.cs" />
     <Compile Include="UI\MonsterInfoParts\MonsterIconTouchEvent.cs" />
     <Compile Include="UI\MonsterInfoParts\MonsterIconTouchEventUD.cs" />
     <Compile Include="UI\MonsterInfoParts\MonsterSelectedIcon.cs" />
+    <Compile Include="UI\PartyEdit\PartyEditQuestBonusButton.cs" />
+    <Compile Include="UI\Quest\QuestDetailedBonusPoint.cs" />
+    <Compile Include="UI\SaleCheck\CMD_SaleBonusCheck.cs" />
+    <Compile Include="UI\SaleCheck\SaleAsset.cs" />
+    <Compile Include="UI\SaleCheck\SaleBonus.cs" />
+    <Compile Include="UI\SaleCheck\UI_SaleBonusCheckAssetIcon.cs" />
+    <Compile Include="UI\SaleCheck\UI_SaleBonusCheckList.cs" />
+    <Compile Include="UI\SaleCheck\UI_SaleBonusCheckListItem.cs" />
+    <Compile Include="UI\TrainingMenu\TrainingMenuButtonResistance.cs" />
+    <Compile Include="UI\TrainingMenu\TrainingMenuButtonSuccession.cs" />
     <Compile Include="UnityEngine\CameraParams\Internal\CameraTargetController.cs" />
     <Compile Include="UnityEngine\CameraParams\Internal\CameraTargetIndexSelector.cs" />
     <Compile Include="UnityEngine\Csv\Csv.cs" />
@@ -1817,6 +1856,7 @@
     <Compile Include="UnityEngine\UIComponentSkinnerInternal\UIComponentSkinnerObjectParts.cs" />
     <Compile Include="UnityEngine\UIComponentSkinnerInternal\UISkinnerPartsType.cs" />
     <Compile Include="UnityEngine\UITextReplacer.cs" />
+    <Compile Include="UnityExtensionMethod.cs" />
     <Compile Include="UnityExtension\BoolExtension.cs" />
     <Compile Include="UnityExtension\GameObjectExtension.cs" />
     <Compile Include="UnityExtension\GizmosExtension.cs" />
@@ -1862,47 +1902,91 @@
       <Name>Chopin</Name>
     </ProjectReference>
     <ProjectReference Include="..\Facebook.Unity\Facebook.Unity.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857968}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
       <Name>Facebook.Unity</Name>
     </ProjectReference>
     <ProjectReference Include="..\JsonFx.Json\JsonFx.Json.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
       <Name>JsonFx.Json</Name>
     </ProjectReference>
-    <ProjectReference Include="..\mscorlib\mscorlib.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
-      <Name>mscorlib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Secure\Secure.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>Secure</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml\System.Xml.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>System.Xml</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
       <Name>System</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TextMeshPro\TextMeshPro.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
-      <Name>TextMeshPro</Name>
+    <ProjectReference Include="..\TextMeshPro-2017.3-1.0.56-Runtime\TextMeshPro-2017.3-1.0.56-Runtime.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857973}</Project>
+      <Name>TextMeshPro-2017.3-1.0.56-Runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
-      <Name>UnityEngine</Name>
+    <ProjectReference Include="..\UnityEngine.AnimationModule\UnityEngine.AnimationModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</Project>
+      <Name>UnityEngine.AnimationModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.AudioModule\UnityEngine.AudioModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857979}</Project>
+      <Name>UnityEngine.AudioModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797B}</Project>
+      <Name>UnityEngine.CoreModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.ImageConversionModule\UnityEngine.ImageConversionModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857981}</Project>
+      <Name>UnityEngine.ImageConversionModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.IMGUIModule\UnityEngine.IMGUIModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857982}</Project>
+      <Name>UnityEngine.IMGUIModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.JSONSerializeModule\UnityEngine.JSONSerializeModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857984}</Project>
+      <Name>UnityEngine.JSONSerializeModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.ParticleSystemModule\UnityEngine.ParticleSystemModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857987}</Project>
+      <Name>UnityEngine.ParticleSystemModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.Physics2DModule\UnityEngine.Physics2DModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857989}</Project>
+      <Name>UnityEngine.Physics2DModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.PhysicsModule\UnityEngine.PhysicsModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798A}</Project>
+      <Name>UnityEngine.PhysicsModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.TextRenderingModule\UnityEngine.TextRenderingModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857994}</Project>
+      <Name>UnityEngine.TextRenderingModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857997}</Project>
+      <Name>UnityEngine.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UnityWebRequestModule\UnityEngine.UnityWebRequestModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799E}</Project>
+      <Name>UnityEngine.UnityWebRequestModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UnityWebRequestWWWModule\UnityEngine.UnityWebRequestWWWModule.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A0}</Project>
+      <Name>UnityEngine.UnityWebRequestWWWModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\websocket-sharp\websocket-sharp.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A6}</Project>
       <Name>websocket-sharp</Name>
     </ProjectReference>
   </ItemGroup>

@@ -16,6 +16,9 @@ public class ManualSelectTarget : MonoBehaviour
 	[SerializeField]
 	private GameObject drainTarget;
 
+	[SerializeField]
+	private GameObject disabled;
+
 	private UIWidget uiWidget;
 
 	private Coroutine animationCoroutine;
@@ -44,8 +47,9 @@ public class ManualSelectTarget : MonoBehaviour
 		this.uiWidget.alpha = 1f;
 		this.defaultTarget.SetActive(iconType == Strength.None);
 		this.strongTarget.SetActive(iconType == Strength.Weak);
-		this.weakTarget.SetActive(iconType == Strength.Strong || iconType == Strength.Invalid);
+		this.weakTarget.SetActive(iconType == Strength.Strong);
 		this.drainTarget.SetActive(iconType == Strength.Drain);
+		this.disabled.SetActive(iconType == Strength.Invalid);
 	}
 
 	public void SetToleranceTarget(Strength[] iconTypes)

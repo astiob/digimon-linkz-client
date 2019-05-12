@@ -234,6 +234,7 @@ public struct ResourcesPath
 		if (extraEffectStatusObject == null)
 		{
 			global::Debug.LogWarning("エリア効果データが存在しません. (" + id + ")");
+			return new ExtraEffectStatus();
 		}
 		return extraEffectStatusObject.extraEffectStatus;
 	}
@@ -413,8 +414,6 @@ public struct ResourcesPath
 
 			public const string damageDrain = "EFF_COM_S_HEAL";
 
-			public const string attack = "EFF_COM_HIT_NORMAL";
-
 			public const string poison = "EFF_COM_POISONATTACK";
 
 			public const string confusion = "EFF_COM_CONFUSIONATTACK";
@@ -448,8 +447,6 @@ public struct ResourcesPath
 			public const string speedUp = "EFF_COM_UP";
 
 			public const string speedDown = "EFF_COM_DOWN";
-
-			public const string drain = "EFF_COM_S_HEAL";
 
 			public const string correctionUpReset = "EFF_COM_DOWN";
 
@@ -495,13 +492,9 @@ public struct ResourcesPath
 
 			public const string gimmickSpecialAttackDown = "EFF_COM_SPECIALATTACK_D";
 
-			public const string attackerDestruct = "EFF_COM_DEATH";
-
 			public const string death = "EFF_COM_DEATH";
 
 			public const string deathLast = "EFF_COM_BOSSDEATH";
-
-			public const string revival = "EFF_COM_L_HEAL";
 
 			public const string waveHpRevival = "EFF_COM_L_HEAL";
 
@@ -576,37 +569,46 @@ public struct ResourcesPath
 			{
 				if (battleMode == BattleMode.PvP)
 				{
-					switch (enemiesNumber)
+					if (enemiesNumber == 1)
 					{
-					case 1:
 						return "0001_enemiesOne_small";
-					case 2:
+					}
+					if (enemiesNumber == 2)
+					{
 						return "0002_enemiesTwo_small";
-					case 3:
+					}
+					if (enemiesNumber == 3)
+					{
 						return "0003_enemiesThree_small_pvp";
 					}
 				}
 				else if (cameraType == 1)
 				{
-					switch (enemiesNumber)
+					if (enemiesNumber == 1)
 					{
-					case 1:
 						return "0001_enemiesOne_small_bigboss";
-					case 2:
+					}
+					if (enemiesNumber == 2)
+					{
 						return "0002_enemiesTwo_small";
-					case 3:
+					}
+					if (enemiesNumber == 3)
+					{
 						return "0003_enemiesThree_small";
 					}
 				}
 				else
 				{
-					switch (enemiesNumber)
+					if (enemiesNumber == 1)
 					{
-					case 1:
 						return "0001_enemiesOne_small";
-					case 2:
+					}
+					if (enemiesNumber == 2)
+					{
 						return "0002_enemiesTwo_small";
-					case 3:
+					}
+					if (enemiesNumber == 3)
+					{
 						return "0003_enemiesThree_small";
 					}
 				}

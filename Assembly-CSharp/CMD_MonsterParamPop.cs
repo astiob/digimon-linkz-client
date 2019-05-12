@@ -89,7 +89,7 @@ public class CMD_MonsterParamPop : CMD
 	{
 		this.viewExtraSkillPage = MonsterStatusData.IsVersionUp(mData.GetMonsterMaster().Simple.rare);
 		this.monsterStatusList.ClearValues();
-		this.monsterStatusList.SetValues(mData, true);
+		this.monsterStatusList.SetValues(mData, true, false);
 		this.monsterBasicInfo.ClearMonsterData();
 		this.monsterBasicInfo.SetMonsterData(mData, experienceInfo);
 		this.monsterResistance.ClearValues();
@@ -173,13 +173,17 @@ public class CMD_MonsterParamPop : CMD
 		this.skillPage.SetActive(false);
 		this.extraSkillPage.SetActive(false);
 		this.chipPage.SetActive(false);
-		switch (this.pageCnt)
+		int num = this.pageCnt;
+		if (num != 2)
 		{
-		case 0:
-			this.statusPage.SetActive(true);
-			break;
-		case 1:
-			if (this.viewExtraSkillPage)
+			if (num != 1)
+			{
+				if (num == 0)
+				{
+					this.statusPage.SetActive(true);
+				}
+			}
+			else if (this.viewExtraSkillPage)
 			{
 				this.extraSkillPage.SetActive(true);
 			}
@@ -187,10 +191,10 @@ public class CMD_MonsterParamPop : CMD
 			{
 				this.skillPage.SetActive(true);
 			}
-			break;
-		case 2:
+		}
+		else
+		{
 			this.chipPage.SetActive(true);
-			break;
 		}
 	}
 

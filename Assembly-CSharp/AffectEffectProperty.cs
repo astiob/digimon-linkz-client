@@ -27,8 +27,8 @@ public class AffectEffectProperty
 	[SerializeField]
 	private TechniqueType _techniqueType;
 
-	[SerializeField]
 	[FormerlySerializedAs("intValue")]
+	[SerializeField]
 	private int[] _intValue = new int[2];
 
 	[FormerlySerializedAs("floatValue")]
@@ -57,6 +57,8 @@ public class AffectEffectProperty
 	}
 
 	public EffectTarget target { get; private set; }
+
+	public bool isMiss { get; set; }
 
 	public AffectEffect type
 	{
@@ -336,6 +338,14 @@ public class AffectEffectProperty
 		}
 	}
 
+	public SufferStateProperty.RemoveOptionType removeOptionType
+	{
+		get
+		{
+			return (SufferStateProperty.RemoveOptionType)this._floatValue[12];
+		}
+	}
+
 	public int chargeRoundNumber
 	{
 		get
@@ -528,9 +538,17 @@ public class AffectEffectProperty
 		}
 	}
 
+	public bool canUseAttribute
+	{
+		get
+		{
+			return this.type != AffectEffect.RefHpRateNonAttribute;
+		}
+	}
+
 	public static bool IsDamage(AffectEffect affectEffect)
 	{
-		return affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage || affectEffect == AffectEffect.HpBorderlineSpDamage || affectEffect == AffectEffect.DefenseThroughDamage || affectEffect == AffectEffect.SpDefenseThroughDamage;
+		return affectEffect == AffectEffect.Damage || affectEffect == AffectEffect.ReferenceTargetHpRate || affectEffect == AffectEffect.HpBorderlineDamage || affectEffect == AffectEffect.HpBorderlineSpDamage || affectEffect == AffectEffect.DefenseThroughDamage || affectEffect == AffectEffect.SpDefenseThroughDamage || affectEffect == AffectEffect.RefHpRateNonAttribute;
 	}
 
 	public bool isMissThrough { get; private set; }

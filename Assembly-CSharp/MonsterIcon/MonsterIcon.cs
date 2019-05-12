@@ -126,7 +126,7 @@ namespace MonsterIcon
 			transform.localScale = Vector3.one;
 			transform.localPosition = Vector3.zero;
 			MonsterIconTransform.SetSize(this.iconRootTransform, iconSize);
-			DepthController.AddWidgetDepth_2(transform, depthOffset);
+			DepthController.AddWidgetDepth_Static(transform, depthOffset);
 			this.Thumbnail.Initialize();
 		}
 	}

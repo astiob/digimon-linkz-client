@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Title
 {
 	public sealed class ConfirmGDPR
 	{
 		private ConfirmGDPR_Network network;
+
+		[CompilerGenerated]
+		private static Action <>f__mg$cache0;
 
 		private IEnumerator WaitClose(CMD dialog)
 		{
@@ -26,7 +30,13 @@ namespace Title
 			this.network = new ConfirmGDPR_Network();
 			APIRequestTask requestInfo = this.network.GetRequestInfo();
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-			return this.network.Send(requestInfo, new Action(RestrictionInput.EndLoad));
+			ConfirmGDPR_Network confirmGDPR_Network = this.network;
+			APIRequestTask request = requestInfo;
+			if (ConfirmGDPR.<>f__mg$cache0 == null)
+			{
+				ConfirmGDPR.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+			}
+			return confirmGDPR_Network.Send(request, ConfirmGDPR.<>f__mg$cache0);
 		}
 
 		public bool IsUpdateRule()

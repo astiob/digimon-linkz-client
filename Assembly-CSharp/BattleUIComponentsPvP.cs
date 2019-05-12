@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleUIComponentsPvP : BattleUIComponentsMultiBasic
 {
-	[SerializeField]
 	[Header("Menu/PanelのTransform")]
+	[SerializeField]
 	private Transform menuPanelTransform;
 
 	[Header("味方のPvP用上に出る文字")]

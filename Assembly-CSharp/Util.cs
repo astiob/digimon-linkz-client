@@ -71,10 +71,23 @@ public static class Util
 	public static void SetLayer(GameObject gO, int mask)
 	{
 		gO.layer = mask;
-		foreach (object obj in gO.transform)
+		IEnumerator enumerator = gO.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			Util.SetLayer(transform.gameObject, mask);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				Util.SetLayer(transform.gameObject, mask);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 

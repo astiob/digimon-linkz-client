@@ -7,13 +7,13 @@ using UnityEngine;
 [AddComponentMenu("NGUI/Interaction/Popup List")]
 public class UIPopupList : UIWidgetContainer
 {
-	private const float animSpeed = 0.15f;
-
 	public static UIPopupList current;
 
 	private static GameObject mChild;
 
 	private static float mFadeOutComplete;
+
+	private const float animSpeed = 0.15f;
 
 	public UIAtlas atlas;
 
@@ -55,32 +55,32 @@ public class UIPopupList : UIWidgetContainer
 
 	public List<EventDelegate> onChange = new List<EventDelegate>();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected string mSelectedItem;
 
 	[HideInInspector]
 	[SerializeField]
 	protected UIPanel mPanel;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UISprite mBackground;
 
 	[HideInInspector]
 	[SerializeField]
 	protected UISprite mHighlight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UILabel mHighlightedLabel;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected List<UILabel> mLabelList = new List<UILabel>();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected float mBgBorder;
 
 	[NonSerialized]
@@ -89,8 +89,8 @@ public class UIPopupList : UIWidgetContainer
 	[NonSerialized]
 	protected int mOpenFrame;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
 	[HideInInspector]
@@ -105,8 +105,8 @@ public class UIPopupList : UIWidgetContainer
 	[SerializeField]
 	private UIFont font;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UILabel textLabel;
 
 	private UIPopupList.LegacyEvent mLegacyEvent;

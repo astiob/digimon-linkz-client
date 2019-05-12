@@ -1,6 +1,7 @@
 ﻿using Master;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class LeadReview
@@ -8,6 +9,9 @@ public sealed class LeadReview
 	public static readonly string DISPLAY_DATETIME_PREFS_KEY = "DateTimeDisplayLeadReview";
 
 	private static Action onFinishedAction;
+
+	[CompilerGenerated]
+	private static Action<int> <>f__mg$cache0;
 
 	public bool DisplayDialog(MonsterData MonsterData)
 	{
@@ -115,7 +119,11 @@ public sealed class LeadReview
 				}
 				return;
 			}
-			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(LeadReview.OnButtonReviewConfirm), "CMD_Confirm", null) as CMD_Confirm;
+			if (LeadReview.<>f__mg$cache0 == null)
+			{
+				LeadReview.<>f__mg$cache0 = new Action<int>(LeadReview.OnButtonReviewConfirm);
+			}
+			CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(LeadReview.<>f__mg$cache0, "CMD_Confirm", null) as CMD_Confirm;
 			cmd_Confirm.Title = @string;
 			cmd_Confirm.Info = string2;
 			LeadReview.onFinishedAction = finishedAction;

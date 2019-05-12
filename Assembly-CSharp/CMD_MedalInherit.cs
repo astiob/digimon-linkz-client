@@ -4,9 +4,10 @@ using Master;
 using Monster;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class CMD_MedalInherit : CMD_PairSelectBase
+public sealed class CMD_MedalInherit : CMD_PairSelectBase
 {
 	[SerializeField]
 	private AbilityUpgradeDetail abilityUpgradeDetail;
@@ -15,13 +16,31 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 
 	private GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList updatedUserMonster_bk;
 
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache3;
+
 	protected override void ShowSecondTutorial()
 	{
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
 		if (tutorialObserver != null)
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_ability_upgrade", new Action(GUIMain.BarrierOFF), delegate
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_ability_upgrade";
+			if (CMD_MedalInherit.<>f__mg$cache0 == null)
+			{
+				CMD_MedalInherit.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, CMD_MedalInherit.<>f__mg$cache0, delegate
 			{
 				GUICollider.EnableAllCollider("CMD_MedalInherit");
 			});
@@ -33,55 +52,89 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		base.SetTutorialAnyTime("anytime_second_tutorial_ability_upgrade");
 	}
 
-	protected override void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
+	private void OnPushDecide()
 	{
-		cd.SetTitle(StringMaster.GetString("MedalInheritAlertTitle"));
-		cd.SetExp(StringMaster.GetString("MedalInheritAlertInfo"));
-		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
-		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
-	}
-
-	protected override void SetTextConfirmPartnerVersionUp(CMD_ResearchModalAlert cd)
-	{
-		cd.SetTitle(StringMaster.GetString("MedalInheritAlertTitle"));
-		cd.SetExp(StringMaster.GetString("MedalInheritAlertInfo2"));
-		cd.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
-		cd.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
-	}
-
-	protected override void OpenConfirmTargetParameter(int selectButtonIndex)
-	{
-		if (selectButtonIndex == 1)
+		CMD_ResearchModalAlert popup = null;
+		if (MonsterStatusData.IsVersionUp(this.partnerDigimon.GetMonsterMaster().Simple.rare))
 		{
-			bool hasGoldOver = false;
-			MonsterAbilityStatusInfo monsterAbilityStatusInfo = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(this.baseDigimon, this.partnerDigimon, ref hasGoldOver);
-			CMD_AbilityModal cmd_AbilityModal = GUIMain.ShowCommonDialog(new Action<int>(base.OnCloseConfirm), "CMD_AbilityModal", null) as CMD_AbilityModal;
-			cmd_AbilityModal.SetChipParams(this.partnerDigimon);
-			cmd_AbilityModal.SetAnyNotUpdate(monsterAbilityStatusInfo);
-			cmd_AbilityModal.SetHasGoldOver(hasGoldOver);
-			cmd_AbilityModal.SetStatus(monsterAbilityStatusInfo);
-			cmd_AbilityModal.ShowIcon(this.baseDigimon, true);
+			popup = this.OpenAlertPartnerMonster(this.partnerDigimon, StringMaster.GetString("MedalInheritAlertInfo2"));
+		}
+		else if (MonsterStatusData.IsArousal(this.partnerDigimon.monsterM.rare))
+		{
+			popup = this.OpenAlertPartnerMonster(this.partnerDigimon, StringMaster.GetString("MedalInheritAlertInfo"));
+		}
+		if (null != popup)
+		{
+			popup.SetActionYesButton(delegate
+			{
+				popup.SetCloseAction(delegate(int noop)
+				{
+					this.OpenConfirmMedalInheritance();
+				});
+			});
+		}
+		else
+		{
+			this.OpenConfirmMedalInheritance();
 		}
 	}
 
-	protected override void DoExec(int result)
+	private CMD_ResearchModalAlert OpenAlertPartnerMonster(MonsterData monsterData, string description)
 	{
-		if (result == -1)
+		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(null, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
+		cmd_ResearchModalAlert.SetTitle(StringMaster.GetString("MedalInheritAlertTitle"));
+		cmd_ResearchModalAlert.SetExp(description);
+		cmd_ResearchModalAlert.SetBtnText_YES(StringMaster.GetString("SystemButtonYes"));
+		cmd_ResearchModalAlert.SetBtnText_NO(StringMaster.GetString("SystemButtonNo"));
+		cmd_ResearchModalAlert.SetDigimonIcon(monsterData);
+		cmd_ResearchModalAlert.AdjustSize();
+		return cmd_ResearchModalAlert;
+	}
+
+	private void OpenConfirmMedalInheritance()
+	{
+		MonsterAbilityStatusInfo monsterAbilityStatusInfo = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(this.baseDigimon, this.partnerDigimon);
+		MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(this.baseDigimon.userMonster.monsterId);
+		int goldMedalMaxNum = MonsterArousalData.GetGoldMedalMaxNum(monsterMasterByMonsterId.Simple.rare);
+		List<AbilityData.GoldMedalInheritanceState> goldMedalInheritanceList = ClassSingleton<AbilityData>.Instance.GetGoldMedalInheritanceList(this.baseDigimon.userMonster, this.partnerDigimon.userMonster);
+		ClassSingleton<AbilityData>.Instance.AdjustMedalInheritanceRate(monsterAbilityStatusInfo, goldMedalInheritanceList, goldMedalMaxNum);
+		int countInheritanceGoldMedal = ClassSingleton<AbilityData>.Instance.GetCountInheritanceGoldMedal(goldMedalInheritanceList);
+		bool hasGoldOver = goldMedalMaxNum < countInheritanceGoldMedal;
+		CMD_AbilityModal cmd_AbilityModal = GUIMain.ShowCommonDialog(null, "CMD_AbilityModal", null) as CMD_AbilityModal;
+		cmd_AbilityModal.SetRemovePartnerEquipChip(this.partnerDigimon);
+		cmd_AbilityModal.SetAnyNotUpdate(monsterAbilityStatusInfo);
+		cmd_AbilityModal.SetHasGoldOver(hasGoldOver, goldMedalMaxNum);
+		cmd_AbilityModal.SetStatus(monsterAbilityStatusInfo);
+		cmd_AbilityModal.SetMonsterIcon(this.baseDigimon);
+		cmd_AbilityModal.SetActionYesButton(delegate
+		{
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			DataMng.Instance().CheckCampaign(new Action<int>(this.DoExec), new GameWebAPI.RespDataCP_Campaign.CampaignType[]
+			{
+				GameWebAPI.RespDataCP_Campaign.CampaignType.MedalTakeOverUp
+			});
+		});
+	}
+
+	private void DoExec(int campaignStatus)
+	{
+		if (campaignStatus == -1)
 		{
 			return;
 		}
-		if (result > 0)
+		if (0 < campaignStatus)
 		{
 			RestrictionInput.EndLoad();
-			DataMng.Instance().CampaignErrorCloseAllCommonDialog(result == 1, delegate
+			DataMng.Instance().CampaignErrorCloseAllCommonDialog(campaignStatus == 1, delegate
 			{
 				RestrictionInput.StartLoad(RestrictionInput.LoadType.SMALL_IMAGE_MASK_ON);
-				DataMng.Instance().ReloadCampaign(delegate
+				DataMng dataMng = DataMng.Instance();
+				if (CMD_MedalInherit.<>f__mg$cache1 == null)
 				{
-					RestrictionInput.EndLoad();
-				});
+					CMD_MedalInherit.<>f__mg$cache1 = new Action(RestrictionInput.EndLoad);
+				}
+				dataMng.ReloadCampaign(CMD_MedalInherit.<>f__mg$cache1);
 			});
-			RestrictionInput.EndLoad();
 			return;
 		}
 		this.useClusterBK = this.CalcCluster();
@@ -116,93 +169,62 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 	protected override void EndSuccess()
 	{
 		bool isSuccess = this.IsSuccsessAbilityUpgrade_bk;
-		bool hasChip = this.ResetChipAfterExec();
-		string[] userMonsterIdList = new string[]
-		{
-			this.partnerDigimon.userMonster.userMonsterId
-		};
-		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(userMonsterIdList);
-		ChipDataMng.DeleteEquipChip(userMonsterIdList);
-		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlotList(userMonsterIdList);
+		bool isEquipChip = this.partnerDigimon.GetChipEquip().IsAttachedChip();
+		ChipDataMng.GetUserChipSlotData().RemoveChipData(this.partnerDigimon.userMonster.userMonsterId, true);
+		ClassSingleton<MonsterUserDataMng>.Instance.DeleteUserMonsterData(this.partnerDigimon.userMonster.userMonsterId);
+		ChipDataMng.GetUserChipSlotData().DeleteMonsterSlot(this.partnerDigimon.userMonster.userMonsterId);
 		GooglePlayGamesTool.Instance.Laboratory();
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		CutsceneDataMedalInherit cutsceneData = new CutsceneDataMedalInherit
+		CutsceneDataMedalInherit cutsceneDataMedalInherit = new CutsceneDataMedalInherit();
+		cutsceneDataMedalInherit.path = "Cutscenes/MedalInherit";
+		cutsceneDataMedalInherit.baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId;
+		cutsceneDataMedalInherit.materialModelId = this.partnerDigimon.GetMonsterMaster().Group.modelId;
+		CutsceneDataMedalInherit cutsceneDataMedalInherit2 = cutsceneDataMedalInherit;
+		if (CMD_MedalInherit.<>f__mg$cache2 == null)
 		{
-			path = "Cutscenes/MedalInherit",
-			baseModelId = this.baseDigimon.GetMonsterMaster().Group.modelId,
-			materialModelId = this.partnerDigimon.GetMonsterMaster().Group.modelId,
-			endCallback = delegate()
-			{
-				CutSceneMain.FadeReqCutSceneEnd();
-				if (null != this.characterDetailed)
-				{
-					this.DisableCutinButton(this.characterDetailed.transform);
-				}
-				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-				if (null != partsMenu)
-				{
-					partsMenu.SetEnableMenuButton(false);
-				}
-			}
-		};
+			CMD_MedalInherit.<>f__mg$cache2 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+		}
+		cutsceneDataMedalInherit2.endCallback = CMD_MedalInherit.<>f__mg$cache2;
+		CutsceneDataMedalInherit cutsceneData = cutsceneDataMedalInherit;
 		Loading.Invisible();
-		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(base.StartCutSceneCallBack), null, delegate(int index)
+		CutSceneMain.FadeReqCutScene(cutsceneData, delegate()
 		{
-			if (PartsUpperCutinController.Instance != null)
-			{
-				if (isSuccess)
-				{
-					PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.TalentBlooms, delegate
-					{
-						this.ShowStoreChipDialog(hasChip);
-					});
-				}
-				else
-				{
-					PartsUpperCutinController.Instance.PlayAnimator(PartsUpperCutinController.AnimeType.BloomsFailed, delegate
-					{
-						this.ShowStoreChipDialog(hasChip);
-					});
-				}
-			}
-			if (!hasChip)
+			this.OnStartCutScene(isSuccess, isEquipChip);
+		}, delegate()
+		{
+			this.characterDetailed.StartAnimation();
+			if (!isEquipChip)
 			{
 				RestrictionInput.EndLoad();
-				this.EnableCutinButton();
-				PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-				if (null != partsMenu)
-				{
-					partsMenu.SetEnableMenuButton(true);
-				}
 			}
 		}, 0.5f, 0.5f);
 	}
 
-	private bool ResetChipAfterExec()
+	private void OnStartCutScene(bool isSuccessInheritance, bool isResetEquipChip)
 	{
-		bool result = this.partnerDigimon.GetChipEquip().IsAttachedChip();
-		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(this.partnerDigimon.userMonster.userMonsterId);
-		if (monsterChipList != null)
+		base.RemoveBaseDigimon();
+		base.RemovePartnerDigimon();
+		this.ClearTargetStatus();
+		DataMng.Instance().US_PlayerInfoSubChipNum(this.useClusterBK);
+		base.UpdateClusterNum();
+		GUIPlayerStatus.RefreshParams_S(false);
+		string userMonsterId = this.GetUserMonsterData().userMonsterId;
+		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
+		Action endCutin = null;
+		if (isResetEquipChip)
 		{
-			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in monsterChipList)
+			if (CMD_MedalInherit.<>f__mg$cache3 == null)
 			{
-				if (userChipList.userMonsterId == int.Parse(this.partnerDigimon.userMonster.userMonsterId))
-				{
-					ChipDataMng.DeleteUserChipData(userChipList.userChipId);
-				}
+				CMD_MedalInherit.<>f__mg$cache3 = new Action(RestrictionInput.EndLoad);
 			}
+			endCutin = CMD_MedalInherit.<>f__mg$cache3;
 		}
-		return result;
+		this.characterDetailed = CMD_CharacterDetailed.CreateWindow(monsterDataByUserMonsterID, endCutin, isSuccessInheritance, isResetEquipChip);
 	}
 
 	protected override string GetTitle()
 	{
 		return StringMaster.GetString("MedalInheritTitle");
-	}
-
-	protected override string GetStoreChipInfo()
-	{
-		return StringMaster.GetString("MedalInheritCautionChip");
 	}
 
 	protected override void ClearTargetStatus()
@@ -215,13 +237,9 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		return this.updatedUserMonster_bk;
 	}
 
-	protected override void AddButton()
-	{
-	}
-
 	protected override int CalcCluster()
 	{
-		int result;
+		int result = 0;
 		if (this.baseDigimon != null && this.partnerDigimon != null)
 		{
 			float maxAbility = ClassSingleton<AbilityData>.Instance.GetMaxAbility(this.baseDigimon.userMonster);
@@ -231,18 +249,17 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 			float num3 = 1f + 0.1f * (float)(totalAbilityCount - 1);
 			result = (int)Mathf.Floor(num2 * num3);
 		}
-		else
-		{
-			result = 0;
-		}
 		return result;
 	}
 
 	protected override void SetTargetStatus()
 	{
-		bool flag = false;
-		MonsterAbilityStatusInfo status = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(this.baseDigimon, this.partnerDigimon, ref flag);
-		this.abilityUpgradeDetail.SetStatus(status);
+		MonsterAbilityStatusInfo monsterAbilityStatusInfo = ClassSingleton<AbilityData>.Instance.CreateAbilityStatus(this.baseDigimon, this.partnerDigimon);
+		MonsterClientMaster monsterMasterByMonsterId = MonsterMaster.GetMonsterMasterByMonsterId(this.baseDigimon.userMonster.monsterId);
+		int goldMedalMaxNum = MonsterArousalData.GetGoldMedalMaxNum(monsterMasterByMonsterId.Simple.rare);
+		List<AbilityData.GoldMedalInheritanceState> goldMedalInheritanceList = ClassSingleton<AbilityData>.Instance.GetGoldMedalInheritanceList(this.baseDigimon.userMonster, this.partnerDigimon.userMonster);
+		ClassSingleton<AbilityData>.Instance.AdjustMedalInheritanceRate(monsterAbilityStatusInfo, goldMedalInheritanceList, goldMedalMaxNum);
+		this.abilityUpgradeDetail.SetStatus(monsterAbilityStatusInfo);
 	}
 
 	protected override bool CanEnter()
@@ -265,9 +282,23 @@ public class CMD_MedalInherit : CMD_PairSelectBase
 		list = MonsterFilter.Filter(list, MonsterFilterType.HAVE_MEDALS);
 		if (idx == 0)
 		{
-			return list.Count > 0;
+			if (list.Count > 0)
+			{
+				return true;
+			}
 		}
-		return idx != 1 || (list.Count > 0 && (this.baseDigimon == null || list.Count != 1 || !(list[0].userMonster.userMonsterId == this.baseDigimon.userMonster.userMonsterId)));
+		else if (list.Count > 0)
+		{
+			if (this.baseDigimon == null)
+			{
+				return true;
+			}
+			if (list.Count != 1 || list[0].userMonster.userMonsterId != this.baseDigimon.userMonster.userMonsterId)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected override void OpenCanNotSelectMonsterPop()

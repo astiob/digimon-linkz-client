@@ -99,12 +99,11 @@ namespace UnityEngine.EventSystems
 			}
 			set
 			{
-				if (this.m_PointerPress == value)
+				if (!(this.m_PointerPress == value))
 				{
-					return;
+					this.lastPress = this.m_PointerPress;
+					this.m_PointerPress = value;
 				}
-				this.lastPress = this.m_PointerPress;
-				this.m_PointerPress = value;
 			}
 		}
 

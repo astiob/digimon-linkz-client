@@ -29,9 +29,9 @@ public class NpHttpConnection
 		WWW www = null;
 		if (post != null)
 		{
-			foreach (KeyValuePair<string, object> p in post)
+			foreach (KeyValuePair<string, object> keyValuePair in post)
 			{
-				form.AddField(p.Key, p.Value.ToString());
+				form.AddField(keyValuePair.Key, keyValuePair.Value.ToString());
 			}
 			www = new WWW(url, form.data, headers);
 		}

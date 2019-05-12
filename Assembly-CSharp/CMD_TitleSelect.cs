@@ -89,16 +89,16 @@ public class CMD_TitleSelect : CMD
 		Vector3 localPosition = component.transform.localPosition;
 		component.SetOriginalPos(this.titleListOriginalItem.transform.localPosition);
 		component.transform.localPosition = localPosition;
-		Rect rect = default(Rect);
-		Rect rect2 = rect;
-		rect2.xMin = component2.size.x * -0.5f;
-		rect2.xMax = component2.size.x * 0.5f;
-		rect2.yMin = component2.size.y * -0.5f - 40f;
-		rect2.yMax = component2.size.y * 0.5f;
-		rect = rect2;
-		rect.yMin = rect.y - GUIMain.VerticalSpaceSize;
-		rect.yMax = rect.y + rect.height + GUIMain.VerticalSpaceSize;
-		listUI.ListWindowViewRect = rect;
+		Rect listWindowViewRect = new Rect
+		{
+			xMin = component2.size.x * -0.5f,
+			xMax = component2.size.x * 0.5f,
+			yMin = component2.size.y * -0.5f - 40f,
+			yMax = component2.size.y * 0.5f
+		};
+		listWindowViewRect.yMin = listWindowViewRect.y - GUIMain.VerticalSpaceSize;
+		listWindowViewRect.yMax = listWindowViewRect.y + listWindowViewRect.height + GUIMain.VerticalSpaceSize;
+		listUI.ListWindowViewRect = listWindowViewRect;
 		listUI.selectParts = this.titleListOriginalItem;
 		listUI.initLocation = true;
 		listUI.AllBuild(listItemCount);
@@ -106,22 +106,24 @@ public class CMD_TitleSelect : CMD
 
 	private void SetTitleDetail(GUISelectPanelTitle listUI, GameWebAPI.RespDataMA_TitleMaster.TitleM[] titleData)
 	{
-		TitleListItem[] componentsInChildren = listUI.GetComponentsInChildren<TitleListItem>();
+		TitleListItem[] componentsInChildren = listUI.GetComponentsInChildren<TitleListItem>(true);
 		if (componentsInChildren == null)
 		{
 			return;
 		}
 		GameWebAPI.RespDataTL_GetUserTitleList.UserTitleList equipedUserTitle = TitleDataMng.GetEquipedUserTitle();
+		int num = 0;
 		for (int i = 0; i < componentsInChildren.Length; i++)
 		{
+			bool owned = null != TitleDataMng.GetUserTitleByMasterId(titleData[i].titleId);
 			bool flag = equipedUserTitle != null && equipedUserTitle.titleId == titleData[i].titleId;
-			GameWebAPI.RespDataTL_GetUserTitleList.UserTitleList userTitleByMasterId = TitleDataMng.GetUserTitleByMasterId(titleData[i].titleId);
-			componentsInChildren[i].SetDetail(titleData[i], userTitleByMasterId != null, flag, new Action<TitleListItem>(this.OnSelectTitle));
-			if (i == 0 || flag)
+			componentsInChildren[i].SetDetail(titleData[i], owned, flag, new Action<TitleListItem>(this.OnSelectTitle));
+			if (flag)
 			{
-				componentsInChildren[i].OnSelectTitle();
+				num = i;
 			}
 		}
+		componentsInChildren[num].OnSelectTitle();
 	}
 
 	public void OnSelectTitle(TitleListItem titleItem)
@@ -156,7 +158,7 @@ public class CMD_TitleSelect : CMD
 	public void OnEquipTitle()
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		TitleListItem[] titles = this.titleList.GetComponentsInChildren<TitleListItem>();
+		TitleListItem[] titles = this.titleList.GetComponentsInChildren<TitleListItem>(true);
 		TitleListItem currentEquipedTitle = titles.FirstOrDefault((TitleListItem _title) => _title.GetTitleId() == this.currentSelectedTitleId);
 		APIRequestTask apirequestTask = new APIRequestTask();
 		apirequestTask.Add(TitleDataMng.RequestUpdateEquipedTitle(this.currentSelectedTitleId, false));

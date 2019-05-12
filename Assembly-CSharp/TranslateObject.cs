@@ -86,17 +86,24 @@ public class TranslateObject : MonoBehaviour
 		base.transform.localPosition = localPosition;
 		base.transform.Translate(this.GetInitializeRotation(this._lookVector) * (num2 * num));
 		base.transform.Translate(this._differenceLocalPosition);
-		switch (this._lookVector)
+		BillboardObject.LookVector lookVector = this._lookVector;
+		if (lookVector != BillboardObject.LookVector.X)
 		{
-		case BillboardObject.LookVector.X:
+			if (lookVector != BillboardObject.LookVector.Y)
+			{
+				if (lookVector == BillboardObject.LookVector.Z)
+				{
+					base.transform.Translate(new Vector3(0f, 0f, this._localDistance * num));
+				}
+			}
+			else
+			{
+				base.transform.Translate(new Vector3(0f, this._localDistance * num, 0f));
+			}
+		}
+		else
+		{
 			base.transform.Translate(new Vector3(this._localDistance * num, 0f, 0f));
-			break;
-		case BillboardObject.LookVector.Y:
-			base.transform.Translate(new Vector3(0f, this._localDistance * num, 0f));
-			break;
-		case BillboardObject.LookVector.Z:
-			base.transform.Translate(new Vector3(0f, 0f, this._localDistance * num));
-			break;
 		}
 		if (this._onManualLocalEulerAngles)
 		{

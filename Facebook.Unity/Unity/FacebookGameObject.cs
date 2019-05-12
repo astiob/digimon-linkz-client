@@ -9,7 +9,7 @@ namespace Facebook.Unity
 
 		public void Awake()
 		{
-			UnityEngine.Object.DontDestroyOnLoad(this);
+			Object.DontDestroyOnLoad(this);
 			AccessToken.CurrentAccessToken = null;
 			this.OnAwake();
 		}

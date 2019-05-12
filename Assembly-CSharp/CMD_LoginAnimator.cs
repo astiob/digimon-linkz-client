@@ -41,7 +41,7 @@ public class CMD_LoginAnimator : CMD_LoginBase
 			{
 				this.loginBonusParam = ((GameObject)result).GetComponent<LoginBonusParam>();
 				this.ShowDLG();
-				this.Show(f, sizeX, sizeY, aT);
+				this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 				this.SetUp();
 			}
 			else

@@ -4,10 +4,6 @@ using UnityEngine;
 
 public sealed class ChipSphereIconButton : GUICollider
 {
-	private const string emptyFrame = "Chip_Sphere_Thumbnail_OFF";
-
-	private const string putFrame = "Chip_Sphere_Thumbnail_ON";
-
 	private ChipSphereIconButton.Parameter myParameter;
 
 	[Header("枠のスプライト")]
@@ -18,16 +14,16 @@ public sealed class ChipSphereIconButton : GUICollider
 	[SerializeField]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("Chargesのオブジェクト")]
+	[SerializeField]
 	private GameObject chargesGO;
 
-	[SerializeField]
 	[Header("選択中(Chip_choosing)")]
+	[SerializeField]
 	private GameObject choosingGO;
 
-	[SerializeField]
 	[Header("チップの名前/拡張説明")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
 	[Header("チップの説明ラベル/拡張パッチの個数")]
@@ -38,17 +34,21 @@ public sealed class ChipSphereIconButton : GUICollider
 	[SerializeField]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("アイテムのスプライト")]
+	[SerializeField]
 	private UISprite itemSprite;
 
-	[SerializeField]
 	[Header("LOOKのスプライト")]
+	[SerializeField]
 	private UISprite lookSprite;
 
-	[SerializeField]
 	[Header("チップランクのスプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
+
+	private const string emptyFrame = "Chip_Sphere_Thumbnail_OFF";
+
+	private const string putFrame = "Chip_Sphere_Thumbnail_ON";
 
 	public CMD_ChipSphere cmdChipSphere { private get; set; }
 
@@ -187,7 +187,12 @@ public sealed class ChipSphereIconButton : GUICollider
 
 	public void OnTouch()
 	{
-		this.cmdChipSphere.OnTouchChipIcon(this.myParameter);
+		this.cmdChipSphere.OnTouchChipIcon(this.myParameter, true);
+	}
+
+	public void RefresAttachPage(bool doAnimationOff)
+	{
+		this.cmdChipSphere.OnTouchChipIcon(this.myParameter, doAnimationOff);
 	}
 
 	public void SetChipColor(bool isExtendable)
@@ -263,6 +268,16 @@ public sealed class ChipSphereIconButton : GUICollider
 			return this.buttonNo - 1;
 		}
 
+		public static bool operator ==(ChipSphereIconButton.Parameter lhs, ChipSphereIconButton.Parameter rhs)
+		{
+			return lhs.isOpened == rhs.isOpened && lhs.buttonNo == rhs.buttonNo && lhs.type == rhs.type && lhs.menuType == rhs.menuType && lhs.itemCount == rhs.itemCount && lhs.chipRank == rhs.chipRank && lhs.chipName == rhs.chipName && lhs.chipDetail == rhs.chipDetail && lhs.chipIconPath == rhs.chipIconPath && lhs.userChipId == rhs.userChipId;
+		}
+
+		public static bool operator !=(ChipSphereIconButton.Parameter lhs, ChipSphereIconButton.Parameter rhs)
+		{
+			return !(lhs == rhs);
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -280,16 +295,6 @@ public sealed class ChipSphereIconButton : GUICollider
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
-		}
-
-		public static bool operator ==(ChipSphereIconButton.Parameter lhs, ChipSphereIconButton.Parameter rhs)
-		{
-			return lhs.isOpened == rhs.isOpened && lhs.buttonNo == rhs.buttonNo && lhs.type == rhs.type && lhs.menuType == rhs.menuType && lhs.itemCount == rhs.itemCount && lhs.chipRank == rhs.chipRank && lhs.chipName == rhs.chipName && lhs.chipDetail == rhs.chipDetail && lhs.chipIconPath == rhs.chipIconPath && lhs.userChipId == rhs.userChipId;
-		}
-
-		public static bool operator !=(ChipSphereIconButton.Parameter lhs, ChipSphereIconButton.Parameter rhs)
-		{
-			return !(lhs == rhs);
 		}
 	}
 }

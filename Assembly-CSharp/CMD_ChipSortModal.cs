@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CMD_ChipSortModal : CMD
@@ -63,6 +64,18 @@ public class CMD_ChipSortModal : CMD
 		CMD_ChipSortModal.RefineType.TribeGlacier,
 		CMD_ChipSortModal.RefineType.TribePhantomStudents
 	};
+
+	[CompilerGenerated]
+	private static Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> <>f__mg$cache3;
 
 	public static CMD_ChipSortModal Create(Action<int> callback = null)
 	{
@@ -254,9 +267,22 @@ public class CMD_ChipSortModal : CMD
 	{
 		Action action = delegate()
 		{
-			foreach (object obj in Enum.GetValues(typeof(CMD_ChipSortModal.RefineType)))
+			IEnumerator enumerator = Enum.GetValues(typeof(CMD_ChipSortModal.RefineType)).GetEnumerator();
+			try
 			{
-				this.SetSelectRefine(true, (CMD_ChipSortModal.RefineType)((int)obj));
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					this.SetSelectRefine(true, (CMD_ChipSortModal.RefineType)obj);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 			CMD_ChipSortModal.sortedUserChipList = CMD_ChipSortModal.GetRefineSortList(CMD_ChipSortModal.baseUserChipList, this.tempData);
 			this.tempData.isAllRank = true;
@@ -340,8 +366,8 @@ public class CMD_ChipSortModal : CMD
 			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(userChipList2);
 			GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffectData = ChipDataMng.GetChipEffectData(userChipList2);
 			int num2 = 0;
-			string text = chipMainData.rank;
-			switch (text)
+			string rank = chipMainData.rank;
+			switch (rank)
 			{
 			case "1":
 				num2 |= 1;
@@ -380,8 +406,8 @@ public class CMD_ChipSortModal : CMD
 			{
 				if (chipEffect.targetSubType == "2")
 				{
-					text = chipEffect.targetValue;
-					switch (text)
+					string targetValue = chipEffect.targetValue;
+					switch (targetValue)
 					{
 					case "1":
 						num4 |= 65536;
@@ -421,22 +447,42 @@ public class CMD_ChipSortModal : CMD
 		{
 			if (sortData.isOrderByAsc)
 			{
-				list.Sort(new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerTimeOrderByAsc));
+				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list2 = list;
+				if (CMD_ChipSortModal.<>f__mg$cache0 == null)
+				{
+					CMD_ChipSortModal.<>f__mg$cache0 = new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerTimeOrderByAsc);
+				}
+				list2.Sort(CMD_ChipSortModal.<>f__mg$cache0);
 			}
 			else
 			{
-				list.Sort(new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerTimeOrderByDesc));
+				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list3 = list;
+				if (CMD_ChipSortModal.<>f__mg$cache1 == null)
+				{
+					CMD_ChipSortModal.<>f__mg$cache1 = new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerTimeOrderByDesc);
+				}
+				list3.Sort(CMD_ChipSortModal.<>f__mg$cache1);
 			}
 		}
 		else if (sortData.sortType == CMD_ChipSortModal.SortType.Rarity)
 		{
 			if (sortData.isOrderByAsc)
 			{
-				list.Sort(new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerRarityOrderByAsc));
+				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list4 = list;
+				if (CMD_ChipSortModal.<>f__mg$cache2 == null)
+				{
+					CMD_ChipSortModal.<>f__mg$cache2 = new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerRarityOrderByAsc);
+				}
+				list4.Sort(CMD_ChipSortModal.<>f__mg$cache2);
 			}
 			else
 			{
-				list.Sort(new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerRarityOrderByDesc));
+				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list5 = list;
+				if (CMD_ChipSortModal.<>f__mg$cache3 == null)
+				{
+					CMD_ChipSortModal.<>f__mg$cache3 = new Comparison<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(CMD_ChipSortModal.ComparerRarityOrderByDesc);
+				}
+				list5.Sort(CMD_ChipSortModal.<>f__mg$cache3);
 			}
 		}
 		return list.ToArray();
@@ -568,9 +614,22 @@ public class CMD_ChipSortModal : CMD
 
 		public Data()
 		{
-			foreach (object obj in Enum.GetValues(typeof(CMD_ChipSortModal.RefineType)))
+			IEnumerator enumerator = Enum.GetValues(typeof(CMD_ChipSortModal.RefineType)).GetEnumerator();
+			try
 			{
-				this.refineTypeList |= (int)obj;
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					this.refineTypeList |= (int)obj;
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 		}
 

@@ -36,10 +36,9 @@ public sealed class CMD_LinkBonus : CMD
 				{
 					GameWebAPI.RespData_WorldMultiResultInfoLogic.DungeonReward.LinkBonus.LinkBonusReward linkBonusReward = linkBonus2.reward[j];
 					string assetTitle = DataMng.Instance().GetAssetTitle(linkBonusReward.assetCategoryId, linkBonusReward.assetValue.ToString());
-					int num2 = type;
-					if (num2 != 1)
+					if (type != 1)
 					{
-						if (num2 == 2)
+						if (type == 2)
 						{
 							UILabel uilabel = this.firstClearMessage;
 							uilabel.text += string.Format(StringMaster.GetString("FirstLinkBonusFriend"), linkBonusReward.linkNum, assetTitle, linkBonusReward.assetNum);

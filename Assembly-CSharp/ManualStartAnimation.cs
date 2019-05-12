@@ -5,15 +5,15 @@ using UnityEngine;
 [RequireComponent(typeof(Animation))]
 public class ManualStartAnimation : MonoBehaviour
 {
-	[Range(0f, 1f)]
 	[SerializeField]
+	[Range(0f, 1f)]
 	private float _startAnimationTime;
 
 	[SerializeField]
 	private ManualStartAnimation.AnimateSign _animateSign;
 
-	[Range(0f, 10f)]
 	[SerializeField]
+	[Range(0f, 10f)]
 	private float _speed = 1f;
 
 	private void Start()

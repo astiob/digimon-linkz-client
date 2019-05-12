@@ -264,7 +264,12 @@ namespace System.Net
 			{
 				if (WebConnection.sslStream == null)
 				{
-					WebConnection.sslStream = typeof(HttpsClientStream);
+					WebConnection.sslStream = Type.GetType("Mono.Security.Protocol.Tls.HttpsClientStream, Mono.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756", false);
+					if (WebConnection.sslStream == null)
+					{
+						string message = "Missing Mono.Security.dll assembly. Support for SSL/TLS is unavailable.";
+						throw new NotSupportedException(message);
+					}
 					WebConnection.piClient = WebConnection.sslStream.GetProperty("SelectedClientCertificate");
 					WebConnection.piServer = WebConnection.sslStream.GetProperty("ServerCertificate");
 					WebConnection.piTrustFailure = WebConnection.sslStream.GetProperty("TrustFailure");

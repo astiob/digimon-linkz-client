@@ -7,16 +7,6 @@ using UnityEngine;
 
 public sealed class CMD_PointResult : CMD
 {
-	private const int BONUS_UI_MAX = 5;
-
-	private const float BONUS_CHANGE_TIME = 0.2f;
-
-	private const float BONUS_CURVE_TIME = 1f;
-
-	private const float BONUS_VIEW_TIME = 0.5f;
-
-	private const float BONUS_END_WAIT_TIME = 1.5f;
-
 	private CMD_PointResult.Proccess currentProccess;
 
 	[SerializeField]
@@ -71,6 +61,8 @@ public sealed class CMD_PointResult : CMD
 
 	private GameWebAPI.RespData_AreaEventResult eventResult;
 
+	private const int BONUS_UI_MAX = 5;
+
 	private int dataViewConter;
 
 	private int dataPageNum;
@@ -79,9 +71,17 @@ public sealed class CMD_PointResult : CMD
 
 	private TweenAlpha bonusPosTween;
 
+	private const float BONUS_CHANGE_TIME = 0.2f;
+
 	private IEnumerator bonusCoroutine;
 
 	private bool countUpSe;
+
+	private const float BONUS_CURVE_TIME = 1f;
+
+	private const float BONUS_VIEW_TIME = 0.5f;
+
+	private const float BONUS_END_WAIT_TIME = 1.5f;
 
 	private List<PointResultBonus> pointBonusList = new List<PointResultBonus>();
 
@@ -133,7 +133,7 @@ public sealed class CMD_PointResult : CMD
 			{
 				this.DispPoint();
 			});
-			this.Show(closeEvent, sizeX, sizeY, 0f);
+			this.<Show>__BaseCallProxy0(closeEvent, sizeX, sizeY, 0f);
 		});
 	}
 
@@ -243,7 +243,7 @@ public sealed class CMD_PointResult : CMD
 				break;
 			}
 			string eventPointBonusMessage = this.eventResult.point.bonusPoint[num2 + 1].eventPointBonusMessage;
-			string pointText = string.Format("{0}", this.eventResult.point.bonusPoint[num2 + 1].point);
+			string pointText = this.eventResult.point.bonusPoint[num2 + 1].point.ToString();
 			this.pointBonusList[i].LabelDataSet(eventPointBonusMessage, pointText);
 		}
 	}
@@ -344,7 +344,7 @@ public sealed class CMD_PointResult : CMD
 		{
 			this.itemGetListRoot.SetActive(true);
 			this.itemGetRoot.SetActive(false);
-			this.csSelectPanelItemList.AllBuild(1, true, 1f, 1f, null, this);
+			this.csSelectPanelItemList.AllBuild(1, true, 1f, 1f, null, this, true);
 			this.csSelectPanelItemList.UpdateBarrier();
 			this.isItemListStarted = true;
 			this.addPitch = 3;
@@ -405,18 +405,21 @@ public sealed class CMD_PointResult : CMD
 	private void DispNextItem()
 	{
 		this.currentProccess = CMD_PointResult.Proccess.NextItem;
-		List<GameWebAPI.RespData_AreaEventResult.Reward> list = (this.eventResult.nextReward != null) ? new List<GameWebAPI.RespData_AreaEventResult.Reward>(this.eventResult.nextReward) : null;
-		if (list == null || list.Count<GameWebAPI.RespData_AreaEventResult.Reward>() == 0)
+		List<GameWebAPI.RespData_AreaEventResult.Reward> nextRewardList = (this.eventResult.nextReward != null) ? new List<GameWebAPI.RespData_AreaEventResult.Reward>(this.eventResult.nextReward) : null;
+		if (nextRewardList == null || nextRewardList.Count<GameWebAPI.RespData_AreaEventResult.Reward>() == 0)
 		{
 			this.OnFinishedDispNextItem();
 		}
 		else
 		{
 			this.nextItemRoot.SetActive(true);
-			this.nextItemRoot.GetComponent<EffectAnimatorEventTime>().SetEvent(0, new Action(this.OnFinishedDispNextItem));
-			int num = (list.Count <= 0) ? 0 : (int.Parse(list[0].point) - this.eventResult.point.eventPoint);
+			this.nextItemRoot.GetComponent<EffectAnimatorEventTime>().SetEvent(0, delegate
+			{
+				this.SetNextItemInfo(nextRewardList);
+				this.OnFinishedDispNextItem();
+			});
+			int num = (nextRewardList.Count <= 0) ? 0 : (int.Parse(nextRewardList[0].point) - this.eventResult.point.eventPoint);
 			this.nextItemPointText.text = string.Format(StringMaster.GetString("BattleResult-14"), num);
-			this.SetNextItemInfo(list);
 		}
 	}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine.UI.Collections;
 
 namespace UnityEngine.UI
@@ -15,7 +16,10 @@ namespace UnityEngine.UI
 
 		private readonly IndexedSet<ICanvasElement> m_GraphicRebuildQueue = new IndexedSet<ICanvasElement>();
 
-		private static readonly Comparison<ICanvasElement> s_SortLayoutFunction = new Comparison<ICanvasElement>(CanvasUpdateRegistry.SortLayoutList);
+		private static readonly Comparison<ICanvasElement> s_SortLayoutFunction;
+
+		[CompilerGenerated]
+		private static Comparison<ICanvasElement> <>f__mg$cache0;
 
 		protected CanvasUpdateRegistry()
 		{
@@ -77,6 +81,7 @@ namespace UnityEngine.UI
 
 		private void PerformUpdate()
 		{
+			UISystemProfilerApi.BeginSample(UISystemProfilerApi.SampleType.Layout);
 			this.CleanInvalidItems();
 			this.m_PerformingLayoutUpdate = true;
 			this.m_LayoutRebuildQueue.Sort(CanvasUpdateRegistry.s_SortLayoutFunction);
@@ -126,26 +131,32 @@ namespace UnityEngine.UI
 			}
 			for (int n = 0; n < this.m_GraphicRebuildQueue.Count; n++)
 			{
-				this.m_GraphicRebuildQueue[n].LayoutComplete();
+				this.m_GraphicRebuildQueue[n].GraphicUpdateComplete();
 			}
 			CanvasUpdateRegistry.instance.m_GraphicRebuildQueue.Clear();
 			this.m_PerformingGraphicUpdate = false;
+			UISystemProfilerApi.EndSample(UISystemProfilerApi.SampleType.Layout);
 		}
 
 		private static int ParentCount(Transform child)
 		{
+			int result;
 			if (child == null)
 			{
-				return 0;
+				result = 0;
 			}
-			Transform parent = child.parent;
-			int num = 0;
-			while (parent != null)
+			else
 			{
-				num++;
-				parent = parent.parent;
+				Transform parent = child.parent;
+				int num = 0;
+				while (parent != null)
+				{
+					num++;
+					parent = parent.parent;
+				}
+				result = num;
 			}
-			return num;
+			return result;
 		}
 
 		private static int SortLayoutList(ICanvasElement x, ICanvasElement y)
@@ -182,12 +193,17 @@ namespace UnityEngine.UI
 
 		private bool InternalRegisterCanvasElementForGraphicRebuild(ICanvasElement element)
 		{
+			bool result;
 			if (this.m_PerformingGraphicUpdate)
 			{
 				Debug.LogError(string.Format("Trying to add {0} for graphic rebuild while we are already inside a graphic rebuild loop. This is not supported.", element));
-				return false;
+				result = false;
 			}
-			return this.m_GraphicRebuildQueue.AddUnique(element);
+			else
+			{
+				result = this.m_GraphicRebuildQueue.AddUnique(element);
+			}
+			return result;
 		}
 
 		public static void UnRegisterCanvasElementForRebuild(ICanvasElement element)
@@ -201,10 +217,12 @@ namespace UnityEngine.UI
 			if (this.m_PerformingLayoutUpdate)
 			{
 				Debug.LogError(string.Format("Trying to remove {0} from rebuild list while we are already inside a rebuild loop. This is not supported.", element));
-				return;
 			}
-			element.LayoutComplete();
-			CanvasUpdateRegistry.instance.m_LayoutRebuildQueue.Remove(element);
+			else
+			{
+				element.LayoutComplete();
+				CanvasUpdateRegistry.instance.m_LayoutRebuildQueue.Remove(element);
+			}
 		}
 
 		private void InternalUnRegisterCanvasElementForGraphicRebuild(ICanvasElement element)
@@ -212,10 +230,12 @@ namespace UnityEngine.UI
 			if (this.m_PerformingGraphicUpdate)
 			{
 				Debug.LogError(string.Format("Trying to remove {0} from rebuild list while we are already inside a rebuild loop. This is not supported.", element));
-				return;
 			}
-			element.GraphicUpdateComplete();
-			CanvasUpdateRegistry.instance.m_GraphicRebuildQueue.Remove(element);
+			else
+			{
+				element.GraphicUpdateComplete();
+				CanvasUpdateRegistry.instance.m_GraphicRebuildQueue.Remove(element);
+			}
 		}
 
 		public static bool IsRebuildingLayout()
@@ -226,6 +246,16 @@ namespace UnityEngine.UI
 		public static bool IsRebuildingGraphics()
 		{
 			return CanvasUpdateRegistry.instance.m_PerformingGraphicUpdate;
+		}
+
+		// Note: this type is marked as 'beforefieldinit'.
+		static CanvasUpdateRegistry()
+		{
+			if (CanvasUpdateRegistry.<>f__mg$cache0 == null)
+			{
+				CanvasUpdateRegistry.<>f__mg$cache0 = new Comparison<ICanvasElement>(CanvasUpdateRegistry.SortLayoutList);
+			}
+			CanvasUpdateRegistry.s_SortLayoutFunction = CanvasUpdateRegistry.<>f__mg$cache0;
 		}
 	}
 }

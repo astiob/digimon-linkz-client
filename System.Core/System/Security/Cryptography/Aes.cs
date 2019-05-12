@@ -20,7 +20,7 @@ namespace System.Security.Cryptography
 		/// <returns>A cryptographic object that is used to perform the symmetric algorithm.</returns>
 		public new static Aes Create()
 		{
-			return Aes.Create("System.Security.Cryptography.AesManaged, System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+			return Aes.Create("System.Security.Cryptography.AesManaged, System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 		}
 
 		/// <summary>Creates a cryptographic object that specifies the implementation of AES to use to perform the symmetric algorithm.</summary>

@@ -167,52 +167,58 @@ public class CMD_LoginNormal : CMD_LoginBase
 	{
 		int num = int.Parse(lr.assetCategoryId);
 		string result = string.Empty;
-		switch (num)
+		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)num;
+		switch (assetCategory)
 		{
-		case 1:
+		case MasterDataMng.AssetCategory.MONSTER:
 			result = "monster_dummy";
 			break;
-		case 2:
+		case MasterDataMng.AssetCategory.DIGI_STONE:
 			result = "Common02_LB_Stone";
 			break;
-		case 3:
+		case MasterDataMng.AssetCategory.LINK_POINT:
 			result = "Common02_LB_Link";
 			break;
-		case 4:
+		case MasterDataMng.AssetCategory.TIP:
 			result = "Common02_LB_Chip";
 			break;
-		case 6:
+		default:
+			switch (assetCategory)
+			{
+			case MasterDataMng.AssetCategory.MEAT:
+				result = "Common02_item_meat";
+				break;
+			case MasterDataMng.AssetCategory.SOUL:
+				result = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(lr.assetValue);
+				break;
+			case MasterDataMng.AssetCategory.FACILITY_KEY:
+			{
+				FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(lr.assetValue);
+				FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
+				FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
+				result = facilityMasterByReleaseId.GetIconPath();
+				break;
+			}
+			case MasterDataMng.AssetCategory.CHIP:
+				result = "chip_dummy";
+				break;
+			case MasterDataMng.AssetCategory.DUNGEON_TICKET:
+			{
+				GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => lr.assetValue == x.dungeonTicketId);
+				if (dungeonTicketM != null)
+				{
+					result = dungeonTicketM.img;
+				}
+				break;
+			}
+			}
+			break;
+		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(lr.assetValue);
 			if (itemM != null)
 			{
 				result = itemM.GetLargeImagePath();
-			}
-			break;
-		}
-		case 13:
-			result = "Common02_item_meat";
-			break;
-		case 14:
-			result = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(lr.assetValue);
-			break;
-		case 16:
-		{
-			FacilityConditionM[] facilityCondition = FarmDataManager.GetFacilityCondition(lr.assetValue);
-			FacilityConditionM facilityConditionM = facilityCondition.FirstOrDefault((FacilityConditionM x) => int.Parse(x.conditionType) == 1);
-			FacilityM facilityMasterByReleaseId = FarmDataManager.GetFacilityMasterByReleaseId(facilityConditionM.releaseId);
-			result = facilityMasterByReleaseId.GetIconPath();
-			break;
-		}
-		case 17:
-			result = "chip_dummy";
-			break;
-		case 18:
-		{
-			GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM dungeonTicketM = MasterDataMng.Instance().RespDataMA_DungeonTicketMaster.dungeonTicketM.FirstOrDefault((GameWebAPI.RespDataMA_DungeonTicketMaster.DungeonTicketM x) => lr.assetValue == x.dungeonTicketId);
-			if (dungeonTicketM != null)
-			{
-				result = dungeonTicketM.img;
 			}
 			break;
 		}

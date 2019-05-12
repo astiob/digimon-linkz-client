@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace MissionData
 {
@@ -17,15 +18,28 @@ namespace MissionData
 			missionInfoLogic.OnReceived = delegate(GameWebAPI.RespDataMS_MissionInfoLogic response)
 			{
 				this.MissionInfoLogicData = response;
-				foreach (object obj in Enum.GetValues(typeof(Type.DisplayGroup)))
+				IEnumerator enumerator = Enum.GetValues(typeof(Type.DisplayGroup)).GetEnumerator();
+				try
 				{
-					Type.DisplayGroup displayGroup = (Type.DisplayGroup)((int)obj);
-					GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[] array = (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[])typeof(GameWebAPI.RespDataMS_MissionInfoLogic.Result).GetField(displayGroup.ToString()).GetValue(this.MissionInfoLogicData.result);
-					foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission in array)
+					while (enumerator.MoveNext())
 					{
-						GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission2 = mission;
-						int num = (int)displayGroup;
-						mission2.displayGroup = num.ToString();
+						object obj = enumerator.Current;
+						Type.DisplayGroup displayGroup = (Type.DisplayGroup)obj;
+						GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[] array = (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission[])typeof(GameWebAPI.RespDataMS_MissionInfoLogic.Result).GetField(displayGroup.ToString()).GetValue(this.MissionInfoLogicData.result);
+						foreach (GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission in array)
+						{
+							GameWebAPI.RespDataMS_MissionInfoLogic.Result.Mission mission2 = mission;
+							int num = (int)displayGroup;
+							mission2.displayGroup = num.ToString();
+						}
+					}
+				}
+				finally
+				{
+					IDisposable disposable;
+					if ((disposable = (enumerator as IDisposable)) != null)
+					{
+						disposable.Dispose();
 					}
 				}
 			};

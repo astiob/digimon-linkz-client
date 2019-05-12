@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class CMD_SPBonusList : CMD
 {
-	private const float bonusChangeTime = 0.2f;
-
 	[SerializeField]
 	private List<UILabel> uiLabelList;
 
@@ -22,22 +20,9 @@ public class CMD_SPBonusList : CMD
 
 	private TweenAlpha bonusPosTween;
 
+	private const float bonusChangeTime = 0.2f;
+
 	private bool bonusChange;
-
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
-	protected override void Update()
-	{
-		base.Update();
-	}
-
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
-	{
-		base.Show(f, sizeX, sizeY, aT);
-	}
 
 	public void SetViewData(List<string> textData)
 	{

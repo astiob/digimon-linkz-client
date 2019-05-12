@@ -37,20 +37,29 @@ namespace UnityEngine.UI.CoroutineTween
 			if (this.m_CoroutineContainer == null)
 			{
 				Debug.LogWarning("Coroutine container not configured... did you forget to call Init?");
-				return;
 			}
+			else
+			{
+				this.StopTween();
+				if (!this.m_CoroutineContainer.gameObject.activeInHierarchy)
+				{
+					info.TweenValue(1f);
+				}
+				else
+				{
+					this.m_Tween = TweenRunner<T>.Start(info);
+					this.m_CoroutineContainer.StartCoroutine(this.m_Tween);
+				}
+			}
+		}
+
+		public void StopTween()
+		{
 			if (this.m_Tween != null)
 			{
 				this.m_CoroutineContainer.StopCoroutine(this.m_Tween);
 				this.m_Tween = null;
 			}
-			if (!this.m_CoroutineContainer.gameObject.activeInHierarchy)
-			{
-				info.TweenValue(1f);
-				return;
-			}
-			this.m_Tween = TweenRunner<T>.Start(info);
-			this.m_CoroutineContainer.StartCoroutine(this.m_Tween);
 		}
 	}
 }

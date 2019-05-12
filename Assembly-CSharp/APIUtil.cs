@@ -176,12 +176,12 @@ public sealed class APIUtil : MonoBehaviour
 		}
 		else if (exception != null)
 		{
-			APIAlert apiAlert = new APIAlert();
+			APIAlert apialert = new APIAlert();
 			if (!exception.IsBackTopScreenError())
 			{
 				RestrictionInput.SuspensionLoad();
-				apiAlert.NetworkAPIError(exception, true);
-				apiAlert.ClosedAction = delegate()
+				apialert.NetworkAPIError(exception, true);
+				apialert.ClosedAction = delegate()
 				{
 					RestrictionInput.ResumeLoad();
 					onCompleted(result);
@@ -189,20 +189,20 @@ public sealed class APIUtil : MonoBehaviour
 			}
 			else
 			{
-				apiAlert.NetworkAPIException(exception);
+				apialert.NetworkAPIException(exception);
 			}
 		}
 		else
 		{
-			string title = StringMaster.GetString("AuthFailedTitle");
-			string message = StringMaster.GetString("AuthFailedInfo");
-			Action<int> onClosed = delegate(int nop)
+			string @string = StringMaster.GetString("AuthFailedTitle");
+			string string2 = StringMaster.GetString("AuthFailedInfo");
+			Action<int> action = delegate(int nop)
 			{
 				RestrictionInput.ResumeLoad();
 				onCompleted(result);
 			};
 			RestrictionInput.SuspensionLoad();
-			AlertManager.ShowAlertDialog(onClosed, title, message, AlertManager.ButtonActionType.Retry, false);
+			AlertManager.ShowAlertDialog(action, @string, string2, AlertManager.ButtonActionType.Retry, false);
 		}
 		yield break;
 	}
@@ -266,70 +266,79 @@ public sealed class APIUtil : MonoBehaviour
 		OptionSetting.Instance.Initialize(DataMng.Instance().RespDataCM_Login.GetOptionList_ProvisionalFunction());
 	}
 
-	public APIRequestTask RequestHomeData()
+	public IEnumerator RequestHomeData()
 	{
-		RequestList requestList = new RequestList();
-		requestList.AddRequest(new GameWebAPI.RequestUS_UserStatus
+		RequestBase request = new GameWebAPI.RequestUS_UserStatus
 		{
 			OnReceived = new Action<GameWebAPI.RespDataUS_GetPlayerInfo>(this.OnRecievedUserStatus)
-		});
-		requestList.AddRequest(new GameWebAPI.RequestTL_GetUserTitleList
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.RequestTL_GetUserTitleList
 		{
 			OnReceived = new Action<GameWebAPI.RespDataTL_GetUserTitleList>(this.OnRecievedUserTitleList)
-		});
-		requestList.AddRequest(ColosseumDeckWeb.Request());
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = ColosseumDeckWeb.Request();
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		if (ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() == 0)
 		{
-			requestList.AddRequest(new GameWebAPI.RequestMonsterList
+			request = new GameWebAPI.RequestMonsterList
 			{
 				OnReceived = new Action<GameWebAPI.RespDataUS_GetMonsterList>(this.OnRecievedUserMonster)
-			});
+			};
+			yield return base.StartCoroutine(request.Run(null, null, null));
 		}
-		requestList.AddRequest(new GameWebAPI.RequestMN_DeckList
+		request = new GameWebAPI.RequestMN_DeckList
 		{
 			OnReceived = new Action<GameWebAPI.RespDataMN_GetDeckList>(this.OnRecievedDeckList)
-		});
-		requestList.AddRequest(new GameWebAPI.ReqDataCS_ChipListLogic
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.ReqDataCS_ChipListLogic
 		{
 			OnReceived = new Action<GameWebAPI.RespDataCS_ChipListLogic>(this.OnRecievedUserChipList)
-		});
-		requestList.AddRequest(new GameWebAPI.ItemListLogic
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.ItemListLogic
 		{
 			OnReceived = new Action<GameWebAPI.RespDataUS_ItemListLogic>(this.OnRecievedItemList)
-		});
-		requestList.AddRequest(new GameWebAPI.MonsterSlotInfoListLogic
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.MonsterSlotInfoListLogic
 		{
 			OnReceived = new Action<GameWebAPI.RespDataCS_MonsterSlotInfoListLogic>(this.OnRecievedMonsterSlotInfo)
-		});
-		requestList.AddRequest(new GameWebAPI.UserSoulInfoList
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.UserSoulInfoList
 		{
 			OnReceived = new Action<GameWebAPI.RespDataUS_GetSoulInfo>(this.OnRecievedUserSoulData)
-		});
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		GameWebAPI.RequestFA_UserFacilityList requestFA_UserFacilityList = new GameWebAPI.RequestFA_UserFacilityList();
 		requestFA_UserFacilityList.SetSendData = delegate(GameWebAPI.FA_Req_RequestFA_UserFacilityList param)
 		{
 			param.userId = DataMng.Instance().RespDataCM_Login.playerInfo.UserId;
 		};
 		requestFA_UserFacilityList.OnReceived = new Action<GameWebAPI.RespDataFA_GetFacilityList>(this.OnRecievedUserFacility);
-		GameWebAPI.RequestFA_UserFacilityList addRequest = requestFA_UserFacilityList;
-		requestList.AddRequest(addRequest);
-		requestList.AddRequest(new GameWebAPI.RequestCM_LoginBonus
+		request = requestFA_UserFacilityList;
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.RequestCM_LoginBonus
 		{
 			OnReceived = new Action<GameWebAPI.RespDataCM_LoginBonus>(this.OnRecievedLoginBonus)
-		});
-		requestList.AddRequest(new GameWebAPI.RequestMP_MyPage
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.RequestMP_MyPage
 		{
 			OnReceived = new Action<GameWebAPI.RespDataMP_MyPage>(this.OnRecievedMyPage)
-		});
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		GameWebAPI.RequestCP_Campaign requestCP_Campaign = new GameWebAPI.RequestCP_Campaign();
 		requestCP_Campaign.SetSendData = delegate(GameWebAPI.CP_Req_Campaign param)
 		{
 			param.campaignId = 0;
 		};
 		requestCP_Campaign.OnReceived = new Action<GameWebAPI.RespDataCP_Campaign>(this.OnRecievedCampaign);
-		GameWebAPI.RequestCP_Campaign addRequest2 = requestCP_Campaign;
-		requestList.AddRequest(addRequest2);
-		RequestList requestList2 = requestList;
+		request = requestCP_Campaign;
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		GameWebAPI.RequestIN_InfoList requestIN_InfoList = new GameWebAPI.RequestIN_InfoList();
 		requestIN_InfoList.SetSendData = delegate(GameWebAPI.SendDataIN_InfoList requestParam)
 		{
@@ -337,8 +346,8 @@ public sealed class APIUtil : MonoBehaviour
 			requestParam.countryCode = countryCode;
 		};
 		requestIN_InfoList.OnReceived = new Action<GameWebAPI.RespDataIN_InfoList>(this.OnRecievedInformationList);
-		requestList2.AddRequest(requestIN_InfoList);
-		RequestList requestList3 = requestList;
+		request = requestIN_InfoList;
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		GameWebAPI.RequestMA_BannerMaster requestMA_BannerMaster = new GameWebAPI.RequestMA_BannerMaster();
 		requestMA_BannerMaster.SetSendData = delegate(GameWebAPI.RequestMA_BannerM requestParam)
 		{
@@ -346,34 +355,37 @@ public sealed class APIUtil : MonoBehaviour
 			requestParam.countryCode = countryCode;
 		};
 		requestMA_BannerMaster.OnReceived = new Action<GameWebAPI.RespDataMA_BannerM>(this.OnRecievedBannerMaster);
-		requestList3.AddRequest(requestMA_BannerMaster);
+		request = requestMA_BannerMaster;
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		GameWebAPI.RequestUS_UserProfile requestUS_UserProfile = new GameWebAPI.RequestUS_UserProfile();
 		requestUS_UserProfile.SetSendData = delegate(GameWebAPI.PRF_Req_ProfileData param)
 		{
 			param.targetUserId = DataMng.Instance().RespDataCM_Login.playerInfo.UserId;
 		};
 		requestUS_UserProfile.OnReceived = new Action<GameWebAPI.RespDataPRF_Profile>(this.OnRecievedProfileData);
-		GameWebAPI.RequestUS_UserProfile addRequest3 = requestUS_UserProfile;
-		requestList.AddRequest(addRequest3);
-		requestList.AddRequest(new GameWebAPI.RequestCL_ColosseumReleaseCriteria
+		request = requestUS_UserProfile;
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.RequestCL_ColosseumReleaseCriteria
 		{
 			OnReceived = new Action<GameWebAPI.RespDataCL_ColosseumReleaseCriteria>(this.OnRecievedColosseumReleaseCriteria)
-		});
-		requestList.AddRequest(new GameWebAPI.ColosseumInfoLogic
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		request = new GameWebAPI.ColosseumInfoLogic
 		{
 			OnReceived = new Action<GameWebAPI.RespData_ColosseumInfoLogic>(this.OnRecievedColosseumInfo)
-		});
+		};
+		yield return base.StartCoroutine(request.Run(null, null, null));
 		GameWebAPI.RequestCL_GetColosseumReward requestCL_GetColosseumReward = new GameWebAPI.RequestCL_GetColosseumReward();
 		requestCL_GetColosseumReward.SetSendData = delegate(GameWebAPI.SendDataCL_GetColosseumReward param)
 		{
 			param.act = "2";
 		};
 		requestCL_GetColosseumReward.OnReceived = new Action<GameWebAPI.RespDataCL_GetColosseumReward>(this.OnRecievedColosseumReward);
-		GameWebAPI.RequestCL_GetColosseumReward addRequest4 = requestCL_GetColosseumReward;
-		requestList.AddRequest(addRequest4);
-		APIRequestTask apirequestTask = new APIRequestTask(requestList, true);
-		apirequestTask.Add(Singleton<UserDataMng>.Instance.RequestUserMonsterFriendshipTime(true)).Delegate(ClassSingleton<BattleDataStore>.Instance.RequestWorldStartDataLogic(true));
-		return apirequestTask;
+		request = requestCL_GetColosseumReward;
+		yield return base.StartCoroutine(request.Run(null, null, null));
+		yield return base.StartCoroutine(Singleton<UserDataMng>.Instance.RequestUserMonsterFriendshipTime(true).Run(null, null, null));
+		yield return base.StartCoroutine(ClassSingleton<BattleDataStore>.Instance.RequestWorldStartDataLogic(true).Run(null, null, null));
+		yield break;
 	}
 
 	public APIRequestTask RequestFirstTutorialData()

@@ -14,8 +14,8 @@ namespace UnityEngine.Csv
 		[SerializeField]
 		private List<CsvColumnList> _value = new List<CsvColumnList>();
 
-		[SerializeField]
 		[FormerlySerializedAs("_rowLengthCash")]
+		[SerializeField]
 		private int _rowLengthCache;
 
 		public Csv(int rowLength, params string[] column)

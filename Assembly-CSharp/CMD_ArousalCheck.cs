@@ -13,32 +13,36 @@ public sealed class CMD_ArousalCheck : CMD
 	private MonsterResistanceList monsterResistanceList;
 
 	[SerializeField]
-	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
 	[SerializeField]
-	[Header("基本的なメッセージのラベル")]
 	private UILabel normalMessageLabel;
 
-	[Header("警告のメッセージのラベル")]
 	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[Header("Yesボタンのラベル")]
 	[SerializeField]
 	private UILabel buttonYesLabel;
 
-	[Header("Noボタンのラベル")]
 	[SerializeField]
 	private UILabel buttonNoLabel;
 
 	[SerializeField]
-	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
 	[SerializeField]
-	[Header("警告ダイアログのボタングループ")]
 	private GameObject btnGroup;
+
+	private Action<CMD> onPushYesButton;
+
+	private void OnPushYesButton()
+	{
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton(this);
+		}
+		this.ClosePanel(true);
+	}
 
 	protected override void Awake()
 	{
@@ -111,5 +115,10 @@ public sealed class CMD_ArousalCheck : CMD
 			component3.AddWidgetDepth(guimonsterIcon.transform, add);
 		}
 		NGUITools.DestroyImmediate(goEmpty);
+	}
+
+	public void SetActionYesButton(Action<CMD> action)
+	{
+		this.onPushYesButton = action;
 	}
 }

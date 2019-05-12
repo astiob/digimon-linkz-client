@@ -448,4 +448,8 @@ public class GUIListPartBS : GUICollider
 	public virtual void InactiveParts()
 	{
 	}
+
+	public virtual void ReceiveOriginalParts(GUIListPartBS originalParts)
+	{
+	}
 }

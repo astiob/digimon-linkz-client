@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ResultBase : MonoBehaviour
 {
-	[SerializeField]
 	[Header("TAP NEXTのオブジェクト")]
+	[SerializeField]
 	private GameObject tapNext;
 
 	public bool isEnd { get; protected set; }

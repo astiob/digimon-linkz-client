@@ -70,7 +70,7 @@ public class GUIListMultiRecruitFriendParts : GUIListPartBS
 				UIWidget component = guimonsterIcon.transform.parent.gameObject.GetComponent<UIWidget>();
 				if (component != null)
 				{
-					DepthController.SetWidgetDepth_2(guimonsterIcon.transform, component.depth + 2);
+					DepthController.SetWidgetDepth_Static(guimonsterIcon.transform, component.depth + 2);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 ﻿using Master;
 using Monster;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -117,11 +118,24 @@ public class CMD_ModalSort : CMD
 			this.clBtnSortList.Add(component);
 			UISprite component2 = this.goBtnSortList[i].GetComponent<UISprite>();
 			this.spBtnSortList.Add(component2);
-			foreach (object obj in this.goBtnSortList[i].transform)
+			IEnumerator enumerator = this.goBtnSortList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				this.lbBtnSortList.Add(component3);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					this.lbBtnSortList.Add(component3);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 			switch (i)
 			{
@@ -213,11 +227,24 @@ public class CMD_ModalSort : CMD
 			this.clBtnSelectList.Add(component);
 			UISprite component2 = this.goBtnSelectList[i].GetComponent<UISprite>();
 			this.spBtnSelectList.Add(component2);
-			foreach (object obj in this.goBtnSelectList[i].transform)
+			IEnumerator enumerator = this.goBtnSelectList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				this.lbBtnSelectList.Add(component3);
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					this.lbBtnSelectList.Add(component3);
+				}
+			}
+			finally
+			{
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
 			}
 			switch (i)
 			{

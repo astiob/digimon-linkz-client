@@ -134,7 +134,7 @@ public class BattleServerControl : BattleFunctionBase
 
 	private void GetMultiBattleData()
 	{
-		UnityEngine.Random.seed = ClassSingleton<MultiBattleData>.Instance.RandomSeed;
+		UnityEngine.Random.InitState(ClassSingleton<MultiBattleData>.Instance.RandomSeed);
 		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
 		DataMng.Instance().WD_ReqDngResult.startId = respData_WorldMultiStartInfo.startId;
 		DataMng.Instance().WD_ReqDngResult.dungeonId = respData_WorldMultiStartInfo.worldDungeonId;
@@ -183,7 +183,7 @@ public class BattleServerControl : BattleFunctionBase
 
 	private void GetPvPBattleData()
 	{
-		UnityEngine.Random.seed = ClassSingleton<MultiBattleData>.Instance.RandomSeed;
+		UnityEngine.Random.InitState(ClassSingleton<MultiBattleData>.Instance.RandomSeed);
 		MultiBattleData.PvPUserData pvPUserData = null;
 		foreach (MultiBattleData.PvPUserData pvPUserData2 in ClassSingleton<MultiBattleData>.Instance.PvPUserDatas)
 		{
@@ -806,35 +806,35 @@ public class BattleServerControl : BattleFunctionBase
 			{
 				obstacleBGTrans = base.stateManager.battleUiComponents.dialogContinue.transform;
 			}
-			Action<int> Result = delegate(int a)
+			Action<int> action = delegate(int a)
 			{
-				global::Debug.Log(base.battleStateData.beforeConfirmDigiStoneNumber + " / " + DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point);
-				base.battleStateData.beforeConfirmDigiStoneNumber = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
+				global::Debug.Log(this.battleStateData.beforeConfirmDigiStoneNumber + " / " + DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point);
+				this.battleStateData.beforeConfirmDigiStoneNumber = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 				shopCloseWait = true;
 			};
-			CMD_Shop cs = GUIMain.ShowCommonDialog(Result, "CMD_Shop", null) as CMD_Shop;
-			cs.CloseWhenConsumed = true;
+			CMD_Shop cmd_Shop = GUIMain.ShowCommonDialog(action, "CMD_Shop", null) as CMD_Shop;
+			cmd_Shop.CloseWhenConsumed = true;
 			float obstacleBGLocalY = obstacleBGTrans.localPosition.y;
-			cs.SetOnOpened(delegate(int a)
+			cmd_Shop.SetOnOpened(delegate(int a)
 			{
 				obstacleBGTrans.SetLocalY(-5000f);
 			});
-			cs.SetHideGUIAction(delegate
+			cmd_Shop.SetHideGUIAction(delegate
 			{
 				obstacleBGTrans.SetLocalY(obstacleBGLocalY);
 			});
-			cs.VirtualUsedStoneNum = base.battleStateData.turnUseDigiStoneCount;
+			cmd_Shop.VirtualUsedStoneNum = base.battleStateData.turnUseDigiStoneCount;
 		}
 		else
 		{
-			Action<int> Result2 = delegate(int a)
+			Action<int> action2 = delegate(int a)
 			{
 				shopCloseWait = true;
 			};
-			CMD_Alert ca = GUIMain.ShowCommonDialog(Result2, "CMD_Alert", null) as CMD_Alert;
-			ca.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
-			ca.Title = StringMaster.GetString("Maintenance-03");
-			ca.Info = StringMaster.GetString("Maintenance-04");
+			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(action2, "CMD_Alert", null) as CMD_Alert;
+			cmd_Alert.SetDisplayButton(CMD_Alert.DisplayButton.CLOSE);
+			cmd_Alert.Title = StringMaster.GetString("Maintenance-03");
+			cmd_Alert.Info = StringMaster.GetString("Maintenance-04");
 		}
 		while (!shopCloseWait)
 		{

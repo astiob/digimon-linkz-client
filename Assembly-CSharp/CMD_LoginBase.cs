@@ -153,23 +153,37 @@ public class CMD_LoginBase : CMD
 	{
 		int num = int.Parse(reward.assetCategoryId);
 		string arg = string.Empty;
-		switch (num)
+		MasterDataMng.AssetCategory assetCategory = (MasterDataMng.AssetCategory)num;
+		switch (assetCategory)
 		{
-		case 1:
-			arg = StringMaster.GetString("SystemCountBody");
-			break;
-		case 2:
-		case 6:
-		case 12:
-		case 13:
-		case 14:
-		case 15:
-			arg = StringMaster.GetString("SystemCountNumber");
-			break;
-		case 11:
+		case MasterDataMng.AssetCategory.GATHA_TICKET:
 			arg = StringMaster.GetString("SystemCountSheets");
+			goto IL_86;
+		case MasterDataMng.AssetCategory.MULTI_ITEM:
+		case MasterDataMng.AssetCategory.MEAT:
+		case MasterDataMng.AssetCategory.SOUL:
+		case MasterDataMng.AssetCategory.NO_DATA_ID:
+			break;
+		default:
+			switch (assetCategory)
+			{
+			case MasterDataMng.AssetCategory.MONSTER:
+				arg = StringMaster.GetString("SystemCountBody");
+				goto IL_86;
+			case MasterDataMng.AssetCategory.DIGI_STONE:
+			case MasterDataMng.AssetCategory.ITEM:
+				break;
+			case MasterDataMng.AssetCategory.LINK_POINT:
+			case MasterDataMng.AssetCategory.TIP:
+			case MasterDataMng.AssetCategory.EXP:
+				goto IL_86;
+			default:
+				goto IL_86;
+			}
 			break;
 		}
+		arg = StringMaster.GetString("SystemCountNumber");
+		IL_86:
 		return string.Format(format, DataMng.Instance().GetAssetTitle(reward.assetCategoryId, reward.assetValue), reward.assetNum, arg);
 	}
 }

@@ -14,12 +14,12 @@ public class CMD_MultiBattleParticipateMenu : CMD
 	[SerializeField]
 	private GameObject goBtnRecruit;
 
-	[SerializeField]
 	[Header("Label：参加")]
+	[SerializeField]
 	private UILabel lbBtnParticipate;
 
-	[SerializeField]
 	[Header("Label：募集")]
+	[SerializeField]
 	private UILabel lbBtnRecruit;
 
 	protected override void Awake()

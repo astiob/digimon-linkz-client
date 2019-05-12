@@ -1,4 +1,5 @@
 ﻿using System;
+using UI.Common;
 using UnityEngine;
 
 public sealed class MonsterEggMedalList : MonoBehaviour
@@ -51,27 +52,27 @@ public sealed class MonsterEggMedalList : MonoBehaviour
 			break;
 		case ConstValue.CandidateMedal.GOLD:
 			icons.SetActiveIcon(false, true);
-			icons.right.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType);
+			icons.right.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType, string.Empty);
 			return;
 		case ConstValue.CandidateMedal.SILVER:
 			icons.SetActiveIcon(false, true);
-			icons.right.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType2);
+			icons.right.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType2, string.Empty);
 			return;
 		default:
 			switch (candidate)
 			{
 			case ConstValue.CandidateMedal.SILVER_OR_NONE:
 				icons.SetActiveIcon(true, false);
-				icons.left.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType2);
+				icons.left.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType2, string.Empty);
 				return;
 			case ConstValue.CandidateMedal.GOLD_OR_NONE:
 				icons.SetActiveIcon(true, false);
-				icons.left.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType);
+				icons.left.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType, string.Empty);
 				return;
 			case ConstValue.CandidateMedal.GOLD_OR_SILVER:
 				icons.SetActive(true);
-				icons.left.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType);
-				icons.right.spriteName = MonsterDetailUtil.GetMedalSpriteName(medalType2);
+				icons.left.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType, string.Empty);
+				icons.right.spriteName = MonsterMedalIcon.GetMedalSpriteName(medalType2, string.Empty);
 				return;
 			}
 			break;

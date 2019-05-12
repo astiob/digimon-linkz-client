@@ -77,7 +77,7 @@ namespace Neptune.Cloud.Core
 					NpRoomParameter npRoomParameter = new NpRoomParameter();
 					npRoomParameter.RoomId = (dictionary3["room_id"] as string);
 					npRoomParameter.RoomName = (dictionary3["room_name"] as string);
-					npRoomParameter.RoomType = (RoomType)((int)dictionary3["room_type"]);
+					npRoomParameter.RoomType = (RoomType)dictionary3["room_type"];
 					npRoomParameter.Owner = (int)dictionary3["owner"];
 					int[] collection = (int[])dictionary3["member_list"];
 					npRoomParameter.MemberList.AddRange(collection);

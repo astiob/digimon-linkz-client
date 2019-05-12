@@ -10,8 +10,6 @@ using UnityEngine;
 
 public sealed class CMD_PvPBattleResult : CMD
 {
-	private const int UP_COUNT_VALUE = 1;
-
 	[Header("Winのロゴ")]
 	[SerializeField]
 	private GameObject winLogo;
@@ -36,8 +34,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private UISprite rankSprite;
 
-	[SerializeField]
 	[Header("獲得クラスタ数値ラベル")]
+	[SerializeField]
 	private UILabel getClusterLabel;
 
 	[Header("変動DP数値ラベル")]
@@ -52,8 +50,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private UILabel totalWinNum;
 
-	[SerializeField]
 	[Header("次のランクアップまでの勝利数ラベル")]
+	[SerializeField]
 	private UILabel nextRankupWinNum;
 
 	[Header("ランクアップ用オブジェクト")]
@@ -64,16 +62,16 @@ public sealed class CMD_PvPBattleResult : CMD
 	[SerializeField]
 	private GameObject gaugeDown;
 
-	[SerializeField]
 	[Header("ランクアップ用エフェクト")]
+	[SerializeField]
 	private GameObject rankUpEffect;
 
-	[SerializeField]
 	[Header("ランクダウン用エフェクト")]
+	[SerializeField]
 	private GameObject rankDownEffect;
 
-	[SerializeField]
 	[Header("TAP NEXTのオブジェクト")]
+	[SerializeField]
 	private GameObject tapNext;
 
 	[Header("加算DPのTween")]
@@ -111,6 +109,8 @@ public sealed class CMD_PvPBattleResult : CMD
 	private bool isMockBattle;
 
 	private int nowTotalWin;
+
+	private const int UP_COUNT_VALUE = 1;
 
 	private CMD_PvPBattleResult.SKIP_SUCCESS currentSkipSuccess;
 

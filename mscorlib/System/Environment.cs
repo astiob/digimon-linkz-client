@@ -182,7 +182,7 @@ namespace System
 		{
 			get
 			{
-				return new Version("3.0.40818.0");
+				return new Version("2.0.50727.1433");
 			}
 		}
 

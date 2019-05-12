@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 namespace UnityEngine.UI
 {
 	[AddComponentMenu("UI/Button", 30)]
-	public class Button : Selectable, IEventSystemHandler, IPointerClickHandler, ISubmitHandler
+	public class Button : Selectable, IPointerClickHandler, ISubmitHandler, IEventSystemHandler
 	{
 		[FormerlySerializedAs("onClick")]
 		[SerializeField]
@@ -31,31 +31,29 @@ namespace UnityEngine.UI
 
 		private void Press()
 		{
-			if (!this.IsActive() || !this.IsInteractable())
+			if (this.IsActive() && this.IsInteractable())
 			{
-				return;
+				UISystemProfilerApi.AddMarker("Button.onClick", this);
+				this.m_OnClick.Invoke();
 			}
-			this.m_OnClick.Invoke();
 		}
 
 		public virtual void OnPointerClick(PointerEventData eventData)
 		{
-			if (eventData.button != PointerEventData.InputButton.Left)
+			if (eventData.button == PointerEventData.InputButton.Left)
 			{
-				return;
+				this.Press();
 			}
-			this.Press();
 		}
 
 		public virtual void OnSubmit(BaseEventData eventData)
 		{
 			this.Press();
-			if (!this.IsActive() || !this.IsInteractable())
+			if (this.IsActive() && this.IsInteractable())
 			{
-				return;
+				this.DoStateTransition(Selectable.SelectionState.Pressed, false);
+				base.StartCoroutine(this.OnFinishSubmit());
 			}
-			this.DoStateTransition(Selectable.SelectionState.Pressed, false);
-			base.StartCoroutine(this.OnFinishSubmit());
 		}
 
 		private IEnumerator OnFinishSubmit()

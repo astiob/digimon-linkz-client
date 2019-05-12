@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TextureTimeScrollInternal
@@ -30,6 +31,8 @@ namespace TextureTimeScrollInternal
 
 		[SerializeField]
 		private float _textureTiling = 1f;
+
+		private Dictionary<string, Dictionary<string, string>> shaderPropertiePair = new Dictionary<string, Dictionary<string, string>>();
 
 		public TextureTimeScrollModClip()
 		{
@@ -99,10 +102,19 @@ namespace TextureTimeScrollInternal
 			this.UpdateSpeed(instancedMaterial);
 			this.UpdateTiling(instancedMaterial);
 			float num = TextureTimeScrollRealTime.time * this._speed * this.GetModTimeScale();
-			instancedMaterial.SetFloat(this._sourcePropertyName + "TimeScroll", num % this.GetModValue(FModMode.TiledTexture));
-			instancedMaterial.SetFloat(this._sourcePropertyName + "TimeScrollSin", Mathf.Sin(num) % this.GetModValue(FModMode.Sin));
-			instancedMaterial.SetFloat(this._sourcePropertyName + "TimeScrollInf", num % this.GetModValue(FModMode.Infinity));
-			instancedMaterial.SetFloat(this._sourcePropertyName + "TimeScrollMod", num % this.GetModValue(instancedMaterial, this._sourcePropertyName + "ModValue"));
+			if (!this.shaderPropertiePair.ContainsKey(this._sourcePropertyName))
+			{
+				Dictionary<string, string> dictionary = new Dictionary<string, string>();
+				dictionary.Add("TimeScroll", this._sourcePropertyName + "TimeScroll");
+				dictionary.Add("TimeScrollSin", this._sourcePropertyName + "TimeScrollSin");
+				dictionary.Add("TimeScrollInf", this._sourcePropertyName + "TimeScrollInf");
+				dictionary.Add("TimeScrollMod", this._sourcePropertyName + "TimeScrollMod");
+				this.shaderPropertiePair.Add(this._sourcePropertyName, dictionary);
+			}
+			instancedMaterial.SetFloat(this.shaderPropertiePair[this._sourcePropertyName]["TimeScroll"], num % this.GetModValue(FModMode.TiledTexture));
+			instancedMaterial.SetFloat(this.shaderPropertiePair[this._sourcePropertyName]["TimeScrollSin"], Mathf.Sin(num) % this.GetModValue(FModMode.Sin));
+			instancedMaterial.SetFloat(this.shaderPropertiePair[this._sourcePropertyName]["TimeScrollInf"], num % this.GetModValue(FModMode.Infinity));
+			instancedMaterial.SetFloat(this.shaderPropertiePair[this._sourcePropertyName]["TimeScrollMod"], num % this.GetModValue(instancedMaterial, this._sourcePropertyName + "ModValue"));
 		}
 
 		private float GetModValue(Material instancedMaterial, string key)

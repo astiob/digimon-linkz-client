@@ -7,10 +7,6 @@ using UnityEngine;
 
 public sealed class CMD_ColosseumRanking : CMD
 {
-	private const int DEFAULT_DISP_RANKING_NUM = 100;
-
-	private const int UPDATE_DISP_RANKING_NUM = 100;
-
 	[SerializeField]
 	private GUISelectPanelQuestRanking csSelectPanel;
 
@@ -46,6 +42,10 @@ public sealed class CMD_ColosseumRanking : CMD
 
 	public static CMD_ColosseumRanking instance;
 
+	private const int DEFAULT_DISP_RANKING_NUM = 100;
+
+	private const int UPDATE_DISP_RANKING_NUM = 100;
+
 	public GameWebAPI.RespDataCL_Ranking.RankingData myData { get; private set; }
 
 	protected override void Awake()
@@ -73,14 +73,14 @@ public sealed class CMD_ColosseumRanking : CMD
 		GameWebAPI.RequestCL_Ranking request = this.GetRequestRanking(this.dispColosseumId, 1, 100, false);
 		yield return base.StartCoroutine(request.RunOneTime(delegate()
 		{
-			base.PartsTitle.SetTitle(StringMaster.GetString("ColosseumRankTitle"));
-			base.ShowDLG();
+			this.PartsTitle.SetTitle(StringMaster.GetString("ColosseumRankTitle"));
+			this.ShowDLG();
 			this.InitUI();
-			base.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception exception)
 		{
-			base.SetCloseAction(null);
-			base.ClosePanel(false);
+			this.SetCloseAction(null);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 		RestrictionInput.EndLoad();
 		yield break;
@@ -153,11 +153,11 @@ public sealed class CMD_ColosseumRanking : CMD
 			this.csParts.SetData();
 			this.csParts.ShowGUI();
 			this.csSelectPanel.DisableList();
-			this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null);
+			this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null, true);
 			this.csSelectPanel.SetLocationByIDX(this.listIdx, 0f);
 			this.csRankingPanel.DisableList();
 			this.csRankingPanel.SetData(this.colosseumRankingList);
-			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), true, 1f, 1f, null, null);
+			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), true, 1f, 1f, null, null, true);
 			this.csRankingPanel.SetBeforeMaxLocate();
 			if (this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>() > 0)
 			{
@@ -174,11 +174,11 @@ public sealed class CMD_ColosseumRanking : CMD
 			this.csParts.SetData();
 			this.csParts.ShowGUI();
 			this.csSelectPanel.DisableList();
-			this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null);
+			this.csSelectPanel.AllBuild(this.keysList.Count, true, 1f, 1f, null, null, true);
 			this.csSelectPanel.SetLocationByIDX(this.listIdx, 0f);
 			this.csRankingPanel.DisableList();
 			this.csRankingPanel.SetData(this.colosseumRankingList);
-			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), true, 1f, 1f, null, null);
+			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), true, 1f, 1f, null, null, true);
 			this.csRankingPanel.SetBeforeMaxLocate();
 			this.lbColosseumRankingListEmpty.gameObject.SetActive(true);
 		}
@@ -333,7 +333,7 @@ public sealed class CMD_ColosseumRanking : CMD
 		{
 			RestrictionInput.EndLoad();
 			base.SetCloseAction(null);
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 	}
 
@@ -346,7 +346,7 @@ public sealed class CMD_ColosseumRanking : CMD
 		{
 			this.csRankingPanel.SetData(this.colosseumRankingList);
 			this.csRankingPanel.initMaxLocation = true;
-			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), false, 1f, 1f, null, null);
+			this.csRankingPanel.AllBuild(this.colosseumRankingList.rankingMember.Count<GameWebAPI.RespDataCL_Ranking.RankingData>(), false, 1f, 1f, null, null, true);
 			this.csRankingPanel.SetSelectLocate();
 			this.csRankingPanel.SetBeforeMaxLocate();
 			RestrictionInput.EndLoad();
@@ -354,7 +354,7 @@ public sealed class CMD_ColosseumRanking : CMD
 		{
 			RestrictionInput.EndLoad();
 			base.SetCloseAction(null);
-			base.ClosePanel(false);
+			this.<ClosePanel>__BaseCallProxy1(false);
 		}, null));
 	}
 

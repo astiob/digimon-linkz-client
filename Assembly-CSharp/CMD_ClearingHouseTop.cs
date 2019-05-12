@@ -41,7 +41,7 @@ public sealed class CMD_ClearingHouseTop : CMD
 			bool flag = eventExchangeInfoList != null && eventExchangeInfoList.Length > 0 && eventExchangeInfoList[0] != null;
 			GUITips.TIPS_DISP_TYPE dispType = (!flag) ? GUITips.TIPS_DISP_TYPE.NoneExchangeNavi : GUITips.TIPS_DISP_TYPE.ExchangeNavi;
 			this.tips.Init(dispType);
-			this.Show(f, sizeX, sizeY, aT);
+			this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 		}, delegate(Exception nop)
 		{
 			RestrictionInput.EndLoad();

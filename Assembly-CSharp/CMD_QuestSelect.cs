@@ -61,7 +61,7 @@ public class CMD_QuestSelect : CMD
 	private void InitUI()
 	{
 		this.csSelectPanel.initLocation = true;
-		this.csSelectPanel.AllBuild(this.worldAreaMList.Count, true, 1f, 1f, null, null);
+		this.csSelectPanel.AllBuild(this.worldAreaMList.Count, true, 1f, 1f, null, null, true);
 	}
 
 	protected override void WindowOpened()

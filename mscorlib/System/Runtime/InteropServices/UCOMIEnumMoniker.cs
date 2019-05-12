@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IEnumMoniker" /> instead.</summary>
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Obsolete]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("00000102-0000-0000-c000-000000000046")]
 	[ComImport]
 	public interface UCOMIEnumMoniker

@@ -36,7 +36,9 @@ namespace UnityEngine.Networking
 
 		public const short LocalChildTransform = 16;
 
-		public const short PeerClientAuthority = 17;
+		public const short Fragment = 17;
+
+		public const short PeerClientAuthority = 18;
 
 		internal const short UserMessage = 0;
 
@@ -103,21 +105,21 @@ namespace UnityEngine.Networking
 			"CRC",
 			"LocalClientAuthority",
 			"LocalChildTransform",
+			"Fragment",
 			"PeerClientAuthority",
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
 			"Connect",
 			"Disconnect",
 			"Error",
@@ -138,16 +140,21 @@ namespace UnityEngine.Networking
 
 		public static string MsgTypeToString(short value)
 		{
+			string result;
 			if (value < 0 || value > 47)
 			{
-				return string.Empty;
+				result = string.Empty;
 			}
-			string text = MsgType.msgLabels[(int)value];
-			if (string.IsNullOrEmpty(text))
+			else
 			{
-				text = "[" + value + "]";
+				string text = MsgType.msgLabels[(int)value];
+				if (string.IsNullOrEmpty(text))
+				{
+					text = "[" + value + "]";
+				}
+				result = text;
 			}
-			return text;
+			return result;
 		}
 	}
 }

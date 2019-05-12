@@ -1,51 +1,100 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine.UI;
 
 namespace UnityEngine.EventSystems
 {
 	public static class ExecuteEvents
 	{
-		private static readonly ExecuteEvents.EventFunction<IPointerEnterHandler> s_PointerEnterHandler = new ExecuteEvents.EventFunction<IPointerEnterHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IPointerEnterHandler> s_PointerEnterHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IPointerExitHandler> s_PointerExitHandler = new ExecuteEvents.EventFunction<IPointerExitHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IPointerExitHandler> s_PointerExitHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IPointerDownHandler> s_PointerDownHandler = new ExecuteEvents.EventFunction<IPointerDownHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IPointerDownHandler> s_PointerDownHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IPointerUpHandler> s_PointerUpHandler = new ExecuteEvents.EventFunction<IPointerUpHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IPointerUpHandler> s_PointerUpHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IPointerClickHandler> s_PointerClickHandler = new ExecuteEvents.EventFunction<IPointerClickHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IPointerClickHandler> s_PointerClickHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IInitializePotentialDragHandler> s_InitializePotentialDragHandler = new ExecuteEvents.EventFunction<IInitializePotentialDragHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IInitializePotentialDragHandler> s_InitializePotentialDragHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IBeginDragHandler> s_BeginDragHandler = new ExecuteEvents.EventFunction<IBeginDragHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IBeginDragHandler> s_BeginDragHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IDragHandler> s_DragHandler = new ExecuteEvents.EventFunction<IDragHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IDragHandler> s_DragHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IEndDragHandler> s_EndDragHandler = new ExecuteEvents.EventFunction<IEndDragHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IEndDragHandler> s_EndDragHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IDropHandler> s_DropHandler = new ExecuteEvents.EventFunction<IDropHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IDropHandler> s_DropHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IScrollHandler> s_ScrollHandler = new ExecuteEvents.EventFunction<IScrollHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IScrollHandler> s_ScrollHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IUpdateSelectedHandler> s_UpdateSelectedHandler = new ExecuteEvents.EventFunction<IUpdateSelectedHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IUpdateSelectedHandler> s_UpdateSelectedHandler;
 
-		private static readonly ExecuteEvents.EventFunction<ISelectHandler> s_SelectHandler = new ExecuteEvents.EventFunction<ISelectHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<ISelectHandler> s_SelectHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IDeselectHandler> s_DeselectHandler = new ExecuteEvents.EventFunction<IDeselectHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IDeselectHandler> s_DeselectHandler;
 
-		private static readonly ExecuteEvents.EventFunction<IMoveHandler> s_MoveHandler = new ExecuteEvents.EventFunction<IMoveHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<IMoveHandler> s_MoveHandler;
 
-		private static readonly ExecuteEvents.EventFunction<ISubmitHandler> s_SubmitHandler = new ExecuteEvents.EventFunction<ISubmitHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<ISubmitHandler> s_SubmitHandler;
 
-		private static readonly ExecuteEvents.EventFunction<ICancelHandler> s_CancelHandler = new ExecuteEvents.EventFunction<ICancelHandler>(ExecuteEvents.Execute);
+		private static readonly ExecuteEvents.EventFunction<ICancelHandler> s_CancelHandler;
 
-		private static readonly ObjectPool<List<IEventSystemHandler>> s_HandlerListPool = new ObjectPool<List<IEventSystemHandler>>(null, delegate(List<IEventSystemHandler> l)
-		{
-			l.Clear();
-		});
+		private static readonly ObjectPool<List<IEventSystemHandler>> s_HandlerListPool;
 
-		private static readonly List<Transform> s_InternalTransformList = new List<Transform>(30);
+		private static readonly List<Transform> s_InternalTransformList;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IPointerEnterHandler> <>f__mg$cache0;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IPointerExitHandler> <>f__mg$cache1;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IPointerDownHandler> <>f__mg$cache2;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IPointerUpHandler> <>f__mg$cache3;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IPointerClickHandler> <>f__mg$cache4;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IInitializePotentialDragHandler> <>f__mg$cache5;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IBeginDragHandler> <>f__mg$cache6;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IDragHandler> <>f__mg$cache7;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IEndDragHandler> <>f__mg$cache8;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IDropHandler> <>f__mg$cache9;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IScrollHandler> <>f__mg$cacheA;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IUpdateSelectedHandler> <>f__mg$cacheB;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<ISelectHandler> <>f__mg$cacheC;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IDeselectHandler> <>f__mg$cacheD;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<IMoveHandler> <>f__mg$cacheE;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<ISubmitHandler> <>f__mg$cacheF;
+
+		[CompilerGenerated]
+		private static ExecuteEvents.EventFunction<ICancelHandler> <>f__mg$cache10;
 
 		public static T ValidateEventData<T>(BaseEventData data) where T : class
 		{
@@ -280,15 +329,14 @@ namespace UnityEngine.EventSystems
 		private static void GetEventChain(GameObject root, IList<Transform> eventChain)
 		{
 			eventChain.Clear();
-			if (root == null)
+			if (!(root == null))
 			{
-				return;
-			}
-			Transform transform = root.transform;
-			while (transform != null)
-			{
-				eventChain.Add(transform);
-				transform = transform.parent;
+				Transform transform = root.transform;
+				while (transform != null)
+				{
+					eventChain.Add(transform);
+					transform = transform.parent;
+				}
 			}
 		}
 
@@ -308,10 +356,10 @@ namespace UnityEngine.EventSystems
 				{
 					IEventSystemHandler eventSystemHandler = list[i];
 					Debug.LogException(new Exception(string.Format("Type {0} expected {1} received.", typeof(T).Name, eventSystemHandler.GetType().Name), innerException));
-					goto IL_8A;
+					goto IL_8F;
 				}
 				goto Block_2;
-				IL_8A:
+				IL_8F:
 				i++;
 				continue;
 				Block_2:
@@ -323,7 +371,7 @@ namespace UnityEngine.EventSystems
 				{
 					Debug.LogException(exception);
 				}
-				goto IL_8A;
+				goto IL_8F;
 			}
 			int count = list.Count;
 			ExecuteEvents.s_HandlerListPool.Release(list);
@@ -346,12 +394,17 @@ namespace UnityEngine.EventSystems
 
 		private static bool ShouldSendToComponent<T>(Component component) where T : IEventSystemHandler
 		{
+			bool result;
 			if (!(component is T))
 			{
-				return false;
+				result = false;
 			}
-			Behaviour behaviour = component as Behaviour;
-			return !(behaviour != null) || behaviour.isActiveAndEnabled;
+			else
+			{
+				Behaviour behaviour = component as Behaviour;
+				result = (!(behaviour != null) || behaviour.isActiveAndEnabled);
+			}
+			return result;
 		}
 
 		private static void GetEventList<T>(GameObject go, IList<IEventSystemHandler> results) where T : IEventSystemHandler
@@ -360,20 +413,19 @@ namespace UnityEngine.EventSystems
 			{
 				throw new ArgumentException("Results array is null", "results");
 			}
-			if (go == null || !go.activeInHierarchy)
+			if (!(go == null) && go.activeInHierarchy)
 			{
-				return;
-			}
-			List<Component> list = ListPool<Component>.Get();
-			go.GetComponents<Component>(list);
-			for (int i = 0; i < list.Count; i++)
-			{
-				if (ExecuteEvents.ShouldSendToComponent<T>(list[i]))
+				List<Component> list = ListPool<Component>.Get();
+				go.GetComponents<Component>(list);
+				for (int i = 0; i < list.Count; i++)
 				{
-					results.Add(list[i] as IEventSystemHandler);
+					if (ExecuteEvents.ShouldSendToComponent<T>(list[i]))
+					{
+						results.Add(list[i] as IEventSystemHandler);
+					}
 				}
+				ListPool<Component>.Release(list);
 			}
-			ListPool<Component>.Release(list);
 		}
 
 		public static bool CanHandleEvent<T>(GameObject go) where T : IEventSystemHandler
@@ -387,20 +439,120 @@ namespace UnityEngine.EventSystems
 
 		public static GameObject GetEventHandler<T>(GameObject root) where T : IEventSystemHandler
 		{
+			GameObject result;
 			if (root == null)
 			{
-				return null;
+				result = null;
 			}
-			Transform transform = root.transform;
-			while (transform != null)
+			else
 			{
-				if (ExecuteEvents.CanHandleEvent<T>(transform.gameObject))
+				Transform transform = root.transform;
+				while (transform != null)
 				{
-					return transform.gameObject;
+					if (ExecuteEvents.CanHandleEvent<T>(transform.gameObject))
+					{
+						return transform.gameObject;
+					}
+					transform = transform.parent;
 				}
-				transform = transform.parent;
+				result = null;
 			}
-			return null;
+			return result;
+		}
+
+		// Note: this type is marked as 'beforefieldinit'.
+		static ExecuteEvents()
+		{
+			if (ExecuteEvents.<>f__mg$cache0 == null)
+			{
+				ExecuteEvents.<>f__mg$cache0 = new ExecuteEvents.EventFunction<IPointerEnterHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_PointerEnterHandler = ExecuteEvents.<>f__mg$cache0;
+			if (ExecuteEvents.<>f__mg$cache1 == null)
+			{
+				ExecuteEvents.<>f__mg$cache1 = new ExecuteEvents.EventFunction<IPointerExitHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_PointerExitHandler = ExecuteEvents.<>f__mg$cache1;
+			if (ExecuteEvents.<>f__mg$cache2 == null)
+			{
+				ExecuteEvents.<>f__mg$cache2 = new ExecuteEvents.EventFunction<IPointerDownHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_PointerDownHandler = ExecuteEvents.<>f__mg$cache2;
+			if (ExecuteEvents.<>f__mg$cache3 == null)
+			{
+				ExecuteEvents.<>f__mg$cache3 = new ExecuteEvents.EventFunction<IPointerUpHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_PointerUpHandler = ExecuteEvents.<>f__mg$cache3;
+			if (ExecuteEvents.<>f__mg$cache4 == null)
+			{
+				ExecuteEvents.<>f__mg$cache4 = new ExecuteEvents.EventFunction<IPointerClickHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_PointerClickHandler = ExecuteEvents.<>f__mg$cache4;
+			if (ExecuteEvents.<>f__mg$cache5 == null)
+			{
+				ExecuteEvents.<>f__mg$cache5 = new ExecuteEvents.EventFunction<IInitializePotentialDragHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_InitializePotentialDragHandler = ExecuteEvents.<>f__mg$cache5;
+			if (ExecuteEvents.<>f__mg$cache6 == null)
+			{
+				ExecuteEvents.<>f__mg$cache6 = new ExecuteEvents.EventFunction<IBeginDragHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_BeginDragHandler = ExecuteEvents.<>f__mg$cache6;
+			if (ExecuteEvents.<>f__mg$cache7 == null)
+			{
+				ExecuteEvents.<>f__mg$cache7 = new ExecuteEvents.EventFunction<IDragHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_DragHandler = ExecuteEvents.<>f__mg$cache7;
+			if (ExecuteEvents.<>f__mg$cache8 == null)
+			{
+				ExecuteEvents.<>f__mg$cache8 = new ExecuteEvents.EventFunction<IEndDragHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_EndDragHandler = ExecuteEvents.<>f__mg$cache8;
+			if (ExecuteEvents.<>f__mg$cache9 == null)
+			{
+				ExecuteEvents.<>f__mg$cache9 = new ExecuteEvents.EventFunction<IDropHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_DropHandler = ExecuteEvents.<>f__mg$cache9;
+			if (ExecuteEvents.<>f__mg$cacheA == null)
+			{
+				ExecuteEvents.<>f__mg$cacheA = new ExecuteEvents.EventFunction<IScrollHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_ScrollHandler = ExecuteEvents.<>f__mg$cacheA;
+			if (ExecuteEvents.<>f__mg$cacheB == null)
+			{
+				ExecuteEvents.<>f__mg$cacheB = new ExecuteEvents.EventFunction<IUpdateSelectedHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_UpdateSelectedHandler = ExecuteEvents.<>f__mg$cacheB;
+			if (ExecuteEvents.<>f__mg$cacheC == null)
+			{
+				ExecuteEvents.<>f__mg$cacheC = new ExecuteEvents.EventFunction<ISelectHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_SelectHandler = ExecuteEvents.<>f__mg$cacheC;
+			if (ExecuteEvents.<>f__mg$cacheD == null)
+			{
+				ExecuteEvents.<>f__mg$cacheD = new ExecuteEvents.EventFunction<IDeselectHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_DeselectHandler = ExecuteEvents.<>f__mg$cacheD;
+			if (ExecuteEvents.<>f__mg$cacheE == null)
+			{
+				ExecuteEvents.<>f__mg$cacheE = new ExecuteEvents.EventFunction<IMoveHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_MoveHandler = ExecuteEvents.<>f__mg$cacheE;
+			if (ExecuteEvents.<>f__mg$cacheF == null)
+			{
+				ExecuteEvents.<>f__mg$cacheF = new ExecuteEvents.EventFunction<ISubmitHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_SubmitHandler = ExecuteEvents.<>f__mg$cacheF;
+			if (ExecuteEvents.<>f__mg$cache10 == null)
+			{
+				ExecuteEvents.<>f__mg$cache10 = new ExecuteEvents.EventFunction<ICancelHandler>(ExecuteEvents.Execute);
+			}
+			ExecuteEvents.s_CancelHandler = ExecuteEvents.<>f__mg$cache10;
+			ExecuteEvents.s_HandlerListPool = new ObjectPool<List<IEventSystemHandler>>(null, delegate(List<IEventSystemHandler> l)
+			{
+				l.Clear();
+			});
+			ExecuteEvents.s_InternalTransformList = new List<Transform>(30);
 		}
 
 		public delegate void EventFunction<T1>(T1 handler, BaseEventData eventData);

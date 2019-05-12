@@ -88,8 +88,8 @@ public class BattleStartAction : MonoBehaviour
 	[Serializable]
 	private struct LeaderSkillUI
 	{
-		[SerializeField]
 		[Header("味方スキル発動ローカライズ")]
+		[SerializeField]
 		public UILabel leaderSkillLocalize;
 
 		[Header("リーダースキルのオブジェクト")]

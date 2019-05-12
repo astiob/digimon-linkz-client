@@ -14,8 +14,8 @@ namespace UnityEngine.UI
 		[FormerlySerializedAs("fontSize")]
 		private int m_FontSize;
 
-		[FormerlySerializedAs("fontStyle")]
 		[SerializeField]
+		[FormerlySerializedAs("fontStyle")]
 		private FontStyle m_FontStyle;
 
 		[SerializeField]
@@ -34,8 +34,8 @@ namespace UnityEngine.UI
 		[SerializeField]
 		private bool m_AlignByGeometry;
 
-		[FormerlySerializedAs("richText")]
 		[SerializeField]
+		[FormerlySerializedAs("richText")]
 		private bool m_RichText;
 
 		[SerializeField]
@@ -46,17 +46,6 @@ namespace UnityEngine.UI
 
 		[SerializeField]
 		private float m_LineSpacing;
-
-		void ISerializationCallbackReceiver.OnBeforeSerialize()
-		{
-		}
-
-		void ISerializationCallbackReceiver.OnAfterDeserialize()
-		{
-			this.m_FontSize = Mathf.Clamp(this.m_FontSize, 0, 300);
-			this.m_MinSize = Mathf.Clamp(this.m_MinSize, 0, this.m_FontSize);
-			this.m_MaxSize = Mathf.Clamp(this.m_MaxSize, this.m_FontSize, 300);
-		}
 
 		public static FontData defaultFontData
 		{
@@ -221,6 +210,17 @@ namespace UnityEngine.UI
 			{
 				this.m_LineSpacing = value;
 			}
+		}
+
+		void ISerializationCallbackReceiver.OnBeforeSerialize()
+		{
+		}
+
+		void ISerializationCallbackReceiver.OnAfterDeserialize()
+		{
+			this.m_FontSize = Mathf.Clamp(this.m_FontSize, 0, 300);
+			this.m_MinSize = Mathf.Clamp(this.m_MinSize, 0, this.m_FontSize);
+			this.m_MaxSize = Mathf.Clamp(this.m_MaxSize, this.m_FontSize, 300);
 		}
 	}
 }

@@ -2,7 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Profiling;
+using WebAPIRequest;
 
 namespace DebugMonitor
 {
@@ -41,6 +44,9 @@ namespace DebugMonitor
 		private float elapsedTime;
 
 		private string log = string.Empty;
+
+		[CompilerGenerated]
+		private static Action <>f__mg$cache0;
 
 		private void Start()
 		{
@@ -91,8 +97,8 @@ namespace DebugMonitor
 
 		private void MonitoringMemory()
 		{
-			float num = Profiler.usedHeapSize;
-			float num2 = Profiler.GetTotalReservedMemory();
+			float num = (float)Profiler.usedHeapSizeLong;
+			float num2 = (float)Profiler.GetTotalReservedMemoryLong();
 			float num3 = num / num2 * 100f;
 			if (this.peekUseMemoryPercent < num3)
 			{
@@ -163,7 +169,12 @@ namespace DebugMonitor
 					colosseumEnd = resData;
 				}
 			};
-			yield return request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+			RequestBase request2 = request;
+			if (ApplicationMonitor.<>f__mg$cache0 == null)
+			{
+				ApplicationMonitor.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+			}
+			yield return request2.Run(ApplicationMonitor.<>f__mg$cache0, delegate(Exception noop)
 			{
 				RestrictionInput.EndLoad();
 			}, null);
@@ -171,12 +182,12 @@ namespace DebugMonitor
 			if (colosseumEnd != null)
 			{
 				responseData.resultCode = colosseumEnd.resultCode;
-				List<MultiBattleData.BattleEndResponseData.Reward> rwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+				List<MultiBattleData.BattleEndResponseData.Reward> list = new List<MultiBattleData.BattleEndResponseData.Reward>();
 				if (colosseumEnd.reward != null)
 				{
 					for (int i = 0; i < colosseumEnd.reward.Length; i++)
 					{
-						rwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+						list.Add(new MultiBattleData.BattleEndResponseData.Reward
 						{
 							assetCategoryId = colosseumEnd.reward[i].assetCategoryId,
 							assetNum = colosseumEnd.reward[i].assetNum,
@@ -184,12 +195,12 @@ namespace DebugMonitor
 						});
 					}
 				}
-				List<MultiBattleData.BattleEndResponseData.Reward> firstRankupRwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+				List<MultiBattleData.BattleEndResponseData.Reward> list2 = new List<MultiBattleData.BattleEndResponseData.Reward>();
 				if (colosseumEnd.firstRankUpReward != null)
 				{
 					for (int j = 0; j < colosseumEnd.firstRankUpReward.Length; j++)
 					{
-						firstRankupRwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+						list2.Add(new MultiBattleData.BattleEndResponseData.Reward
 						{
 							assetCategoryId = colosseumEnd.firstRankUpReward[j].assetCategoryId,
 							assetNum = colosseumEnd.firstRankUpReward[j].assetNum,
@@ -197,8 +208,8 @@ namespace DebugMonitor
 						});
 					}
 				}
-				responseData.reward = rwardList.ToArray();
-				responseData.firstRankUpReward = firstRankupRwardList.ToArray();
+				responseData.reward = list.ToArray();
+				responseData.firstRankUpReward = list2.ToArray();
 				responseData.score = colosseumEnd.score;
 				responseData.colosseumRankId = colosseumEnd.colosseumRankId;
 				responseData.isFirstRankUp = colosseumEnd.isFirstRankUp;

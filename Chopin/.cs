@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-internal class \uE00C : \uE013
+internal class \uE00C : \uE00B
 {
-	internal \uE00C(byte[] \uE000)
+	internal \uE00C(byte[] \uE014)
 	{
-		this.\uE000 = new HMACSHA1(\uE000);
+		this.\uE000 = new HMACMD5(\uE014);
 	}
 }

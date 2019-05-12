@@ -18,7 +18,7 @@ namespace UnityEngine.Networking
 		private bool m_ServerBindToIP;
 
 		[SerializeField]
-		private string m_ServerBindAddress = string.Empty;
+		private string m_ServerBindAddress = "";
 
 		[SerializeField]
 		private string m_NetworkAddress = "localhost";
@@ -48,10 +48,10 @@ namespace UnityEngine.Networking
 		private PlayerSpawnMethod m_PlayerSpawnMethod;
 
 		[SerializeField]
-		private string m_OfflineScene = string.Empty;
+		private string m_OfflineScene = "";
 
 		[SerializeField]
-		private string m_OnlineScene = string.Empty;
+		private string m_OnlineScene = "";
 
 		[SerializeField]
 		private List<GameObject> m_SpawnPrefabs = new List<GameObject>();
@@ -84,10 +84,22 @@ namespace UnityEngine.Networking
 		private float m_PacketLossPercentage;
 
 		[SerializeField]
+		private int m_MaxBufferedPackets = 16;
+
+		[SerializeField]
+		private bool m_AllowFragmentation = true;
+
+		[SerializeField]
 		private string m_MatchHost = "mm.unet.unity3d.com";
 
 		[SerializeField]
 		private int m_MatchPort = 443;
+
+		[SerializeField]
+		public string matchName = "default";
+
+		[SerializeField]
+		public uint matchSize = 4u;
 
 		private NetworkMigrationManager m_MigrationManager;
 
@@ -95,7 +107,7 @@ namespace UnityEngine.Networking
 
 		private bool m_ClientLoadedScene;
 
-		public static string networkSceneName = string.Empty;
+		public static string networkSceneName = "";
 
 		public bool isNetworkActive;
 
@@ -109,11 +121,7 @@ namespace UnityEngine.Networking
 
 		public NetworkMatch matchMaker;
 
-		public List<MatchDesc> matches;
-
-		public string matchName = "default";
-
-		public uint matchSize = 4u;
+		public List<MatchInfoSnapshot> matches;
 
 		public static NetworkManager singleton;
 
@@ -491,13 +499,14 @@ namespace UnityEngine.Networking
 			get
 			{
 				int num = 0;
-				foreach (NetworkConnection networkConnection in NetworkServer.connections)
+				for (int i = 0; i < NetworkServer.connections.Count; i++)
 				{
+					NetworkConnection networkConnection = NetworkServer.connections[i];
 					if (networkConnection != null)
 					{
-						foreach (PlayerController playerController in networkConnection.playerControllers)
+						for (int j = 0; j < networkConnection.playerControllers.Count; j++)
 						{
-							if (playerController.IsValid)
+							if (networkConnection.playerControllers[j].IsValid)
 							{
 								num++;
 							}
@@ -515,44 +524,50 @@ namespace UnityEngine.Networking
 
 		private void InitializeSingleton()
 		{
-			if (NetworkManager.singleton != null && NetworkManager.singleton == this)
+			if (!(NetworkManager.singleton != null) || !(NetworkManager.singleton == this))
 			{
-				return;
-			}
-			LogFilter.currentLogLevel = (int)this.m_LogLevel;
-			if (this.m_DontDestroyOnLoad)
-			{
-				if (NetworkManager.singleton != null)
+				int logLevel = (int)this.m_LogLevel;
+				if (logLevel != -1)
+				{
+					LogFilter.currentLogLevel = logLevel;
+				}
+				if (this.m_DontDestroyOnLoad)
+				{
+					if (NetworkManager.singleton != null)
+					{
+						if (LogFilter.logDev)
+						{
+							Debug.Log("Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will not be used.");
+						}
+						Object.Destroy(base.gameObject);
+						return;
+					}
+					if (LogFilter.logDev)
+					{
+						Debug.Log("NetworkManager created singleton (DontDestroyOnLoad)");
+					}
+					NetworkManager.singleton = this;
+					if (Application.isPlaying)
+					{
+						Object.DontDestroyOnLoad(base.gameObject);
+					}
+				}
+				else
 				{
 					if (LogFilter.logDev)
 					{
-						Debug.Log("Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will not be used.");
+						Debug.Log("NetworkManager created singleton (ForScene)");
 					}
-					Object.Destroy(base.gameObject);
-					return;
+					NetworkManager.singleton = this;
 				}
-				if (LogFilter.logDev)
+				if (this.m_NetworkAddress != "")
 				{
-					Debug.Log("NetworkManager created singleton (DontDestroyOnLoad)");
+					NetworkManager.s_Address = this.m_NetworkAddress;
 				}
-				NetworkManager.singleton = this;
-				Object.DontDestroyOnLoad(base.gameObject);
-			}
-			else
-			{
-				if (LogFilter.logDev)
+				else if (NetworkManager.s_Address != "")
 				{
-					Debug.Log("NetworkManager created singleton (ForScene)");
+					this.m_NetworkAddress = NetworkManager.s_Address;
 				}
-				NetworkManager.singleton = this;
-			}
-			if (this.m_NetworkAddress != string.Empty)
-			{
-				NetworkManager.s_Address = this.m_NetworkAddress;
-			}
-			else if (NetworkManager.s_Address != string.Empty)
-			{
-				this.m_NetworkAddress = NetworkManager.s_Address;
 			}
 		}
 
@@ -582,6 +597,18 @@ namespace UnityEngine.Networking
 			{
 				this.m_MaxConnections = 32000;
 			}
+			if (this.m_MaxBufferedPackets <= 0)
+			{
+				this.m_MaxBufferedPackets = 0;
+			}
+			if (this.m_MaxBufferedPackets > 512)
+			{
+				this.m_MaxBufferedPackets = 512;
+				if (LogFilter.logError)
+				{
+					Debug.LogError("NetworkManager - MaxBufferedPackets cannot be more than " + 512);
+				}
+			}
 			if (this.m_PlayerPrefab != null && this.m_PlayerPrefab.GetComponent<NetworkIdentity>() == null)
 			{
 				if (LogFilter.logError)
@@ -590,7 +617,7 @@ namespace UnityEngine.Networking
 				}
 				this.m_PlayerPrefab = null;
 			}
-			if (this.m_ConnectionConfig.MinUpdateTimeout <= 0u)
+			if (this.m_ConnectionConfig != null && this.m_ConnectionConfig.MinUpdateTimeout <= 0u)
 			{
 				if (LogFilter.logError)
 				{
@@ -598,13 +625,16 @@ namespace UnityEngine.Networking
 				}
 				this.m_ConnectionConfig.MinUpdateTimeout = 1u;
 			}
-			if (this.m_GlobalConfig != null && this.m_GlobalConfig.ThreadAwakeTimeout <= 0u)
+			if (this.m_GlobalConfig != null)
 			{
-				if (LogFilter.logError)
+				if (this.m_GlobalConfig.ThreadAwakeTimeout <= 0u)
 				{
-					Debug.LogError("NetworkManager ThreadAwakeTimeout cannot be zero or less. The value will be reset to 1 millisecond");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("NetworkManager ThreadAwakeTimeout cannot be zero or less. The value will be reset to 1 millisecond");
+					}
+					this.m_GlobalConfig.ThreadAwakeTimeout = 1u;
 				}
-				this.m_GlobalConfig.ThreadAwakeTimeout = 1u;
 			}
 		}
 
@@ -655,9 +685,9 @@ namespace UnityEngine.Networking
 			if (this.m_CustomConfig && this.m_ConnectionConfig != null && config == null)
 			{
 				this.m_ConnectionConfig.Channels.Clear();
-				foreach (QosType value in this.m_Channels)
+				for (int i = 0; i < this.m_Channels.Count; i++)
 				{
-					this.m_ConnectionConfig.AddChannel(value);
+					this.m_ConnectionConfig.AddChannel(this.m_Channels[i]);
 				}
 				NetworkServer.Configure(this.m_ConnectionConfig, this.m_MaxConnections);
 			}
@@ -702,7 +732,7 @@ namespace UnityEngine.Networking
 			}
 			this.isNetworkActive = true;
 			string name = SceneManager.GetSceneAt(0).name;
-			if (this.m_OnlineScene != string.Empty && this.m_OnlineScene != name && this.m_OnlineScene != this.m_OfflineScene)
+			if (!string.IsNullOrEmpty(this.m_OnlineScene) && this.m_OnlineScene != name && this.m_OnlineScene != this.m_OfflineScene)
 			{
 				this.ServerChangeScene(this.m_OnlineScene);
 			}
@@ -724,8 +754,9 @@ namespace UnityEngine.Networking
 			{
 				ClientScene.RegisterPrefab(this.m_PlayerPrefab);
 			}
-			foreach (GameObject gameObject in this.m_SpawnPrefabs)
+			for (int i = 0; i < this.m_SpawnPrefabs.Count; i++)
 			{
+				GameObject gameObject = this.m_SpawnPrefabs[i];
 				if (gameObject != null)
 				{
 					ClientScene.RegisterPrefab(gameObject);
@@ -752,7 +783,7 @@ namespace UnityEngine.Networking
 				ClientScene.DestroyAllClientObjects();
 				ClientScene.HandleClientDisconnect(this.client.connection);
 				this.client = null;
-				if (this.m_OfflineScene != string.Empty)
+				if (!string.IsNullOrEmpty(this.m_OfflineScene))
 				{
 					this.ClientChangeScene(this.m_OfflineScene, false);
 				}
@@ -760,7 +791,7 @@ namespace UnityEngine.Networking
 			NetworkManager.s_Address = this.m_NetworkAddress;
 		}
 
-		public NetworkClient StartClient(MatchInfo info, ConnectionConfig config)
+		public NetworkClient StartClient(MatchInfo info, ConnectionConfig config, int hostPort)
 		{
 			this.InitializeSingleton();
 			this.matchInfo = info;
@@ -774,9 +805,10 @@ namespace UnityEngine.Networking
 				NetworkTransport.Init(this.m_GlobalConfig);
 			}
 			this.client = new NetworkClient();
+			this.client.hostPort = hostPort;
 			if (config != null)
 			{
-				if (config.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4)
+				if (config.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4 && Application.platform != RuntimePlatform.PSP2)
 				{
 					throw new ArgumentOutOfRangeException("Platform specific protocols are not supported on this platform");
 				}
@@ -785,11 +817,11 @@ namespace UnityEngine.Networking
 			else if (this.m_CustomConfig && this.m_ConnectionConfig != null)
 			{
 				this.m_ConnectionConfig.Channels.Clear();
-				foreach (QosType value in this.m_Channels)
+				for (int i = 0; i < this.m_Channels.Count; i++)
 				{
-					this.m_ConnectionConfig.AddChannel(value);
+					this.m_ConnectionConfig.AddChannel(this.m_Channels[i]);
 				}
-				if (this.m_ConnectionConfig.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4)
+				if (this.m_ConnectionConfig.UsePlatformSpecificProtocols && Application.platform != RuntimePlatform.PS4 && Application.platform != RuntimePlatform.PSP2)
 				{
 					throw new ArgumentOutOfRangeException("Platform specific protocols are not supported on this platform");
 				}
@@ -860,44 +892,62 @@ namespace UnityEngine.Networking
 			return this.StartClient(null, null);
 		}
 
+		public NetworkClient StartClient(MatchInfo info, ConnectionConfig config)
+		{
+			return this.StartClient(info, config, 0);
+		}
+
 		public virtual NetworkClient StartHost(ConnectionConfig config, int maxConnections)
 		{
 			this.OnStartHost();
+			NetworkClient result;
 			if (this.StartServer(config, maxConnections))
 			{
 				NetworkClient networkClient = this.ConnectLocalClient();
 				this.OnServerConnect(networkClient.connection);
 				this.OnStartClient(networkClient);
-				return networkClient;
+				result = networkClient;
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual NetworkClient StartHost(MatchInfo info)
 		{
 			this.OnStartHost();
 			this.matchInfo = info;
+			NetworkClient result;
 			if (this.StartServer(info))
 			{
 				NetworkClient networkClient = this.ConnectLocalClient();
-				this.OnServerConnect(networkClient.connection);
 				this.OnStartClient(networkClient);
-				return networkClient;
+				result = networkClient;
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual NetworkClient StartHost()
 		{
 			this.OnStartHost();
+			NetworkClient result;
 			if (this.StartServer())
 			{
 				NetworkClient networkClient = this.ConnectLocalClient();
-				this.OnServerConnect(networkClient.connection);
 				this.OnStartClient(networkClient);
-				return networkClient;
+				result = networkClient;
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		private NetworkClient ConnectLocalClient()
@@ -922,29 +972,32 @@ namespace UnityEngine.Networking
 			this.OnStopHost();
 			this.StopServer();
 			this.StopClient();
-			if (this.m_MigrationManager != null && active)
+			if (this.m_MigrationManager != null)
 			{
-				this.m_MigrationManager.LostHostOnHost();
+				if (active)
+				{
+					this.m_MigrationManager.LostHostOnHost();
+				}
 			}
 		}
 
 		public void StopServer()
 		{
-			if (!NetworkServer.active)
+			if (NetworkServer.active)
 			{
-				return;
-			}
-			this.OnStopServer();
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("NetworkManager StopServer");
-			}
-			this.isNetworkActive = false;
-			NetworkServer.Shutdown();
-			this.StopMatchMaker();
-			if (this.m_OfflineScene != string.Empty)
-			{
-				this.ServerChangeScene(this.m_OfflineScene);
+				this.OnStopServer();
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("NetworkManager StopServer");
+				}
+				this.isNetworkActive = false;
+				NetworkServer.Shutdown();
+				this.StopMatchMaker();
+				if (!string.IsNullOrEmpty(this.m_OfflineScene))
+				{
+					this.ServerChangeScene(this.m_OfflineScene);
+				}
+				this.CleanupNetworkIdentities();
 			}
 		}
 
@@ -964,10 +1017,11 @@ namespace UnityEngine.Networking
 			}
 			this.StopMatchMaker();
 			ClientScene.DestroyAllClientObjects();
-			if (this.m_OfflineScene != string.Empty)
+			if (!string.IsNullOrEmpty(this.m_OfflineScene))
 			{
 				this.ClientChangeScene(this.m_OfflineScene, false);
 			}
+			this.CleanupNetworkIdentities();
 		}
 
 		public virtual void ServerChangeScene(string newSceneName)
@@ -978,19 +1032,29 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("ServerChangeScene empty scene name");
 				}
-				return;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log("ServerChangeScene " + newSceneName);
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("ServerChangeScene " + newSceneName);
+				}
+				NetworkServer.SetAllClientsNotReady();
+				NetworkManager.networkSceneName = newSceneName;
+				NetworkManager.s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+				StringMessage msg = new StringMessage(NetworkManager.networkSceneName);
+				NetworkServer.SendToAll(39, msg);
+				NetworkManager.s_StartPositionIndex = 0;
+				NetworkManager.s_StartPositions.Clear();
 			}
-			NetworkServer.SetAllClientsNotReady();
-			NetworkManager.networkSceneName = newSceneName;
-			NetworkManager.s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
-			StringMessage msg = new StringMessage(NetworkManager.networkSceneName);
-			NetworkServer.SendToAll(39, msg);
-			NetworkManager.s_StartPositionIndex = 0;
-			NetworkManager.s_StartPositions.Clear();
+		}
+
+		private void CleanupNetworkIdentities()
+		{
+			foreach (NetworkIdentity networkIdentity in Resources.FindObjectsOfTypeAll<NetworkIdentity>())
+			{
+				networkIdentity.MarkForReset();
+			}
 		}
 
 		internal void ClientChangeScene(string newSceneName, bool forceReload)
@@ -1001,27 +1065,29 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("ClientChangeScene empty scene name");
 				}
-				return;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log("ClientChangeScene newSceneName:" + newSceneName + " networkSceneName:" + NetworkManager.networkSceneName);
-			}
-			if (newSceneName == NetworkManager.networkSceneName)
-			{
-				if (this.m_MigrationManager != null)
+				if (LogFilter.logDebug)
 				{
-					this.FinishLoadScene();
-					return;
+					Debug.Log("ClientChangeScene newSceneName:" + newSceneName + " networkSceneName:" + NetworkManager.networkSceneName);
 				}
-				if (!forceReload)
+				if (newSceneName == NetworkManager.networkSceneName)
 				{
-					this.FinishLoadScene();
-					return;
+					if (this.m_MigrationManager != null)
+					{
+						this.FinishLoadScene();
+						return;
+					}
+					if (!forceReload)
+					{
+						this.FinishLoadScene();
+						return;
+					}
 				}
+				NetworkManager.s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+				NetworkManager.networkSceneName = newSceneName;
 			}
-			NetworkManager.s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
-			NetworkManager.networkSceneName = newSceneName;
 		}
 
 		private void FinishLoadScene()
@@ -1053,25 +1119,22 @@ namespace UnityEngine.Networking
 
 		internal static void UpdateScene()
 		{
-			if (NetworkManager.singleton == null)
+			if (!(NetworkManager.singleton == null))
 			{
-				return;
+				if (NetworkManager.s_LoadingSceneAsync != null)
+				{
+					if (NetworkManager.s_LoadingSceneAsync.isDone)
+					{
+						if (LogFilter.logDebug)
+						{
+							Debug.Log("ClientChangeScene done readyCon:" + NetworkManager.s_ClientReadyConnection);
+						}
+						NetworkManager.singleton.FinishLoadScene();
+						NetworkManager.s_LoadingSceneAsync.allowSceneActivation = true;
+						NetworkManager.s_LoadingSceneAsync = null;
+					}
+				}
 			}
-			if (NetworkManager.s_LoadingSceneAsync == null)
-			{
-				return;
-			}
-			if (!NetworkManager.s_LoadingSceneAsync.isDone)
-			{
-				return;
-			}
-			if (LogFilter.logDebug)
-			{
-				Debug.Log("ClientChangeScene done readyCon:" + NetworkManager.s_ClientReadyConnection);
-			}
-			NetworkManager.singleton.FinishLoadScene();
-			NetworkManager.s_LoadingSceneAsync.allowSceneActivation = true;
-			NetworkManager.s_LoadingSceneAsync = null;
 		}
 
 		private void OnDestroy()
@@ -1086,7 +1149,13 @@ namespace UnityEngine.Networking
 		{
 			if (LogFilter.logDebug)
 			{
-				Debug.Log("RegisterStartPosition:" + start);
+				Debug.Log(string.Concat(new object[]
+				{
+					"RegisterStartPosition: (",
+					start.gameObject.name,
+					") ",
+					start.position
+				}));
 			}
 			NetworkManager.s_StartPositions.Add(start);
 		}
@@ -1095,7 +1164,13 @@ namespace UnityEngine.Networking
 		{
 			if (LogFilter.logDebug)
 			{
-				Debug.Log("UnRegisterStartPosition:" + start);
+				Debug.Log(string.Concat(new object[]
+				{
+					"UnRegisterStartPosition: (",
+					start.gameObject.name,
+					") ",
+					start.position
+				}));
 			}
 			NetworkManager.s_StartPositions.Remove(start);
 		}
@@ -1107,15 +1182,14 @@ namespace UnityEngine.Networking
 
 		public static void Shutdown()
 		{
-			if (NetworkManager.singleton == null)
+			if (!(NetworkManager.singleton == null))
 			{
-				return;
+				NetworkManager.s_StartPositions.Clear();
+				NetworkManager.s_StartPositionIndex = 0;
+				NetworkManager.s_ClientReadyConnection = null;
+				NetworkManager.singleton.StopHost();
+				NetworkManager.singleton = null;
 			}
-			NetworkManager.s_StartPositions.Clear();
-			NetworkManager.s_StartPositionIndex = 0;
-			NetworkManager.s_ClientReadyConnection = null;
-			NetworkManager.singleton.StopHost();
-			NetworkManager.singleton = null;
 		}
 
 		internal void OnServerConnectInternal(NetworkMessage netMsg)
@@ -1125,7 +1199,21 @@ namespace UnityEngine.Networking
 				Debug.Log("NetworkManager:OnServerConnectInternal");
 			}
 			netMsg.conn.SetMaxDelay(this.m_MaxDelay);
-			if (NetworkManager.networkSceneName != string.Empty && NetworkManager.networkSceneName != this.m_OfflineScene)
+			if (this.m_MaxBufferedPackets != 512)
+			{
+				for (int i = 0; i < NetworkServer.numChannels; i++)
+				{
+					netMsg.conn.SetChannelOption(i, ChannelOption.MaxPendingBuffers, this.m_MaxBufferedPackets);
+				}
+			}
+			if (!this.m_AllowFragmentation)
+			{
+				for (int j = 0; j < NetworkServer.numChannels; j++)
+				{
+					netMsg.conn.SetChannelOption(j, ChannelOption.AllowFragmentation, 0);
+				}
+			}
+			if (NetworkManager.networkSceneName != "" && NetworkManager.networkSceneName != this.m_OfflineScene)
 			{
 				StringMessage msg = new StringMessage(NetworkManager.networkSceneName);
 				netMsg.conn.Send(39, msg);
@@ -1233,13 +1321,20 @@ namespace UnityEngine.Networking
 			{
 				Debug.Log("NetworkManager:OnClientDisconnectInternal");
 			}
-			if (this.m_MigrationManager != null && this.m_MigrationManager.LostHostOnClient(netMsg.conn))
+			if (this.m_MigrationManager != null)
 			{
-				return;
+				if (this.m_MigrationManager.LostHostOnClient(netMsg.conn))
+				{
+					return;
+				}
 			}
-			if (this.m_OfflineScene != string.Empty)
+			if (!string.IsNullOrEmpty(this.m_OfflineScene))
 			{
 				this.ClientChangeScene(this.m_OfflineScene, false);
+			}
+			if (this.matchMaker != null && this.matchInfo != null && this.matchInfo.networkId != NetworkID.Invalid && this.matchInfo.nodeId != NodeID.Invalid)
+			{
+				this.matchMaker.DropConnection(this.matchInfo.networkId, this.matchInfo.nodeId, this.matchInfo.domain, new NetworkMatch.BasicResponseDelegate(this.OnDropConnection));
 			}
 			this.OnClientDisconnect(netMsg.conn);
 		}
@@ -1284,13 +1379,23 @@ namespace UnityEngine.Networking
 		public virtual void OnServerDisconnect(NetworkConnection conn)
 		{
 			NetworkServer.DestroyPlayersForConnection(conn);
+			if (conn.lastError != NetworkError.Ok)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("ServerDisconnected due to error: " + conn.lastError);
+				}
+			}
 		}
 
 		public virtual void OnServerReady(NetworkConnection conn)
 		{
-			if (conn.playerControllers.Count == 0 && LogFilter.logDebug)
+			if (conn.playerControllers.Count == 0)
 			{
-				Debug.Log("Ready with no player object");
+				if (LogFilter.logDebug)
+				{
+					Debug.Log("Ready with no player object");
+				}
 			}
 			NetworkServer.SetClientReady(conn);
 		}
@@ -1313,35 +1418,35 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("The PlayerPrefab is empty on the NetworkManager. Please setup a PlayerPrefab object.");
 				}
-				return;
 			}
-			if (this.m_PlayerPrefab.GetComponent<NetworkIdentity>() == null)
+			else if (this.m_PlayerPrefab.GetComponent<NetworkIdentity>() == null)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("The PlayerPrefab does not have a NetworkIdentity. Please add a NetworkIdentity to the player prefab.");
 				}
-				return;
 			}
-			if ((int)playerControllerId < conn.playerControllers.Count && conn.playerControllers[(int)playerControllerId].IsValid && conn.playerControllers[(int)playerControllerId].gameObject != null)
+			else if ((int)playerControllerId < conn.playerControllers.Count && conn.playerControllers[(int)playerControllerId].IsValid && conn.playerControllers[(int)playerControllerId].gameObject != null)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("There is already a player at that playerControllerId for this connections.");
 				}
-				return;
-			}
-			Transform startPosition = this.GetStartPosition();
-			GameObject player;
-			if (startPosition != null)
-			{
-				player = (GameObject)Object.Instantiate(this.m_PlayerPrefab, startPosition.position, startPosition.rotation);
 			}
 			else
 			{
-				player = (GameObject)Object.Instantiate(this.m_PlayerPrefab, Vector3.zero, Quaternion.identity);
+				Transform startPosition = this.GetStartPosition();
+				GameObject player;
+				if (startPosition != null)
+				{
+					player = Object.Instantiate<GameObject>(this.m_PlayerPrefab, startPosition.position, startPosition.rotation);
+				}
+				else
+				{
+					player = Object.Instantiate<GameObject>(this.m_PlayerPrefab, Vector3.zero, Quaternion.identity);
+				}
+				NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
 			}
-			NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
 		}
 
 		public Transform GetStartPosition()
@@ -1356,22 +1461,27 @@ namespace UnityEngine.Networking
 					}
 				}
 			}
+			Transform result;
 			if (this.m_PlayerSpawnMethod == PlayerSpawnMethod.Random && NetworkManager.s_StartPositions.Count > 0)
 			{
 				int index = Random.Range(0, NetworkManager.s_StartPositions.Count);
-				return NetworkManager.s_StartPositions[index];
+				result = NetworkManager.s_StartPositions[index];
 			}
-			if (this.m_PlayerSpawnMethod == PlayerSpawnMethod.RoundRobin && NetworkManager.s_StartPositions.Count > 0)
+			else if (this.m_PlayerSpawnMethod == PlayerSpawnMethod.RoundRobin && NetworkManager.s_StartPositions.Count > 0)
 			{
 				if (NetworkManager.s_StartPositionIndex >= NetworkManager.s_StartPositions.Count)
 				{
 					NetworkManager.s_StartPositionIndex = 0;
 				}
-				Transform result = NetworkManager.s_StartPositions[NetworkManager.s_StartPositionIndex];
+				Transform transform = NetworkManager.s_StartPositions[NetworkManager.s_StartPositionIndex];
 				NetworkManager.s_StartPositionIndex++;
-				return result;
+				result = transform;
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		public virtual void OnServerRemovePlayer(NetworkConnection conn, PlayerController player)
@@ -1405,6 +1515,13 @@ namespace UnityEngine.Networking
 		public virtual void OnClientDisconnect(NetworkConnection conn)
 		{
 			this.StopClient();
+			if (conn.lastError != NetworkError.Ok)
+			{
+				if (LogFilter.logError)
+				{
+					Debug.LogError("ClientDisconnected due to error: " + conn.lastError);
+				}
+			}
 		}
 
 		public virtual void OnClientError(NetworkConnection conn, int errorCode)
@@ -1418,27 +1535,26 @@ namespace UnityEngine.Networking
 		public virtual void OnClientSceneChanged(NetworkConnection conn)
 		{
 			ClientScene.Ready(conn);
-			if (!this.m_AutoCreatePlayer)
+			if (this.m_AutoCreatePlayer)
 			{
-				return;
-			}
-			bool flag = ClientScene.localPlayers.Count == 0;
-			bool flag2 = false;
-			foreach (PlayerController playerController in ClientScene.localPlayers)
-			{
-				if (playerController.gameObject != null)
+				bool flag = ClientScene.localPlayers.Count == 0;
+				bool flag2 = false;
+				for (int i = 0; i < ClientScene.localPlayers.Count; i++)
 				{
-					flag2 = true;
-					break;
+					if (ClientScene.localPlayers[i].gameObject != null)
+					{
+						flag2 = true;
+						break;
+					}
 				}
-			}
-			if (!flag2)
-			{
-				flag = true;
-			}
-			if (flag)
-			{
-				ClientScene.AddPlayer(0);
+				if (!flag2)
+				{
+					flag = true;
+				}
+				if (flag)
+				{
+					ClientScene.AddPlayer(0);
+				}
 			}
 		}
 
@@ -1448,11 +1564,15 @@ namespace UnityEngine.Networking
 			{
 				Debug.Log("NetworkManager StartMatchMaker");
 			}
-			this.SetMatchHost(this.m_MatchHost, this.m_MatchPort, true);
+			this.SetMatchHost(this.m_MatchHost, this.m_MatchPort, this.m_MatchPort == 443);
 		}
 
 		public void StopMatchMaker()
 		{
+			if (this.matchMaker != null && this.matchInfo != null && this.matchInfo.networkId != NetworkID.Invalid && this.matchInfo.nodeId != NodeID.Invalid)
+			{
+				this.matchMaker.DropConnection(this.matchInfo.networkId, this.matchInfo.nodeId, this.matchInfo.domain, new NetworkMatch.BasicResponseDelegate(this.OnDropConnection));
+			}
 			if (this.matchMaker != null)
 			{
 				Object.Destroy(this.matchMaker);
@@ -1468,28 +1588,37 @@ namespace UnityEngine.Networking
 			{
 				this.matchMaker = base.gameObject.AddComponent<NetworkMatch>();
 			}
-			if (newHost == "localhost" || newHost == "127.0.0.1")
+			if (newHost == "127.0.0.1")
 			{
-				newHost = Environment.MachineName;
+				newHost = "localhost";
 			}
 			string text = "http://";
 			if (https)
 			{
 				text = "https://";
 			}
-			if (LogFilter.logDebug)
+			if (newHost.StartsWith("http://"))
 			{
-				Debug.Log("SetMatchHost:" + newHost);
+				newHost = newHost.Replace("http://", "");
+			}
+			if (newHost.StartsWith("https://"))
+			{
+				newHost = newHost.Replace("https://", "");
 			}
 			this.m_MatchHost = newHost;
 			this.m_MatchPort = port;
-			this.matchMaker.baseUri = new Uri(string.Concat(new object[]
+			string text2 = string.Concat(new object[]
 			{
 				text,
 				this.m_MatchHost,
 				":",
 				this.m_MatchPort
-			}));
+			});
+			if (LogFilter.logDebug)
+			{
+				Debug.Log("SetMatchHost:" + text2);
+			}
+			this.matchMaker.baseUri = new Uri(text2);
 		}
 
 		public virtual void OnStartHost()
@@ -1516,46 +1645,87 @@ namespace UnityEngine.Networking
 		{
 		}
 
-		public virtual void OnMatchCreate(CreateMatchResponse matchInfo)
+		public virtual void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
 		{
 			if (LogFilter.logDebug)
 			{
-				Debug.Log("NetworkManager OnMatchCreate " + matchInfo);
+				Debug.LogFormat("NetworkManager OnMatchCreate Success:{0}, ExtendedInfo:{1}, matchInfo:{2}", new object[]
+				{
+					success,
+					extendedInfo,
+					matchInfo
+				});
 			}
-			if (matchInfo.success)
+			if (success)
 			{
-				Utility.SetAccessTokenForNetwork(matchInfo.networkId, new NetworkAccessToken(matchInfo.accessTokenString));
-				this.StartHost(new MatchInfo(matchInfo));
-			}
-			else if (LogFilter.logError)
-			{
-				Debug.LogError("Create Failed:" + matchInfo);
+				this.StartHost(matchInfo);
 			}
 		}
 
-		public virtual void OnMatchList(ListMatchResponse matchList)
+		public virtual void OnMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> matchList)
 		{
 			if (LogFilter.logDebug)
 			{
-				Debug.Log("NetworkManager OnMatchList ");
+				Debug.LogFormat("NetworkManager OnMatchList Success:{0}, ExtendedInfo:{1}, matchList.Count:{2}", new object[]
+				{
+					success,
+					extendedInfo,
+					matchList.Count
+				});
 			}
-			this.matches = matchList.matches;
+			this.matches = matchList;
 		}
 
-		public void OnMatchJoined(JoinMatchResponse matchInfo)
+		public virtual void OnMatchJoined(bool success, string extendedInfo, MatchInfo matchInfo)
 		{
 			if (LogFilter.logDebug)
 			{
-				Debug.Log("NetworkManager OnMatchJoined ");
+				Debug.LogFormat("NetworkManager OnMatchJoined Success:{0}, ExtendedInfo:{1}, matchInfo:{2}", new object[]
+				{
+					success,
+					extendedInfo,
+					matchInfo
+				});
 			}
-			if (matchInfo.success)
+			if (success)
 			{
-				Utility.SetAccessTokenForNetwork(matchInfo.networkId, new NetworkAccessToken(matchInfo.accessTokenString));
-				this.StartClient(new MatchInfo(matchInfo));
+				this.StartClient(matchInfo);
 			}
-			else if (LogFilter.logError)
+		}
+
+		public virtual void OnDestroyMatch(bool success, string extendedInfo)
+		{
+			if (LogFilter.logDebug)
 			{
-				Debug.LogError("Join Failed:" + matchInfo);
+				Debug.LogFormat("NetworkManager OnDestroyMatch Success:{0}, ExtendedInfo:{1}", new object[]
+				{
+					success,
+					extendedInfo
+				});
+			}
+		}
+
+		public virtual void OnDropConnection(bool success, string extendedInfo)
+		{
+			if (LogFilter.logDebug)
+			{
+				Debug.LogFormat("NetworkManager OnDropConnection Success:{0}, ExtendedInfo:{1}", new object[]
+				{
+					success,
+					extendedInfo
+				});
+			}
+		}
+
+		public virtual void OnSetMatchAttributes(bool success, string extendedInfo)
+		{
+			if (LogFilter.logDebug)
+			{
+				Debug.LogFormat("NetworkManager OnSetMatchAttributes Success:{0}, ExtendedInfo:{1}", new object[]
+				{
+					success,
+					extendedInfo
+				});
 			}
 		}
 	}

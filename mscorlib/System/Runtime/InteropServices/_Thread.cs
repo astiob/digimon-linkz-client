@@ -4,10 +4,10 @@ using System.Threading;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Threading.Thread" /> class to unmanaged code.</summary>
-	[TypeLibImportClass(typeof(Thread))]
 	[Guid("C281C7F1-4AA9-3517-961A-463CFED57E75")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[TypeLibImportClass(typeof(Thread))]
 	[CLSCompliant(false)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
 	public interface _Thread
 	{

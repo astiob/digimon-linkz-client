@@ -196,14 +196,10 @@ public class TextUtil
 								case '⚜':
 								case '⚠':
 								case '⚡':
-								case '⚪':
-								case '⚫':
 									break;
 								default:
 									switch (c)
 									{
-									case '⛩':
-									case '⛪':
 									case '⛰':
 									case '⛱':
 									case '⛲':
@@ -219,43 +215,43 @@ public class TextUtil
 									default:
 										switch (c)
 										{
-										case '☝':
-										case '☠':
-										case '☢':
-										case '☣':
-										case '☦':
+										case '☀':
+										case '☁':
+										case '☂':
+										case '☃':
+										case '☄':
 											break;
 										default:
 											switch (c)
 											{
-											case '⛎':
-											case '⛏':
-											case '⛑':
-											case '⛓':
-											case '⛔':
+											case '☝':
+											case '☠':
+											case '☢':
+											case '☣':
+											case '☦':
 												break;
 											default:
 												switch (c)
 												{
-												case '☪':
-												case '☮':
-												case '☯':
+												case '⛎':
+												case '⛏':
+												case '⛑':
+												case '⛓':
+												case '⛔':
 													break;
 												default:
 													switch (c)
 													{
-													case '☀':
-													case '☁':
-													case '☂':
-													case '☃':
-													case '☄':
+													case '☔':
+													case '☕':
+													case '☘':
 														break;
 													default:
 														switch (c)
 														{
-														case '☔':
-														case '☕':
-														case '☘':
+														case '☸':
+														case '☹':
+														case '☺':
 															break;
 														default:
 															switch (c)
@@ -271,20 +267,15 @@ public class TextUtil
 																case '☑':
 																	break;
 																default:
-																	switch (c)
+																	if (c != '☮' && c != '☯')
 																	{
-																	case '☸':
-																	case '☹':
-																	case '☺':
-																		break;
-																	default:
 																		switch (c)
 																		{
 																		case '♀':
 																		case '♂':
 																			break;
 																		default:
-																			if (c != '⚰' && c != '⚱' && c != '⚽' && c != '⚾' && c != '♻' && c != '♿')
+																			if (c != '⚪' && c != '⚫' && c != '⚰' && c != '⚱' && c != '⚽' && c != '⚾' && c != '⛩' && c != '⛪' && c != '☪' && c != '♻' && c != '♿')
 																			{
 																				switch (c)
 																				{
@@ -303,8 +294,6 @@ public class TextUtil
 																				default:
 																					switch (c)
 																					{
-																					case '❌':
-																					case '❎':
 																					case '❓':
 																					case '❔':
 																					case '❕':
@@ -313,43 +302,57 @@ public class TextUtil
 																					default:
 																						switch (c)
 																						{
-																						case '✂':
-																						case '✅':
+																						case '➕':
+																						case '➖':
+																						case '➗':
 																							break;
 																						default:
 																							switch (c)
 																							{
-																							case '❄':
-																							case '❇':
+																							case '⬅':
+																							case '⬆':
+																							case '⬇':
 																								break;
 																							default:
 																								switch (c)
 																								{
-																								case '➕':
-																								case '➖':
-																								case '➗':
+																								case '✂':
+																								case '✅':
 																									break;
 																								default:
-																									switch (c)
+																									if (c != '✳' && c != '✴')
 																									{
-																									case '⬅':
-																									case '⬆':
-																									case '⬇':
-																										break;
-																									default:
 																										switch (c)
 																										{
-																										case '㊗':
-																										case '㊙':
+																										case '❄':
+																										case '❇':
 																											break;
 																										default:
-																											if (c != '✳' && c != '✴' && c != '❣' && c != '❤' && c != '⤴' && c != '⤵' && c != '⬛' && c != '⬜' && c != '✡' && c != '✨' && c != '➡' && c != '➰' && c != '➿' && c != '⭐' && c != '⭕' && c != '〰' && c != '〽')
+																											switch (c)
 																											{
-																												return false;
+																											case '❌':
+																											case '❎':
+																												break;
+																											default:
+																												if (c != '❣' && c != '❤' && c != '⤴' && c != '⤵' && c != '⬛' && c != '⬜')
+																												{
+																													switch (c)
+																													{
+																													case '㊗':
+																													case '㊙':
+																														break;
+																													default:
+																														if (c != '✡' && c != '✨' && c != '➡' && c != '➰' && c != '➿' && c != '⭐' && c != '⭕' && c != '〰' && c != '〽')
+																														{
+																															return false;
+																														}
+																														break;
+																													}
+																												}
+																												break;
 																											}
 																											break;
 																										}
-																										break;
 																									}
 																									break;
 																								}
@@ -365,7 +368,6 @@ public class TextUtil
 																			}
 																			break;
 																		}
-																		break;
 																	}
 																	break;
 																}

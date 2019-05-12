@@ -7,10 +7,6 @@ using UnityEngine;
 public class GUIListPartsS_DungeonR : GUIListPartBS
 {
 	[SerializeField]
-	[Header("NEWの画像")]
-	private GameObject goNEW;
-
-	[SerializeField]
 	[Header("ドロップの画像")]
 	private List<PresentBoxItem> itemDROP_ITEM_LIST;
 
@@ -38,28 +34,28 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("ソロとマルチができるステージ色")]
 	private Color colorNormalStage;
 
-	[Header("マルチ専用のステージ色")]
 	[SerializeField]
+	[Header("マルチ専用のステージ色")]
 	private Color colorMultiStage;
 
 	[SerializeField]
 	[Header("ソロ専用のステージ色")]
 	private Color colorSoloStage;
 
-	[Header("イベント用のステージ背景色")]
 	[SerializeField]
+	[Header("イベント用のステージ背景色")]
 	private Color colorEventStageBackground;
 
-	[Header("####ソロとマルチステージ名装飾色")]
 	[SerializeField]
+	[Header("ソロとマルチステージ名装飾色")]
 	private Color colorSoloMultiStageNameOutline;
 
-	[Header("####マルチ専用名装飾色")]
 	[SerializeField]
+	[Header("マルチ専用名装飾色")]
 	private Color colorMultiStageNameOutline;
 
-	[Header("####ソロ専用ステージ名装飾色")]
 	[SerializeField]
+	[Header("ソロ専用ステージ名装飾色")]
 	private Color colorSoloStageNameOutline;
 
 	[SerializeField]
@@ -74,16 +70,16 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("背景色のパーツ（ライン）")]
 	private UITexture backgroundLine;
 
-	[Header("残回数無しラベル")]
 	[SerializeField]
+	[Header("残回数無しラベル")]
 	private UILabel ngTXT_PLAY_LIMIT;
 
-	[Header("回数限定用グレーアウトSPR素材")]
 	[SerializeField]
+	[Header("回数限定用グレーアウトSPR素材")]
 	private UISprite spGRAYOUT_PLAY_LIMIT;
 
-	[SerializeField]
 	[Header("NEWとCLEARのアイコン")]
+	[SerializeField]
 	private UISprite ngSPR_NEW;
 
 	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
@@ -94,8 +90,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[SerializeField]
 	[Header("ステージギミック表記Obj")]
+	[SerializeField]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -122,6 +118,9 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private GameWebAPI.RespDataCP_Campaign.CampaignType[] refCampaignType;
 
+	[SerializeField]
+	private CampaignLabelQuest campagin;
+
 	private bool isTouchEndFromChild;
 
 	private GameWebAPI.RespDataCP_Campaign.CampaignInfo campaignInfo;
@@ -139,7 +138,13 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	protected override void Awake()
 	{
 		base.Awake();
-		this.ngSPR_NEW = this.goNEW.GetComponent<UISprite>();
+		this.campagin.Initialize(new Action<string, string>(this.SetExtraEffectDescription));
+	}
+
+	protected override void OnDestroy()
+	{
+		this.campagin.Destroy();
+		base.OnDestroy();
 	}
 
 	public void ChangeSprite(string sprName)
@@ -158,13 +163,13 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		switch (this.WorldDungeonData.status)
 		{
 		case 1:
-			this.goNEW.SetActive(false);
+			this.ngSPR_NEW.gameObject.SetActive(false);
 			break;
 		case 2:
 			this.ngSPR_NEW.MakePixelPerfect();
 			break;
 		case 3:
-			this.goNEW.SetActive(false);
+			this.ngSPR_NEW.gameObject.SetActive(false);
 			break;
 		case 4:
 			this.SetClearIcon();
@@ -191,8 +196,9 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		}
 		if (!this.IsEventStage)
 		{
+			string worldStageId = this.WorldDungeonData.worldDungeonM.worldStageId;
 			GameWebAPI.RespDataCP_Campaign respDataCP_Campaign = DataMng.Instance().RespDataCP_Campaign;
-			this.campaignInfo = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown, this.WorldDungeonData.worldDungeonM.worldStageId);
+			this.campaignInfo = respDataCP_Campaign.GetCampaign(GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown, worldStageId);
 			if (this.ngTXT_STAMINA != null)
 			{
 				int num = int.Parse(this.WorldDungeonData.worldDungeonM.needStamina);
@@ -236,52 +242,9 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 					this.ngTXT_STAMINA.effectColor = this.colorSoloMultiStageNameOutline;
 				}
 			}
-			if (DataMng.Instance().StageGimmick.DataDic.ContainsKey(this.WorldDungeonData.worldDungeonM.worldStageId))
-			{
-				bool flag = DataMng.Instance().StageGimmick.DataDic[this.WorldDungeonData.worldDungeonM.worldStageId].ContainsKey(this.WorldDungeonData.worldDungeonM.worldDungeonId);
-				if (flag)
-				{
-					this.stateLabelColor.Add(new Color(1f, 0.94f, 0f));
-					this.stateEffectColor.Add(new Color(0f, 0.51f, 0f));
-					this.campaignTextList.Add(StringMaster.GetString("QuestGimmick"));
-				}
-			}
-			List<GameWebAPI.RespDataCP_Campaign.CampaignInfo> list = new List<GameWebAPI.RespDataCP_Campaign.CampaignInfo>();
-			DateTime now = ServerDateTime.Now;
-			for (int i = 0; i < respDataCP_Campaign.campaignInfo.Length; i++)
-			{
-				if (this.ExistCampaign(respDataCP_Campaign.campaignInfo[i].GetCmpIdByEnum()) && respDataCP_Campaign.campaignInfo[i].targetValue == this.WorldDungeonData.worldDungeonM.worldStageId && respDataCP_Campaign.campaignInfo[i].IsUnderway(now))
-				{
-					list.Add(respDataCP_Campaign.campaignInfo[i]);
-				}
-			}
-			if (list.Count > 0 && list[0] != null)
-			{
-				GameWebAPI.RespDataCP_Campaign.CampaignType cmpIdByEnum = list[0].GetCmpIdByEnum();
-				float num3 = float.Parse(list[0].rate);
-				if (cmpIdByEnum == GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDown || cmpIdByEnum == GameWebAPI.RespDataCP_Campaign.CampaignType.QuestStmDownMul)
-				{
-					num3 = Mathf.Ceil(1f / num3);
-				}
-				string description = CampaignUtil.GetDescription(cmpIdByEnum, num3, this.useLongDescription);
-				this.campaignTextList.Add(description);
-				this.stateLabelColor.Add(new Color(0.78f, 0f, 0f));
-				this.stateEffectColor.Add(new Color(1f, 0.94f, 0f));
-			}
-			this.stageGimmickObj.SetActive(this.campaignTextList.Count > 0);
-			if (this.stageGimmickObj.activeSelf && this.labelToggle != null)
-			{
-				if (this.campaignTextList.Count > 1)
-				{
-					this.labelToggle.InitToggleData(this.stageStateLabel, this.campaignTextList, this.stateLabelColor, this.stateEffectColor, this.gimmickFadeTime, this.gimmickViewTime, true);
-				}
-				else if (this.campaignTextList.Count == 1)
-				{
-					this.stageStateLabel.text = this.campaignTextList[0];
-					this.stageStateLabel.color = this.stateLabelColor[0];
-					this.stageStateLabel.effectColor = this.stateEffectColor[0];
-				}
-			}
+			this.campagin.AreaId = worldStageId;
+			string text = this.campagin.GetText(DataMng.Instance().RespDataCP_Campaign, DataMng.Instance().CampaignForceHide);
+			this.SetExtraEffectDescription(worldStageId, text);
 		}
 		else
 		{
@@ -309,6 +272,42 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 		}
 		this.ShowNoContinue();
 		this.ShowLockStatus();
+	}
+
+	private void SetExtraEffectDescription(string worldStageId, string campaignDescript)
+	{
+		this.campaignTextList.Clear();
+		if (DataMng.Instance().StageGimmick.DataDic.ContainsKey(worldStageId))
+		{
+			Dictionary<string, List<string>> dictionary = DataMng.Instance().StageGimmick.DataDic[worldStageId];
+			bool flag = dictionary.ContainsKey(this.WorldDungeonData.worldDungeonM.worldDungeonId);
+			if (flag)
+			{
+				this.campaignTextList.Add(StringMaster.GetString("QuestGimmick"));
+				this.stateLabelColor.Add(new Color(1f, 0.94f, 0f));
+				this.stateEffectColor.Add(new Color(0f, 0.51f, 0f));
+			}
+		}
+		if (!string.IsNullOrEmpty(campaignDescript))
+		{
+			this.campaignTextList.Add(campaignDescript);
+			this.stateLabelColor.Add(new Color(0.78f, 0f, 0f));
+			this.stateEffectColor.Add(new Color(1f, 0.94f, 0f));
+		}
+		this.stageGimmickObj.SetActive(this.campaignTextList.Count > 0);
+		if (this.stageGimmickObj.activeSelf && this.labelToggle != null)
+		{
+			if (this.campaignTextList.Count > 1)
+			{
+				this.labelToggle.InitToggleData(this.stageStateLabel, this.campaignTextList, this.stateLabelColor, this.stateEffectColor, this.gimmickFadeTime, this.gimmickViewTime, true);
+			}
+			else if (this.campaignTextList.Count == 1)
+			{
+				this.stageStateLabel.text = this.campaignTextList[0];
+				this.stageStateLabel.color = this.stateLabelColor[0];
+				this.stageStateLabel.effectColor = this.stateEffectColor[0];
+			}
+		}
 	}
 
 	public void RefreshShowPlayLimit()

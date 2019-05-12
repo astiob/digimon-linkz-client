@@ -63,15 +63,15 @@ namespace Network
 					{
 						try
 						{
-							byte[] data = new byte[1024];
-							int dataLength = stream.Read(data, 0, data.Length);
-							if (dataLength <= 0)
+							byte[] array = new byte[1024];
+							int num = stream.Read(array, 0, array.Length);
+							if (num <= 0)
 							{
 								break;
 							}
-							for (int i = 0; i < dataLength; i++)
+							for (int i = 0; i < num; i++)
 							{
-								buffer.Add(data[i]);
+								buffer.Add(array[i]);
 							}
 						}
 						catch (Exception)

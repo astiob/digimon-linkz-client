@@ -41,6 +41,7 @@ namespace UnityEngine.UI
 		private static void SetDefaultTextValues(Text lbl)
 		{
 			lbl.color = DefaultControls.s_TextColor;
+			lbl.AssignDefaultFont();
 		}
 
 		private static void SetDefaultColorTransitionValues(Selectable slider)
@@ -53,12 +54,11 @@ namespace UnityEngine.UI
 
 		private static void SetParentAndAlign(GameObject child, GameObject parent)
 		{
-			if (parent == null)
+			if (!(parent == null))
 			{
-				return;
+				child.transform.SetParent(parent.transform, false);
+				DefaultControls.SetLayerRecursively(child, parent.layer);
 			}
-			child.transform.SetParent(parent.transform, false);
-			DefaultControls.SetLayerRecursively(child, parent.layer);
 		}
 
 		private static void SetLayerRecursively(GameObject go, int layer)
@@ -90,6 +90,7 @@ namespace UnityEngine.UI
 		{
 			GameObject gameObject = DefaultControls.CreateUIElementRoot("Button", DefaultControls.s_ThickElementSize);
 			GameObject gameObject2 = new GameObject("Text");
+			gameObject2.AddComponent<RectTransform>();
 			DefaultControls.SetParentAndAlign(gameObject2, gameObject);
 			Image image = gameObject.AddComponent<Image>();
 			image.sprite = resources.standard;
@@ -252,7 +253,7 @@ namespace UnityEngine.UI
 			InputField inputField = gameObject.AddComponent<InputField>();
 			DefaultControls.SetDefaultColorTransitionValues(inputField);
 			Text text = gameObject3.AddComponent<Text>();
-			text.text = string.Empty;
+			text.text = "";
 			text.supportRichText = false;
 			DefaultControls.SetDefaultTextValues(text);
 			Text text2 = gameObject2.AddComponent<Text>();

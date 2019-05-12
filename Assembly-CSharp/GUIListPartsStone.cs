@@ -1,6 +1,7 @@
 ﻿using Master;
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class GUIListPartsStone : GUIListPartBS
@@ -45,6 +46,9 @@ public sealed class GUIListPartsStone : GUIListPartBS
 	private int totalSeconds;
 
 	private CMD_AgeConfirmation ageConfDialog;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	public Action Callback { private get; set; }
 
@@ -314,7 +318,12 @@ public sealed class GUIListPartsStone : GUIListPartBS
 			}
 			return null;
 		}));
-		return apirequestTask.Run(new Action(RestrictionInput.EndLoad), delegate(Exception x)
+		TaskBase task = apirequestTask;
+		if (GUIListPartsStone.<>f__mg$cache0 == null)
+		{
+			GUIListPartsStone.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		return task.Run(GUIListPartsStone.<>f__mg$cache0, delegate(Exception x)
 		{
 			RestrictionInput.EndLoad();
 		}, null);
@@ -335,7 +344,7 @@ public sealed class GUIListPartsStone : GUIListPartBS
 						this.data.purchasedCount++;
 						if (this.data.purchasedCount >= this.data.limitCount && null != CMD_Shop.instance)
 						{
-							CMD_Shop.instance.DeleteListParts(base.IDX);
+							CMD_Shop.instance.DeleteListParts(this.IDX);
 						}
 					}
 					onCompleted(isSuccess);

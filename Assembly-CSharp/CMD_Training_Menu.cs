@@ -3,6 +3,7 @@ using Master;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UI.TrainingMenu;
 using UnityEngine;
 
 public sealed class CMD_Training_Menu : CMD
@@ -22,17 +23,14 @@ public sealed class CMD_Training_Menu : CMD
 	[SerializeField]
 	private GUISelectPanelViewPartsUD csSelectPanel;
 
-	[Header("非アクティブ ベース 色")]
 	[SerializeField]
-	private Color colBase;
+	private Color buttonTextColor;
 
 	[SerializeField]
-	[Header("非アクティブ タイトル 色")]
-	private Color colTitle;
+	private Color buttonParenthesesColor;
 
 	[SerializeField]
-	[Header("非アクティブ 【】 色")]
-	private Color colLR;
+	private Color buttonDisableColor;
 
 	[SerializeField]
 	private UISprite spChipList;
@@ -76,14 +74,14 @@ public sealed class CMD_Training_Menu : CMD
 		{
 			if (flg)
 			{
-				base.ShowDLG();
-				base.PartsTitle.SetTitle(StringMaster.GetString("TrainingMenuTitle"));
+				this.ShowDLG();
+				this.PartsTitle.SetTitle(StringMaster.GetString("TrainingMenuTitle"));
 				this.InitUI();
-				base.Show(f, sizeX, sizeY, aT);
+				this.<Show>__BaseCallProxy0(f, sizeX, sizeY, aT);
 			}
 			else
 			{
-				base.ClosePanel(false);
+				this.<ClosePanel>__BaseCallProxy1(false);
 			}
 			RestrictionInput.EndLoad();
 		});
@@ -94,14 +92,13 @@ public sealed class CMD_Training_Menu : CMD
 	{
 		this.MakeData();
 		this.csSelectPanel.initLocation = true;
-		this.csSelectPanel.AllBuild(this.TrainingMenuPartsDataL.Count, true, 1f, 1f, null, null);
+		this.csSelectPanel.AllBuild(this.TrainingMenuPartsDataL.Count, true, 1f, 1f, null, null, true);
 		this.ShowDatas();
 		this.OnClickedChipList(this.spChipList, this.lbChipList);
 	}
 
 	private void MakeData()
 	{
-		int trainHouseCT = this.GetFacilityCount(4);
 		int chipFactoryCT = this.GetFacilityCount(25);
 		if (this.TrainingMenuPartsDataL != null)
 		{
@@ -111,6 +108,8 @@ public sealed class CMD_Training_Menu : CMD
 				partsData.strCampaign = string.Empty;
 				partsData.isInfo = false;
 				partsData.isNew = false;
+				partsData.labelCol = this.buttonTextColor;
+				partsData.LRCol = this.buttonParenthesesColor;
 				int num = 0;
 				string strTitle = partsData.strTitle;
 				switch (strTitle)
@@ -180,46 +179,10 @@ public sealed class CMD_Training_Menu : CMD
 					break;
 				}
 				case "SuccessionTitle":
-					if (trainHouseCT <= 0)
-					{
-						partsData.col = this.colBase;
-						partsData.labelCol = this.colTitle;
-						partsData.LRCol = this.colLR;
-					}
-					partsData.actCallBack = delegate()
-					{
-						if (trainHouseCT > 0)
-						{
-							GUIMain.ShowCommonDialog(null, "CMD_Succession", null);
-						}
-						else
-						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
-							cmd_ModalMessage.Title = StringMaster.GetString("TrainingMissingAlertTitle");
-							cmd_ModalMessage.Info = StringMaster.GetString("TrainingMissingAlertInfo-01");
-						}
-					};
+					TrainingMenuButtonSuccession.SetButtonInfo(partsData, this.buttonDisableColor);
 					break;
 				case "ArousalTitle":
-					if (trainHouseCT <= 0)
-					{
-						partsData.col = this.colBase;
-						partsData.labelCol = this.colTitle;
-						partsData.LRCol = this.colLR;
-					}
-					partsData.actCallBack = delegate()
-					{
-						if (trainHouseCT > 0)
-						{
-							GUIMain.ShowCommonDialog(null, "CMD_ArousalTOP", null);
-						}
-						else
-						{
-							CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
-							cmd_ModalMessage.Title = StringMaster.GetString("TrainingMissingAlertTitle");
-							cmd_ModalMessage.Info = StringMaster.GetString("TrainingMissingAlertInfo-02");
-						}
-					};
+					TrainingMenuButtonResistance.SetButtonInfo(partsData, this.buttonDisableColor);
 					break;
 				case "LaboratoryTitle":
 					partsData.actCallBack = delegate()
@@ -251,9 +214,9 @@ public sealed class CMD_Training_Menu : CMD
 				case "ChipSphereTitle":
 					if (chipFactoryCT <= 0)
 					{
-						partsData.col = this.colBase;
-						partsData.labelCol = this.colTitle;
-						partsData.LRCol = this.colLR;
+						partsData.col = this.buttonDisableColor;
+						partsData.labelCol = this.buttonDisableColor;
+						partsData.LRCol = this.buttonDisableColor;
 					}
 					partsData.actCallBack = delegate()
 					{
@@ -274,9 +237,9 @@ public sealed class CMD_Training_Menu : CMD
 				case "ChipReinforceTitle":
 					if (chipFactoryCT <= 0)
 					{
-						partsData.col = this.colBase;
-						partsData.labelCol = this.colTitle;
-						partsData.LRCol = this.colLR;
+						partsData.col = this.buttonDisableColor;
+						partsData.labelCol = this.buttonDisableColor;
+						partsData.LRCol = this.buttonDisableColor;
 					}
 					partsData.actCallBack = delegate()
 					{
@@ -365,13 +328,13 @@ public sealed class CMD_Training_Menu : CMD
 		int facilityCount = this.GetFacilityCount(25);
 		if (0 < facilityCount)
 		{
-			sp.color = new Color(1f, 1f, 1f, 1f);
-			lb.color = new Color(1f, 1f, 1f, 1f);
+			sp.color = Color.white;
+			lb.color = Color.white;
 		}
 		else
 		{
-			sp.color = new Color(0.5f, 0.5f, 0.5f, 1f);
-			lb.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+			sp.color = Color.gray;
+			lb.color = Color.gray;
 		}
 	}
 

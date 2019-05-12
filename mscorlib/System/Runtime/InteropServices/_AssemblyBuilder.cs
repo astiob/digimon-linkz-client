@@ -4,11 +4,11 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> class to unmanaged code.</summary>
-	[ComVisible(true)]
-	[TypeLibImportClass(typeof(AssemblyBuilder))]
-	[Guid("BEBB2505-8B54-3443-AEAD-142A16DD9CC7")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[CLSCompliant(false)]
+	[ComVisible(true)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("BEBB2505-8B54-3443-AEAD-142A16DD9CC7")]
+	[TypeLibImportClass(typeof(AssemblyBuilder))]
 	public interface _AssemblyBuilder
 	{
 		/// <summary>Maps a set of names to a corresponding set of dispatch identifiers.</summary>

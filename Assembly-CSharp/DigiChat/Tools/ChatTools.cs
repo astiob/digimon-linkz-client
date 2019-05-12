@@ -3,6 +3,7 @@ using Master;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace DigiChat.Tools
@@ -10,6 +11,12 @@ namespace DigiChat.Tools
 	public sealed class ChatTools
 	{
 		private static int cgi;
+
+		[CompilerGenerated]
+		private static Action<string> <>f__mg$cache0;
+
+		[CompilerGenerated]
+		private static Action<Dictionary<string, object>> <>f__mg$cache1;
 
 		public static Vector3 GetColliderSize(GameWebAPI.Common_MessageData resp, BoxCollider bc, GameObject tmpTxtOb, out string outStr)
 		{
@@ -46,7 +53,7 @@ namespace DigiChat.Tools
 					TCPUtil.SystemMsg systemMsg = JsonMapper.ToObject<TCPUtil.SystemMsg>(resp.message);
 					txt = string.Format(StringMaster.GetString(systemMsg.key), systemMsg.uname);
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 				}
 				num = ChatTools.CheckCommentSize(txt, 635, tmpTxtOb, out outStr) + 30;
@@ -133,13 +140,23 @@ namespace DigiChat.Tools
 
 		public static void SetSystemMessageTCP()
 		{
-			Singleton<TCPUtil>.Instance.PrepareTCPServer(new Action<string>(ChatTools.AfterPrepareTCPServer), "chat");
+			TCPUtil instance = Singleton<TCPUtil>.Instance;
+			if (ChatTools.<>f__mg$cache0 == null)
+			{
+				ChatTools.<>f__mg$cache0 = new Action<string>(ChatTools.AfterPrepareTCPServer);
+			}
+			instance.PrepareTCPServer(ChatTools.<>f__mg$cache0, "chat");
 		}
 
 		private static void AfterPrepareTCPServer(string server)
 		{
 			Singleton<TCPUtil>.Instance.MakeTCPClient();
-			Singleton<TCPUtil>.Instance.SetTCPCallBackMethod(new Action<Dictionary<string, object>>(ChatTools.GetTCPSystemReceponseData));
+			TCPUtil instance = Singleton<TCPUtil>.Instance;
+			if (ChatTools.<>f__mg$cache1 == null)
+			{
+				ChatTools.<>f__mg$cache1 = new Action<Dictionary<string, object>>(ChatTools.GetTCPSystemReceponseData);
+			}
+			instance.SetTCPCallBackMethod(ChatTools.<>f__mg$cache1);
 		}
 
 		private static void GetTCPSystemReceponseData(Dictionary<string, object> data)

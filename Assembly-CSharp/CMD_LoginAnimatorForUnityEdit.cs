@@ -38,8 +38,8 @@ public class CMD_LoginAnimatorForUnityEdit : MonoBehaviour
 
 	private void Update()
 	{
-		Transform transform = base.transform.FindChild(this.effectName);
-		Transform transform2 = base.transform.FindChild(this.rewardName + this.day);
+		Transform transform = base.transform.Find(this.effectName);
+		Transform transform2 = base.transform.Find(this.rewardName + this.day);
 		transform.position = transform2.position;
 		if (this.animator != null)
 		{

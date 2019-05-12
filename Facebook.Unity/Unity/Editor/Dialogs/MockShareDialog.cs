@@ -60,7 +60,7 @@ namespace Facebook.Unity.Editor.Dialogs
 			stringBuilder.Append('_');
 			for (int i = 0; i < 17; i++)
 			{
-				stringBuilder.Append(UnityEngine.Random.Range(0, 10));
+				stringBuilder.Append(Random.Range(0, 10));
 			}
 			return stringBuilder.ToString();
 		}

@@ -9,41 +9,9 @@ internal class \uE014 : Stream
 
 	private MemoryStream \uE002;
 
-	private \uE00A \uE003;
+	private \uE007 \uE003;
 
 	private bool \uE004;
-
-	public \uE014(string \uE000) : this(\uE000, 8192, null, null)
-	{
-	}
-
-	public \uE014(string \uE000, \uE00A \uE001) : this(\uE000, 8192, \uE001, \uE001)
-	{
-	}
-
-	public \uE014(string \uE000, int \uE001, \uE00A \uE002, \uE00A \uE003)
-	{
-		this.\uE003 = \uE003;
-		this.\uE001 = \uE000;
-		this.\uE002 = new MemoryStream(\uE001);
-		if (!File.Exists(\uE000))
-		{
-			return;
-		}
-		try
-		{
-			byte[] array = File.ReadAllBytes(\uE000);
-			if (\uE002 != null)
-			{
-				array = \uE002.\uE005(array);
-			}
-			this.\uE002.Write(array, 0, array.Length);
-			this.\uE002.Seek(0L, SeekOrigin.Begin);
-		}
-		catch
-		{
-		}
-	}
 
 	public override bool CanRead
 	{
@@ -86,6 +54,38 @@ internal class \uE014 : Stream
 		set
 		{
 			this.\uE002.Position = value;
+		}
+	}
+
+	public \uE014(string \uE018) : this(\uE018, 8192, null, null)
+	{
+	}
+
+	public \uE014(string \uE019, \uE007 \uE01A) : this(\uE019, 8192, \uE01A, \uE01A)
+	{
+	}
+
+	public \uE014(string \uE01B, int \uE01C, \uE007 \uE01D, \uE007 \uE01E)
+	{
+		this.\uE003 = \uE01E;
+		this.\uE001 = \uE01B;
+		this.\uE002 = new MemoryStream(\uE01C);
+		if (!File.Exists(\uE01B))
+		{
+			return;
+		}
+		try
+		{
+			byte[] array = File.ReadAllBytes(\uE01B);
+			if (\uE01D != null)
+			{
+				array = \uE01D.\uE005(array);
+			}
+			this.\uE002.Write(array, 0, array.Length);
+			this.\uE002.Seek(0L, SeekOrigin.Begin);
+		}
+		catch
+		{
 		}
 	}
 

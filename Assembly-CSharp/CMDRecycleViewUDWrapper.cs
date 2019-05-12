@@ -80,7 +80,7 @@ public abstract class CMDRecycleViewUDWrapper : MonoBehaviour
 		if (!this.isInitializedList)
 		{
 			this.isInitializedList = true;
-			this.cmdRecycleView.AllBuild(count, true, 1f, 1f, null, null);
+			this.cmdRecycleView.AllBuild(count, true, 1f, 1f, null, null, true);
 		}
 		else
 		{

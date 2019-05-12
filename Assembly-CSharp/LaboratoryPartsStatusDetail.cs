@@ -71,7 +71,7 @@ public class LaboratoryPartsStatusDetail : MonoBehaviour
 			{
 				this.monsterBasicInfo.SetMonsterData(monsterData);
 			}
-			this.statusList.SetValues(monsterData, false);
+			this.statusList.SetValues(monsterData, false, false);
 			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM resistanceMaster = MonsterResistanceData.GetResistanceMaster(monsterData.monsterM.resistanceId);
 			List<GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM> uniqueResistanceList = MonsterResistanceData.GetUniqueResistanceList(monsterData.GetResistanceIdList());
 			GameWebAPI.RespDataMA_GetMonsterResistanceM.MonsterResistanceM values = MonsterResistanceData.AddResistanceFromMultipleTranceData(resistanceMaster, uniqueResistanceList);

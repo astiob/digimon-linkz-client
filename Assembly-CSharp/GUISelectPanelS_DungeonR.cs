@@ -38,14 +38,12 @@ public class GUISelectPanelS_DungeonR : GUISelectPanelBSPartsUD
 			{
 				GameObject gameObject = base.AddBuildPart();
 				GUIListPartsS_DungeonR component = gameObject.GetComponent<GUIListPartsS_DungeonR>();
-				CampaignLabelQuest component2 = gameObject.GetComponent<CampaignLabelQuest>();
 				if (component != null)
 				{
 					component.SetOriginalPos(new Vector3(startX, num, -5f));
 					component.StageNum = (count - num2).ToString();
 					component.WorldDungeonData = worldDungeonData;
 					component.IsEventStage = ClassSingleton<QuestData>.Instance.ExistEvent(worldDungeonData.worldDungeonM.worldDungeonId);
-					component2.AreaId = worldDungeonData.worldDungeonM.worldStageId;
 					component.ShowGUI();
 				}
 				num -= panelBuildData.pitchH;

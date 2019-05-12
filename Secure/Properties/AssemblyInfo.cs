@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyVersion("1.0.6477.23770")]
+[assembly: AssemblyVersion("1.0.6626.27612")]
 [assembly: AssemblyTitle("Secure")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
@@ -11,4 +11,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("digimon")]
 [assembly: AssemblyTrademark("")]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
-[assembly: SuppressIldasm]

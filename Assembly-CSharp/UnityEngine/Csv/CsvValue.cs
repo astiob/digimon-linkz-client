@@ -115,16 +115,6 @@ namespace UnityEngine.Csv
 			return obj._value.Trim().Equals(this._value.Trim());
 		}
 
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
-
 		public static bool operator ==(CsvValue a, CsvValue b)
 		{
 			return a.Equals(b);
@@ -286,6 +276,16 @@ namespace UnityEngine.Csv
 		{
 			a.stringValue = a.stringValue.Replace(s, string.Empty);
 			return a;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 	}
 }

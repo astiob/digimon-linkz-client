@@ -167,8 +167,7 @@ public sealed class CMD_Alert : CMD
 		if (this.actionOnButtonExtraFunction != null)
 		{
 			CMD_Alert.ExtraFunctionReturnValue extraFunctionReturnValue = this.actionOnButtonExtraFunction();
-			CMD_Alert.ExtraFunctionReturnValue extraFunctionReturnValue2 = extraFunctionReturnValue;
-			if (extraFunctionReturnValue2 == CMD_Alert.ExtraFunctionReturnValue.NOT_CLOSE)
+			if (extraFunctionReturnValue == CMD_Alert.ExtraFunctionReturnValue.NOT_CLOSE)
 			{
 				return;
 			}

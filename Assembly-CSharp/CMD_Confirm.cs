@@ -22,6 +22,8 @@ public class CMD_Confirm : CMD
 	[SerializeField]
 	private GUICollider yesCollider;
 
+	private Action<CMD> onPushYesButton;
+
 	public string Title
 	{
 		get
@@ -113,5 +115,21 @@ public class CMD_Confirm : CMD
 	public void SetMaxLine(int num)
 	{
 		this.textInfo.maxLineCount = num;
+	}
+
+	public void SetActionYesButton(Action<CMD> action)
+	{
+		this.onPushYesButton = action;
+		this.yesCollider.CallBackClass = base.gameObject;
+		this.yesCollider.MethodToInvoke = "OnPushYesButton";
+	}
+
+	private void OnPushYesButton()
+	{
+		if (this.onPushYesButton != null)
+		{
+			this.onPushYesButton(this);
+		}
+		this.ClosePanel(true);
 	}
 }

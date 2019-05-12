@@ -136,20 +136,26 @@ public class BattleSoundPlayer : BattleFunctionBase
 		{
 			return;
 		}
-		switch (state)
+		if (state != AlwaysEffectState.In)
 		{
-		case AlwaysEffectState.In:
+			if (state != AlwaysEffectState.Always)
+			{
+				if (state == AlwaysEffectState.Out)
+				{
+					this.TryPlaySE(alwaysEffect.outSeId, 0f, false);
+					this.TryStopSE(alwaysEffect.inSeId, 0f);
+					this.TryStopSE(alwaysEffect.alwaysSeId, 0f);
+				}
+			}
+			else
+			{
+				this.TryPlaySE(alwaysEffect.alwaysSeId, 0f, true);
+			}
+		}
+		else
+		{
 			this.TryPlaySE(alwaysEffect.inSeId, 0f, false);
 			this.TryPlaySE(alwaysEffect.alwaysSeId, 0.1f, true);
-			break;
-		case AlwaysEffectState.Always:
-			this.TryPlaySE(alwaysEffect.alwaysSeId, 0f, true);
-			break;
-		case AlwaysEffectState.Out:
-			this.TryPlaySE(alwaysEffect.outSeId, 0f, false);
-			this.TryStopSE(alwaysEffect.inSeId, 0f);
-			this.TryStopSE(alwaysEffect.alwaysSeId, 0f);
-			break;
 		}
 	}
 
@@ -205,12 +211,18 @@ public class BattleSoundPlayer : BattleFunctionBase
 
 	public void PlayDeathSE()
 	{
-		this.TryPlaySE(base.battleStateData.enemiesDeathEffect[0]);
+		if (base.battleStateData.UseDeathEffect.Count > 0)
+		{
+			this.TryPlaySE(base.battleStateData.UseDeathEffect[0]);
+		}
 	}
 
 	public void StopHitEffectSE()
 	{
-		this.TryStopSE(base.battleStateData.enemiesDeathEffect[0]);
+		if (base.battleStateData.UseDeathEffect.Count > 0)
+		{
+			this.TryStopSE(base.battleStateData.UseDeathEffect[0]);
+		}
 	}
 
 	public void SetVolumeSE(bool isX2Play)

@@ -41,11 +41,9 @@ public class GUIScreenHome : GUIScreen
 
 	protected virtual void ServerRequest()
 	{
-		APIRequestTask task = APIUtil.Instance().RequestHomeData();
-		base.StartCoroutine(task.Run(delegate
-		{
-			base.StartCoroutine(this.StartEvent());
-		}, null, null));
+		NormalTask normalTask = new NormalTask(APIUtil.Instance().RequestHomeData());
+		normalTask.Add(new NormalTask(new Func<IEnumerator>(this.StartEvent)));
+		base.StartCoroutine(normalTask.Run(null, null, null));
 	}
 
 	protected virtual IEnumerator StartEvent()
@@ -149,8 +147,10 @@ public class GUIScreenHome : GUIScreen
 		GameWebAPI.RespDataCM_LoginBonus respDataCM_LoginBonus = DataMng.Instance().RespDataCM_LoginBonus;
 		if (respDataCM_LoginBonus.loginBonus != null && respDataCM_LoginBonus.loginBonus.campaign != null)
 		{
-			foreach (GameWebAPI.RespDataCM_LoginBonus.LoginBonus campaign in respDataCM_LoginBonus.loginBonus.campaign)
+			GameWebAPI.RespDataCM_LoginBonus.LoginBonus[] campaign2 = respDataCM_LoginBonus.loginBonus.campaign;
+			for (int i = 0; i < campaign2.Length; i++)
 			{
+				GameWebAPI.RespDataCM_LoginBonus.LoginBonus campaign = campaign2[i];
 				bool isLoadEnd = false;
 				string path = CMD_LoginCampaign.GetBgPathForFTP(campaign.backgroundImg);
 				TextureManager.instance.Load(path, delegate(Texture2D texture)
@@ -199,7 +199,8 @@ public class GUIScreenHome : GUIScreen
 		FarmRoot instance = FarmRoot.Instance;
 		instance.DigimonManager.AppaearanceDigimon(null);
 		this.EnableFarmInput();
-		this.CachePartyAll();
+		List<string> deckMonsterPathList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckMonsterPathList(false);
+		AssetDataCacheMng.Instance().RegisterCacheType(deckMonsterPathList, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, false);
 		if (ConstValue.IS_CHAT_OPEN == 1)
 		{
 			ClassSingleton<FaceChatNotificationAccessor>.Instance.faceChatNotification.StartGetHistoryIdList();
@@ -359,7 +360,7 @@ public class GUIScreenHome : GUIScreen
 		DataMng dataMng = DataMng.Instance();
 		if (!this.isStartGuidance)
 		{
-			if (this.isInfoShowed || (null != dataMng && dataMng.IsPopUpInformaiton))
+			if (null != dataMng && dataMng.IsPopUpInformaiton)
 			{
 				Action<int> action = delegate(int x)
 				{
@@ -460,44 +461,18 @@ public class GUIScreenHome : GUIScreen
 	{
 		if (!GUIScreenHome.isCacheBattled)
 		{
-			this.CacheBattleAllClear();
-			this.CacheBattleAll();
+			AssetDataCacheMng.Instance().DeleteCacheType(AssetDataCacheMng.CACHE_TYPE.BATTLE_COMMON);
+			List<string> battleCommon = AssetDataCacheData.GetBattleCommon();
+			AssetDataCacheMng.Instance().RegisterCacheType(battleCommon, AssetDataCacheMng.CACHE_TYPE.BATTLE_COMMON, false);
 			GUIScreenHome.isCacheBattled = true;
 		}
 	}
 
 	protected void StartCacheParty()
 	{
-		this.CachePartyAllClear();
-		this.CachePartyFavorite();
-	}
-
-	private void CachePartyAllClear()
-	{
 		AssetDataCacheMng.Instance().DeleteCacheType(AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY);
-	}
-
-	private void CachePartyFavorite()
-	{
 		List<string> deckMonsterPathList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckMonsterPathList(true);
 		AssetDataCacheMng.Instance().RegisterCacheType(deckMonsterPathList, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, false);
-	}
-
-	private void CachePartyAll()
-	{
-		List<string> deckMonsterPathList = ClassSingleton<MonsterUserDataMng>.Instance.GetDeckMonsterPathList(false);
-		AssetDataCacheMng.Instance().RegisterCacheType(deckMonsterPathList, AssetDataCacheMng.CACHE_TYPE.CHARA_PARTY, false);
-	}
-
-	private void CacheBattleAllClear()
-	{
-		AssetDataCacheMng.Instance().DeleteCacheType(AssetDataCacheMng.CACHE_TYPE.BATTLE_COMMON);
-	}
-
-	private void CacheBattleAll()
-	{
-		List<string> battleCommon = AssetDataCacheData.GetBattleCommon();
-		AssetDataCacheMng.Instance().RegisterCacheType(battleCommon, AssetDataCacheMng.CACHE_TYPE.BATTLE_COMMON, false);
 	}
 
 	private IEnumerator checkAndSyncCountryCode()

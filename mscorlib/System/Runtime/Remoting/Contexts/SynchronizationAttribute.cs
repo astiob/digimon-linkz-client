@@ -7,8 +7,8 @@ using System.Threading;
 namespace System.Runtime.Remoting.Contexts
 {
 	/// <summary>Enforces a synchronization domain for the current context and all contexts that share the same instance.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Class)]
+	[ComVisible(true)]
 	[Serializable]
 	public class SynchronizationAttribute : ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{

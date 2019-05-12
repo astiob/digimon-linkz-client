@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 public class CMD_MultiLangSetting : CMD
 {
@@ -17,6 +19,9 @@ public class CMD_MultiLangSetting : CMD
 
 	[SerializeField]
 	private UISprite krBtnImg;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	protected override void Awake()
 	{
@@ -88,8 +93,13 @@ public class CMD_MultiLangSetting : CMD
 					UnityEngine.Object.Destroy(GUIFace.instance.gameObject.transform.parent.gameObject);
 				}
 			};
-			GameWebAPI.RequestUS_RegisterLanguageInfo request = requestUS_RegisterLanguageInfo;
-			base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+			GameWebAPI.RequestUS_RegisterLanguageInfo requestUS_RegisterLanguageInfo2 = requestUS_RegisterLanguageInfo;
+			RequestBase request = requestUS_RegisterLanguageInfo2;
+			if (CMD_MultiLangSetting.<>f__mg$cache0 == null)
+			{
+				CMD_MultiLangSetting.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+			}
+			base.StartCoroutine(request.RunOneTime(CMD_MultiLangSetting.<>f__mg$cache0, delegate(Exception noop)
 			{
 				RestrictionInput.EndLoad();
 			}, null));

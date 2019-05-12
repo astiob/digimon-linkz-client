@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Identifies a list of interfaces that are exposed as COM event sources for the attributed class.</summary>
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class ComSourceInterfacesAttribute : Attribute
 	{
 		private string internalValue;

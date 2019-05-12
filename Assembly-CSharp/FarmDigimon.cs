@@ -426,13 +426,13 @@ public sealed class FarmDigimon : MonoBehaviour
 		}
 		default:
 		{
-			CharacterParams characterParams3 = this.digimon.GetComponent<CharacterParams>();
-			characterParams3.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
+			CharacterParams component = this.digimon.GetComponent<CharacterParams>();
+			component.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
 			break;
 		}
 		}
-		CharacterParams characterParams4 = this.digimon.GetComponent<CharacterParams>();
-		characterParams4.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
+		CharacterParams component2 = this.digimon.GetComponent<CharacterParams>();
+		component2.PlayAnimationSmooth(CharacterAnimationType.revival, SkillType.Attack, 0, null, null);
 		yield return new WaitForSeconds(5f);
 		this.farmDigimonAI.ClearActionParam();
 		this.actionState = FarmDigimon.ActionState.THINKING;
@@ -493,9 +493,9 @@ public sealed class FarmDigimon : MonoBehaviour
 		{
 			if ((this.memoryNextTime - ServerDateTime.Now).TotalSeconds <= 0.0 && this.memoryNextTime != DateTime.MinValue)
 			{
-				int maxFriendship = MonsterFriendshipData.GetFriendshipMaxValue(this.monsterData.monsterMG.growStep);
-				int friendshipInt = int.Parse(this.monsterData.userMonster.friendship);
-				if (friendshipInt < maxFriendship)
+				int friendshipMaxValue = MonsterFriendshipData.GetFriendshipMaxValue(this.monsterData.monsterMG.growStep);
+				int num = int.Parse(this.monsterData.userMonster.friendship);
+				if (num < friendshipMaxValue)
 				{
 					this.beforeFriendship = this.monsterData.userMonster.friendship;
 					this.UpFriendStatus();

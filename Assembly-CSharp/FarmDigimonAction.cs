@@ -6,7 +6,12 @@ public sealed class FarmDigimonAction : MonoBehaviour
 {
 	private IEnumerator enumerator;
 
-	private static readonly int MASK_LAYER = 1 << LayerMask.NameToLayer("Farm.NoEntry") | 1 << LayerMask.NameToLayer("IgnoreShadow");
+	private int MASK_LAYER;
+
+	private void Awake()
+	{
+		this.MASK_LAYER = (1 << LayerMask.NameToLayer("Farm.NoEntry") | 1 << LayerMask.NameToLayer("IgnoreShadow"));
+	}
 
 	public void StopAction()
 	{
@@ -72,7 +77,7 @@ public sealed class FarmDigimonAction : MonoBehaviour
 				Vector3 rayDirection = gridPos3D - digimonPos3D;
 				digimonPos3D.y = farmRoot.transform.localPosition.y + 0.1f;
 				gridPos3D.y = farmRoot.transform.localPosition.y + 0.1f;
-				if (!Physics.Raycast(digimonPos3D, rayDirection, rayDirection.magnitude, FarmDigimonAction.MASK_LAYER))
+				if (!Physics.Raycast(digimonPos3D, rayDirection, rayDirection.magnitude, this.MASK_LAYER))
 				{
 					digimonPos3D.y = 0f;
 					gridPos3D.y = 0f;

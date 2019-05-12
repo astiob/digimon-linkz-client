@@ -8,8 +8,8 @@ public class VersionUpItem : GUICollider
 	[SerializeField]
 	public UISprite spIcon;
 
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	public UITexture texIcon;
 
 	[Header("素材選択")]

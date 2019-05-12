@@ -53,12 +53,22 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 		int countryCode;
 		if (int.TryParse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN), out countryCode))
 		{
-			bool requestRetry = this.isTutorial;
+			bool requestRetry;
+			int type;
+			if (!this.isTutorial)
+			{
+				type = 0;
+				requestRetry = false;
+			}
+			else
+			{
+				type = 1;
+				requestRetry = true;
+			}
 			GameWebAPI.RequestGA_GashaInfo request = new GameWebAPI.RequestGA_GashaInfo
 			{
 				SetSendData = delegate(GameWebAPI.GA_Req_GashaInfo param)
 				{
-					int type;
 					param.isTutorial = type;
 					param.countryCode = countryCode;
 				},
@@ -144,7 +154,7 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 					this.gashaButtonList.Create(this.gashaButtonResource);
 					this.CreateGashaButtonList(this.gashaInfoManager.GetInfoList(), this.gashaButtonTextureList, this.selectGashaButtonIndex, this.isTutorial);
 					this.ChangeSelection(this.selectGashaButtonIndex);
-					this.Show(closeEvent, sizeX, sizeY, showTime);
+					this.<Show>__BaseCallProxy1(closeEvent, sizeX, sizeY, showTime);
 				});
 			}
 			else
@@ -159,7 +169,7 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 				}
 				else
 				{
-					this.ClosePanel(false);
+					this.<ClosePanel>__BaseCallProxy0(false);
 				}
 			}
 		});
@@ -306,10 +316,7 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 		this.isTutorial = true;
 		if (passTutorialAction.ContainsKey("GashaConfirmDialog"))
 		{
-			string key2;
-			string key = key2 = "GashaConfirmDialog";
-			Action a = passTutorialAction[key2];
-			passTutorialAction[key] = (Action)Delegate.Combine(a, new Action(this.startButton.OnPushedOneButton));
+			passTutorialAction["GashaConfirmDialog"] = (Action)Delegate.Combine(passTutorialAction["GashaConfirmDialog"], new Action(this.startButton.OnPushedOneButton));
 		}
 		else
 		{

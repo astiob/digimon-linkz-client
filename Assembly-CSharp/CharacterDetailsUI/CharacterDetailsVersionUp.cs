@@ -1,0 +1,63 @@
+﻿using Master;
+using System;
+using UnityEngine;
+
+namespace CharacterDetailsUI
+{
+	public sealed class CharacterDetailsVersionUp : ICharacterDetailsUIAnimation
+	{
+		private bool isResetEquipChip;
+
+		private int cutinSortingOrder;
+
+		private Transform cutinParentObject;
+
+		private PartsUpperCutinController cutinController;
+
+		private Action onEndCutin;
+
+		private void OnFinishCutin()
+		{
+			if (this.onEndCutin != null)
+			{
+				this.onEndCutin();
+			}
+			if (this.isResetEquipChip)
+			{
+				CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(null, "CMD_ModalMessage", null) as CMD_ModalMessage;
+				cmd_ModalMessage.Title = StringMaster.GetString("VersionUpTitle");
+				cmd_ModalMessage.Info = StringMaster.GetString("VersionUPCautionChip");
+			}
+		}
+
+		public void OnOpenWindow()
+		{
+			this.cutinController = PartsUpperCutinController.Create(this.cutinParentObject, this.cutinSortingOrder);
+		}
+
+		public void OnCloseWindow()
+		{
+		}
+
+		public void OnOpenMenu()
+		{
+		}
+
+		public void OnCloseMenu()
+		{
+		}
+
+		public void StartAnimation()
+		{
+			this.cutinController.PlayAnimator(PartsUpperCutinController.AnimeType.Versionup, new Action(this.OnFinishCutin));
+		}
+
+		public void Initialize(int windowSortingOrder, Transform windowRoot, bool resetEquipChip, Action endCutin)
+		{
+			this.cutinSortingOrder = windowSortingOrder + 1;
+			this.onEndCutin = endCutin;
+			this.cutinParentObject = windowRoot;
+			this.isResetEquipChip = resetEquipChip;
+		}
+	}
+}

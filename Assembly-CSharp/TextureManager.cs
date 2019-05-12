@@ -9,11 +9,11 @@ public class TextureManager : MonoBehaviour
 {
 	private static TextureManager _instance;
 
-	private string cachePath = Application.persistentDataPath + "/TextureCache.txt";
+	private string cachePath = string.Empty;
+
+	private PersistentFile persistentFile;
 
 	private List<TextureManager.TextureInfo> infoList = new List<TextureManager.TextureInfo>();
-
-	private PersistentFile persistentFile = new PersistentFile(false);
 
 	private TextureManager.SaveData saveData = new TextureManager.SaveData();
 
@@ -40,6 +40,20 @@ public class TextureManager : MonoBehaviour
 	}
 
 	public bool isLoadSaveData { get; private set; }
+
+	public void Awake()
+	{
+		this.SetCachePath();
+		this.persistentFile = new PersistentFile(false);
+	}
+
+	public void SetCachePath()
+	{
+		if (this.cachePath == string.Empty)
+		{
+			this.cachePath = Application.persistentDataPath + "/TextureCache.txt";
+		}
+	}
 
 	public Coroutine Load(string path, Action<Texture2D> callback, float timeoutSeconds = 30f, bool isCache = true)
 	{
@@ -111,7 +125,7 @@ public class TextureManager : MonoBehaviour
 			if (isSuccess)
 			{
 				byte[] data2 = Convert.FromBase64String(data);
-				texture2D = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+				texture2D = new Texture2D(2, 2, TextureFormat.ARGB32, false, false);
 				texture2D.LoadImage(data2);
 			}
 			if (callback != null)

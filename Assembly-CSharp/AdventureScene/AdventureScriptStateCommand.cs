@@ -39,20 +39,26 @@ namespace AdventureScene
 		{
 			bool result = true;
 			string text = this.state;
-			switch (text)
+			if (text != null)
 			{
-			case "INIT":
-				ClassSingleton<AdventureSceneData>.Instance.adventureScriptEngine.SetScriptState(AdventureScriptEngine.ScriptState.INIT);
-				goto IL_B9;
-			case "RUN":
-				ClassSingleton<AdventureSceneData>.Instance.adventureScriptEngine.SetScriptState(AdventureScriptEngine.ScriptState.RUN);
-				goto IL_B9;
-			case "END":
-				ClassSingleton<AdventureSceneData>.Instance.adventureScriptEngine.SetScriptState(AdventureScriptEngine.ScriptState.END);
-				goto IL_B9;
+				if (text == "INIT")
+				{
+					ClassSingleton<AdventureSceneData>.Instance.adventureScriptEngine.SetScriptState(AdventureScriptEngine.ScriptState.INIT);
+					goto IL_8A;
+				}
+				if (text == "RUN")
+				{
+					ClassSingleton<AdventureSceneData>.Instance.adventureScriptEngine.SetScriptState(AdventureScriptEngine.ScriptState.RUN);
+					goto IL_8A;
+				}
+				if (text == "END")
+				{
+					ClassSingleton<AdventureSceneData>.Instance.adventureScriptEngine.SetScriptState(AdventureScriptEngine.ScriptState.END);
+					goto IL_8A;
+				}
 			}
 			result = false;
-			IL_B9:
+			IL_8A:
 			base.ResumeScriptEngine();
 			return result;
 		}

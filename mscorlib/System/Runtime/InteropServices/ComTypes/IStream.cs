@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	/// <summary>Provides the managed definition of the IStream interface, with ISequentialStream functionality.</summary>
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("0000000c-0000-0000-c000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface IStream
 	{

@@ -1,5 +1,6 @@
 ﻿using Master;
 using Monster;
+using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -156,8 +157,6 @@ public sealed class CMD_DeckList : CMD
 
 	private GameObject goMN_ICON_CHG_2;
 
-	private GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] effectArray;
-
 	private static CMD_DeckList instance;
 
 	[Header("キャラクターのステータスPanel")]
@@ -167,6 +166,10 @@ public sealed class CMD_DeckList : CMD
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
 
 	private List<MonsterData> targetMonsterList;
+
+	private QuestBonusPack questBonusPack;
+
+	private QuestBonusTargetCheck bonusTargetCheck;
 
 	public static MonsterData SelectMonsterData { get; set; }
 
@@ -196,12 +199,17 @@ public sealed class CMD_DeckList : CMD
 		}
 	}
 
-	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
+	public void SetQuestBonus(QuestBonusPack questBonus, QuestBonusTargetCheck checker)
+	{
+		this.questBonusPack = questBonus;
+		this.bonusTargetCheck = checker;
+	}
+
+	public override void Show(Action<int> closeEvent, float sizeX, float sizeY, float showAnimationTime)
 	{
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.PartsTitle.SetTitle(StringMaster.GetString("PartyTitleSelect"));
 		this.statusPanel.SetEnable(true);
-		this.SetGimmickInfo();
 		this.SetSelectedChar();
 		this.SetCommonUI();
 		this.InitMonsterList();
@@ -211,7 +219,7 @@ public sealed class CMD_DeckList : CMD
 		this.SelectButtonActive(false);
 		this.StatusPageChange(false);
 		base.SetOpendAction(new Action<int>(this.OpendAction));
-		base.Show(f, sizeX, sizeY, aT);
+		base.Show(closeEvent, sizeX, sizeY, showAnimationTime);
 		RestrictionInput.EndLoad();
 	}
 
@@ -259,25 +267,13 @@ public sealed class CMD_DeckList : CMD
 		base.WindowClosed();
 	}
 
-	private void SetGimmickInfo()
-	{
-		if (CMD_MultiRecruitPartyWait.StageDataBk != null)
-		{
-			this.effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_MultiRecruitPartyWait.StageDataBk.worldDungeonId);
-		}
-		else if (null != CMD_QuestTOP.instance && CMD_QuestTOP.instance.StageDataBk != null)
-		{
-			this.effectArray = ExtraEffectUtil.GetExtraEffectArray(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);
-		}
-	}
-
 	private void ShowNowInfo()
 	{
 		if (CMD_DeckList.SelectMonsterData != null)
 		{
 			this.baseChipBaseSelect.SetSelectedCharChg(CMD_DeckList.SelectMonsterData);
 			this.nowMonsterBasicInfo.SetMonsterData(CMD_DeckList.SelectMonsterData);
-			this.nowMonsterStatusList.SetValues(CMD_DeckList.SelectMonsterData, this.effectArray);
+			this.nowMonsterStatusList.SetValues(CMD_DeckList.SelectMonsterData, this.questBonusPack.dungeonBonuses.ToArray());
 			this.nowMonsterMedalList.SetValues(CMD_DeckList.SelectMonsterData.userMonster);
 			this.nowMonsterLeaderSkill.SetSkill(CMD_DeckList.SelectMonsterData);
 			this.nowMonsterUniqueSkill.SetSkill(CMD_DeckList.SelectMonsterData);
@@ -326,7 +322,7 @@ public sealed class CMD_DeckList : CMD
 		{
 			this.partnerChipBaseSelect.SetSelectedCharChg(this.DataChg);
 			this.changeMonsterBasicInfo.SetMonsterData(this.DataChg);
-			this.changeMonsterStatusList.SetValues(this.DataChg, this.effectArray);
+			this.changeMonsterStatusList.SetValues(this.DataChg, this.questBonusPack.dungeonBonuses.ToArray());
 			this.changeMonsterMedalList.SetValues(this.DataChg.userMonster);
 			this.changeMonsterLeaderSkill.SetSkill(this.DataChg);
 			this.changeMonsterUniqueSkill.SetSkill(this.DataChg);
@@ -403,7 +399,13 @@ public sealed class CMD_DeckList : CMD
 				component3.AddWidgetDepth(guimonsterIcon.transform, add);
 			}
 			this.goMN_ICON_NOW.SetActive(false);
-			guimonsterIcon.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(CMD_DeckList.SelectMonsterData, this.effectArray);
+			QuestBonusPack questBonusPack = new QuestBonusPack
+			{
+				bonusChipIds = QuestBonusFilter.GetActivateBonusChips(CMD_DeckList.SelectMonsterData, this.questBonusPack.bonusChipIds),
+				eventBonuses = QuestBonusFilter.GetActivateEventBonuses(this.bonusTargetCheck, CMD_DeckList.SelectMonsterData, this.questBonusPack.eventBonuses),
+				dungeonBonuses = QuestBonusFilter.GetActivateDungeonBonuses(this.bonusTargetCheck, CMD_DeckList.SelectMonsterData, this.questBonusPack.dungeonBonuses)
+			};
+			guimonsterIcon.Gimmick = questBonusPack.ExistBonus();
 		}
 	}
 
@@ -449,6 +451,7 @@ public sealed class CMD_DeckList : CMD
 		this.targetMonsterList = list;
 		list = MonsterDataMng.Instance().SelectionMDList(list);
 		this.csSelectPanelMonsterIcon.AllBuild(list, localScale, new Action<MonsterData>(this.ActMIconLong), new Action<MonsterData>(this.ActMIconShort), false);
+		this.csSelectPanelMonsterIcon.SetIconDungeonBonus(this.questBonusPack, this.bonusTargetCheck);
 		if (this.sortieLimitList != null)
 		{
 			this.csSelectPanelMonsterIcon.SetIconSortieLimitParts(this.sortieLimitList);
@@ -512,7 +515,13 @@ public sealed class CMD_DeckList : CMD
 				component3.AddWidgetDepth(guimonsterIcon.transform, add);
 			}
 			this.goMN_ICON_CHG.SetActive(false);
-			guimonsterIcon.Gimmick = ExtraEffectUtil.IsExtraEffectMonster(this.DataChg, this.effectArray);
+			QuestBonusPack questBonusPack = new QuestBonusPack
+			{
+				bonusChipIds = QuestBonusFilter.GetActivateBonusChips(this.DataChg, this.questBonusPack.bonusChipIds),
+				eventBonuses = QuestBonusFilter.GetActivateEventBonuses(this.bonusTargetCheck, this.DataChg, this.questBonusPack.eventBonuses),
+				dungeonBonuses = QuestBonusFilter.GetActivateDungeonBonuses(this.bonusTargetCheck, this.DataChg, this.questBonusPack.dungeonBonuses)
+			};
+			guimonsterIcon.Gimmick = questBonusPack.ExistBonus();
 		}
 		this.ShowChgInfo();
 	}

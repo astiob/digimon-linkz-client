@@ -3,9 +3,9 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IEnumConnectionPoints" /> instead. </summary>
-	[Guid("b196b285-bab4-101a-b69c-00aa00341d07")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Obsolete]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("b196b285-bab4-101a-b69c-00aa00341d07")]
 	[ComImport]
 	public interface UCOMIEnumConnectionPoints
 	{

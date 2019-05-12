@@ -48,7 +48,7 @@ public class CMD_CacheClear : CMD
 				"SUB_SAVE_DT.binary"
 			};
 			GameCache.ClearCache(ignoreFileNameList);
-			Caching.CleanCache();
+			Caching.ClearCache();
 			result = true;
 		}
 		catch

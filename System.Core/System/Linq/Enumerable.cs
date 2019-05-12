@@ -165,7 +165,22 @@ namespace System.Linq
 		/// <exception cref="T:System.OverflowException">The sum of the elements in the sequence is larger than <see cref="F:System.Int64.MaxValue" />.</exception>
 		public static double Average(this IEnumerable<int> source)
 		{
-			return source.Average((long a, int b) => a + (long)b, (long a, long b) => (double)a / (double)b);
+			Check.Source(source);
+			long num = 0L;
+			int num2 = 0;
+			foreach (int num3 in source)
+			{
+				checked
+				{
+					num += unchecked((long)num3);
+				}
+				num2++;
+			}
+			if (num2 == 0)
+			{
+				throw new InvalidOperationException();
+			}
+			return (double)num / (double)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Int64" /> values.</summary>
@@ -178,7 +193,19 @@ namespace System.Linq
 		/// <exception cref="T:System.OverflowException">The sum of the elements in the sequence is larger than <see cref="F:System.Int64.MaxValue" />.</exception>
 		public static double Average(this IEnumerable<long> source)
 		{
-			return source.Average((long a, long b) => a + b, (long a, long b) => (double)a / (double)b);
+			Check.Source(source);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (long num3 in source)
+			{
+				num += num3;
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return (double)num / (double)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Double" /> values.</summary>
@@ -190,7 +217,20 @@ namespace System.Linq
 		///   <paramref name="source" /> contains no elements.</exception>
 		public static double Average(this IEnumerable<double> source)
 		{
-			return source.Average((double a, double b) => a + b, (double a, long b) => a / (double)b);
+			Check.Source(source);
+			double num = 0.0;
+			long num2 = 0L;
+			foreach (double num3 in source)
+			{
+				double num4 = num3;
+				num += num4;
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return num / (double)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Single" /> values.</summary>
@@ -202,7 +242,20 @@ namespace System.Linq
 		///   <paramref name="source" /> contains no elements.</exception>
 		public static float Average(this IEnumerable<float> source)
 		{
-			return source.Average((double a, float b) => a + (double)b, (double a, long b) => (float)a / (float)b);
+			Check.Source(source);
+			float num = 0f;
+			long num2 = 0L;
+			foreach (float num3 in source)
+			{
+				float num4 = num3;
+				num += num4;
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return num / (float)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Decimal" /> values.</summary>
@@ -215,44 +268,19 @@ namespace System.Linq
 		/// <exception cref="T:System.OverflowException">The sum of the elements in the sequence is larger than <see cref="F:System.Decimal.MaxValue" />.</exception>
 		public static decimal Average(this IEnumerable<decimal> source)
 		{
-			return source.Average((decimal a, decimal b) => a + b, (decimal a, long b) => a / b);
-		}
-
-		private static TResult Average<TElement, TAggregate, TResult>(this IEnumerable<TElement> source, Func<TAggregate, TElement, TAggregate> func, Func<TAggregate, long, TResult> result) where TElement : struct where TAggregate : struct where TResult : struct
-		{
 			Check.Source(source);
-			TAggregate arg = default(TAggregate);
+			decimal d = 0m;
 			long num = 0L;
-			foreach (TElement arg2 in source)
+			foreach (decimal d2 in source)
 			{
-				arg = func(arg, arg2);
+				d += d2;
 				num += 1L;
 			}
 			if (num == 0L)
 			{
 				throw new InvalidOperationException();
 			}
-			return result(arg, num);
-		}
-
-		private static TResult? AverageNullable<TElement, TAggregate, TResult>(this IEnumerable<TElement?> source, Func<TAggregate, TElement, TAggregate> func, Func<TAggregate, long, TResult> result) where TElement : struct where TAggregate : struct where TResult : struct
-		{
-			Check.Source(source);
-			TAggregate arg = default(TAggregate);
-			long num = 0L;
-			foreach (TElement? telement in source)
-			{
-				if (telement != null)
-				{
-					arg = func(arg, telement.Value);
-					num += 1L;
-				}
-			}
-			if (num == 0L)
-			{
-				return null;
-			}
-			return new TResult?(result(arg, num));
+			return d / num;
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Int32" /> values.</summary>
@@ -264,7 +292,21 @@ namespace System.Linq
 		public static double? Average(this IEnumerable<int?> source)
 		{
 			Check.Source(source);
-			return source.AverageNullable((long a, int b) => a + (long)b, (long a, long b) => (double)a / (double)b);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (int? num3 in source)
+			{
+				if (num3 != null)
+				{
+					num += (long)num3.Value;
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new double?((double)num / (double)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Int64" /> values.</summary>
@@ -276,7 +318,24 @@ namespace System.Linq
 		public static double? Average(this IEnumerable<long?> source)
 		{
 			Check.Source(source);
-			return source.AverageNullable((long a, long b) => a + b, (long a, long b) => (double)a / (double)b);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (long? num3 in source)
+			{
+				if (num3 != null)
+				{
+					checked
+					{
+						num += num3.Value;
+					}
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new double?((double)num / (double)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Double" /> values.</summary>
@@ -287,7 +346,21 @@ namespace System.Linq
 		public static double? Average(this IEnumerable<double?> source)
 		{
 			Check.Source(source);
-			return source.AverageNullable((double a, double b) => a + b, (double a, long b) => a / (double)b);
+			double num = 0.0;
+			long num2 = 0L;
+			foreach (double? num3 in source)
+			{
+				if (num3 != null)
+				{
+					num += num3.Value;
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new double?(num / (double)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Decimal" /> values.</summary>
@@ -299,7 +372,21 @@ namespace System.Linq
 		public static decimal? Average(this IEnumerable<decimal?> source)
 		{
 			Check.Source(source);
-			return source.AverageNullable((decimal a, decimal b) => a + b, (decimal a, long b) => a / b);
+			decimal d = 0m;
+			long num = 0L;
+			foreach (decimal? num2 in source)
+			{
+				if (num2 != null)
+				{
+					d += num2.Value;
+					num += 1L;
+				}
+			}
+			if (num == 0L)
+			{
+				return null;
+			}
+			return new decimal?(d / num);
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Single" /> values.</summary>
@@ -310,7 +397,21 @@ namespace System.Linq
 		public static float? Average(this IEnumerable<float?> source)
 		{
 			Check.Source(source);
-			return source.AverageNullable((double a, float b) => a + (double)b, (double a, long b) => (float)a / (float)b);
+			float num = 0f;
+			long num2 = 0L;
+			foreach (float? num3 in source)
+			{
+				if (num3 != null)
+				{
+					num += num3.Value;
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new float?(num / (float)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Int32" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -326,7 +427,18 @@ namespace System.Linq
 		public static double Average<TSource>(this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).Average((long a, int b) => a + (long)b, (long a, long b) => (double)a / (double)b);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				num += (long)selector(arg);
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return (double)num / (double)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Int32" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -340,7 +452,22 @@ namespace System.Linq
 		public static double? Average<TSource>(this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).AverageNullable((long a, int b) => a + (long)b, (long a, long b) => (double)a / (double)b);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				int? num3 = selector(arg);
+				if (num3 != null)
+				{
+					num += (long)num3.Value;
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new double?((double)num / (double)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Int64" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -356,7 +483,21 @@ namespace System.Linq
 		public static double Average<TSource>(this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).Average((long a, long b) => a + b, (long a, long b) => (double)a / (double)b);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				checked
+				{
+					num += selector(arg);
+				}
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return (double)num / (double)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Int64" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -367,7 +508,25 @@ namespace System.Linq
 		public static double? Average<TSource>(this IEnumerable<TSource> source, Func<TSource, long?> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).AverageNullable((long a, long b) => a + b, (long a, long b) => (double)a / (double)b);
+			long num = 0L;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				long? num3 = selector(arg);
+				if (num3 != null)
+				{
+					checked
+					{
+						num += num3.Value;
+					}
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new double?((double)num / (double)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Double" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -382,7 +541,18 @@ namespace System.Linq
 		public static double Average<TSource>(this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).Average((double a, double b) => a + b, (double a, long b) => a / (double)b);
+			double num = 0.0;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				num += selector(arg);
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return num / (double)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Double" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -395,7 +565,22 @@ namespace System.Linq
 		public static double? Average<TSource>(this IEnumerable<TSource> source, Func<TSource, double?> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).AverageNullable((double a, double b) => a + b, (double a, long b) => a / (double)b);
+			double num = 0.0;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				double? num3 = selector(arg);
+				if (num3 != null)
+				{
+					num += num3.Value;
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new double?(num / (double)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Single" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -410,7 +595,18 @@ namespace System.Linq
 		public static float Average<TSource>(this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).Average((double a, float b) => a + (double)b, (double a, long b) => (float)a / (float)b);
+			float num = 0f;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				num += selector(arg);
+				num2 += 1L;
+			}
+			if (num2 == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return num / (float)num2;
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Single" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -423,7 +619,22 @@ namespace System.Linq
 		public static float? Average<TSource>(this IEnumerable<TSource> source, Func<TSource, float?> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).AverageNullable((double a, float b) => a + (double)b, (double a, long b) => (float)a / (float)b);
+			float num = 0f;
+			long num2 = 0L;
+			foreach (TSource arg in source)
+			{
+				float? num3 = selector(arg);
+				if (num3 != null)
+				{
+					num += num3.Value;
+					num2 += 1L;
+				}
+			}
+			if (num2 == 0L)
+			{
+				return null;
+			}
+			return new float?(num / (float)num2);
 		}
 
 		/// <summary>Computes the average of a sequence of <see cref="T:System.Decimal" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -439,7 +650,18 @@ namespace System.Linq
 		public static decimal Average<TSource>(this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).Average((decimal a, decimal b) => a + b, (decimal a, long b) => a / b);
+			decimal d = 0m;
+			long num = 0L;
+			foreach (TSource arg in source)
+			{
+				d += selector(arg);
+				num += 1L;
+			}
+			if (num == 0L)
+			{
+				throw new InvalidOperationException();
+			}
+			return d / num;
 		}
 
 		/// <summary>Computes the average of a sequence of nullable <see cref="T:System.Decimal" /> values that are obtained by invoking a transform function on each element of the input sequence.</summary>
@@ -453,7 +675,22 @@ namespace System.Linq
 		public static decimal? Average<TSource>(this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
 		{
 			Check.SourceAndSelector(source, selector);
-			return source.Select(selector).AverageNullable((decimal a, decimal b) => a + b, (decimal a, long b) => a / b);
+			decimal d = 0m;
+			long num = 0L;
+			foreach (TSource arg in source)
+			{
+				decimal? num2 = selector(arg);
+				if (num2 != null)
+				{
+					d += num2.Value;
+					num += 1L;
+				}
+			}
+			if (num == 0L)
+			{
+				return null;
+			}
+			return new decimal?(d / num);
 		}
 
 		/// <summary>Converts the elements of an <see cref="T:System.Collections.IEnumerable" /> to the specified type.</summary>
@@ -864,7 +1101,14 @@ namespace System.Linq
 		public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
 		{
 			Check.Source(source);
-			return source.First(Enumerable.PredicateOf<TSource>.Always, Enumerable.Fallback.Default);
+			using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+			{
+				if (enumerator.MoveNext())
+				{
+					return enumerator.Current;
+				}
+			}
+			return default(TSource);
 		}
 
 		/// <summary>Returns the first element of the sequence that satisfies a condition or a default value if no such element is found.</summary>
@@ -1337,7 +1581,18 @@ namespace System.Linq
 			{
 				return list[list.Count - 1];
 			}
-			return source.Last(Enumerable.PredicateOf<TSource>.Always, Enumerable.Fallback.Throw);
+			bool flag = true;
+			TSource result = default(TSource);
+			foreach (TSource tsource in source)
+			{
+				result = tsource;
+				flag = false;
+			}
+			if (!flag)
+			{
+				return result;
+			}
+			throw new InvalidOperationException();
 		}
 
 		/// <summary>Returns the last element of a sequence that satisfies a specified condition.</summary>
@@ -1368,7 +1623,18 @@ namespace System.Linq
 			{
 				return (list.Count <= 0) ? default(TSource) : list[list.Count - 1];
 			}
-			return source.Last(Enumerable.PredicateOf<TSource>.Always, Enumerable.Fallback.Default);
+			bool flag = true;
+			TSource result = default(TSource);
+			foreach (TSource tsource in source)
+			{
+				result = tsource;
+				flag = false;
+			}
+			if (!flag)
+			{
+				return result;
+			}
+			return result;
 		}
 
 		/// <summary>Returns the last element of a sequence that satisfies a condition or a default value if no such element is found.</summary>
@@ -2470,7 +2736,22 @@ namespace System.Linq
 		public static TSource Single<TSource>(this IEnumerable<TSource> source)
 		{
 			Check.Source(source);
-			return source.Single(Enumerable.PredicateOf<TSource>.Always, Enumerable.Fallback.Throw);
+			bool flag = false;
+			TSource result = default(TSource);
+			foreach (TSource tsource in source)
+			{
+				if (flag)
+				{
+					throw new InvalidOperationException();
+				}
+				flag = true;
+				result = tsource;
+			}
+			if (!flag)
+			{
+				throw new InvalidOperationException();
+			}
+			return result;
 		}
 
 		/// <summary>Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.</summary>
@@ -2497,7 +2778,18 @@ namespace System.Linq
 		public static TSource SingleOrDefault<TSource>(this IEnumerable<TSource> source)
 		{
 			Check.Source(source);
-			return source.Single(Enumerable.PredicateOf<TSource>.Always, Enumerable.Fallback.Default);
+			bool flag = false;
+			TSource result = default(TSource);
+			foreach (TSource tsource in source)
+			{
+				if (flag)
+				{
+					throw new InvalidOperationException();
+				}
+				flag = true;
+				result = tsource;
+			}
+			return result;
 		}
 
 		/// <summary>Returns the only element of a sequence that satisfies a specified condition or a default value if no such element exists; this method throws an exception if more than one element satisfies the condition.</summary>
@@ -3446,11 +3738,6 @@ namespace System.Linq
 		{
 			Default,
 			Throw
-		}
-
-		private class PredicateOf<T>
-		{
-			public static readonly Func<T, bool> Always = (T t) => true;
 		}
 
 		private class Function<T>

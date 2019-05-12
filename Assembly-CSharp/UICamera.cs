@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [ExecuteInEditMode]
-[RequireComponent(typeof(Camera))]
 [AddComponentMenu("NGUI/UI/NGUI Event System (UICamera)")]
+[RequireComponent(typeof(Camera))]
 public class UICamera : MonoBehaviour
 {
 	public static BetterList<UICamera> list = new BetterList<UICamera>();
 
-	public static UICamera.GetKeyStateFunc GetKeyDown = new UICamera.GetKeyStateFunc(Input.GetKeyDown);
+	public static UICamera.GetKeyStateFunc GetKeyDown;
 
-	public static UICamera.GetKeyStateFunc GetKeyUp = new UICamera.GetKeyStateFunc(Input.GetKeyUp);
+	public static UICamera.GetKeyStateFunc GetKeyUp;
 
-	public static UICamera.GetKeyStateFunc GetKey = new UICamera.GetKeyStateFunc(Input.GetKey);
+	public static UICamera.GetKeyStateFunc GetKey;
 
-	public static UICamera.GetAxisFunc GetAxis = new UICamera.GetAxisFunc(Input.GetAxis);
+	public static UICamera.GetAxisFunc GetAxis;
 
 	public static UICamera.GetAnyKeyFunc GetAnyKeyDown;
 
@@ -79,31 +80,31 @@ public class UICamera : MonoBehaviour
 
 	public static UICamera.OnCustomInput onCustomInput;
 
-	public static bool showTooltips = true;
+	public static bool showTooltips;
 
-	private static bool mDisableController = false;
+	private static bool mDisableController;
 
-	private static Vector2 mLastPos = Vector2.zero;
+	private static Vector2 mLastPos;
 
-	public static Vector3 lastWorldPosition = Vector3.zero;
+	public static Vector3 lastWorldPosition;
 
 	public static RaycastHit lastHit;
 
-	public static UICamera current = null;
+	public static UICamera current;
 
-	public static Camera currentCamera = null;
+	public static Camera currentCamera;
 
 	public static UICamera.OnSchemeChange onSchemeChange;
 
-	private static UICamera.ControlScheme mLastScheme = UICamera.ControlScheme.Mouse;
+	private static UICamera.ControlScheme mLastScheme;
 
-	public static int currentTouchID = -100;
+	public static int currentTouchID;
 
-	private static KeyCode mCurrentKey = KeyCode.Alpha0;
+	private static KeyCode mCurrentKey;
 
-	public static UICamera.MouseOrTouch currentTouch = null;
+	public static UICamera.MouseOrTouch currentTouch;
 
-	private static bool mInputFocus = false;
+	private static bool mInputFocus;
 
 	private static GameObject mGenericHandler;
 
@@ -143,32 +144,27 @@ public class UICamera : MonoBehaviour
 
 	public static UICamera.MoveDelegate onMouseMove;
 
-	private static UICamera.MouseOrTouch[] mMouse = new UICamera.MouseOrTouch[]
-	{
-		new UICamera.MouseOrTouch(),
-		new UICamera.MouseOrTouch(),
-		new UICamera.MouseOrTouch()
-	};
+	private static UICamera.MouseOrTouch[] mMouse;
 
-	public static UICamera.MouseOrTouch controller = new UICamera.MouseOrTouch();
+	public static UICamera.MouseOrTouch controller;
 
-	public static List<UICamera.MouseOrTouch> activeTouches = new List<UICamera.MouseOrTouch>();
+	public static List<UICamera.MouseOrTouch> activeTouches;
 
-	private static List<int> mTouchIDs = new List<int>();
+	private static List<int> mTouchIDs;
 
-	private static int mWidth = 0;
+	private static int mWidth;
 
-	private static int mHeight = 0;
+	private static int mHeight;
 
-	private static GameObject mTooltip = null;
+	private static GameObject mTooltip;
 
 	private Camera mCam;
 
-	private static float mTooltipTime = 0f;
+	private static float mTooltipTime;
 
 	private float mNextRaycast;
 
-	public static bool isDragging = false;
+	public static bool isDragging;
 
 	private static GameObject mRayHitObject;
 
@@ -176,21 +172,36 @@ public class UICamera : MonoBehaviour
 
 	private static GameObject mSelected;
 
-	private static UICamera.DepthEntry mHit = default(UICamera.DepthEntry);
+	private static UICamera.DepthEntry mHit;
 
-	private static BetterList<UICamera.DepthEntry> mHits = new BetterList<UICamera.DepthEntry>();
+	private static BetterList<UICamera.DepthEntry> mHits;
 
-	private static Plane m2DPlane = new Plane(Vector3.back, 0f);
+	private static Plane m2DPlane;
 
-	private static float mNextEvent = 0f;
+	private static float mNextEvent;
 
-	private static int mNotifying = 0;
+	private static int mNotifying;
 
-	private static bool mUsingTouchEvents = true;
+	private static bool mUsingTouchEvents;
 
 	public static UICamera.GetTouchCountCallback GetInputTouchCount;
 
 	public static UICamera.GetTouchCallback GetInputTouch;
+
+	[CompilerGenerated]
+	private static BetterList<UICamera>.CompareFunc <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static UICamera.GetKeyStateFunc <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static UICamera.GetKeyStateFunc <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static UICamera.GetKeyStateFunc <>f__mg$cache3;
+
+	[CompilerGenerated]
+	private static UICamera.GetAxisFunc <>f__mg$cache4;
 
 	[Obsolete("Use new OnDragStart / OnDragOver / OnDragOut / OnDragEnd events instead")]
 	public bool stickyPress
@@ -1250,7 +1261,12 @@ public class UICamera : MonoBehaviour
 	private void OnEnable()
 	{
 		UICamera.list.Add(this);
-		UICamera.list.Sort(new BetterList<UICamera>.CompareFunc(UICamera.CompareFunc));
+		BetterList<UICamera> betterList = UICamera.list;
+		if (UICamera.<>f__mg$cache0 == null)
+		{
+			UICamera.<>f__mg$cache0 = new BetterList<UICamera>.CompareFunc(UICamera.CompareFunc);
+		}
+		betterList.Sort(UICamera.<>f__mg$cache0);
 	}
 
 	private void OnDisable()
@@ -2053,6 +2069,62 @@ public class UICamera : MonoBehaviour
 		return UICamera.ShowTooltip(null);
 	}
 
+	// Note: this type is marked as 'beforefieldinit'.
+	static UICamera()
+	{
+		if (UICamera.<>f__mg$cache1 == null)
+		{
+			UICamera.<>f__mg$cache1 = new UICamera.GetKeyStateFunc(Input.GetKeyDown);
+		}
+		UICamera.GetKeyDown = UICamera.<>f__mg$cache1;
+		if (UICamera.<>f__mg$cache2 == null)
+		{
+			UICamera.<>f__mg$cache2 = new UICamera.GetKeyStateFunc(Input.GetKeyUp);
+		}
+		UICamera.GetKeyUp = UICamera.<>f__mg$cache2;
+		if (UICamera.<>f__mg$cache3 == null)
+		{
+			UICamera.<>f__mg$cache3 = new UICamera.GetKeyStateFunc(Input.GetKey);
+		}
+		UICamera.GetKey = UICamera.<>f__mg$cache3;
+		if (UICamera.<>f__mg$cache4 == null)
+		{
+			UICamera.<>f__mg$cache4 = new UICamera.GetAxisFunc(Input.GetAxis);
+		}
+		UICamera.GetAxis = UICamera.<>f__mg$cache4;
+		UICamera.showTooltips = true;
+		UICamera.mDisableController = false;
+		UICamera.mLastPos = Vector2.zero;
+		UICamera.lastWorldPosition = Vector3.zero;
+		UICamera.current = null;
+		UICamera.currentCamera = null;
+		UICamera.mLastScheme = UICamera.ControlScheme.Mouse;
+		UICamera.currentTouchID = -100;
+		UICamera.mCurrentKey = KeyCode.Alpha0;
+		UICamera.currentTouch = null;
+		UICamera.mInputFocus = false;
+		UICamera.mMouse = new UICamera.MouseOrTouch[]
+		{
+			new UICamera.MouseOrTouch(),
+			new UICamera.MouseOrTouch(),
+			new UICamera.MouseOrTouch()
+		};
+		UICamera.controller = new UICamera.MouseOrTouch();
+		UICamera.activeTouches = new List<UICamera.MouseOrTouch>();
+		UICamera.mTouchIDs = new List<int>();
+		UICamera.mWidth = 0;
+		UICamera.mHeight = 0;
+		UICamera.mTooltip = null;
+		UICamera.mTooltipTime = 0f;
+		UICamera.isDragging = false;
+		UICamera.mHit = default(UICamera.DepthEntry);
+		UICamera.mHits = new BetterList<UICamera.DepthEntry>();
+		UICamera.m2DPlane = new Plane(Vector3.back, 0f);
+		UICamera.mNextEvent = 0f;
+		UICamera.mNotifying = 0;
+		UICamera.mUsingTouchEvents = true;
+	}
+
 	public enum ControlScheme
 	{
 		Mouse,
@@ -2128,28 +2200,6 @@ public class UICamera : MonoBehaviour
 		UI_2D
 	}
 
-	private struct DepthEntry
-	{
-		public int depth;
-
-		public RaycastHit hit;
-
-		public Vector3 point;
-
-		public GameObject go;
-	}
-
-	public class Touch
-	{
-		public int fingerId;
-
-		public TouchPhase phase;
-
-		public Vector2 position;
-
-		public int tapCount;
-	}
-
 	public delegate bool GetKeyStateFunc(KeyCode key);
 
 	public delegate float GetAxisFunc(string name);
@@ -2175,6 +2225,28 @@ public class UICamera : MonoBehaviour
 	public delegate void ObjectDelegate(GameObject go, GameObject obj);
 
 	public delegate void KeyCodeDelegate(GameObject go, KeyCode key);
+
+	private struct DepthEntry
+	{
+		public int depth;
+
+		public RaycastHit hit;
+
+		public Vector3 point;
+
+		public GameObject go;
+	}
+
+	public class Touch
+	{
+		public int fingerId;
+
+		public TouchPhase phase;
+
+		public Vector2 position;
+
+		public int tapCount;
+	}
 
 	public delegate int GetTouchCountCallback();
 

@@ -5,14 +5,12 @@ using UnityEngine;
 
 public class BattleUIInitialize : MonoBehaviour
 {
-	private const int LoadingGaugeInterval = 10000;
-
-	[SerializeField]
 	[Header("UIWidget")]
+	[SerializeField]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("ローディングのオブジェクト")]
+	[SerializeField]
 	public GameObject loadingGaugeRootObject;
 
 	[Header("ローディングのゲージ")]
@@ -34,6 +32,8 @@ public class BattleUIInitialize : MonoBehaviour
 	[Header("ローディングのメッセージのローカライズ")]
 	[SerializeField]
 	private UILabel loadingMessageLabel;
+
+	private const int LoadingGaugeInterval = 10000;
 
 	private int currentLoadingLevel = 1;
 
@@ -110,14 +110,14 @@ public class BattleUIInitialize : MonoBehaviour
 				{
 					count = 0;
 				}
-				string addString = string.Empty;
+				string text = string.Empty;
 				for (int i = 0; i < count; i++)
 				{
-					addString += ".";
+					text += ".";
 				}
 				this.loadingMessageLabel.text = StringMaster.GetString("SystemLoading");
 				UILabel uilabel = this.loadingMessageLabel;
-				uilabel.text += addString;
+				uilabel.text += text;
 			}
 			yield return null;
 		}

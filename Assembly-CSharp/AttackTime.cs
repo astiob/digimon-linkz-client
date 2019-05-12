@@ -13,12 +13,12 @@ public sealed class AttackTime : MonoBehaviour
 	[SerializeField]
 	private int maxAttackTime = 30;
 
-	[SerializeField]
 	[Header("急かす時間(MultiBattleDataから自動セット)")]
+	[SerializeField]
 	private int hurryUpAttackTime = 10;
 
-	[SerializeField]
 	[Header("攻撃のカウントダウンの急かす色")]
+	[SerializeField]
 	private Color hurryUpColor = new Color32(byte.MaxValue, 240, 0, byte.MaxValue);
 
 	private int nowTime = 10;

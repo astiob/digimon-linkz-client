@@ -5,16 +5,16 @@ using UnityEngine;
 
 public sealed class CampaignIcon : PartsMenuNotfIcon
 {
-	private const int BASE_PLATE_SIZE = 66;
-
-	private const int DELTA_PLATE_SIZE = 14;
-
 	[SerializeField]
 	private UILabel lbContent;
 
 	[Header("キャンペーン中を必ず表示")]
 	[SerializeField]
 	private bool forceShowInCampaign;
+
+	private const int BASE_PLATE_SIZE = 66;
+
+	private const int DELTA_PLATE_SIZE = 14;
 
 	protected override void Start()
 	{

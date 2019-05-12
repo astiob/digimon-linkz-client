@@ -258,8 +258,8 @@ public class TakeoverMenu : MonoBehaviour
 		}
 		else
 		{
-			CMD_ModalMessage cd = CMD_ModalMessage.Create(StringMaster.GetString("SystemConfirm"), StringMaster.GetString("Facebook_TimeOut"), null);
-			cd.BtnText = StringMaster.GetString("SystemButtonClose");
+			CMD_ModalMessage cmd_ModalMessage = CMD_ModalMessage.Create(StringMaster.GetString("SystemConfirm"), StringMaster.GetString("Facebook_TimeOut"), null);
+			cmd_ModalMessage.BtnText = StringMaster.GetString("SystemButtonClose");
 		}
 		RestrictionInput.EndLoad();
 		yield break;
@@ -439,7 +439,7 @@ public class TakeoverMenu : MonoBehaviour
 			};
 			APIRequestTask task = new APIRequestTask(request, false);
 			task.Add(Singleton<UserDataMng>.Instance.RequestPlayerInfo(true));
-			CMD_ModalMessageBtn2 cmd_ModalMessageBtn = GUIMain.ShowCommonDialog(delegate(int x)
+			GUIMain.ShowCommonDialog(delegate(int x)
 			{
 				if (x == 1)
 				{
@@ -466,7 +466,7 @@ public class TakeoverMenu : MonoBehaviour
 				{
 					GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 				}
-			}, "CMD_FacebookConfirm2", null) as CMD_ModalMessageBtn2;
+			}, "CMD_FacebookConfirm2", null);
 		}
 	}
 

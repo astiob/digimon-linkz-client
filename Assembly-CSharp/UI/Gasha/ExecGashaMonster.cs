@@ -4,6 +4,7 @@ using Picturebook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using User;
 
 namespace UI.Gasha
@@ -11,6 +12,12 @@ namespace UI.Gasha
 	public class ExecGashaMonster : ExecGashaBase
 	{
 		private Action showedGashaResultAction;
+
+		[CompilerGenerated]
+		private static Action <>f__mg$cache0;
+
+		[CompilerGenerated]
+		private static Action <>f__mg$cache1;
 
 		private void SetGashaResult(GameWebAPI.RespDataGA_ExecGacha gashaResult, int playCount)
 		{
@@ -63,19 +70,28 @@ namespace UI.Gasha
 				array[i] = group.modelId;
 				array2[i] = group.growStep;
 			}
-			CutsceneDataGasha cutsceneData = new CutsceneDataGasha
+			CutsceneDataGasha cutsceneDataGasha = new CutsceneDataGasha();
+			cutsceneDataGasha.path = "Cutscenes/Gasha";
+			cutsceneDataGasha.modelIdList = array;
+			cutsceneDataGasha.growStepList = array2;
+			CutsceneDataGasha cutsceneDataGasha2 = cutsceneDataGasha;
+			if (ExecGashaMonster.<>f__mg$cache0 == null)
 			{
-				path = "Cutscenes/Gasha",
-				modelIdList = array,
-				growStepList = array2,
-				endCallback = new Action(CutSceneMain.FadeReqCutSceneEnd)
-			};
+				ExecGashaMonster.<>f__mg$cache0 = new Action(CutSceneMain.FadeReqCutSceneEnd);
+			}
+			cutsceneDataGasha2.endCallback = ExecGashaMonster.<>f__mg$cache0;
+			CutsceneDataGasha cutsceneDataGasha3 = cutsceneDataGasha;
 			Loading.Invisible();
 			if (isTutorial)
 			{
 				this.showedGashaResultAction = new Action(Singleton<TutorialObserver>.Instance.ResumeScript);
 			}
-			CutSceneMain.FadeReqCutScene(cutsceneData, new Action(CMD_MonsterGashaResult.CreateDialog), null, new Action<int>(this.OnShowedGashaResultDialog), 0.5f, 0.5f);
+			CutsceneDataBase cutsceneData = cutsceneDataGasha3;
+			if (ExecGashaMonster.<>f__mg$cache1 == null)
+			{
+				ExecGashaMonster.<>f__mg$cache1 = new Action(CMD_MonsterGashaResult.CreateDialog);
+			}
+			CutSceneMain.FadeReqCutScene(cutsceneData, ExecGashaMonster.<>f__mg$cache1, null, new Action<int>(this.OnShowedGashaResultDialog), 0.5f, 0.5f);
 		}
 
 		protected override void OnShowedGashaResultDialog(int noop)
@@ -91,6 +107,8 @@ namespace UI.Gasha
 
 		public override IEnumerator Exec(GameWebAPI.GA_Req_ExecGacha playGashaRequestParam, bool isTutorial)
 		{
+			GameWebAPI.RespDataGA_ExecGacha gashaResult = null;
+			int[] userMonsterIdList = null;
 			GameWebAPI.RequestGA_GashaExec playGashaRequest = new GameWebAPI.RequestGA_GashaExec
 			{
 				SetSendData = delegate(GameWebAPI.GA_Req_ExecGacha param)
@@ -101,8 +119,8 @@ namespace UI.Gasha
 				},
 				OnReceived = delegate(GameWebAPI.RespDataGA_ExecGacha response)
 				{
-					GameWebAPI.RespDataGA_ExecGacha gashaResult = response;
-					int[] userMonsterIdList = new int[gashaResult.userMonsterList.Length];
+					gashaResult = response;
+					userMonsterIdList = new int[gashaResult.userMonsterList.Length];
 					for (int i = 0; i < gashaResult.userMonsterList.Length; i++)
 					{
 						int num = 0;

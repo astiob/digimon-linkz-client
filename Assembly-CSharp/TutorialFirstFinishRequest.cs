@@ -103,10 +103,10 @@ public sealed class TutorialFirstFinishRequest
 		int meatFarmUserFacilityId = -1;
 		for (int i = 0; i < Singleton<UserDataMng>.Instance.userFacilityList.Count; i++)
 		{
-			UserFacility facility = Singleton<UserDataMng>.Instance.userFacilityList[i];
-			if (facility.facilityId == 1)
+			UserFacility userFacility = Singleton<UserDataMng>.Instance.userFacilityList[i];
+			if (userFacility.facilityId == 1)
 			{
-				meatFarmUserFacilityId = facility.userFacilityId;
+				meatFarmUserFacilityId = userFacility.userFacilityId;
 				break;
 			}
 		}

@@ -21,8 +21,8 @@ public class GUIListDropItemParts : GUIListPartBS
 
 	private bool _LongTouch = true;
 
-	[SerializeField]
 	[Header("箱のアイコン")]
+	[SerializeField]
 	private UISprite boxIcons;
 
 	[Header("ドロップアイテム")]
@@ -57,8 +57,8 @@ public class GUIListDropItemParts : GUIListPartBS
 	[SerializeField]
 	private UILabel eventChipDropIcon;
 
-	[SerializeField]
 	[Header("ドロップ数のラベル")]
+	[SerializeField]
 	private UILabel dropNumLabel;
 
 	private ParticleSystem dropParticleSystem;
@@ -252,24 +252,24 @@ public class GUIListDropItemParts : GUIListPartBS
 		case GUIListDropItemParts.DropType.LuckMulti:
 		{
 			this.AddIconAnimationList(this.luckIcons);
-			GUIListDropItemParts.LuckDropUserInfo info = this.GetLuckDropUserInfo(0, this.data.multiLuckDropUserId);
-			if (info != null)
+			GUIListDropItemParts.LuckDropUserInfo luckDropUserInfo = this.GetLuckDropUserInfo(0, this.data.multiLuckDropUserId);
+			if (luckDropUserInfo != null)
 			{
-				int playerIconIndex = 0;
-				MultiBattleData multiBattleData = ClassSingleton<MultiBattleData>.Instance;
-				string[] uniqMultiUsers = multiBattleData.MultiUsers.Select((MultiUser item) => item.userId).Distinct<string>().ToArray<string>();
-				int uniqUserLength = (uniqMultiUsers == null) ? 0 : uniqMultiUsers.Length;
-				for (int i = 0; i < uniqUserLength; i++)
+				int luckPlayerIcon = 0;
+				MultiBattleData instance = ClassSingleton<MultiBattleData>.Instance;
+				string[] array = instance.MultiUsers.Select((MultiUser item) => item.userId).Distinct<string>().ToArray<string>();
+				int num = (array == null) ? 0 : array.Length;
+				for (int i = 0; i < num; i++)
 				{
-					if (info.userId == uniqMultiUsers[i])
+					if (luckDropUserInfo.userId == array[i])
 					{
-						playerIconIndex = i;
+						luckPlayerIcon = i;
 						break;
 					}
 				}
-				GameObject luckPlayerIcon = this.goLuckPlayerIcons;
-				BattleResultLuckPlayerIcon playerIcon = luckPlayerIcon.GetComponent<BattleResultLuckPlayerIcon>();
-				playerIcon.SetLuckPlayerIcon(playerIconIndex);
+				GameObject gameObject = this.goLuckPlayerIcons;
+				BattleResultLuckPlayerIcon component = gameObject.GetComponent<BattleResultLuckPlayerIcon>();
+				component.SetLuckPlayerIcon(luckPlayerIcon);
 			}
 			break;
 		}

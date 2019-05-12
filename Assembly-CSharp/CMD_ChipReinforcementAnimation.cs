@@ -46,9 +46,9 @@ public sealed class CMD_ChipReinforcementAnimation : CMD
 
 	private IEnumerator Load(GameWebAPI.RespDataMA_ChipM.Chip data)
 	{
-		foreach (UITexture icon in this.icons)
+		foreach (UITexture baseIcon in this.icons)
 		{
-			ChipTools.CreateChipIcon(data, icon, delegate(ChipIcon chipIcon)
+			ChipTools.CreateChipIcon(data, baseIcon, delegate(ChipIcon chipIcon)
 			{
 				this.chipIconList.Add(chipIcon);
 			});
@@ -74,8 +74,8 @@ public sealed class CMD_ChipReinforcementAnimation : CMD
 		{
 			for (int i = 0; i < this.icons.Length; i++)
 			{
-				UIWidget uiWidget = this.chipIconList[i].GetComponent<UIWidget>();
-				uiWidget.alpha = this.icons[i].alpha;
+				UIWidget component = this.chipIconList[i].GetComponent<UIWidget>();
+				component.alpha = this.icons[i].alpha;
 			}
 			yield return null;
 		}

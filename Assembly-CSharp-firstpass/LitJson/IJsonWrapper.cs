@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 
 namespace LitJson
 {
-	public interface IJsonWrapper : IList, ICollection, IDictionary, IEnumerable, IOrderedDictionary
+	public interface IJsonWrapper : IList, IOrderedDictionary, IEnumerable, ICollection, IDictionary
 	{
 		bool IsArray { get; }
 

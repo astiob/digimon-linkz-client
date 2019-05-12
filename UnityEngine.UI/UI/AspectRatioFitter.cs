@@ -3,19 +3,22 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
+	[AddComponentMenu("Layout/Aspect Ratio Fitter", 142)]
 	[ExecuteInEditMode]
 	[RequireComponent(typeof(RectTransform))]
-	[AddComponentMenu("Layout/Aspect Ratio Fitter", 142)]
-	public class AspectRatioFitter : UIBehaviour, ILayoutController, ILayoutSelfController
+	[DisallowMultipleComponent]
+	public class AspectRatioFitter : UIBehaviour, ILayoutSelfController, ILayoutController
 	{
 		[SerializeField]
-		private AspectRatioFitter.AspectMode m_AspectMode;
+		private AspectRatioFitter.AspectMode m_AspectMode = AspectRatioFitter.AspectMode.None;
 
 		[SerializeField]
 		private float m_AspectRatio = 1f;
 
 		[NonSerialized]
 		private RectTransform m_Rect;
+
+		private bool m_DelayedSetDirty = false;
 
 		private DrivenRectTransformTracker m_Tracker;
 
@@ -68,7 +71,7 @@ namespace UnityEngine.UI
 		protected override void OnEnable()
 		{
 			base.OnEnable();
-			this.SetDirty();
+			this.m_DelayedSetDirty = true;
 		}
 
 		protected override void OnDisable()
@@ -78,6 +81,15 @@ namespace UnityEngine.UI
 			base.OnDisable();
 		}
 
+		protected virtual void Update()
+		{
+			if (this.m_DelayedSetDirty)
+			{
+				this.m_DelayedSetDirty = false;
+				this.SetDirty();
+			}
+		}
+
 		protected override void OnRectTransformDimensionsChange()
 		{
 			this.UpdateRect();
@@ -85,41 +97,40 @@ namespace UnityEngine.UI
 
 		private void UpdateRect()
 		{
-			if (!this.IsActive())
+			if (this.IsActive())
 			{
-				return;
-			}
-			this.m_Tracker.Clear();
-			switch (this.m_AspectMode)
-			{
-			case AspectRatioFitter.AspectMode.WidthControlsHeight:
-				this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.SizeDeltaY);
-				this.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, this.rectTransform.rect.width / this.m_AspectRatio);
-				break;
-			case AspectRatioFitter.AspectMode.HeightControlsWidth:
-				this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.SizeDeltaX);
-				this.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, this.rectTransform.rect.height * this.m_AspectRatio);
-				break;
-			case AspectRatioFitter.AspectMode.FitInParent:
-			case AspectRatioFitter.AspectMode.EnvelopeParent:
-			{
-				this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.AnchorMinX | DrivenTransformProperties.AnchorMinY | DrivenTransformProperties.AnchorMaxX | DrivenTransformProperties.AnchorMaxY | DrivenTransformProperties.SizeDeltaX | DrivenTransformProperties.SizeDeltaY);
-				this.rectTransform.anchorMin = Vector2.zero;
-				this.rectTransform.anchorMax = Vector2.one;
-				this.rectTransform.anchoredPosition = Vector2.zero;
-				Vector2 zero = Vector2.zero;
-				Vector2 parentSize = this.GetParentSize();
-				if (parentSize.y * this.aspectRatio < parentSize.x ^ this.m_AspectMode == AspectRatioFitter.AspectMode.FitInParent)
+				this.m_Tracker.Clear();
+				switch (this.m_AspectMode)
 				{
-					zero.y = this.GetSizeDeltaToProduceSize(parentSize.x / this.aspectRatio, 1);
-				}
-				else
+				case AspectRatioFitter.AspectMode.WidthControlsHeight:
+					this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.SizeDeltaY);
+					this.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, this.rectTransform.rect.width / this.m_AspectRatio);
+					break;
+				case AspectRatioFitter.AspectMode.HeightControlsWidth:
+					this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.SizeDeltaX);
+					this.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, this.rectTransform.rect.height * this.m_AspectRatio);
+					break;
+				case AspectRatioFitter.AspectMode.FitInParent:
+				case AspectRatioFitter.AspectMode.EnvelopeParent:
 				{
-					zero.x = this.GetSizeDeltaToProduceSize(parentSize.y * this.aspectRatio, 0);
+					this.m_Tracker.Add(this, this.rectTransform, DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.AnchorMinX | DrivenTransformProperties.AnchorMinY | DrivenTransformProperties.AnchorMaxX | DrivenTransformProperties.AnchorMaxY | DrivenTransformProperties.SizeDeltaX | DrivenTransformProperties.SizeDeltaY);
+					this.rectTransform.anchorMin = Vector2.zero;
+					this.rectTransform.anchorMax = Vector2.one;
+					this.rectTransform.anchoredPosition = Vector2.zero;
+					Vector2 zero = Vector2.zero;
+					Vector2 parentSize = this.GetParentSize();
+					if (parentSize.y * this.aspectRatio < parentSize.x ^ this.m_AspectMode == AspectRatioFitter.AspectMode.FitInParent)
+					{
+						zero.y = this.GetSizeDeltaToProduceSize(parentSize.x / this.aspectRatio, 1);
+					}
+					else
+					{
+						zero.x = this.GetSizeDeltaToProduceSize(parentSize.y * this.aspectRatio, 0);
+					}
+					this.rectTransform.sizeDelta = zero;
+					break;
 				}
-				this.rectTransform.sizeDelta = zero;
-				break;
-			}
+				}
 			}
 		}
 
@@ -131,11 +142,16 @@ namespace UnityEngine.UI
 		private Vector2 GetParentSize()
 		{
 			RectTransform rectTransform = this.rectTransform.parent as RectTransform;
+			Vector2 result;
 			if (!rectTransform)
 			{
-				return Vector2.zero;
+				result = Vector2.zero;
 			}
-			return rectTransform.rect.size;
+			else
+			{
+				result = rectTransform.rect.size;
+			}
+			return result;
 		}
 
 		public virtual void SetLayoutHorizontal()
@@ -148,10 +164,6 @@ namespace UnityEngine.UI
 
 		protected void SetDirty()
 		{
-			if (!this.IsActive())
-			{
-				return;
-			}
 			this.UpdateRect();
 		}
 

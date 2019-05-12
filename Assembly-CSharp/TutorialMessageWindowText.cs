@@ -105,19 +105,26 @@ public sealed class TutorialMessageWindowText : MonoBehaviour
 		int num = index;
 		while (!flag && text.Length > num)
 		{
-			switch (this.GetCharaType(text, num))
+			TutorialMessageWindowText.CharaType charaType = this.GetCharaType(text, num);
+			if (charaType != TutorialMessageWindowText.CharaType.LINE)
 			{
-			case TutorialMessageWindowText.CharaType.LINE:
+				if (charaType != TutorialMessageWindowText.CharaType.COLOR)
+				{
+					if (charaType == TutorialMessageWindowText.CharaType.SHOW_CHARA)
+					{
+						num++;
+						flag = true;
+					}
+				}
+				else
+				{
+					this.showTextInfo.isColor = this.IsStartColorCode(text, num);
+					num = this.GetNextIndexToChara(text, num, ']');
+				}
+			}
+			else
+			{
 				num = this.SkipLineCode(text, num);
-				break;
-			case TutorialMessageWindowText.CharaType.COLOR:
-				this.showTextInfo.isColor = this.IsStartColorCode(text, num);
-				num = this.GetNextIndexToChara(text, num, ']');
-				break;
-			case TutorialMessageWindowText.CharaType.SHOW_CHARA:
-				num++;
-				flag = true;
-				break;
 			}
 		}
 		if (text.Length < num)

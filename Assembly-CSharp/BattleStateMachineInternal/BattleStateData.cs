@@ -83,13 +83,7 @@ namespace BattleStateMachineInternal
 
 		private HitEffectParams _drainEffect;
 
-		private HitEffectParams[] _playersDeathEffect = new HitEffectParams[0];
-
-		private HitEffectParams[] _enemiesDeathEffect = new HitEffectParams[0];
-
 		private HitEffectParams[] _enemiesLastDeadEffect = new HitEffectParams[0];
-
-		private HitEffectParams[] _revivalEffect = new HitEffectParams[0];
 
 		private HitEffectParams[] _waveChangeHpRevivalEffect = new HitEffectParams[0];
 
@@ -219,6 +213,12 @@ namespace BattleStateMachineInternal
 		public bool isTutorialInduction;
 
 		public int turnUseDigiStoneCount;
+
+		public BattleStateData()
+		{
+			this.UseDeathEffect = new List<HitEffectParams>();
+			this.UseLastDeadEffect = new List<HitEffectParams>();
+		}
 
 		public TweenCameraTargetFunction commandSelectTweenTargetCamera { get; set; }
 
@@ -688,30 +688,6 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public HitEffectParams[] playersDeathEffect
-		{
-			get
-			{
-				return this._playersDeathEffect;
-			}
-			set
-			{
-				this._playersDeathEffect = value;
-			}
-		}
-
-		public HitEffectParams[] enemiesDeathEffect
-		{
-			get
-			{
-				return this._enemiesDeathEffect;
-			}
-			set
-			{
-				this._enemiesDeathEffect = value;
-			}
-		}
-
 		public HitEffectParams[] enemiesLastDeadEffect
 		{
 			get
@@ -721,18 +697,6 @@ namespace BattleStateMachineInternal
 			set
 			{
 				this._enemiesLastDeadEffect = value;
-			}
-		}
-
-		public HitEffectParams[] revivalEffect
-		{
-			get
-			{
-				return this._revivalEffect;
-			}
-			set
-			{
-				this._revivalEffect = value;
 			}
 		}
 
@@ -759,6 +723,10 @@ namespace BattleStateMachineInternal
 				this._roundChangeApRevivalEffect = value;
 			}
 		}
+
+		public List<HitEffectParams> UseDeathEffect { get; set; }
+
+		public List<HitEffectParams> UseLastDeadEffect { get; set; }
 
 		public HitEffectParams[] GetDamageEffect(Strength strength)
 		{
@@ -931,27 +899,6 @@ namespace BattleStateMachineInternal
 			if (this._drainEffect != null)
 			{
 				UnityEngine.Object.Destroy(this._drainEffect.gameObject);
-			}
-			foreach (HitEffectParams hitEffectParams2 in this._playersDeathEffect)
-			{
-				if (hitEffectParams2 != null)
-				{
-					UnityEngine.Object.Destroy(hitEffectParams2.gameObject);
-				}
-			}
-			foreach (HitEffectParams hitEffectParams3 in this._enemiesDeathEffect)
-			{
-				if (hitEffectParams3 != null && !BattleObjectPooler.ContainHitEffectParams(hitEffectParams3))
-				{
-					UnityEngine.Object.Destroy(hitEffectParams3.gameObject);
-				}
-			}
-			foreach (HitEffectParams hitEffectParams4 in this._revivalEffect)
-			{
-				if (hitEffectParams4 != null && !BattleObjectPooler.ContainHitEffectParams(hitEffectParams4))
-				{
-					UnityEngine.Object.Destroy(hitEffectParams4.gameObject);
-				}
 			}
 			foreach (AlwaysEffectParams alwaysEffectParams in this._revivalReservedEffect)
 			{

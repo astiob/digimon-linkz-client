@@ -4,8 +4,8 @@ using System.Reflection.Emit;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Exposes the <see cref="T:System.Reflection.Emit.MethodBuilder" /> class to unmanaged code.</summary>
-	[CLSCompliant(false)]
 	[ComVisible(true)]
+	[CLSCompliant(false)]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("007D8A14-FDF3-363E-9A0B-FEC0618260A2")]
 	[TypeLibImportClass(typeof(MethodBuilder))]

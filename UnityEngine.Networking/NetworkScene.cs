@@ -66,19 +66,21 @@ namespace UnityEngine.Networking
 			if (obj == null)
 			{
 				this.m_LocalObjects[netId] = null;
-				return;
 			}
-			NetworkIdentity networkIdentity = null;
-			if (this.m_LocalObjects.ContainsKey(netId))
+			else
 			{
-				networkIdentity = this.m_LocalObjects[netId];
+				NetworkIdentity networkIdentity = null;
+				if (this.m_LocalObjects.ContainsKey(netId))
+				{
+					networkIdentity = this.m_LocalObjects[netId];
+				}
+				if (networkIdentity == null)
+				{
+					networkIdentity = obj.GetComponent<NetworkIdentity>();
+					this.m_LocalObjects[netId] = networkIdentity;
+				}
+				networkIdentity.UpdateClientServer(isClient, isServer);
 			}
-			if (networkIdentity == null)
-			{
-				networkIdentity = obj.GetComponent<NetworkIdentity>();
-				this.m_LocalObjects[netId] = networkIdentity;
-			}
-			networkIdentity.UpdateClientServer(isClient, isServer);
 		}
 
 		internal GameObject FindLocalObject(NetworkInstanceId netId)
@@ -96,13 +98,18 @@ namespace UnityEngine.Networking
 
 		internal bool GetNetworkIdentity(NetworkInstanceId netId, out NetworkIdentity uv)
 		{
+			bool result;
 			if (this.m_LocalObjects.ContainsKey(netId) && this.m_LocalObjects[netId] != null)
 			{
 				uv = this.m_LocalObjects[netId];
-				return true;
+				result = true;
 			}
-			uv = null;
-			return false;
+			else
+			{
+				uv = null;
+				result = false;
+			}
+			return result;
 		}
 
 		internal bool RemoveLocalObject(NetworkInstanceId netId)
@@ -112,13 +119,18 @@ namespace UnityEngine.Networking
 
 		internal bool RemoveLocalObjectAndDestroy(NetworkInstanceId netId)
 		{
+			bool result;
 			if (this.m_LocalObjects.ContainsKey(netId))
 			{
 				NetworkIdentity networkIdentity = this.m_LocalObjects[netId];
 				Object.Destroy(networkIdentity.gameObject);
-				return this.m_LocalObjects.Remove(netId);
+				result = this.m_LocalObjects.Remove(netId);
 			}
-			return false;
+			else
+			{
+				result = false;
+			}
+			return result;
 		}
 
 		internal void ClearLocalObjects()
@@ -167,9 +179,12 @@ namespace UnityEngine.Networking
 				}
 				NetworkScene.s_GuidToPrefab[component.assetId] = prefab;
 				NetworkIdentity[] componentsInChildren = prefab.GetComponentsInChildren<NetworkIdentity>();
-				if (componentsInChildren.Length > 1 && LogFilter.logWarn)
+				if (componentsInChildren.Length > 1)
 				{
-					Debug.LogWarning("The prefab '" + prefab.name + "' has multiple NetworkIdentity components. There can only be one NetworkIdentity on a prefab, and it must be on the root object.");
+					if (LogFilter.logWarn)
+					{
+						Debug.LogWarning("The prefab '" + prefab.name + "' has multiple NetworkIdentity components. There can only be one NetworkIdentity on a prefab, and it must be on the root object.");
+					}
 				}
 			}
 			else if (LogFilter.logError)
@@ -180,18 +195,23 @@ namespace UnityEngine.Networking
 
 		internal static bool GetPrefab(NetworkHash128 assetId, out GameObject prefab)
 		{
+			bool result;
 			if (!assetId.IsValid())
 			{
 				prefab = null;
-				return false;
+				result = false;
 			}
-			if (NetworkScene.s_GuidToPrefab.ContainsKey(assetId) && NetworkScene.s_GuidToPrefab[assetId] != null)
+			else if (NetworkScene.s_GuidToPrefab.ContainsKey(assetId) && NetworkScene.s_GuidToPrefab[assetId] != null)
 			{
 				prefab = NetworkScene.s_GuidToPrefab[assetId];
-				return true;
+				result = true;
 			}
-			prefab = null;
-			return false;
+			else
+			{
+				prefab = null;
+				result = false;
+			}
+			return result;
 		}
 
 		internal static void ClearSpawners()
@@ -215,22 +235,24 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("RegisterSpawnHandler custom spawn function null for " + assetId);
 				}
-				return;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log(string.Concat(new object[]
+				if (LogFilter.logDebug)
 				{
-					"RegisterSpawnHandler asset '",
-					assetId,
-					"' ",
-					spawnHandler.Method.Name,
-					"/",
-					unspawnHandler.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterSpawnHandler asset '",
+						assetId,
+						"' ",
+						spawnHandler.GetMethodName(),
+						"/",
+						unspawnHandler.GetMethodName()
+					}));
+				}
+				NetworkScene.s_SpawnHandlers[assetId] = spawnHandler;
+				NetworkScene.s_UnspawnHandlers[assetId] = unspawnHandler;
 			}
-			NetworkScene.s_SpawnHandlers[assetId] = spawnHandler;
-			NetworkScene.s_UnspawnHandlers[assetId] = unspawnHandler;
 		}
 
 		internal static void UnregisterPrefab(GameObject prefab)
@@ -242,10 +264,12 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("Could not unregister '" + prefab.name + "' since it contains no NetworkIdentity component");
 				}
-				return;
 			}
-			NetworkScene.s_SpawnHandlers.Remove(component.assetId);
-			NetworkScene.s_UnspawnHandlers.Remove(component.assetId);
+			else
+			{
+				NetworkScene.s_SpawnHandlers.Remove(component.assetId);
+				NetworkScene.s_UnspawnHandlers.Remove(component.assetId);
+			}
 		}
 
 		internal static void RegisterPrefab(GameObject prefab, SpawnDelegate spawnHandler, UnSpawnDelegate unspawnHandler)
@@ -257,62 +281,72 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("Could not register '" + prefab.name + "' since it contains no NetworkIdentity component");
 				}
-				return;
 			}
-			if (spawnHandler == null || unspawnHandler == null)
+			else if (spawnHandler == null || unspawnHandler == null)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("RegisterPrefab custom spawn function null for " + component.assetId);
 				}
-				return;
 			}
-			if (!component.assetId.IsValid())
+			else if (!component.assetId.IsValid())
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("RegisterPrefab game object " + prefab.name + " has no prefab. Use RegisterSpawnHandler() instead?");
 				}
-				return;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log(string.Concat(new object[]
+				if (LogFilter.logDebug)
 				{
-					"Registering custom prefab '",
-					prefab.name,
-					"' as asset:",
-					component.assetId,
-					" ",
-					spawnHandler.Method.Name,
-					"/",
-					unspawnHandler.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"Registering custom prefab '",
+						prefab.name,
+						"' as asset:",
+						component.assetId,
+						" ",
+						spawnHandler.GetMethodName(),
+						"/",
+						unspawnHandler.GetMethodName()
+					}));
+				}
+				NetworkScene.s_SpawnHandlers[component.assetId] = spawnHandler;
+				NetworkScene.s_UnspawnHandlers[component.assetId] = unspawnHandler;
 			}
-			NetworkScene.s_SpawnHandlers[component.assetId] = spawnHandler;
-			NetworkScene.s_UnspawnHandlers[component.assetId] = unspawnHandler;
 		}
 
 		internal static bool GetSpawnHandler(NetworkHash128 assetId, out SpawnDelegate handler)
 		{
+			bool result;
 			if (NetworkScene.s_SpawnHandlers.ContainsKey(assetId))
 			{
 				handler = NetworkScene.s_SpawnHandlers[assetId];
-				return true;
+				result = true;
 			}
-			handler = null;
-			return false;
+			else
+			{
+				handler = null;
+				result = false;
+			}
+			return result;
 		}
 
 		internal static bool InvokeUnSpawnHandler(NetworkHash128 assetId, GameObject obj)
 		{
+			bool result;
 			if (NetworkScene.s_UnspawnHandlers.ContainsKey(assetId) && NetworkScene.s_UnspawnHandlers[assetId] != null)
 			{
 				UnSpawnDelegate unSpawnDelegate = NetworkScene.s_UnspawnHandlers[assetId];
 				unSpawnDelegate(obj);
-				return true;
+				result = true;
 			}
-			return false;
+			else
+			{
+				result = false;
+			}
+			return result;
 		}
 
 		internal void DestroyAllClientObjects()
@@ -322,13 +356,17 @@ namespace UnityEngine.Networking
 				NetworkIdentity networkIdentity = this.m_LocalObjects[key];
 				if (networkIdentity != null && networkIdentity.gameObject != null)
 				{
-					if (networkIdentity.sceneId.IsEmpty())
+					if (!NetworkScene.InvokeUnSpawnHandler(networkIdentity.assetId, networkIdentity.gameObject))
 					{
-						Object.Destroy(networkIdentity.gameObject);
-					}
-					else
-					{
-						networkIdentity.gameObject.SetActive(false);
+						if (networkIdentity.sceneId.IsEmpty())
+						{
+							Object.Destroy(networkIdentity.gameObject);
+						}
+						else
+						{
+							networkIdentity.MarkForReset();
+							networkIdentity.gameObject.SetActive(false);
+						}
 					}
 				}
 			}

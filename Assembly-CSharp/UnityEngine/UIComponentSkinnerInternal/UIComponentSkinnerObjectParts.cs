@@ -107,6 +107,8 @@ namespace UnityEngine.UIComponentSkinnerInternal
 		[SerializeField]
 		private int _materialSwicherIndex;
 
+		private UIWidget parentUIWidget;
+
 		private DepthControllerHash cachedDepthControllerHash;
 
 		public UIComponentSkinnerObjectParts()
@@ -272,15 +274,14 @@ namespace UnityEngine.UIComponentSkinnerInternal
 			case UISkinnerPartsType.WidgetDepth:
 				if (this._uiWidget != null)
 				{
-					this._uiWidget.depth = this._depth;
-					if (!this.cachedDepthControllerHash)
+					if (this.parentUIWidget == null)
 					{
-						this.cachedDepthControllerHash = this._uiWidget.gameObject.GetComponent<DepthControllerHash>();
+						this.parentUIWidget = this._uiWidget.transform.parent.GetComponent<UIWidget>();
 					}
-					if (this.cachedDepthControllerHash)
-					{
-						this.cachedDepthControllerHash.originDepth = this._depth;
-					}
+					this._uiWidget.depth = this.parentUIWidget.depth + this._depth;
+					DepthControllerHash component = this._uiWidget.GetComponent<DepthControllerHash>();
+					component.originDepth = this._depth;
+					this._uiWidget.Update();
 					this.EditorApply(this._uiWidget);
 				}
 				break;

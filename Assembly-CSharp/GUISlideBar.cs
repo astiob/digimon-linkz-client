@@ -1,5 +1,6 @@
 ﻿using Master;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GUISlideBar : MonoBehaviour
@@ -56,42 +57,68 @@ public class GUISlideBar : MonoBehaviour
 
 	private void Awake()
 	{
-		foreach (object obj in base.transform)
+		IEnumerator enumerator = base.transform.GetEnumerator();
+		try
 		{
-			Transform transform = (Transform)obj;
-			if (transform.name == "L_BTN")
+			while (enumerator.MoveNext())
 			{
-				this.goLeft = transform.gameObject;
-			}
-			if (transform.name == "R_BTN")
-			{
-				this.goRight = transform.gameObject;
-			}
-			if (transform.name == "KNOB")
-			{
-				this.goKnob = transform.gameObject;
-				this.colKnob = transform.gameObject.GetComponent<GUICollider>();
-				foreach (object obj2 in transform)
+				object obj = enumerator.Current;
+				Transform transform = (Transform)obj;
+				if (transform.name == "L_BTN")
 				{
-					Transform transform2 = (Transform)obj2;
-					if (transform2.name == "NOW_NUM")
+					this.goLeft = transform.gameObject;
+				}
+				if (transform.name == "R_BTN")
+				{
+					this.goRight = transform.gameObject;
+				}
+				if (transform.name == "KNOB")
+				{
+					this.goKnob = transform.gameObject;
+					this.colKnob = transform.gameObject.GetComponent<GUICollider>();
+					IEnumerator enumerator2 = transform.GetEnumerator();
+					try
 					{
-						this.goNowVal = transform2.gameObject;
-						this.nowValueFont = transform2.gameObject.GetComponent<GameStringsFont>();
+						while (enumerator2.MoveNext())
+						{
+							object obj2 = enumerator2.Current;
+							Transform transform2 = (Transform)obj2;
+							if (transform2.name == "NOW_NUM")
+							{
+								this.goNowVal = transform2.gameObject;
+								this.nowValueFont = transform2.gameObject.GetComponent<GameStringsFont>();
+							}
+							if (transform2.name == "TAG")
+							{
+								this.goNowValTag = transform2.gameObject;
+							}
+						}
 					}
-					if (transform2.name == "TAG")
+					finally
 					{
-						this.goNowValTag = transform2.gameObject;
+						IDisposable disposable;
+						if ((disposable = (enumerator2 as IDisposable)) != null)
+						{
+							disposable.Dispose();
+						}
 					}
 				}
+				if (transform.name == "BAR")
+				{
+					this.NGSprbBar = transform.gameObject.GetComponent<UISprite>();
+				}
+				if (transform.name == "CUR_NUM")
+				{
+					this.curValueFont = transform.gameObject.GetComponent<GameStringsFont>();
+				}
 			}
-			if (transform.name == "BAR")
+		}
+		finally
+		{
+			IDisposable disposable2;
+			if ((disposable2 = (enumerator as IDisposable)) != null)
 			{
-				this.NGSprbBar = transform.gameObject.GetComponent<UISprite>();
-			}
-			if (transform.name == "CUR_NUM")
-			{
-				this.curValueFont = transform.gameObject.GetComponent<GameStringsFont>();
+				disposable2.Dispose();
 			}
 		}
 		this.colKnob.onTouchBegan += delegate(Touch touch, Vector2 pos)

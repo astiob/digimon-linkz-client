@@ -25,9 +25,9 @@ namespace UnityEngine.Networking.NetworkSystem
 		{
 			writer.WritePackedUInt32((uint)this.oldServerConnectionId);
 			writer.Write((ushort)this.peers.Length);
-			foreach (PeerInfoMessage peerInfoMessage in this.peers)
+			for (int i = 0; i < this.peers.Length; i++)
 			{
-				peerInfoMessage.Serialize(writer);
+				this.peers[i].Serialize(writer);
 			}
 		}
 	}

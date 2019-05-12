@@ -4,9 +4,9 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Provides a callback mechanism for the assembly converter to inform the caller of the status of the conversion, and involve the caller in the conversion process itself.</summary>
+	[Guid("f1c3bf77-c3e4-11d3-88e7-00902754c43a")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	[Guid("f1c3bf77-c3e4-11d3-88e7-00902754c43a")]
 	public interface ITypeLibExporterNotifySink
 	{
 		/// <summary>Notifies the caller that an event occured during the conversion of an assembly.</summary>

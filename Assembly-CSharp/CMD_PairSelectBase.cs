@@ -1,7 +1,5 @@
-﻿using Monster;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CMD_PairSelectBase : CMD
@@ -39,8 +37,6 @@ public class CMD_PairSelectBase : CMD
 
 	private GameObject goPartnerDigimon;
 
-	private List<BoxCollider> buttonEnableChangeList = new List<BoxCollider>();
-
 	protected CMD_CharacterDetailed characterDetailed;
 
 	protected override void Awake()
@@ -65,111 +61,6 @@ public class CMD_PairSelectBase : CMD
 	{
 	}
 
-	private void OnTouchDecide()
-	{
-		bool flag = false;
-		bool flag2 = false;
-		bool flag3 = false;
-		if (this.baseDigimon != null)
-		{
-			flag3 = MonsterStatusData.IsVersionUp(this.baseDigimon.GetMonsterMaster().Simple.rare);
-		}
-		if (this.partnerDigimon != null)
-		{
-			flag = MonsterStatusData.IsArousal(this.partnerDigimon.monsterM.rare);
-			flag2 = MonsterStatusData.IsVersionUp(this.partnerDigimon.GetMonsterMaster().Simple.rare);
-		}
-		Action<int> action = new Action<int>(this.OpenConfirmTargetParameter);
-		if (flag2)
-		{
-			action = delegate(int i)
-			{
-				if (i == 1)
-				{
-					this.OpenConfirmPartnerVersionUp(new Action<int>(this.OpenConfirmTargetParameter));
-				}
-			};
-		}
-		else if (flag)
-		{
-			action = delegate(int i)
-			{
-				if (i == 1)
-				{
-					this.OpenConfirmPartnerArousal(new Action<int>(this.OpenConfirmTargetParameter));
-				}
-			};
-		}
-		if (base.GetType() == typeof(CMD_Laboratory) && flag3)
-		{
-			Action<int> _callback = action;
-			action = delegate(int i)
-			{
-				if (i == 1)
-				{
-					this.OpenConfirmBaseVersionUp(_callback);
-				}
-			};
-		}
-		action(1);
-	}
-
-	protected virtual void SetTextConfirmPartnerArousal(CMD_ResearchModalAlert cd)
-	{
-	}
-
-	private void OpenConfirmPartnerArousal(Action<int> onClosedPopupAction)
-	{
-		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
-		cmd_ResearchModalAlert.SetDigimonIcon(this.partnerDigimon);
-		this.SetTextConfirmPartnerArousal(cmd_ResearchModalAlert);
-		cmd_ResearchModalAlert.AdjustSize();
-	}
-
-	protected virtual void SetTextConfirmBaseVersionUp(CMD_ResearchModalAlert cd)
-	{
-	}
-
-	private void OpenConfirmBaseVersionUp(Action<int> onClosedPopupAction)
-	{
-		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
-		cmd_ResearchModalAlert.SetDigimonIcon(this.baseDigimon);
-		this.SetTextConfirmBaseVersionUp(cmd_ResearchModalAlert);
-		cmd_ResearchModalAlert.AdjustSize();
-	}
-
-	protected virtual void SetTextConfirmPartnerVersionUp(CMD_ResearchModalAlert cd)
-	{
-	}
-
-	private void OpenConfirmPartnerVersionUp(Action<int> onClosedPopupAction)
-	{
-		CMD_ResearchModalAlert cmd_ResearchModalAlert = GUIMain.ShowCommonDialog(onClosedPopupAction, "CMD_ResearchModalAlert", null) as CMD_ResearchModalAlert;
-		cmd_ResearchModalAlert.SetDigimonIcon(this.partnerDigimon);
-		this.SetTextConfirmPartnerVersionUp(cmd_ResearchModalAlert);
-		cmd_ResearchModalAlert.AdjustSize();
-	}
-
-	protected virtual void OpenConfirmTargetParameter(int selectButtonIndex)
-	{
-	}
-
-	protected void OnCloseConfirm(int selectButtonIndex)
-	{
-		if (selectButtonIndex == 0)
-		{
-			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-			DataMng.Instance().CheckCampaign(new Action<int>(this.DoExec), new GameWebAPI.RespDataCP_Campaign.CampaignType[]
-			{
-				GameWebAPI.RespDataCP_Campaign.CampaignType.MedalTakeOverUp
-			});
-		}
-	}
-
-	protected virtual void DoExec(int result)
-	{
-	}
-
 	protected IEnumerator GetChipSlotInfo()
 	{
 		GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[] monsterList = new GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList[]
@@ -189,75 +80,9 @@ public class CMD_PairSelectBase : CMD
 	{
 	}
 
-	protected void DisableCutinButton(Transform t)
-	{
-		if (null != t)
-		{
-			for (int i = 0; i < t.childCount; i++)
-			{
-				Transform child = t.GetChild(i);
-				BoxCollider component = child.GetComponent<BoxCollider>();
-				if (null != component && component.enabled)
-				{
-					this.buttonEnableChangeList.Add(component);
-					component.enabled = false;
-				}
-				this.DisableCutinButton(child);
-			}
-		}
-	}
-
-	protected void EnableCutinButton()
-	{
-		for (int i = 0; i < this.buttonEnableChangeList.Count; i++)
-		{
-			this.buttonEnableChangeList[i].enabled = true;
-		}
-		this.buttonEnableChangeList.Clear();
-	}
-
 	protected virtual string GetTitle()
 	{
 		return string.Empty;
-	}
-
-	protected virtual string GetStoreChipInfo()
-	{
-		return string.Empty;
-	}
-
-	protected void ShowStoreChipDialog(bool hasChip)
-	{
-		if (hasChip)
-		{
-			CMD_ModalMessage cmd_ModalMessage = GUIMain.ShowCommonDialog(delegate(int i)
-			{
-				RestrictionInput.EndLoad();
-			}, "CMD_ModalMessage", null) as CMD_ModalMessage;
-			cmd_ModalMessage.Title = this.GetTitle();
-			cmd_ModalMessage.Info = this.GetStoreChipInfo();
-			this.EnableCutinButton();
-			PartsMenu partsMenu = UnityEngine.Object.FindObjectOfType<PartsMenu>();
-			if (null != partsMenu)
-			{
-				partsMenu.SetEnableMenuButton(true);
-			}
-		}
-	}
-
-	protected void StartCutSceneCallBack()
-	{
-		this.RemoveBaseDigimon();
-		this.RemovePartnerDigimon();
-		this.ClearTargetStatus();
-		DataMng.Instance().US_PlayerInfoSubChipNum(this.useClusterBK);
-		this.UpdateClusterNum();
-		GUIPlayerStatus.RefreshParams_S(false);
-		string userMonsterId = this.GetUserMonsterData().userMonsterId;
-		MonsterData monsterDataByUserMonsterID = MonsterDataMng.Instance().GetMonsterDataByUserMonsterID(userMonsterId, false);
-		this.AddButton();
-		CMD_CharacterDetailed.DataChg = monsterDataByUserMonsterID;
-		this.characterDetailed = (GUIMain.ShowCommonDialog(null, "CMD_CharacterDetailed", null) as CMD_CharacterDetailed);
 	}
 
 	protected virtual void ClearTargetStatus()
@@ -267,10 +92,6 @@ public class CMD_PairSelectBase : CMD
 	protected virtual GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList GetUserMonsterData()
 	{
 		return null;
-	}
-
-	protected virtual void AddButton()
-	{
 	}
 
 	protected virtual int CalcCluster()
@@ -369,7 +190,7 @@ public class CMD_PairSelectBase : CMD
 	{
 	}
 
-	private void UpdateClusterNum()
+	protected void UpdateClusterNum()
 	{
 		this.possessionTip.text = StringFormat.Cluster(DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.gamemoney);
 	}
@@ -594,5 +415,24 @@ public class CMD_PairSelectBase : CMD
 		this.ShowMATInfo_1();
 		this.ShowCHGInfo();
 		this.BtnCont();
+	}
+
+	protected void RemoveEquipChip(bool destroyChip, string userMonsterId)
+	{
+		GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(userMonsterId);
+		if (monsterChipList != null)
+		{
+			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in monsterChipList)
+			{
+				if (destroyChip)
+				{
+					ChipDataMng.DeleteUserChipData(userChipList.userChipId);
+				}
+				else
+				{
+					userChipList.resetUserMonsterID();
+				}
+			}
+		}
 	}
 }

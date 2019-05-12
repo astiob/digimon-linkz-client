@@ -368,7 +368,7 @@ namespace Facebook.Unity
 				FB.facebook = this.FBGameObject.Facebook;
 				FB.OnDLLLoadedDelegate();
 				FB.LogVersion();
-				UnityEngine.Object.Destroy(this);
+				Object.Destroy(this);
 			}
 		}
 	}

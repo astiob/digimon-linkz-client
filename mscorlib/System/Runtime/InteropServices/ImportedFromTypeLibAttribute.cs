@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Indicates that the types defined within an assembly were originally defined in a type library.</summary>
-	[AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
 	[ComVisible(true)]
+	[AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
 	public sealed class ImportedFromTypeLibAttribute : Attribute
 	{
 		private string TlbFile;

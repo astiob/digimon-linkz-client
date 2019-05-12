@@ -1,28 +1,58 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public static class QuestSecondTutorial
 {
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache1;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache2;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache3;
+
 	private static string GetQuestTopTutorialFileName(string worldAreaId)
 	{
 		string result = string.Empty;
-		switch (worldAreaId)
+		if (worldAreaId != null)
 		{
-		case "1":
-			result = "second_tutorial_quest";
-			break;
-		case "2":
-			result = "second_tutorial_quest_week";
-			break;
-		case "3":
-			result = "second_tutorial_quest_advent";
-			break;
-		case "8":
-			result = string.Empty;
-			break;
-		case "9":
-			result = "second_tutorial_quest_beginner";
-			break;
+			if (!(worldAreaId == "1"))
+			{
+				if (!(worldAreaId == "2"))
+				{
+					if (!(worldAreaId == "3"))
+					{
+						if (!(worldAreaId == "8"))
+						{
+							if (worldAreaId == "9")
+							{
+								result = "second_tutorial_quest_beginner";
+							}
+						}
+						else
+						{
+							result = string.Empty;
+						}
+					}
+					else
+					{
+						result = "second_tutorial_quest_advent";
+					}
+				}
+				else
+				{
+					result = "second_tutorial_quest_week";
+				}
+			}
+			else
+			{
+				result = "second_tutorial_quest";
+			}
 		}
 		return result;
 	}
@@ -47,7 +77,18 @@ public static class QuestSecondTutorial
 		else
 		{
 			GUIMain.BarrierON(null);
-			tutorialObserver.StartSecondTutorial("second_tutorial_quest", new Action(GUIMain.BarrierOFF), new Action(QuestSecondTutorial.InitializedQuestSelectTutorial));
+			TutorialObserver tutorialObserver2 = tutorialObserver;
+			string tutorialName = "second_tutorial_quest";
+			if (QuestSecondTutorial.<>f__mg$cache0 == null)
+			{
+				QuestSecondTutorial.<>f__mg$cache0 = new Action(GUIMain.BarrierOFF);
+			}
+			Action completed = QuestSecondTutorial.<>f__mg$cache0;
+			if (QuestSecondTutorial.<>f__mg$cache1 == null)
+			{
+				QuestSecondTutorial.<>f__mg$cache1 = new Action(QuestSecondTutorial.InitializedQuestSelectTutorial);
+			}
+			tutorialObserver2.StartSecondTutorial(tutorialName, completed, QuestSecondTutorial.<>f__mg$cache1);
 		}
 	}
 
@@ -68,7 +109,18 @@ public static class QuestSecondTutorial
 			else
 			{
 				GUIMain.BarrierON(null);
-				tutorialObserver.StartSecondTutorial(questTopTutorialFileName, new Action(GUIMain.BarrierOFF), new Action(QuestSecondTutorial.InitializedQuestTopTutorial));
+				TutorialObserver tutorialObserver2 = tutorialObserver;
+				string tutorialName = questTopTutorialFileName;
+				if (QuestSecondTutorial.<>f__mg$cache2 == null)
+				{
+					QuestSecondTutorial.<>f__mg$cache2 = new Action(GUIMain.BarrierOFF);
+				}
+				Action completed = QuestSecondTutorial.<>f__mg$cache2;
+				if (QuestSecondTutorial.<>f__mg$cache3 == null)
+				{
+					QuestSecondTutorial.<>f__mg$cache3 = new Action(QuestSecondTutorial.InitializedQuestTopTutorial);
+				}
+				tutorialObserver2.StartSecondTutorial(tutorialName, completed, QuestSecondTutorial.<>f__mg$cache3);
 			}
 		}
 	}

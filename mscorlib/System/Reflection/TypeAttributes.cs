@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace System.Reflection
 {
 	/// <summary>Specifies type attributes.</summary>
-	[Flags]
 	[ComVisible(true)]
+	[Flags]
 	[Serializable]
 	public enum TypeAttributes
 	{

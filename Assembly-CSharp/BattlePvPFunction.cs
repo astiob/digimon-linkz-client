@@ -5,7 +5,9 @@ using MultiBattle.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using WebAPIRequest;
 
 public sealed class BattlePvPFunction : BattleMultiBasicFunction
 {
@@ -34,6 +36,9 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 	private bool isEnemyFailedAction;
 
 	private IEnumerator enemyFailedAction;
+
+	[CompilerGenerated]
+	private static Action <>f__mg$cache0;
 
 	protected override string myTCPKey
 	{
@@ -162,13 +167,13 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 				waitingCount += Time.unscaledDeltaTime;
 				yield return null;
 			}
-			LastConfirmationData lastConfirmationMessage = new LastConfirmationData
+			LastConfirmationData message2 = new LastConfirmationData
 			{
 				playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
 				hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.EnemyTurnSync),
 				tcpMessageType = TCPMessageType.EnemyTurnSync.ToInteger()
 			};
-			base.SendMessageForSync(TCPMessageType.LastConfirmation, lastConfirmationMessage);
+			base.SendMessageForSync(TCPMessageType.LastConfirmation, message2);
 			this.confirmationChecks[TCPMessageType.EnemyTurnSync].Clear();
 		}
 		else
@@ -192,7 +197,7 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			SetSendData = delegate(GameWebAPI.ReqData_ColosseumBattleEndLogic param)
 			{
 				param.battleResult = ClassSingleton<MultiBattleData>.Instance.BattleResult;
-				param.roundCount = base.battleStateData.currentRoundNumber;
+				param.roundCount = this.battleStateData.currentRoundNumber;
 				param.isMockBattle = ((!(ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode == "0")) ? 1 : 0);
 				param.skillUseDeckPosition = "0";
 			},
@@ -201,7 +206,12 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 				colosseumEnd = resData;
 			}
 		};
-		yield return request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		RequestBase request2 = request;
+		if (BattlePvPFunction.<>f__mg$cache0 == null)
+		{
+			BattlePvPFunction.<>f__mg$cache0 = new Action(RestrictionInput.EndLoad);
+		}
+		yield return request2.Run(BattlePvPFunction.<>f__mg$cache0, delegate(Exception noop)
 		{
 			RestrictionInput.EndLoad();
 		}, null);
@@ -209,12 +219,12 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		if (colosseumEnd != null)
 		{
 			responseData.resultCode = colosseumEnd.resultCode;
-			List<MultiBattleData.BattleEndResponseData.Reward> rwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+			List<MultiBattleData.BattleEndResponseData.Reward> list = new List<MultiBattleData.BattleEndResponseData.Reward>();
 			if (colosseumEnd.reward != null)
 			{
 				for (int i = 0; i < colosseumEnd.reward.Length; i++)
 				{
-					rwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+					list.Add(new MultiBattleData.BattleEndResponseData.Reward
 					{
 						assetCategoryId = colosseumEnd.reward[i].assetCategoryId,
 						assetNum = colosseumEnd.reward[i].assetNum,
@@ -222,12 +232,12 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 					});
 				}
 			}
-			List<MultiBattleData.BattleEndResponseData.Reward> firstRankupRwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+			List<MultiBattleData.BattleEndResponseData.Reward> list2 = new List<MultiBattleData.BattleEndResponseData.Reward>();
 			if (colosseumEnd.firstRankUpReward != null)
 			{
 				for (int j = 0; j < colosseumEnd.firstRankUpReward.Length; j++)
 				{
-					firstRankupRwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+					list2.Add(new MultiBattleData.BattleEndResponseData.Reward
 					{
 						assetCategoryId = colosseumEnd.firstRankUpReward[j].assetCategoryId,
 						assetNum = colosseumEnd.firstRankUpReward[j].assetNum,
@@ -235,8 +245,8 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 					});
 				}
 			}
-			responseData.reward = rwardList.ToArray();
-			responseData.firstRankUpReward = firstRankupRwardList.ToArray();
+			responseData.reward = list.ToArray();
+			responseData.firstRankUpReward = list2.ToArray();
 			responseData.score = colosseumEnd.score;
 			responseData.colosseumRankId = colosseumEnd.colosseumRankId;
 			responseData.isFirstRankUp = colosseumEnd.isFirstRankUp;
@@ -469,13 +479,13 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			sendTotalWaitTime += Time.unscaledDeltaTime;
 			yield return null;
 		}
-		LastConfirmationData lastConfirmationMessage = new LastConfirmationData
+		LastConfirmationData message2 = new LastConfirmationData
 		{
 			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, tcpMessageType),
 			tcpMessageType = tcpMessageType.ToInteger()
 		};
-		base.SendMessageForSync(TCPMessageType.LastConfirmation, lastConfirmationMessage);
+		base.SendMessageForSync(TCPMessageType.LastConfirmation, message2);
 		this.confirmationChecks[tcpMessageType].Clear();
 		yield break;
 		yield break;

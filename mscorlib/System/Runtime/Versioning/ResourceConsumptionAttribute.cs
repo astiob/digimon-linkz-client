@@ -4,8 +4,8 @@ using System.Diagnostics;
 namespace System.Runtime.Versioning
 {
 	/// <summary>Specifies the resource consumed by the member of a class. This class cannot be inherited.</summary>
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, Inherited = false)]
 	[Conditional("RESOURCE_ANNOTATION_WORK")]
+	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, Inherited = false)]
 	public sealed class ResourceConsumptionAttribute : Attribute
 	{
 		private ResourceScope resource;

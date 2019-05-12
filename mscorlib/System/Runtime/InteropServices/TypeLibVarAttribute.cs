@@ -3,8 +3,8 @@
 namespace System.Runtime.InteropServices
 {
 	/// <summary>Contains the <see cref="T:System.Runtime.InteropServices.VARFLAGS" /> that were originally imported for this field from the COM type library.</summary>
-	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Field, Inherited = false)]
+	[ComVisible(true)]
 	public sealed class TypeLibVarAttribute : Attribute
 	{
 		private TypeLibVarFlags flags;

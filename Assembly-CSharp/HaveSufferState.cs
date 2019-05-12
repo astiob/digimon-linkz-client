@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,11 +12,24 @@ public class HaveSufferState
 	{
 		this.sufferStatePropertyDictionary = new Dictionary<SufferStateProperty.SufferType, SufferStateProperty>();
 		Array values = Enum.GetValues(typeof(SufferStateProperty.SufferType));
-		foreach (object obj in values)
+		IEnumerator enumerator = values.GetEnumerator();
+		try
 		{
-			SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)((int)obj);
-			SufferStateProperty value = new SufferStateProperty(sufferType);
-			this.sufferStatePropertyDictionary.Add(sufferType, value);
+			while (enumerator.MoveNext())
+			{
+				object obj = enumerator.Current;
+				SufferStateProperty.SufferType sufferType = (SufferStateProperty.SufferType)obj;
+				SufferStateProperty value = new SufferStateProperty(sufferType);
+				this.sufferStatePropertyDictionary.Add(sufferType, value);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
+			}
 		}
 	}
 
@@ -35,16 +49,16 @@ public class HaveSufferState
 		return this.sufferStatePropertyDictionary[type].isActive;
 	}
 
-	public void RemoveSufferState(SufferStateProperty.SufferType type)
+	public void RemoveSufferState(SufferStateProperty.SufferType type, bool isRevival = false)
 	{
-		this.sufferStatePropertyDictionary[type].SetNull();
+		this.sufferStatePropertyDictionary[type].SetNull(isRevival);
 	}
 
-	public void RemoveAllSufferState()
+	public void RevivalSufferState()
 	{
 		foreach (KeyValuePair<SufferStateProperty.SufferType, SufferStateProperty> keyValuePair in this.sufferStatePropertyDictionary)
 		{
-			this.RemoveSufferState(keyValuePair.Key);
+			this.RemoveSufferState(keyValuePair.Key, true);
 		}
 	}
 
@@ -117,16 +131,29 @@ public class HaveSufferState
 		HaveSufferStateStore haveSufferStateStore = new HaveSufferStateStore();
 		List<HaveSufferStateStore.Data> list = new List<HaveSufferStateStore.Data>();
 		Array values = Enum.GetValues(typeof(SufferStateProperty.SufferType));
-		foreach (object obj in values)
+		IEnumerator enumerator = values.GetEnumerator();
+		try
 		{
-			SufferStateProperty.SufferType key = (SufferStateProperty.SufferType)((int)obj);
-			if (this.sufferStatePropertyDictionary.ContainsKey(key))
+			while (enumerator.MoveNext())
 			{
-				list.Add(new HaveSufferStateStore.Data
+				object obj = enumerator.Current;
+				SufferStateProperty.SufferType key = (SufferStateProperty.SufferType)obj;
+				if (this.sufferStatePropertyDictionary.ContainsKey(key))
 				{
-					key = key,
-					values = this.sufferStatePropertyDictionary[key].Get()
-				});
+					list.Add(new HaveSufferStateStore.Data
+					{
+						key = key,
+						values = this.sufferStatePropertyDictionary[key].Get()
+					});
+				}
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
 			}
 		}
 		haveSufferStateStore.sufferStatePropertys = list.ToArray();
@@ -136,17 +163,30 @@ public class HaveSufferState
 	public void Set(HaveSufferStateStore haveSufferStateStore)
 	{
 		Array values = Enum.GetValues(typeof(SufferStateProperty.SufferType));
-		foreach (object obj in values)
+		IEnumerator enumerator = values.GetEnumerator();
+		try
 		{
-			SufferStateProperty.SufferType key = (SufferStateProperty.SufferType)((int)obj);
-			HaveSufferStateStore.Data data = haveSufferStateStore.sufferStatePropertys.Where((HaveSufferStateStore.Data item) => item.key == key).SingleOrDefault<HaveSufferStateStore.Data>();
-			if (data != null)
+			while (enumerator.MoveNext())
 			{
-				if (!this.sufferStatePropertyDictionary.ContainsKey(key))
+				object obj = enumerator.Current;
+				SufferStateProperty.SufferType key = (SufferStateProperty.SufferType)obj;
+				HaveSufferStateStore.Data data = haveSufferStateStore.sufferStatePropertys.Where((HaveSufferStateStore.Data item) => item.key == key).SingleOrDefault<HaveSufferStateStore.Data>();
+				if (data != null)
 				{
-					this.sufferStatePropertyDictionary.Add(key, new SufferStateProperty(key));
+					if (!this.sufferStatePropertyDictionary.ContainsKey(key))
+					{
+						this.sufferStatePropertyDictionary.Add(key, new SufferStateProperty(key));
+					}
+					this.sufferStatePropertyDictionary[key].Set(data.values);
 				}
-				this.sufferStatePropertyDictionary[key].Set(data.values);
+			}
+		}
+		finally
+		{
+			IDisposable disposable;
+			if ((disposable = (enumerator as IDisposable)) != null)
+			{
+				disposable.Dispose();
 			}
 		}
 	}

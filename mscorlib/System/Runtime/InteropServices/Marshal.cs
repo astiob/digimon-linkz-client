@@ -707,8 +707,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 		public static int GetHRForLastWin32Error()
 		{
 			throw new NotImplementedException();
@@ -799,8 +799,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[MonoTODO]
 		[Obsolete("This method has been deprecated")]
+		[MonoTODO]
 		public static IntPtr GetManagedThunkForUnmanagedMethodPtr(IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature)
 		{
 			throw new NotImplementedException();
@@ -1027,8 +1027,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[MonoTODO]
 		[Obsolete]
+		[MonoTODO]
 		public static int GetTypeLibLcid(UCOMITypeLib pTLB)
 		{
 			throw new NotImplementedException();
@@ -1101,8 +1101,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[Obsolete("This method has been deprecated")]
 		[MonoTODO]
+		[Obsolete("This method has been deprecated")]
 		public static IntPtr GetUnmanagedThunkForManagedMethodPtr(IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature)
 		{
 			throw new NotImplementedException();
@@ -1463,8 +1463,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 		public static long ReadInt64([MarshalAs(UnmanagedType.AsAny)] [In] object ptr, int ofs)
 		{
 			throw new NotImplementedException();
@@ -1506,8 +1506,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[MonoTODO]
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+		[MonoTODO]
 		public static IntPtr ReadIntPtr([MarshalAs(UnmanagedType.AsAny)] [In] object ptr, int ofs)
 		{
 			throw new NotImplementedException();
@@ -1585,8 +1585,8 @@ namespace System.Runtime.InteropServices
 		/// <PermissionSet>
 		///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode" />
 		/// </PermissionSet>
-		[Obsolete]
 		[MonoTODO]
+		[Obsolete]
 		public static void ReleaseThreadCache()
 		{
 			throw new NotImplementedException();

@@ -16,9 +16,9 @@ public class SubStateMultiRoundStartAction : SubStateRoundStartAction
 			if (!base.battleStateData.playerCharacters[i].isDied)
 			{
 				bool isRevivalAp = base.battleStateData.isRoundStartApRevival[i];
-				bool isRevivalHp = base.battleStateData.isRoundStartHpRevival[i];
-				base.stateManager.uiControlMulti.ApplyHUDRecoverMulti(i, isRevivalAp, isRevivalHp, totalCharacters[i].upAp);
-				if (isRevivalHp)
+				bool flag = base.battleStateData.isRoundStartHpRevival[i];
+				base.stateManager.uiControlMulti.ApplyHUDRecoverMulti(i, isRevivalAp, flag, totalCharacters[i].upAp);
+				if (flag)
 				{
 					isHPWait = true;
 				}

@@ -10,20 +10,20 @@ public class ChipIcon : MonoBehaviour
 	[SerializeField]
 	private UISprite equipment;
 
-	[SerializeField]
 	[Header("選択中のメッセージラベル")]
+	[SerializeField]
 	private UILabel dimMessage;
 
 	[Header("チップアイコン")]
 	[SerializeField]
 	private UITexture iconTexture;
 
-	[SerializeField]
 	[Header("ランクアイコン")]
+	[SerializeField]
 	private UISprite rankSprite;
 
-	[SerializeField]
 	[Header("複数選択時のメッセージラベル")]
+	[SerializeField]
 	private UILabel selectMessage;
 
 	private int defaultTexSizeWidth;

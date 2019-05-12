@@ -3,8 +3,8 @@ using UnityEngine;
 
 public sealed class TVFade : ScreenEffectBase
 {
-	[SerializeField]
 	[Range(0f, 0.5f)]
+	[SerializeField]
 	private float lightEdge;
 
 	[SerializeField]
@@ -92,25 +92,32 @@ public sealed class TVFade : ScreenEffectBase
 
 	private void UpdateValue(float min, float max, float duration, ref TVFade.RunTimeAnimationInfo runTimeInfo, Action<float> setAction, Action onCompleted)
 	{
-		switch (runTimeInfo.state)
+		TVFade.AnimeState state = runTimeInfo.state;
+		if (state != TVFade.AnimeState.PLAY)
 		{
-		case TVFade.AnimeState.PLAY:
+			if (state != TVFade.AnimeState.REVERSE)
+			{
+				if (state == TVFade.AnimeState.STOP)
+				{
+					runTimeInfo.state = TVFade.AnimeState.NONE;
+				}
+			}
+			else
+			{
+				if (this.PlayReverse(ref runTimeInfo.delay, ref runTimeInfo.value, min, max, ref runTimeInfo.elapse, duration))
+				{
+					onCompleted();
+				}
+				setAction(runTimeInfo.value);
+			}
+		}
+		else
+		{
 			if (this.PlayForward(ref runTimeInfo.delay, ref runTimeInfo.value, min, max, ref runTimeInfo.elapse, duration))
 			{
 				onCompleted();
 			}
 			setAction(runTimeInfo.value);
-			break;
-		case TVFade.AnimeState.REVERSE:
-			if (this.PlayReverse(ref runTimeInfo.delay, ref runTimeInfo.value, min, max, ref runTimeInfo.elapse, duration))
-			{
-				onCompleted();
-			}
-			setAction(runTimeInfo.value);
-			break;
-		case TVFade.AnimeState.STOP:
-			runTimeInfo.state = TVFade.AnimeState.NONE;
-			break;
 		}
 	}
 

@@ -2,20 +2,12 @@
 
 namespace UnityEngine.Networking
 {
-	[AddComponentMenu("Network/NetworkTransform")]
 	[DisallowMultipleComponent]
+	[AddComponentMenu("Network/NetworkTransform")]
 	public class NetworkTransform : NetworkBehaviour
 	{
-		private const float k_LocalMovementThreshold = 1E-05f;
-
-		private const float k_LocalRotationThreshold = 1E-05f;
-
-		private const float k_LocalVelocityThreshold = 1E-05f;
-
-		private const float k_MoveAheadRatio = 0.1f;
-
 		[SerializeField]
-		private NetworkTransform.TransformSyncMode m_TransformSyncMode;
+		private NetworkTransform.TransformSyncMode m_TransformSyncMode = NetworkTransform.TransformSyncMode.SyncNone;
 
 		[SerializeField]
 		private float m_SendInterval = 0.1f;
@@ -24,13 +16,16 @@ namespace UnityEngine.Networking
 		private NetworkTransform.AxisSyncMode m_SyncRotationAxis = NetworkTransform.AxisSyncMode.AxisXYZ;
 
 		[SerializeField]
-		private NetworkTransform.CompressionSyncMode m_RotationSyncCompression;
+		private NetworkTransform.CompressionSyncMode m_RotationSyncCompression = NetworkTransform.CompressionSyncMode.None;
 
 		[SerializeField]
 		private bool m_SyncSpin;
 
 		[SerializeField]
 		private float m_MovementTheshold = 0.001f;
+
+		[SerializeField]
+		private float m_VelocityThreshold = 0.0001f;
 
 		[SerializeField]
 		private float m_SnapThreshold = 5f;
@@ -80,6 +75,14 @@ namespace UnityEngine.Networking
 		private float m_PrevRotation2D;
 
 		private float m_PrevVelocity;
+
+		private const float k_LocalMovementThreshold = 1E-05f;
+
+		private const float k_LocalRotationThreshold = 1E-05f;
+
+		private const float k_LocalVelocityThreshold = 1E-05f;
+
+		private const float k_MoveAheadRatio = 0.1f;
 
 		private NetworkWriter m_LocalTransformWriter;
 
@@ -152,6 +155,18 @@ namespace UnityEngine.Networking
 			set
 			{
 				this.m_MovementTheshold = value;
+			}
+		}
+
+		public float velocityThreshold
+		{
+			get
+			{
+				return this.m_VelocityThreshold;
+			}
+			set
+			{
+				this.m_VelocityThreshold = value;
 			}
 		}
 
@@ -309,6 +324,10 @@ namespace UnityEngine.Networking
 			{
 				this.m_MovementTheshold = 0f;
 			}
+			if (this.m_VelocityThreshold < 0f)
+			{
+				this.m_VelocityThreshold = 0f;
+			}
 			if (this.m_SnapThreshold < 0f)
 			{
 				this.m_SnapThreshold = 0.01f;
@@ -385,8 +404,44 @@ namespace UnityEngine.Networking
 			this.m_PrevVelocity = 0f;
 		}
 
+		private void VerifySerializeComponentExists()
+		{
+			bool flag = false;
+			Type type = null;
+			NetworkTransform.TransformSyncMode transformSyncMode = this.transformSyncMode;
+			if (transformSyncMode != NetworkTransform.TransformSyncMode.SyncCharacterController)
+			{
+				if (transformSyncMode != NetworkTransform.TransformSyncMode.SyncRigidbody2D)
+				{
+					if (transformSyncMode == NetworkTransform.TransformSyncMode.SyncRigidbody3D)
+					{
+						if (!this.m_RigidBody3D && !(this.m_RigidBody3D = base.GetComponent<Rigidbody>()))
+						{
+							flag = true;
+							type = typeof(Rigidbody);
+						}
+					}
+				}
+				else if (!this.m_RigidBody2D && !(this.m_RigidBody2D = base.GetComponent<Rigidbody2D>()))
+				{
+					flag = true;
+					type = typeof(Rigidbody2D);
+				}
+			}
+			else if (!this.m_CharacterController && !(this.m_CharacterController = base.GetComponent<CharacterController>()))
+			{
+				flag = true;
+				type = typeof(CharacterController);
+			}
+			if (flag && type != null)
+			{
+				throw new InvalidOperationException(string.Format("transformSyncMode set to {0} but no {1} component was found, did you call NetworkServer.Spawn on a prefab?", this.transformSyncMode, type.Name));
+			}
+		}
+
 		private void SerializeMode3D(NetworkWriter writer)
 		{
+			this.VerifySerializeComponentExists();
 			if (base.isServer && this.m_LastClientSyncTime != 0f)
 			{
 				writer.Write(this.m_TargetSyncPosition);
@@ -416,6 +471,7 @@ namespace UnityEngine.Networking
 
 		private void SerializeModeCharacterController(NetworkWriter writer)
 		{
+			this.VerifySerializeComponentExists();
 			if (base.isServer && this.m_LastClientSyncTime != 0f)
 			{
 				writer.Write(this.m_TargetSyncPosition);
@@ -439,6 +495,7 @@ namespace UnityEngine.Networking
 
 		private void SerializeMode2D(NetworkWriter writer)
 		{
+			this.VerifySerializeComponentExists();
 			if (base.isServer && this.m_LastClientSyncTime != 0f)
 			{
 				writer.Write(this.m_TargetSyncPosition);
@@ -478,32 +535,34 @@ namespace UnityEngine.Networking
 
 		public override void OnDeserialize(NetworkReader reader, bool initialState)
 		{
-			if (base.isServer && NetworkServer.localClientActive)
+			if (!base.isServer || !NetworkServer.localClientActive)
 			{
-				return;
+				if (!initialState)
+				{
+					if (reader.ReadPackedUInt32() == 0u)
+					{
+						return;
+					}
+				}
+				switch (this.transformSyncMode)
+				{
+				case NetworkTransform.TransformSyncMode.SyncNone:
+					return;
+				case NetworkTransform.TransformSyncMode.SyncTransform:
+					this.UnserializeModeTransform(reader, initialState);
+					break;
+				case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
+					this.UnserializeMode2D(reader, initialState);
+					break;
+				case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
+					this.UnserializeMode3D(reader, initialState);
+					break;
+				case NetworkTransform.TransformSyncMode.SyncCharacterController:
+					this.UnserializeModeCharacterController(reader, initialState);
+					break;
+				}
+				this.m_LastClientSyncTime = Time.time;
 			}
-			if (!initialState && reader.ReadPackedUInt32() == 0u)
-			{
-				return;
-			}
-			switch (this.transformSyncMode)
-			{
-			case NetworkTransform.TransformSyncMode.SyncNone:
-				return;
-			case NetworkTransform.TransformSyncMode.SyncTransform:
-				this.UnserializeModeTransform(reader, initialState);
-				break;
-			case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
-				this.UnserializeMode2D(reader, initialState);
-				break;
-			case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
-				this.UnserializeMode3D(reader, initialState);
-				break;
-			case NetworkTransform.TransformSyncMode.SyncCharacterController:
-				this.UnserializeModeCharacterController(reader, initialState);
-				break;
-			}
-			this.m_LastClientSyncTime = Time.time;
 		}
 
 		private void UnserializeModeTransform(NetworkReader reader, bool initialState)
@@ -515,9 +574,8 @@ namespace UnityEngine.Networking
 				{
 					NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
 				}
-				return;
 			}
-			if (base.isServer && this.m_ClientMoveCallback3D != null)
+			else if (base.isServer && this.m_ClientMoveCallback3D != null)
 			{
 				Vector3 position = reader.ReadVector3();
 				Vector3 zero = Vector3.zero;
@@ -526,14 +584,13 @@ namespace UnityEngine.Networking
 				{
 					rotation = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
 				}
-				if (!this.m_ClientMoveCallback3D(ref position, ref zero, ref rotation))
+				if (this.m_ClientMoveCallback3D(ref position, ref zero, ref rotation))
 				{
-					return;
-				}
-				base.transform.position = position;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-				{
-					base.transform.rotation = rotation;
+					base.transform.position = position;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						base.transform.rotation = rotation;
+					}
 				}
 			}
 			else
@@ -560,87 +617,89 @@ namespace UnityEngine.Networking
 				{
 					NetworkTransform.UnserializeSpin3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
 				}
-				return;
-			}
-			if (base.isServer && this.m_ClientMoveCallback3D != null)
-			{
-				Vector3 targetSyncPosition = reader.ReadVector3();
-				Vector3 targetSyncVelocity = reader.ReadVector3();
-				Quaternion targetSyncRotation3D = Quaternion.identity;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-				{
-					targetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
-				}
-				if (!this.m_ClientMoveCallback3D(ref targetSyncPosition, ref targetSyncVelocity, ref targetSyncRotation3D))
-				{
-					return;
-				}
-				this.m_TargetSyncPosition = targetSyncPosition;
-				this.m_TargetSyncVelocity = targetSyncVelocity;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-				{
-					this.m_TargetSyncRotation3D = targetSyncRotation3D;
-				}
 			}
 			else
 			{
-				this.m_TargetSyncPosition = reader.ReadVector3();
-				this.m_TargetSyncVelocity = reader.ReadVector3();
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				if (base.isServer && this.m_ClientMoveCallback3D != null)
 				{
-					this.m_TargetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
+					Vector3 targetSyncPosition = reader.ReadVector3();
+					Vector3 targetSyncVelocity = reader.ReadVector3();
+					Quaternion targetSyncRotation3D = Quaternion.identity;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						targetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
+					}
+					if (!this.m_ClientMoveCallback3D(ref targetSyncPosition, ref targetSyncVelocity, ref targetSyncRotation3D))
+					{
+						return;
+					}
+					this.m_TargetSyncPosition = targetSyncPosition;
+					this.m_TargetSyncVelocity = targetSyncVelocity;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_TargetSyncRotation3D = targetSyncRotation3D;
+					}
 				}
-			}
-			if (this.syncSpin)
-			{
-				this.m_TargetSyncAngularVelocity3D = NetworkTransform.UnserializeSpin3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
-			}
-			if (this.m_RigidBody3D == null)
-			{
-				return;
-			}
-			if (base.isServer && !base.isClient)
-			{
-				this.m_RigidBody3D.MovePosition(this.m_TargetSyncPosition);
-				this.m_RigidBody3D.MoveRotation(this.m_TargetSyncRotation3D);
-				this.m_RigidBody3D.velocity = this.m_TargetSyncVelocity;
-				return;
-			}
-			if (this.GetNetworkSendInterval() == 0f)
-			{
-				this.m_RigidBody3D.MovePosition(this.m_TargetSyncPosition);
-				this.m_RigidBody3D.velocity = this.m_TargetSyncVelocity;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				else
 				{
-					this.m_RigidBody3D.MoveRotation(this.m_TargetSyncRotation3D);
+					this.m_TargetSyncPosition = reader.ReadVector3();
+					this.m_TargetSyncVelocity = reader.ReadVector3();
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_TargetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
+					}
 				}
 				if (this.syncSpin)
 				{
-					this.m_RigidBody3D.angularVelocity = this.m_TargetSyncAngularVelocity3D;
+					this.m_TargetSyncAngularVelocity3D = NetworkTransform.UnserializeSpin3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
 				}
-				return;
-			}
-			float magnitude = (this.m_RigidBody3D.position - this.m_TargetSyncPosition).magnitude;
-			if (magnitude > this.snapThreshold)
-			{
-				this.m_RigidBody3D.position = this.m_TargetSyncPosition;
-				this.m_RigidBody3D.velocity = this.m_TargetSyncVelocity;
-			}
-			if (this.interpolateRotation == 0f && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-			{
-				this.m_RigidBody3D.rotation = this.m_TargetSyncRotation3D;
-				if (this.syncSpin)
+				if (!(this.m_RigidBody3D == null))
 				{
-					this.m_RigidBody3D.angularVelocity = this.m_TargetSyncAngularVelocity3D;
+					if (base.isServer && !base.isClient)
+					{
+						this.m_RigidBody3D.MovePosition(this.m_TargetSyncPosition);
+						this.m_RigidBody3D.MoveRotation(this.m_TargetSyncRotation3D);
+						this.m_RigidBody3D.velocity = this.m_TargetSyncVelocity;
+					}
+					else if (this.GetNetworkSendInterval() == 0f)
+					{
+						this.m_RigidBody3D.MovePosition(this.m_TargetSyncPosition);
+						this.m_RigidBody3D.velocity = this.m_TargetSyncVelocity;
+						if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+						{
+							this.m_RigidBody3D.MoveRotation(this.m_TargetSyncRotation3D);
+						}
+						if (this.syncSpin)
+						{
+							this.m_RigidBody3D.angularVelocity = this.m_TargetSyncAngularVelocity3D;
+						}
+					}
+					else
+					{
+						float magnitude = (this.m_RigidBody3D.position - this.m_TargetSyncPosition).magnitude;
+						if (magnitude > this.snapThreshold)
+						{
+							this.m_RigidBody3D.position = this.m_TargetSyncPosition;
+							this.m_RigidBody3D.velocity = this.m_TargetSyncVelocity;
+						}
+						if (this.interpolateRotation == 0f && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+						{
+							this.m_RigidBody3D.rotation = this.m_TargetSyncRotation3D;
+							if (this.syncSpin)
+							{
+								this.m_RigidBody3D.angularVelocity = this.m_TargetSyncAngularVelocity3D;
+							}
+						}
+						if (this.m_InterpolateMovement == 0f)
+						{
+							this.m_RigidBody3D.position = this.m_TargetSyncPosition;
+						}
+						if (initialState && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+						{
+							this.m_RigidBody3D.rotation = this.m_TargetSyncRotation3D;
+						}
+					}
 				}
-			}
-			if (this.m_InterpolateMovement == 0f)
-			{
-				this.m_RigidBody3D.position = this.m_TargetSyncPosition;
-			}
-			if (initialState && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-			{
-				this.m_RigidBody3D.rotation = this.m_TargetSyncRotation3D;
 			}
 		}
 
@@ -658,87 +717,86 @@ namespace UnityEngine.Networking
 				{
 					NetworkTransform.UnserializeSpin2D(reader, this.rotationSyncCompression);
 				}
-				return;
 			}
-			if (this.m_RigidBody2D == null)
+			else if (!(this.m_RigidBody2D == null))
 			{
-				return;
-			}
-			if (base.isServer && this.m_ClientMoveCallback2D != null)
-			{
-				Vector2 v = reader.ReadVector2();
-				Vector2 v2 = reader.ReadVector2();
-				float targetSyncRotation2D = 0f;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				if (base.isServer && this.m_ClientMoveCallback2D != null)
 				{
-					targetSyncRotation2D = NetworkTransform.UnserializeRotation2D(reader, this.rotationSyncCompression);
+					Vector2 v = reader.ReadVector2();
+					Vector2 v2 = reader.ReadVector2();
+					float targetSyncRotation2D = 0f;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						targetSyncRotation2D = NetworkTransform.UnserializeRotation2D(reader, this.rotationSyncCompression);
+					}
+					if (!this.m_ClientMoveCallback2D(ref v, ref v2, ref targetSyncRotation2D))
+					{
+						return;
+					}
+					this.m_TargetSyncPosition = v;
+					this.m_TargetSyncVelocity = v2;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_TargetSyncRotation2D = targetSyncRotation2D;
+					}
 				}
-				if (!this.m_ClientMoveCallback2D(ref v, ref v2, ref targetSyncRotation2D))
+				else
 				{
-					return;
+					this.m_TargetSyncPosition = reader.ReadVector2();
+					this.m_TargetSyncVelocity = reader.ReadVector2();
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_TargetSyncRotation2D = NetworkTransform.UnserializeRotation2D(reader, this.rotationSyncCompression);
+					}
 				}
-				this.m_TargetSyncPosition = v;
-				this.m_TargetSyncVelocity = v2;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				if (this.syncSpin)
 				{
-					this.m_TargetSyncRotation2D = targetSyncRotation2D;
+					this.m_TargetSyncAngularVelocity2D = NetworkTransform.UnserializeSpin2D(reader, this.rotationSyncCompression);
 				}
-			}
-			else
-			{
-				this.m_TargetSyncPosition = reader.ReadVector2();
-				this.m_TargetSyncVelocity = reader.ReadVector2();
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				if (base.isServer && !base.isClient)
 				{
-					this.m_TargetSyncRotation2D = NetworkTransform.UnserializeRotation2D(reader, this.rotationSyncCompression);
-				}
-			}
-			if (this.syncSpin)
-			{
-				this.m_TargetSyncAngularVelocity2D = NetworkTransform.UnserializeSpin2D(reader, this.rotationSyncCompression);
-			}
-			if (base.isServer && !base.isClient)
-			{
-				base.transform.position = this.m_TargetSyncPosition;
-				this.m_RigidBody2D.MoveRotation(this.m_TargetSyncRotation2D);
-				this.m_RigidBody2D.velocity = this.m_TargetSyncVelocity;
-				return;
-			}
-			if (this.GetNetworkSendInterval() == 0f)
-			{
-				base.transform.position = this.m_TargetSyncPosition;
-				this.m_RigidBody2D.velocity = this.m_TargetSyncVelocity;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-				{
+					base.transform.position = this.m_TargetSyncPosition;
 					this.m_RigidBody2D.MoveRotation(this.m_TargetSyncRotation2D);
+					this.m_RigidBody2D.velocity = this.m_TargetSyncVelocity;
 				}
-				if (this.syncSpin)
+				else if (this.GetNetworkSendInterval() == 0f)
 				{
-					this.m_RigidBody2D.angularVelocity = this.m_TargetSyncAngularVelocity2D;
+					base.transform.position = this.m_TargetSyncPosition;
+					this.m_RigidBody2D.velocity = this.m_TargetSyncVelocity;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_RigidBody2D.MoveRotation(this.m_TargetSyncRotation2D);
+					}
+					if (this.syncSpin)
+					{
+						this.m_RigidBody2D.angularVelocity = this.m_TargetSyncAngularVelocity2D;
+					}
 				}
-				return;
-			}
-			float magnitude = (this.m_RigidBody2D.position - this.m_TargetSyncPosition).magnitude;
-			if (magnitude > this.snapThreshold)
-			{
-				this.m_RigidBody2D.position = this.m_TargetSyncPosition;
-				this.m_RigidBody2D.velocity = this.m_TargetSyncVelocity;
-			}
-			if (this.interpolateRotation == 0f && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-			{
-				this.m_RigidBody2D.rotation = this.m_TargetSyncRotation2D;
-				if (this.syncSpin)
+				else
 				{
-					this.m_RigidBody2D.angularVelocity = this.m_TargetSyncAngularVelocity2D;
+					float magnitude = (this.m_RigidBody2D.position - this.m_TargetSyncPosition).magnitude;
+					if (magnitude > this.snapThreshold)
+					{
+						this.m_RigidBody2D.position = this.m_TargetSyncPosition;
+						this.m_RigidBody2D.velocity = this.m_TargetSyncVelocity;
+					}
+					if (this.interpolateRotation == 0f && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_RigidBody2D.rotation = this.m_TargetSyncRotation2D;
+						if (this.syncSpin)
+						{
+							this.m_RigidBody2D.angularVelocity = this.m_TargetSyncAngularVelocity2D;
+						}
+					}
+					if (this.m_InterpolateMovement == 0f)
+					{
+						this.m_RigidBody2D.position = this.m_TargetSyncPosition;
+					}
+					if (initialState)
+					{
+						this.m_RigidBody2D.rotation = this.m_TargetSyncRotation2D;
+					}
 				}
-			}
-			if (this.m_InterpolateMovement == 0f)
-			{
-				this.m_RigidBody2D.position = this.m_TargetSyncPosition;
-			}
-			if (initialState)
-			{
-				this.m_RigidBody2D.rotation = this.m_TargetSyncRotation2D;
 			}
 		}
 
@@ -751,78 +809,80 @@ namespace UnityEngine.Networking
 				{
 					NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
 				}
-				return;
-			}
-			if (base.isServer && this.m_ClientMoveCallback3D != null)
-			{
-				Vector3 targetSyncPosition = reader.ReadVector3();
-				Quaternion targetSyncRotation3D = Quaternion.identity;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-				{
-					targetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
-				}
-				if (this.m_CharacterController == null)
-				{
-					return;
-				}
-				Vector3 velocity = this.m_CharacterController.velocity;
-				if (!this.m_ClientMoveCallback3D(ref targetSyncPosition, ref velocity, ref targetSyncRotation3D))
-				{
-					return;
-				}
-				this.m_TargetSyncPosition = targetSyncPosition;
-				this.m_TargetSyncVelocity = velocity;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-				{
-					this.m_TargetSyncRotation3D = targetSyncRotation3D;
-				}
 			}
 			else
 			{
-				this.m_TargetSyncPosition = reader.ReadVector3();
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				if (base.isServer && this.m_ClientMoveCallback3D != null)
 				{
-					this.m_TargetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
+					Vector3 targetSyncPosition = reader.ReadVector3();
+					Quaternion targetSyncRotation3D = Quaternion.identity;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						targetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
+					}
+					if (this.m_CharacterController == null)
+					{
+						return;
+					}
+					Vector3 velocity = this.m_CharacterController.velocity;
+					if (!this.m_ClientMoveCallback3D(ref targetSyncPosition, ref velocity, ref targetSyncRotation3D))
+					{
+						return;
+					}
+					this.m_TargetSyncPosition = targetSyncPosition;
+					this.m_TargetSyncVelocity = velocity;
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_TargetSyncRotation3D = targetSyncRotation3D;
+					}
 				}
-			}
-			if (this.m_CharacterController == null)
-			{
-				return;
-			}
-			Vector3 a = this.m_TargetSyncPosition - base.transform.position;
-			Vector3 a2 = a / this.GetNetworkSendInterval();
-			this.m_FixedPosDiff = a2 * Time.fixedDeltaTime;
-			if (base.isServer && !base.isClient)
-			{
-				base.transform.position = this.m_TargetSyncPosition;
-				base.transform.rotation = this.m_TargetSyncRotation3D;
-				return;
-			}
-			if (this.GetNetworkSendInterval() == 0f)
-			{
-				base.transform.position = this.m_TargetSyncPosition;
-				if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+				else
 				{
-					base.transform.rotation = this.m_TargetSyncRotation3D;
+					this.m_TargetSyncPosition = reader.ReadVector3();
+					if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+					{
+						this.m_TargetSyncRotation3D = NetworkTransform.UnserializeRotation3D(reader, this.syncRotationAxis, this.rotationSyncCompression);
+					}
 				}
-				return;
-			}
-			float magnitude = (base.transform.position - this.m_TargetSyncPosition).magnitude;
-			if (magnitude > this.snapThreshold)
-			{
-				base.transform.position = this.m_TargetSyncPosition;
-			}
-			if (this.interpolateRotation == 0f && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-			{
-				base.transform.rotation = this.m_TargetSyncRotation3D;
-			}
-			if (this.m_InterpolateMovement == 0f)
-			{
-				base.transform.position = this.m_TargetSyncPosition;
-			}
-			if (initialState && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
-			{
-				base.transform.rotation = this.m_TargetSyncRotation3D;
+				if (!(this.m_CharacterController == null))
+				{
+					Vector3 a = this.m_TargetSyncPosition - base.transform.position;
+					Vector3 a2 = a / this.GetNetworkSendInterval();
+					this.m_FixedPosDiff = a2 * Time.fixedDeltaTime;
+					if (base.isServer && !base.isClient)
+					{
+						base.transform.position = this.m_TargetSyncPosition;
+						base.transform.rotation = this.m_TargetSyncRotation3D;
+					}
+					else if (this.GetNetworkSendInterval() == 0f)
+					{
+						base.transform.position = this.m_TargetSyncPosition;
+						if (this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+						{
+							base.transform.rotation = this.m_TargetSyncRotation3D;
+						}
+					}
+					else
+					{
+						float magnitude = (base.transform.position - this.m_TargetSyncPosition).magnitude;
+						if (magnitude > this.snapThreshold)
+						{
+							base.transform.position = this.m_TargetSyncPosition;
+						}
+						if (this.interpolateRotation == 0f && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+						{
+							base.transform.rotation = this.m_TargetSyncRotation3D;
+						}
+						if (this.m_InterpolateMovement == 0f)
+						{
+							base.transform.position = this.m_TargetSyncPosition;
+						}
+						if (initialState && this.syncRotationAxis != NetworkTransform.AxisSyncMode.None)
+						{
+							base.transform.rotation = this.m_TargetSyncRotation3D;
+						}
+					}
+				}
 			}
 		}
 
@@ -840,71 +900,76 @@ namespace UnityEngine.Networking
 
 		private void FixedUpdateServer()
 		{
-			if (base.syncVarDirtyBits != 0u)
+			if (base.syncVarDirtyBits == 0u)
 			{
-				return;
-			}
-			if (!NetworkServer.active)
-			{
-				return;
-			}
-			if (!base.isServer)
-			{
-				return;
-			}
-			if (this.GetNetworkSendInterval() == 0f)
-			{
-				return;
-			}
-			float num = (base.transform.position - this.m_PrevPosition).magnitude;
-			if (num < this.movementTheshold)
-			{
-				num = Quaternion.Angle(this.m_PrevRotation, base.transform.rotation);
-				if (num < this.movementTheshold)
+				if (NetworkServer.active)
 				{
-					return;
+					if (base.isServer)
+					{
+						if (this.GetNetworkSendInterval() != 0f)
+						{
+							float num = (base.transform.position - this.m_PrevPosition).magnitude;
+							if (num < this.movementTheshold)
+							{
+								num = Quaternion.Angle(this.m_PrevRotation, base.transform.rotation);
+								if (num < this.movementTheshold)
+								{
+									if (!this.CheckVelocityChanged())
+									{
+										return;
+									}
+								}
+							}
+							base.SetDirtyBit(1u);
+						}
+					}
 				}
 			}
-			base.SetDirtyBit(1u);
+		}
+
+		private bool CheckVelocityChanged()
+		{
+			NetworkTransform.TransformSyncMode transformSyncMode = this.transformSyncMode;
+			bool result;
+			if (transformSyncMode != NetworkTransform.TransformSyncMode.SyncRigidbody2D)
+			{
+				result = (transformSyncMode == NetworkTransform.TransformSyncMode.SyncRigidbody3D && (this.m_RigidBody3D && this.m_VelocityThreshold > 0f) && Mathf.Abs(this.m_RigidBody3D.velocity.sqrMagnitude - this.m_PrevVelocity) >= this.m_VelocityThreshold);
+			}
+			else
+			{
+				result = (this.m_RigidBody2D && this.m_VelocityThreshold > 0f && Mathf.Abs(this.m_RigidBody2D.velocity.sqrMagnitude - this.m_PrevVelocity) >= this.m_VelocityThreshold);
+			}
+			return result;
 		}
 
 		private void FixedUpdateClient()
 		{
-			if (this.m_LastClientSyncTime == 0f)
+			if (this.m_LastClientSyncTime != 0f)
 			{
-				return;
-			}
-			if (!NetworkServer.active && !NetworkClient.active)
-			{
-				return;
-			}
-			if (!base.isServer && !base.isClient)
-			{
-				return;
-			}
-			if (this.GetNetworkSendInterval() == 0f)
-			{
-				return;
-			}
-			if (base.hasAuthority)
-			{
-				return;
-			}
-			switch (this.transformSyncMode)
-			{
-			case NetworkTransform.TransformSyncMode.SyncNone:
-				return;
-			case NetworkTransform.TransformSyncMode.SyncTransform:
-				return;
-			case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
-				this.InterpolateTransformMode2D();
-				break;
-			case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
-				this.InterpolateTransformMode3D();
-				break;
-			case NetworkTransform.TransformSyncMode.SyncCharacterController:
-				this.InterpolateTransformModeCharacterController();
-				break;
+				if (NetworkServer.active || NetworkClient.active)
+				{
+					if (base.isServer || base.isClient)
+					{
+						if (this.GetNetworkSendInterval() != 0f)
+						{
+							if (!base.hasAuthority)
+							{
+								switch (this.transformSyncMode)
+								{
+								case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
+									this.InterpolateTransformMode2D();
+									break;
+								case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
+									this.InterpolateTransformMode3D();
+									break;
+								case NetworkTransform.TransformSyncMode.SyncCharacterController:
+									this.InterpolateTransformModeCharacterController();
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -924,23 +989,22 @@ namespace UnityEngine.Networking
 
 		private void InterpolateTransformModeCharacterController()
 		{
-			if (this.m_FixedPosDiff == Vector3.zero && this.m_TargetSyncRotation3D == base.transform.rotation)
+			if (!(this.m_FixedPosDiff == Vector3.zero) || !(this.m_TargetSyncRotation3D == base.transform.rotation))
 			{
-				return;
-			}
-			if (this.m_InterpolateMovement != 0f)
-			{
-				this.m_CharacterController.Move(this.m_FixedPosDiff * this.m_InterpolateMovement);
-			}
-			if (this.interpolateRotation != 0f)
-			{
-				base.transform.rotation = Quaternion.Slerp(base.transform.rotation, this.m_TargetSyncRotation3D, Time.fixedDeltaTime * this.interpolateRotation * 10f);
-			}
-			if (Time.time - this.m_LastClientSyncTime > this.GetNetworkSendInterval())
-			{
-				this.m_FixedPosDiff = Vector3.zero;
-				Vector3 motion = this.m_TargetSyncPosition - base.transform.position;
-				this.m_CharacterController.Move(motion);
+				if (this.m_InterpolateMovement != 0f)
+				{
+					this.m_CharacterController.Move(this.m_FixedPosDiff * this.m_InterpolateMovement);
+				}
+				if (this.interpolateRotation != 0f)
+				{
+					base.transform.rotation = Quaternion.Slerp(base.transform.rotation, this.m_TargetSyncRotation3D, Time.fixedDeltaTime * this.interpolateRotation * 10f);
+				}
+				if (Time.time - this.m_LastClientSyncTime > this.GetNetworkSendInterval())
+				{
+					this.m_FixedPosDiff = Vector3.zero;
+					Vector3 motion = this.m_TargetSyncPosition - base.transform.position;
+					this.m_CharacterController.Move(motion);
+				}
 			}
 		}
 
@@ -972,22 +1036,19 @@ namespace UnityEngine.Networking
 
 		private void Update()
 		{
-			if (!base.hasAuthority)
+			if (base.hasAuthority)
 			{
-				return;
-			}
-			if (!base.localPlayerAuthority)
-			{
-				return;
-			}
-			if (NetworkServer.active)
-			{
-				return;
-			}
-			if (Time.time - this.m_LastClientSendTime > this.GetNetworkSendInterval())
-			{
-				this.SendTransform();
-				this.m_LastClientSendTime = Time.time;
+				if (base.localPlayerAuthority)
+				{
+					if (!NetworkServer.active)
+					{
+						if (Time.time - this.m_LastClientSendTime > this.GetNetworkSendInterval())
+						{
+							this.SendTransform();
+							this.m_LastClientSendTime = Time.time;
+						}
+					}
+				}
 			}
 		}
 
@@ -1006,82 +1067,89 @@ namespace UnityEngine.Networking
 			{
 				num = (base.transform.position - this.m_PrevPosition).magnitude;
 			}
+			bool result;
 			if (num > 1E-05f)
 			{
-				return true;
-			}
-			if (this.m_RigidBody3D != null)
-			{
-				num = Quaternion.Angle(this.m_RigidBody3D.rotation, this.m_PrevRotation);
-			}
-			else if (this.m_RigidBody2D != null)
-			{
-				num = Math.Abs(this.m_RigidBody2D.rotation - this.m_PrevRotation2D);
+				result = true;
 			}
 			else
 			{
-				num = Quaternion.Angle(base.transform.rotation, this.m_PrevRotation);
+				if (this.m_RigidBody3D != null)
+				{
+					num = Quaternion.Angle(this.m_RigidBody3D.rotation, this.m_PrevRotation);
+				}
+				else if (this.m_RigidBody2D != null)
+				{
+					num = Math.Abs(this.m_RigidBody2D.rotation - this.m_PrevRotation2D);
+				}
+				else
+				{
+					num = Quaternion.Angle(base.transform.rotation, this.m_PrevRotation);
+				}
+				if (num > 1E-05f)
+				{
+					result = true;
+				}
+				else
+				{
+					if (this.m_RigidBody3D != null)
+					{
+						num = Mathf.Abs(this.m_RigidBody3D.velocity.sqrMagnitude - this.m_PrevVelocity);
+					}
+					else if (this.m_RigidBody2D != null)
+					{
+						num = Mathf.Abs(this.m_RigidBody2D.velocity.sqrMagnitude - this.m_PrevVelocity);
+					}
+					result = (num > 1E-05f);
+				}
 			}
-			if (num > 1E-05f)
-			{
-				return true;
-			}
-			if (this.m_RigidBody3D != null)
-			{
-				num = Mathf.Abs(this.m_RigidBody3D.velocity.sqrMagnitude - this.m_PrevVelocity);
-			}
-			else if (this.m_RigidBody2D != null)
-			{
-				num = Mathf.Abs(this.m_RigidBody2D.velocity.sqrMagnitude - this.m_PrevVelocity);
-			}
-			return num > 1E-05f;
+			return result;
 		}
 
 		[Client]
 		private void SendTransform()
 		{
-			if (!this.HasMoved() || ClientScene.readyConnection == null)
+			if (this.HasMoved() && ClientScene.readyConnection != null)
 			{
-				return;
+				this.m_LocalTransformWriter.StartMessage(6);
+				this.m_LocalTransformWriter.Write(base.netId);
+				switch (this.transformSyncMode)
+				{
+				case NetworkTransform.TransformSyncMode.SyncNone:
+					return;
+				case NetworkTransform.TransformSyncMode.SyncTransform:
+					this.SerializeModeTransform(this.m_LocalTransformWriter);
+					break;
+				case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
+					this.SerializeMode2D(this.m_LocalTransformWriter);
+					break;
+				case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
+					this.SerializeMode3D(this.m_LocalTransformWriter);
+					break;
+				case NetworkTransform.TransformSyncMode.SyncCharacterController:
+					this.SerializeModeCharacterController(this.m_LocalTransformWriter);
+					break;
+				}
+				if (this.m_RigidBody3D != null)
+				{
+					this.m_PrevPosition = this.m_RigidBody3D.position;
+					this.m_PrevRotation = this.m_RigidBody3D.rotation;
+					this.m_PrevVelocity = this.m_RigidBody3D.velocity.sqrMagnitude;
+				}
+				else if (this.m_RigidBody2D != null)
+				{
+					this.m_PrevPosition = this.m_RigidBody2D.position;
+					this.m_PrevRotation2D = this.m_RigidBody2D.rotation;
+					this.m_PrevVelocity = this.m_RigidBody2D.velocity.sqrMagnitude;
+				}
+				else
+				{
+					this.m_PrevPosition = base.transform.position;
+					this.m_PrevRotation = base.transform.rotation;
+				}
+				this.m_LocalTransformWriter.FinishMessage();
+				ClientScene.readyConnection.SendWriter(this.m_LocalTransformWriter, this.GetNetworkChannel());
 			}
-			this.m_LocalTransformWriter.StartMessage(6);
-			this.m_LocalTransformWriter.Write(base.netId);
-			switch (this.transformSyncMode)
-			{
-			case NetworkTransform.TransformSyncMode.SyncNone:
-				return;
-			case NetworkTransform.TransformSyncMode.SyncTransform:
-				this.SerializeModeTransform(this.m_LocalTransformWriter);
-				break;
-			case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
-				this.SerializeMode2D(this.m_LocalTransformWriter);
-				break;
-			case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
-				this.SerializeMode3D(this.m_LocalTransformWriter);
-				break;
-			case NetworkTransform.TransformSyncMode.SyncCharacterController:
-				this.SerializeModeCharacterController(this.m_LocalTransformWriter);
-				break;
-			}
-			if (this.m_RigidBody3D != null)
-			{
-				this.m_PrevPosition = this.m_RigidBody3D.position;
-				this.m_PrevRotation = this.m_RigidBody3D.rotation;
-				this.m_PrevVelocity = this.m_RigidBody3D.velocity.sqrMagnitude;
-			}
-			else if (this.m_RigidBody2D != null)
-			{
-				this.m_PrevPosition = this.m_RigidBody2D.position;
-				this.m_PrevRotation2D = this.m_RigidBody2D.rotation;
-				this.m_PrevVelocity = this.m_RigidBody2D.velocity.sqrMagnitude;
-			}
-			else
-			{
-				this.m_PrevPosition = base.transform.position;
-				this.m_PrevRotation = base.transform.rotation;
-			}
-			this.m_LocalTransformWriter.FinishMessage();
-			ClientScene.readyConnection.SendWriter(this.m_LocalTransformWriter, this.GetNetworkChannel());
 		}
 
 		public static void HandleTransform(NetworkMessage netMsg)
@@ -1092,92 +1160,109 @@ namespace UnityEngine.Networking
 			{
 				if (LogFilter.logError)
 				{
-					Debug.LogError("HandleTransform no gameObject");
+					Debug.LogError("Received NetworkTransform data for GameObject that doesn't exist");
 				}
-				return;
 			}
-			NetworkTransform component = gameObject.GetComponent<NetworkTransform>();
-			if (component == null)
+			else
 			{
-				if (LogFilter.logError)
+				NetworkTransform component = gameObject.GetComponent<NetworkTransform>();
+				if (component == null)
 				{
-					Debug.LogError("HandleTransform null target");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("HandleTransform null target");
+					}
 				}
-				return;
-			}
-			if (!component.localPlayerAuthority)
-			{
-				if (LogFilter.logError)
+				else if (!component.localPlayerAuthority)
 				{
-					Debug.LogError("HandleTransform no localPlayerAuthority");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("HandleTransform no localPlayerAuthority");
+					}
 				}
-				return;
-			}
-			if (netMsg.conn.clientOwnedObjects == null)
-			{
-				if (LogFilter.logError)
+				else if (netMsg.conn.clientOwnedObjects == null)
 				{
-					Debug.LogError("HandleTransform object not owned by connection");
+					if (LogFilter.logError)
+					{
+						Debug.LogError("HandleTransform object not owned by connection");
+					}
 				}
-				return;
-			}
-			if (netMsg.conn.clientOwnedObjects.Contains(networkInstanceId))
-			{
-				switch (component.transformSyncMode)
+				else if (netMsg.conn.clientOwnedObjects.Contains(networkInstanceId))
 				{
-				case NetworkTransform.TransformSyncMode.SyncNone:
-					return;
-				case NetworkTransform.TransformSyncMode.SyncTransform:
-					component.UnserializeModeTransform(netMsg.reader, false);
-					break;
-				case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
-					component.UnserializeMode2D(netMsg.reader, false);
-					break;
-				case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
-					component.UnserializeMode3D(netMsg.reader, false);
-					break;
-				case NetworkTransform.TransformSyncMode.SyncCharacterController:
-					component.UnserializeModeCharacterController(netMsg.reader, false);
-					break;
+					switch (component.transformSyncMode)
+					{
+					case NetworkTransform.TransformSyncMode.SyncNone:
+						return;
+					case NetworkTransform.TransformSyncMode.SyncTransform:
+						component.UnserializeModeTransform(netMsg.reader, false);
+						break;
+					case NetworkTransform.TransformSyncMode.SyncRigidbody2D:
+						component.UnserializeMode2D(netMsg.reader, false);
+						break;
+					case NetworkTransform.TransformSyncMode.SyncRigidbody3D:
+						component.UnserializeMode3D(netMsg.reader, false);
+						break;
+					case NetworkTransform.TransformSyncMode.SyncCharacterController:
+						component.UnserializeModeCharacterController(netMsg.reader, false);
+						break;
+					}
+					component.m_LastClientSyncTime = Time.time;
 				}
-				component.m_LastClientSyncTime = Time.time;
-				return;
-			}
-			if (LogFilter.logWarn)
-			{
-				Debug.LogWarning("HandleTransform netId:" + networkInstanceId + " is not for a valid player");
+				else if (LogFilter.logWarn)
+				{
+					Debug.LogWarning("HandleTransform netId:" + networkInstanceId + " is not for a valid player");
+				}
 			}
 		}
 
 		private static void WriteAngle(NetworkWriter writer, float angle, NetworkTransform.CompressionSyncMode compression)
 		{
-			switch (compression)
+			if (compression != NetworkTransform.CompressionSyncMode.None)
 			{
-			case NetworkTransform.CompressionSyncMode.None:
+				if (compression != NetworkTransform.CompressionSyncMode.Low)
+				{
+					if (compression == NetworkTransform.CompressionSyncMode.High)
+					{
+						writer.Write((short)angle);
+					}
+				}
+				else
+				{
+					writer.Write((short)angle);
+				}
+			}
+			else
+			{
 				writer.Write(angle);
-				break;
-			case NetworkTransform.CompressionSyncMode.Low:
-				writer.Write((short)angle);
-				break;
-			case NetworkTransform.CompressionSyncMode.High:
-				writer.Write((short)angle);
-				break;
 			}
 		}
 
 		private static float ReadAngle(NetworkReader reader, NetworkTransform.CompressionSyncMode compression)
 		{
-			switch (compression)
+			float result;
+			if (compression != NetworkTransform.CompressionSyncMode.None)
 			{
-			case NetworkTransform.CompressionSyncMode.None:
-				return reader.ReadSingle();
-			case NetworkTransform.CompressionSyncMode.Low:
-				return (float)reader.ReadInt16();
-			case NetworkTransform.CompressionSyncMode.High:
-				return (float)reader.ReadInt16();
-			default:
-				return 0f;
+				if (compression != NetworkTransform.CompressionSyncMode.Low)
+				{
+					if (compression != NetworkTransform.CompressionSyncMode.High)
+					{
+						result = 0f;
+					}
+					else
+					{
+						result = (float)reader.ReadInt16();
+					}
+				}
+				else
+				{
+					result = (float)reader.ReadInt16();
+				}
 			}
+			else
+			{
+				result = reader.ReadSingle();
+			}
+			return result;
 		}
 
 		public static void SerializeVelocity3D(NetworkWriter writer, Vector3 velocity, NetworkTransform.CompressionSyncMode compression)

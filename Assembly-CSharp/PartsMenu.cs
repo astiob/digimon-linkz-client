@@ -151,12 +151,10 @@ public sealed class PartsMenu : MonoBehaviour
 	private void ShowMainParts()
 	{
 		GUIManager.ExtBackKeyReady = false;
-		if (CMD_CharacterDetailed.Instance != null)
-		{
-			CMD_CharacterDetailed.Instance.TranceEffectActiveSet(false);
-		}
+		GUIMain.GetUIRoot().BroadcastMessage("OnOpenMenuReceiver", SendMessageOptions.DontRequireReceiver);
 		this.mainParts.Open(new Action<int>(this.EndMoved));
-		GUICollider.DisableAllCollider("PartsMenu");
+		this.bannerPanel.SetMenuShowFlag(true);
+		GUICollider.DisableAllCollider("PartsMenu_Collider");
 		FarmRoot farmRoot = FarmRoot.Instance;
 		if (null != farmRoot)
 		{
@@ -175,7 +173,8 @@ public sealed class PartsMenu : MonoBehaviour
 		GUIFace.instance.EnableCollider(true);
 		GUIFaceIndicator.instance.EnableCollider(true);
 		this.mainParts.Close(sound, new Action<int>(this.EndMoved));
-		GUICollider.DisableAllCollider("PartsMenu");
+		this.bannerPanel.SetMenuShowFlag(false);
+		GUICollider.DisableAllCollider("PartsMenu_Collider");
 	}
 
 	private void EndMoved(int i)
@@ -192,12 +191,9 @@ public sealed class PartsMenu : MonoBehaviour
 			PartsMenu.SetMenuButtonAlertBadge();
 			this._isShowed = false;
 			GUIManager.ExtBackKeyReady = true;
-			if (CMD_CharacterDetailed.Instance != null)
-			{
-				CMD_CharacterDetailed.Instance.TranceEffectActiveSet(true);
-			}
+			GUIMain.GetUIRoot().BroadcastMessage("OnCloseMenuReceiver", SendMessageOptions.DontRequireReceiver);
 		}
-		GUICollider.EnableAllCollider("PartsMenu");
+		GUICollider.EnableAllCollider("PartsMenu_Collider");
 	}
 
 	private void OnTappedTab()
@@ -453,17 +449,22 @@ public sealed class PartsMenu : MonoBehaviour
 			if (topDialog.name == "CMD_MonsterGashaResult" || topDialog.name == "CMD_ChipGashaResult" || topDialog.name == "CMD_TicketGashaResult")
 			{
 				topDialog.ClosePanel(true);
-				return;
 			}
-			if (topDialog.name == "CMD_GashaTOP")
+			else if (topDialog.name != "CMD_GashaTOP")
 			{
-				return;
+				GUIManager.CloseAllCommonDialog(delegate
+				{
+					this.PartsMenuShowDialog(null, "CMD_GashaTOP");
+				});
 			}
 		}
-		GUIManager.CloseAllCommonDialog(delegate
+		else
 		{
-			this.PartsMenuShowDialog(null, "CMD_GashaTOP");
-		});
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_GashaTOP");
+			});
+		}
 	}
 
 	private void OnClickedChat()
@@ -621,14 +622,6 @@ public sealed class PartsMenu : MonoBehaviour
 		}
 	}
 
-	public static void SetMenuAlertState(bool state)
-	{
-		if (null != PartsMenu.instance)
-		{
-			PartsMenu.instance.trainingAlertState = state;
-		}
-	}
-
 	public static void SetTrainingAlertState(bool state)
 	{
 		if (null != PartsMenu.instance)
@@ -653,9 +646,9 @@ public sealed class PartsMenu : MonoBehaviour
 		}
 	}
 
-	private CommonDialog PartsMenuShowDialog(Action<int> action, string dialogName)
+	private CommonDialog PartsMenuShowDialog(Action<int> closeAction, string dialogName)
 	{
-		CommonDialog result = GUIMain.ShowCommonDialog(action, dialogName, null);
+		CommonDialog result = GUIMain.ShowCommonDialog(closeAction, dialogName, null);
 		GUIMain.AdjustBarrierZ();
 		return result;
 	}

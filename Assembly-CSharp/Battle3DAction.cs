@@ -106,9 +106,9 @@ public class Battle3DAction : BattleFunctionBase
 			{
 				smoothLevel = 1f - smoothLevel;
 			}
-			foreach (CharacterStateControl c in characters)
+			foreach (CharacterStateControl characterStateControl in characters)
 			{
-				c.CharacterParams.transform.localScale = Vector3.one * smoothLevel;
+				characterStateControl.CharacterParams.transform.localScale = Vector3.one * smoothLevel;
 			}
 			yield return new WaitForEndOfFrame();
 		}
@@ -187,9 +187,9 @@ public class Battle3DAction : BattleFunctionBase
 	public IEnumerator StopHitAnimation(params HitEffectParams[] currentHitEffect)
 	{
 		this.StopHitEffectAction(currentHitEffect);
-		foreach (HitEffectParams h in currentHitEffect)
+		foreach (HitEffectParams hitEffect in currentHitEffect)
 		{
-			base.stateManager.soundPlayer.TryStopSE(h);
+			base.stateManager.soundPlayer.TryStopSE(hitEffect);
 		}
 		base.stateManager.soundPlayer.StopHitEffectSE();
 		yield break;
@@ -225,34 +225,34 @@ public class Battle3DAction : BattleFunctionBase
 		List<CharacterParams> downCharacters = new List<CharacterParams>();
 		if (base.battleStateData.currentWaveNumber < 1)
 		{
-			foreach (CharacterStateControl player in players)
+			foreach (CharacterStateControl characterStateControl in players)
 			{
-				int upCount = 0;
-				int downCount = 0;
-				player.GetDifferenceExtraPram(out upCount, out downCount);
-				bool isPoint = player.IsPoint();
-				if (upCount > 0 || isPoint)
+				int num = 0;
+				int num2 = 0;
+				characterStateControl.GetDifferenceExtraPram(out num, out num2);
+				bool flag = characterStateControl.IsPoint();
+				if (num > 0 || flag)
 				{
-					upCharacters.Add(player.CharacterParams);
+					upCharacters.Add(characterStateControl.CharacterParams);
 				}
-				if (downCount > 0)
+				if (num2 > 0)
 				{
-					downCharacters.Add(player.CharacterParams);
+					downCharacters.Add(characterStateControl.CharacterParams);
 				}
 			}
 		}
-		foreach (CharacterStateControl enemy in enemies)
+		foreach (CharacterStateControl characterStateControl2 in enemies)
 		{
-			int upCount2 = 0;
-			int downCount2 = 0;
-			enemy.GetDifferenceExtraPram(out upCount2, out downCount2);
-			if (upCount2 > 0)
+			int num3 = 0;
+			int num4 = 0;
+			characterStateControl2.GetDifferenceExtraPram(out num3, out num4);
+			if (num3 > 0)
 			{
-				upCharacters.Add(enemy.CharacterParams);
+				upCharacters.Add(characterStateControl2.CharacterParams);
 			}
-			if (downCount2 > 0)
+			if (num4 > 0)
 			{
-				downCharacters.Add(enemy.CharacterParams);
+				downCharacters.Add(characterStateControl2.CharacterParams);
 			}
 		}
 		if (base.battleStateData.currentWaveNumber == 0 && upCharacters.Count > 0)
@@ -374,27 +374,30 @@ public class Battle3DAction : BattleFunctionBase
 
 	public void PlayDeadAnimationCharacterAction(Action deathEffectPlay, CharacterStateControl character)
 	{
-		int myIndex = character.myIndex;
 		HitEffectParams hitEffectParams;
 		if (character.isEnemy)
 		{
 			bool flag = base.stateManager.IsLastBattleAndAllDeath();
 			if (flag)
 			{
-				hitEffectParams = base.battleStateData.enemiesLastDeadEffect[myIndex];
+				hitEffectParams = (BattleEffectManager.Instance.GetEffect("EFF_COM_BOSSDEATH") as HitEffectParams);
+				base.battleStateData.UseLastDeadEffect.Add(hitEffectParams);
 			}
 			else
 			{
-				hitEffectParams = base.battleStateData.enemiesDeathEffect[myIndex];
+				hitEffectParams = (BattleEffectManager.Instance.GetEffect("EFF_COM_DEATH") as HitEffectParams);
+				base.battleStateData.UseDeathEffect.Add(hitEffectParams);
 			}
 		}
 		else
 		{
-			hitEffectParams = base.battleStateData.playersDeathEffect[myIndex];
+			hitEffectParams = (BattleEffectManager.Instance.GetEffect("EFF_COM_DEATH") as HitEffectParams);
+			base.battleStateData.UseDeathEffect.Add(hitEffectParams);
 		}
 		CharacterParams characterParams = character.CharacterParams;
+		CharacterAnimationType type = CharacterAnimationType.dead;
 		HitEffectParams hitEffectParams2 = hitEffectParams;
-		characterParams.PlayAnimation(CharacterAnimationType.dead, SkillType.Attack, 0, hitEffectParams2, deathEffectPlay);
+		characterParams.PlayAnimation(type, SkillType.Attack, 0, hitEffectParams2, deathEffectPlay);
 	}
 
 	public void ShowAllCharactersAction(params CharacterStateControl[] characters)
@@ -425,19 +428,19 @@ public class Battle3DAction : BattleFunctionBase
 	{
 		bool[] charactersActive = new bool[characters.Length];
 		int index = 0;
-		foreach (CharacterStateControl c in characters)
+		foreach (CharacterStateControl characterStateControl in characters)
 		{
-			charactersActive[index] = c.CharacterParams.gameObject.activeSelf;
-			c.CharacterParams.gameObject.SetActive(true);
-			c.CharacterParams.StopAnimation();
-			c.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
+			charactersActive[index] = characterStateControl.CharacterParams.gameObject.activeSelf;
+			characterStateControl.CharacterParams.gameObject.SetActive(true);
+			characterStateControl.CharacterParams.StopAnimation();
+			characterStateControl.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 			index++;
 		}
 		yield return new WaitForEndOfFrame();
 		index = 0;
-		foreach (CharacterStateControl c2 in characters)
+		foreach (CharacterStateControl characterStateControl2 in characters)
 		{
-			c2.CharacterParams.gameObject.SetActive(charactersActive[index]);
+			characterStateControl2.CharacterParams.gameObject.SetActive(charactersActive[index]);
 			index++;
 		}
 		yield break;
@@ -452,7 +455,10 @@ public class Battle3DAction : BattleFunctionBase
 	{
 		foreach (HitEffectParams hitEffectParams in hitEffects)
 		{
-			hitEffectParams.StopAnimation();
+			if (hitEffectParams != null)
+			{
+				hitEffectParams.StopAnimation();
+			}
 		}
 	}
 

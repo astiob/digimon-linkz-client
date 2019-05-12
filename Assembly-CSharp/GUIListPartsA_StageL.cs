@@ -7,24 +7,24 @@ using UnityEngine;
 
 public class GUIListPartsA_StageL : GUIListPartBS
 {
-	[SerializeField]
 	[Header("デフォルトの進捗の画像")]
+	[SerializeField]
 	private string normalProgress = "Common02_ProgressG";
 
 	[Header("クリア進捗の画像")]
 	[SerializeField]
 	private string clearProgress = "Common02_Progress";
 
-	[SerializeField]
 	[Header("進捗の四角")]
+	[SerializeField]
 	private List<GameObject> goPROGRESS_LIST;
 
 	[Header("NEWのGameObject")]
 	[SerializeField]
 	private GameObject goNEW;
 
-	[SerializeField]
 	[Header("[の画像のGameObject")]
+	[SerializeField]
 	private GameObject goFRAME_L;
 
 	[Header("]の画像のGameObject")]
@@ -47,8 +47,8 @@ public class GUIListPartsA_StageL : GUIListPartBS
 
 	private Color defalutBackground2Color;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite background;
 
 	private UILabel ngTXT_AREA;
@@ -62,12 +62,12 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[SerializeField]
 	[Header("クリアのマークの画像")]
+	[SerializeField]
 	private string clearMark = "Common02_text_Clear";
 
-	[SerializeField]
 	[Header("ステージギミック表記Obj")]
+	[SerializeField]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]
@@ -165,17 +165,24 @@ public class GUIListPartsA_StageL : GUIListPartBS
 	public override void ShowGUI()
 	{
 		base.ShowGUI();
-		switch (this.data.status)
+		int status = this.data.status;
+		if (status != 2)
 		{
-		case 2:
+			if (status != 3)
+			{
+				if (status == 4)
+				{
+					this.SetClearIcon();
+				}
+			}
+			else
+			{
+				this.goNEW.SetActive(false);
+			}
+		}
+		else
+		{
 			this.ngSPR_NEW.MakePixelPerfect();
-			break;
-		case 3:
-			this.goNEW.SetActive(false);
-			break;
-		case 4:
-			this.SetClearIcon();
-			break;
 		}
 		if (this.ngTXT_AREA != null)
 		{
@@ -280,7 +287,7 @@ public class GUIListPartsA_StageL : GUIListPartBS
 			{
 				xx,
 				yy
-			}).Where(<>__TranspIdent2 => <>__TranspIdent2.xx.worldDungeonM.worldDungeonId == <>__TranspIdent2.yy.Key && <>__TranspIdent2.xx.status != 1).Select(<>__TranspIdent2 => <>__TranspIdent2.xx);
+			}).Where(<>__TranspIdent3 => <>__TranspIdent3.xx.worldDungeonM.worldDungeonId == <>__TranspIdent3.yy.Key && <>__TranspIdent3.xx.status != 1).Select(<>__TranspIdent3 => <>__TranspIdent3.xx);
 			if (source.Count<QuestData.WorldDungeonData>() != 0)
 			{
 				this.stateLabelColor.Add(new Color(1f, 0.94f, 0f));

@@ -111,29 +111,39 @@ public class CMD_MultiRecruitSettingModal : CMD
 			UISprite component2 = this.goPublishedBtnList[i].GetComponent<UISprite>();
 			this.clPublishedBtnList.Add(component);
 			this.spPublishedBtnList.Add(component2);
-			int num;
-			foreach (object obj in this.goPublishedBtnList[i].transform)
+			IEnumerator enumerator = this.goPublishedBtnList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				num = i;
-				if (num != 0)
+				while (enumerator.MoveNext())
 				{
-					if (num == 1)
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					if (i != 0)
 					{
-						component3.text = StringMaster.GetString("RecruitRule-04");
+						if (i == 1)
+						{
+							component3.text = StringMaster.GetString("RecruitRule-04");
+						}
 					}
+					else
+					{
+						component3.text = StringMaster.GetString("RecruitRule-03");
+					}
+					this.lbPublishedBtnList.Add(component3);
 				}
-				else
-				{
-					component3.text = StringMaster.GetString("RecruitRule-03");
-				}
-				this.lbPublishedBtnList.Add(component3);
 			}
-			num = i;
-			if (num != 0)
+			finally
 			{
-				if (num == 1)
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
+			}
+			if (i != 0)
+			{
+				if (i == 1)
 				{
 					component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 					{
@@ -163,44 +173,69 @@ public class CMD_MultiRecruitSettingModal : CMD
 			UISprite component2 = this.goMoodBtnList[i].GetComponent<UISprite>();
 			this.clMoodBtnList.Add(component);
 			this.spMoodBtnList.Add(component2);
-			foreach (object obj in this.goMoodBtnList[i].transform)
+			IEnumerator enumerator = this.goMoodBtnList[i].transform.GetEnumerator();
+			try
 			{
-				Transform transform = (Transform)obj;
-				UILabel component3 = transform.gameObject.GetComponent<UILabel>();
-				switch (i)
+				while (enumerator.MoveNext())
 				{
-				case 0:
-					component3.text = StringMaster.GetString("RecruitRule-06");
-					break;
-				case 1:
-					component3.text = StringMaster.GetString("RecruitRule-07");
-					break;
-				case 2:
-					component3.text = StringMaster.GetString("RecruitRule-08");
-					break;
+					object obj = enumerator.Current;
+					Transform transform = (Transform)obj;
+					UILabel component3 = transform.gameObject.GetComponent<UILabel>();
+					if (i != 0)
+					{
+						if (i != 1)
+						{
+							if (i == 2)
+							{
+								component3.text = StringMaster.GetString("RecruitRule-08");
+							}
+						}
+						else
+						{
+							component3.text = StringMaster.GetString("RecruitRule-07");
+						}
+					}
+					else
+					{
+						component3.text = StringMaster.GetString("RecruitRule-06");
+					}
+					this.lbMoodBtnList.Add(component3);
 				}
-				this.lbMoodBtnList.Add(component3);
 			}
-			switch (i)
+			finally
 			{
-			case 0:
+				IDisposable disposable;
+				if ((disposable = (enumerator as IDisposable)) != null)
+				{
+					disposable.Dispose();
+				}
+			}
+			if (i != 0)
+			{
+				if (i != 1)
+				{
+					if (i == 2)
+					{
+						component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
+						{
+							this.OnClickedMoodBtn(2);
+						};
+					}
+				}
+				else
+				{
+					component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
+					{
+						this.OnClickedMoodBtn(1);
+					};
+				}
+			}
+			else
+			{
 				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
 				{
 					this.OnClickedMoodBtn(0);
 				};
-				break;
-			case 1:
-				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
-				{
-					this.OnClickedMoodBtn(1);
-				};
-				break;
-			case 2:
-				component.onTouchEnded += delegate(Touch touch, Vector2 pos, bool flag)
-				{
-					this.OnClickedMoodBtn(2);
-				};
-				break;
 			}
 		}
 		this.SetupMoodBtnColor(0);
@@ -280,7 +315,7 @@ public class CMD_MultiRecruitSettingModal : CMD
 	private IEnumerator CreateMultiRecruitRoom()
 	{
 		GameWebAPI.WD_Req_DngStart last_dng_req = DataMng.Instance().GetResultUtilData().GetLastDngReq();
-		int worldDungeonId;
+		int worldDungeonId = -1;
 		if (CMD_QuestTOP.instance != null)
 		{
 			worldDungeonId = int.Parse(CMD_QuestTOP.instance.StageDataBk.worldDungeonM.worldDungeonId);

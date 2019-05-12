@@ -15,23 +15,24 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("RegisterHandlerSafe id:" + msgType + " handler is null");
 				}
-				return;
 			}
-			if (LogFilter.logDebug)
+			else
 			{
-				Debug.Log(string.Concat(new object[]
+				if (LogFilter.logDebug)
 				{
-					"RegisterHandlerSafe id:",
-					msgType,
-					" handler:",
-					handler.Method.Name
-				}));
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterHandlerSafe id:",
+						msgType,
+						" handler:",
+						handler.GetMethodName()
+					}));
+				}
+				if (!this.m_MsgHandlers.ContainsKey(msgType))
+				{
+					this.m_MsgHandlers.Add(msgType, handler);
+				}
 			}
-			if (this.m_MsgHandlers.ContainsKey(msgType))
-			{
-				return;
-			}
-			this.m_MsgHandlers.Add(msgType, handler);
 		}
 
 		public void RegisterHandler(short msgType, NetworkMessageDelegate handler)
@@ -42,35 +43,36 @@ namespace UnityEngine.Networking
 				{
 					Debug.LogError("RegisterHandler id:" + msgType + " handler is null");
 				}
-				return;
 			}
-			if (msgType <= 31)
+			else if (msgType <= 31)
 			{
 				if (LogFilter.logError)
 				{
 					Debug.LogError("RegisterHandler: Cannot replace system message handler " + msgType);
 				}
-				return;
 			}
-			if (this.m_MsgHandlers.ContainsKey(msgType))
+			else
 			{
+				if (this.m_MsgHandlers.ContainsKey(msgType))
+				{
+					if (LogFilter.logDebug)
+					{
+						Debug.Log("RegisterHandler replacing " + msgType);
+					}
+					this.m_MsgHandlers.Remove(msgType);
+				}
 				if (LogFilter.logDebug)
 				{
-					Debug.Log("RegisterHandler replacing " + msgType);
+					Debug.Log(string.Concat(new object[]
+					{
+						"RegisterHandler id:",
+						msgType,
+						" handler:",
+						handler.GetMethodName()
+					}));
 				}
-				this.m_MsgHandlers.Remove(msgType);
+				this.m_MsgHandlers.Add(msgType, handler);
 			}
-			if (LogFilter.logDebug)
-			{
-				Debug.Log(string.Concat(new object[]
-				{
-					"RegisterHandler id:",
-					msgType,
-					" handler:",
-					handler.Method.Name
-				}));
-			}
-			this.m_MsgHandlers.Add(msgType, handler);
 		}
 
 		public void UnregisterHandler(short msgType)
@@ -80,11 +82,16 @@ namespace UnityEngine.Networking
 
 		internal NetworkMessageDelegate GetHandler(short msgType)
 		{
+			NetworkMessageDelegate result;
 			if (this.m_MsgHandlers.ContainsKey(msgType))
 			{
-				return this.m_MsgHandlers[msgType];
+				result = this.m_MsgHandlers[msgType];
 			}
-			return null;
+			else
+			{
+				result = null;
+			}
+			return result;
 		}
 
 		internal Dictionary<short, NetworkMessageDelegate> GetHandlers()

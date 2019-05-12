@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 [AddComponentMenu("Digimon Effects/Tools/Particle Controller")]
 [RequireComponent(typeof(ParticleSystem))]
-[DisallowMultipleComponent]
 public class ParticleController : MonoBehaviour
 {
 	[SerializeField]
@@ -16,7 +16,7 @@ public class ParticleController : MonoBehaviour
 	private void Awake()
 	{
 		this._particleSystem = base.GetComponent<ParticleSystem>();
-		this._particleSystem.playOnAwake = false;
+		this._particleSystem.main.playOnAwake = false;
 		this._onEmitParticleCache = !this._onEmitParticle;
 	}
 

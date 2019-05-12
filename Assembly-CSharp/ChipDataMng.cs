@@ -57,9 +57,9 @@ public static class ChipDataMng
 
 	public static void DeleteUserChipData(int userChipId)
 	{
-		List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(ChipDataMng.userChipData.userChipList);
 		if (ChipDataMng.userChipData != null)
 		{
+			List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(ChipDataMng.userChipData.userChipList);
 			for (int i = 0; i < ChipDataMng.userChipData.userChipList.Length; i++)
 			{
 				if (ChipDataMng.userChipData.userChipList[i].userChipId == userChipId)
@@ -73,17 +73,41 @@ public static class ChipDataMng
 		}
 	}
 
+	public static void DeleteUserChipData(List<int> userChipIdList)
+	{
+		if (ChipDataMng.userChipData != null)
+		{
+			List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = new List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>(ChipDataMng.userChipData.userChipList);
+			int i;
+			for (i = userChipIdList.Count - 1; i >= 0; i--)
+			{
+				GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList = list.SingleOrDefault((GameWebAPI.RespDataCS_ChipListLogic.UserChipList x) => x.userChipId == userChipIdList[i]);
+				if (userChipList != null)
+				{
+					list.Remove(userChipList);
+				}
+			}
+			ChipDataMng.userChipData.userChipList = list.ToArray();
+			ChipDataMng.userChipData.count = list.Count;
+		}
+	}
+
 	public static void DeleteEquipChip(string[] userMonsterIdList)
 	{
 		foreach (string userMonsterId in userMonsterIdList)
 		{
 			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] monsterChipList = ChipDataMng.GetMonsterChipList(userMonsterId);
-			if (monsterChipList != null)
+			ChipDataMng.DeleteUserChip(monsterChipList);
+		}
+	}
+
+	public static void DeleteUserChip(GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] chipList)
+	{
+		if (chipList != null)
+		{
+			foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in chipList)
 			{
-				foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in monsterChipList)
-				{
-					ChipDataMng.DeleteUserChipData(userChipList.userChipId);
-				}
+				ChipDataMng.DeleteUserChipData(userChipList.userChipId);
 			}
 		}
 	}
@@ -145,11 +169,13 @@ public static class ChipDataMng
 		if (ChipDataMng.ChipEffectM == null)
 		{
 			ChipDataMng.ChipEffectM = new Dictionary<int, GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[]>();
-			KeyValuePair<int, GameWebAPI.RespDataMA_ChipM.Chip> chip;
-			foreach (KeyValuePair<int, GameWebAPI.RespDataMA_ChipM.Chip> chip2 in ChipDataMng.GetDictionaryChipM())
+			using (Dictionary<int, GameWebAPI.RespDataMA_ChipM.Chip>.Enumerator enumerator = ChipDataMng.GetDictionaryChipM().GetEnumerator())
 			{
-				chip = chip2;
-				ChipDataMng.ChipEffectM[chip.Key] = MasterDataMng.Instance().RespDataMA_ChipEffectMaster.chipEffectM.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect e) => e.chipId == chip.Value.chipId).ToArray<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+				while (enumerator.MoveNext())
+				{
+					KeyValuePair<int, GameWebAPI.RespDataMA_ChipM.Chip> chip = enumerator.Current;
+					ChipDataMng.ChipEffectM[chip.Key] = MasterDataMng.Instance().RespDataMA_ChipEffectMaster.chipEffectM.Where((GameWebAPI.RespDataMA_ChipEffectM.ChipEffect e) => e.chipId == chip.Value.chipId).ToArray<GameWebAPI.RespDataMA_ChipEffectM.ChipEffect>();
+				}
 			}
 		}
 		return ChipDataMng.ChipEffectM;
@@ -157,8 +183,13 @@ public static class ChipDataMng
 
 	public static GameWebAPI.RespDataMA_ChipM.Chip GetChipMainData(string chipId)
 	{
+		return ChipDataMng.GetChipMainData(int.Parse(chipId));
+	}
+
+	public static GameWebAPI.RespDataMA_ChipM.Chip GetChipMainData(int chipId)
+	{
 		GameWebAPI.RespDataMA_ChipM.Chip chip = null;
-		if (ChipDataMng.GetDictionaryChipM().TryGetValue(int.Parse(chipId), out chip))
+		if (ChipDataMng.GetDictionaryChipM().TryGetValue(chipId, out chip))
 		{
 			chip = ChipDataMng.SetChipIconPath(chip);
 			chip = ChipDataMng.SetChipSellPrice(chip);
@@ -230,7 +261,7 @@ public static class ChipDataMng
 		return new APIRequestTask(request, requestRetry);
 	}
 
-	public static GameWebAPI.ChipEquipLogic RequestAPIChipEquip(GameWebAPI.ReqDataCS_ChipEquipLogic equip, Action<int, GameWebAPI.RequestMonsterList> callBack = null)
+	public static GameWebAPI.ChipEquipLogic RequestAPIChipEquip(GameWebAPI.ReqDataCS_ChipEquipLogic equip, Action<int> callBack = null)
 	{
 		return new GameWebAPI.ChipEquipLogic
 		{
@@ -244,35 +275,22 @@ public static class ChipDataMng
 			},
 			OnReceived = delegate(GameWebAPI.RespDataCS_ChipEquipLogic resData)
 			{
-				GameWebAPI.RequestMonsterList arg = null;
 				if (resData.resultCode == 1)
 				{
 					GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChip = ChipDataMng.GetUserChip(equip.userChipId);
 					userChip.userChipId = equip.userChipId;
 					userChip.userMonsterId = ((equip.GetActEnum() != GameWebAPI.ReqDataCS_ChipEquipLogic.ACT.ATTACH) ? 0 : equip.userMonsterId);
-					MonsterData md = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(equip.userMonsterId.ToString());
-					md.GetChipEquip().UpdateEquipList(equip);
+					MonsterData userMonster = ClassSingleton<MonsterUserDataMng>.Instance.GetUserMonster(equip.userMonsterId.ToString());
+					userMonster.GetChipEquip().UpdateEquipList(equip);
 					if (equip.GetActEnum() == GameWebAPI.ReqDataCS_ChipEquipLogic.ACT.REMOVE)
 					{
 						Singleton<UserDataMng>.Instance.UpdateUserItemNum(7, -1);
 					}
-					GameWebAPI.RequestMonsterList requestMonsterList = new GameWebAPI.RequestMonsterList();
-					requestMonsterList.SetSendData = delegate(GameWebAPI.ReqDataUS_GetMonsterList param)
-					{
-						param.userMonsterIds = new int[]
-						{
-							int.Parse(md.userMonster.userMonsterId)
-						};
-					};
-					requestMonsterList.OnReceived = delegate(GameWebAPI.RespDataUS_GetMonsterList response)
-					{
-						ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonsterList);
-					};
-					arg = requestMonsterList;
+					ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(resData.userMonster);
 				}
 				if (callBack != null)
 				{
-					callBack(resData.resultCode, arg);
+					callBack(resData.resultCode);
 				}
 			}
 		};
@@ -294,8 +312,10 @@ public static class ChipDataMng
 			if (resData.resultCode == 1)
 			{
 				List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> list = ChipDataMng.userChipData.userChipList.ToList<GameWebAPI.RespDataCS_ChipListLogic.UserChipList>();
-				foreach (int materialChip in materialChipIds)
+				int[] materialChipIds2 = materialChipIds;
+				for (int i = 0; i < materialChipIds2.Length; i++)
 				{
+					int materialChip = materialChipIds2[i];
 					list.RemoveAll((GameWebAPI.RespDataCS_ChipListLogic.UserChipList c) => c.userChipId == materialChip);
 				}
 				ChipDataMng.userChipData.userChipList = list.ToArray();
@@ -343,31 +363,6 @@ public static class ChipDataMng
 					ChipClientSlotInfo slotInfo = ChipDataMng.userChipSlotData.GetSlotInfo(md.userMonster.userMonsterId);
 					slotInfo.GetSlotNum().extraSlotNum++;
 					Singleton<UserDataMng>.Instance.UpdateUserItemNum(6, useEjectItemCnt * -1);
-				}
-				if (callBack != null)
-				{
-					callBack(resData.resultCode);
-				}
-			}
-		};
-	}
-
-	public static GameWebAPI.ChipSellLogic RequestAPIChipSell(int[] sellUserChipIdList, Action<int> callBack = null)
-	{
-		return new GameWebAPI.ChipSellLogic
-		{
-			SetSendData = delegate(GameWebAPI.ReqDataCS_ChipSellLogic param)
-			{
-				param.materialChip = sellUserChipIdList;
-			},
-			OnReceived = delegate(GameWebAPI.RespDataCS_ChipSellLogic resData)
-			{
-				if (resData.resultCode == 1)
-				{
-					foreach (int userChipId in sellUserChipIdList)
-					{
-						ChipDataMng.DeleteUserChipData(userChipId);
-					}
 				}
 				if (callBack != null)
 				{

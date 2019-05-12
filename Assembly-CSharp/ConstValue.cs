@@ -4,7 +4,31 @@ using UnityEngine;
 
 public class ConstValue
 {
+	private static int[] skill_ditailM_efcs = new int[]
+	{
+		1,
+		34
+	};
+
+	public static int NO_MEAN_NUM = -1;
+
 	public const string TAB_ARROW = "Common02_Btn_Arrow";
+
+	public static Color TAB_YELLOW = new Color(0.980392158f, 0.945098042f, 0f, 1f);
+
+	public static Color DIGIMON_YELLOW = new Color32(byte.MaxValue, 200, 0, byte.MaxValue);
+
+	public static Color DIGIMON_BLUE = new Color32(0, 200, byte.MaxValue, byte.MaxValue);
+
+	public static Color DIGIMON_GREEN = new Color32(0, byte.MaxValue, 50, byte.MaxValue);
+
+	public static Color PLUS_COLOR = new Color32(0, 150, 0, byte.MaxValue);
+
+	public static Color MINUS_COLOR = new Color32(byte.MaxValue, 0, 0, byte.MaxValue);
+
+	public static Color DEFAULT_COLOR = new Color32(58, 58, 58, byte.MaxValue);
+
+	public static Color DEACTIVE_BUTTON_LABEL = new Color32(150, 150, 150, byte.MaxValue);
 
 	public const string RESISTANCE_WEAK_VALUE = "-1";
 
@@ -82,30 +106,6 @@ public class ConstValue
 
 	public const float RENDER3D_CHARA_SCALE_MAX = 1.2f;
 
-	private static int[] skill_ditailM_efcs = new int[]
-	{
-		1,
-		34
-	};
-
-	public static int NO_MEAN_NUM = -1;
-
-	public static Color TAB_YELLOW = new Color(0.980392158f, 0.945098042f, 0f, 1f);
-
-	public static Color DIGIMON_YELLOW = new Color32(byte.MaxValue, 200, 0, byte.MaxValue);
-
-	public static Color DIGIMON_BLUE = new Color32(0, 200, byte.MaxValue, byte.MaxValue);
-
-	public static Color DIGIMON_GREEN = new Color32(0, byte.MaxValue, 50, byte.MaxValue);
-
-	public static Color PLUS_COLOR = new Color32(0, 150, 0, byte.MaxValue);
-
-	public static Color MINUS_COLOR = new Color32(byte.MaxValue, 0, 0, byte.MaxValue);
-
-	public static Color DEFAULT_COLOR = new Color32(58, 58, 58, byte.MaxValue);
-
-	public static Color DEACTIVE_BUTTON_LABEL = new Color32(150, 150, 150, byte.MaxValue);
-
 	public static string APP_SITE_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_SITE_DOMAIN;
 
 	public static string APP_WEB_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_SITE_DOMAIN;
@@ -138,14 +138,6 @@ public class ConstValue
 		get
 		{
 			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.RECOVER_STAMINA_DIGISTONE_NUM;
-		}
-	}
-
-	public static int MAX_GOLD_MEDAL_COUNT
-	{
-		get
-		{
-			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.MAX_GOLD_MEDAL_COUNT;
 		}
 	}
 
@@ -213,11 +205,11 @@ public class ConstValue
 		}
 	}
 
-	public static int ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON
+	public static int ENABLE_SPACE_TOEXEC_DUNGEON
 	{
 		get
 		{
-			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON;
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ENABLE_SPACE_TOEXEC_DUNGEON;
 		}
 	}
 
@@ -230,14 +222,6 @@ public class ConstValue
 	}
 
 	public static int ENABLE_CHIP_SPACE_TOEXEC_GASHA_10
-	{
-		get
-		{
-			return 1;
-		}
-	}
-
-	public static int ENABLE_CHIP_SPACE_TOEXEC_DUNGEON
 	{
 		get
 		{

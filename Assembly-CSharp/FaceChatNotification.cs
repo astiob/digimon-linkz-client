@@ -85,8 +85,7 @@ public class FaceChatNotification : GUICollider
 		{
 			APIRequestTask apirequestTask = new APIRequestTask(request, false);
 			apirequestTask.SetAfterBehavior(TaskBase.AfterAlertClosed.RETURN);
-			Func<Exception, IEnumerator> onAlert = (Exception noop) => null;
-			IEnumerator routine = apirequestTask.Run(null, null, onAlert);
+			IEnumerator routine = apirequestTask.Run(null, null, (Exception noop) => null);
 			base.StartCoroutine(routine);
 		}
 	}
@@ -226,8 +225,10 @@ public class FaceChatNotification : GUICollider
 		string text = string.Empty;
 		string text2 = string.Empty;
 		bool flag = false;
-		foreach (GameWebAPI.RespData_ChatLastHistoryIdList.LastHistoryIds dt in this.apiLastHistoryList.lastHistoryIds)
+		GameWebAPI.RespData_ChatLastHistoryIdList.LastHistoryIds[] lastHistoryIds = this.apiLastHistoryList.lastHistoryIds;
+		for (int i = 0; i < lastHistoryIds.Length; i++)
 		{
+			GameWebAPI.RespData_ChatLastHistoryIdList.LastHistoryIds dt = lastHistoryIds[i];
 			text2 += string.Format("{0}:{1},", dt.chatGroupId, dt.chatMessageHistoryId);
 			var <>__AnonType = this.prefsLastHistoryList.Where((FaceChatNotification.UserPrefsHistoryIdList item) => item.historyData.chatGroupId == dt.chatGroupId).Select((FaceChatNotification.UserPrefsHistoryIdList item) => new
 			{

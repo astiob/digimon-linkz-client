@@ -223,7 +223,7 @@ public class BattleCallAction : BattleFunctionBase
 		base.stateManager.uiControl.ApplySetContinueUIColliders(true);
 		base.battleStateData.isShowRetireWindow = false;
 		base.stateManager.time.SetPlaySpeed(false, false);
-		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3));
+		base.stateManager.uiControl.ApplyCurrentSelectArrow(false, default(Vector3), 0);
 		base.stateManager.soundPlayer.SetPauseVolume(false);
 		SoundPlayer.PlayButtonEnter();
 		base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, true, base.battleStateData.isBattleRetired);
