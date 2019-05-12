@@ -16,12 +16,12 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[Header("ガシャの背景色")]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("イベントの背景色")]
+	[SerializeField]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
-	[Header("キャンペーンの背景色")]
 	[SerializeField]
+	[Header("キャンペーンの背景色")]
 	private Color campaignBGColor = new Color32(0, 0, 80, byte.MaxValue);
 
 	[Header("背景のスプライト")]
@@ -37,12 +37,12 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	[SerializeField]
 	[Header("NEWのスプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
-	[SerializeField]
 	[Header("NEWをコントロールする")]
+	[SerializeField]
 	private bool doNewControl;
 
 	private static readonly int DAY_HOUR = 24;

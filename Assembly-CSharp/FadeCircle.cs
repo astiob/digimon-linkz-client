@@ -195,8 +195,8 @@ public class FadeCircle : ScreenEffectBase
 		[Range(0f, 1f)]
 		public float max;
 
-		[Range(0.5f, 5f)]
 		[SerializeField]
+		[Range(0.5f, 5f)]
 		public float blinkingSpeed;
 
 		[SerializeField]
@@ -210,12 +210,12 @@ public class FadeCircle : ScreenEffectBase
 		[Range(0f, 1.5f)]
 		public float to;
 
-		[SerializeField]
 		[Range(0f, 1.5f)]
+		[SerializeField]
 		public float from;
 
-		[SerializeField]
 		[Range(0.5f, 5f)]
+		[SerializeField]
 		public float changeSpeed;
 
 		[SerializeField]

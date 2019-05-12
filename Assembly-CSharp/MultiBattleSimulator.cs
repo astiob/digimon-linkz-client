@@ -12,12 +12,12 @@ public class MultiBattleSimulator : BattleSimulator
 
 	public const string memberName = "hostAddress";
 
-	[SerializeField]
 	[Header("MyユーザID")]
+	[SerializeField]
 	public string myPlayerUserId;
 
-	[Header("マルチユーザ達")]
 	[SerializeField]
+	[Header("マルチユーザ達")]
 	public MultiUser[] multiUsers;
 
 	[SerializeField]

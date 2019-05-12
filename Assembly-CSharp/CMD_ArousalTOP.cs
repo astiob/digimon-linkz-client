@@ -69,8 +69,8 @@ public sealed class CMD_ArousalTOP : CMD
 	[SerializeField]
 	private ChipBaseSelect chipBaseSelect;
 
-	[Header("パートナーデジモンのラベル")]
 	[SerializeField]
+	[Header("パートナーデジモンのラベル")]
 	private UILabel partnerTitleLabel;
 
 	[Header("決定ボタンのラベル")]

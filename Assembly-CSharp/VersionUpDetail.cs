@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class VersionUpDetail : MonoBehaviour
 {
-	[SerializeField]
 	[Header("デジモンのサムネイル用のアイコン")]
+	[SerializeField]
 	private UISprite charaIcon;
 
 	[Header("バージョンアップ 文言")]
 	[SerializeField]
 	private UILabel lbTXT_VerUp;
 
-	[Header("バージョンアップ LEV BEFORE 表示")]
 	[SerializeField]
+	[Header("バージョンアップ LEV BEFORE 表示")]
 	private UILabel lbTXT_LevBefore;
 
 	[SerializeField]

@@ -10,8 +10,8 @@ public class UIWidget : UIRect
 	[HideInInspector]
 	protected Color mColor = Color.white;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIWidget.Pivot mPivot = UIWidget.Pivot.Center;
 
 	[HideInInspector]
@@ -22,8 +22,8 @@ public class UIWidget : UIRect
 	[HideInInspector]
 	protected int mHeight = 100;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mDepth;
 
 	public UIWidget.OnDimensionsChanged onChange;
@@ -675,16 +675,16 @@ public class UIWidget : UIRect
 		}
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static int FullCompareFunc(UIWidget left, UIWidget right)
 	{
 		int num = UIPanel.CompareFunc(left.panel, right.panel);
 		return (num != 0) ? num : UIWidget.PanelCompareFunc(left, right);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int PanelCompareFunc(UIWidget left, UIWidget right)
 	{
 		if (left.mDepth < right.mDepth)

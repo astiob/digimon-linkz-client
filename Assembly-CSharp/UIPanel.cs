@@ -42,20 +42,20 @@ public class UIPanel : UIRect
 
 	public UIPanel.OnClippingMoved onClipMove;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Texture2D mClipTexture;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private float mAlpha = 1f;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIDrawCall.Clipping mClipping;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Vector4 mClipRange = new Vector4(0f, 0f, 300f, 200f);
 
 	[HideInInspector]

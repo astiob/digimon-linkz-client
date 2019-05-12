@@ -30,8 +30,8 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("警告のメッセージのラベル")]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
 	[Header("警告ダイアログのボタングループ")]

@@ -10,28 +10,28 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	[SerializeField]
 	private UISprite spBase;
 
-	[Header("ベースのSabスプライト")]
 	[SerializeField]
+	[Header("ベースのSabスプライト")]
 	private UISprite spBaseSab;
 
-	[Header("ベースのLineスプライト")]
 	[SerializeField]
+	[Header("ベースのLineスプライト")]
 	private UISprite spBaseLine;
 
 	[Header("ベースのGlowスプライト")]
 	[SerializeField]
 	private UISprite spBaseGlow;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
 	[SerializeField]
 	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
-	[Header("ランキング順位")]
 	[SerializeField]
+	[Header("ランキング順位")]
 	private GameObject goIsMine;
 
 	private string[] keyData = new string[2];

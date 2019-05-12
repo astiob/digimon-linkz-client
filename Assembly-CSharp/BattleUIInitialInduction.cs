@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class BattleUIInitialInduction : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("Rootのオブジェクト(Dialog)")]
 	[SerializeField]
+	[Header("Rootのオブジェクト(Dialog)")]
 	private GameObject rootObject;
 
 	[Header("ボタン")]
@@ -21,8 +21,8 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private UILabel text;
 
-	[SerializeField]
 	[Header("モニター")]
+	[SerializeField]
 	private UIComponentSkinner monitorSkinner;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public class BattleUIInitialInduction : MonoBehaviour
 	[SerializeField]
 	private UITweener textTween;
 
-	[Header("ヒナの名前")]
 	[SerializeField]
+	[Header("ヒナの名前")]
 	private UILabel hinaLocalize;
 
 	private void Awake()

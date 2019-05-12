@@ -5,8 +5,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UISkinnerToggle : MonoBehaviour
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UISpriteSkinnerBase spriteSkinner;
 
 	[SerializeField]

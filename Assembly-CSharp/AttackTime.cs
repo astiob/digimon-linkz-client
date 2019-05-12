@@ -9,8 +9,8 @@ public sealed class AttackTime : MonoBehaviour
 	[SerializeField]
 	private GameObject _hurryUpObject;
 
-	[SerializeField]
 	[Header("MAX時間(MultiBattleDataから自動セット)")]
+	[SerializeField]
 	private int maxAttackTime = 30;
 
 	[Header("急かす時間(MultiBattleDataから自動セット)")]

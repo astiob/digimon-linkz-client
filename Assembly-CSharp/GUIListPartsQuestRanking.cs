@@ -5,36 +5,36 @@ using UnityEngine;
 
 public class GUIListPartsQuestRanking : GUIListPartBS
 {
-	[SerializeField]
 	[Header("あなたを示すアイコン")]
+	[SerializeField]
 	private UISprite spYouIcon;
 
-	[Header("キャラサムネの位置")]
 	[SerializeField]
+	[Header("キャラサムネの位置")]
 	private GameObject goMONSTER_ICON;
 
 	[SerializeField]
 	[Header("ユーザーネーム")]
 	private UILabel lbTX_UserName;
 
-	[Header("称号アイコン")]
 	[SerializeField]
+	[Header("称号アイコン")]
 	private GameObject goTITLE_ICON;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
-	[SerializeField]
 	[Header("Nextポイント")]
+	[SerializeField]
 	private UILabel lbTX_NextPoint;
 
-	[SerializeField]
 	[Header("ランキング順位")]
+	[SerializeField]
 	private UILabel lbTX_RankingNumber;
 
-	[SerializeField]
 	[Header("ランキングアイコン")]
+	[SerializeField]
 	private UISprite spRankingIcon;
 
 	private MonsterData digimonData;

@@ -23,8 +23,8 @@ public class BattleUIInitialize : MonoBehaviour
 	[SerializeField]
 	private UITextReplacer loadingText;
 
-	[SerializeField]
 	[Header("ローディングのメッセージのローカライズ")]
+	[SerializeField]
 	private UITextReplacer loadingMessageText;
 
 	private int currentLoadingLevel = 1;

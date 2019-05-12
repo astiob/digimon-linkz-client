@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Play Tween")]
+[ExecuteInEditMode]
 public class UIPlayTween : MonoBehaviour
 {
 	public static UIPlayTween current;
@@ -29,8 +29,8 @@ public class UIPlayTween : MonoBehaviour
 
 	public List<EventDelegate> onFinished = new List<EventDelegate>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private GameObject eventReceiver;
 
 	[HideInInspector]

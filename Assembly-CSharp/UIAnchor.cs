@@ -17,8 +17,8 @@ public class UIAnchor : MonoBehaviour
 
 	public Vector2 pixelOffset = Vector2.zero;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIWidget widgetContainer;
 
 	private Transform mTrans;

@@ -574,6 +574,9 @@ public class AssetBundleMng : MonoBehaviour
 		case 7:
 			typeFromHandle = typeof(TextAsset);
 			break;
+		case 8:
+			typeFromHandle = typeof(Font);
+			break;
 		}
 		UnityEngine.Object @object = abdlI.www.assetBundle.LoadAsset(objName, typeFromHandle);
 		if (@object == null && objName.IndexOf("/") != -1)

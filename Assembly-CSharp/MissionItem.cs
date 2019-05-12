@@ -16,8 +16,8 @@ public class MissionItem : GUIListPartBS
 	[SerializeField]
 	private UISprite rewardIcon;
 
-	[SerializeField]
 	[Header("報酬アイテム名")]
+	[SerializeField]
 	private UILabel rewardName;
 
 	[SerializeField]

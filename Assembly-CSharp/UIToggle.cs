@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Toggle")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Toggle")]
 public class UIToggle : UIWidgetContainer
 {
 	public static BetterList<UIToggle> list = new BetterList<UIToggle>();
@@ -31,12 +31,12 @@ public class UIToggle : UIWidgetContainer
 
 	public UIToggle.Validate validator;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UISprite checkSprite;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Animation checkAnimation;
 
 	[SerializeField]

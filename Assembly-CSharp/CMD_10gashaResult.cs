@@ -28,12 +28,12 @@ public class CMD_10gashaResult : CMD
 	[SerializeField]
 	private UILabel ngTX_EXP_TEN;
 
-	[SerializeField]
 	[Header("シングルキャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteSingle;
 
-	[SerializeField]
 	[Header("10連キャプチャボタンSprite")]
+	[SerializeField]
 	private UISprite buttonSpriteTen;
 
 	[Header("シングルキャプチャボタンGUICollider")]

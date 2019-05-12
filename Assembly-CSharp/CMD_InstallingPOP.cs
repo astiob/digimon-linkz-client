@@ -10,20 +10,20 @@ public sealed class CMD_InstallingPOP : CMD
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("チップテクスチャ")]
 	[SerializeField]
+	[Header("チップテクスチャ")]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("チップランクプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	[Header("はいラベル")]
 	[SerializeField]
 	private UILabel yesLabel;
 
-	[Header("いいえラベル")]
 	[SerializeField]
+	[Header("いいえラベル")]
 	private UILabel noLabel;
 
 	[SerializeField]
@@ -34,8 +34,8 @@ public sealed class CMD_InstallingPOP : CMD
 	[Header("チップ説明ラベル")]
 	private UILabel chipDescLabel;
 
-	[Header("チップ装着メッセージラベル")]
 	[SerializeField]
+	[Header("チップ装着メッセージラベル")]
 	private UILabel chipAlertLabel;
 
 	private GameWebAPI.ReqDataCS_ChipEquipLogic equip;

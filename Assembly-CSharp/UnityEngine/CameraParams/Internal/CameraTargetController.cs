@@ -6,8 +6,8 @@ namespace UnityEngine.CameraParams.Internal
 	[DisallowMultipleComponent]
 	public sealed class CameraTargetController : MonoBehaviour
 	{
-		[SerializeField]
 		[Range(1f, 179f)]
+		[SerializeField]
 		private float _fieldOfView = 60f;
 
 		[SerializeField]

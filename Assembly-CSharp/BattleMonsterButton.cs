@@ -14,8 +14,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[SerializeField]
 	public HoldPressButton playerMonsterDescriptionSwitch;
 
-	[SerializeField]
 	[Header("リーダーアイコン")]
+	[SerializeField]
 	private UISprite leaderIcon;
 
 	[SerializeField]
@@ -26,8 +26,8 @@ public class BattleMonsterButton : MonoBehaviour
 	[SerializeField]
 	private UISprite playerNamePlate;
 
-	[SerializeField]
 	[Header("プレイヤー番号アイコン")]
+	[SerializeField]
 	private UISprite playerNumberIcon;
 
 	[SerializeField]
@@ -117,8 +117,8 @@ public class BattleMonsterButton : MonoBehaviour
 		[SerializeField]
 		private Material[] materials;
 
-		[SerializeField]
 		[Header("アトラス（通常、死亡時の順）")]
+		[SerializeField]
 		private UIAtlas[] uiAtlases;
 
 		public void SetEvolutionStep(GrowStep growStep)

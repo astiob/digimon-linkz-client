@@ -60,8 +60,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider showBtnCollider;
 
-	[SerializeField]
 	[Header("一覧ボタンのラベル")]
+	[SerializeField]
 	private UILabelEx showBtnLabel;
 
 	[SerializeField]
@@ -70,8 +70,8 @@ public sealed class CMD_FarewellListRun : CMD
 	[SerializeField]
 	private GUICollider farewellBtnCollider;
 
-	[SerializeField]
 	[Header("お別れボタンのラベル")]
+	[SerializeField]
 	private UILabelEx farewellBtnLabel;
 
 	[SerializeField]

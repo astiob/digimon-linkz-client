@@ -20,8 +20,8 @@ public class RoundStart : MonoBehaviour
 	[SerializeField]
 	protected UILabel onlyApUpLocalize;
 
-	[SerializeField]
 	[Header("AP UPローカライズ(両方)")]
+	[SerializeField]
 	protected UILabel apUpLocalize;
 
 	[SerializeField]

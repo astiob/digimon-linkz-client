@@ -10,12 +10,12 @@ public sealed class TicketGashaController : CutsceneBase
 	[Header("カードアニメフレーム間隔")]
 	private int cardAnimIntervalFrame;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	private Camera mainCam;
 
-	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
 	[SerializeField]
+	[Header("カードエフェクト : 1:白, 2:黄色, 3:虹")]
 	private List<GameObject> goCardEfcList;
 
 	[Header("カードアニメ : 1:白, 2:黄色, 3:虹")]

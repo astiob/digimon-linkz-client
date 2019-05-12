@@ -8,8 +8,8 @@ public class IsWarning : MonoBehaviour
 	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("Allyのタイトルバーのスキナー")]
 	[SerializeField]
+	[Header("Allyのタイトルバーのスキナー")]
 	private UIComponentSkinner allyTitleBarSkinner;
 
 	[SerializeField]

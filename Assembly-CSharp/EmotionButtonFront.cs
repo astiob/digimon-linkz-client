@@ -8,16 +8,16 @@ public class EmotionButtonFront : MonoBehaviour
 	[SerializeField]
 	private UIButton openEmotionButton;
 
-	[Header("スタンプのラベル")]
 	[SerializeField]
+	[Header("スタンプのラベル")]
 	private UILabel stampLabel;
 
-	[Header("スタンプの本体")]
 	[SerializeField]
+	[Header("スタンプの本体")]
 	private UITexture[] stampTextureList;
 
-	[Header("スタンプの画像名")]
 	[SerializeField]
+	[Header("スタンプの画像名")]
 	private string[] stampNameList;
 
 	private void Awake()

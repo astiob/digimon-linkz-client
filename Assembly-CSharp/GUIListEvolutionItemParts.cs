@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class GUIListEvolutionItemParts : GUIListPartBS
 {
-	[SerializeField]
 	[Header("素材用アイコンのGUICollider")]
+	[SerializeField]
 	private GUICollider colSoul;
 
-	[Header("素材用アイコンのUITexture")]
 	[SerializeField]
+	[Header("素材用アイコンのUITexture")]
 	private UITexture texSoul;
 
-	[Header("所持数のGameObject")]
 	[SerializeField]
+	[Header("所持数のGameObject")]
 	private GameObject goNum;
 
-	[Header("所持数のUIlabel")]
 	[SerializeField]
+	[Header("所持数のUIlabel")]
 	private UILabel lbNum;
 
 	[Header("所持数背景のGameObject")]
 	[SerializeField]
 	private GameObject goNumBG;
 
-	[Header("親のパネル")]
 	[SerializeField]
+	[Header("親のパネル")]
 	private GUISelectPanelEvolutionItemList parentPanel;
 
 	private string soulId;

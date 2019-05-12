@@ -7,8 +7,8 @@ public class ChipEfc : MonoBehaviour
 	[SerializeField]
 	public GameObject goCHIP_THUMB;
 
-	[SerializeField]
 	[Header("アニメーション コンポーネント")]
+	[SerializeField]
 	public Animation anim;
 
 	[Header("アニメーション OBJ")]

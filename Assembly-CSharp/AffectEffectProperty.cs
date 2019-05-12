@@ -27,12 +27,12 @@ public class AffectEffectProperty
 	[SerializeField]
 	private TechniqueType _techniqueType;
 
-	[SerializeField]
 	[FormerlySerializedAs("intValue")]
+	[SerializeField]
 	private int[] _intValue = new int[2];
 
-	[FormerlySerializedAs("floatValue")]
 	[SerializeField]
+	[FormerlySerializedAs("floatValue")]
 	private float[] _floatValue = new float[6];
 
 	public AffectEffectProperty()

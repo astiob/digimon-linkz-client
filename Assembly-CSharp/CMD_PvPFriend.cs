@@ -10,8 +10,8 @@ using UnityEngine;
 
 public class CMD_PvPFriend : CMD
 {
-	[Header("リストパーツ")]
 	[SerializeField]
+	[Header("リストパーツ")]
 	private GameObject partFriendParent;
 
 	[SerializeField]

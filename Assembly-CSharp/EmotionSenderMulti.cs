@@ -5,8 +5,8 @@ using UnityEngine;
 
 public sealed class EmotionSenderMulti : MonoBehaviour
 {
-	[SerializeField]
 	[Header("受信用の各々のエモーションアイコンのスプライト(UIAtlasSkinnerを使わない方)")]
+	[SerializeField]
 	private UISprite[] emotionSprites;
 
 	[SerializeField]

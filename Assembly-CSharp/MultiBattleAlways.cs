@@ -3,8 +3,8 @@ using UnityEngine;
 
 public sealed class MultiBattleAlways : BattleAlways
 {
-	[SerializeField]
 	[Header("EmotionボタンFrontのGameObject")]
+	[SerializeField]
 	private GameObject emotionButtonFrontGO;
 
 	[SerializeField]
@@ -15,8 +15,8 @@ public sealed class MultiBattleAlways : BattleAlways
 	[Header("右下のメッセージ")]
 	public MultiConnetionMessage connectionMessage;
 
-	[SerializeField]
 	[Header("マルチバトルのダイアログ")]
+	[SerializeField]
 	public MultiBattleDialog multiBattleDialog;
 
 	[SerializeField]

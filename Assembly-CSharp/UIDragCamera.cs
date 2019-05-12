@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Drag Camera")]
+[ExecuteInEditMode]
 public class UIDragCamera : MonoBehaviour
 {
 	public UIDraggableCamera draggableCamera;

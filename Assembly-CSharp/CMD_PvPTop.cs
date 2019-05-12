@@ -129,12 +129,12 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel lbRewardPercentage;
 
-	[SerializeField]
 	[Header("スケジュール")]
+	[SerializeField]
 	private GameObject goTimeSchedule;
 
-	[SerializeField]
 	[Header("以下,○回目ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] spanTimeLabelArray = new UILabel[0];
 
 	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
@@ -149,12 +149,12 @@ public class CMD_PvPTop : CMD
 	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
-	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
-	[Header("以下,ヘルプの画像パス(表示順)")]
 	[SerializeField]
+	[Header("以下,ヘルプの画像パス(表示順)")]
 	private List<string> helpImagePathList = new List<string>();
 
 	[SerializeField]

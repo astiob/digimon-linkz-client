@@ -11,8 +11,8 @@ public static class NGUIMath
 		return from * (1f - factor) + to * factor;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int ClampIndex(int val, int max)
 	{
 		return (val >= 0) ? ((val >= max) ? (max - 1) : val) : 0;
@@ -52,8 +52,8 @@ public static class NGUIMath
 		return angle;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float Wrap01(float val)
 	{
 		return val - (float)Mathf.FloorToInt(val);
@@ -143,23 +143,23 @@ public static class NGUIMath
 		return num.ToString("X2");
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string DecimalToHex24(int num)
 	{
 		num &= 16777215;
 		return num.ToString("X6");
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string DecimalToHex32(int num)
 	{
 		return num.ToString("X8");
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int ColorToInt(Color c)
 	{
 		int num = 0;
@@ -169,8 +169,8 @@ public static class NGUIMath
 		return num | Mathf.RoundToInt(c.a * 255f);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static Color IntToColor(int val)
 	{
 		float num = 0.003921569f;
@@ -182,8 +182,8 @@ public static class NGUIMath
 		return black;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string IntToBinary(int val, int bits)
 	{
 		string text = string.Empty;

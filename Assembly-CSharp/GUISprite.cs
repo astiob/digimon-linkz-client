@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
+[ExecuteInEditMode]
 [RequireComponent(typeof(MeshFilter))]
 public class GUISprite : GUISpriteBase
 {

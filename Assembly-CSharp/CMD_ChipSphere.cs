@@ -31,12 +31,12 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private GameObject barrierGO;
 
-	[Header("左下のベースを変更ボタンラベル")]
 	[SerializeField]
+	[Header("左下のベースを変更ボタンラベル")]
 	private UILabel changeBaseButtonLabel;
 
-	[SerializeField]
 	[Header("取外パッチの残り個数")]
+	[SerializeField]
 	private UILabel ejectCountLabel;
 
 	[SerializeField]
@@ -63,16 +63,16 @@ public sealed class CMD_ChipSphere : CMD
 	[SerializeField]
 	private GameObject partsUpperCutinGO;
 
-	[Header("装着アニメーションのテクスチャ")]
 	[SerializeField]
+	[Header("装着アニメーションのテクスチャ")]
 	private UITexture[] partsUpperCutinTextures;
 
-	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
 	[SerializeField]
+	[Header("拡張/チップ取外アニメーションのゲームオブジェクト")]
 	private GameObject ejectItemCutinGO;
 
-	[SerializeField]
 	[Header("拡張/チップ取外アニメーションのテクスチャ")]
+	[SerializeField]
 	private UITexture[] ejectItemCutinTextures;
 
 	private CharacterCameraView characterCameraView;

@@ -12,28 +12,28 @@ public sealed class CMD_ArousalCheck : CMD
 	[SerializeField]
 	private MonsterResistanceList monsterResistanceList;
 
-	[Header("タイトルのラベル")]
 	[SerializeField]
+	[Header("タイトルのラベル")]
 	private UILabel titleLabel;
 
 	[Header("基本的なメッセージのラベル")]
 	[SerializeField]
 	private UILabel normalMessageLabel;
 
-	[SerializeField]
 	[Header("警告のメッセージのラベル")]
+	[SerializeField]
 	private UILabel warningMessageLabel;
 
-	[SerializeField]
 	[Header("Yesボタンのラベル")]
+	[SerializeField]
 	private UILabel buttonYesLabel;
 
 	[Header("Noボタンのラベル")]
 	[SerializeField]
 	private UILabel buttonNoLabel;
 
-	[SerializeField]
 	[Header("警告ダイアログの窓本体")]
+	[SerializeField]
 	private GameObject dialogPlate;
 
 	[SerializeField]

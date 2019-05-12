@@ -290,7 +290,7 @@ public class CloudBackup
 		string title = StringMaster.GetString("CloudTakeOverTitle");
 		string format = StringMaster.GetString("CloudTakeOverInfo");
 		string info = string.Format(format, this.cloudUserCode, userName);
-		yield return AppCoroutine.Start(this.ShowCMD_BackupModal(title, info, delegate(bool result)
+		yield return AppCoroutine.Start(this.ShowCMD_BackupModal_2(title, info, delegate(bool result)
 		{
 			isPermit = result;
 		}), false);
@@ -601,6 +601,28 @@ public class CloudBackup
 		{
 			isClose = true;
 			if (index == 1)
+			{
+				pushYes = true;
+			}
+		}, "CMD_BackupModal") as CMD_BackupModal;
+		cd.Title = TitleText;
+		cd.Info = InfoText;
+		while (!isClose)
+		{
+			yield return null;
+		}
+		OnClose(pushYes);
+		yield break;
+	}
+
+	private IEnumerator ShowCMD_BackupModal_2(string TitleText, string InfoText, Action<bool> OnClose)
+	{
+		bool isClose = false;
+		bool pushYes = false;
+		CMD_BackupModal cd = GUIMain.ShowCommonDialog(delegate(int index)
+		{
+			isClose = true;
+			if (index != 1)
 			{
 				pushYes = true;
 			}

@@ -6,16 +6,16 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class CustomUISpriteAnimation : MonoBehaviour
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected float mFPS = 30f;
 
 	[HideInInspector]
 	[SerializeField]
 	protected string mPrefix = string.Empty;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected bool mLoop = true;
 
 	[HideInInspector]

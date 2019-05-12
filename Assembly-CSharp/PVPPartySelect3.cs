@@ -111,8 +111,8 @@ public class PVPPartySelect3 : MonoBehaviour
 	[SerializeField]
 	private GameObject switchSkillPanelBtn;
 
-	[Header("ステータス下のリーダースキル表示")]
 	[SerializeField]
+	[Header("ステータス下のリーダースキル表示")]
 	private MonsterLeaderSkill leaderSkill;
 
 	private MonsterData DataChg;

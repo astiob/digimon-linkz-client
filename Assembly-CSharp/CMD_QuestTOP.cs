@@ -30,32 +30,32 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private UserStamina userStamina;
 
-	[SerializeField]
 	[Header("クリッピングしているオブジェクト達")]
+	[SerializeField]
 	private GameObject[] clipObjects;
 
-	[Header("ポイントクエスト用 ROOT")]
 	[SerializeField]
+	[Header("ポイントクエスト用 ROOT")]
 	private GameObject goPartsPointROOT;
 
 	[SerializeField]
 	[Header("ポイントクエスト用（ランキングなし） ROOT")]
 	private GameObject goPartsPointWithoutRankingROOT;
 
-	[Header("ポイントクエスト用 BG")]
 	[SerializeField]
+	[Header("ポイントクエスト用 BG")]
 	private UITexture txEVENT_BG;
 
-	[Header("降臨エリア用 スケジュールバナー領域")]
 	[SerializeField]
+	[Header("降臨エリア用 スケジュールバナー領域")]
 	private GameObject goScheduleBannerROOT;
 
-	[Header("降臨エリア用 スケジュールバナー")]
 	[SerializeField]
+	[Header("降臨エリア用 スケジュールバナー")]
 	private GameObject goScheduleBannerParts;
 
-	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
 	[SerializeField]
+	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
 	private float timeOutSeconds;
 
 	public bool isGoingBattle;

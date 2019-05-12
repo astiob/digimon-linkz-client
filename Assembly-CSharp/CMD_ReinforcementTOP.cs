@@ -31,12 +31,12 @@ public sealed class CMD_ReinforcementTOP : CMD
 	[SerializeField]
 	private UILabel ngTX_LEV_S_PLUS;
 
-	[Header("チップ部分")]
 	[SerializeField]
+	[Header("チップ部分")]
 	private ChipBaseSelect chipBaseSelect;
 
-	[Header("所持クラスタ")]
 	[SerializeField]
+	[Header("所持クラスタ")]
 	private UILabel possessionClusterLabel;
 
 	[Header("消費クラスタ")]

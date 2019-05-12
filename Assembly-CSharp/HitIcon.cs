@@ -11,8 +11,8 @@ public class HitIcon : MonoBehaviour
 	[SerializeField]
 	private UITweener[] tween;
 
-	[SerializeField]
 	[Header("通常のUI")]
+	[SerializeField]
 	private HitIcon.Data standard = new HitIcon.Data();
 
 	[SerializeField]
@@ -23,12 +23,12 @@ public class HitIcon : MonoBehaviour
 	[Header("耐性結果を表示するフォントテクスチャ")]
 	private HitIcon.ResistanceFontTexture resistanceFontTexture;
 
-	[Header("通常効果を表示するフォントテクスチャ")]
 	[SerializeField]
+	[Header("通常効果を表示するフォントテクスチャ")]
 	private HitIcon.StandardEffectFontTexture standardEffectFontTexture;
 
-	[SerializeField]
 	[Header("ステージ効果を表示するフォントテクスチャ")]
+	[SerializeField]
 	private HitIcon.StageEffectFontTexture stageEffectFontTexture;
 
 	private MaterialPropertyBlock materialPropertyBlock;

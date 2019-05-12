@@ -253,8 +253,8 @@ public static class NGUIText
 		return new Color(num4 * (float)num, num4 * (float)num2, num4 * (float)num3);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static Color ParseColor32(string text, int offset)
 	{
 		int num = NGUIMath.HexToDecimal(text[offset]) << 4 | NGUIMath.HexToDecimal(text[offset + 1]);
@@ -265,8 +265,8 @@ public static class NGUIText
 		return new Color(num5 * (float)num, num5 * (float)num2, num5 * (float)num3, num5 * (float)num4);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeColor(Color c)
 	{
 		return NGUIText.EncodeColor24(c);
@@ -294,16 +294,16 @@ public static class NGUIText
 		return NGUIMath.DecimalToHex8(num);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeColor24(Color c)
 	{
 		int num = 16777215 & NGUIMath.ColorToInt(c) >> 8;
 		return NGUIMath.DecimalToHex24(num);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeColor32(Color c)
 	{
 		int num = NGUIMath.ColorToInt(c);
@@ -727,8 +727,8 @@ public static class NGUIText
 		return indices[i];
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	private static bool IsSpace(int ch)
 	{
 		return ch == 32 || ch == 8202 || ch == 8203 || ch == 8201;

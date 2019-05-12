@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Internal/Property Binding")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Internal/Property Binding")]
 public class PropertyBinding : MonoBehaviour
 {
 	public PropertyReference source;

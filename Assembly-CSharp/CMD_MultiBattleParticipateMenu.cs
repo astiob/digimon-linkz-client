@@ -14,8 +14,8 @@ public class CMD_MultiBattleParticipateMenu : CMD
 	[Header("GameObject：募集")]
 	private GameObject goBtnRecruit;
 
-	[SerializeField]
 	[Header("Label：参加")]
+	[SerializeField]
 	private UILabel lbBtnParticipate;
 
 	[Header("Label：募集")]

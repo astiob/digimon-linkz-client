@@ -56,6 +56,11 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.appVersion.text = string.Empty;
 		this.buildNumLabel.text = string.Empty;
 		this.NpVersion.text = string.Empty;
+		this.userID.gameObject.SetActive(false);
+		this.userCode.gameObject.SetActive(false);
+		this.appVersion.gameObject.SetActive(false);
+		this.buildNumLabel.gameObject.SetActive(false);
+		this.NpVersion.gameObject.SetActive(false);
 		this.cacheClearButtonLabel.text = StringMaster.GetString("TitleCacheButton");
 		this.takeoverButtonLabel.text = StringMaster.GetString("TakeOverTitle");
 		this.optionButtonLabel.text = StringMaster.GetString("TitleOptionButton");
@@ -79,6 +84,11 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.googlePlay.Bootup();
 		yield return base.StartCoroutine(this.AuthLogin());
 		yield return base.StartCoroutine(APIUtil.Instance().StartGameLogin());
+		this.userID.gameObject.SetActive(true);
+		this.userCode.gameObject.SetActive(true);
+		this.appVersion.gameObject.SetActive(true);
+		this.buildNumLabel.gameObject.SetActive(true);
+		this.NpVersion.gameObject.SetActive(true);
 		this.userCode.text = string.Format(StringMaster.GetString("TitleUserCode"), DataMng.Instance().RespDataCM_Login.playerInfo.userCode);
 		this.appVersion.text = string.Format(StringMaster.GetString("TitleAppVersion"), VersionManager.version);
 		GameWebAPI.RespDataCM_Login.TutorialStatus tutorialStatus = DataMng.Instance().RespDataCM_Login.tutorialStatus;
@@ -228,6 +238,19 @@ public sealed class GUIScreenTitle : GUIScreen
 		while (!isFinished)
 		{
 			yield return null;
+		}
+		yield break;
+	}
+
+	private IEnumerator DownloadFontAsset()
+	{
+		bool result = AssetDataMng.Instance().AB_StartDownLoad("FONT", 4);
+		if (result)
+		{
+			while (AssetDataMng.Instance().IsAssetBundleDownloading())
+			{
+				yield return null;
+			}
 		}
 		yield break;
 	}

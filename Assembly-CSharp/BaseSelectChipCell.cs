@@ -12,8 +12,8 @@ public sealed class BaseSelectChipCell : MonoBehaviour
 	[SerializeField]
 	private UISprite rareSprite;
 
-	[Header("チップ名のラベル")]
 	[SerializeField]
+	[Header("チップ名のラベル")]
 	private UILabel chipNameLabel;
 
 	[Header("非装着のラベル")]

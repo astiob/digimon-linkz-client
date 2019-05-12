@@ -10,15 +10,15 @@ using WebAPIRequest;
 
 public class CMD_MultiRecruitPartyWait : CMD
 {
-	[SerializeField]
 	[Header("エリア名 ステージ名")]
+	[SerializeField]
 	private UILabel lbAreaName;
 
 	[SerializeField]
 	private UILabel lbStageName;
 
-	[SerializeField]
 	[Header("リーダースキル名")]
+	[SerializeField]
 	private UILabel lbTXT_LEADERSKILL;
 
 	[SerializeField]
@@ -46,8 +46,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[Header("ステータス変更ボタン")]
 	private UILabel lbTXT_ST_EXCHANGE;
 
-	[Header("準備完了ボタン")]
 	[SerializeField]
+	[Header("準備完了ボタン")]
 	private UILabel lbTXT_BTN_READY;
 
 	[SerializeField]
@@ -74,12 +74,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	private PartsMultiRecruitMonsInfo[] monsterInfoList;
 
-	[SerializeField]
 	[Header("エモーション処理")]
+	[SerializeField]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーションコンポーネント")]
+	[SerializeField]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]
@@ -474,6 +474,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		ClassSingleton<MultiBattleData>.Instance.HurryUpAttackTime = ConstValue.MULTI_HURRYUP_ATTACK_TIME;
 		ClassSingleton<MultiBattleData>.Instance.RandomSeed = this.roomInfo.multiRoomId.ToInt32();
 		MultiUser[] array = new MultiUser[3];
+		ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = new string[3];
 		if (data.memberPatternId > 0)
 		{
 			array[data.memberPatternId] = new MultiUser
@@ -482,6 +483,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				userId = data.party[0].userId,
 				userName = data.party[0].nickname
 			};
+			ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[data.memberPatternId] = data.party[0].userMonsters[1].userMonsterId;
 		}
 		for (int i = 0; i < data.party.Length; i++)
 		{
@@ -494,10 +496,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 			if (array[i] == null)
 			{
 				array[i] = multiUser;
+				ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[i] = data.party[i].userMonsters[0].userMonsterId;
 			}
 			else
 			{
 				array[i + 1] = multiUser;
+				ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[i + 1] = data.party[i].userMonsters[0].userMonsterId;
 			}
 		}
 		ClassSingleton<MultiBattleData>.Instance.MultiUsers = array;
@@ -518,35 +522,6 @@ public class CMD_MultiRecruitPartyWait : CMD
 			pvPUserData.userStatus.nickname = list[k].userName;
 			pvPUserData.monsterData = null;
 			ClassSingleton<MultiBattleData>.Instance.PvPUserDatas[k] = pvPUserData;
-		}
-		ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = new string[3];
-		for (int l = 0; l < this.monsterDataList.Count; l++)
-		{
-			ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[l] = this.monsterDataList[l].userMonster.userMonsterId;
-		}
-		if (this.memberList.Where((GameWebAPI.Common_MultiMemberList user) => user == null).Count<GameWebAPI.Common_MultiMemberList>() > 0)
-		{
-			global::Debug.Log("最大人数未満での出発になるためサーバデータとチェックします");
-			string[] array2 = new string[3];
-			for (int m = 0; m < data.party.Length; m++)
-			{
-				GameWebAPI.Common_MonsterData[] userMonsters = data.party[m].userMonsters;
-				array2[m] = userMonsters[0].userMonsterId;
-				if (userMonsters.Length > 1)
-				{
-					int num2 = array2.Length - 1;
-					array2[num2] = userMonsters[1].userMonsterId;
-				}
-			}
-			for (int n = 0; n < 3; n++)
-			{
-				if (ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds[n] != array2[n])
-				{
-					global::Debug.Log("モンスターデータをサーバデータで補正します");
-					ClassSingleton<MultiBattleData>.Instance.PlayerUserMonsterIds = array2;
-					break;
-				}
-			}
 		}
 		TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.QuestToMultiBattle, false);
 		base.SetLastCallBack(new Action<int>(this.GoToBattleScene));

@@ -216,7 +216,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetFacilityDetail(GUISelectPanelFacility listUI, FacilityM[] facilityData)
 	{
-		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey370 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey370();
+		CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey372 <SetFacilityDetail>c__AnonStorey = new CMD_FacilityShop.<SetFacilityDetail>c__AnonStorey372();
 		<SetFacilityDetail>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>();
 		if (<SetFacilityDetail>c__AnonStorey.items == null)
 		{
@@ -250,7 +250,7 @@ public sealed class CMD_FacilityShop : CMD
 
 	private void SetNewIcon(GUISelectPanelFacility listUI)
 	{
-		CMD_FacilityShop.<SetNewIcon>c__AnonStorey372 <SetNewIcon>c__AnonStorey = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey372();
+		CMD_FacilityShop.<SetNewIcon>c__AnonStorey374 <SetNewIcon>c__AnonStorey = new CMD_FacilityShop.<SetNewIcon>c__AnonStorey374();
 		<SetNewIcon>c__AnonStorey.items = listUI.GetComponentsInChildren<FacilityShopItem>(true);
 		if (<SetNewIcon>c__AnonStorey.items == null)
 		{

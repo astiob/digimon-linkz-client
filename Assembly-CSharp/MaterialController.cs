@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
 [AddComponentMenu("Digimon Effects/Tools/Material Controller")]
+[RequireComponent(typeof(Renderer))]
 public class MaterialController : MonoBehaviour
 {
 	private const float maxTint = 10f;

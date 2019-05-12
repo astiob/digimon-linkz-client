@@ -106,6 +106,7 @@ public class AssetBundleInfo
 		TYPE_ASSET,
 		TYPE_ANIM,
 		TYPE_ANIMATOR,
-		TYPE_BYTES
+		TYPE_BYTES,
+		TYPE_FONT
 	}
 }

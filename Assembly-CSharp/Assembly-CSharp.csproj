@@ -1414,6 +1414,7 @@
     <Compile Include="RemainingTurn.cs" />
     <Compile Include="RenderCamera.cs" />
     <Compile Include="RenderFrontThanNGUI.cs" />
+    <Compile Include="RenderQueueController.cs" />
     <Compile Include="ResistanceTrance\AttributeResistance.cs" />
     <Compile Include="ResourcesPath.cs" />
     <Compile Include="RestrictionInput.cs" />

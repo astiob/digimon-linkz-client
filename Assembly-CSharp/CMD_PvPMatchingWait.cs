@@ -57,16 +57,16 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("取り消しボタンコライダー")]
 	private BoxCollider coCancelBtn;
 
-	[Header("取り消しボタンスプライト")]
 	[SerializeField]
+	[Header("取り消しボタンスプライト")]
 	private UISprite spCancelBtn;
 
 	[SerializeField]
 	[Header("取り消しボタンラベル")]
 	private UILabel lbCancelBtn;
 
-	[Header("モンスター表示")]
 	[SerializeField]
+	[Header("モンスター表示")]
 	private PartsMatchingWaitMonsInfo monsInfo;
 
 	[SerializeField]
@@ -77,8 +77,8 @@ public class CMD_PvPMatchingWait : CMD
 	[SerializeField]
 	private GameObject goMatchingEndAnim;
 
-	[SerializeField]
 	[Header("マッチング完了エフェクト")]
+	[SerializeField]
 	private Animator MatchingEffectAnimator;
 
 	[SerializeField]
@@ -88,20 +88,20 @@ public class CMD_PvPMatchingWait : CMD
 	[Header("転送エフェクトの乗算色(アルファは０固定)")]
 	private Color renderTextureColor;
 
-	[Header("キャラの勝利アニメを見せる時間（秒）")]
 	[SerializeField]
+	[Header("キャラの勝利アニメを見せる時間（秒）")]
 	private float winAnimationWait;
 
 	[SerializeField]
 	[Header("キャラが消えてから情報が出るまでの時間（秒）")]
 	private float transferWait;
 
-	[SerializeField]
 	[Header("３対選択画面")]
+	[SerializeField]
 	private PVPPartySelect3 partySelect;
 
-	[SerializeField]
 	[Header("演出チェック用")]
+	[SerializeField]
 	private bool debugAnimation;
 
 	private Coroutine matchingFinishAnimation;

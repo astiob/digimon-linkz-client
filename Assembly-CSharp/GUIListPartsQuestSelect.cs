@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class GUIListPartsQuestSelect : GUIListPartBS
 {
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
-	[Header("バナー読み込み失敗時のテキスト")]
 	[SerializeField]
+	[Header("バナー読み込み失敗時のテキスト")]
 	private UILabel failedTextLabel;
 
 	[SerializeField]

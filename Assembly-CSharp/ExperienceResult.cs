@@ -31,8 +31,8 @@ public class ExperienceResult : ResultBase
 	[Header("デジモンに吸収されるパーティクルを消す")]
 	private GameObject particleRemover;
 
-	[Header("取得経験値のラベル")]
 	[SerializeField]
+	[Header("取得経験値のラベル")]
 	private UILabel getExp;
 
 	[Header("取得経験値の文言ラベル")]
@@ -43,20 +43,20 @@ public class ExperienceResult : ResultBase
 	[Header("取得クラスタのラベル")]
 	private UILabel getCluster;
 
-	[Header("取得クラスタの文言ラベル")]
 	[SerializeField]
+	[Header("取得クラスタの文言ラベル")]
 	private UILabel getClusterText;
 
-	[Header("取得友情度【リーダー】のラベル")]
 	[SerializeField]
+	[Header("取得友情度【リーダー】のラベル")]
 	private UILabel getFriendPointForLeader;
 
 	[Header("取得友情度【リーダー】の文言ラベル")]
 	[SerializeField]
 	private UILabel getFriendPointForLeaderText;
 
-	[Header("取得友情度のラベル")]
 	[SerializeField]
+	[Header("取得友情度のラベル")]
 	private UILabel getFriendPoint;
 
 	[Header("取得友情度の文言ラベル")]

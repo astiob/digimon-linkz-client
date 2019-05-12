@@ -9,28 +9,28 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 	[Header("ベースのスプライト")]
 	private UISprite spBase;
 
-	[Header("NEWを示すアイコン")]
 	[SerializeField]
+	[Header("NEWを示すアイコン")]
 	private UISprite spNew;
 
 	[SerializeField]
 	[Header("ビックリマーク")]
 	private UISprite spInfo;
 
-	[Header("タイトルラベル")]
 	[SerializeField]
+	[Header("タイトルラベル")]
 	private UILabel lbTX_Title;
 
 	[Header("タイトル左")]
 	[SerializeField]
 	private UISprite spL_Title;
 
-	[Header("タイトル右")]
 	[SerializeField]
+	[Header("タイトル右")]
 	private UISprite spR_Title;
 
-	[SerializeField]
 	[Header("キャンペーンラベル")]
+	[SerializeField]
 	private UILabel lbTX_Campaign;
 
 	private GUIListPartsTrainingMenu.PartsData data;

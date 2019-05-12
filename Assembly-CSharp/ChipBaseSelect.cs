@@ -26,8 +26,8 @@ public sealed class ChipBaseSelect : MonoBehaviour
 	[SerializeField]
 	private BaseSelectChipCell[] chipCells;
 
-	[SerializeField]
 	[Header("チップのラベル")]
+	[SerializeField]
 	private UILabel chipLabel;
 
 	[Header("チップがないメッセージ")]

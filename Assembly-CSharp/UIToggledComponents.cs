@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(UIToggle))]
 [AddComponentMenu("NGUI/Interaction/Toggled Components")]
-[ExecuteInEditMode]
 public class UIToggledComponents : MonoBehaviour
 {
 	public List<MonoBehaviour> activate;
 
 	public List<MonoBehaviour> deactivate;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private MonoBehaviour target;
 
 	[HideInInspector]

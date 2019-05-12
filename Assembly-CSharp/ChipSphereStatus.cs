@@ -12,40 +12,40 @@ public class ChipSphereStatus : MonoBehaviour
 	[SerializeField]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("アイコン右下のレア度")]
+	[SerializeField]
 	private UISprite rareSprite;
 
-	[Header("アイコンのlookテクスチャ")]
 	[SerializeField]
+	[Header("アイコンのlookテクスチャ")]
 	private UITexture chipLookTexture;
 
 	[Header("アイコンのテクスチャ")]
 	[SerializeField]
 	private UITexture chipTexture;
 
-	[SerializeField]
 	[Header("アイコンの個数/名前/進化段階名")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[Header("右下のメッセージ")]
 	[SerializeField]
+	[Header("右下のメッセージ")]
 	private UILabel messageLabel;
 
-	[SerializeField]
 	[Header("ボタンのラベル")]
+	[SerializeField]
 	private UILabel buttonLabel;
 
-	[SerializeField]
 	[Header("強化ボタンのラベル")]
+	[SerializeField]
 	private UILabel reinforcementButtonLabel;
 
-	[Header("ボタンのスプライト")]
 	[SerializeField]
+	[Header("ボタンのスプライト")]
 	private UISprite buttonSprite;
 
-	[SerializeField]
 	[Header("強化ボタンのスプライト")]
+	[SerializeField]
 	private UISprite reinforcementButtonSprite;
 
 	[SerializeField]

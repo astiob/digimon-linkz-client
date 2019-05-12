@@ -116,18 +116,6 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			this.PlayCamera(targetDataList.Select((SubStateSkillDetailsFunction.TargetData item) => item.target).ToArray<CharacterStateControl>());
 			this.ShowDigimon(targetDataList[0].target);
 			yield return null;
-			foreach (SubStateSkillDetailsFunction.TargetData targetData in targetDataList)
-			{
-				if (targetData.target == currentCharacter)
-				{
-					currentCharacter.CharacterParams.gameObject.SetActive(true);
-					base.stateManager.threeDAction.PlayIdleAnimationCharactersAction(new CharacterStateControl[]
-					{
-						currentCharacter
-					});
-					break;
-				}
-			}
 			base.stateManager.uiControl.HideCharacterHUDFunction();
 			if (i == 0)
 			{
@@ -144,12 +132,12 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			if (enableDrawProtectMessage)
 			{
-				foreach (SubStateSkillDetailsFunction.TargetData targetData2 in targetDataList)
+				foreach (SubStateSkillDetailsFunction.TargetData targetData in targetDataList)
 				{
-					if (targetData2.onProtect)
+					if (targetData.onProtect)
 					{
 						base.stateManager.uiControl.ApplyTurnActionBarSwipeout(true);
-						base.stateManager.uiControl.ApplySkillName(true, StringMaster.GetString("BattleUI-47"), targetData2.target);
+						base.stateManager.uiControl.ApplySkillName(true, StringMaster.GetString("BattleUI-47"), targetData.target);
 						break;
 					}
 				}
@@ -201,9 +189,9 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}
 			if (enableDrawProtectMessage)
 			{
-				foreach (SubStateSkillDetailsFunction.TargetData targetData3 in targetDataList)
+				foreach (SubStateSkillDetailsFunction.TargetData targetData2 in targetDataList)
 				{
-					if (targetData3.onProtect)
+					if (targetData2.onProtect)
 					{
 						base.stateManager.uiControl.ApplyTurnActionBarSwipeout(false);
 						break;
@@ -233,19 +221,19 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		this.OnChipTriggerForSufferHit();
 		if (!base.battleStateData.IsChipSkill())
 		{
-			foreach (SubStateSkillDetailsFunction.TargetData targetData4 in this.cacheTargetDataList)
+			foreach (SubStateSkillDetailsFunction.TargetData targetData3 in this.cacheTargetDataList)
 			{
-				if (!targetData4.isMiss && !currentCharacter.isDied && targetData4.isDamage)
+				if (!targetData3.isMiss && !currentCharacter.isDied && targetData3.isDamage)
 				{
 					currentCharacter.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillDamageEndSend);
 					break;
 				}
 			}
-			foreach (SubStateSkillDetailsFunction.TargetData targetData5 in this.cacheTargetDataList)
+			foreach (SubStateSkillDetailsFunction.TargetData targetData4 in this.cacheTargetDataList)
 			{
-				if (!targetData5.isMiss && !targetData5.target.isDied && targetData5.isDamage)
+				if (!targetData4.isMiss && !targetData4.target.isDied && targetData4.isDamage)
 				{
-					targetData5.target.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillDamageEndRecieve);
+					targetData4.target.OnChipTrigger(EffectStatusBase.EffectTriggerType.SkillDamageEndRecieve);
 				}
 			}
 			if (this.cacheTargetDataList.Where((SubStateSkillDetailsFunction.TargetData item) => item.isMiss).Any<SubStateSkillDetailsFunction.TargetData>() && !currentCharacter.isDied)
@@ -599,7 +587,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			{
 				interval = base.stateManager.stateProperty.multiHitIntervalWaitSecond / (float)hitLength;
 			}
-			base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets, currentSuffer.type, interval, skillResultMissHits, hitIconlist.ToArray(), currentSuffer, true, skillResultExtraEffectTypes);
+			base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets, currentSuffer.type, interval, skillResultMissHits, hitIconlist.ToArray(), skillResultExtraEffectTypes, currentSuffer, true);
 			base.SetState(typeof(SubStatePlayHitAnimationAction));
 			while (base.isWaitState)
 			{
@@ -773,7 +761,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		}, AffectEffect.HpRevival, base.stateManager.stateProperty.attackerCharacterDrainActionWaitSecond, new bool[1], new HitIcon[]
 		{
 			hitIcon
-		}, currentSuffer, false, null);
+		}, new ExtraEffectType[1], currentSuffer, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -838,7 +826,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}, AffectEffect.Damage, base.stateManager.stateProperty.targetCounterReflectionActionWaitSecond / (float)totalCounterReflectionDamage.Count, new bool[1], new HitIcon[]
 			{
 				hitIcon
-			}, currentSuffer, true, null);
+			}, new ExtraEffectType[1], currentSuffer, true);
 			base.SetState(typeof(SubStatePlayHitAnimationAction));
 			while (base.isWaitState)
 			{
@@ -895,7 +883,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		}, currentSuffer.type, base.stateManager.stateProperty.destructCharacterDeathActionWaitSecond, new bool[1], new HitIcon[]
 		{
 			selfHitIcon
-		}, null, false, null);
+		}, new ExtraEffectType[1], null, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -924,6 +912,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		List<bool> skillResultMisses = new List<bool>();
 		List<HitIcon> hitIconList = new List<HitIcon>();
 		List<CharacterStateControl> currentDeathCharacters = new List<CharacterStateControl>();
+		List<ExtraEffectType> extraEffectTypeList = new List<ExtraEffectType>();
 		for (int targets = 0; targets < targetDataList.Count; targets++)
 		{
 			targetDataList[targets].isMiss = true;
@@ -941,6 +930,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				this.SetTargetLog(targetDataList[targets].target, targetDataList[targets].isMiss, false);
 				skillResultTargets.Add(targetDataList[targets].target);
 				skillResultMisses.Add(targetDataList[targets].isMiss);
+				extraEffectTypeList.Add(ExtraEffectType.Non);
 				if (targetDataList[targets].target.isDied)
 				{
 					currentDeathCharacters.Add(targetDataList[targets].target);
@@ -950,7 +940,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		this.AfterEnemyDeadFunction(currentDeathCharacters.ToArray());
 		base.stateManager.cameraControl.PlayCameraShake();
 		base.stateManager.soundPlayer.StopHitEffectSE();
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, null);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), extraEffectTypeList.ToArray(), null, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -980,6 +970,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		List<CharacterStateControl> skillResultTargets = new List<CharacterStateControl>();
 		List<bool> skillResultMisses = new List<bool>();
 		List<HitIcon> hitIconList = new List<HitIcon>();
+		List<ExtraEffectType> extraEffectTypeList = new List<ExtraEffectType>();
 		int totalApDrain = 0;
 		for (int i = 0; i < targetDataList.Count; i++)
 		{
@@ -1011,6 +1002,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				this.SetTargetLog(targetDataList[i].target, targetDataList[i].isMiss, false);
 				skillResultTargets.Add(targetDataList[i].target);
 				skillResultMisses.Add(targetDataList[i].isMiss);
+				extraEffectTypeList.Add(ExtraEffectType.Non);
 				BattleLogData.BuffLog log = new BattleLogData.BuffLog
 				{
 					index = targetDataList[i].target.myIndex,
@@ -1026,7 +1018,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			object obj = logs.Current;
 			yield return obj;
 		}
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), AffectEffect.ApDown, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, null);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), AffectEffect.ApDown, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), extraEffectTypeList.ToArray(), null, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -1072,7 +1064,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 			}, AffectEffect.ApDrain, base.stateManager.stateProperty.attackerCharacterDrainActionWaitSecond, new bool[1], new HitIcon[]
 			{
 				hitIcon2
-			}, currentSuffer, false, null);
+			}, new ExtraEffectType[1], currentSuffer, false);
 			base.SetState(typeof(SubStatePlayHitAnimationAction));
 			while (base.isWaitState)
 			{
@@ -1140,6 +1132,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		List<CharacterStateControl> skillResultTargets = new List<CharacterStateControl>();
 		List<bool> skillResultMisses = new List<bool>();
 		List<HitIcon> hitIconList = new List<HitIcon>();
+		List<ExtraEffectType> extraEffectTypeList = new List<ExtraEffectType>();
 		for (int j = 0; j < targetDataList.Count; j++)
 		{
 			if (!targetDataList[j].target.isDied)
@@ -1186,6 +1179,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				this.SetTargetLog(targetDataList[j].target, isMiss, false);
 				skillResultTargets.Add(targetDataList[j].target);
 				skillResultMisses.Add(isMiss);
+				extraEffectTypeList.Add(ExtraEffectType.Non);
 			}
 		}
 		foreach (SubStateSkillDetailsFunction.TargetData targetData in targetDataList)
@@ -1205,7 +1199,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		{
 			base.stateManager.cameraControl.PlayCameraShake();
 		}
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, null);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), extraEffectTypeList.ToArray(), null, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{
@@ -1243,6 +1237,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 		List<CharacterStateControl> skillResultTargets = new List<CharacterStateControl>();
 		List<bool> skillResultMisses = new List<bool>();
 		List<HitIcon> hitIconList = new List<HitIcon>();
+		List<ExtraEffectType> extraEffectTypeList = new List<ExtraEffectType>();
 		for (int i = 0; i < targetDataList.Count; i++)
 		{
 			BattleLogData.BuffLog log = new BattleLogData.BuffLog();
@@ -1376,7 +1371,7 @@ public class SubStateSkillDetailsFunction : BattleStateController
 				targetData.target.hitSufferList.Add(suffer2);
 			}
 		}
-		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), null, false, null);
+		base.battleStateData.SetPlayAnimationActionValues(currentCharacter, skillResultTargets.ToArray(), currentSuffer.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconList.ToArray(), extraEffectTypeList.ToArray(), null, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{

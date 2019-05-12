@@ -11,8 +11,8 @@ public class ScreenToWorld : MonoBehaviour
 	[SerializeField]
 	private Vector2 offset;
 
-	[Header("カメラ")]
 	[SerializeField]
+	[Header("カメラ")]
 	private Camera cam;
 
 	private Vector3 v3 = new Vector3(0f, 0f, 1f);

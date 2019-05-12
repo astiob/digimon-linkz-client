@@ -21,24 +21,24 @@ public sealed class ChipGashaController : CutsceneBase
 	[Header("光弾エフェクト")]
 	private GameObject goPartsLight;
 
-	[SerializeField]
 	[Header("青色→青色")]
+	[SerializeField]
 	private GameObject goPartsBlue;
 
-	[SerializeField]
 	[Header("青色→黄色")]
+	[SerializeField]
 	private GameObject goPartsYellow;
 
-	[Header("青色→虹色")]
 	[SerializeField]
+	[Header("青色→虹色")]
 	private GameObject goPartsRainbow;
 
-	[Header("フェードアウト開始フレーム")]
 	[SerializeField]
+	[Header("フェードアウト開始フレーム")]
 	private int startFadeOutFrame;
 
-	[SerializeField]
 	[Header("メインカメラ")]
+	[SerializeField]
 	private Camera mainCam;
 
 	[SerializeField]

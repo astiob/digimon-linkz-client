@@ -48,7 +48,7 @@ public sealed class UserStamina : MonoBehaviour
 	{
 		if (this.countDownCoroutine != null)
 		{
-			AppCoroutine.Stop(this.countDownCoroutine, false);
+			AppCoroutine.Stop(this.countDownCoroutine, true);
 			this.countDownCoroutine = null;
 		}
 	}

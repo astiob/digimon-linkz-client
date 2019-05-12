@@ -1621,7 +1621,7 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public void SetPlayAnimationActionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, AffectEffect affectEffect, float waitTime, bool[] onMissHit, HitIcon[] hitIconList, AffectEffectProperty status = null, bool useSlowMotion = false, ExtraEffectType[] extraEffectType = null)
+		public void SetPlayAnimationActionValues(CharacterStateControl currentCharacter, CharacterStateControl[] isTargetsStatus, AffectEffect affectEffect, float waitTime, bool[] onMissHit, HitIcon[] hitIconList, ExtraEffectType[] extraEffectType, AffectEffectProperty status = null, bool useSlowMotion = false)
 		{
 			this.sendValues["currentCharacter"] = currentCharacter;
 			this.sendValues["isTargetsStatus"] = isTargetsStatus;

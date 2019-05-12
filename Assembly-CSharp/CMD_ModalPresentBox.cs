@@ -9,23 +9,23 @@ using WebAPIRequest;
 
 public class CMD_ModalPresentBox : CMD
 {
-	[Header("タイトルラベル")]
 	[SerializeField]
+	[Header("タイトルラベル")]
 	private UILabel lbTitle;
 
-	[Header("残り受取件数")]
 	[SerializeField]
+	[Header("残り受取件数")]
 	private UILabel lbSubtitle;
 
-	[SerializeField]
 	[Header("初期メッセージ")]
+	[SerializeField]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("一括受取ボタン")]
+	[SerializeField]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]
@@ -37,8 +37,8 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbBtnGetAll;
 
-	[Header("履歴ボタン")]
 	[SerializeField]
+	[Header("履歴ボタン")]
 	private GameObject goBtnHistory;
 
 	[SerializeField]
@@ -363,6 +363,15 @@ public class CMD_ModalPresentBox : CMD
 			cmd_ModalMessage2.Title = StringMaster.GetString("Present-03");
 			cmd_ModalMessage2.Info = this.GetPresentCountDescription(this.receivedPresentCountList);
 			cmd_ModalMessage2.AdjustSize();
+			foreach (string receiveId in data.prizeReceiveIds)
+			{
+				GameWebAPI.RespDataPR_PrizeData.PrizeData prizeData = this.prizeDataList.prizeData.SingleOrDefault((GameWebAPI.RespDataPR_PrizeData.PrizeData x) => x.receiveId == receiveId);
+				if (prizeData != null && int.Parse(prizeData.assetCategoryId) == 16)
+				{
+					Singleton<UserDataMng>.Instance.ClearUserFacilityCondition();
+					break;
+				}
+			}
 		}
 		else
 		{

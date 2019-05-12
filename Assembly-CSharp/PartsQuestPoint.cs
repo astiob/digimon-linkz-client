@@ -10,8 +10,8 @@ public class PartsQuestPoint : MonoBehaviour
 	[Header("ポイントのスプライト")]
 	private List<UISprite> spPointList;
 
-	[Header("ランキングのスプライト")]
 	[SerializeField]
+	[Header("ランキングのスプライト")]
 	private List<UISprite> spRankingList;
 
 	[SerializeField]

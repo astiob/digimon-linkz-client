@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class GUIListPartsS_DungeonR : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWの画像")]
+	[SerializeField]
 	private GameObject goNEW;
 
 	[SerializeField]
@@ -18,8 +18,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("ステージ数用のラベル")]
 	private UILabel ngTXT_STAGE;
 
-	[SerializeField]
 	[Header("ステージ名用のラベル")]
+	[SerializeField]
 	private UILabel ngTXT_STAGE_NAME;
 
 	[SerializeField]
@@ -50,8 +50,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private Color colorEventStageBackground;
 
-	[SerializeField]
 	[Header("####ソロとマルチステージ名装飾色")]
+	[SerializeField]
 	private Color colorSoloMultiStageNameOutline;
 
 	[Header("####マルチ専用名装飾色")]
@@ -62,16 +62,16 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[Header("####ソロ専用ステージ名装飾色")]
 	private Color colorSoloStageNameOutline;
 
-	[SerializeField]
 	[Header("イベント用のステージ名装飾色")]
+	[SerializeField]
 	private Color colorEventStageNameOutline;
 
 	[SerializeField]
 	[Header("背景色のパーツ（板）")]
 	private UISprite backgroundBord;
 
-	[SerializeField]
 	[Header("背景色のパーツ（ライン）")]
+	[SerializeField]
 	private UITexture backgroundLine;
 
 	[SerializeField]
@@ -86,8 +86,8 @@ public class GUIListPartsS_DungeonR : GUIListPartBS
 	[SerializeField]
 	private UISprite ngSPR_NEW;
 
-	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	[SerializeField]
+	[Header("指定クエストクリア管理フラグ 閉じている時のカギ")]
 	private UISprite ngSPR_LOCK;
 
 	[Header("クリアのマークの画像")]

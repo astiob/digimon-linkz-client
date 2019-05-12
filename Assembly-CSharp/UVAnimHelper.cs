@@ -8,16 +8,16 @@ public class UVAnimHelper : MonoBehaviour
 	[SerializeField]
 	private float speedU;
 
-	[SerializeField]
 	[Header("UV アニメ V方向スピード")]
+	[SerializeField]
 	private float speedV;
 
 	[SerializeField]
 	[Header("テクスチャ タイリング X")]
 	private float tileX = 1f;
 
-	[SerializeField]
 	[Header("テクスチャ タイリング Y")]
+	[SerializeField]
 	private float tileY = 10f;
 
 	private float totalU;

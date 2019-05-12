@@ -19,8 +19,8 @@ public class PlayerWinner : MonoBehaviour
 	[SerializeField]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("スピードクリア")]
+	[SerializeField]
 	public GameObject speedClearObject;
 
 	public void AddEvent(Action skipWinnerAction)

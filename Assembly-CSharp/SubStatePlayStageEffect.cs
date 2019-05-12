@@ -344,6 +344,7 @@ public class SubStatePlayStageEffect : BattleStateController
 		List<int> skillResultDamages = new List<int>();
 		List<Strength> skillResultStrength = new List<Strength>();
 		List<AffectEffect> skillResultAffectEffect = new List<AffectEffect>();
+		List<ExtraEffectType> extraEffectTypeList = new List<ExtraEffectType>();
 		foreach (CharacterStateControl target in targetList)
 		{
 			if (!target.isDied)
@@ -459,6 +460,7 @@ public class SubStatePlayStageEffect : BattleStateController
 				skillResultDamages.Add(hitIconDigit);
 				skillResultStrength.Add(strength);
 				skillResultAffectEffect.Add(affectEffect);
+				extraEffectTypeList.Add(ExtraEffectType.Non);
 			}
 		}
 		List<HitIcon> hitIconlist = new List<HitIcon>();
@@ -468,7 +470,7 @@ public class SubStatePlayStageEffect : BattleStateController
 			HitIcon hitIcon = base.stateManager.uiControl.ApplyShowHitIcon(i, hitIconPositions[i], skillResultAffectEffect[i], skillResultDamages[i], skillResultStrength[i], skillResultMisses[i], false, false, false, ExtraEffectType.Non);
 			hitIconlist.Add(hitIcon);
 		}
-		base.battleStateData.SetPlayAnimationActionValues(null, skillResultTargets.ToArray(), affectEffectProperty.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconlist.ToArray(), affectEffectProperty, false, null);
+		base.battleStateData.SetPlayAnimationActionValues(null, skillResultTargets.ToArray(), affectEffectProperty.type, base.stateManager.stateProperty.multiHitIntervalWaitSecond, skillResultMisses.ToArray(), hitIconlist.ToArray(), extraEffectTypeList.ToArray(), affectEffectProperty, false);
 		base.SetState(typeof(SubStatePlayHitAnimationAction));
 		while (base.isWaitState)
 		{

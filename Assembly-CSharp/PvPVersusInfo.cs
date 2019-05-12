@@ -9,8 +9,8 @@ public sealed class PvPVersusInfo : MonoBehaviour
 	[SerializeField]
 	private UISprite title;
 
-	[Header("ユーザー情報を表示するUIのルート")]
 	[SerializeField]
+	[Header("ユーザー情報を表示するUIのルート")]
 	private EffectAnimatorEventTime userDataUIRoot;
 
 	[Header("自分の情報を表示するUI群")]

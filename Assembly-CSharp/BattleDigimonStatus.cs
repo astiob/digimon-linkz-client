@@ -100,44 +100,44 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("各才能メダルの表示切り替え")]
 	private MonsterMedalList MonsterMedalList;
 
-	[Header("Lvローカライズ")]
 	[SerializeField]
+	[Header("Lvローカライズ")]
 	private UILabel lvLocalize;
 
-	[SerializeField]
 	[Header("HPローカライズ")]
+	[SerializeField]
 	private UILabel hpLocalize;
 
 	[Header("友情度ローカライズ")]
 	[SerializeField]
 	private UILabel friendLocalize;
 
-	[Header("ATKローカライズ")]
 	[SerializeField]
+	[Header("ATKローカライズ")]
 	private UILabel atkLocalize;
 
-	[SerializeField]
 	[Header("DEFローカライズ")]
+	[SerializeField]
 	private UILabel defLocalize;
 
-	[Header("SATKローカライズ")]
 	[SerializeField]
+	[Header("SATKローカライズ")]
 	private UILabel satkLocalize;
 
-	[SerializeField]
 	[Header("SDEFローカライズ")]
+	[SerializeField]
 	private UILabel sdefLocalize;
 
-	[Header("SPDローカライズ")]
 	[SerializeField]
+	[Header("SPDローカライズ")]
 	private UILabel spdLocalize;
 
 	[Header("Luckローカライズ")]
 	[SerializeField]
 	private UILabel luckLocalize;
 
-	[Header("リーダースキルローカライズ")]
 	[SerializeField]
+	[Header("リーダースキルローカライズ")]
 	private UILabel lSkillLocalize;
 
 	[SerializeField]

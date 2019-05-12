@@ -12,44 +12,44 @@ public sealed class CMD_ChipInstalling : CMD
 	[SerializeField]
 	private ChipIcon chipIcon;
 
-	[SerializeField]
 	[Header("左下のチップ名ラベル")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("左下のチップの説明ラベル")]
+	[SerializeField]
 	private UILabel chipDetailLabel;
 
 	[SerializeField]
 	[Header("右下の装着するボタンラベル")]
 	private UILabel executeButtonLabel;
 
-	[SerializeField]
 	[Header("右下の表示切替ボタンラベル")]
+	[SerializeField]
 	private UILabel changeViewLabel;
 
-	[SerializeField]
 	[Header("右下の内容ラベル")]
+	[SerializeField]
 	private UILabel changeViewContentLabel;
 
-	[SerializeField]
 	[Header("右下の装着するボタンスプライト")]
+	[SerializeField]
 	private UISprite executeButtonSprite;
 
-	[SerializeField]
 	[Header("右下の装着するボタンコライダー")]
+	[SerializeField]
 	private BoxCollider executeButtonCollider;
 
-	[SerializeField]
 	[Header("右下の表示切替ボタンスプライト")]
+	[SerializeField]
 	private UISprite changeViewButtonSprite;
 
-	[Header("チップ一覧用親")]
 	[SerializeField]
+	[Header("チップ一覧用親")]
 	private GameObject partsSortListBase;
 
-	[Header("チップ空メッセージ")]
 	[SerializeField]
+	[Header("チップ空メッセージ")]
 	private UILabel emptyChipLabel;
 
 	private int selectedUserChipId;

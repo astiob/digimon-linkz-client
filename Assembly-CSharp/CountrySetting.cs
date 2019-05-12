@@ -1,6 +1,7 @@
 ﻿using Master;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -86,6 +87,16 @@ public static class CountrySetting
 
 	public static void ReloadMaster()
 	{
+		DirectoryInfo directoryInfo = new DirectoryInfo(Application.persistentDataPath);
+		foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+		{
+			string name = fileInfo.Name;
+			if (name.StartsWith("MA_"))
+			{
+				File.Delete(Application.persistentDataPath + "/" + name);
+			}
+		}
+		MasterDataMng.Instance().ClearCache();
 		StringMaster.Reload();
 		AlertMaster.Reload();
 	}

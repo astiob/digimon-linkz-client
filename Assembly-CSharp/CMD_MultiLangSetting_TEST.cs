@@ -64,6 +64,7 @@ public class CMD_MultiLangSetting_TEST : CMD
 	{
 		if (isUpdateRequired)
 		{
+			CountrySetting.ReloadMaster();
 			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 			GameWebAPI.RequestUS_RegisterLanguageInfo requestUS_RegisterLanguageInfo = new GameWebAPI.RequestUS_RegisterLanguageInfo();
 			requestUS_RegisterLanguageInfo.SetSendData = delegate(GameWebAPI.US_Req_RegisterLanguageInfo param)

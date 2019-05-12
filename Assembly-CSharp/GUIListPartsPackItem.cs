@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class GUIListPartsPackItem : GUIListPartBS
 {
-	[Header("アイコン")]
 	[SerializeField]
+	[Header("アイコン")]
 	private UITexture ItemIcon;
 
-	[Header("アイテムネーム")]
 	[SerializeField]
+	[Header("アイテムネーム")]
 	private UILabel lbTX_ItemName;
 
 	[SerializeField]
 	[Header("アイテム個数")]
 	private UILabel lbTX_ItemNum;
 
-	[SerializeField]
 	[Header("オマケフラグ")]
+	[SerializeField]
 	private bool isOmake;
 
 	[SerializeField]

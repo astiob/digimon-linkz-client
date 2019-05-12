@@ -22,8 +22,8 @@ public class CMD_MultiRecruitFriend : CMD
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("全選択ボタン")]
+	[SerializeField]
 	private GameObject goBtnSelectAll;
 
 	[SerializeField]
@@ -32,8 +32,8 @@ public class CMD_MultiRecruitFriend : CMD
 	[SerializeField]
 	private UISprite spBtnSelectAll;
 
-	[SerializeField]
 	[Header("誘うボタン")]
+	[SerializeField]
 	private GameObject goBtnRecruit;
 
 	[SerializeField]

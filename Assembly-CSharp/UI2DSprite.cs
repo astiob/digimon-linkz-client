@@ -9,12 +9,12 @@ public class UI2DSprite : UIBasicSprite
 	[HideInInspector]
 	private Sprite mSprite;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Material mMat;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private Shader mShader;
 
 	[SerializeField]
@@ -25,8 +25,8 @@ public class UI2DSprite : UIBasicSprite
 	[SerializeField]
 	private bool mFixedAspect;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float mPixelSize = 1f;
 
 	public Sprite nextSprite;

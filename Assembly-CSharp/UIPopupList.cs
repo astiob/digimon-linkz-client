@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Popup List")]
+[ExecuteInEditMode]
 public class UIPopupList : UIWidgetContainer
 {
 	private const float animSpeed = 0.15f;
@@ -59,8 +59,8 @@ public class UIPopupList : UIWidgetContainer
 	[SerializeField]
 	protected string mSelectedItem;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIPanel mPanel;
 
 	[HideInInspector]
@@ -71,16 +71,16 @@ public class UIPopupList : UIWidgetContainer
 	[HideInInspector]
 	protected UISprite mHighlight;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UILabel mHighlightedLabel;
 
 	[HideInInspector]
 	[SerializeField]
 	protected List<UILabel> mLabelList = new List<UILabel>();
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected float mBgBorder;
 
 	[NonSerialized]
@@ -89,20 +89,20 @@ public class UIPopupList : UIWidgetContainer
 	[NonSerialized]
 	protected int mOpenFrame;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private GameObject eventReceiver;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private string functionName = "OnSelectionChange";
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private float textScale;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private UIFont font;
 
 	[HideInInspector]

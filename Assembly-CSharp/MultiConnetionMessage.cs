@@ -12,8 +12,8 @@ public sealed class MultiConnetionMessage : MonoBehaviour
 	[Header("コマンド入力中ローカライズ")]
 	private UILabel cmdSelectMessageeLocalize;
 
-	[SerializeField]
 	[Header("開始準備中オブジェクト")]
+	[SerializeField]
 	private GameObject prepareStartGO;
 
 	[SerializeField]

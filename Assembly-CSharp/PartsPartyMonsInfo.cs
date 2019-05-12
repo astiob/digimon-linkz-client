@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PartsPartyMonsInfo : GUICollider
 {
-	[SerializeField]
 	[Header("チップの処理")]
+	[SerializeField]
 	protected ChipBaseSelect chipBaseSelect;
 
 	[SerializeField]
@@ -94,8 +94,8 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject goL_CLIP;
 
-	[SerializeField]
 	[Header("右クリップのOBJ")]
+	[SerializeField]
 	private GameObject goR_CLIP;
 
 	[SerializeField]
@@ -464,10 +464,6 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.spButton.SetActive(false);
 		}
-		else if (CMD_PartyEdit.ModeType == CMD_PartyEdit.MODE_TYPE.EDIT)
-		{
-			this.spButton.SetActive(false);
-		}
 		else if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(text2))
 		{
 			List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> list = new List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>();
@@ -541,7 +537,7 @@ public class PartsPartyMonsInfo : GUICollider
 					for (int num2 = 0; num2 < list6.Count; num2++)
 					{
 						GameWebAPI.RespDataMA_ChipM.Chip chipMainData4 = ChipDataMng.GetChipMainData(list7[n].targetValue);
-						if (chipMainData4 != null && int.Parse(list7[n].effectValue) >= 0 && chipMainData4.chipId.Equals(list6[num2].chipId) && !list8.Contains(chipMainData4.chipId))
+						if (chipMainData4 != null && float.Parse(list7[n].effectValue) >= 0f && chipMainData4.chipId.Equals(list6[num2].chipId) && !list8.Contains(chipMainData4.chipId))
 						{
 							this.bonusListText.Add(chipMainData4.name);
 							list8.Add(chipMainData4.chipId);
@@ -555,25 +551,25 @@ public class PartsPartyMonsInfo : GUICollider
 				switch (int.Parse(list[num3].targetSubType))
 				{
 				case 2:
-					if (this.Data.monsterMG.tribe.Equals(list[num3].targetValue) && int.Parse(list[num3].effectValue) >= 0)
+					if (this.Data.monsterMG.tribe.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(list[num3].detail);
 					}
 					break;
 				case 3:
-					if (this.Data.monsterMG.monsterGroupId.Equals(list[num3].targetValue) && int.Parse(list[num3].effectValue) >= 0)
+					if (this.Data.monsterMG.monsterGroupId.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(list[num3].detail);
 					}
 					break;
 				case 4:
-					if (this.Data.monsterMG.growStep.Equals(list[num3].targetValue) && int.Parse(list[num3].effectValue) >= 0)
+					if (this.Data.monsterMG.growStep.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(list[num3].detail);
 					}
 					break;
 				case 5:
-					if (this.Data.GetCommonSkill() != null && this.Data.GetCommonSkill().skillId.Equals(list[num3].targetValue) && int.Parse(list[num3].effectValue) >= 0)
+					if (this.Data.GetCommonSkill() != null && this.Data.GetCommonSkill().skillId.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(list[num3].detail);
 					}
@@ -581,7 +577,7 @@ public class PartsPartyMonsInfo : GUICollider
 				case 8:
 					for (int num4 = 0; num4 < monsterIntegrationGroupM.Length; num4++)
 					{
-						if (list[num3].targetValue.Equals(monsterIntegrationGroupM[num4].monsterIntegrationId) && monsterIntegrationGroupM[num4].monsterId.Equals(this.Data.monsterM.monsterId) && int.Parse(list[num3].effectValue) >= 0)
+						if (list[num3].targetValue.Equals(monsterIntegrationGroupM[num4].monsterIntegrationId) && monsterIntegrationGroupM[num4].monsterId.Equals(this.Data.monsterM.monsterId) && float.Parse(list[num3].effectValue) >= 0f)
 						{
 							this.bonusListText.Add(list[num3].detail);
 						}
@@ -594,25 +590,25 @@ public class PartsPartyMonsInfo : GUICollider
 				switch (int.Parse(extraEffectDataList[num5].targetSubType))
 				{
 				case 2:
-					if (this.Data.monsterMG.tribe.Equals(extraEffectDataList[num5].targetValue) && int.Parse(extraEffectDataList[num5].effectValue) >= 0)
+					if (this.Data.monsterMG.tribe.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(extraEffectDataList[num5].detail);
 					}
 					break;
 				case 3:
-					if (this.Data.monsterMG.monsterGroupId.Equals(extraEffectDataList[num5].targetValue) && int.Parse(extraEffectDataList[num5].effectValue) >= 0)
+					if (this.Data.monsterMG.monsterGroupId.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(extraEffectDataList[num5].detail);
 					}
 					break;
 				case 4:
-					if (this.Data.monsterMG.growStep.Equals(extraEffectDataList[num5].targetValue) && int.Parse(extraEffectDataList[num5].effectValue) >= 0)
+					if (this.Data.monsterMG.growStep.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(extraEffectDataList[num5].detail);
 					}
 					break;
 				case 6:
-					if (this.Data.GetCommonSkill() != null && this.Data.GetCommonSkill().skillId.Equals(extraEffectDataList[num5].targetValue) && int.Parse(extraEffectDataList[num5].effectValue) >= 0)
+					if (this.Data.GetCommonSkill() != null && this.Data.GetCommonSkill().skillId.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
 					{
 						this.bonusListText.Add(extraEffectDataList[num5].detail);
 					}
@@ -620,7 +616,7 @@ public class PartsPartyMonsInfo : GUICollider
 				case 8:
 					for (int num6 = 0; num6 < monsterIntegrationGroupM.Length; num6++)
 					{
-						if (extraEffectDataList[num5].targetValue.Equals(monsterIntegrationGroupM[num6].monsterIntegrationId) && monsterIntegrationGroupM[num6].monsterId.Equals(this.Data.monsterM.monsterId) && int.Parse(extraEffectDataList[num5].effectValue) >= 0)
+						if (extraEffectDataList[num5].targetValue.Equals(monsterIntegrationGroupM[num6].monsterIntegrationId) && monsterIntegrationGroupM[num6].monsterId.Equals(this.Data.monsterM.monsterId) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
 						{
 							this.bonusListText.Add(extraEffectDataList[num5].detail);
 						}
@@ -636,6 +632,10 @@ public class PartsPartyMonsInfo : GUICollider
 			{
 				this.spButton.SetActive(false);
 			}
+		}
+		else if (CMD_PartyEdit.ModeType == CMD_PartyEdit.MODE_TYPE.EDIT)
+		{
+			this.spButton.SetActive(false);
 		}
 		this.monsterGimickEffectStatusList.SetValues(this.Data, gimmickEffectArray);
 		this.monsterResistanceList.SetValues(this.Data);

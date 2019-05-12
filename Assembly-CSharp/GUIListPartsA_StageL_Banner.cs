@@ -7,12 +7,12 @@ using UnityEngine;
 
 public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWのGameObject")]
+	[SerializeField]
 	private GameObject goNEW;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
@@ -23,16 +23,16 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private Color normalFrameColor = Color.white;
 
-	[SerializeField]
 	[Header("選択時の外枠色")]
+	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
 	[Header("残り時間のラベル")]
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
 	[Header("背景のスプライト")]
@@ -43,8 +43,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("外枠のスプライト")]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
 	[Header("オープンの時の色")]
@@ -55,8 +55,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("クローズの時の色")]
 	private Color closeBannerCol;
 
-	[Header("オープンしてないを示す鍵")]
 	[SerializeField]
+	[Header("オープンしてないを示す鍵")]
 	private GameObject goCloseKey;
 
 	[SerializeField]
@@ -67,8 +67,8 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[Header("クリアのマークの画像")]
 	private string clearMark = "Common02_text_Clear";
 
-	[Header("ステージギミック表記Obj")]
 	[SerializeField]
+	[Header("ステージギミック表記Obj")]
 	private GameObject stageGimmickObj;
 
 	[SerializeField]

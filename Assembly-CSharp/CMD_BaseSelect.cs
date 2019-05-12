@@ -36,8 +36,8 @@ public sealed class CMD_BaseSelect : CMD
 
 	private GUIMonsterIcon leftLargeMonsterIcon;
 
-	[SerializeField]
 	[Header("キャンペーンラベル")]
+	[SerializeField]
 	private CampaignLabel campaignLabel;
 
 	[SerializeField]

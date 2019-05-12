@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BattleStateMachineInternal;
+using System;
 using System.Collections.Generic;
 
 namespace Monster
@@ -23,9 +24,15 @@ namespace Monster
 			dest = null;
 			for (int i = 0; i < source.Count; i++)
 			{
-				if (dest == null || source[i].effectType == 1)
+				if (dest == null)
 				{
 					dest = source[i];
+				}
+				AffectEffect affectEffect = ServerToBattleUtility.IntToAffectEffect(source[i].effectType);
+				if (AffectEffectProperty.IsDamage(affectEffect))
+				{
+					dest = source[i];
+					break;
 				}
 			}
 		}

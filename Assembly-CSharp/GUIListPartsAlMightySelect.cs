@@ -13,8 +13,8 @@ public class GUIListPartsAlMightySelect : GUIListPartBS
 	[SerializeField]
 	public UISprite spSelectIcon;
 
-	[SerializeField]
 	[Header("個数プレート")]
+	[SerializeField]
 	public UISprite spNumPlate;
 
 	[SerializeField]
