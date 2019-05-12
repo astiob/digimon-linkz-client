@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857991}</ProjectGuid>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE68857997}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnityEngine.StyleSheets</RootNamespace>
@@ -54,11 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857974}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857981}</Project>
       <Name>UnityEngine.CoreModule</Name>
     </ProjectReference>
   </ItemGroup>

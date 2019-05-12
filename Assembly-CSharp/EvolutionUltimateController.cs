@@ -37,6 +37,8 @@ public sealed class EvolutionUltimateController : CutsceneControllerBase
 
 	private Action endCallback;
 
+	private Transform cameraTarget;
+
 	private void EndCutscene()
 	{
 		this.fade.StartFadeOut(new Action(this.Finish));
@@ -77,6 +79,14 @@ public sealed class EvolutionUltimateController : CutsceneControllerBase
 		}
 	}
 
+	protected override void OnLateUpdate()
+	{
+		if (this.animeEvent.IsCameraChase())
+		{
+			this.subCamera.transform.LookAt(this.cameraTarget);
+		}
+	}
+
 	public override void SetData(CutsceneDataBase data)
 	{
 		CutsceneDataEvolutionUltimate cutsceneDataEvolutionUltimate = data as CutsceneDataEvolutionUltimate;
@@ -91,9 +101,11 @@ public sealed class EvolutionUltimateController : CutsceneControllerBase
 			gameObject.transform.localPosition = Vector3.zero;
 			GameObject gameObject2 = CutsceneCommon.LoadMonsterModel(this.afterMonsterParent, cutsceneDataEvolutionUltimate.afterModelId);
 			gameObject2.transform.localPosition = Vector3.zero;
+			CharacterParams component = gameObject2.GetComponent<CharacterParams>();
+			this.cameraTarget = component.characterCenterTarget;
 			CutsceneCommon.SetBillBoardCamera(gameObject, this.mainCamera);
 			CutsceneCommon.SetBillBoardCamera(gameObject2, this.subCamera);
-			this.animeEvent.Initialize(this.cutsceneSound, gameObject, gameObject2);
+			this.animeEvent.Initialize(this.mainCamera.transform, this.cutsceneSound, gameObject, gameObject2);
 		}
 	}
 }

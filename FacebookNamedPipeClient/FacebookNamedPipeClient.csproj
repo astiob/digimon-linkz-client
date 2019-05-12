@@ -55,11 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\System.Xml\System.Xml.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</Project>
       <Name>System.Xml</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
       <Name>System</Name>
     </ProjectReference>
   </ItemGroup>

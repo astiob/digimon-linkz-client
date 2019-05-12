@@ -154,6 +154,8 @@ public class GameWebAPI : WebAPI
 
 		public int isPolicyConfirm;
 
+		public int state;
+
 		public Dictionary<string, int> GetOptionList_ProvisionalFunction()
 		{
 			Dictionary<string, int> dictionary = new Dictionary<string, int>();
@@ -3303,7 +3305,7 @@ public class GameWebAPI : WebAPI
 
 	public sealed class ReqDataUS_MissionRewardLogic : WebAPI.SendBaseData
 	{
-		public int missionId;
+		public int[] missionId;
 	}
 
 	public sealed class RespDataMS_MissionRewardLogic : WebAPI.ResponseData
@@ -3312,10 +3314,6 @@ public class GameWebAPI : WebAPI
 
 		public struct Result
 		{
-			public string missionRewardId;
-
-			public string missionRewardListId;
-
 			public string viewFlg;
 
 			public string assetCategoryId;
@@ -4765,6 +4763,10 @@ public class GameWebAPI : WebAPI
 			public int effect15;
 
 			public int effect16;
+
+			public int effect17;
+
+			public bool toPercentage = true;
 		}
 
 		[Serializable]
@@ -6474,6 +6476,14 @@ public class GameWebAPI : WebAPI
 				}
 			}
 
+			public string pvpBattleEndJudgmentCheck
+			{
+				set
+				{
+					this.PVP_BATTLEEND_JUDGMENTCHECK = int.Parse(value);
+				}
+			}
+
 			public string multiMaxAttackTime
 			{
 				set
@@ -6847,6 +6857,8 @@ public class GameWebAPI : WebAPI
 			public int PVP_SELECT_DATA_RETRY_COUNT { get; private set; }
 
 			public int PVP_PARTY_SELECT_TIME { get; private set; }
+
+			public int PVP_BATTLEEND_JUDGMENTCHECK { get; private set; }
 
 			public int MULTI_MAX_ATTACK_TIME { get; private set; }
 

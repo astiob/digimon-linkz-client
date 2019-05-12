@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F8DAB99-2302-404C-AC7D-0ACE6885796D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Firebase</RootNamespace>
+    <AssemblyName>Firebase.Platform</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dispatcher.cs" />
+    <Compile Include="Platform\DebugLogger.cs" />
+    <Compile Include="Platform\Default\AppConfigExtensions.cs" />
+    <Compile Include="Platform\Default\BaseAuthService.cs" />
+    <Compile Include="Platform\Default\SystemClock.cs" />
+    <Compile Include="Platform\Default\UnityConfigExtensions.cs" />
+    <Compile Include="Platform\FirebaseAppUtilsStub.cs" />
+    <Compile Include="Platform\FirebaseEditorDispatcher.cs" />
+    <Compile Include="Platform\FirebaseHandler.cs" />
+    <Compile Include="Platform\FirebaseHttpRequest.cs" />
+    <Compile Include="Platform\FirebaseLogger.cs" />
+    <Compile Include="Platform\FirebaseMonoBehaviour.cs" />
+    <Compile Include="Platform\IAppConfigExtensions.cs" />
+    <Compile Include="Platform\IAuthService.cs" />
+    <Compile Include="Platform\ICertificateService.cs" />
+    <Compile Include="Platform\IClockService.cs" />
+    <Compile Include="Platform\IFirebaseAppPlatform.cs" />
+    <Compile Include="Platform\IFirebaseAppUtils.cs" />
+    <Compile Include="Platform\IGetTokenCompletionListener.cs" />
+    <Compile Include="Platform\IHttpFactoryService.cs" />
+    <Compile Include="Platform\ILoggingService.cs" />
+    <Compile Include="Platform\ITokenChangeListener.cs" />
+    <Compile Include="Platform\NoopCertificateService.cs" />
+    <Compile Include="Platform\PlatformInformation.cs" />
+    <Compile Include="Platform\PlatformLogLevel.cs" />
+    <Compile Include="Platform\Security\GAuthToken.cs" />
+    <Compile Include="Platform\Security\GoogleAuthConsts.cs" />
+    <Compile Include="Platform\Security\ServiceAccountCredential.cs" />
+    <Compile Include="Platform\Security\ServiceCredential.cs" />
+    <Compile Include="Platform\Services.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unity\InstallRootCerts.cs" />
+    <Compile Include="Unity\UnityHttpFactoryService.cs" />
+    <Compile Include="Unity\UnityLoggingService.cs" />
+    <Compile Include="Unity\UnityPlatformServices.cs" />
+    <Compile Include="Unity\UnitySynchronizationContext.cs" />
+    <Compile Include="Unity\WWWHttpRequest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Platform\cacert_pem.txt" />
+    <EmbeddedResource Include="Platform\cacrl_pem.txt" />
+    <EmbeddedResource Include="Platform\caintermediatecrl_pem.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Google.MiniJson\Google.MiniJson.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Name>Google.MiniJson</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857974}</Project>
+      <Name>System.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
+      <Name>System</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unity.Compat\Unity.Compat.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857978}</Project>
+      <Name>Unity.Compat</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unity.Tasks\Unity.Tasks.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857979}</Project>
+      <Name>Unity.Tasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857984}</Project>
+      <Name>UnityEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

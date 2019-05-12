@@ -106,13 +106,15 @@ public class ConstValue
 
 	public const float RENDER3D_CHARA_SCALE_MAX = 1.2f;
 
+	public const int UI_RECT_SIZE_X = 1136;
+
+	public const int UI_RECT_SIZE_Y = 820;
+
 	public static string APP_SITE_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_SITE_DOMAIN;
 
 	public static string APP_WEB_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_SITE_DOMAIN;
 
 	public static string APP_ASSET_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_ASSET_DOMAIN;
-
-	private static string IOS_CONTACT_DEFAULT_SITE_URL = "http://bnfaq.channel.or.jp/contact/faq_list/1723";
 
 	private static string ANDROID_CONTACT_DEFAULT_SITE_URL = "http://bnfaq.channel.or.jp/contact/faq_list/1724";
 
@@ -675,6 +677,14 @@ public class ConstValue
 		get
 		{
 			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_BATTLE_ENEMY_RECOVER_TIME;
+		}
+	}
+
+	public static int PVP_BATTLEEND_JUDGMENTCHECK
+	{
+		get
+		{
+			return MasterDataMng.Instance().RespDataMA_CodeM.codeM.PVP_BATTLEEND_JUDGMENTCHECK;
 		}
 	}
 

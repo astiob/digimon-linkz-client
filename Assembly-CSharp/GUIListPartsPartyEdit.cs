@@ -206,6 +206,7 @@ public class GUIListPartsPartyEdit : GUIListPartBS
 
 	public void ReloadAllCharacters(bool flg)
 	{
+		PlayerPrefs.SetString("BonusMonsterIdList", string.Empty);
 		for (int i = 0; i < this.ppmiList.Count; i++)
 		{
 			if (flg)

@@ -35,6 +35,8 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	[SerializeField]
 	private int shortenNameLength;
 
+	private int shortenNameLengthVal;
+
 	private void Start()
 	{
 		if (this.isUniqueSkill)
@@ -58,9 +60,9 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	private void SetSkillUI(string skillName, string skillInfo, string skillCost, int skillAttribute)
 	{
 		this.calcShortenNameLength(skillName);
-		if (this.shortenName && skillName.Length > this.shortenNameLength)
+		if (this.shortenName && skillName.Length > this.shortenNameLengthVal)
 		{
-			this.skillName.text = string.Format("{0} ...", skillName.Substring(0, this.shortenNameLength));
+			this.skillName.text = string.Format("{0} ...", skillName.Substring(0, this.shortenNameLengthVal));
 		}
 		else
 		{
@@ -154,7 +156,7 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 	{
 		if (CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN) == 2.ToString())
 		{
-			this.shortenNameLength *= 2;
+			this.shortenNameLengthVal = this.shortenNameLength * 2;
 			int num = 0;
 			float num2 = 0f;
 			for (int i = 0; i < text.Length; i++)
@@ -168,12 +170,16 @@ public sealed class MonsterLearnSkill : MonoBehaviour
 					num2 += 1f;
 				}
 				num++;
-				if ((int)Math.Ceiling((double)num2) >= this.shortenNameLength)
+				if ((int)Math.Ceiling((double)num2) >= this.shortenNameLengthVal)
 				{
-					this.shortenNameLength = num;
+					this.shortenNameLengthVal = num;
 					break;
 				}
 			}
+		}
+		else
+		{
+			this.shortenNameLengthVal = this.shortenNameLength;
 		}
 	}
 }

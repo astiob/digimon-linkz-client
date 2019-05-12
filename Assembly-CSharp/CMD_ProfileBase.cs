@@ -108,7 +108,7 @@ public abstract class CMD_ProfileBase : CMD
 
 	private void ShowCharacter()
 	{
-		this.characterCameraView = new CharacterCameraView(this.leaderMonsterData);
+		this.characterCameraView = new CharacterCameraView(this.leaderMonsterData, 1136, 820);
 		this.ngTargetTex.mainTexture = this.characterCameraView.renderTex;
 	}
 

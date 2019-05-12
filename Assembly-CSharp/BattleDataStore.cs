@@ -82,7 +82,8 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		"leaderCharacter",
 		"leaderEnemyCharacter",
 		"useInheritanceSkillPlayers",
-		"extraEffectStatus"
+		"extraEffectStatus",
+		"currentSelectCharacterState"
 	};
 
 	public TaskBase RequestWorldStartDataLogic()
@@ -102,21 +103,24 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				{
 					this.isRecoverSuccessWebAPI = true;
 					ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart = response;
-					string userDungeonTicketId = string.Empty;
+					string text = string.Empty;
+					DkLog.W("response.userDungeonTicketId : " + response.userDungeonTicketId, false);
 					if (string.IsNullOrEmpty(response.userDungeonTicketId))
 					{
 						string @string = PlayerPrefs.GetString("userDungeonTicketId", string.Empty);
 						if (!string.IsNullOrEmpty(@string))
 						{
-							userDungeonTicketId = @string;
+							text = @string;
+							DkLog.W("ticketid : " + text, false);
 						}
 						PlayerPrefs.SetString("userDungeonTicketId", string.Empty);
 					}
 					else
 					{
-						userDungeonTicketId = response.userDungeonTicketId;
+						text = response.userDungeonTicketId;
 					}
-					this.SetRetryData(response.worldDungeonId, userDungeonTicketId);
+					DkLog.W("SetRetryData(response.worldDungeonId, ticketid) : " + text, false);
+					this.SetRetryData(response.worldDungeonId, text);
 				}
 			}
 		};
@@ -704,6 +708,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				propInfoType
 			});
 		}
+		DkLog.W(string.Format("チケットID {0} : {1}", battleStateData.ticketId, DataMng.Instance().GetResultUtilData().last_dng_req.userDungeonTicketId), false);
 		if (!string.IsNullOrEmpty(battleStateData.ticketId))
 		{
 			DataMng.Instance().GetResultUtilData().last_dng_req.userDungeonTicketId = battleStateData.ticketId;

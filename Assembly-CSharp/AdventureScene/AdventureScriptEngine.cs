@@ -169,6 +169,9 @@ namespace AdventureScene
 			this.SetCommand(new ReleaseBattleStageCommand());
 			this.SetCommand(new LoadBattleCameraCommand());
 			this.SetCommand(new BattleCharaShowCommand());
+			this.SetCommand(new ShowPopupCommand());
+			this.SetCommand(new ShowBackgroundCommand());
+			this.SetCommand(new HideBackgroundCommand());
 			this.InitTutorialScriptEngine();
 		}
 

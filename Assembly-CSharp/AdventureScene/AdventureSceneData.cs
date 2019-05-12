@@ -30,6 +30,8 @@ namespace AdventureScene
 
 		public Action sceneDeleteAction;
 
+		public GameObject commonBackground;
+
 		public AdventureSceneData()
 		{
 			this.adventureCamera = new AdventureCamera();

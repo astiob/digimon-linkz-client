@@ -304,11 +304,7 @@ public class GUIMain : Singleton<GUIMain>
 		{
 			GUIMain.nowBgm = b2;
 			string path = string.Empty;
-			if ("UITitle" == screenName)
-			{
-				path = "BGMInternal/" + GUIMain.nowBgm + "/sound";
-			}
-			else
+			if (!("UITitle" == screenName))
 			{
 				path = "BGM/" + GUIMain.nowBgm + "/sound";
 			}

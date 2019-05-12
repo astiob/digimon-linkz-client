@@ -38,6 +38,7 @@ public sealed class CMD_Inquiry : CMD
 		base.HideDLG();
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		this.responseContactCode = PlayerPrefs.GetString("InquiryCode", string.Empty);
+		DkLog.W("responseContactCode : " + this.responseContactCode, false);
 		this.contactCode.text = this.GetMoldedContactCode(this.responseContactCode);
 		RestrictionInput.EndLoad();
 		base.ShowDLG();

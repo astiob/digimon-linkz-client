@@ -1567,6 +1567,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 					{
 						Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType].Add(confirmationData.playerUserId);
 					}
+					DkLog.W(string.Format("confirmationData.value1 {0} : {1}", confirmationData.value1, this.haveOwner), false);
 					this.ownerGoingBattle = (confirmationData.value1 == "True" || confirmationData.value1 == "true");
 					if (!this.haveOwner && this.ownerGoingBattle)
 					{
@@ -1718,6 +1719,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 
 	public void ReloadAllCharacters(bool isShow)
 	{
+		PlayerPrefs.SetString("BonusMonsterIdList", string.Empty);
 		for (int i = 0; i < this.partsMonsInfoList.Count; i++)
 		{
 			if (isShow)

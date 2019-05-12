@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BattleUIHUD : UITweener
@@ -90,6 +91,11 @@ public class BattleUIHUD : UITweener
 
 	private float currentFactor;
 
+	private int sufferOrderCount()
+	{
+		return this.sufferOrderList.Count((SufferStateProperty.SufferType syffer) => syffer != SufferStateProperty.SufferType.ChangeToleranceUp && syffer != SufferStateProperty.SufferType.ChangeToleranceDown);
+	}
+
 	public float alpha
 	{
 		get
@@ -161,7 +167,7 @@ public class BattleUIHUD : UITweener
 		this.viewId = 0;
 		base.ResetToBeginning();
 		this.UpdateActiveWidgets();
-		base.enabled = (this.sufferOrderList.Count > 0);
+		base.enabled = (this.sufferOrderCount() > 0);
 		if (characterStatus.hp > 0)
 		{
 			this.hudTween.enabled = false;
@@ -249,6 +255,8 @@ public class BattleUIHUD : UITweener
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.CountEvasion, "Battle_icon_avoid");
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.Escape, "Battle_icon_escape");
 			this.iconSpriteNames.Add(SufferStateProperty.SufferType.InstantDeath, string.Empty);
+			this.iconSpriteNames.Add(SufferStateProperty.SufferType.ChangeToleranceUp, string.Empty);
+			this.iconSpriteNames.Add(SufferStateProperty.SufferType.ChangeToleranceDown, string.Empty);
 		}
 	}
 
@@ -268,7 +276,7 @@ public class BattleUIHUD : UITweener
 	{
 		foreach (UISprite uisprite in this.iconImageGroup01)
 		{
-			if (this.sufferOrderList.Count > this.nextIndex)
+			if (this.sufferOrderCount() > this.nextIndex)
 			{
 				uisprite.gameObject.SetActive(true);
 				uisprite.spriteName = this.SufferTypeToSpriteName(this.sufferOrderList[this.nextIndex]);
@@ -289,7 +297,7 @@ public class BattleUIHUD : UITweener
 		{
 			if (this.viewId == 0)
 			{
-				if (this.sufferOrderList.Count == 0)
+				if (this.sufferOrderCount() == 0)
 				{
 					this.viewId = 0;
 				}
@@ -300,7 +308,7 @@ public class BattleUIHUD : UITweener
 					this.UpdateIcon();
 				}
 			}
-			else if (this.sufferOrderList.Count > this.nextIndex)
+			else if (this.sufferOrderCount() > this.nextIndex)
 			{
 				this.UpdateIcon();
 			}

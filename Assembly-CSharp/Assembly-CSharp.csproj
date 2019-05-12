@@ -81,6 +81,7 @@
     <Compile Include="AdventureScene\EffectPositionCommand.cs" />
     <Compile Include="AdventureScene\EffectRotationCommand.cs" />
     <Compile Include="AdventureScene\EffectShowCommand.cs" />
+    <Compile Include="AdventureScene\HideBackgroundCommand.cs" />
     <Compile Include="AdventureScene\LoadBattleCameraCommand.cs" />
     <Compile Include="AdventureScene\LoadBattleStageCommand.cs" />
     <Compile Include="AdventureScene\LoadCameraAnimeCommand.cs" />
@@ -89,6 +90,8 @@
     <Compile Include="AdventureScene\LoadEffectCommand.cs" />
     <Compile Include="AdventureScene\LoadStageCommand.cs" />
     <Compile Include="AdventureScene\ReleaseBattleStageCommand.cs" />
+    <Compile Include="AdventureScene\ShowBackgroundCommand.cs" />
+    <Compile Include="AdventureScene\ShowPopupCommand.cs" />
     <Compile Include="AdventureScene\State\AdventureState.cs" />
     <Compile Include="AdventureScene\State\BaseState.cs" />
     <Compile Include="AdventureScene\State\BeginState.cs" />
@@ -1490,6 +1493,8 @@
     <Compile Include="SimpleDiskUtils\DiskUtils.cs" />
     <Compile Include="SingleBattleState.cs" />
     <Compile Include="Singleton.cs" />
+    <Compile Include="SkillBranchTargetType.cs" />
+    <Compile Include="SkillBranchType.cs" />
     <Compile Include="SkillConverter.cs" />
     <Compile Include="SkillResults.cs" />
     <Compile Include="SkillSelectPvP.cs" />
@@ -1906,88 +1911,92 @@
       <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857969}</Project>
       <Name>Facebook.Unity</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Firebase.Messaging\Firebase.Messaging.csproj">
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796C}</Project>
+      <Name>Firebase.Messaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JsonFx.Json\JsonFx.Json.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
       <Name>JsonFx.Json</Name>
     </ProjectReference>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Secure\Secure.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796F}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857973}</Project>
       <Name>Secure</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857974}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml\System.Xml.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</Project>
       <Name>System.Xml</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\TextMeshPro-2017.3-1.0.56-Runtime\TextMeshPro-2017.3-1.0.56-Runtime.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857973}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857977}</Project>
       <Name>TextMeshPro-2017.3-1.0.56-Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.AnimationModule\UnityEngine.AnimationModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797C}</Project>
       <Name>UnityEngine.AnimationModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.AudioModule\UnityEngine.AudioModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857979}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797F}</Project>
       <Name>UnityEngine.AudioModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857981}</Project>
       <Name>UnityEngine.CoreModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.ImageConversionModule\UnityEngine.ImageConversionModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857981}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857987}</Project>
       <Name>UnityEngine.ImageConversionModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.IMGUIModule\UnityEngine.IMGUIModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857982}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857988}</Project>
       <Name>UnityEngine.IMGUIModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.JSONSerializeModule\UnityEngine.JSONSerializeModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857984}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798A}</Project>
       <Name>UnityEngine.JSONSerializeModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.ParticleSystemModule\UnityEngine.ParticleSystemModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857987}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798D}</Project>
       <Name>UnityEngine.ParticleSystemModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.Physics2DModule\UnityEngine.Physics2DModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857989}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798F}</Project>
       <Name>UnityEngine.Physics2DModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.PhysicsModule\UnityEngine.PhysicsModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857990}</Project>
       <Name>UnityEngine.PhysicsModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.TextRenderingModule\UnityEngine.TextRenderingModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857994}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799A}</Project>
       <Name>UnityEngine.TextRenderingModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857997}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799D}</Project>
       <Name>UnityEngine.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UnityWebRequestModule\UnityEngine.UnityWebRequestModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A4}</Project>
       <Name>UnityEngine.UnityWebRequestModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UnityWebRequestWWWModule\UnityEngine.UnityWebRequestWWWModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A0}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A6}</Project>
       <Name>UnityEngine.UnityWebRequestWWWModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\websocket-sharp\websocket-sharp.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A6}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579AC}</Project>
       <Name>websocket-sharp</Name>
     </ProjectReference>
   </ItemGroup>

@@ -327,6 +327,18 @@ public class BattleInitialize : BattleFunctionBase
 			{
 				this.SetHitEffectPool("EFF_COM_HIT_RATIO", AffectEffect.RefHpRateNonAttribute.ToString());
 			}
+			else if (affectEffect == AffectEffect.ChangeToleranceUp)
+			{
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.ChangeToleranceUp.ToString());
+			}
+			else if (affectEffect == AffectEffect.ChangeToleranceDown)
+			{
+				this.SetHitEffectPool("EFF_COM_DOWN", AffectEffect.ChangeToleranceDown.ToString());
+			}
+			else if (affectEffect == AffectEffect.ClearTolerance)
+			{
+				this.SetHitEffectPool("EFF_COM_UP", AffectEffect.ClearTolerance.ToString());
+			}
 		}
 		return result;
 	}

@@ -30,6 +30,7 @@ public class StoreUtil : MonoBehaviour
 	{
 		if (this.storeProductData != null)
 		{
+			global::Debug.Log(string.Format("storeProductData {0} : {1}", this.storeProductData, this.storeProductData.storeProductInfoList.Length));
 			for (int i = 0; i < this.storeProductData.storeProductInfoList.Length; i++)
 			{
 				if (this.storeProductData.storeProductInfoList[i].sku == productId)
@@ -202,12 +203,21 @@ public class StoreUtil : MonoBehaviour
 
 	public double GetStorePriceFromProductId(string productId)
 	{
+		global::Debug.Log("★productId : " + productId);
 		StoreUtil.StoreProductInfo storeProductInfo_ByProductId = this.GetStoreProductInfo_ByProductId(productId);
 		if (storeProductInfo_ByProductId != null)
 		{
+			global::Debug.Log(string.Format("info {0}\ntitle : {1}\nprice : {2}\npriceAmountMicros : {3}", new object[]
+			{
+				storeProductInfo_ByProductId,
+				storeProductInfo_ByProductId.title,
+				storeProductInfo_ByProductId.price,
+				storeProductInfo_ByProductId.priceAmountMicros
+			}));
 			double num = double.Parse(storeProductInfo_ByProductId.priceAmountMicros);
 			return num / 1000000.0;
 		}
+		global::Debug.Log("info null...");
 		return 0.0;
 	}
 
@@ -491,6 +501,7 @@ public class StoreUtil : MonoBehaviour
 		{
 			global::Debug.Log("========= PRODUCT LIST SKU   = " + this.storeProductData.storeProductInfoList[i].sku);
 			global::Debug.Log("========= PRODUCT LIST PRICE = " + this.storeProductData.storeProductInfoList[i].price);
+			global::Debug.Log("========= PRODUCT LIST PRICEA = " + this.storeProductData.storeProductInfoList[i].priceAmountMicros);
 			this.storeProductData.storeProductInfoList[i].countryCode = localeCountryCode;
 			this.storeProductData.storeProductInfoList[i].currencyCode = this.storeProductData.storeProductInfoList[i].priceCurrencyCode;
 		}

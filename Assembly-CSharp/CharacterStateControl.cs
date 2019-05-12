@@ -36,6 +36,9 @@ public class CharacterStateControl
 	private Tolerance _tolerance;
 
 	[SerializeField]
+	private Tolerance _addTolerances;
+
+	[SerializeField]
 	private CharacterDatas _characterDatas;
 
 	[SerializeField]
@@ -543,8 +546,87 @@ public class CharacterStateControl
 			{
 				return this._tolerance.CreateAddTolerance(this._leaderSkillResult.addTolerances);
 			}
+			bool flag = this.overrideTolerances();
+			if (this._addTolerances != null && flag)
+			{
+				return this._addTolerances;
+			}
 			return this._tolerance;
 		}
+	}
+
+	public bool overrideTolerances()
+	{
+		bool flag = false;
+		int[] overrideTolerances = this.getOverrideTolerances(ref flag);
+		if (!flag)
+		{
+			return false;
+		}
+		this._addTolerances = this._tolerance.ConvertAddTolerance(overrideTolerances);
+		return true;
+	}
+
+	public int[] getOverrideTolerances(ref bool doOverrideData)
+	{
+		int[] array = new int[14];
+		SufferStateProperty sufferStateProperty = this.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.ChangeToleranceUp);
+		if (sufferStateProperty.dataDictionary.Count != 0)
+		{
+			doOverrideData = true;
+			foreach (List<SufferStateProperty.Data> list in sufferStateProperty.dataDictionary.Values)
+			{
+				foreach (SufferStateProperty.Data data in list)
+				{
+					if (data.isActive)
+					{
+						for (int i = 0; i < array.Length; i++)
+						{
+							if ((int)data.toleranceValue[i] >= 100)
+							{
+								if (array[i] < 100)
+								{
+									array[i] = (int)data.toleranceValue[i];
+								}
+							}
+							else if (array[i] < 100)
+							{
+								array[i] += (int)data.toleranceValue[i];
+							}
+						}
+					}
+				}
+			}
+		}
+		sufferStateProperty = this.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.ChangeToleranceDown);
+		if (sufferStateProperty.dataDictionary.Count != 0)
+		{
+			doOverrideData = true;
+			foreach (List<SufferStateProperty.Data> list2 in sufferStateProperty.dataDictionary.Values)
+			{
+				foreach (SufferStateProperty.Data data2 in list2)
+				{
+					if (data2.isActive)
+					{
+						for (int j = 0; j < array.Length; j++)
+						{
+							if ((int)data2.toleranceValue[j] >= 100)
+							{
+								if (array[j] < 100)
+								{
+									array[j] = (int)data2.toleranceValue[j];
+								}
+							}
+							else if (array[j] < 100)
+							{
+								array[j] += (int)data2.toleranceValue[j];
+							}
+						}
+					}
+				}
+			}
+		}
+		return array;
 	}
 
 	public HaveSufferState currentSufferState
@@ -1313,7 +1395,31 @@ public class CharacterStateControl
 				}
 			}
 		}
+		if (this.IsBonusQuest(this.characterStatus.groupId))
+		{
+			this._effectiveBonus = true;
+			return;
+		}
 		this._effectiveBonus = false;
+	}
+
+	private bool IsBonusQuest(string monsterId)
+	{
+		bool result = false;
+		string @string = PlayerPrefs.GetString("BonusMonsterIdList");
+		string[] array = @string.Split(",".ToCharArray());
+		if (array != null && array.Length > 0)
+		{
+			foreach (string a in array)
+			{
+				if (a == monsterId)
+				{
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	public bool isEffectiveBonus()

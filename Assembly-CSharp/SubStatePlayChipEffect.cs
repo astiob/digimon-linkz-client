@@ -8,6 +8,8 @@ public class SubStatePlayChipEffect : BattleStateController
 {
 	private Func<bool> IsSkillEnd;
 
+	private List<CharacterStateControl> targetList = new List<CharacterStateControl>();
+
 	public SubStatePlayChipEffect(Action OnExit, Action<EventState> OnExitGotEvent, Func<bool> isSkillEnd = null) : base(null, OnExit, OnExitGotEvent)
 	{
 		this.IsSkillEnd = isSkillEnd;
@@ -72,6 +74,7 @@ public class SubStatePlayChipEffect : BattleStateController
 				}
 			}
 			string cameraKey = string.Empty;
+			CharacterStateControl target = null;
 			if ((chipPlayType == SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay || chipPlayType == SubStatePlayChipEffect.ChipPlayType.SKillPlay) && this.IsSkillEnd != null && this.IsSkillEnd())
 			{
 				List<CharacterStateControl> list = new List<CharacterStateControl>();
@@ -94,8 +97,7 @@ public class SubStatePlayChipEffect : BattleStateController
 						cameraKey = "skillA";
 					}
 					list[0].CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
-					base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, list[0]);
-					base.stateManager.cameraControl.SetTime(cameraKey, 1f);
+					target = list[0];
 				}
 			}
 			if (chipPlayType != SubStatePlayChipEffect.ChipPlayType.None)
@@ -108,6 +110,12 @@ public class SubStatePlayChipEffect : BattleStateController
 						returnData3.characterStateControl.CharacterParams.StopAnimation();
 						returnData3.characterStateControl.CharacterParams.PlayAnimation(CharacterAnimationType.idle, SkillType.Attack, 0, null, null);
 					}
+				}
+				if (target != null)
+				{
+					yield return new WaitForEndOfFrame();
+					base.stateManager.cameraControl.PlayCameraMotionActionCharacter(cameraKey, target);
+					base.stateManager.cameraControl.SetTime(cameraKey, 1f);
 				}
 				IEnumerator chipWait = this.PlayChipEffectPerformance(resultList);
 				while (chipWait.MoveNext())
@@ -202,7 +210,19 @@ public class SubStatePlayChipEffect : BattleStateController
 					{
 						SkillStatus skillStatus = base.hierarchyData.GetSkillStatus(chipEffectDataToId.effectValue);
 						CharacterStateControl target = this.GetTarget(characterStateControl, chipEffectDataToId);
-						if (skillStatus != null && target != null)
+						if (chipEffectDataToId.effectTrigger.ToInt32() == 37)
+						{
+							if (skillStatus != null && target != null && this.checkUseSkill(skillStatus, characterStateControl, target))
+							{
+								returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay;
+								returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
+							}
+							else
+							{
+								returnData.characterStateControl.AddChipEffectCount(chipEffectDataToId.chipEffectId.ToInt32(), 1);
+							}
+						}
+						else if (skillStatus != null && target != null)
 						{
 							returnData.chipPlayType = SubStatePlayChipEffect.ChipPlayType.ChipAndSKillPlay;
 							returnData.dictionary[keyValuePair.Value].Add(chipEffectDataToId);
@@ -494,6 +514,345 @@ public class SubStatePlayChipEffect : BattleStateController
 			}
 			return base.battleStateData.currentSelectCharacterState;
 		}
+	}
+
+	private bool checkUseSkill(SkillStatus status, CharacterStateControl currentCharacter, CharacterStateControl tg)
+	{
+		bool isProtectEnableSkill = false;
+		foreach (AffectEffectProperty affectEffectProperty in status.affectEffect)
+		{
+			if (AffectEffectProperty.IsDamage(affectEffectProperty.type))
+			{
+				isProtectEnableSkill = true;
+				break;
+			}
+		}
+		List<SubStateSkillDetailsFunction.TargetData> list = new List<SubStateSkillDetailsFunction.TargetData>();
+		int num = 0;
+		for (int i = 0; i < status.affectEffect.Count; i++)
+		{
+			AffectEffectProperty affectEffectProperty2 = status.affectEffect[i];
+			if (AffectEffectProperty.IsDamage(affectEffectProperty2.type))
+			{
+				num += affectEffectProperty2.hitNumber;
+			}
+		}
+		bool flag = true;
+		AffectEffectProperty affectEffectProperty3 = null;
+		bool flag2 = false;
+		bool result = false;
+		bool flag3 = false;
+		EffectTarget effectTarget = EffectTarget.Enemy;
+		for (int j = 0; j < status.affectEffect.Count; j++)
+		{
+			DkLog.W("↓↓↓↓↓↓", false);
+			AffectEffectProperty affectEffectProperty4 = status.affectEffect[j];
+			if (j == 0)
+			{
+				effectTarget = affectEffectProperty4.target;
+			}
+			if (affectEffectProperty3 != null && affectEffectProperty3.target != affectEffectProperty4.target)
+			{
+				CharacterStateControl[] skillTargetList = base.stateManager.targetSelect.GetSkillTargetList(currentCharacter, affectEffectProperty4.target);
+				if (skillTargetList != null && skillTargetList.Length > 0)
+				{
+					currentCharacter.targetCharacter = skillTargetList[0];
+				}
+				if (effectTarget == affectEffectProperty4.target)
+				{
+					currentCharacter.targetCharacter = tg;
+				}
+			}
+			list = this.CreateTargetData(list, currentCharacter, affectEffectProperty4, isProtectEnableSkill, ref flag);
+			affectEffectProperty3 = affectEffectProperty4;
+			if (this.SwitchAffectEffect(affectEffectProperty4, currentCharacter, tg, list, ref flag3, ref flag2))
+			{
+				DkLog.W(string.Format("targetDataList {0} : currentSuffer.type {1} : tg {2} : skip {3}", new object[]
+				{
+					list.Count,
+					affectEffectProperty4.type,
+					string.Empty,
+					flag2
+				}), false);
+				if (!flag2)
+				{
+					result = true;
+					DkLog.W(string.Format("targetDataList.Count {0}", list.Count), false);
+				}
+			}
+		}
+		return result;
+	}
+
+	private List<SubStateSkillDetailsFunction.TargetData> CreateTargetData(List<SubStateSkillDetailsFunction.TargetData> oldTargetDataList, CharacterStateControl currentCharacter, AffectEffectProperty currentSuffer, bool isProtectEnableSkill, ref bool enableDrawProtectMessage)
+	{
+		List<SubStateSkillDetailsFunction.TargetData> list = new List<SubStateSkillDetailsFunction.TargetData>();
+		CharacterStateControl[] array;
+		if (base.battleStateData.isConfusionAttack)
+		{
+			if (currentCharacter.isEnemy)
+			{
+				array = base.stateManager.targetSelect.GetSkillTargetList(base.battleStateData.playerCharacters[0], currentSuffer.target);
+			}
+			else
+			{
+				array = base.stateManager.targetSelect.GetSkillTargetList(base.battleStateData.enemies[0], currentSuffer.target);
+			}
+		}
+		else
+		{
+			array = base.stateManager.targetSelect.GetSkillTargetList(currentCharacter, currentSuffer.target);
+		}
+		if (array == null || array.Length == 0)
+		{
+			return list;
+		}
+		bool flag = false;
+		if (currentSuffer.effectNumbers == EffectNumbers.Simple)
+		{
+			CharacterStateControl[] array2 = array.Where((CharacterStateControl item) => item.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Protect)).ToArray<CharacterStateControl>();
+			if (base.battleStateData.isConfusionAttack)
+			{
+				flag = (isProtectEnableSkill && array2 != null && array2.Length > 0);
+			}
+			else
+			{
+				flag = (isProtectEnableSkill && array2 != null && array2.Length > 0 && currentCharacter.isEnemy != array[0].isEnemy);
+			}
+			if (flag)
+			{
+				array = CharacterStateControlSorter.SortedSufferStateGenerateStartTiming(array2, SufferStateProperty.SufferType.Protect);
+				if (currentCharacter.targetCharacter == array[0])
+				{
+					enableDrawProtectMessage = false;
+				}
+				currentCharacter.targetCharacter = array[0];
+			}
+			array = new CharacterStateControl[]
+			{
+				currentCharacter.targetCharacter
+			};
+		}
+		if (!currentSuffer.isMissThrough && oldTargetDataList.Count > 0)
+		{
+			List<CharacterStateControl> list2 = new List<CharacterStateControl>();
+			CharacterStateControl[] array3 = array;
+			for (int i = 0; i < array3.Length; i++)
+			{
+				CharacterStateControl target = array3[i];
+				SubStateSkillDetailsFunction.TargetData targetData = oldTargetDataList.Where((SubStateSkillDetailsFunction.TargetData item) => item.target == target).SingleOrDefault<SubStateSkillDetailsFunction.TargetData>();
+				bool flag2;
+				if (targetData != null)
+				{
+					flag2 = !targetData.isAllMiss;
+				}
+				else
+				{
+					flag2 = oldTargetDataList.Where((SubStateSkillDetailsFunction.TargetData item) => !item.isAllMiss).Any<SubStateSkillDetailsFunction.TargetData>();
+				}
+				if (flag2)
+				{
+					list2.Add(target);
+				}
+			}
+			if (list2.Count <= 0)
+			{
+				return list;
+			}
+			array = list2.ToArray();
+		}
+		foreach (CharacterStateControl target2 in array)
+		{
+			list.Add(new SubStateSkillDetailsFunction.TargetData
+			{
+				target = target2,
+				isAllMiss = true,
+				onProtect = flag,
+				isDamage = isProtectEnableSkill
+			});
+		}
+		return list;
+	}
+
+	private bool SwitchAffectEffect(AffectEffectProperty currentSuffer, CharacterStateControl currentCharacter, CharacterStateControl baseTarget, List<SubStateSkillDetailsFunction.TargetData> targetDataList, ref bool isEnableForPrevious, ref bool skip)
+	{
+		if (currentSuffer.type != AffectEffect.SkillBranch)
+		{
+			return true;
+		}
+		DkLog.W("条件分岐判定処理開始", false);
+		if (currentSuffer.type == AffectEffect.SkillBranch && currentSuffer.skillBranchOverlap == 1)
+		{
+			isEnableForPrevious = false;
+			DkLog.W("重複可能だったのでフラグを下ろす", false);
+		}
+		DkLog.W("isEnableForPrevious : " + isEnableForPrevious, false);
+		if (currentSuffer.type == AffectEffect.SkillBranch && (currentSuffer.skillBranchOverlap != 0 || !isEnableForPrevious))
+		{
+			bool flag = false;
+			bool flag2 = currentSuffer.skillBranchTargetType == 4 || currentSuffer.skillBranchTargetType == 6;
+			this.targetList.Clear();
+			switch (currentSuffer.skillBranchTargetType)
+			{
+			case 1:
+				this.targetList.Add(currentCharacter);
+				break;
+			case 2:
+				this.targetList.Add(baseTarget);
+				break;
+			case 3:
+			case 4:
+				foreach (CharacterStateControl item in base.battleStateData.playerCharacters)
+				{
+					this.targetList.Add(item);
+				}
+				break;
+			case 5:
+			case 6:
+				foreach (CharacterStateControl item2 in base.battleStateData.enemies)
+				{
+					this.targetList.Add(item2);
+				}
+				break;
+			}
+			foreach (CharacterStateControl characterStateControl in this.targetList)
+			{
+				if (!(characterStateControl != null) || !characterStateControl.isDied)
+				{
+					CharacterStateControl characterStateControl2 = characterStateControl;
+					SkillBranchType skillBranchType = (SkillBranchType)currentSuffer.skillBranchType;
+					switch (skillBranchType)
+					{
+					case SkillBranchType.None:
+						break;
+					case SkillBranchType.SufferStatus:
+						if (characterStateControl2.currentSufferState.FindSufferState((SufferStateProperty.SufferType)currentSuffer.skillBranchTypeValue))
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					case SkillBranchType.HpRateUp:
+					{
+						float num = (float)characterStateControl2.hp / ((float)characterStateControl2.extraMaxHp * 1f) * 100f;
+						if (num >= (float)currentSuffer.skillBranchTypeValue)
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					}
+					case SkillBranchType.HpRateDown:
+					{
+						float num = (float)characterStateControl2.hp / ((float)characterStateControl2.extraMaxHp * 1f) * 100f;
+						if (num * 100f <= (float)currentSuffer.skillBranchTypeValue)
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					}
+					case SkillBranchType.MyHpRateUp:
+					{
+						float num = (float)characterStateControl2.hp / ((float)characterStateControl2.extraMaxHp * 1f) * 100f;
+						float num2 = (float)currentCharacter.hp / ((float)currentCharacter.extraMaxHp * 1f) * 100f;
+						if (num >= num2)
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					}
+					case SkillBranchType.MyHpRateDown:
+					{
+						float num = (float)characterStateControl2.hp / ((float)characterStateControl2.extraMaxHp * 1f) * 100f;
+						float num2 = (float)currentCharacter.hp / ((float)currentCharacter.extraMaxHp * 1f) * 100f;
+						if (num <= num2)
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					}
+					case SkillBranchType.BehaviorAlready:
+						if (currentSuffer.skillBranchTypeValue == 0)
+						{
+							if (characterStateControl2.skillOrder > currentCharacter.skillOrder)
+							{
+								flag = true;
+							}
+							else if (flag2)
+							{
+								flag = false;
+							}
+						}
+						else if (characterStateControl2.skillOrder < currentCharacter.skillOrder)
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					case SkillBranchType.Attribute:
+						continue;
+					case SkillBranchType.AttributeMerit:
+						continue;
+					case SkillBranchType.NotSufferStatus:
+						if (!characterStateControl2.currentSufferState.FindSufferState((SufferStateProperty.SufferType)currentSuffer.skillBranchTypeValue))
+						{
+							flag = true;
+						}
+						else if (flag2)
+						{
+							flag = false;
+						}
+						continue;
+					default:
+						if (skillBranchType != SkillBranchType.End)
+						{
+							continue;
+						}
+						break;
+					}
+					flag = true;
+				}
+			}
+			DkLog.W(string.Format("isEnable {0}", flag), false);
+			if (flag)
+			{
+				skip = false;
+				isEnableForPrevious = true;
+			}
+			else
+			{
+				skip = true;
+			}
+			foreach (SubStateSkillDetailsFunction.TargetData targetData in targetDataList)
+			{
+				targetData.isAllMiss = false;
+			}
+			return false;
+		}
+		skip = true;
+		DkLog.W(string.Format("skip {0}", skip), false);
+		return false;
 	}
 
 	private enum ChipPlayType

@@ -105,27 +105,8 @@ public class CMD_GashaTOP : CMD, ITutorialControl
 	{
 		if (base.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
 		{
-			List<int> list = this.gashaInfoManager.RemoveExcessGasha();
-			if (0 < list.Count)
-			{
-				this.RemoveGashaButtonTexture(list);
-				this.CreateGashaButtonList(this.gashaInfoManager.GetInfoList(), this.gashaButtonTextureList, this.selectGashaButtonIndex, this.isTutorial);
-				for (int i = 0; i < list.Count; i++)
-				{
-					if (list[i] == this.selectGashaButtonIndex)
-					{
-						this.selectGashaButtonIndex = 0;
-						break;
-					}
-				}
-				this.gashaButtonList.SetCellAnim(this.selectGashaButtonIndex);
-				this.ChangeSelection(this.selectGashaButtonIndex);
-			}
-			else
-			{
-				this.gashaButtonList.RefreshAbleCount();
-				this.SetGashaDetailed(this.selectGashaButtonIndex);
-			}
+			this.gashaButtonList.RefreshAbleCount();
+			this.SetGashaDetailed(this.selectGashaButtonIndex);
 		}
 	}
 

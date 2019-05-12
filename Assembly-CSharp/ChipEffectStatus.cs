@@ -91,6 +91,8 @@ public class ChipEffectStatus : EffectStatusBase
 		case 28:
 		case 29:
 			return true;
+		case 37:
+			return ChipEffectStatus.CheckSufferHit(effectTriggerValue, characterStateControl);
 		}
 		return true;
 	}

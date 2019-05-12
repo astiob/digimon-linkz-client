@@ -396,4 +396,63 @@ public class Tolerance
 		}
 		return this;
 	}
+
+	public Tolerance ConvertAddTolerance(int[] addTolerances)
+	{
+		if (addTolerances != null)
+		{
+			Strength[] array = new Strength[]
+			{
+				this.none,
+				this.red,
+				this.blue,
+				this.yellow,
+				this.green,
+				this.white,
+				this.black,
+				this.poison,
+				this.confusion,
+				this.paralysis,
+				this.sleep,
+				this.stun,
+				this.skillLock,
+				this.instantDeath
+			};
+			for (int i = 0; i < addTolerances.Length; i++)
+			{
+				array[i] = this.converStrength(array[i], addTolerances[i]);
+			}
+			return new Tolerance(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13]);
+		}
+		return this;
+	}
+
+	private Strength converStrength(Strength now, int param)
+	{
+		Strength[] array = new Strength[]
+		{
+			Strength.Weak,
+			Strength.None,
+			Strength.Strong,
+			Strength.Drain,
+			Strength.Invalid
+		};
+		int num = Array.IndexOf<Strength>(array, now);
+		int num2 = num;
+		num += param;
+		if (param != 0)
+		{
+			num2 = Math.Min(num, 2);
+			num2 = Math.Max(num2, 0);
+		}
+		if (param == 100)
+		{
+			num2 = 3;
+		}
+		if (param == 101)
+		{
+			num2 = 4;
+		}
+		return array[num2];
+	}
 }

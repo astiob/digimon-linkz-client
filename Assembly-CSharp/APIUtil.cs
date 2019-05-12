@@ -246,6 +246,8 @@ public sealed class APIUtil : MonoBehaviour
 
 	public IEnumerator StartGameLogin()
 	{
+		APIUtil.<StartGameLogin>c__AnonStorey9 <StartGameLogin>c__AnonStorey = new APIUtil.<StartGameLogin>c__AnonStorey9();
+		APIUtil.<StartGameLogin>c__AnonStorey9 <StartGameLogin>c__AnonStorey2 = <StartGameLogin>c__AnonStorey;
 		GameWebAPI.RequestCM_Login requestCM_Login = new GameWebAPI.RequestCM_Login();
 		requestCM_Login.SetSendData = delegate(GameWebAPI.RequestCM_LoginRequest param)
 		{
@@ -255,8 +257,14 @@ public sealed class APIUtil : MonoBehaviour
 			param.appVersion = WebAPIPlatformValue.GetAppVersion();
 		};
 		requestCM_Login.OnReceived = new Action<GameWebAPI.RespDataCM_Login>(this.OnRecievedLogin);
-		GameWebAPI.RequestCM_Login request = requestCM_Login;
-		return request.Run(null, null, null);
+		<StartGameLogin>c__AnonStorey2.request = requestCM_Login;
+		return <StartGameLogin>c__AnonStorey.request.Run(null, null, (Exception ex) => APIUtil.OnAlertSend(ex, <StartGameLogin>c__AnonStorey.request));
+	}
+
+	public static IEnumerator OnAlertSend(Exception ex, RequestBase request)
+	{
+		DkLog.W("アラート", false);
+		yield break;
 	}
 
 	private void OnRecievedLogin(GameWebAPI.RespDataCM_Login responseData)

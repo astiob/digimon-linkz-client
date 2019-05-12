@@ -23,7 +23,7 @@ public class SufferStatePropertyCounter
 			}
 			if (array.Length > 0)
 			{
-				sufferStateProperty.AddCurrentKeepCount(array, -1);
+				sufferStateProperty.AddCurrentKeepCount(array, -1, null, null);
 			}
 			SufferStateProperty.Data[] array2 = sufferStateProperty.GetNotIsMultiHitThroughDatas();
 			if (ids != null)
@@ -48,7 +48,7 @@ public class SufferStatePropertyCounter
 		}
 	}
 
-	public void UpdateCount(SufferStateProperty.SufferType key)
+	public void UpdateCount(SufferStateProperty.SufferType key, SkillStatus skillStatus = null)
 	{
 		List<SufferStatePropertyCounter.CountData> list = null;
 		this.countDictionary.TryGetValue(key, out list);
@@ -72,7 +72,7 @@ public class SufferStatePropertyCounter
 					}
 					if (array.Length > 0)
 					{
-						sufferStateProperty.AddCurrentKeepCount(array, -1);
+						sufferStateProperty.AddCurrentKeepCount(array, -1, skillStatus, countData.characterStateControl);
 					}
 				}
 			}

@@ -105,14 +105,20 @@ public class PicturebookMonsterIcon : GUIListPartBS
 		Texture2D texture2D2 = Resources.Load(localizedPath + "_alpha") as Texture2D;
 		Texture2D texture2D3 = texture2D ?? (Resources.Load(resourcePath) as Texture2D);
 		Texture2D texture2D4 = texture2D2 ?? (Resources.Load(resourcePath + "_alpha") as Texture2D);
+		string localizedPath2 = AssetDataMng.GetLocalizedPath(assetBundlePath);
+		string path = localizedPath2 + "_alpha";
 		if (texture2D3 == null && texture2D4 == null)
 		{
-			Texture2D texture2D5 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(assetBundlePath, null) as Texture2D;
+			Texture2D texture2D5 = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(localizedPath2, null) as Texture2D;
+			Texture2D monsterAlphaTexture = MonsterIconCacheBuffer.Instance().LoadAndCacheObj(path, null) as Texture2D;
 			if (null != texture2D5)
 			{
 				textureData._monsterTexture = texture2D5;
-				textureData._monsterAlphaTexture = Texture2D.whiteTexture;
 				textureData._isMainTexture = true;
+			}
+			if (null != texture2D5)
+			{
+				textureData._monsterAlphaTexture = monsterAlphaTexture;
 			}
 		}
 		else

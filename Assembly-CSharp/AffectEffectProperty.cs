@@ -342,7 +342,12 @@ public class AffectEffectProperty
 	{
 		get
 		{
-			return (SufferStateProperty.RemoveOptionType)this._floatValue[12];
+			int num = (int)this._floatValue[12];
+			if (num >= 0 && num < 3)
+			{
+				return (SufferStateProperty.RemoveOptionType)this._floatValue[12];
+			}
+			return SufferStateProperty.RemoveOptionType.None;
 		}
 	}
 
@@ -527,6 +532,62 @@ public class AffectEffectProperty
 		get
 		{
 			return this._floatValue[0];
+		}
+	}
+
+	public int skillBranchType
+	{
+		get
+		{
+			return this._intValue[0];
+		}
+	}
+
+	public int skillBranchTypeValue
+	{
+		get
+		{
+			return this._intValue[1];
+		}
+	}
+
+	public int skillBranchTargetType
+	{
+		get
+		{
+			return (int)this._floatValue[0];
+		}
+	}
+
+	public int skillBranchOverlap
+	{
+		get
+		{
+			return (int)this._floatValue[1];
+		}
+	}
+
+	public float[] toleranceValue
+	{
+		get
+		{
+			return this._floatValue;
+		}
+	}
+
+	public int toleranceClearType
+	{
+		get
+		{
+			return this._intValue[1];
+		}
+	}
+
+	public int toleranceCountType
+	{
+		get
+		{
+			return (int)this._floatValue[14];
 		}
 	}
 

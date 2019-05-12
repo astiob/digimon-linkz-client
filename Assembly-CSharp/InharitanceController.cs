@@ -98,7 +98,7 @@ public sealed class InharitanceController : CutsceneControllerBase
 			gameObject2.transform.localPosition = Vector3.zero;
 			gameObject2.transform.localRotation = Quaternion.identity;
 			CharacterParams component = gameObject.GetComponent<CharacterParams>();
-			this.cameraTarget = component.characterFaceCenterTarget;
+			this.cameraTarget = component.characterCenterTarget;
 			CutsceneCommon.SetBillBoardCamera(gameObject, this.mainCamera);
 			CutsceneCommon.SetBillBoardCamera(gameObject2, this.mainCamera);
 			CharacterParams component2 = gameObject2.GetComponent<CharacterParams>();

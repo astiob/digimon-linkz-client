@@ -348,7 +348,6 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 
 	private IEnumerator DownloadBannerTexture(QuestData.WorldStageData wsd, Action<Texture2D> callback)
 	{
-		bool isUnlock = ClassSingleton<QuestData>.Instance.IsUnlockWorldStage(wsd);
 		if (wsd.worldStageM.worldAreaId == ConstValue.QUEST_AREA_ID_DEFAULT || wsd.worldStageM.worldAreaId == "4" || wsd.worldStageM.worldAreaId == "5" || "null" == wsd.worldStageM.stageImage || string.IsNullOrEmpty(wsd.worldStageM.stageImage))
 		{
 			callback(null);

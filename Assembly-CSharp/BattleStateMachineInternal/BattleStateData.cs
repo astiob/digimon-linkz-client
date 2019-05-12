@@ -71,7 +71,7 @@ namespace BattleStateMachineInternal
 
 		private CharacterStateControl _leaderEnemyCharacter;
 
-		private List<CharacterStateControl> _sortedCharactersOriginal = new List<CharacterStateControl>();
+		private CharacterStateControl _currentSelectCharacterState;
 
 		private CharacterStateControl autoCounterCharacter;
 
@@ -120,8 +120,6 @@ namespace BattleStateMachineInternal
 		private int _totalRoundNumber = 1;
 
 		private int _currentWaveNumber = -1;
-
-		private int _currentActiveCharacter;
 
 		private int _currentSelectCharacterIndex;
 
@@ -422,11 +420,11 @@ namespace BattleStateMachineInternal
 		{
 			get
 			{
-				if (this._sortedCharactersOriginal == null || this._sortedCharactersOriginal.Count <= this._currentActiveCharacter)
-				{
-					return null;
-				}
-				return this._sortedCharactersOriginal[this._currentActiveCharacter];
+				return this._currentSelectCharacterState;
+			}
+			set
+			{
+				this._currentSelectCharacterState = value;
 			}
 		}
 
@@ -502,28 +500,22 @@ namespace BattleStateMachineInternal
 			}
 		}
 
-		public void SetOrderInSortedCharacter(List<CharacterStateControl> sortedCharacters, int prevIndex = -1)
+		public void SetOrderInSortedCharacter(Queue<CharacterStateControl> sortedCharacters, int prevIndex = -1)
 		{
 			if (sortedCharacters == null)
 			{
-				this._sortedCharactersOriginal = sortedCharacters;
 				return;
 			}
-			this._sortedCharactersOriginal = new List<CharacterStateControl>();
-			foreach (CharacterStateControl item in sortedCharacters)
-			{
-				this._sortedCharactersOriginal.Add(item);
-			}
 			int num = 0;
-			for (int i = 0; i < this._sortedCharactersOriginal.Count; i++)
+			foreach (CharacterStateControl characterStateControl in sortedCharacters)
 			{
-				if (this._sortedCharactersOriginal[i].isDied || i <= prevIndex)
+				if (characterStateControl.isDied)
 				{
-					this._sortedCharactersOriginal[i].skillOrder = -1;
+					characterStateControl.skillOrder = -1;
 				}
 				else
 				{
-					this._sortedCharactersOriginal[i].skillOrder = num;
+					characterStateControl.skillOrder = num;
 					num++;
 				}
 			}
@@ -1029,18 +1021,6 @@ namespace BattleStateMachineInternal
 			get
 			{
 				return this.currentWaveNumber + 1;
-			}
-		}
-
-		public int currentActiveCharacter
-		{
-			get
-			{
-				return this._currentActiveCharacter;
-			}
-			set
-			{
-				this._currentActiveCharacter = ((this._sortedCharactersOriginal != null) ? Mathf.Clamp(value, 0, this._sortedCharactersOriginal.Count) : value);
 			}
 		}
 

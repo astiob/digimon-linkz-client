@@ -160,6 +160,7 @@ public class EffectStatusBase
 		SkillDamageHitSendEvery,
 		SkillDamageHitRecieveEvery,
 		SkillDamageEndSendEvery,
-		SkillDamageEndRecieveEvery
+		SkillDamageEndRecieveEvery,
+		SufferHitAndUseSkill
 	}
 }

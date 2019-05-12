@@ -52,9 +52,58 @@ public sealed class GUIScreenTitle : GUIScreen
 	private UITexture titleLogo;
 
 	[SerializeField]
+	private UITexture titleLogo2Uitexture;
+
+	[SerializeField]
 	private UITexture rightSignage;
 
 	private CloudBackup backup = new CloudBackup();
+
+	[SerializeField]
+	private GameObject titleLogoDefault;
+
+	[SerializeField]
+	private GameObject titleLogo2;
+
+	[SerializeField]
+	private GameObject titleVisualDefault;
+
+	[SerializeField]
+	private GameObject titleVisual2;
+
+	[SerializeField]
+	private GameObject circle;
+
+	[SerializeField]
+	private UILabel titleInfomation;
+
+	[SerializeField]
+	private GameObject contactBtn;
+
+	[SerializeField]
+	private GameObject infomationBtn;
+
+	[SerializeField]
+	private GameObject takeoverBtn;
+
+	[SerializeField]
+	private GameObject optionBtn;
+
+	[SerializeField]
+	private GameObject inquiryBtn;
+
+	[SerializeField]
+	private GUICollider screenCollider;
+
+	private GameWebAPI.RespDataIN_InfoList respDataInInfoList;
+
+	private GUIScreenTitle.TitleStete titleState = GUIScreenTitle.TitleStete.defaultState;
+
+	private const string defaultBgmPath = "BGMInternal/bgm_101/sound";
+
+	private const string exBgmPath = "BGMInternal/bgm_103/sound";
+
+	private GameWebAPI.RespDataMA_MessageM.MessageM infomationMessage;
 
 	protected override void Start()
 	{
@@ -72,8 +121,21 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.takeoverButtonLabel.text = StringMaster.GetString("TakeOverTitle");
 		this.optionButtonLabel.text = StringMaster.GetString("TitleOptionButton");
 		this.inquiryButtonLabel.text = StringMaster.GetString("InquiryTitle");
-		this.titleLogo.mainTexture = (Resources.Load(string.Format("UITexture/InternationalTitleLogo/digimon_linkz_logo_{0}", CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN))) as Texture2D);
+		Texture2D mainTexture = Resources.Load(string.Format("UITexture/InternationalTitleLogo/digimon_linkz_logo_{0}", CountrySetting.GetCountryPrefix(CountrySetting.CountryCode.EN))) as Texture2D;
+		this.titleLogo.mainTexture = mainTexture;
+		this.titleLogo2Uitexture.mainTexture = mainTexture;
 		this.rightSignage.mainTexture = (Resources.Load("UITexture/InternationalTitleLogo/RightSignage_en") as Texture2D);
+		this.infomationMessage = AlertMaster.GetAlert("E-AL80");
+		UILabel componentInChildren = this.infomationBtn.GetComponentInChildren<UILabel>();
+		if (componentInChildren != null)
+		{
+			componentInChildren.text = this.infomationMessage.messageTitle;
+		}
+		UILabel componentInChildren2 = this.contactBtn.GetComponentInChildren<UILabel>();
+		if (componentInChildren2 != null)
+		{
+			componentInChildren2.text = StringMaster.GetString("InquiryTitle");
+		}
 		base.Start();
 		base.gameObject.SetActive(true);
 		if (!global::Debug.isDebugBuild || this.buildNumLabel != null)
@@ -93,6 +155,18 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.googlePlay.Bootup();
 		yield return base.StartCoroutine(this.AuthLogin());
 		yield return base.StartCoroutine(APIUtil.Instance().StartGameLogin());
+		if (DataMng.Instance().RespDataCM_Login == null)
+		{
+			SoundMng.Instance().PlayBGM("BGMInternal/bgm_103/sound", 0.3f, null);
+			this.screenCollider.playOkSE = false;
+			this.switchTitleImage(GUIScreenTitle.TitleStete.returnVal);
+			RestrictionInput.EndLoad();
+			GUIFadeControll.ActionRestart();
+			yield break;
+		}
+		this.titleState = (GUIScreenTitle.TitleStete)DataMng.Instance().RespDataCM_Login.state;
+		this.switchTitleImage(this.titleState);
+		GUIFadeControll.ActionRestart();
 		string responseContactCode = PlayerPrefs.GetString("InquiryCode", string.Empty);
 		if (string.IsNullOrEmpty(responseContactCode))
 		{
@@ -169,16 +243,23 @@ public sealed class GUIScreenTitle : GUIScreen
 		{
 			return;
 		}
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		if (this.tapToStart != null)
+		if (this.titleState == GUIScreenTitle.TitleStete.defaultState || this.titleState == GUIScreenTitle.TitleStete.scenario || this.titleState == GUIScreenTitle.TitleStete.shop)
 		{
-			this.tapToStart.SetActive(false);
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+			if (this.tapToStart != null)
+			{
+				this.tapToStart.SetActive(false);
+			}
+			if (this.googlePlay != null)
+			{
+				this.googlePlay.EnableMenu(false);
+			}
+			base.StartCoroutine(this.GameStart());
 		}
-		if (this.googlePlay != null)
+		else if (this.titleState == GUIScreenTitle.TitleStete.stop)
 		{
-			this.googlePlay.EnableMenu(false);
+			this.OnClickedImportant();
 		}
-		base.StartCoroutine(this.GameStart());
 	}
 
 	public void OnClickedTakeover()
@@ -205,6 +286,14 @@ public sealed class GUIScreenTitle : GUIScreen
 	{
 		this.googlePlay.EnableMenu(false);
 		GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
+	}
+
+	public void OnClickedImportant()
+	{
+		this.googlePlay.EnableMenu(false);
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
+		cmdwebWindow.TitleText = this.infomationMessage.messageTitle;
+		cmdwebWindow.Url = WebAddress.EXT_ADR_IMPORTANT;
 	}
 
 	private void CancelGameStart()
@@ -358,5 +447,78 @@ public sealed class GUIScreenTitle : GUIScreen
 		{
 			Application.Quit();
 		}
+	}
+
+	public void switchTitleImage(GUIScreenTitle.TitleStete state)
+	{
+		this.titleState = state;
+		switch (state)
+		{
+		case GUIScreenTitle.TitleStete.scenario:
+		case GUIScreenTitle.TitleStete.shop:
+			this.showTitleVisual(false, false);
+			this.cacheClearButtonSprite.gameObject.SetActive(true);
+			this.takeoverBtn.SetActive(true);
+			this.optionBtn.SetActive(true);
+			this.inquiryBtn.SetActive(true);
+			this.contactBtn.SetActive(false);
+			this.infomationBtn.SetActive(false);
+			SoundMng.Instance().PlayBGM("BGMInternal/bgm_103/sound", 0.3f, null);
+			break;
+		case GUIScreenTitle.TitleStete.stop:
+			this.showTitleVisual(false, true);
+			this.cacheClearButtonSprite.gameObject.SetActive(false);
+			this.takeoverBtn.SetActive(false);
+			this.optionBtn.SetActive(false);
+			this.inquiryBtn.SetActive(false);
+			this.contactBtn.SetActive(true);
+			this.infomationBtn.SetActive(true);
+			SoundMng.Instance().PlayBGM("BGMInternal/bgm_103/sound", 0.3f, null);
+			break;
+		case GUIScreenTitle.TitleStete.returnVal:
+			this.showTitleVisual(false, true);
+			this.cacheClearButtonSprite.gameObject.SetActive(false);
+			this.takeoverBtn.SetActive(false);
+			this.optionBtn.SetActive(false);
+			this.inquiryBtn.SetActive(false);
+			this.contactBtn.SetActive(false);
+			this.infomationBtn.SetActive(false);
+			SoundMng.Instance().PlayBGM("BGMInternal/bgm_103/sound", 0.3f, null);
+			break;
+		default:
+			this.showTitleVisual(true, false);
+			this.cacheClearButtonSprite.gameObject.SetActive(true);
+			this.takeoverBtn.SetActive(true);
+			this.optionBtn.SetActive(true);
+			this.inquiryBtn.SetActive(true);
+			this.contactBtn.SetActive(false);
+			this.infomationBtn.SetActive(false);
+			SoundMng.Instance().PlayBGM("BGMInternal/bgm_101/sound", 0.3f, null);
+			break;
+		}
+	}
+
+	private void showTitleVisual(bool def, bool end = false)
+	{
+		this.titleVisualDefault.SetActive(def);
+		this.titleVisual2.SetActive(!def);
+		this.titleLogoDefault.SetActive(def);
+		this.titleLogo2.SetActive(!def);
+		this.circle.SetActive(!def);
+		this.titleInfomation.gameObject.SetActive(end);
+		this.tapToStart.SetActive(!end);
+		if (this.googlePlay != null && end)
+		{
+			this.googlePlay.enableButton(false);
+		}
+	}
+
+	public enum TitleStete
+	{
+		defaultState = 1,
+		scenario,
+		shop,
+		stop,
+		returnVal
 	}
 }

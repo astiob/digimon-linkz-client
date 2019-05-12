@@ -513,47 +513,47 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PersistentData\PersistentData.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885796E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857972}</Project>
       <Name>PersistentData</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857970}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857974}</Project>
       <Name>System.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857971}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857975}</Project>
       <Name>System</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.AnimationModule\UnityEngine.AnimationModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857976}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797C}</Project>
       <Name>UnityEngine.AnimationModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.CoreModule\UnityEngine.CoreModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885797B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857981}</Project>
       <Name>UnityEngine.CoreModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.Physics2DModule\UnityEngine.Physics2DModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857989}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798F}</Project>
       <Name>UnityEngine.Physics2DModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.PhysicsModule\UnityEngine.PhysicsModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798A}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857990}</Project>
       <Name>UnityEngine.PhysicsModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.ScreenCaptureModule\UnityEngine.ScreenCaptureModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885798B}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857991}</Project>
       <Name>UnityEngine.ScreenCaptureModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE68857997}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799D}</Project>
       <Name>UnityEngine.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UnityWebRequestModule\UnityEngine.UnityWebRequestModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE6885799E}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A4}</Project>
       <Name>UnityEngine.UnityWebRequestModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UnityWebRequestWWWModule\UnityEngine.UnityWebRequestWWWModule.csproj">
-      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A0}</Project>
+      <Project>{6F8DAB99-2302-404C-AC7D-0ACE688579A6}</Project>
       <Name>UnityEngine.UnityWebRequestWWWModule</Name>
     </ProjectReference>
   </ItemGroup>

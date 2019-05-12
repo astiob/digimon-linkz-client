@@ -9,6 +9,9 @@ public class GUISelectPanelMissionSelect : GUISelectPanelViewPartsUD
 	[SerializeField]
 	private float selectPartsAnimX = 25f;
 
+	[SerializeField]
+	private GameObject getAllButton;
+
 	private int animIndexBK = -1;
 
 	public void ResetAnimIDX()
@@ -46,6 +49,21 @@ public class GUISelectPanelMissionSelect : GUISelectPanelViewPartsUD
 			this.animationMoving = true;
 			GUICollider.DisableAllCollider("GUISelectPanelMissionSelect::SetCellAnim");
 			GameObject gameObject = this.partObjs[selectedIndex].csParts.gameObject;
+			if (!this.getAllButton.gameObject.activeSelf)
+			{
+				this.getAllButton.transform.SetParent(base.transform);
+				this.getAllButton.transform.localPosition = new Vector3(-250f, this.getAllButton.transform.localPosition.y, this.getAllButton.transform.localPosition.z);
+				this.getAllButton.gameObject.SetActive(true);
+				iTween.MoveTo(this.getAllButton, iTween.Hash(new object[]
+				{
+					"x",
+					2.0,
+					"time",
+					0.4,
+					"islocal",
+					true
+				}));
+			}
 			if (gameObject.activeSelf)
 			{
 				iTween.MoveTo(gameObject, iTween.Hash(new object[]

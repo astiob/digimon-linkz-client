@@ -104,7 +104,9 @@ public class HaveSufferState
 			SufferStateProperty.SufferType.DamageRateDown,
 			SufferStateProperty.SufferType.Regenerate,
 			SufferStateProperty.SufferType.TurnEvasion,
-			SufferStateProperty.SufferType.Escape
+			SufferStateProperty.SufferType.Escape,
+			SufferStateProperty.SufferType.ChangeToleranceUp,
+			SufferStateProperty.SufferType.ChangeToleranceDown
 		};
 		foreach (SufferStateProperty.SufferType key in array)
 		{

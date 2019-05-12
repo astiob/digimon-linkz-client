@@ -35,6 +35,7 @@ public class CMD_QuestSelect : CMD
 			if (worldAreaM_Normal[i].isActive)
 			{
 				List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(worldAreaM_Normal[i].data.worldAreaId);
+				DkLog.W(string.Format("{0} : {1} : {2}", worldAreaM_Normal[i].data.name, worldAreaM_Normal[i].isActive, worldStageData_ByAreaID.Count), false);
 				if (worldStageData_ByAreaID.Count > 0)
 				{
 					this.worldAreaMList.Add(worldAreaM_Normal[i]);

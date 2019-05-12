@@ -27,6 +27,25 @@ namespace Cutscene
 
 		private bool spiralBRotatoFlag;
 
+		private Transform mainCameraTransform;
+
+		private bool chaseFlag;
+
+		private void ChaseFlagStarter()
+		{
+			this.chaseFlag = true;
+		}
+
+		private void ChaseFlagStopper()
+		{
+			this.chaseFlag = false;
+		}
+
+		public bool IsCameraChase()
+		{
+			return this.chaseFlag;
+		}
+
 		private void spriralRotater()
 		{
 			this.spiralBRotatoFlag = true;
@@ -96,8 +115,9 @@ namespace Cutscene
 			this.sound.PlaySE("SEInternal/Cutscene/bt_519");
 		}
 
-		public void Initialize(CutsceneSound sound, GameObject beforeMonster, GameObject afterMonster)
+		public void Initialize(Transform cameraTransform, CutsceneSound sound, GameObject beforeMonster, GameObject afterMonster)
 		{
+			this.mainCameraTransform = cameraTransform;
 			this.sound = sound;
 			this.beforeMonster = beforeMonster;
 			this.afterMonster = afterMonster;

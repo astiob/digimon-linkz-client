@@ -61,6 +61,10 @@ public enum AffectEffect
 	Escape,
 	Nothing,
 	RefHpRateNonAttribute,
+	SkillBranch,
+	ChangeToleranceUp,
+	ChangeToleranceDown,
+	ClearTolerance,
 	gimmickSpecialAttackUp,
 	gimmickSpecialAttackDown
 }

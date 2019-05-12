@@ -61,7 +61,7 @@ public class SubStateInstantDeathFunction : BattleStateController
 		{
 			SufferStateProperty sufferStateProperty = characters[i].currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.InstantDeath);
 			hit.Add(characters[i], sufferStateProperty.isMiss);
-			HitIcon item = base.stateManager.uiControl.ApplyShowHitIcon(i, hitIconPositions[i], AffectEffect.InstantDeath, 0, Strength.None, sufferStateProperty.isMiss, false, false, false, false, ExtraEffectType.Non, true);
+			HitIcon item = base.stateManager.uiControl.ApplyShowHitIcon(i, hitIconPositions[i], AffectEffect.InstantDeath, 0, Strength.None, sufferStateProperty.isMiss, false, false, false, false, ExtraEffectType.Non, true, null);
 			hitIconlist.Add(item);
 		}
 		this.ShowDigimon(characters);

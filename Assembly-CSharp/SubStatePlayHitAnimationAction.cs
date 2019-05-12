@@ -61,7 +61,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 		foreach (SubStatePlayHitAnimationAction.Data.HitIcon hitIcon2 in this.data.hitIconList)
 		{
 			int count = hitIconList.Count;
-			HitIcon item2 = base.stateManager.uiControl.ApplyShowHitIcon(count, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon2.target), hitIcon2.affectEffect, hitIcon2.damage, hitIcon2.strength, hitIcon2.isMiss, hitIcon2.isCritical, hitIcon2.isDrain, hitIcon2.isCounter, hitIcon2.isReflection, hitIcon2.extraEffectType, hitIcon2.affectEffect != AffectEffect.InstantDeath);
+			HitIcon item2 = base.stateManager.uiControl.ApplyShowHitIcon(count, base.stateManager.uiControl.GetFixableCharacterCenterPosition2DFunction(hitIcon2.target), hitIcon2.affectEffect, hitIcon2.damage, hitIcon2.strength, hitIcon2.isMiss, hitIcon2.isCritical, hitIcon2.isDrain, hitIcon2.isCounter, hitIcon2.isReflection, hitIcon2.extraEffectType, hitIcon2.affectEffect != AffectEffect.InstantDeath, this.data.affectEffectProperty);
 			hitIconList.Add(item2);
 		}
 		HitEffectParams[] currentHitEffect = this.GetHitEffectParams();
@@ -113,7 +113,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						switch (affectEffect)
 						{
 						case AffectEffect.Damage:
-							goto IL_67E;
+							goto IL_69A;
 						default:
 							switch (affectEffect)
 							{
@@ -123,11 +123,13 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							case AffectEffect.DefenseThroughDamage:
 							case AffectEffect.SpDefenseThroughDamage:
 							case AffectEffect.RefHpRateNonAttribute:
-								goto IL_67E;
+								goto IL_69A;
 							case AffectEffect.ApDrain:
 							case AffectEffect.Escape:
 							case AffectEffect.Nothing:
-								goto IL_86A;
+							case AffectEffect.SkillBranch:
+							case AffectEffect.ChangeToleranceUp:
+								goto IL_881;
 							case AffectEffect.HpSettingFixable:
 							case AffectEffect.HpSettingPercentage:
 								if (this.data.hitIconList[i].damage > 0)
@@ -145,8 +147,10 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 									});
 								}
 								break;
+							case AffectEffect.ChangeToleranceDown:
+								goto IL_79F;
 							default:
-								goto IL_86A;
+								goto IL_881;
 							}
 							break;
 						case AffectEffect.AttackDown:
@@ -161,26 +165,21 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 						case AffectEffect.Sleep:
 						case AffectEffect.SkillLock:
 						case AffectEffect.HitRateDown:
+						case AffectEffect.InstantDeath:
 						case AffectEffect.Confusion:
 						case AffectEffect.Stun:
 						case AffectEffect.SatisfactionRateDown:
 						case AffectEffect.ApDown:
 						case AffectEffect.ApConsumptionUp:
-							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
-							{
-								this.data.hitIconList[i].target
-							});
-							break;
+							goto IL_79F;
 						case AffectEffect.Counter:
 						case AffectEffect.Reflection:
 						case AffectEffect.Destruct:
-							goto IL_86A;
-						case AffectEffect.InstantDeath:
-							break;
+							goto IL_881;
 						}
-						IL_8AA:
-						goto IL_8EA;
-						IL_67E:
+						IL_8C1:
+						goto IL_901;
+						IL_69A:
 						if (this.data.hitIconList[i].strength == Strength.Weak)
 						{
 							base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.strongHit, new CharacterStateControl[]
@@ -202,8 +201,14 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 								this.data.hitIconList[i].target
 							});
 						}
-						goto IL_8AA;
-						IL_86A:
+						goto IL_8C1;
+						IL_79F:
+						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.hit, new CharacterStateControl[]
+						{
+							this.data.hitIconList[i].target
+						});
+						goto IL_8C1;
+						IL_881:
 						base.stateManager.threeDAction.PlayAnimationCharacterAction(CharacterAnimationType.revival, new CharacterStateControl[]
 						{
 							this.data.hitIconList[i].target
@@ -216,7 +221,7 @@ public class SubStatePlayHitAnimationAction : BattleStateBase
 							this.data.hitIconList[i].target
 						});
 					}
-					IL_8EA:;
+					IL_901:;
 				}
 				else
 				{

@@ -127,10 +127,7 @@ public class UIStartupCaution : GUIScreen
 		if ((this.timer <= 0f || this.tapSkip) && !this.mainFade)
 		{
 			this.mainFade = true;
-			GUIMain.FadeWhiteReqScreen("UITitle", delegate(int x)
-			{
-				GUIFadeControll.ActionRestart();
-			}, 1.2f, 1.2f, false);
+			GUIMain.FadeWhiteReqScreen("UITitle", null, 1.2f, 1.2f, true);
 		}
 	}
 
