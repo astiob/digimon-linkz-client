@@ -107,6 +107,9 @@ public class CharacterStateControl
 	[SerializeField]
 	private List<ItemDropResult> _itemDropResult = new List<ItemDropResult>();
 
+	[SerializeField]
+	private bool _effectiveBonus;
+
 	private int m_extraMaxHp;
 
 	private int m_extraAttackPower;
@@ -167,6 +170,7 @@ public class CharacterStateControl
 		{
 			this.enemyAi = this.enemyStatus.enemyAiPattern;
 		}
+		this.CheckEffectiveBonus();
 	}
 
 	public int extraMaxHp
@@ -1213,12 +1217,12 @@ public class CharacterStateControl
 		}
 	}
 
-	public bool IsPoint()
+	public void CheckEffectiveBonus()
 	{
 		BattleStateManager current = BattleStateManager.current;
 		if (!current.onServerConnect)
 		{
-			return false;
+			return;
 		}
 		string b = string.Empty;
 		if (current.battleMode == BattleMode.Multi)
@@ -1253,13 +1257,15 @@ public class CharacterStateControl
 				case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterTribe:
 					if (this.characterDatas.tribe.Equals(eventPointBonus.targetValue))
 					{
-						return true;
+						this._effectiveBonus = true;
+						return;
 					}
 					break;
 				case ExtraEffectUtil.EventPointBonusTargetSubType.MonsterGroup:
 					if (this.characterStatus.groupId.Equals(eventPointBonus.targetValue))
 					{
-						return true;
+						this._effectiveBonus = true;
+						return;
 					}
 					break;
 				case ExtraEffectUtil.EventPointBonusTargetSubType.GrowStep:
@@ -1267,24 +1273,28 @@ public class CharacterStateControl
 					string text = MonsterGrowStepData.ToGrowStepString(this.characterDatas.growStep);
 					if (text.Equals(eventPointBonus.targetValue))
 					{
-						return true;
+						this._effectiveBonus = true;
+						return;
 					}
 					break;
 				}
 				case ExtraEffectUtil.EventPointBonusTargetSubType.SkillId:
-					if (this.skillStatus[2].skillId.Equals(eventPointBonus.targetValue))
+					if (this.skillStatus.Length > 2 && this.skillStatus[2].skillId.Equals(eventPointBonus.targetValue))
 					{
-						return true;
+						this._effectiveBonus = true;
+						return;
 					}
 					if (this.leaderSkillStatus.leaderSkillId.Equals(eventPointBonus.targetValue))
 					{
-						return true;
+						this._effectiveBonus = true;
+						return;
 					}
 					break;
 				case ExtraEffectUtil.EventPointBonusTargetSubType.ChipId:
 					if (this.chipIds.Where((int item) => item == eventPointBonus.targetValue.ToInt32()).Any<int>())
 					{
-						return true;
+						this._effectiveBonus = true;
+						return;
 					}
 					break;
 				default:
@@ -1294,7 +1304,8 @@ public class CharacterStateControl
 						{
 							if (eventPointBonus.targetValue.Equals(value))
 							{
-								return true;
+								this._effectiveBonus = true;
+								return;
 							}
 						}
 					}
@@ -1302,7 +1313,12 @@ public class CharacterStateControl
 				}
 			}
 		}
-		return false;
+		this._effectiveBonus = false;
+	}
+
+	public bool isEffectiveBonus()
+	{
+		return this._effectiveBonus;
 	}
 
 	public BattleInvariant.Type hittingTheTargetType

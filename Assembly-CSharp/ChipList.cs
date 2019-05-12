@@ -12,17 +12,17 @@ public class ChipList
 
 	private Vector2 windowSize = Vector2.zero;
 
-	public ChipList(GameObject parent, int widthLength, Vector2 windowSize, GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false)
+	public ChipList(GameObject parent, int widthLength, Vector2 windowSize, GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false, bool isInitLocation = true)
 	{
-		this.AllBuild(parent, widthLength, windowSize, dataList, shouldDim);
+		this.AllBuild(parent, widthLength, windowSize, dataList, shouldDim, isInitLocation);
 	}
 
 	public ChipList(GameObject parent, int widthLength, Vector2 windowSize, List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> dataList)
 	{
-		this.AllBuild(parent, widthLength, windowSize, dataList.ToArray(), false);
+		this.AllBuild(parent, widthLength, windowSize, dataList.ToArray(), false, false);
 	}
 
-	private void AllBuild(GameObject parent, int widthLength, Vector2 windowSize, GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false)
+	private void AllBuild(GameObject parent, int widthLength, Vector2 windowSize, GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false, bool isInitLocation = false)
 	{
 		this.gameObject = new GameObject();
 		this.gameObject.name = "ChipListBase";
@@ -36,18 +36,18 @@ public class ChipList
 		gameObject2.SetActive(false);
 		this.widthLength = widthLength;
 		this.windowSize = windowSize;
-		this.guiSelectPanelChipList.AllBuild(widthLength, windowSize, dataList, shouldDim);
+		this.guiSelectPanelChipList.AllBuild(widthLength, windowSize, dataList, shouldDim, isInitLocation);
 	}
 
-	public void ReAllBuild(GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false)
+	public void ReAllBuild(GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false, bool isInitLocation = false)
 	{
-		this.guiSelectPanelChipList.AllBuild(this.widthLength, this.windowSize, dataList, shouldDim);
-		this.guiSelectPanelChipList.RefreshList(dataList.Length);
+		this.guiSelectPanelChipList.AllBuild(this.widthLength, this.windowSize, dataList, shouldDim, isInitLocation);
+		this.guiSelectPanelChipList.RefreshList(dataList.Length, isInitLocation);
 	}
 
-	public void ReAllBuild(List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> dataList)
+	public void ReAllBuild(List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> dataList, bool isInitLocation = false)
 	{
-		this.guiSelectPanelChipList.AllBuild(this.widthLength, this.windowSize, dataList);
+		this.guiSelectPanelChipList.AllBuild(this.widthLength, this.windowSize, dataList, isInitLocation);
 	}
 
 	public void AddWidgetDepth(int depth)

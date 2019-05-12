@@ -1,4 +1,5 @@
 ﻿using Master;
+using Quest;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -37,7 +38,7 @@ public sealed class GUIListPartsQuestRanking : GUIListPartBS
 
 	private GUIMonsterIcon csMonsIcon;
 
-	private GameWebAPI.RespDataMS_PointQuestRankingList.RankingData data;
+	private RankingData data;
 
 	private int nextPoint;
 
@@ -54,7 +55,7 @@ public sealed class GUIListPartsQuestRanking : GUIListPartBS
 		}
 		if (CMD_ColosseumRanking.instance != null)
 		{
-			this.data = default(GameWebAPI.RespDataMS_PointQuestRankingList.RankingData);
+			this.data = default(RankingData);
 			this.data.iconId = CMD_ColosseumRanking.instance.myData.leaderMonsterId.ToString();
 			this.data.nickname = CMD_ColosseumRanking.instance.myData.nickname;
 			this.data.titleId = CMD_ColosseumRanking.instance.myData.titleId;

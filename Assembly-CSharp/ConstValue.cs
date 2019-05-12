@@ -112,6 +112,10 @@ public class ConstValue
 
 	public static string APP_ASSET_DOMAIN = Secure.ConstValue.MULTI_LANGUAGE_APP_AND_ASSET_DOMAIN;
 
+	private static string IOS_CONTACT_DEFAULT_SITE_URL = "http://bnfaq.channel.or.jp/contact/faq_list/1723";
+
+	private static string ANDROID_CONTACT_DEFAULT_SITE_URL = "http://bnfaq.channel.or.jp/contact/faq_list/1724";
+
 	public static string WEB_INFO_ADR = "/information/InformationDetail/?informationId=";
 
 	public static int WEB_INFO_ADR_GASHA_OFFSET = 10000;
@@ -489,11 +493,20 @@ public class ConstValue
 	{
 		get
 		{
+			string text = string.Empty;
 			if (MasterDataMng.Instance().RespDataMA_CodeM != null)
 			{
-				return MasterDataMng.Instance().RespDataMA_CodeM.codeM.ANDROID_CONTACT_SITE_URL;
+				text = MasterDataMng.Instance().RespDataMA_CodeM.codeM.ANDROID_CONTACT_SITE_URL;
 			}
-			return string.Empty;
+			else
+			{
+				text = PlayerPrefs.GetString("androidContactSiteURL", string.Empty);
+			}
+			if (string.IsNullOrEmpty(text))
+			{
+				text = global::ConstValue.ANDROID_CONTACT_DEFAULT_SITE_URL;
+			}
+			return text;
 		}
 	}
 

@@ -345,6 +345,7 @@ public class GUIScreenHome : GUIScreen
 			Action onCancelAction = delegate()
 			{
 				isCancel = true;
+				PlayerPrefs.SetString("userDungeonTicketId", string.Empty);
 			};
 			ClassSingleton<BattleDataStore>.Instance.OpenBattleRecoverConfirm(onBattleRecover, onCancelAction);
 			while (!isCancel)

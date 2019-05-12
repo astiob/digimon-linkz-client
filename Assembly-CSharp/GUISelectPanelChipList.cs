@@ -6,12 +6,12 @@ public class GUISelectPanelChipList : GUISelectPanelViewPartsUD
 {
 	public static List<GUIListChipParts.Data> partsDataList;
 
-	public void AllBuild(int widthLength, Vector2 windowSize, List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> dataList)
+	public void AllBuild(int widthLength, Vector2 windowSize, List<GameWebAPI.RespDataCS_ChipListLogic.UserChipList> dataList, bool isInitLocation = false)
 	{
-		this.AllBuild(widthLength, windowSize, dataList.ToArray(), false);
+		this.AllBuild(widthLength, windowSize, dataList.ToArray(), false, isInitLocation);
 	}
 
-	public void AllBuild(int widthLength, Vector2 windowSize, GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false)
+	public void AllBuild(int widthLength, Vector2 windowSize, GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList, bool shouldDim = false, bool isInitLocation = false)
 	{
 		Rect listWindowViewRect = default(Rect);
 		float num = windowSize.x * 0.5f;
@@ -41,13 +41,13 @@ public class GUISelectPanelChipList : GUISelectPanelViewPartsUD
 			data.myDigimonChipGroupIds = myDigimonChipGroupIds;
 			GUISelectPanelChipList.partsDataList.Add(data);
 		}
-		base.initLocation = true;
-		base.AllBuild(dataList.Length, true, 1f, 1f, null, null, true);
+		base.initLocation = isInitLocation;
+		base.AllBuild(dataList.Length, isInitLocation, 1f, 1f, null, null, true);
 	}
 
-	public void RefreshList(int partsCount)
+	public void RefreshList(int partsCount, bool isInitLocation = false)
 	{
-		base.RefreshList(partsCount, this.PARTS_CT_MN, null, true);
+		base.RefreshList(partsCount, this.PARTS_CT_MN, null, isInitLocation);
 	}
 
 	public void AddWidgetDepth(int depth)

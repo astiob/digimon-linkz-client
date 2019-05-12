@@ -1,4 +1,5 @@
 ﻿using Master;
+using Quest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ public class CMD_PointQuestRanking : CMD
 
 	private GameWebAPI.RespDataMS_PointQuestRankingList pointQuestRankingList;
 
-	private GameWebAPI.RespDataMS_PointQuestRankingList.RankingData myData;
+	private RankingData myData;
 
 	private List<string> keysListStartValue;
 
@@ -103,7 +104,7 @@ public class CMD_PointQuestRanking : CMD
 		return this.pointQuestRankingList.pointToNextRank;
 	}
 
-	public GameWebAPI.RespDataMS_PointQuestRankingList.RankingData GetData()
+	public RankingData GetData()
 	{
 		return this.myData;
 	}
@@ -178,9 +179,9 @@ public class CMD_PointQuestRanking : CMD
 		}
 	}
 
-	private GameWebAPI.RespDataMS_PointQuestRankingList.RankingData GetMyData()
+	private RankingData GetMyData()
 	{
-		this.myData = default(GameWebAPI.RespDataMS_PointQuestRankingList.RankingData);
+		this.myData = default(RankingData);
 		this.myData.userId = DataMng.Instance().UserId;
 		if (string.IsNullOrEmpty(this.pointQuestRankingList.myRankingNo.ToString()) || this.pointQuestRankingList.myRankingNo <= 0)
 		{
@@ -205,63 +206,43 @@ public class CMD_PointQuestRanking : CMD
 		respDataMS_PointQuestRankingList.myRankRewardList = PointQuestRanking.myRankRewardList;
 		respDataMS_PointQuestRankingList.nextRankRewardList = PointQuestRanking.nextRankRewardList;
 		respDataMS_PointQuestRankingList.pointRankingList = PointQuestRanking.pointRankingList;
-		this.testLog(respDataMS_PointQuestRankingList);
 		respDataMS_PointQuestRankingList.pointRankingList["-1"] = 0;
+		int index = 0;
 		this.keysList = new List<string>(respDataMS_PointQuestRankingList.pointRankingList.Keys);
 		this.valsList = new List<int>(respDataMS_PointQuestRankingList.pointRankingList.Values);
 		this.keysListStartValue = new List<string>();
 		this.keysListStartValue.Add("1");
-		for (int i = 1; i < respDataMS_PointQuestRankingList.pointRankingList.Count; i++)
+		for (int i = 0; i < respDataMS_PointQuestRankingList.pointRankingList.Count - 1; i++)
 		{
-			int num = int.Parse(this.keysList[i - 1]) + 1;
+			int num = int.Parse(this.keysList[i]) + 1;
 			this.keysListStartValue.Add(num.ToString());
-		}
-		for (int j = 0; j < respDataMS_PointQuestRankingList.pointRankingList.Count - 1; j++)
-		{
+			index = i;
 		}
 		if (respDataMS_PointQuestRankingList.myRankingNo > 0)
 		{
-			for (int k = 0; k < this.keysList.Count; k++)
+			for (int j = 0; j < this.keysList.Count; j++)
 			{
-				if (respDataMS_PointQuestRankingList.myRankingNo > int.Parse(this.keysList[k]) && int.Parse(this.keysList[k]) > 0)
+				if (respDataMS_PointQuestRankingList.myRankingNo > int.Parse(this.keysList[j]) && int.Parse(this.keysList[j]) > 0)
 				{
-					this.listIdx = k + 1;
+					this.listIdx = j + 1;
 				}
 			}
-			if (int.Parse(this.keysList[this.keysList.Count - 2]) < respDataMS_PointQuestRankingList.myRankingNo)
+			if (int.Parse(this.keysList[index]) < respDataMS_PointQuestRankingList.myRankingNo)
 			{
 				this.listIdx = this.keysList.Count - 1;
 				this.amIOutRange = true;
-				global::Debug.LogFormat("PointQuestRanking | 圏外 km", new object[0]);
-			}
-			else
-			{
-				global::Debug.LogFormat("PointQuestRanking | ランク内:{0}/{1} (0~{1}) km", new object[]
-				{
-					this.listIdx,
-					this.keysList.Count - 1
-				});
 			}
 		}
 		else
 		{
 			this.listIdx = this.keysList.Count - 1;
 			this.amIOutRange = true;
-			global::Debug.LogFormat("PointQuestRanking | 不参加 km", new object[0]);
 		}
-		this.limitRank = int.Parse(this.keysList[this.keysList.Count - 2]);
+		this.limitRank = int.Parse(this.keysList[index]);
 		if (this.listIdx == 0)
 		{
 			respDataMS_PointQuestRankingList.pointToNextRank = 0;
 		}
 		return respDataMS_PointQuestRankingList;
-	}
-
-	private void testData()
-	{
-	}
-
-	private void testLog(GameWebAPI.RespDataMS_PointQuestRankingList pqRanking)
-	{
 	}
 }

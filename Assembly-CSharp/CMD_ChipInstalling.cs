@@ -116,7 +116,7 @@ public sealed class CMD_ChipInstalling : CMD
 		if (data.userChipList != null)
 		{
 			GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList = this.GetDataList(data);
-			this.chipList = new ChipList(this.partsSortListBase, widthLength, new Vector2(960f, 350f), dataList, true);
+			this.chipList = new ChipList(this.partsSortListBase, widthLength, new Vector2(960f, 350f), dataList, true, true);
 			this.chipList.SetPosition(new Vector3(-110f, 0f, 0f));
 			this.chipList.SetScrollBarPosX(510f);
 			this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
@@ -186,7 +186,7 @@ public sealed class CMD_ChipInstalling : CMD
 				if (userChipData.userChipList != null)
 				{
 					GameWebAPI.RespDataCS_ChipListLogic.UserChipList[] dataList = this.GetDataList(userChipData);
-					this.chipList.ReAllBuild(dataList, true);
+					this.chipList.ReAllBuild(dataList, true, false);
 					this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 					this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
 					this.chipList.SetSelectColor(this.selectedUserChipId, true);

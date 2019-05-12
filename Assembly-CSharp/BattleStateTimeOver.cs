@@ -14,12 +14,49 @@ public class BattleStateTimeOver : BattleStateController
 
 	protected override void EnabledThisState()
 	{
-		base.stateManager.SetBattleScreen(BattleScreen.TimeOver);
+	}
+
+	protected override void DisabledThisState()
+	{
 		ClassSingleton<BattleDataStore>.Instance.DeleteForSystem();
 	}
 
 	protected override IEnumerator MainRoutine()
 	{
+		if (BattleStateManager.current.onServerConnect)
+		{
+			DataMng.Instance().WD_ReqDngResult.clearRound = 0;
+		}
+		base.stateManager.battleAdventureSceneManager.OnTrigger(BattleAdventureSceneManager.TriggerType.LoseStart);
+		if (base.stateManager.battleAdventureSceneManager.isUpdate)
+		{
+			IEnumerator loseStart = base.stateManager.battleAdventureSceneManager.Update();
+			while (loseStart.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		else
+		{
+			IEnumerator playerFailedAction = this.PlayerFailedAction();
+			while (playerFailedAction.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		base.stateManager.battleAdventureSceneManager.OnTrigger(BattleAdventureSceneManager.TriggerType.LoseEnd);
+		IEnumerator loseEnd = base.stateManager.battleAdventureSceneManager.Update();
+		while (loseEnd.MoveNext())
+		{
+			yield return null;
+		}
+		yield break;
+	}
+
+	private IEnumerator PlayerFailedAction()
+	{
+		base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Excess, true, base.battleStateData.isBattleRetired);
+		base.stateManager.SetBattleScreen(BattleScreen.TimeOver);
 		bool isRevivalFail = true;
 		for (int i = 0; i < base.battleStateData.playerCharacters.Length; i++)
 		{
@@ -33,17 +70,6 @@ public class BattleStateTimeOver : BattleStateController
 				isRevivalFail = false;
 			}
 		}
-		IEnumerator wait = this.PlayerFailedAction();
-		while (wait.MoveNext())
-		{
-			yield return null;
-		}
-		yield break;
-	}
-
-	private IEnumerator PlayerFailedAction()
-	{
-		base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Excess, base.stateManager.isLastBattle, base.battleStateData.isBattleRetired);
 		base.stateManager.soundPlayer.TryStopBGM();
 		base.stateManager.time.SetPlaySpeed(false, false);
 		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
@@ -56,6 +82,7 @@ public class BattleStateTimeOver : BattleStateController
 		{
 			yield return null;
 		}
+		DataMng.Instance().WD_ReqDngResult.clear = 0;
 		SoundPlayer.StopBattleFailBGM();
 		yield break;
 	}

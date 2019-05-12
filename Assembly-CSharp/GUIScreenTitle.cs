@@ -93,6 +93,17 @@ public sealed class GUIScreenTitle : GUIScreen
 		this.googlePlay.Bootup();
 		yield return base.StartCoroutine(this.AuthLogin());
 		yield return base.StartCoroutine(APIUtil.Instance().StartGameLogin());
+		string responseContactCode = PlayerPrefs.GetString("InquiryCode", string.Empty);
+		if (string.IsNullOrEmpty(responseContactCode))
+		{
+			GameWebAPI.RequestCM_InquiryCodeRequest requestCM_InquiryCodeRequest = new GameWebAPI.RequestCM_InquiryCodeRequest();
+			requestCM_InquiryCodeRequest.OnReceived = delegate(GameWebAPI.InquiryCodeRequest response)
+			{
+				PlayerPrefs.SetString("InquiryCode", response.inquiryCode);
+			};
+			GameWebAPI.RequestCM_InquiryCodeRequest request = requestCM_InquiryCodeRequest;
+			yield return base.StartCoroutine(request.Run(null, null, null));
+		}
 		yield return base.StartCoroutine(this.InitAssetBundleDownloadInfo());
 		yield return base.StartCoroutine(this.DownloadFontAsset());
 		UILabel.defaultFont = (AssetDataMng.Instance().LoadObject("Font/DigimonTitle", null, true) as Font);

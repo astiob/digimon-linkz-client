@@ -8,9 +8,20 @@ public class CMD_maintenance : CMD
 	[SerializeField]
 	private GameObject goTXT_EXP;
 
+	[SerializeField]
+	private UISprite spriteContactBTN;
+
+	[SerializeField]
+	private UILabel textContactBTN;
+
+	[SerializeField]
+	private GUICollider colliderContactBTN;
+
 	private UILabel ngTXT_EXP;
 
 	private string info = string.Empty;
+
+	private string responseContactCode = string.Empty;
 
 	public string Info
 	{
@@ -74,6 +85,7 @@ public class CMD_maintenance : CMD
 		base.Awake();
 		this.ngTXT_EXP = this.goTXT_EXP.GetComponent<UILabel>();
 		this.enableAndroidBackKey = false;
+		this.SetupContactButton();
 	}
 
 	public override void ClosePanel(bool animation = true)
@@ -142,6 +154,26 @@ public class CMD_maintenance : CMD
 
 	private void OnInquiryButton()
 	{
-		GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
+		if (!string.IsNullOrEmpty(this.responseContactCode))
+		{
+			GUIMain.ShowCommonDialog(null, "CMD_inquiry", null);
+		}
+	}
+
+	private void SetupContactButton()
+	{
+		this.responseContactCode = PlayerPrefs.GetString("InquiryCode", string.Empty);
+		if (!string.IsNullOrEmpty(this.responseContactCode))
+		{
+			this.spriteContactBTN.spriteName = "Common02_Btn_Blue";
+			this.textContactBTN.color = Color.white;
+			this.colliderContactBTN.activeCollider = true;
+		}
+		else
+		{
+			this.spriteContactBTN.spriteName = "Common02_Btn_Gray";
+			this.textContactBTN.color = Color.gray;
+			this.colliderContactBTN.activeCollider = false;
+		}
 	}
 }

@@ -147,6 +147,10 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[NonSerialized]
 	public List<string> recruitedFriendIdList;
 
+	private bool haveOwner;
+
+	private bool ownerGoingBattle;
+
 	private CMD_MultiRecruitTop parentDialog;
 
 	[CompilerGenerated]
@@ -1450,6 +1454,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 				if (recruitShareUserInfo.positionNumber == 0)
 				{
 					this.leaderMonsterData = value;
+					this.haveOwner = true;
 				}
 				this.UpdateMonsterUISingle(recruitShareUserInfo.isRequestMemberData, recruitShareUserInfo.positionNumber);
 				this.RefreshLeaderSkillText();
@@ -1486,7 +1491,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 					this.SetBtnDecide();
 				}
 			}
-			Singleton<TCPUtil>.Instance.SendConfirmation(TCPMessageType.RecruitShareUserInfo, recruitShareUserInfo.userId, this.myUserId, "multiRecruit");
+			Singleton<TCPUtil>.Instance.SendConfirmationJoin(TCPMessageType.RecruitShareUserInfo, recruitShareUserInfo.userId, this.myUserId, "multiRecruit", this.isBattleClicked || this.isGoingBattle);
 			break;
 		}
 		case TCPMessageType.RecruitRoomOut:
@@ -1561,6 +1566,11 @@ public class CMD_MultiRecruitPartyWait : CMD
 					if (!flag3)
 					{
 						Singleton<TCPUtil>.Instance.confirmationChecks[(TCPMessageType)confirmationData.tcpMessageType].Add(confirmationData.playerUserId);
+					}
+					this.ownerGoingBattle = (confirmationData.value1 == "True" || confirmationData.value1 == "true");
+					if (!this.haveOwner && this.ownerGoingBattle)
+					{
+						this.OnClickCancelExec(this.DispErrorModal(StringMaster.GetString("AlertNetworkErrorTitle"), StringMaster.GetString("AlertNetworkErrorInfo")));
 					}
 					global::Debug.LogFormat("{0}から確認用{1}を受信しました", new object[]
 					{

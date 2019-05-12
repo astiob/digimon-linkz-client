@@ -56,6 +56,7 @@ public sealed class FusionController : CutsceneBase
 		CutsceneDataFusion cutsceneDataFusion = data as CutsceneDataFusion;
 		if (cutsceneDataFusion != null)
 		{
+			base.transform.localPosition = new Vector3(0f, 10f, 0f);
 			this.endCallback = cutsceneDataFusion.endCallback;
 			this.allSkipButton.Initialize();
 			this.allSkipButton.AddAction(new Action(this.EndCutscene));

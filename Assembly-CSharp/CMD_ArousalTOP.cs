@@ -285,6 +285,10 @@ public sealed class CMD_ArousalTOP : CMD
 			this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
 			this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 		}
+		if (this.baseDigimon != null || this.partnerMonsterList.Count > 0)
+		{
+			this.FilterList();
+		}
 	}
 
 	private void ResetList()
@@ -309,15 +313,18 @@ public sealed class CMD_ArousalTOP : CMD
 				{
 					b = this.partnerMonsterList[0].monsterMG.monsterGroupId;
 				}
-				if (list[i].monsterMG.monsterGroupId != b || MonsterGrowStepData.IsUltimateScope(list[i].GetMonsterMaster().Group.growStep))
+				if (this.baseDigimon != null || this.partnerMonsterList.Count > 0)
+				{
+					if (list[i].monsterMG.monsterGroupId != b || MonsterGrowStepData.IsUltimateScope(list[i].GetMonsterMaster().Group.growStep))
+					{
+						list2.Add(list[i]);
+					}
+				}
+				else if (list[i].monsterMG.monsterGroupId != b || MonsterGrowStepData.IsUltimateScope(list[i].GetMonsterMaster().Group.growStep))
 				{
 					list2.Add(list[i]);
 				}
-				else if (0 < this.partnerMonsterList.Count && list[i] == this.partnerMonsterList[0])
-				{
-					list2.Add(list[i]);
-				}
-				else if (this.baseDigimon != null && (list[i].userMonster.IsLocked || MonsterStatusData.IsSpecialTrainingType(list[i].GetMonsterMaster().Group.monsterType) || 0 < this.partnerMonsterList.Count))
+				else if (this.baseDigimon != null && (MonsterStatusData.IsSpecialTrainingType(list[i].GetMonsterMaster().Group.monsterType) || 0 < this.partnerMonsterList.Count))
 				{
 					list2.Add(list[i]);
 				}
@@ -328,6 +335,11 @@ public sealed class CMD_ArousalTOP : CMD
 			list.Remove(item);
 		}
 		this._csSelectPanelMonsterIcon.ReAllBuild(list);
+		if (this.baseDigimon != null || 0 < this.partnerMonsterList.Count)
+		{
+			this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
+			this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
+		}
 	}
 
 	private void ActMIconLong(MonsterData monsterData)
@@ -448,7 +460,12 @@ public sealed class CMD_ArousalTOP : CMD
 			this.leftLargeMonsterIcon = this.CreateIcon(this.baseDigimon, this._goMN_ICON_CHG);
 			this.leftLargeMonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
 			this.ShowChgInfo();
-			this.FilterList();
+			if (this.partnerMonsterList.Count == 0)
+			{
+				this.FilterList();
+			}
+			this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
+			this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 		}
 		else if (1 > this.partnerMonsterList.Count)
 		{
@@ -819,11 +836,9 @@ public sealed class CMD_ArousalTOP : CMD
 			else
 			{
 				this.monsterList.ClearIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
-				this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
 				this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 			}
 			this.ShowChgInfo();
-			this.ResetList();
 			this.chipBaseSelect.ClearChipIcons();
 		}
 		else
@@ -850,9 +865,13 @@ public sealed class CMD_ArousalTOP : CMD
 			}
 			else
 			{
-				this.monsterList.ClearIconGrayOutPartnerMonster(this.baseDigimon, this.baseDigimon.monsterMG.monsterGroupId);
+				this.monsterList.ClearIconGrayOutPartnerMonsterCheckLock(this.baseDigimon, this.baseDigimon.monsterMG.monsterGroupId);
 				this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
 			}
+		}
+		if (this.baseDigimon == null && this.partnerMonsterList.Count == 0)
+		{
+			this.ResetList();
 		}
 		this.BtnCont();
 	}

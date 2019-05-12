@@ -357,10 +357,17 @@ public class CameraParams : MonoBehaviour
 	public void PlayCameraAnimation(CharacterParams characterParams, bool onInverse = false, bool onClampAnimation = false)
 	{
 		base.gameObject.SetActive(true);
+		base.StartCoroutine(this.PlayCameraAnimationIE(characterParams, onInverse, onClampAnimation));
+	}
+
+	private IEnumerator PlayCameraAnimationIE(CharacterParams characterParams, bool onInverse = false, bool onClampAnimation = false)
+	{
+		yield return new WaitForEndOfFrame();
 		this.StopCameraAnimationInternal();
 		this.currentPlayAnimationCorutine = this.PlayCameraAnimationCorutine(characterParams, onInverse, onClampAnimation);
 		this.currentPlayAnimationCorutine.MoveNext();
 		base.StartCoroutine(this.currentPlayAnimationCorutine);
+		yield break;
 	}
 
 	private IEnumerator PlayCameraAnimationCorutine(Vector3 targetRootPosition, Vector3 targetRootRotation, bool onInverse, bool onClampAnimation)

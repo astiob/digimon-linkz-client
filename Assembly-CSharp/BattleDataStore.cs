@@ -85,7 +85,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		"extraEffectStatus"
 	};
 
-	public TaskBase RequestWorldStartDataLogic(bool requestRetry = true)
+	public TaskBase RequestWorldStartDataLogic()
 	{
 		NormalTask normalTask = new NormalTask(delegate()
 		{
@@ -96,17 +96,31 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		});
 		GameWebAPI.WorldStartDataLogic request = new GameWebAPI.WorldStartDataLogic
 		{
-			OnReceived = delegate(GameWebAPI.RespDataWD_DungeonStart response)
+			OnReceived = delegate(GameWebAPI.ReceiveQuestResume response)
 			{
 				if (response.startId != null)
 				{
 					this.isRecoverSuccessWebAPI = true;
 					ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart = response;
-					this.SetRetryData(response.worldDungeonId);
+					string userDungeonTicketId = string.Empty;
+					if (string.IsNullOrEmpty(response.userDungeonTicketId))
+					{
+						string @string = PlayerPrefs.GetString("userDungeonTicketId", string.Empty);
+						if (!string.IsNullOrEmpty(@string))
+						{
+							userDungeonTicketId = @string;
+						}
+						PlayerPrefs.SetString("userDungeonTicketId", string.Empty);
+					}
+					else
+					{
+						userDungeonTicketId = response.userDungeonTicketId;
+					}
+					this.SetRetryData(response.worldDungeonId, userDungeonTicketId);
 				}
 			}
 		};
-		normalTask.Add(new APIRequestTask(request, requestRetry));
+		normalTask.Add(new APIRequestTask(request, true));
 		normalTask.Add(new NormalTask(delegate()
 		{
 			if (this.CheckSaveFile())
@@ -119,15 +133,15 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 		return normalTask;
 	}
 
-	private void SetRetryData(string worldDungeonId)
+	private void SetRetryData(string worldDungeonId, string userDungeonTicketId)
 	{
 		string selectDeckNum = DataMng.Instance().RespDataMN_DeckList.selectDeckNum;
-		GameWebAPI.WD_Req_DngStart last_dng_req = new GameWebAPI.WD_Req_DngStart
+		DataMng.Instance().GetResultUtilData().last_dng_req = new GameWebAPI.WD_Req_DngStart
 		{
 			dungeonId = worldDungeonId,
-			deckNum = selectDeckNum.ToString()
+			deckNum = selectDeckNum.ToString(),
+			userDungeonTicketId = userDungeonTicketId
 		};
-		DataMng.Instance().GetResultUtilData().last_dng_req = last_dng_req;
 	}
 
 	private IEnumerator RequestWorldStartDataDelete()
@@ -433,7 +447,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 			{
 				GameWebAPI.RespDataWD_DungeonStart respDataWD_DungeonStart = ClassSingleton<QuestData>.Instance.RespDataWD_DungeonStart;
 				string b = string.Empty;
-				string text = string.Empty;
+				string b2 = string.Empty;
 				if (respDataWD_DungeonStart == null)
 				{
 					global::Debug.LogError("dungeon data is null");
@@ -442,8 +456,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				else
 				{
 					b = respDataWD_DungeonStart.startId;
-					text = respDataWD_DungeonStart.worldDungeonId;
-					this.SetRetryData(text);
+					b2 = respDataWD_DungeonStart.worldDungeonId;
 				}
 				VersatileDataStore versatileDataStore = JsonReader.Deserialize<VersatileDataStore>(array[1]);
 				string startId = versatileDataStore.startId;
@@ -456,7 +469,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				{
 					UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(versatileDataStore.randomState);
 				}
-				if (res && startId == b && worldDungeonId == text)
+				if (res && startId == b && worldDungeonId == b2)
 				{
 					this.cachedJsonArr = new string[array.Length - 1];
 					int num = 2;
@@ -691,6 +704,10 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 				propInfoType
 			});
 		}
+		if (!string.IsNullOrEmpty(battleStateData.ticketId))
+		{
+			DataMng.Instance().GetResultUtilData().last_dng_req.userDungeonTicketId = battleStateData.ticketId;
+		}
 	}
 
 	private PropertyInfo[] GetPropertyInfos(Type type, bool isOnlyGet = false)
@@ -704,6 +721,7 @@ public sealed class BattleDataStore : ClassSingleton<BattleDataStore>
 
 	public void Save(BattleStateData battleStateData)
 	{
+		battleStateData.ticketId = DataMng.Instance().GetResultUtilData().last_dng_req.userDungeonTicketId;
 		PropertyInfo[] propertyInfos = this.GetPropertyInfos(typeof(BattleStateData), false);
 		List<string> list = new List<string>();
 		string propInfoName = string.Empty;

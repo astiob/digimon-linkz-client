@@ -28,7 +28,7 @@ public class SoundMng : MonoBehaviour
 
 	private int SE_MAX = 9;
 
-	private int TS_SE_MAX = 5;
+	private int TS_SE_MAX = 6;
 
 	private List<SoundCtr> audioSEList;
 

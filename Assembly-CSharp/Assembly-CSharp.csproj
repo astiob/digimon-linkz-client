@@ -1442,6 +1442,7 @@
     <Compile Include="Quest\QuestData.cs" />
     <Compile Include="Quest\QuestEventInfoList.cs" />
     <Compile Include="Quest\QuestStart.cs" />
+    <Compile Include="Quest\RankingData.cs" />
     <Compile Include="RadioWave.cs" />
     <Compile Include="RandomRotater.cs" />
     <Compile Include="RandomSeedSyncData.cs" />

@@ -83,7 +83,7 @@ public sealed class CMD_ChipAdministration : CMD
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
 		this.userChipList = this.ConvertChipList(ChipDataMng.userChipData);
-		this.chipList = new ChipList(this.goEFC_FOOTER, 7, new Vector2(960f, 450f), this.userChipList, false);
+		this.chipList = new ChipList(this.goEFC_FOOTER, 7, new Vector2(960f, 450f), this.userChipList, false, true);
 		this.chipList.SetPosition(new Vector3(-110f, -70f, 0f));
 		this.chipList.SetScrollBarPosX(450f);
 		this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
@@ -193,7 +193,7 @@ public sealed class CMD_ChipAdministration : CMD
 			{
 				this.sortNameLabel.text = CMD_ChipSortModal.GetSortName();
 				this.userChipList = this.ConvertChipList(ChipDataMng.userChipData);
-				this.chipList.ReAllBuild(this.userChipList, false);
+				this.chipList.ReAllBuild(this.userChipList, false, false);
 				this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 				this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
 				this.messageLabel.gameObject.SetActive(this.userChipList.Length == 0);
@@ -298,7 +298,7 @@ public sealed class CMD_ChipAdministration : CMD
 		this.saleClusterMessageLabel.text = "0";
 		this.totalPrice = 0;
 		this.userChipList = this.ConvertChipList(ChipDataMng.userChipData);
-		this.chipList.ReAllBuild(this.userChipList, false);
+		this.chipList.ReAllBuild(this.userChipList, false, false);
 		this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 		this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
 		foreach (GameWebAPI.RespDataCS_ChipListLogic.UserChipList userChipList in this.userChipList)

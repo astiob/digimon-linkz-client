@@ -283,9 +283,8 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 				component.SetOriginalPos(new Vector3(0f, num, -5f));
 				if (component != null)
 				{
-					component.WorldStageData = worldStageData;
+					component.SetData(worldStageData, this.animationMoving);
 					component.ShowGUI();
-					component.selectPanelA = this;
 					CampaignLabelQuest component2 = component.GetComponent<CampaignLabelQuest>();
 					component2.AreaId = worldStageData.worldStageM.worldStageId;
 					if (num2 == viewIdx)
@@ -304,7 +303,7 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 			}
 			base.height = panelBuildData.lenH;
 			base.InitMinMaxLocation(viewIdx, 0f);
-			if (!this.partObjs[viewIdx].IsFadeDo())
+			if (viewIdx < this.partObjs.Count && !this.partObjs[viewIdx].IsFadeDo())
 			{
 				this.partObjs[viewIdx].gameObject.SetActive(false);
 				this.SetCellAnim(viewIdx);
@@ -350,7 +349,7 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 	private IEnumerator DownloadBannerTexture(QuestData.WorldStageData wsd, Action<Texture2D> callback)
 	{
 		bool isUnlock = ClassSingleton<QuestData>.Instance.IsUnlockWorldStage(wsd);
-		if (wsd.worldStageM.worldAreaId == ConstValue.QUEST_AREA_ID_DEFAULT || wsd.worldStageM.worldAreaId == "4" || wsd.worldStageM.worldAreaId == "5" || !isUnlock || "null" == wsd.worldStageM.stageImage || string.IsNullOrEmpty(wsd.worldStageM.stageImage))
+		if (wsd.worldStageM.worldAreaId == ConstValue.QUEST_AREA_ID_DEFAULT || wsd.worldStageM.worldAreaId == "4" || wsd.worldStageM.worldAreaId == "5" || "null" == wsd.worldStageM.stageImage || string.IsNullOrEmpty(wsd.worldStageM.stageImage))
 		{
 			callback(null);
 			yield break;

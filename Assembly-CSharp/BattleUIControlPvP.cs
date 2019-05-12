@@ -210,7 +210,6 @@ public class BattleUIControlPvP : BattleUIControlMultiBasic
 
 	public void HideAlertDialog()
 	{
-		global::Debug.LogError("HideAlertDialog");
 		this.battleDialog.SetSkin(0);
 		this.attackTime.RestartTimer();
 	}

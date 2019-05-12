@@ -73,4 +73,12 @@ public static class PlayerPrefsKeys
 	public const string DIGIMON_FILTER_TYPE = "DigimonFilterType";
 
 	public const string CHIP_SORT_DATA = "ChipSortData";
+
+	public const string INQUIRY_CODE = "InquiryCode";
+
+	public const string IOS_CONTACT_URL = "iosContactSiteURL";
+
+	public const string ANDROID_CONTACT_URL = "androidContactSiteURL";
+
+	public const string USER_DUNGEON_TICKETID = "userDungeonTicketId";
 }

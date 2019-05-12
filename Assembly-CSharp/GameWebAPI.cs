@@ -2654,7 +2654,7 @@ public class GameWebAPI : WebAPI
 		public string userDungeonTicketId;
 	}
 
-	public sealed class RespDataWD_DungeonStart : WebAPI.ResponseData
+	public class RespDataWD_DungeonStart : WebAPI.ResponseData
 	{
 		public string startId;
 
@@ -2985,6 +2985,8 @@ public class GameWebAPI : WebAPI
 
 			public int isOpen = 1;
 
+			public int isCounting;
+
 			public GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons;
 
 			public DateTime closeTime;
@@ -3011,12 +3013,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class WorldStartDataLogic : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataWD_DungeonStart>
+	public sealed class WorldStartDataLogic : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.ReceiveQuestResume>
 	{
 		public WorldStartDataLogic()
 		{
 			this.apiId = "090012";
 		}
+	}
+
+	public sealed class ReceiveQuestResume : GameWebAPI.RespDataWD_DungeonStart
+	{
+		public string userDungeonTicketId;
 	}
 
 	public sealed class WorldDungeonTutorialContinueLogic : RequestTypeBase<GameWebAPI.WD_Req_Continue, GameWebAPI.RespDataWD_Continue>
@@ -3241,21 +3248,6 @@ public class GameWebAPI : WebAPI
 		public int pointToNextRank;
 
 		public Dictionary<string, int> pointRankingList;
-
-		public struct RankingData
-		{
-			public string userId;
-
-			public string rank;
-
-			public string score;
-
-			public string nickname;
-
-			public string iconId;
-
-			public string titleId;
-		}
 
 		public struct RewardData
 		{
@@ -6173,6 +6165,7 @@ public class GameWebAPI : WebAPI
 				set
 				{
 					this.IOS_CONTACT_SITE_URL = value;
+					PlayerPrefs.SetString("iosContactSiteURL", this.IOS_CONTACT_SITE_URL);
 				}
 			}
 
@@ -6181,6 +6174,7 @@ public class GameWebAPI : WebAPI
 				set
 				{
 					this.ANDROID_CONTACT_SITE_URL = value;
+					PlayerPrefs.SetString("androidContactSiteURL", this.ANDROID_CONTACT_SITE_URL);
 				}
 			}
 
@@ -7038,8 +7032,6 @@ public class GameWebAPI : WebAPI
 			public string closeTime;
 
 			public string adminOpenFlg;
-
-			public string forceOpenNum = "5";
 		}
 	}
 

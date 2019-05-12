@@ -82,12 +82,12 @@ public static class FacilityShopFilter
 
 	private static bool CheckFacilityConditionWorldArea(string areaId)
 	{
-		GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldId = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldId(areaId);
-		if (dngeonInfoByWorldId.worldDungeonInfo != null)
+		GameWebAPI.RespDataWD_GetDungeonInfo dngeonInfoByWorldAreaId = ClassSingleton<QuestData>.Instance.GetDngeonInfoByWorldAreaId(areaId);
+		if (dngeonInfoByWorldAreaId.worldDungeonInfo != null)
 		{
-			for (int i = 0; i < dngeonInfoByWorldId.worldDungeonInfo.Length; i++)
+			for (int i = 0; i < dngeonInfoByWorldAreaId.worldDungeonInfo.Length; i++)
 			{
-				GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons = dngeonInfoByWorldId.worldDungeonInfo[i].dungeons;
+				GameWebAPI.RespDataWD_GetDungeonInfo.Dungeons[] dungeons = dngeonInfoByWorldAreaId.worldDungeonInfo[i].dungeons;
 				for (int j = 0; j < dungeons.Length; j++)
 				{
 					if (dungeons[j].status < 4)

@@ -57,9 +57,21 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	[SerializeField]
 	private GameObject goCloseKey;
 
+	[Header("オープンしてないを示す鍵(本体)")]
+	[SerializeField]
+	private UISprite ngCloseKey;
+
 	[Header("NEWとCLEARのアイコン")]
 	[SerializeField]
 	private UISprite ngSPR_NEW;
+
+	[Header("集計中のラベル")]
+	[SerializeField]
+	private UILabel aggregatingLabel;
+
+	[Header("開催終了時のテキスト")]
+	[SerializeField]
+	private UILabel closedTextLabel;
 
 	[Header("クリアのマークの画像")]
 	[SerializeField]
@@ -99,7 +111,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 
 	private DateTime restTimeDate;
 
-	public GUISelectPanelA_StageL selectPanelA;
+	private bool animationMoving;
 
 	private int totalSeconds;
 
@@ -110,10 +122,6 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 		get
 		{
 			return this.worldStageData;
-		}
-		set
-		{
-			this.worldStageData = value;
 		}
 	}
 
@@ -150,6 +158,12 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	{
 		this.failedTextLabel.text = stageName;
 		this.failedTextLabel.gameObject.SetActive(active);
+	}
+
+	public void SetData(QuestData.WorldStageData worldStageData, bool animationMoving)
+	{
+		this.worldStageData = worldStageData;
+		this.animationMoving = animationMoving;
 	}
 
 	public override void ShowGUI()
@@ -193,7 +207,20 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 	private void SetOpenStatus()
 	{
 		this.InitializeBannerTex();
-		if (this.worldStageData.wdi.isOpen == 1)
+		if (this.worldStageData.wdi.timeLeft == 0 && (this.worldStageData.wdi.dungeons == null || this.worldStageData.wdi.dungeons.Length == 0))
+		{
+			this.timeLabel.gameObject.SetActive(false);
+			this.bannerTex.material.SetFloat("_Rate", 1f);
+			this.bannerTex.color = this.closeBannerCol;
+			this.goCloseKey.SetActive(true);
+			this.ngCloseKey.enabled = false;
+			this.closedTextLabel.transform.parent.gameObject.SetActive(true);
+			this.closedTextLabel.text = StringMaster.GetString("QuestPointRankingClosed");
+			bool active = this.worldStageData.isViewRanking && this.worldStageData.isCounting;
+			this.aggregatingLabel.gameObject.SetActive(active);
+			this.aggregatingLabel.text = StringMaster.GetString("QuestPointRankingCounting");
+		}
+		else if (this.worldStageData.wdi.isOpen == 1)
 		{
 			this.timeLabel.gameObject.SetActive(true);
 			this.SetTimeStatus();
@@ -248,6 +275,10 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 				}
 			}
 			GUIBannerParts.SetTimeTextForDayOfWeek(this.timeLabel, this.totalSeconds, this.restTimeDate, true);
+		}
+		else if (this.worldStageData.isViewRanking && this.worldStageData.isCounting)
+		{
+			this.timeLabel.text = StringMaster.GetString("QuestPointRankingCounting");
 		}
 		else if (this.totalSeconds < 99999999)
 		{
@@ -323,7 +354,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 		{
 			return;
 		}
-		if (flag && !this.selectPanelA.animationMoving)
+		if (flag && !this.animationMoving)
 		{
 			base.OnTouchEnded(touch, pos, flag);
 			float magnitude = (this.beganPostion - pos).magnitude;
@@ -406,7 +437,7 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 
 	private void ExecuteTouch(bool forceChange)
 	{
-		if (0 >= this.totalSeconds)
+		if (0 >= this.totalSeconds && !this.worldStageData.isViewRanking)
 		{
 			CMD_Alert cmd_Alert = GUIMain.ShowCommonDialog(delegate(int i)
 			{
@@ -439,6 +470,10 @@ public sealed class GUIListPartsA_StageL_Banner : GUIListPartBS
 				}
 			}
 			GUIBannerParts.SetTimeTextForDayOfWeek(this.timeLabel, this.totalSeconds, this.restTimeDate, true);
+		}
+		else if (this.worldStageData.isViewRanking && this.worldStageData.isCounting)
+		{
+			this.timeLabel.text = StringMaster.GetString("QuestPointRankingCounting");
 		}
 		else if (this.totalSeconds < 99999999)
 		{

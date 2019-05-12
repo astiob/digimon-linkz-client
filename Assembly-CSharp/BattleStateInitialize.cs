@@ -650,10 +650,12 @@ public class BattleStateInitialize : BattleStateController
 		TimeProfiler.EndTotalProfile();
 		for (int i = 0; i < base.hierarchyData.usePlayerCharacters.Length; i++)
 		{
-			bool isLeader = i == base.hierarchyData.leaderCharacter;
+			bool isLeade = i == base.hierarchyData.leaderCharacter;
 			CharacterStateControl characterStateControl = base.battleStateData.playerCharacters[i];
 			Sprite characterThumbnail = base.stateManager.serverControl.GetCharacterThumbnail(characterStateControl.playerStatus.thumbnailId);
-			base.stateManager.uiControl.ApplyMonsterButtonIcon(i, characterThumbnail, characterStateControl, isLeader);
+			string resourcePath = GUIMonsterIcon.InternalGetMonsterIconPathByIconId(characterStateControl.playerStatus.thumbnailId);
+			string monsterIconPathByIconId = GUIMonsterIcon.GetMonsterIconPathByIconId(characterStateControl.playerStatus.thumbnailId);
+			base.stateManager.uiControl.ApplyMonsterButtonIcon(i, characterStateControl, isLeade, resourcePath, monsterIconPathByIconId);
 		}
 		BattleDebug.Log("--- バトルGC : 開始");
 		Resources.UnloadUnusedAssets();

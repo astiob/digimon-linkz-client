@@ -9,7 +9,7 @@ public class BattleMonsterButton : MonoBehaviour
 
 	[Header("アイコン画像")]
 	[SerializeField]
-	public UI2DSprite monsterIcon;
+	public UITexture monsterIconTexture;
 
 	[SerializeField]
 	public HoldPressButton playerMonsterDescriptionSwitch;
@@ -38,9 +38,9 @@ public class BattleMonsterButton : MonoBehaviour
 	[SerializeField]
 	private BattleMonsterButton.Frame frame;
 
-	public void ApplyMonsterButtonIcon(Sprite image, CharacterStateControl characterStatus, bool isLeader)
+	public void ApplyMonsterButtonIcon(CharacterStateControl characterStatus, bool isLeader, string resourcePath, string assetBundlePath)
 	{
-		this.monsterIcon.sprite2D = image;
+		GUIMonsterIcon.SetTextureMonsterParts(this.monsterIconTexture, resourcePath, assetBundlePath, true);
 		this.frame.SetEvolutionStep(characterStatus.characterDatas.growStep);
 		this.SetArousal(characterStatus.arousal);
 		this.ApplyLeaderIcon(isLeader);
@@ -111,7 +111,7 @@ public class BattleMonsterButton : MonoBehaviour
 		private UISprite selectFrame;
 
 		[SerializeField]
-		private UI2DSprite materialFrame;
+		private UITexture charaTexture;
 
 		[Header("マテリアル（通常、死亡時の順）")]
 		[SerializeField]
@@ -120,6 +120,8 @@ public class BattleMonsterButton : MonoBehaviour
 		[Header("アトラス（通常、死亡時の順）")]
 		[SerializeField]
 		private UIAtlas[] uiAtlases;
+
+		private BattleMonsterButton.Type iconType;
 
 		public void SetEvolutionStep(GrowStep growStep)
 		{
@@ -158,10 +160,33 @@ public class BattleMonsterButton : MonoBehaviour
 		{
 			this.selectFrame.gameObject.SetActive(type == BattleMonsterButton.Type.Select);
 			int num = (type != BattleMonsterButton.Type.Dead) ? 0 : 1;
-			this.materialFrame.material = this.materials[num];
 			this.baseFrame.atlas = this.uiAtlases[num];
 			this.bgFrame.atlas = this.uiAtlases[num];
 			this.flashFrame.atlas = this.uiAtlases[num];
+			if (this.charaTexture.material == null)
+			{
+				this.charaTexture.shader = this.materials[num].shader;
+			}
+			else if ((type == BattleMonsterButton.Type.Dead && this.iconType != BattleMonsterButton.Type.Dead) || (type != BattleMonsterButton.Type.Dead && this.iconType == BattleMonsterButton.Type.Dead))
+			{
+				this.iconType = type;
+				Texture texture = this.charaTexture.material.GetTexture("_MaskTex");
+				Texture texture2 = this.charaTexture.material.GetTexture("_MainTex");
+				if (type == BattleMonsterButton.Type.Dead)
+				{
+					Shader iconShaderGray = GUIMonsterIcon.GetIconShaderGray();
+					this.charaTexture.material = new Material(iconShaderGray);
+					this.charaTexture.material.SetTexture("_MaskTex", texture);
+					this.charaTexture.material.SetTexture("_MainTex", texture2);
+				}
+				else
+				{
+					Shader iconShader = GUIMonsterIcon.GetIconShader();
+					this.charaTexture.material = new Material(iconShader);
+					this.charaTexture.material.SetTexture("_MaskTex", texture);
+					this.charaTexture.material.SetTexture("_MainTex", texture2);
+				}
+			}
 		}
 	}
 }

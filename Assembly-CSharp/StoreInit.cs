@@ -139,7 +139,13 @@ public class StoreInit : MonoBehaviour
 			}
 			else
 			{
-				productIDS = null;
+				productIDS = new string[0];
+				DataMng.Instance().RespDataSH_Info.shopList = new GameWebAPI.RespDataSH_Info.ShopList[]
+				{
+					new GameWebAPI.RespDataSH_Info.ShopList()
+				};
+				DataMng.Instance().RespDataSH_Info.shopList[0].productList = new GameWebAPI.RespDataSH_Info.ProductList[0];
+				this.init_status = StoreInit.STATUS.DONE_RECONSUME;
 			}
 			onCompleted(productIDS);
 		};
@@ -293,8 +299,7 @@ public class StoreInit : MonoBehaviour
 			{
 				return StoreInit.Instance().GetProducts(productsID, false);
 			}
-			this.getProductsSucceed = false;
-			return null;
+			return StoreInit.Instance().GetProducts(productsID, false);
 		}));
 		return productsID2.Run(null, delegate(Exception nop)
 		{

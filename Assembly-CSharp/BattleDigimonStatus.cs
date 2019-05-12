@@ -266,7 +266,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			this.inheritance2.description.text = "-";
 			this.ApplyValue(0, 0, null, this.inheritance2.upObject, this.inheritance2.downObject);
 		}
-		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipServerAddValue || characterStatus.IsPoint());
+		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipServerAddValue || characterStatus.isEffectiveBonus());
 		this.SetArousal(characterStatus.arousal);
 		base.SetupTolerance(characterStatus);
 		this.MonsterMedalList.SetValues(characterStatus.talent);

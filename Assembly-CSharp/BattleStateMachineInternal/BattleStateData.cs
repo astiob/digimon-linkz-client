@@ -316,6 +316,8 @@ namespace BattleStateMachineInternal
 
 		public int leaderCharacterIndex { get; set; }
 
+		public string ticketId { get; set; }
+
 		public void ApplySpawnPoint(SpawnPointParams spawnPoint)
 		{
 			if (spawnPoint == null)
