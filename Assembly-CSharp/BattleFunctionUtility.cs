@@ -38,4 +38,6 @@ public static class BattleFunctionUtility
 		}
 		return list.ToArray();
 	}
+
+	public static float ExTimeScale { get; set; }
 }

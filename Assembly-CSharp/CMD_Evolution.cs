@@ -202,13 +202,13 @@ public sealed class CMD_Evolution : CMD
 			OnReceived = delegate(GameWebAPI.RespDataMN_EvolutionExec response)
 			{
 				ClassSingleton<MonsterUserDataMng>.Instance.UpdateUserMonsterData(response.userMonster);
-				if (response.IsFirstUltimaEvolution())
-				{
-					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
-				}
-				else if (response.IsFirstEvolution())
+				if (response.IsFirstEvolution())
 				{
 					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW;
+				}
+				else if (response.IsFirstUltimaEvolution())
+				{
+					this.execEvolutionReviewStatus = CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
 				}
 			}
 		};
@@ -328,7 +328,7 @@ public sealed class CMD_Evolution : CMD
 		CutSceneMain.FadeReqCutScene(cutsceneData, new Action(this.StartCutSceneCallBack), delegate()
 		{
 			this.detailedWindow.StartAnimation();
-			if (this.execEvolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW && this.execEvolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW)
+			if (this.execEvolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW && this.execEvolutionReviewStatus != CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW)
 			{
 				RestrictionInput.EndLoad();
 			}
@@ -350,13 +350,13 @@ public sealed class CMD_Evolution : CMD
 			CMD_Evolution $this = this;
 			MonsterData afterMonster = afterMonster;
 			string effectType = this.evolveDataBK.mem.effectType;
-			bool reviewFirstUltima = this.execEvolutionReviewStatus == CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
 			bool reviewFirstEvolution = this.execEvolutionReviewStatus == CMD_Evolution.EvolutionReviewStatus.FIRST_EVOLUTION_REVIEW;
+			bool reviewFirstUltimaEvolution = this.execEvolutionReviewStatus == CMD_Evolution.EvolutionReviewStatus.FIRST_ULTIMA_EVOLUTION_REVIEW;
 			if (CMD_Evolution.<>f__mg$cache4 == null)
 			{
 				CMD_Evolution.<>f__mg$cache4 = new Action(RestrictionInput.EndLoad);
 			}
-			$this.detailedWindow = CMD_CharacterDetailed.CreateWindow(afterMonster, effectType, reviewFirstUltima, reviewFirstEvolution, CMD_Evolution.<>f__mg$cache4);
+			$this.detailedWindow = CMD_CharacterDetailed.CreateWindow(afterMonster, effectType, reviewFirstEvolution, reviewFirstUltimaEvolution, CMD_Evolution.<>f__mg$cache4);
 		});
 		this.ClosePanel(false);
 	}

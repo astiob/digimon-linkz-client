@@ -58,6 +58,7 @@ public class BattleTime : BattleFunctionBase
 		{
 			Time.timeScale = ((!base.battleStateData.isInvocationEffectPlaying) ? 1f : base.stateManager.stateProperty.attackActionSpeedTime) * num;
 		}
+		Time.timeScale += BattleFunctionUtility.ExTimeScale;
 	}
 
 	public bool isPause

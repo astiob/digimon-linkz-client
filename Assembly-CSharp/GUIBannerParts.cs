@@ -53,8 +53,6 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private static readonly int MINUTES_SECONDS = 60;
 
-	private bool menuShowFlag;
-
 	public GameWebAPI.RespDataMA_BannerM.BannerM Data { get; set; }
 
 	public void SetBGColor()
@@ -354,21 +352,15 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	private void InfoShortcut()
 	{
-		if (this.menuShowFlag)
-		{
-			CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
-			cmdwebWindow.TitleText = this.Data.name;
-			cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
-		}
+		CMDWebWindow cmdwebWindow = GUIMain.ShowCommonDialog(null, "CMDWebWindow", null) as CMDWebWindow;
+		cmdwebWindow.TitleText = this.Data.name;
+		cmdwebWindow.Url = ConstValue.APP_WEB_DOMAIN + this.Data.url;
 	}
 
 	private void ScheduleShortcut()
 	{
-		if (this.menuShowFlag)
-		{
-			this.InfoShortcut();
-			PartsMenu.instance.RefreshMenuBannerNewAlert();
-		}
+		this.InfoShortcut();
+		PartsMenu.instance.RefreshMenuBannerNewAlert();
 	}
 
 	public void OnBannerReceived(Texture2D texture)
@@ -386,7 +378,6 @@ public sealed class GUIBannerParts : GUIListPartBS
 
 	public void SetMenuShowFlag(bool showFlag)
 	{
-		this.menuShowFlag = showFlag;
 	}
 
 	private enum LinkCategoryType

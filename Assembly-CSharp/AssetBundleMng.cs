@@ -374,10 +374,15 @@ public class AssetBundleMng : MonoBehaviour
 	public int GetDLAllCount(AssetBundleInfoData abid)
 	{
 		int num = 0;
-		List<AssetBundleInfo> assetBundleInfoList = abid.assetBundleInfoList;
-		for (int i = 0; i < assetBundleInfoList.Count; i++)
+		return this.GetDLAllCount(abid, out num);
+	}
+
+	public int GetDLAllCount(AssetBundleInfoData abid, out int size)
+	{
+		int num = 0;
+		size = 0;
+		foreach (AssetBundleInfo assetBundleInfo in abid.assetBundleInfoList)
 		{
-			AssetBundleInfo assetBundleInfo = assetBundleInfoList[i];
 			uint crc = assetBundleInfo.crc;
 			uint recordCRC = this.GetRecordCRC(abid.abPath, assetBundleInfo.abName);
 			int recordVersion = this.GetRecordVersion(abid.abPath, assetBundleInfo.abName);
@@ -386,10 +391,12 @@ public class AssetBundleMng : MonoBehaviour
 				if (recordVersion == -1)
 				{
 					num++;
+					size += int.Parse(assetBundleInfo.size);
 				}
 				else if (recordCRC != crc)
 				{
 					num++;
+					size += int.Parse(assetBundleInfo.size);
 				}
 				else
 				{
@@ -405,6 +412,7 @@ public class AssetBundleMng : MonoBehaviour
 					if (!Caching.IsVersionCached(url, hash))
 					{
 						num++;
+						size += int.Parse(assetBundleInfo.size);
 					}
 					else
 					{

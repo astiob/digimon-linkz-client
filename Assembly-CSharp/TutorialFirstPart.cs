@@ -1,4 +1,5 @@
-﻿using Monster;
+﻿using Master;
+using Monster;
 using System;
 using System.Collections;
 using TS;
@@ -17,6 +18,27 @@ public sealed class TutorialFirstPart : TutorialBasePart
 
 	private IEnumerator Initialize(GameObject observer, string tutorialStatusId, Action completed)
 	{
+		bool idOk = false;
+		int totalSize = 0;
+		int size = 0;
+		AssetDataMng.Instance().GetDownloadAssetBundleCount("TUTO1", out size);
+		totalSize += size;
+		AssetDataMng.Instance().GetDownloadAssetBundleCount("TUTO2", out size);
+		totalSize += size;
+		AssetDataMng.Instance().GetDownloadAssetBundleCount("TUTO3", out size);
+		totalSize += size;
+		AssetDataMng.Instance().GetDownloadAssetBundleCount("TUTO4", out size);
+		totalSize += size;
+		this.DownloadConfirmation(totalSize, delegate
+		{
+			idOk = true;
+		}, false);
+		RestrictionInput.EndLoad();
+		while (!idOk)
+		{
+			yield return null;
+		}
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		DataMng.Instance().CampaignForceHide = true;
 		this.gameEngineController = observer.AddComponent<TutorialControlToGame>();
 		yield return null;
@@ -87,5 +109,46 @@ public sealed class TutorialFirstPart : TutorialBasePart
 		GUIManager.ExtBackKeyReady = true;
 		RestrictionInput.isDisableBackKeySetting = false;
 		ClassSingleton<MonsterUserDataMng>.Instance.Initialize();
+	}
+
+	private void DownloadConfirmation(int size, Action callback, bool returnConfirmation = false)
+	{
+		if (size <= 0)
+		{
+			callback();
+			return;
+		}
+		string[] array = new string[]
+		{
+			StringMaster.GetString("DownloadSizeKB"),
+			StringMaster.GetString("DownloadSizeMB"),
+			StringMaster.GetString("DownloadSizeGB")
+		};
+		ScriptUtil.SIZE_TYPE size_TYPE = ScriptUtil.SIZE_TYPE.KILOBYTE;
+		ScriptUtil.ShowCommonDialogForMessage(delegate(int index)
+		{
+			if (index == 0)
+			{
+				callback();
+			}
+			else if (returnConfirmation)
+			{
+				ScriptUtil.ShowCommonDialog(delegate(int id)
+				{
+					if (id == 0)
+					{
+						GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
+					}
+					else
+					{
+						this.DownloadConfirmation(size, callback, false);
+					}
+				}, "BackKeyConfirmTitle", "DownloadSizeExit", "SEInternal/Common/se_106");
+			}
+			else
+			{
+				GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
+			}
+		}, StringMaster.GetString("DownloadSizeTitle"), string.Format(StringMaster.GetString("DownloadSizeInfo"), ScriptUtil.CheckSize(size, ref size_TYPE), array[(int)size_TYPE]), "SEInternal/Common/se_106");
 	}
 }

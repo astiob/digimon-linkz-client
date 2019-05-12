@@ -287,6 +287,49 @@ public sealed class CMD_ArousalTOP : CMD
 		}
 	}
 
+	private void ResetList()
+	{
+		this.OnChangeSortSetting();
+	}
+
+	private void FilterList()
+	{
+		List<MonsterData> list = new List<MonsterData>(this.targetMonsterList);
+		List<MonsterData> list2 = new List<MonsterData>();
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list[i] != this.baseDigimon)
+			{
+				string b = string.Empty;
+				if (this.baseDigimon != null)
+				{
+					b = this.baseDigimon.monsterMG.monsterGroupId;
+				}
+				else if (this.partnerMonsterList != null && 0 < this.partnerMonsterList.Count)
+				{
+					b = this.partnerMonsterList[0].monsterMG.monsterGroupId;
+				}
+				if (list[i].monsterMG.monsterGroupId != b || MonsterGrowStepData.IsUltimateScope(list[i].GetMonsterMaster().Group.growStep))
+				{
+					list2.Add(list[i]);
+				}
+				else if (0 < this.partnerMonsterList.Count && list[i] == this.partnerMonsterList[0])
+				{
+					list2.Add(list[i]);
+				}
+				else if (this.baseDigimon != null && (list[i].userMonster.IsLocked || MonsterStatusData.IsSpecialTrainingType(list[i].GetMonsterMaster().Group.monsterType) || 0 < this.partnerMonsterList.Count))
+				{
+					list2.Add(list[i]);
+				}
+			}
+		}
+		foreach (MonsterData item in list2)
+		{
+			list.Remove(item);
+		}
+		this._csSelectPanelMonsterIcon.ReAllBuild(list);
+	}
+
 	private void ActMIconLong(MonsterData monsterData)
 	{
 		this.ShowDetail(monsterData);
@@ -405,8 +448,7 @@ public sealed class CMD_ArousalTOP : CMD
 			this.leftLargeMonsterIcon = this.CreateIcon(this.baseDigimon, this._goMN_ICON_CHG);
 			this.leftLargeMonsterIcon.SetTouchAct_S(new Action<MonsterData>(this.ActMIconS_Remove));
 			this.ShowChgInfo();
-			this.monsterList.SetGrayOutIconPartyUsedMonster(this.baseDigimon);
-			this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
+			this.FilterList();
 		}
 		else if (1 > this.partnerMonsterList.Count)
 		{
@@ -781,6 +823,7 @@ public sealed class CMD_ArousalTOP : CMD
 				this.monsterList.SetIconGrayOutPartnerMonster(this.baseDigimon, this.partnerMonsterList);
 			}
 			this.ShowChgInfo();
+			this.ResetList();
 			this.chipBaseSelect.ClearChipIcons();
 		}
 		else

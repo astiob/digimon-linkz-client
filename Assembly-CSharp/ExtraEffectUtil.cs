@@ -3,6 +3,7 @@ using Monster;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class ExtraEffectUtil
 {
@@ -299,7 +300,7 @@ public class ExtraEffectUtil
 
 	private static int GetExtraChipValue(MonsterData monsterData, EffectStatusBase.ExtraEffectType effectType)
 	{
-		int num = 0;
+		float num = 0f;
 		int areaId = ExtraEffectUtil.GetAreaId();
 		GameWebAPI.RespDataMA_GetMonsterMG.MonsterM group = MonsterMaster.GetMonsterMasterByMonsterGroupId(monsterData.monsterM.monsterGroupId).Group;
 		foreach (int num2 in monsterData.GetChipEquip().GetChipIdList())
@@ -347,10 +348,10 @@ public class ExtraEffectUtil
 				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
 				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] source = responseMonsterIntegrationGroupMaster.monsterIntegrationGroupM.Where((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterId == monsterData.monsterM.monsterId).ToArray<GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup>();
 				string[] monsterIntegrationIds = source.Select((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterIntegrationId).ToArray<string>();
-				num += (int)ChipEffectStatus.GetChipEffectValueToFloat(invocationList, (float)num3, false, monsterIntegrationIds, monsterData.monsterM.monsterGroupId, ExtraEffectUtil.ResistanceToTolerance(monsterData), group.tribe, MonsterGrowStepData.ToGrowStep(group.growStep), null, null, ChipEffectStatus.TargetType.Actor, effectType2, 0);
+				num += ChipEffectStatus.GetChipEffectValueToFloat(invocationList, (float)num3, false, monsterIntegrationIds, monsterData.monsterM.monsterGroupId, ExtraEffectUtil.ResistanceToTolerance(monsterData), group.tribe, MonsterGrowStepData.ToGrowStep(group.growStep), null, null, ChipEffectStatus.TargetType.Actor, effectType2, 0);
 			}
 		}
-		return num;
+		return Mathf.FloorToInt(num);
 	}
 
 	private static int GetAreaId()

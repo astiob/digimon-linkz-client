@@ -503,7 +503,6 @@
     <Compile Include="CMD_ResearchModal.cs" />
     <Compile Include="CMD_ResearchModalAlert.cs" />
     <Compile Include="CMD_SaleCheck.cs" />
-    <Compile Include="CMD_SAMPLE.cs" />
     <Compile Include="CMD_Shop.cs" />
     <Compile Include="CMD_ShortDownload.cs" />
     <Compile Include="CMD_SPBonusList.cs" />
@@ -1873,6 +1872,7 @@
     <Compile Include="UtilForCMD.cs" />
     <Compile Include="UVAnimHelper.cs" />
     <Compile Include="UVAnimHelper_2.cs" />
+    <Compile Include="UVSplitAnimationHelper.cs" />
     <Compile Include="VersatileDataStore.cs" />
     <Compile Include="VersionManager.cs" />
     <Compile Include="VersionUPController.cs" />

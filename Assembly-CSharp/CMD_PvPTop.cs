@@ -960,7 +960,7 @@ public class CMD_PvPTop : CMD
 		{
 			this.displayCommentDataList = Algorithm.ShuffuleList<CMD_Tips.TipsM.Tips>(this.displayCommentDataList);
 		}
-		if (0 < this.displayCommentDataList.Count)
+		if (this.displayCommentDataListIndex < this.displayCommentDataList.Count)
 		{
 			if ("45" == this.displayCommentDataList[this.displayCommentDataListIndex].tipsId)
 			{
@@ -971,7 +971,7 @@ public class CMD_PvPTop : CMD
 				else if (this.colosseumBattleRecord != null)
 				{
 					this.displayCommentDataListIndex++;
-					if (this.displayCommentDataListIndex == this.displayCommentDataList.Count)
+					if (this.displayCommentDataListIndex >= this.displayCommentDataList.Count)
 					{
 						this.displayCommentDataListIndex = 0;
 					}
@@ -991,7 +991,7 @@ public class CMD_PvPTop : CMD
 			this.thumbnail.mainTexture = mainTexture;
 			this.displayCommentDataListIndex++;
 		}
-		if (this.displayCommentDataListIndex == this.displayCommentDataList.Count)
+		if (this.displayCommentDataListIndex >= this.displayCommentDataList.Count)
 		{
 			this.displayCommentDataListIndex = 0;
 		}

@@ -489,6 +489,13 @@ public class AssetDataMng : MonoBehaviour
 	public int GetDownloadAssetBundleCount(string level)
 	{
 		int num = 0;
+		return this.GetDownloadAssetBundleCount(level, out num);
+	}
+
+	public int GetDownloadAssetBundleCount(string level, out int size)
+	{
+		int num = 0;
+		size = 0;
 		if (this.USE_ASSET_BUNDLE != ABPrefabType.None)
 		{
 			if (!this.IsAssetBundleDownloading())
@@ -496,9 +503,11 @@ public class AssetDataMng : MonoBehaviour
 				this.level = level;
 				AssetBundleMng.Instance().InitDownLoad_All(level);
 			}
-			for (int i = 0; i < this.abidList.Count; i++)
+			int num2 = 0;
+			foreach (AssetBundleInfoData abid in this.abidList)
 			{
-				num += AssetBundleMng.Instance().GetDLAllCount(this.abidList[i]);
+				num += AssetBundleMng.Instance().GetDLAllCount(abid, out num2);
+				size += num2;
 			}
 		}
 		return num;
@@ -534,10 +543,9 @@ public class AssetDataMng : MonoBehaviour
 			this.currentDownloadStream = ((downloadStream <= 0) ? 1 : Math.Min(downloadStream, 4));
 			AssetBundleMng.Instance().InitODLStream();
 			this.realABDL_TotalCount_LV = 0;
-			for (int i = 0; i < this.abidList.Count; i++)
+			foreach (AssetBundleInfoData abid in this.abidList)
 			{
-				int dlallCount = AssetBundleMng.Instance().GetDLAllCount(this.abidList[i]);
-				this.realABDL_TotalCount_LV += dlallCount;
+				this.realABDL_TotalCount_LV += AssetBundleMng.Instance().GetDLAllCount(abid);
 			}
 		}
 		return flag;

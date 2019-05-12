@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 public static class UnityExtensionMethod
 {
+	private const string SEPARATOR = ",";
+
+	private const string FORMAT = "{0}:{1}";
+
 	public static void TryInstantiate(this GameObject original, Action<GameObject> action)
 	{
 		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(original);
@@ -147,5 +153,20 @@ public static class UnityExtensionMethod
 			t = gameObject.AddComponent<T>();
 		}
 		return t;
+	}
+
+	public static string ToStringFields<T>(this T obj)
+	{
+		return string.Join(",", obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Select((FieldInfo c) => string.Format("{0}:{1}", c.Name, c.GetValue(obj))).ToArray<string>());
+	}
+
+	public static string ToStringProperties<T>(this T obj)
+	{
+		return string.Join(",", obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where((PropertyInfo c) => c.CanRead).Select((PropertyInfo c) => string.Format("{0}:{1}", c.Name, c.GetValue(obj, null))).ToArray<string>());
+	}
+
+	public static string ToStringReflection<T>(this T obj)
+	{
+		return string.Format("{0},{1}", obj.ToStringFields<T>(), obj.ToStringProperties<T>());
 	}
 }
