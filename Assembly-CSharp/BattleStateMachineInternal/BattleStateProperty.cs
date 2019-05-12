@@ -92,8 +92,8 @@ namespace BattleStateMachineInternal
 		[Header("敵ターン開始演出時間 (秒)")]
 		public float enemyTurnStartActionWaitSecond = 1.5f;
 
-		[Header("メニュー表示BGMボリューム (%)")]
 		[Range(1f, 0f)]
+		[Header("メニュー表示BGMボリューム (%)")]
 		public float pauseBgmVolumeLevel = 0.5f;
 
 		[Header("通常攻撃演出速度 (倍速)")]

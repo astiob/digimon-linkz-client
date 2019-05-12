@@ -1189,12 +1189,17 @@ public class GameWebAPI : WebAPI
 		}
 	}
 
-	public sealed class RequestUS_UserStatus : RequestTypeBase<WebAPI.SendBaseData, GameWebAPI.RespDataUS_GetPlayerInfo>
+	public sealed class RequestUS_UserStatus : RequestTypeBase<GameWebAPI.PlayerInfoSendData, GameWebAPI.RespDataUS_GetPlayerInfo>
 	{
 		public RequestUS_UserStatus()
 		{
 			this.apiId = "020001";
 		}
+	}
+
+	public sealed class PlayerInfoSendData : WebAPI.SendBaseData
+	{
+		public string keys;
 	}
 
 	public sealed class RespDataUS_GetPlayerInfo : WebAPI.ResponseData
@@ -2034,7 +2039,7 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecGacha.GachaResultMonster[] userMonsterList;
 
-		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] rewards;
 
 		public sealed class GachaResultMonster : GameWebAPI.RespDataUS_GetMonsterList.UserMonsterList
 		{
@@ -2078,7 +2083,7 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecChip.UserAssetList[] userAssetList;
 
-		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] rewards;
 
 		public sealed class UserAssetList
 		{
@@ -2117,7 +2122,7 @@ public class GameWebAPI : WebAPI
 	{
 		public GameWebAPI.RespDataGA_ExecTicket.UserDungeonTicketList[] userDungeonTicketList;
 
-		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData rewards;
+		public GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] rewards;
 
 		public sealed class UserDungeonTicketList
 		{
@@ -3087,7 +3092,7 @@ public class GameWebAPI : WebAPI
 
 			public sealed class BonusPoint
 			{
-				public string eventPointBonusId;
+				public string eventPointBonusMessage;
 
 				public int point;
 			}
@@ -5640,6 +5645,8 @@ public class GameWebAPI : WebAPI
 
 			private int[] _modeChangeCoefficientRare = new int[6];
 
+			private int useNewPvPMatchingType = 1;
+
 			private int[] _chipExtendSlotNeeds = new int[]
 			{
 				1,
@@ -6386,6 +6393,14 @@ public class GameWebAPI : WebAPI
 				}
 			}
 
+			public string pvpMatchingType
+			{
+				set
+				{
+					this.PVP_MATCHING_TYPE = int.Parse(value);
+				}
+			}
+
 			public string multiMaxAttackTime
 			{
 				set
@@ -6736,6 +6751,18 @@ public class GameWebAPI : WebAPI
 
 			public int PVP_PARTY_SELECT_TIME { get; private set; }
 
+			public int PVP_MATCHING_TYPE
+			{
+				get
+				{
+					return this.useNewPvPMatchingType;
+				}
+				private set
+				{
+					this.useNewPvPMatchingType = value;
+				}
+			}
+
 			public int MULTI_MAX_ATTACK_TIME { get; private set; }
 
 			public int MULTI_HURRYUP_ATTACK_TIME { get; private set; }
@@ -7006,7 +7033,7 @@ public class GameWebAPI : WebAPI
 
 			public string limitRound;
 
-			public string speedClearRound;
+			public string optionRewardFlg;
 
 			public bool IsSoloMulti()
 			{
@@ -7185,6 +7212,10 @@ public class GameWebAPI : WebAPI
 
 			public string subType;
 
+			public string clearType;
+
+			public string clearValue;
+
 			public string assetCategoryId;
 
 			public string assetValue;
@@ -7192,6 +7223,8 @@ public class GameWebAPI : WebAPI
 			public string assetNum;
 
 			public string exValue;
+
+			public string joinType;
 		}
 	}
 

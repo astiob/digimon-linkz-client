@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Internal/Spring Panel")]
 [RequireComponent(typeof(UIPanel))]
+[AddComponentMenu("NGUI/Internal/Spring Panel")]
 public class SpringPanel : MonoBehaviour
 {
 	public static SpringPanel current;

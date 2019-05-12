@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
 [AddComponentMenu("NGUI/Tween/Tween Field of View")]
+[RequireComponent(typeof(Camera))]
 public class TweenFOV : UITweener
 {
 	public float from = 45f;

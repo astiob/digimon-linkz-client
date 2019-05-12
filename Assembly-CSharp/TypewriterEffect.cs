@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-[RequireComponent(typeof(UILabel))]
 [AddComponentMenu("NGUI/Interaction/Typewriter Effect")]
+[RequireComponent(typeof(UILabel))]
 public class TypewriterEffect : MonoBehaviour
 {
 	public static TypewriterEffect current;

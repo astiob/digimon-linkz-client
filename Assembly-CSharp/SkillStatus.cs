@@ -320,22 +320,25 @@ public class SkillStatus
 		}
 	}
 
-	public SkillResults OnAttack(int index, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter, bool onRandomAttack = true)
+	public static SkillResults GetSkillResults(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter, bool onRandomAttack = true, int attackNum = 0)
 	{
 		SkillResults skillResults = new SkillResults();
 		LeaderSkillResult leaderSkillResult = attackerCharacter.leaderSkillResult;
 		HaveSufferState currentSufferState = attackerCharacter.currentSufferState;
 		HaveSufferState currentSufferState2 = targetCharacter.currentSufferState;
 		float[] array = new float[2];
+		skillResults.useAffectEffectProperty = affectEffectProperty;
+		skillResults.hitIconAffectEffect = AffectEffect.Damage;
+		skillResults.attackCharacter = attackerCharacter;
 		skillResults.targetCharacter = targetCharacter;
 		if (targetCharacter.isDied)
 		{
 			return skillResults;
 		}
-		skillResults.onWeakHit = targetCharacter.tolerance.GetAttributeStrength(this.affectEffect[index].attribute);
+		skillResults.onWeakHit = targetCharacter.tolerance.GetAttributeStrength(affectEffectProperty.attribute);
 		if (attackerCharacter.hittingTheTargetType == BattleInvariant.Type.Non)
 		{
-			skillResults.onMissHit = !this.affectEffect[index].OnHit(attackerCharacter, targetCharacter);
+			skillResults.onMissHit = !affectEffectProperty.OnHit(attackerCharacter, targetCharacter);
 		}
 		else if (attackerCharacter.hittingTheTargetType == BattleInvariant.Type.Up)
 		{
@@ -349,14 +352,16 @@ public class SkillStatus
 		{
 			if (attackerCharacter.criticalTheTargetType == BattleInvariant.Type.Non)
 			{
-				float num = this.affectEffect[index].satisfactionRate;
-				if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.SatisfactionRateUp))
+				float num = affectEffectProperty.satisfactionRate;
+				SufferStateProperty sufferStateProperty = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SatisfactionRateUp);
+				if (sufferStateProperty.isActive)
 				{
-					num += currentSufferState.onSatisfactionRateUp.upPercent;
+					num += sufferStateProperty.upPercent;
 				}
-				if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.SatisfactionRateDown))
+				SufferStateProperty sufferStateProperty2 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SatisfactionRateDown);
+				if (sufferStateProperty2.isActive)
 				{
-					num -= currentSufferState.onSatisfactionRateDown.downPercent;
+					num -= sufferStateProperty2.downPercent;
 				}
 				if (attackerCharacter.isSelectSkill > 0)
 				{
@@ -376,25 +381,60 @@ public class SkillStatus
 		}
 		if (!skillResults.onMissHit)
 		{
-			if (this.affectEffect[index].type == AffectEffect.ReferenceTargetHpRate)
+			if (skillResults.onWeakHit == Strength.Invalid)
+			{
+				skillResults.hitIconAffectEffect = AffectEffect.Invalid;
+				skillResults.onMissHit = false;
+				skillResults.onWeakHit = Strength.Invalid;
+				skillResults.onCriticalHit = false;
+			}
+			else if (skillResults.targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnBarrier))
+			{
+				skillResults.hitIconAffectEffect = AffectEffect.TurnBarrier;
+				skillResults.onMissHit = false;
+				skillResults.onWeakHit = Strength.None;
+				skillResults.onCriticalHit = false;
+			}
+			else if (skillResults.targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
+			{
+				skillResults.hitIconAffectEffect = AffectEffect.CountBarrier;
+				skillResults.onMissHit = false;
+				skillResults.onWeakHit = Strength.None;
+				skillResults.onCriticalHit = false;
+			}
+			else if (skillResults.targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnEvasion))
+			{
+				skillResults.hitIconAffectEffect = AffectEffect.TurnEvasion;
+				skillResults.onMissHit = false;
+				skillResults.onWeakHit = Strength.None;
+				skillResults.onCriticalHit = false;
+			}
+			else if (skillResults.targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
+			{
+				skillResults.hitIconAffectEffect = AffectEffect.CountEvasion;
+				skillResults.onMissHit = false;
+				skillResults.onWeakHit = Strength.None;
+				skillResults.onCriticalHit = false;
+			}
+			else if (affectEffectProperty.type == AffectEffect.ReferenceTargetHpRate)
 			{
 				float reduceDamageRate = SkillStatus.GetReduceDamageRate(currentSufferState2);
-				float attributeDamegeResult = this.GetAttributeDamegeResult(skillResults.onWeakHit);
+				float attributeDamegeResult = SkillStatus.GetAttributeDamegeResult(skillResults.onWeakHit);
 				float num2 = 1f;
 				if (skillResults.onCriticalHit)
 				{
 					num2 = 1.2f;
 				}
-				int num3 = (int)(this.affectEffect[index].damagePercent * (float)targetCharacter.hp);
+				int num3 = (int)(affectEffectProperty.damagePercent * (float)targetCharacter.hp);
 				for (int i = 0; i < array.Length; i++)
 				{
 					array[i] = (float)num3 * attributeDamegeResult * num2 * reduceDamageRate;
 				}
 			}
-			else if (this.affectEffect[index].powerType == PowerType.Percentage)
+			else if (affectEffectProperty.powerType == PowerType.Percentage)
 			{
-				bool flag = this.affectEffect[index].techniqueType == TechniqueType.Physics;
-				float attributeDamegeResult2 = this.GetAttributeDamegeResult(skillResults.onWeakHit);
+				bool flag = affectEffectProperty.techniqueType == TechniqueType.Physics;
+				float attributeDamegeResult2 = SkillStatus.GetAttributeDamegeResult(skillResults.onWeakHit);
 				float num4 = 1f;
 				if (skillResults.onCriticalHit)
 				{
@@ -409,196 +449,196 @@ public class SkillStatus
 				float num6 = 1f;
 				if (flag)
 				{
-					if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Counter))
+					SufferStateProperty sufferStateProperty3 = targetCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Counter);
+					if (sufferStateProperty3.isActive)
 					{
-						num6 *= currentSufferState2.onCounter.recieveDamageRate;
+						num6 *= sufferStateProperty3.recieveDamageRate;
 					}
 				}
-				else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Reflection))
+				else
 				{
-					num6 *= currentSufferState2.onReflection.recieveDamageRate;
+					SufferStateProperty sufferStateProperty4 = targetCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Reflection);
+					if (sufferStateProperty4.isActive)
+					{
+						num6 *= sufferStateProperty4.recieveDamageRate;
+					}
 				}
 				float num7 = 1f;
-				if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.PowerCharge))
+				SufferStateProperty sufferStateProperty5 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.PowerCharge);
+				if (sufferStateProperty5.isActive)
 				{
 					if (flag)
 					{
-						num7 *= currentSufferState.onPowerCharge.physicUpPercent;
+						num7 *= sufferStateProperty5.physicUpPercent;
 					}
 					else
 					{
-						num7 *= currentSufferState.onPowerCharge.specialUpPercent;
+						num7 *= sufferStateProperty5.specialUpPercent;
 					}
 				}
 				float num8 = 1f;
 				float num9 = 0f;
 				float num10 = 0f;
-				if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.DamageRateUp))
+				SufferStateProperty sufferStateProperty6 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.DamageRateUp);
+				if (sufferStateProperty6.isActive)
 				{
-					int num11 = targetCharacter.characterDatas.tribe.ToInt32();
-					float[] array2 = new float[]
-					{
-						0f,
-						currentSufferState.onDamageRateUp.damageRateForPhantomStudents,
-						currentSufferState.onDamageRateUp.damageRateForHeatHaze,
-						currentSufferState.onDamageRateUp.damageRateForGlacier,
-						currentSufferState.onDamageRateUp.damageRateForElectromagnetic,
-						currentSufferState.onDamageRateUp.damageRateForEarth,
-						currentSufferState.onDamageRateUp.damageRateForShaftOfLight,
-						currentSufferState.onDamageRateUp.damageRateForAbyss
-					};
-					num9 += array2[num11];
+					num9 += sufferStateProperty6.GetTribeDamageRate(targetCharacter);
 				}
-				if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.DamageRateDown))
+				SufferStateProperty sufferStateProperty7 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.DamageRateDown);
+				if (sufferStateProperty7.isActive)
 				{
-					int num12 = targetCharacter.characterDatas.tribe.ToInt32();
-					float[] array3 = new float[]
-					{
-						0f,
-						currentSufferState.onDamageRateDown.damageRateForPhantomStudents,
-						currentSufferState.onDamageRateDown.damageRateForHeatHaze,
-						currentSufferState.onDamageRateDown.damageRateForGlacier,
-						currentSufferState.onDamageRateDown.damageRateForElectromagnetic,
-						currentSufferState.onDamageRateDown.damageRateForEarth,
-						currentSufferState.onDamageRateDown.damageRateForShaftOfLight,
-						currentSufferState.onDamageRateDown.damageRateForAbyss
-					};
-					num10 += array3[num12];
+					num10 += sufferStateProperty7.GetTribeDamageRate(targetCharacter);
 				}
 				num8 = Mathf.Max(0f, num8 + num9 - num10);
 				for (int j = 0; j < array.Length; j++)
 				{
-					float num13 = 0f;
-					float num14 = 0f;
-					float num15 = 0f;
-					float num16 = 0f;
-					int num17 = 0;
-					float num18 = 1f;
-					foreach (int num19 in attackerCharacter.potencyChipIdList.Keys)
+					int num11 = 0;
+					float num12 = 1f;
+					foreach (int num13 in attackerCharacter.potencyChipIdList.Keys)
 					{
-						GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(num19.ToString());
+						GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId = ChipDataMng.GetChipEffectDataToId(num13.ToString());
 						if (j != 0 || chipEffectDataToId.effectTrigger.ToInt32() != 11)
 						{
 							GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects = new GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[]
 							{
 								chipEffectDataToId
 							};
-							num17 += ChipEffectStatus.GetSkillPowerCorrectionValue(chipEffects, this.affectEffect[index], attackerCharacter);
-							num18 += ChipEffectStatus.GetChipEffectValueToFloat(chipEffects, num18, attackerCharacter, EffectStatusBase.ExtraEffectType.Damage);
+							num11 += ChipEffectStatus.GetSkillPowerCorrectionValue(chipEffects, affectEffectProperty, attackerCharacter, attackNum);
+							num12 += ChipEffectStatus.GetSkillDamageCorrectionValue(chipEffects, affectEffectProperty, attackerCharacter);
 						}
 					}
-					float num20 = 1f;
-					foreach (int num21 in targetCharacter.potencyChipIdList.Keys)
+					float num14 = 1f;
+					foreach (int num15 in targetCharacter.potencyChipIdList.Keys)
 					{
-						GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId2 = ChipDataMng.GetChipEffectDataToId(num21.ToString());
+						GameWebAPI.RespDataMA_ChipEffectM.ChipEffect chipEffectDataToId2 = ChipDataMng.GetChipEffectDataToId(num15.ToString());
 						if (j != 0 || chipEffectDataToId2.effectTrigger.ToInt32() != 11)
 						{
 							GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[] chipEffects2 = new GameWebAPI.RespDataMA_ChipEffectM.ChipEffect[]
 							{
 								chipEffectDataToId2
 							};
-							num20 += ChipEffectStatus.GetChipEffectValueToFloat(chipEffects2, num20, targetCharacter, EffectStatusBase.ExtraEffectType.Damage);
+							num14 += ChipEffectStatus.GetSkillDamageCorrectionValue(chipEffects2, affectEffectProperty, targetCharacter);
 						}
 					}
-					int num24;
+					float num24;
 					float num25;
-					int num26;
-					float num27;
 					if (flag)
 					{
-						int num22 = (j != 0) ? attackerCharacter.extraAttackPower : attackerCharacter.attackPower;
-						int num23 = (j != 0) ? targetCharacter.extraDefencePower : targetCharacter.defencePower;
-						num24 = num22;
-						num25 = leaderSkillResult.attackUpPercent * (float)num24;
-						num26 = num23;
-						num27 = targetCharacter.leaderSkillResult.defenceUpPercent * (float)num26;
-						if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackUp))
+						int num16 = (j != 0) ? attackerCharacter.extraAttackPower : attackerCharacter.attackPower;
+						int num17 = (j != 0) ? targetCharacter.extraDefencePower : targetCharacter.defencePower;
+						float num18 = leaderSkillResult.attackUpPercent * (float)num16;
+						float num19 = targetCharacter.leaderSkillResult.defenceUpPercent * (float)num17;
+						float num20 = 0f;
+						float num21 = 0f;
+						float num22 = 0f;
+						float num23 = 0f;
+						SufferStateProperty sufferStateProperty8 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.AttackUp);
+						if (sufferStateProperty8.isActive)
 						{
-							num13 = currentSufferState.onAttackUp.upPercent * (float)num24;
+							num20 = sufferStateProperty8.upPercent * (float)num16;
 						}
-						if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackDown))
+						SufferStateProperty sufferStateProperty9 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.AttackDown);
+						if (sufferStateProperty9.isActive)
 						{
-							num14 = currentSufferState.onAttackDown.downPercent * (float)num24;
+							num21 = sufferStateProperty9.downPercent * (float)num16;
 						}
-						if (currentSufferState2.FindSufferState(SufferStateProperty.SufferType.DefenceUp))
+						SufferStateProperty sufferStateProperty10 = currentSufferState2.GetSufferStateProperty(SufferStateProperty.SufferType.DefenceUp);
+						if (sufferStateProperty10.isActive)
 						{
-							num15 = currentSufferState2.onDefenceUp.upPercent * (float)num26;
+							num22 = sufferStateProperty10.upPercent * (float)num17;
 						}
-						if (currentSufferState2.FindSufferState(SufferStateProperty.SufferType.DefenceDown))
+						SufferStateProperty sufferStateProperty11 = currentSufferState2.GetSufferStateProperty(SufferStateProperty.SufferType.DefenceDown);
+						if (sufferStateProperty11.isActive)
 						{
-							num16 = currentSufferState2.onDefenceDown.downPercent * (float)num26;
+							num23 = sufferStateProperty11.downPercent * (float)num17;
 						}
+						num24 = (float)num16 + num20 - num21 + num18;
+						num25 = (float)num17 + num22 - num23 + num19;
+						num24 = Mathf.Min(num24, (float)num16 * 2.2f);
+						num24 = Mathf.Max(num24, (float)num16 * 0.6f);
+						num25 = Mathf.Min(num25, (float)num17 * 2.2f);
+						num25 = Mathf.Max(num25, (float)num17 * 0.6f);
 					}
 					else
 					{
-						int num28 = (j != 0) ? attackerCharacter.extraSpecialAttackPower : attackerCharacter.specialAttackPower;
-						int num29 = (j != 0) ? targetCharacter.extraSpecialDefencePower : targetCharacter.specialDefencePower;
-						num24 = num28;
-						num25 = leaderSkillResult.specialAttackUpPercent * (float)num24;
-						num26 = num29;
-						num27 = targetCharacter.leaderSkillResult.specialDefenceUpPercent * (float)num26;
-						if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackUp))
+						int num26 = (j != 0) ? attackerCharacter.extraSpecialAttackPower : attackerCharacter.specialAttackPower;
+						int num27 = (j != 0) ? targetCharacter.extraSpecialDefencePower : targetCharacter.specialDefencePower;
+						float num28 = leaderSkillResult.specialAttackUpPercent * (float)num26;
+						float num29 = targetCharacter.leaderSkillResult.specialDefenceUpPercent * (float)num27;
+						float num30 = 0f;
+						float num31 = 0f;
+						float num32 = 0f;
+						float num33 = 0f;
+						SufferStateProperty sufferStateProperty12 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SpAttackUp);
+						if (sufferStateProperty12.isActive)
 						{
-							num13 = currentSufferState.onSpAttackUp.upPercent * (float)num24;
+							num30 = sufferStateProperty12.upPercent * (float)num26;
 						}
-						if (currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackDown))
+						SufferStateProperty sufferStateProperty13 = currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SpAttackDown);
+						if (sufferStateProperty13.isActive)
 						{
-							num14 = currentSufferState.onSpAttackDown.downPercent * (float)num24;
+							num31 = sufferStateProperty13.downPercent * (float)num26;
 						}
-						if (currentSufferState2.FindSufferState(SufferStateProperty.SufferType.SpDefenceUp))
+						SufferStateProperty sufferStateProperty14 = currentSufferState2.GetSufferStateProperty(SufferStateProperty.SufferType.SpDefenceUp);
+						if (sufferStateProperty14.isActive)
 						{
-							num15 = currentSufferState2.onSpDefenceUp.upPercent * (float)num26;
+							num32 = sufferStateProperty14.upPercent * (float)num27;
 						}
-						if (currentSufferState2.FindSufferState(SufferStateProperty.SufferType.SpDefenceDown))
+						SufferStateProperty sufferStateProperty15 = currentSufferState2.GetSufferStateProperty(SufferStateProperty.SufferType.SpDefenceDown);
+						if (sufferStateProperty15.isActive)
 						{
-							num16 = currentSufferState2.onSpDefenceDown.downPercent * (float)num26;
+							num33 = sufferStateProperty15.downPercent * (float)num27;
 						}
+						num24 = (float)num26 + num30 - num31 + num28;
+						num25 = (float)num27 + num32 - num33 + num29;
+						num24 = Mathf.Min(num24, (float)num26 * 2.2f);
+						num24 = Mathf.Max(num24, (float)num26 * 0.6f);
+						num25 = Mathf.Min(num25, (float)num27 * 2.2f);
+						num25 = Mathf.Max(num25, (float)num27 * 0.6f);
 					}
-					int num30;
+					int num34;
 					if (j == 0)
 					{
-						num30 = this.affectEffect[index].GetPower(attackerCharacter);
+						num34 = affectEffectProperty.GetPower(attackerCharacter);
 					}
 					else
 					{
 						List<ExtraEffectStatus> extraEffectStatus = BattleStateManager.current.battleStateData.extraEffectStatus;
 						List<ExtraEffectStatus> invocationList = ExtraEffectStatus.GetInvocationList(extraEffectStatus, EffectStatusBase.EffectTriggerType.Usually);
-						num30 = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, this.affectEffect[index], attackerCharacter);
+						num34 = ExtraEffectStatus.GetSkillPowerCorrectionValue(invocationList, affectEffectProperty, attackerCharacter);
 					}
-					float num31 = (float)num24 + num13 - num14 + num25;
-					float num32 = (float)num26 + num15 - num16 + num27;
-					if (this.affectEffect[index].type == AffectEffect.DefenseThroughDamage || this.affectEffect[index].type == AffectEffect.SpDefenseThroughDamage)
+					if (affectEffectProperty.type == AffectEffect.DefenseThroughDamage || affectEffectProperty.type == AffectEffect.SpDefenseThroughDamage)
 					{
-						num32 = (float)this.affectEffect[index].DefenseThrough;
+						num25 = (float)affectEffectProperty.DefenseThrough;
 					}
-					if (num31 <= 0f)
+					if (num24 <= 0f)
 					{
 						array[j] = 0f;
 					}
 					else
 					{
-						num31 = Mathf.Max(num31, 0f);
-						num32 = Mathf.Max(num32, 1f);
-						float num33 = (float)attackerCharacter.level * 0.01f + 1f;
-						float num34 = (float)(num30 + num17) * (1f + leaderSkillResult.damageUpPercent);
-						float num35 = num33 * num34 * num31 * num7 / num32 + 2f;
-						float num36 = num18 * num20 * reduceDamageRate2 * num6 * num5 * num4 * attributeDamegeResult2 * num8;
-						array[j] = num35 * num36;
+						num24 = Mathf.Max(num24, 0f);
+						num25 = Mathf.Max(num25, 1f);
+						float num35 = (float)attackerCharacter.level * 0.01f + 1f;
+						float num36 = (float)(num34 + num11) * (1f + leaderSkillResult.damageUpPercent);
+						float num37 = num35 * num36 * num24 * num7 / num25 + 2f;
+						float num38 = num12 * num14 * reduceDamageRate2 * num6 * num5 * num4 * attributeDamegeResult2 * num8;
+						array[j] = num37 * num38;
 					}
 				}
 			}
-			else if (this.affectEffect[index].powerType == PowerType.Fixable)
+			else if (affectEffectProperty.powerType == PowerType.Fixable)
 			{
 				float reduceDamageRate3 = SkillStatus.GetReduceDamageRate(currentSufferState2);
 				for (int k = 0; k < array.Length; k++)
 				{
-					array[k] = (float)this.affectEffect[index].damagePower * reduceDamageRate3;
+					array[k] = (float)affectEffectProperty.damagePower * reduceDamageRate3;
 				}
 			}
 		}
 		skillResults.originalAttackPower = Mathf.FloorToInt(array[0]);
 		skillResults.attackPower = Mathf.FloorToInt(array[1]);
-		if (skillResults.attackPower <= 0)
+		if (skillResults.hitIconAffectEffect == AffectEffect.Damage && skillResults.attackPower <= 0)
 		{
 			skillResults.onMissHit = true;
 			skillResults.onCriticalHit = false;
@@ -626,7 +666,67 @@ public class SkillStatus
 		return skillResults;
 	}
 
-	public static float GetReduceDamageRate(HaveSufferState targetSufferState)
+	public static SkillResults GetStageDamageSkillResult(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)
+	{
+		SkillResults skillResults = new SkillResults();
+		skillResults.useAffectEffectProperty = affectEffectProperty;
+		skillResults.hitIconAffectEffect = AffectEffect.Damage;
+		skillResults.attackCharacter = null;
+		skillResults.targetCharacter = targetCharacter;
+		skillResults.onMissHit = !affectEffectProperty.OnHit(attackerCharacter, targetCharacter);
+		skillResults.onWeakHit = targetCharacter.tolerance.GetAttributeStrength(affectEffectProperty.attribute);
+		if (skillResults.onMissHit)
+		{
+			return skillResults;
+		}
+		if (skillResults.onWeakHit == Strength.Invalid)
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.Invalid;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnBarrier))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.TurnBarrier;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.CountBarrier;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnEvasion))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.TurnEvasion;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.CountEvasion;
+		}
+		else
+		{
+			float reduceDamageRate = SkillStatus.GetReduceDamageRate(targetCharacter.currentSufferState);
+			float attributeDamegeResult = SkillStatus.GetAttributeDamegeResult(skillResults.onWeakHit);
+			int num;
+			if (affectEffectProperty.powerType == PowerType.Fixable)
+			{
+				num = (int)((float)affectEffectProperty.damagePower * reduceDamageRate * attributeDamegeResult);
+			}
+			else
+			{
+				num = (int)(affectEffectProperty.damagePercent * (float)targetCharacter.hp * reduceDamageRate * attributeDamegeResult);
+			}
+			if (skillResults.onWeakHit != Strength.Drain)
+			{
+				targetCharacter.hp -= num;
+			}
+			else
+			{
+				targetCharacter.hp += num;
+			}
+			skillResults.attackPower = num;
+			skillResults.originalAttackPower = num;
+		}
+		return skillResults;
+	}
+
+	private static float GetReduceDamageRate(HaveSufferState targetSufferState)
 	{
 		float result = 1f;
 		if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.TurnBarrier))
@@ -647,12 +747,12 @@ public class SkillStatus
 		}
 		else if (targetSufferState.FindSufferState(SufferStateProperty.SufferType.CountGuard))
 		{
-			result = 1f - targetSufferState.onCountGuard.damagePercent;
+			result = 1f - targetSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.CountGuard).damagePercent;
 		}
 		return result;
 	}
 
-	private float GetAttributeDamegeResult(Strength strength)
+	private static float GetAttributeDamegeResult(Strength strength)
 	{
 		switch (strength)
 		{
@@ -745,13 +845,15 @@ public class SkillStatus
 	public int GetCorrectedAp(CharacterStateControl user)
 	{
 		int num = this.needAp;
-		if (user.currentSufferState.FindSufferState(SufferStateProperty.SufferType.ApConsumptionUp))
+		SufferStateProperty sufferStateProperty = user.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.ApConsumptionUp);
+		if (sufferStateProperty.isActive)
 		{
-			num += user.currentSufferState.onApConsumptionUp.upPower;
+			num += sufferStateProperty.upPower;
 		}
-		if (user.currentSufferState.FindSufferState(SufferStateProperty.SufferType.ApConsumptionDown))
+		SufferStateProperty sufferStateProperty2 = user.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.ApConsumptionDown);
+		if (sufferStateProperty2.isActive)
 		{
-			num -= user.currentSufferState.onApConsumptionUp.downPower;
+			num -= sufferStateProperty2.downPower;
 		}
 		return num;
 	}

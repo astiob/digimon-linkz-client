@@ -330,10 +330,7 @@ public class GUIListPartsStone : GUIListPartBS
 			}
 			return null;
 		}));
-		return apirequestTask.Run(delegate
-		{
-			RestrictionInput.EndLoad();
-		}, delegate(Exception nop)
+		return apirequestTask.Run(new Action(RestrictionInput.EndLoad), delegate(Exception x)
 		{
 			RestrictionInput.EndLoad();
 		}, null);
@@ -352,12 +349,9 @@ public class GUIListPartsStone : GUIListPartBS
 					if (isSuccess && this.data.limitCount > 0)
 					{
 						this.data.purchasedCount++;
-						if (this.data.purchasedCount >= this.data.limitCount)
+						if (this.data.purchasedCount >= this.data.limitCount && CMD_Shop.instance != null)
 						{
-							if (CMD_Shop.instance != null)
-							{
-								CMD_Shop.instance.DeleteListParts(base.IDX);
-							}
+							CMD_Shop.instance.DeleteListParts(base.IDX);
 						}
 					}
 					onCompleted(isSuccess);

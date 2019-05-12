@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class UVAnimHelper_2 : MonoBehaviour
 {
-	[Header("UVアニメデータ・name + speedU + speedV のみ設定してください")]
 	[SerializeField]
+	[Header("UVアニメデータ・name + speedU + speedV のみ設定してください")]
 	private List<UVAnimHelper_2.UVAnimData> UVAnimDataList;
 
 	private MeshRenderer mr;

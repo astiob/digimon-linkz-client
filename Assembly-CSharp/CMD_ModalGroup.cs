@@ -8,8 +8,8 @@ public sealed class CMD_ModalGroup : CMD
 	[SerializeField]
 	private UILabel titleLabel;
 
-	[Header("サブタイトルラベル")]
 	[SerializeField]
+	[Header("サブタイトルラベル")]
 	private UILabel subTitleLabel;
 
 	[Header("サブタイトルのGameObject")]

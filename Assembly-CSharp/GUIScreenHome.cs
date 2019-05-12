@@ -97,6 +97,7 @@ public class GUIScreenHome : GUIScreen
 		TutorialObserver tutorialObserver = UnityEngine.Object.FindObjectOfType<TutorialObserver>();
 		yield return base.StartCoroutine(tutorialObserver.StartGuidance(new Action<bool>(this.StartedGuidance)));
 		GUIFace.SetFacilityAlertIcon();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetParticleMissionIcon();
 		yield break;
 	}
 
@@ -126,7 +127,8 @@ public class GUIScreenHome : GUIScreen
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
 		ClassSingleton<GUIMonsterIconList>.Instance.RefreshList(MonsterDataMng.Instance().GetMonsterDataList());
-		this.MissionProcess();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.MissionTapCheck();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(false);
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 		ClassSingleton<FaceNewsAccessor>.Instance.faceNews.SetBadgeOnly();
 		ClassSingleton<PartsMenuFriendIconAccessor>.Instance.partsMenuFriendIcon.FrinedListCheck();
@@ -206,12 +208,6 @@ public class GUIScreenHome : GUIScreen
 			GUIScreenHome.homeOpenCallback();
 			GUIScreenHome.homeOpenCallback = null;
 		}
-	}
-
-	private void MissionProcess()
-	{
-		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.MissionTapCheck();
-		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
 	}
 
 	protected IEnumerator CreateFarm()
@@ -516,7 +512,7 @@ public class GUIScreenHome : GUIScreen
 				param.countryCode = int.Parse(CountrySetting.GetCountryCode(CountrySetting.CountryCode.EN));
 			};
 			GameWebAPI.RequestUS_RegisterLanguageInfo request = requestUS_RegisterLanguageInfo;
-			yield return base.StartCoroutine(request.RunOneTime(new Action(RestrictionInput.EndLoad), null, null));
+			yield return base.StartCoroutine(request.Run(null, null, null));
 		}
 		yield break;
 	}

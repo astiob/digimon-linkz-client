@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Color Adjustments/Sepia Tone")]
+	[ExecuteInEditMode]
 	public class SepiaTone : ImageEffectBase
 	{
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)

@@ -5,20 +5,20 @@ using UnityEngine;
 
 public sealed class PvPVersusInfo : MonoBehaviour
 {
-	[Header("対人戦の名称を表示するスプライト")]
 	[SerializeField]
+	[Header("対人戦の名称を表示するスプライト")]
 	private UISprite title;
 
-	[SerializeField]
 	[Header("ユーザー情報を表示するUIのルート")]
+	[SerializeField]
 	private EffectAnimatorEventTime userDataUIRoot;
 
-	[SerializeField]
 	[Header("自分の情報を表示するUI群")]
+	[SerializeField]
 	private PvPVersusInfo.UserDataUI myDataUI;
 
-	[SerializeField]
 	[Header("相手の情報を表示するUI群")]
+	[SerializeField]
 	private PvPVersusInfo.UserDataUI opponentDataUI;
 
 	[SerializeField]

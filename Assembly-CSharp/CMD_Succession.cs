@@ -47,8 +47,8 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private CMD_Succession.SkillTab materialMonsterSkillTab2;
 
-	[Header("所持クラスタ数")]
 	[SerializeField]
+	[Header("所持クラスタ数")]
 	private UILabel myClusterLabel;
 
 	[SerializeField]
@@ -64,8 +64,8 @@ public sealed class CMD_Succession : CMD
 	[SerializeField]
 	private UILabel ngTX_DECIDE;
 
-	[Header("表示デジモン数")]
 	[SerializeField]
+	[Header("表示デジモン数")]
 	private UILabel ngTX_MN_HAVE;
 
 	[SerializeField]

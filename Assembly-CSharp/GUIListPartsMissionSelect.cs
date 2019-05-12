@@ -4,16 +4,16 @@ using UnityEngine;
 
 public sealed class GUIListPartsMissionSelect : GUIListPartBS
 {
-	[SerializeField]
 	[Header("NEWの スプライト")]
+	[SerializeField]
 	private UISprite newSprite;
 
 	[Header("回数表示")]
 	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
@@ -32,24 +32,24 @@ public sealed class GUIListPartsMissionSelect : GUIListPartBS
 	[SerializeField]
 	private UILabel timeLabel;
 
-	[SerializeField]
 	[Header("バナー読み込み失敗時のテキスト")]
+	[SerializeField]
 	private UILabel failedTextLabel;
 
-	[SerializeField]
 	[Header("背景のスプライト")]
+	[SerializeField]
 	private UISprite bgSprite;
 
 	[Header("外枠のスプライト")]
 	[SerializeField]
 	private UISprite frameSprite;
 
-	[SerializeField]
 	[Header("バナーのテクスチャ")]
+	[SerializeField]
 	public UITexture bannerTex;
 
-	[SerializeField]
 	[Header("バッジスプライト")]
+	[SerializeField]
 	private UISprite spBadge;
 
 	private bool isTouchEndFromChild;

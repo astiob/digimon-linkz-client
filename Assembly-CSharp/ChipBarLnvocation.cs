@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ChipBarLnvocation : MonoBehaviour
 {
-	[Header("チップアニメーション")]
 	[SerializeField]
+	[Header("チップアニメーション")]
 	private Animation chipAnimation;
 
 	[Header("アニメーションチップ")]
@@ -18,8 +18,8 @@ public class ChipBarLnvocation : MonoBehaviour
 	[SerializeField]
 	private AnimationClip outAnimationClip;
 
-	[Header("演出の待機時間")]
 	[SerializeField]
+	[Header("演出の待機時間")]
 	private float minWaitTime = 2f;
 
 	[Header("チップアイコン表示位置")]

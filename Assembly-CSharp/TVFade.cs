@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class TVFade : ScreenEffectBase
 {
-	[Range(0f, 0.5f)]
 	[SerializeField]
+	[Range(0f, 0.5f)]
 	private float lightEdge;
 
 	[SerializeField]

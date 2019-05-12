@@ -71,7 +71,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void ChangeScene(int sceneType, Action completed, bool isSkipTutorial, Action skipBattle)
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int x)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			this.OpenNewScene(sceneType, completed, isSkipTutorial, skipBattle);
 		});
@@ -969,7 +969,7 @@ public sealed class TutorialControlToGame : MonoBehaviour
 
 	public void CloseAllUI(Action onCompleted)
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int x)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			if (onCompleted != null)
 			{

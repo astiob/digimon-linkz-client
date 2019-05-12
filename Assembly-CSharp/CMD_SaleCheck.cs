@@ -10,20 +10,20 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("サムネイルのアイコン達")]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
-	[SerializeField]
 	[Header("タイトルのラベル")]
+	[SerializeField]
 	private UILabel titleLabel;
 
-	[SerializeField]
 	[Header("取得クラスタのタイトルラベル")]
+	[SerializeField]
 	private UILabel getClusterTitleLabel;
 
 	[SerializeField]
 	[Header("取得クラスタのラベル")]
 	private UILabel getClusterLabel;
 
-	[SerializeField]
 	[Header("基本的なメッセージのラベル")]
+	[SerializeField]
 	private UILabel normalMessageLabel;
 
 	[SerializeField]
@@ -34,8 +34,8 @@ public sealed class CMD_SaleCheck : CMD
 	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
-	[SerializeField]
 	[Header("警告ダイアログのボタングループ")]
+	[SerializeField]
 	private GameObject btnGroup;
 
 	public override void ClosePanel(bool animation = true)

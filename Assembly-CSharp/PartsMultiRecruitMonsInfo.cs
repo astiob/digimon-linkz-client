@@ -2,6 +2,7 @@
 using Quest;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
@@ -48,11 +49,28 @@ public class PartsMultiRecruitMonsInfo : PartsPartyMonsInfo
 
 	private List<GameWebAPI.RespDataMA_WorldDungeonSortieLimit.WorldDungeonSortieLimit> sortieLimitList;
 
+	private UIWidget parentUIWidget;
+
+	private TextMeshPro textMeshPro;
+
 	public int positionNumber { get; set; }
+
+	private void Start()
+	{
+		this.textMeshPro = this.goTXT_READY.GetComponent<TextMeshPro>();
+		if (base.gameObject.transform.parent != null)
+		{
+			this.parentUIWidget = base.gameObject.transform.parent.GetComponent<UIWidget>();
+		}
+	}
 
 	protected override void Update()
 	{
 		base.UpdateCharacter();
+		if (this.textMeshPro != null && this.parentUIWidget != null)
+		{
+			this.textMeshPro.alpha = this.parentUIWidget.alpha;
+		}
 	}
 
 	public void DoDestroy()

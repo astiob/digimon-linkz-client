@@ -530,26 +530,6 @@ public class StoreUtil : MonoBehaviour
 		}
 	}
 
-	public void TEST_JSON()
-	{
-		string str = "[{\"priceNumber\":\"120\",\"sku\":\"bngi0222_idigistone01\",\"price\":\"¥120\",\"currencyCode\":\"JPY\",\"title\":\"デジストーン6個\",\"description\":\"デジストーン6個です\",\"type\":\"inapp\",\"currencySymbol\":\"¥\"},{\"priceNumber\":\"480\",\"sku\":\"bngi0222_idigistone02\",\"price\":\"¥480\",\"currencyCode\":\"JPY\",\"title\":\"デジストーン24個\",\"description\":\"デジストーン24個です\",\"type\":\"inapp\",\"currencySymbol\":\"¥\"}]";
-		string json = "{\"storeProductInfoList\":" + str + "}";
-		this.storeProductData = JsonMapper.ToObject<StoreUtil.StoreProductData>(json);
-		for (int i = 0; i < this.storeProductData.storeProductInfoList.Length; i++)
-		{
-			global::Debug.Log("========= PRODUCT LIST SKU   = " + this.storeProductData.storeProductInfoList[i].sku);
-			global::Debug.Log("========= PRODUCT LIST PRICE = " + this.storeProductData.storeProductInfoList[i].price);
-		}
-	}
-
-	public void TEST_TO_JSON()
-	{
-		string text = JsonMapper.ToJson(new StoreUtil.StoreProductData
-		{
-			storeProductInfoList = new StoreUtil.StoreProductInfo[2]
-		});
-	}
-
 	public class StoreProductInfo
 	{
 		public string sku;

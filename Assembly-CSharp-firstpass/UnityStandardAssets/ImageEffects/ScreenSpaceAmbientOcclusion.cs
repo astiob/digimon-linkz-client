@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[AddComponentMenu("Image Effects/Rendering/Screen Space Ambient Occlusion")]
-	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
+	[ExecuteInEditMode]
 	public class ScreenSpaceAmbientOcclusion : MonoBehaviour
 	{
 		public float m_Radius = 0.4f;

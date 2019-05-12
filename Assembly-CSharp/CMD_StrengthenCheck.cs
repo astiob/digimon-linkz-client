@@ -6,8 +6,8 @@ using UnityEngine;
 
 public sealed class CMD_StrengthenCheck : CMD
 {
-	[Header("サムネイルのアイコン達")]
 	[SerializeField]
+	[Header("サムネイルのアイコン達")]
 	private GUIMonsterIcon[] guiMonsterIcons;
 
 	[Header("タイトルのラベル")]
@@ -18,12 +18,12 @@ public sealed class CMD_StrengthenCheck : CMD
 	[Header("消費クラスタのラベル")]
 	private UILabel useClusterLabel;
 
-	[Header("強化前のレベルのラベル")]
 	[SerializeField]
+	[Header("強化前のレベルのラベル")]
 	private UILabel beforeLevelLabel;
 
-	[Header("強化後のレベルのラベル")]
 	[SerializeField]
+	[Header("強化後のレベルのラベル")]
 	private UILabel afterLevelLabel;
 
 	[Header("上昇値のレベルのラベル")]

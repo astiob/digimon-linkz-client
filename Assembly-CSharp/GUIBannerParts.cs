@@ -16,8 +16,8 @@ public sealed class GUIBannerParts : GUIListPartBS
 	[SerializeField]
 	private Color gashaBGColor = new Color32(0, 80, 0, byte.MaxValue);
 
-	[Header("イベントの背景色")]
 	[SerializeField]
+	[Header("イベントの背景色")]
 	private Color eventBGColor = new Color32(80, 0, 0, byte.MaxValue);
 
 	[SerializeField]

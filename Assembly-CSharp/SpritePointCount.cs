@@ -9,8 +9,8 @@ public class SpritePointCount : MonoBehaviour
 	[Header("表示番号のスプライト")]
 	private UISprite[] numSprite;
 
-	[SerializeField]
 	[Header("上桁ゼロ表示しない = true")]
+	[SerializeField]
 	private bool dontShowUpperZero;
 
 	[SerializeField]

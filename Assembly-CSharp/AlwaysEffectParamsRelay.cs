@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("Digimon Effects/Tools/Always Effect Params Relay")]
 [RequireComponent(typeof(Animation))]
+[AddComponentMenu("Digimon Effects/Tools/Always Effect Params Relay")]
 public class AlwaysEffectParamsRelay : MonoBehaviour
 {
 	private AlwaysEffectParams _parentParams;

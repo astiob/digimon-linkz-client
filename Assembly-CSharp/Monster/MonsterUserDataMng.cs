@@ -289,6 +289,11 @@ namespace Monster
 			this.colosseumDeckUserMonsterIdList = userMonsteridList;
 		}
 
+		public string[] GetColosseumDeckUserMonsterIdList()
+		{
+			return this.colosseumDeckUserMonsterIdList;
+		}
+
 		public List<MonsterData> GetColosseumDeckUserMonsterList()
 		{
 			List<MonsterData> list = new List<MonsterData>();

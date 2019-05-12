@@ -1,10 +1,13 @@
-﻿using Evolution;
-using Master;
+﻿using Master;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class CMD_CaptureBonus : CMD
 {
+	[SerializeField]
+	private CaptureBonusItem captureBonusItem;
+
 	[SerializeField]
 	private UILabel titleLabel;
 
@@ -15,17 +18,47 @@ public sealed class CMD_CaptureBonus : CMD
 	private UILabel presentBoxLabel;
 
 	[SerializeField]
-	private UITexture iconTexture;
+	private float iconMergine = 10f;
 
 	[SerializeField]
-	private UISprite iconSprite;
+	private int maxColumnNum = 3;
 
 	public static CMD_CaptureBonus Create(string title, string info, Action<int> onCloseAction = null)
 	{
 		return GUIMain.ShowCommonDialog(onCloseAction, "CMD_CaptureBonus") as CMD_CaptureBonus;
 	}
 
-	public void DialogDataSet(GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM masterUpgradeCategory, MasterDataMng.AssetCategory assetCategoryId, GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData RewardsData)
+	public void DialogDataSet(GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] RewardsData)
+	{
+		this.titleLabel.text = StringMaster.GetString("CaptureBonusTitle");
+		this.presentBoxLabel.text = StringMaster.GetString("CaptureBonusText");
+		this.captureBonusItem.gameObject.SetActive(true);
+		int num = (this.maxColumnNum + 1 >= RewardsData.Length) ? RewardsData.Length : (this.maxColumnNum + 1);
+		float num2 = this.captureBonusItem.GetComponent<BoxCollider>().size.x + this.iconMergine;
+		float num3 = num2 / 2f * (float)(num - 1);
+		List<string> list = new List<string>();
+		for (int i = 0; i < RewardsData.Length; i++)
+		{
+			CaptureBonusItem captureBonusItem = UnityEngine.Object.Instantiate<CaptureBonusItem>(this.captureBonusItem);
+			captureBonusItem.transform.parent = base.gameObject.transform;
+			captureBonusItem.transform.localScale = this.captureBonusItem.transform.localScale;
+			captureBonusItem.transform.localRotation = this.captureBonusItem.transform.localRotation;
+			captureBonusItem.transform.localPosition = new Vector3(this.captureBonusItem.transform.localPosition.x - num3 + num2 * (float)i, this.captureBonusItem.transform.localPosition.y, this.captureBonusItem.transform.localPosition.z);
+			if (i >= this.maxColumnNum)
+			{
+				captureBonusItem.ActivateMore();
+				list.Add(StringMaster.GetString("ItemTruncated"));
+				break;
+			}
+			GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM assetCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(RewardsData[i].assetCategoryId);
+			MasterDataMng.AssetCategory assetCategoryId = (MasterDataMng.AssetCategory)int.Parse(RewardsData[i].assetCategoryId);
+			list.Add(captureBonusItem.DialogDataSet(assetCategory, assetCategoryId, RewardsData[i]));
+		}
+		this.captureBonusItem.gameObject.SetActive(false);
+		this.itemDetileLabel.text = string.Join("\n", list.ToArray());
+	}
+
+	private string GetDetailText(GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM masterUpgradeCategory, MasterDataMng.AssetCategory assetCategoryId, GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData RewardsData)
 	{
 		string text = string.Empty;
 		if (masterUpgradeCategory != null)
@@ -33,127 +66,64 @@ public sealed class CMD_CaptureBonus : CMD
 			text = masterUpgradeCategory.assetTitle;
 		}
 		string arg = string.Empty;
-		this.iconTexture.gameObject.SetActive(false);
-		this.iconSprite.gameObject.SetActive(false);
 		switch (assetCategoryId)
 		{
 		case MasterDataMng.AssetCategory.MONSTER:
 		{
 			MonsterData monsterData = MonsterDataMng.Instance().CreateMonsterDataByMID(RewardsData.assetValue);
-			GUIMonsterIcon guimonsterIcon = GUIMonsterIcon.MakePrefabByMonsterData(MonsterDataMng.Instance().CreateMonsterDataByMID(RewardsData.assetValue), Vector3.one, Vector3.zero, this.iconSprite.transform, true, false);
-			guimonsterIcon.ResizeIcon(this.iconSprite.width, this.iconSprite.height);
-			if (null != guimonsterIcon)
-			{
-				DepthController depthController = guimonsterIcon.GetDepthController();
-				if (null != depthController)
-				{
-					depthController.AddWidgetDepth(guimonsterIcon.transform, this.iconSprite.depth + 10);
-					this.iconSprite.gameObject.SetActive(true);
-				}
-			}
 			arg = monsterData.monsterMG.monsterName;
-			goto IL_2FC;
+			goto IL_12A;
 		}
 		case MasterDataMng.AssetCategory.DIGI_STONE:
 			arg = text;
-			this.iconSprite.gameObject.SetActive(true);
-			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
-			goto IL_2FC;
+			goto IL_12A;
 		case MasterDataMng.AssetCategory.LINK_POINT:
 			arg = text;
-			this.iconSprite.gameObject.SetActive(true);
-			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
-			goto IL_2FC;
+			goto IL_12A;
 		case MasterDataMng.AssetCategory.TIP:
-			this.iconSprite.gameObject.SetActive(true);
-			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
 			arg = text;
-			goto IL_2FC;
+			goto IL_12A;
 		case MasterDataMng.AssetCategory.ITEM:
 		{
 			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(RewardsData.assetValue);
 			if (itemM != null)
 			{
 				arg = itemM.name;
-				NGUIUtil.ChangeUITextureFromFile(this.iconTexture, this.GetTexturePath(assetCategoryId, RewardsData.assetValue), false);
-				this.iconTexture.gameObject.SetActive(true);
 			}
-			goto IL_2FC;
+			goto IL_12A;
 		}
 		case MasterDataMng.AssetCategory.MEAT:
-			this.iconSprite.gameObject.SetActive(true);
-			this.iconSprite.spriteName = this.GetSpriteName(assetCategoryId);
 			arg = text;
-			goto IL_2FC;
+			goto IL_12A;
 		case MasterDataMng.AssetCategory.SOUL:
 		{
 			GameWebAPI.RespDataMA_GetSoulM.SoulM soul = MasterDataMng.Instance().RespDataMA_SoulM.GetSoul(RewardsData.assetValue);
 			arg = soul.soulName;
-			NGUIUtil.ChangeUITextureFromFile(this.iconTexture, this.GetTexturePath(assetCategoryId, RewardsData.assetValue), false);
-			this.iconTexture.gameObject.SetActive(true);
-			goto IL_2FC;
+			goto IL_12A;
 		}
 		case MasterDataMng.AssetCategory.FACILITY_KEY:
 			arg = text;
-			goto IL_2FC;
+			goto IL_12A;
 		case MasterDataMng.AssetCategory.CHIP:
 		{
 			GameWebAPI.RespDataMA_ChipM.Chip chipMainData = ChipDataMng.GetChipMainData(RewardsData.assetValue);
-			ChipDataMng.MakePrefabByChipData(chipMainData, this.iconSprite.gameObject, this.iconSprite.transform.localPosition, this.iconSprite.transform.localScale, null, -1, -1, true);
 			arg = chipMainData.name;
-			goto IL_2FC;
+			goto IL_12A;
 		}
 		}
 		arg = StringMaster.GetString("Present-10");
-		IL_2FC:
-		this.titleLabel.text = StringMaster.GetString("CaptureBonusTitle");
-		this.presentBoxLabel.text = StringMaster.GetString("CaptureBonusText");
-		this.itemDetileLabel.text = string.Format(StringMaster.GetString("CaptureBonusItem"), arg, RewardsData.count);
+		IL_12A:
+		return string.Format(StringMaster.GetString("CaptureBonusItem"), arg, RewardsData.count);
 	}
 
-	private string GetSpriteName(MasterDataMng.AssetCategory assetCategoryId)
+	public void AdjustSize()
 	{
-		string result = string.Empty;
-		switch (assetCategoryId)
+		int num = this.itemDetileLabel.text.Split(new char[]
 		{
-		case MasterDataMng.AssetCategory.DIGI_STONE:
-			result = "Common02_LB_Stone";
-			break;
-		case MasterDataMng.AssetCategory.LINK_POINT:
-			result = "Common02_LB_Link";
-			break;
-		case MasterDataMng.AssetCategory.TIP:
-			result = "Common02_LB_Chip";
-			break;
-		default:
-			if (assetCategoryId == MasterDataMng.AssetCategory.MEAT)
-			{
-				result = "Common02_item_meat";
-			}
-			break;
-		}
-		return result;
-	}
-
-	private string GetTexturePath(MasterDataMng.AssetCategory assetCategoryId, string objectId)
-	{
-		string result = string.Empty;
-		if (assetCategoryId != MasterDataMng.AssetCategory.ITEM)
-		{
-			if (assetCategoryId == MasterDataMng.AssetCategory.SOUL)
-			{
-				result = ClassSingleton<EvolutionData>.Instance.GetEvolveItemIconPathByID(objectId);
-			}
-		}
-		else
-		{
-			GameWebAPI.RespDataMA_GetItemM.ItemM itemM = MasterDataMng.Instance().RespDataMA_ItemM.GetItemM(objectId);
-			if (itemM != null)
-			{
-				result = itemM.GetLargeImagePath();
-			}
-		}
-		return result;
+			'\n'
+		}).Length;
+		int num2 = (this.itemDetileLabel.fontSize + this.itemDetileLabel.spacingY) * num;
+		base.GetComponent<UIWidget>().height += num2;
 	}
 
 	protected override void Awake()

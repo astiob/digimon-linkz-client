@@ -287,17 +287,18 @@ public sealed class UserDataMng : Singleton<UserDataMng>
 		this.playerStaminaBaseTime = ServerDateTime.Now;
 	}
 
-	public void ConsumeUserStamina(int staminaValue)
+	public void ConsumeUserStamina(int cost)
 	{
 		DateTime now = ServerDateTime.Now;
 		TimeSpan timeSpan = now - this.playerStaminaBaseTime;
-		if (DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery - (int)timeSpan.TotalSeconds <= 0)
+		int num = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery - (int)timeSpan.TotalSeconds;
+		if (num <= 0)
 		{
 			this.playerStaminaBaseTime = now;
 			DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery = 0;
 		}
-		DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina -= staminaValue;
-		DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery += staminaValue * 180;
+		DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.stamina -= cost;
+		DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.recovery += cost * 180;
 	}
 
 	public void AddDigiStone(int addCount)

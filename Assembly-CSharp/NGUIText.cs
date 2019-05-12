@@ -242,8 +242,8 @@ public static class NGUIText
 		return NGUIText.ParseColor24(text, offset);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color ParseColor24(string text, int offset)
 	{
 		int num = NGUIMath.HexToDecimal(text[offset]) << 4 | NGUIMath.HexToDecimal(text[offset + 1]);
@@ -253,8 +253,8 @@ public static class NGUIText
 		return new Color(num4 * (float)num, num4 * (float)num2, num4 * (float)num3);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color ParseColor32(string text, int offset)
 	{
 		int num = NGUIMath.HexToDecimal(text[offset]) << 4 | NGUIMath.HexToDecimal(text[offset + 1]);
@@ -265,8 +265,8 @@ public static class NGUIText
 		return new Color(num5 * (float)num, num5 * (float)num2, num5 * (float)num3, num5 * (float)num4);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeColor(Color c)
 	{
 		return NGUIText.EncodeColor24(c);
@@ -286,24 +286,24 @@ public static class NGUIText
 		});
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeAlpha(float a)
 	{
 		int num = Mathf.Clamp(Mathf.RoundToInt(a * 255f), 0, 255);
 		return NGUIMath.DecimalToHex8(num);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string EncodeColor24(Color c)
 	{
 		int num = 16777215 & NGUIMath.ColorToInt(c) >> 8;
 		return NGUIMath.DecimalToHex24(num);
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static string EncodeColor32(Color c)
 	{
 		int num = NGUIMath.ColorToInt(c);
@@ -734,8 +734,8 @@ public static class NGUIText
 		return ch == 32 || ch == 8202 || ch == 8203 || ch == 8201;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static void EndLine(ref StringBuilder s)
 	{
 		int num = s.Length - 1;

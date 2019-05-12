@@ -9,20 +9,20 @@ public class CMD_TicketGashaResult : CMD
 {
 	public static CMD_TicketGashaResult instance;
 
-	[SerializeField]
 	[Header("アイコン中心位置")]
+	[SerializeField]
 	private GameObject goICON_CENTER_POS;
 
-	[SerializeField]
 	[Header("アイコンオフセット XY")]
+	[SerializeField]
 	private Vector2 iconOffset;
 
-	[SerializeField]
 	[Header("アイコンX方向の数")]
+	[SerializeField]
 	private int iconNumX;
 
-	[SerializeField]
 	[Header("アイコン登場時間(フレーム数)")]
+	[SerializeField]
 	private int showChipInterval = 16;
 
 	[SerializeField]
@@ -45,16 +45,16 @@ public class CMD_TicketGashaResult : CMD
 	[Header("シングルキャプチャボタンSprite")]
 	private UISprite buttonSpriteSingle;
 
-	[Header("10連キャプチャボタンSprite")]
 	[SerializeField]
+	[Header("10連キャプチャボタンSprite")]
 	private UISprite buttonSpriteTen;
 
 	[Header("TOPへボタンSprite")]
 	[SerializeField]
 	private UISprite buttonSpriteTOP;
 
-	[Header("シングルキャプチャボタンGUICollider")]
 	[SerializeField]
+	[Header("シングルキャプチャボタンGUICollider")]
 	private GUICollider buttonColliderSingle;
 
 	[Header("10連キャプチャボタンGUICollider")]
@@ -84,8 +84,8 @@ public class CMD_TicketGashaResult : CMD
 	[SerializeField]
 	private GameObject goEFC_GOLD;
 
-	[Header("RAINBOW エフェクト")]
 	[SerializeField]
+	[Header("RAINBOW エフェクト")]
 	private GameObject goEFC_RAINBOW;
 
 	[SerializeField]
@@ -106,7 +106,7 @@ public class CMD_TicketGashaResult : CMD
 
 	public bool StartEffect { get; set; }
 
-	public static GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData RewardsData { get; set; }
+	public static GameWebAPI.RespDataGA_ExecGacha.GachaRewardsData[] RewardsData { get; set; }
 
 	protected override void Awake()
 	{
@@ -412,11 +412,10 @@ public class CMD_TicketGashaResult : CMD
 	private IEnumerator GashaRewardSet(float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		GameWebAPI.RespDataMA_GetAssetCategoryM.AssetCategoryM masterUpgradeCategory = MasterDataMng.Instance().RespDataMA_AssetCategoryM.GetAssetCategory(CMD_TicketGashaResult.RewardsData.assetCategoryId);
-		MasterDataMng.AssetCategory assetCategoryId = (MasterDataMng.AssetCategory)int.Parse(CMD_TicketGashaResult.RewardsData.assetCategoryId);
 		CMD_CaptureBonus cd = null;
 		cd = (GUIMain.ShowCommonDialog(null, "CMD_CaptureBonus") as CMD_CaptureBonus);
-		cd.DialogDataSet(masterUpgradeCategory, assetCategoryId, CMD_TicketGashaResult.RewardsData);
+		cd.DialogDataSet(CMD_TicketGashaResult.RewardsData);
+		cd.AdjustSize();
 		GUICollider.EnableAllCollider("=================================== CMD_TicketGashaResult::ICON");
 		yield break;
 	}

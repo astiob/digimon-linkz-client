@@ -12,8 +12,8 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[SerializeField]
 	private UILabel lbAbleCount;
 
-	[SerializeField]
 	[Header("選択してないときの背景色")]
+	[SerializeField]
 	private Color normalBGColor = new Color32(180, 0, 0, byte.MaxValue);
 
 	[Header("選択時の背景色")]
@@ -28,8 +28,8 @@ public sealed class GUIListPartsGashaMain : GUIListPartBS
 	[SerializeField]
 	private Color selectedFrameColor = new Color32(150, 0, 0, byte.MaxValue);
 
-	[SerializeField]
 	[Header("残り時間のラベル")]
+	[SerializeField]
 	private UILabel timeLabel;
 
 	[Header("バナー読み込み失敗時のテキスト")]

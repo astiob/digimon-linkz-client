@@ -144,21 +144,25 @@ public static class CharacterStateControlSorter
 		}
 		if (checkBath)
 		{
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
+			SufferStateProperty sufferStateProperty = x.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SpeedUp);
+			if (sufferStateProperty.isActive)
 			{
-				num += (float)x.extraSpeed * x.currentSufferState.onSpeedUp.upPercent;
+				num += (float)x.extraSpeed * sufferStateProperty.upPercent;
 			}
-			if (x.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
+			SufferStateProperty sufferStateProperty2 = x.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SpeedDown);
+			if (sufferStateProperty2.isActive)
 			{
-				num -= (float)x.extraSpeed * x.currentSufferState.onSpeedDown.downPercent;
+				num -= (float)x.extraSpeed * sufferStateProperty2.downPercent;
 			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
+			SufferStateProperty sufferStateProperty3 = y.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SpeedUp);
+			if (sufferStateProperty3.isActive)
 			{
-				num2 += (float)y.extraSpeed * y.currentSufferState.onSpeedUp.upPercent;
+				num2 += (float)y.extraSpeed * sufferStateProperty3.upPercent;
 			}
-			if (y.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
+			SufferStateProperty sufferStateProperty4 = y.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.SpeedDown);
+			if (sufferStateProperty4.isActive)
 			{
-				num2 -= (float)y.extraSpeed * y.currentSufferState.onSpeedDown.downPercent;
+				num2 -= (float)y.extraSpeed * sufferStateProperty4.downPercent;
 			}
 		}
 		if (num > num2)

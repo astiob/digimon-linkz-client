@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[RequireComponent(typeof(Camera))]
-	[AddComponentMenu("Image Effects/Camera/Depth of Field (Lens Blur, Scatter, DX11)")]
 	[ExecuteInEditMode]
+	[AddComponentMenu("Image Effects/Camera/Depth of Field (Lens Blur, Scatter, DX11)")]
 	public class DepthOfField : PostEffectsBase
 	{
 		public bool visualizeFocus;

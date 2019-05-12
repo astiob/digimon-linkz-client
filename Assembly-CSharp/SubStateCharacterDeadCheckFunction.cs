@@ -37,18 +37,16 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 
 	protected override IEnumerator MainRoutine()
 	{
-		if (base.battleStateData.GetCharactersDeath(true))
+		yield return this.CheckEnemyDeath();
+		yield return this.CheckPlayerDeath();
+		yield break;
+	}
+
+	protected IEnumerator CheckPlayerDeath()
+	{
+		bool? flag = this.isPlayerWinner;
+		if (flag != null)
 		{
-			this.isPlayerWinner = new bool?(true);
-			if (!this.isLastBattle)
-			{
-				base.SetState(typeof(SubStateCharacterRevivalFunction));
-				while (base.isWaitState)
-				{
-					yield return null;
-				}
-			}
-			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Win, this.isLastBattle, base.battleStateData.isBattleRetired);
 			yield break;
 		}
 		if (base.battleStateData.GetCharactersDeath(false))
@@ -61,6 +59,29 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 				yield return obj;
 			}
 			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Defeat, false, base.battleStateData.isBattleRetired);
+		}
+		yield break;
+	}
+
+	protected IEnumerator CheckEnemyDeath()
+	{
+		bool? flag = this.isPlayerWinner;
+		if (flag != null)
+		{
+			yield break;
+		}
+		if (base.battleStateData.GetCharactersDeath(true))
+		{
+			this.isPlayerWinner = new bool?(true);
+			if (!this.isLastBattle)
+			{
+				base.SetState(typeof(SubStateCharacterRevivalFunction));
+				while (base.isWaitState)
+				{
+					yield return null;
+				}
+			}
+			base.stateManager.log.GetBattleFinishedLogData(DataMng.ClearFlag.Win, this.isLastBattle, base.battleStateData.isBattleRetired);
 			yield break;
 		}
 		yield break;
@@ -109,7 +130,6 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 					yield return null;
 				}
 			}
-			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(base.battleStateData.enemies);
 			base.battleStateData.isContinueFlag = false;
 			List<CharacterParams> characters = new List<CharacterParams>();
 			int counted = 0;
@@ -130,9 +150,12 @@ public class SubStateCharacterDeadCheckFunction : BattleStateController
 			base.battleStateData.isShowContinueWindow = true;
 			base.battleStateData.isShowRetireWindow = false;
 			base.stateManager.uiControl.ApplyContinueNeedDigiStone(characters.Count + 2, base.battleStateData.beforeConfirmDigiStoneNumber - counted, false);
+			base.stateManager.threeDAction.PlayIdleAnimationUndeadCharactersAction(base.battleStateData.enemies);
 			string cameraKey = "0002_command";
 			base.stateManager.cameraControl.PlayCameraMotionAction(cameraKey, base.battleStateData.stageSpawnPoint, true);
+			yield return null;
 			base.stateManager.uiControl.ShowCharacterHUDFunction(base.battleStateData.enemies);
+			base.stateManager.uiControl.RepositionCharacterHUDPosition(base.battleStateData.enemies);
 			while (!base.battleStateData.isContinueFlag)
 			{
 				yield return null;

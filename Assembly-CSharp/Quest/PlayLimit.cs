@@ -25,20 +25,12 @@ namespace Quest
 				OnReceived = delegate(WebAPI.ResponseData res)
 				{
 					GameWebAPI.RespDataWD_GetDungeonInfo.PlayLimit playLimit = dng.playLimit;
-					int num = int.Parse(playLimit.restCount);
-					int num2 = int.Parse(playLimit.recoveryCount);
-					int num3 = int.Parse(playLimit.maxCount);
-					num = num2;
-					if (num > num3)
-					{
-						num = num3;
-					}
-					playLimit.restCount = num.ToString();
+					playLimit.restCount = int.Parse(playLimit.recoveryCount).ToString();
 					if (playLimit.recoveryAssetCategoryId == 2)
 					{
-						int num4 = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
-						num4 -= dng.playLimit.recoveryAssetNum;
-						DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point = num4;
+						int num = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
+						num -= dng.playLimit.recoveryAssetNum;
+						DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point = num;
 					}
 					else if (playLimit.recoveryAssetCategoryId == 6)
 					{
@@ -200,7 +192,7 @@ namespace Quest
 				GameWebAPI.RespDataWD_GetDungeonInfo.PlayLimit playLimit = this.dngPlayLimit_cache.playLimit;
 				int num = int.Parse(playLimit.restCount);
 				num -= this.dngPlayLimit_UseCount_cache;
-				if (num < 0)
+				if (0 > num)
 				{
 					num = 0;
 				}

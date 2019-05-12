@@ -7,16 +7,16 @@ using UnityEngine;
 
 public sealed class CMD_Mission : CMD
 {
-	[SerializeField]
 	[Header("ミッションリストのタッチ領域")]
+	[SerializeField]
 	private GUISelectPanelMission missionList;
 
-	[SerializeField]
 	[Header("ミッション選択のタッチ領域")]
+	[SerializeField]
 	private GUISelectPanelMissionSelect csSelectPanelMissionSelect;
 
-	[SerializeField]
 	[Header("ミッションの段階終了時カットイン演出コントローラ")]
+	[SerializeField]
 	private PartsUpperCutinController cutinController;
 
 	[SerializeField]
@@ -334,7 +334,7 @@ public sealed class CMD_Mission : CMD
 
 	public override void ClosePanel(bool animation = true)
 	{
-		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge();
+		ClassSingleton<FaceMissionAccessor>.Instance.faceMission.SetBadge(true);
 		ClassSingleton<FacePresentAccessor>.Instance.facePresent.SetBadgeOnly();
 		GUIFace.SetFacilityShopButtonBadge();
 		PartsMenu.SetMenuButtonAlertBadge();

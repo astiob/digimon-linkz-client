@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
+	[AddComponentMenu("Image Effects/Bloom and Glow/BloomAndFlares (3.5, Deprecated)")]
 	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
-	[AddComponentMenu("Image Effects/Bloom and Glow/BloomAndFlares (3.5, Deprecated)")]
 	public class BloomAndFlares : PostEffectsBase
 	{
 		public TweakMode34 tweakMode;

@@ -31,7 +31,6 @@ public class UnityObjectPooler<Object>
 	{
 		if (this.objects.ContainsKey(key))
 		{
-			Debug.LogWarning(key + "は既に使用されています.");
 			return;
 		}
 		if (g == null)
@@ -45,7 +44,6 @@ public class UnityObjectPooler<Object>
 	{
 		if (this.objects.ContainsKey(masterKey + "#" + subKey))
 		{
-			Debug.LogWarning(masterKey + "#" + subKey + "は既に使用されています.");
 			return;
 		}
 		if (g == null)

@@ -13,6 +13,8 @@ public class CMD_QuestTOP : CMD
 
 	public const string POINT_WITHOUT_RANKING_QUEST_TYPE = "4";
 
+	public const string DETAILS_TYPE = "6";
+
 	public static CMD_QuestTOP instance;
 
 	[SerializeField]
@@ -42,20 +44,24 @@ public class CMD_QuestTOP : CMD
 	[SerializeField]
 	private GameObject goPartsPointWithoutRankingROOT;
 
-	[Header("ポイントクエスト用 BG")]
 	[SerializeField]
+	[Header("詳細ボタン用 ROOT")]
+	private GameObject goPartsDetailsROOT;
+
+	[SerializeField]
+	[Header("ポイントクエスト用 BG")]
 	private UITexture txEVENT_BG;
 
-	[SerializeField]
 	[Header("降臨エリア用 スケジュールバナー領域")]
+	[SerializeField]
 	private GameObject goScheduleBannerROOT;
 
-	[Header("降臨エリア用 スケジュールバナー")]
 	[SerializeField]
+	[Header("降臨エリア用 スケジュールバナー")]
 	private GameObject goScheduleBannerParts;
 
-	[SerializeField]
 	[Header("降臨エリア用 バナー画像のDLタイムアウト秒")]
+	[SerializeField]
 	private float timeOutSeconds;
 
 	public bool isGoingBattle;
@@ -74,6 +80,8 @@ public class CMD_QuestTOP : CMD
 
 	private bool isScheduleBannerActive;
 
+	private int currentSelected;
+
 	private List<QuestData.WorldStageData> worldStageData;
 
 	private GameWebAPI.RespDataWD_PointQuestInfo pointInfo;
@@ -81,8 +89,6 @@ public class CMD_QuestTOP : CMD
 	private int needLife;
 
 	private PartsQuestPoint partsQuestPoint;
-
-	private int currentSelected;
 
 	public static QuestData.WorldAreaData AreaData { get; set; }
 
@@ -109,7 +115,7 @@ public class CMD_QuestTOP : CMD
 			return;
 		}
 		List<QuestData.WorldStageData> worldStageData_ByAreaID = ClassSingleton<QuestData>.Instance.GetWorldStageData_ByAreaID(CMD_QuestTOP.AreaData.data.worldAreaId, false);
-		if (worldStageData_ByAreaID.Count <= 0)
+		if (0 >= worldStageData_ByAreaID.Count)
 		{
 			AppCoroutine.Start(this.CloseImmidiate_OpenQuestSelect(1), false);
 			return;
@@ -158,6 +164,14 @@ public class CMD_QuestTOP : CMD
 			this.goPartsPointROOT.SetActive(false);
 			this.goPartsPointWithoutRankingROOT.SetActive(false);
 			this.goScheduleBannerROOT.SetActive(false);
+			this.goPartsDetailsROOT.SetActive(false);
+			if (CMD_QuestTOP.AreaData.data.type == "6")
+			{
+				this.goPartsDetailsROOT.SetActive(true);
+				PartsQuestDetails component = this.goPartsDetailsROOT.GetComponent<PartsQuestDetails>();
+				string worldEventId = this.GetWorldEventId();
+				component.worldEventId = worldEventId;
+			}
 			if (CMD_QuestTOP.AreaData.data.worldAreaId == "3")
 			{
 				IEnumerable<GameWebAPI.RespDataMA_BannerM.BannerM> source = DataMng.Instance().RespData_BannerMaster.bannerM.Where((GameWebAPI.RespDataMA_BannerM.BannerM _banner) => _banner.linkCategoryType == "9" && _banner.actionType == "menu" && ServerDateTime.Now >= DateTime.Parse(_banner.startTime) && GUIBannerParts.GetRestTimeSeconds(DateTime.Parse(_banner.endTime)) > 0);
@@ -243,32 +257,39 @@ public class CMD_QuestTOP : CMD
 	private string GetBGPath()
 	{
 		GameWebAPI.RespDataMA_WorldEventAreaMaster respDataMA_WorldEventAreaMaster = MasterDataMng.Instance().RespDataMA_WorldEventAreaMaster;
-		int i;
-		for (i = 0; i < respDataMA_WorldEventAreaMaster.worldEventAreaM.Length; i++)
+		GameWebAPI.RespDataMA_WorldEventAreaMaster.WorldEventAreaM worldEventAreaM = respDataMA_WorldEventAreaMaster.worldEventAreaM.SingleOrDefault((GameWebAPI.RespDataMA_WorldEventAreaMaster.WorldEventAreaM x) => x.worldAreaId == CMD_QuestTOP.AreaData.data.worldAreaId);
+		string result = string.Empty;
+		if (worldEventAreaM != null && !string.IsNullOrEmpty(worldEventAreaM.worldEventId))
 		{
-			if (respDataMA_WorldEventAreaMaster.worldEventAreaM[i].worldAreaId == CMD_QuestTOP.AreaData.data.worldAreaId)
-			{
-				break;
-			}
-		}
-		if (i < respDataMA_WorldEventAreaMaster.worldEventAreaM.Length && !string.IsNullOrEmpty(respDataMA_WorldEventAreaMaster.worldEventAreaM[i].worldEventId))
-		{
-			string worldEventId = respDataMA_WorldEventAreaMaster.worldEventAreaM[i].worldEventId;
+			string worldEventId = worldEventAreaM.worldEventId;
 			GameWebAPI.RespDataMA_WorldEventMaster respDataMA_WorldEventMaster = MasterDataMng.Instance().RespDataMA_WorldEventMaster;
-			for (int j = 0; j < respDataMA_WorldEventMaster.worldEventM.Length; j++)
+			for (int i = 0; i < respDataMA_WorldEventMaster.worldEventM.Length; i++)
 			{
-				if (respDataMA_WorldEventMaster.worldEventM[j].worldEventId == worldEventId)
+				if (respDataMA_WorldEventMaster.worldEventM[i].worldEventId == worldEventId)
 				{
-					string backgroundImg = respDataMA_WorldEventMaster.worldEventM[j].backgroundImg;
+					string backgroundImg = respDataMA_WorldEventMaster.worldEventM[i].backgroundImg;
 					if (!string.IsNullOrEmpty(backgroundImg))
 					{
-						return AssetDataMng.GetWebAssetImagePath() + "/events/" + backgroundImg;
+						result = AssetDataMng.GetWebAssetImagePath() + "/events/" + backgroundImg;
+						break;
 					}
 				}
 			}
-			return null;
 		}
-		return null;
+		return result;
+	}
+
+	private string GetWorldEventId()
+	{
+		string result = string.Empty;
+		GameWebAPI.RespDataMA_WorldEventAreaMaster respDataMA_WorldEventAreaMaster = MasterDataMng.Instance().RespDataMA_WorldEventAreaMaster;
+		GameWebAPI.RespDataMA_WorldEventMaster respDataMA_WorldEventMaster = MasterDataMng.Instance().RespDataMA_WorldEventMaster;
+		GameWebAPI.RespDataMA_WorldEventAreaMaster.WorldEventAreaM areaMaster = respDataMA_WorldEventAreaMaster.worldEventAreaM.SingleOrDefault((GameWebAPI.RespDataMA_WorldEventAreaMaster.WorldEventAreaM x) => x.worldAreaId == CMD_QuestTOP.AreaData.data.worldAreaId);
+		if (areaMaster != null && !string.IsNullOrEmpty(areaMaster.worldEventId) && respDataMA_WorldEventMaster.worldEventM.Any((GameWebAPI.RespDataMA_WorldEventMaster.WorldEventM x) => x.worldEventId == areaMaster.worldEventId))
+		{
+			result = areaMaster.worldEventId;
+		}
+		return result;
 	}
 
 	public override void ClosePanel(bool animation = true)
@@ -280,7 +301,8 @@ public class CMD_QuestTOP : CMD
 			{
 				CMD_QuestSelect.instance.SetForceReturnValue(0);
 			}
-			this.CloseAndFarmCamOn(false);
+			FarmCameraControlForCMD.On();
+			base.ClosePanel(false);
 			if (CMD_QuestSelect.instance != null)
 			{
 				CMD_QuestSelect.instance.ClosePanel(false);
@@ -291,7 +313,8 @@ public class CMD_QuestTOP : CMD
 			SoundMng.Instance().PlayGameBGM("bgm_201");
 			base.SetForceReturnValue(6);
 			CMD_QuestTOP.AreaData = null;
-			this.CloseAndFarmCamOn(animation);
+			FarmCameraControlForCMD.On();
+			base.ClosePanel(animation);
 		}
 		if (this.csSelectPanelA_StageL != null)
 		{
@@ -351,16 +374,10 @@ public class CMD_QuestTOP : CMD
 
 	public void HideClips()
 	{
-		foreach (GameObject go in this.clipObjects)
+		foreach (GameObject gameObject in this.clipObjects)
 		{
-			NGUITools.SetActiveSelf(go, false);
+			gameObject.SetActive(false);
 		}
-	}
-
-	private void CloseAndFarmCamOn(bool animation)
-	{
-		FarmCameraControlForCMD.On();
-		base.ClosePanel(animation);
 	}
 
 	public static void ChangeSelectA_StageL_S(int idx, bool forceChange = false)
@@ -409,6 +426,12 @@ public class CMD_QuestTOP : CMD
 			gameObject2.transform.parent = base.transform;
 			this.csSelectPanelA_StageL.SetSelectPanelParam(gameObject2);
 		}
+		else if (CMD_QuestTOP.AreaData.data.type == "6")
+		{
+			GameObject gameObject3 = UnityEngine.Object.Instantiate(Resources.Load("UISelectPanelParam/SelectPanelParamUD_A_StageL_Detiles")) as GameObject;
+			gameObject3.transform.parent = base.transform;
+			this.csSelectPanelA_StageL.SetSelectPanelParam(gameObject3);
+		}
 		Vector3 localPosition = this.goLP_SATGE.transform.localPosition;
 		GUICollider component = this.goSelectPanelA_StageL.GetComponent<GUICollider>();
 		component.SetOriginalPos(localPosition);
@@ -438,12 +461,12 @@ public class CMD_QuestTOP : CMD
 		this.csSelectPanelA_StageL.initLocation = true;
 		bool fromResult = ClassSingleton<QuestTOPAccessor>.Instance != null && ClassSingleton<QuestTOPAccessor>.Instance.nextAreaFlg;
 		GameWebAPI.RespDataMA_GetWorldDungeonM.WorldDungeonM nextDungeon = (ClassSingleton<QuestTOPAccessor>.Instance == null) ? null : ClassSingleton<QuestTOPAccessor>.Instance.nextDungeon;
-		if (CMD_QuestTOP.AreaData.data.worldAreaId == "1")
+		if ("1" == CMD_QuestTOP.AreaData.data.worldAreaId)
 		{
 			this.csSelectPanelA_StageL.selectParts = this.goLP_SATGE;
 			this.csSelectPanelA_StageL.AllBuild(this.worldStageData, fromResult, nextDungeon);
 		}
-		else if (CMD_QuestTOP.AreaData.data.worldAreaId == "8")
+		else if ("8" == CMD_QuestTOP.AreaData.data.worldAreaId)
 		{
 			this.csSelectPanelA_StageL.selectParts = this.goLP_SATGE_Ticket;
 			this.csSelectPanelA_StageL.AllBuild_Ticket(this.worldStageData, fromResult, nextDungeon);
@@ -591,15 +614,14 @@ public class CMD_QuestTOP : CMD
 			{
 				CMD_ChangePOP_STONE cmd_ChangePOP_STONE = GUIMain.ShowCommonDialog(null, "CMD_ChangePOP_STONE") as CMD_ChangePOP_STONE;
 				cmd_ChangePOP_STONE.Title = StringMaster.GetString("StaminaShortageTitle");
-				string info = string.Format(StringMaster.GetString("StaminaShortageInfo"), new object[]
+				cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnSelectedRecover);
+				cmd_ChangePOP_STONE.Info = string.Format(StringMaster.GetString("StaminaShortageInfo"), new object[]
 				{
 					ConstValue.RECOVER_STAMINA_DIGISTONE_NUM,
 					stamina,
 					stamina + num,
 					point
 				});
-				cmd_ChangePOP_STONE.OnPushedYesAction = new Action(this.OnSelectedRecover);
-				cmd_ChangePOP_STONE.Info = info;
 				cmd_ChangePOP_STONE.SetDigistone(point, ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
 				cmd_ChangePOP_STONE.BtnTextYes = StringMaster.GetString("StaminaRecoveryExecution");
 				cmd_ChangePOP_STONE.BtnTextNo = StringMaster.GetString("SystemButtonClose");
@@ -608,8 +630,7 @@ public class CMD_QuestTOP : CMD
 			{
 				CMD_Confirm cmd_Confirm = GUIMain.ShowCommonDialog(new Action<int>(this.OnCloseConfirmShop), "CMD_Confirm") as CMD_Confirm;
 				cmd_Confirm.Title = StringMaster.GetString("StaminaShortageTitle");
-				string info2 = string.Format(StringMaster.GetString("StaminaShortageGoShop"), ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
-				cmd_Confirm.Info = info2;
+				cmd_Confirm.Info = string.Format(StringMaster.GetString("StaminaShortageGoShop"), ConstValue.RECOVER_STAMINA_DIGISTONE_NUM);
 				cmd_Confirm.BtnTextYes = StringMaster.GetString("SystemButtonGoShop");
 				cmd_Confirm.BtnTextNo = StringMaster.GetString("SystemButtonClose");
 			}
@@ -623,26 +644,28 @@ public class CMD_QuestTOP : CMD
 
 	private bool CanPlayDungeonOver()
 	{
-		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON))
+		bool result = true;
+		int count = ClassSingleton<MonsterUserDataMng>.Instance.GetMonsterNum() + ConstValue.ENABLE_MONSTER_SPACE_TOEXEC_DUNGEON;
+		if (Singleton<UserDataMng>.Instance.IsOverUnitLimit(count))
 		{
 			CMD_UpperLimit cmd_UpperLimit = GUIMain.ShowCommonDialog(null, "CMD_Upperlimit") as CMD_UpperLimit;
 			cmd_UpperLimit.SetType(CMD_UpperLimit.MessageType.QUEST);
-			return false;
+			result = false;
 		}
-		if (!Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
+		else if (Singleton<UserDataMng>.Instance.IsOverChipLimit(ConstValue.ENABLE_CHIP_SPACE_TOEXEC_DUNGEON))
 		{
-			return true;
+			CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
+			cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
+			result = false;
 		}
-		CMD_UpperlimitChip cmd_UpperlimitChip = GUIMain.ShowCommonDialog(null, "CMD_UpperlimitChip") as CMD_UpperlimitChip;
-		cmd_UpperlimitChip.SetType(CMD_UpperlimitChip.MessageType.QUEST);
-		return false;
+		return result;
 	}
 
 	private void OnCloseConfirmShop(int idx)
 	{
-		int hadStone = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 		if (idx == 0)
 		{
+			int hadStone = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point;
 			GUIMain.ShowCommonDialog(delegate(int indexe)
 			{
 				if (hadStone < DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point && this.GetActionStatus() == CommonDialog.ACT_STATUS.OPEN)
@@ -808,11 +831,10 @@ public class CMD_QuestTOP : CMD
 		{
 			if (selectButtonIndex == 20)
 			{
-				if (!this.CanPlayDungeonStamina())
+				if (this.CanPlayDungeonStamina())
 				{
-					return;
+					this.OnTapMultiRecruitButton();
 				}
-				this.OnTapMultiRecruitButton();
 			}
 		}
 		else
@@ -827,7 +849,7 @@ public class CMD_QuestTOP : CMD
 		for (int i = 0; i < partObjs.Count; i++)
 		{
 			GUIListPartsS_DungeonR guilistPartsS_DungeonR = (GUIListPartsS_DungeonR)partObjs[i];
-			if (guilistPartsS_DungeonR.Data.dungeon.worldDungeonId == dng.worldDungeonId)
+			if (guilistPartsS_DungeonR.WorldDungeonData.dungeon.worldDungeonId == dng.worldDungeonId)
 			{
 				guilistPartsS_DungeonR.RefreshShowPlayLimit();
 				break;
@@ -931,12 +953,12 @@ public class CMD_QuestTOP : CMD
 		this.isGoingBattle = true;
 		DataMng.Instance().WD_ReqDngResult.dungeonId = this.StageDataBk.worldDungeonM.worldDungeonId;
 		DataMng.Instance().WD_ReqDngResult.clear = 0;
-		base.SetLastCallBack(new Action<int>(this.GoToBattleScene));
+		base.SetLastCallBack(new Action(this.GoToBattleScene));
 		this.ClosePanel(true);
 		yield break;
 	}
 
-	private void GoToBattleScene(int noop)
+	private void GoToBattleScene()
 	{
 		BattleStateManager.StartSingle(0.5f, 0.5f, true, null);
 	}
@@ -958,6 +980,6 @@ public class CMD_QuestTOP : CMD
 
 	public bool IsSpecialDungeon()
 	{
-		return CMD_QuestTOP.AreaData.data.worldAreaId != "1";
+		return "1" != CMD_QuestTOP.AreaData.data.worldAreaId;
 	}
 }

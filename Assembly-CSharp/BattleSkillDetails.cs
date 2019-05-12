@@ -5,177 +5,377 @@ using UnityExtension;
 
 public class BattleSkillDetails : BattleFunctionBase
 {
-	public const int IsDiedCounterReflectionDamage = -1;
-
-	public void NotToCounterReflectionMonsterWhoDiedOnTheWay(List<int[]> TotalCounterReflectionDamage)
+	private void CorrectionUpReset(CharacterStateControl target)
 	{
-		for (int i = TotalCounterReflectionDamage.Count - 1; i > -1; i--)
+		SufferStateProperty.SufferType[] array = new SufferStateProperty.SufferType[]
 		{
-			for (int j = 0; j < TotalCounterReflectionDamage[i].Length; j++)
+			SufferStateProperty.SufferType.AttackUp,
+			SufferStateProperty.SufferType.DefenceUp,
+			SufferStateProperty.SufferType.SpAttackUp,
+			SufferStateProperty.SufferType.SpDefenceUp,
+			SufferStateProperty.SufferType.SpeedUp,
+			SufferStateProperty.SufferType.HitRateUp
+		};
+		foreach (SufferStateProperty.SufferType type in array)
+		{
+			if (target.currentSufferState.FindSufferState(type))
 			{
-				if (TotalCounterReflectionDamage[i][j] == -1)
-				{
-					TotalCounterReflectionDamage.RemoveAt(i);
-					break;
-				}
+				target.currentSufferState.RemoveSufferState(type);
 			}
 		}
 	}
 
-	public void GetSleepWakeUp(CharacterStateControl[] targetsStatus, bool[] onMissHit)
+	private void CorrectionDownReset(CharacterStateControl target)
 	{
-		List<CharacterStateControl> list = new List<CharacterStateControl>(targetsStatus);
-		list.RemoveAll((CharacterStateControl c) => targetsStatus[0] == c);
-		for (int i = 0; i < list.Count; i++)
+		SufferStateProperty.SufferType[] array = new SufferStateProperty.SufferType[]
 		{
-			if (!list[i].isDied && list[i].currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && !onMissHit[i] && list[i].currentSufferState.onSleep.GetSleepGetupOccurrenceDamage())
+			SufferStateProperty.SufferType.AttackDown,
+			SufferStateProperty.SufferType.DefenceDown,
+			SufferStateProperty.SufferType.SpAttackDown,
+			SufferStateProperty.SufferType.SpDefenceDown,
+			SufferStateProperty.SufferType.SpeedDown,
+			SufferStateProperty.SufferType.HitRateDown
+		};
+		foreach (SufferStateProperty.SufferType type in array)
+		{
+			if (target.currentSufferState.FindSufferState(type))
 			{
-				list[i].currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
+				target.currentSufferState.RemoveSufferState(type);
 			}
 		}
 	}
 
-	public void CorrectionUpReset(CharacterStateControl isTargetsStatus)
+	private void SufferStatusClear(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackUp))
+		Dictionary<SufferStateProperty.SufferType, float> dictionary = new Dictionary<SufferStateProperty.SufferType, float>
 		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.AttackUp);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.DefenceUp))
+			{
+				SufferStateProperty.SufferType.Poison,
+				affectEffectProperty.clearPoisonIncidenceRate
+			},
+			{
+				SufferStateProperty.SufferType.Confusion,
+				affectEffectProperty.clearConfusionIncidenceRate
+			},
+			{
+				SufferStateProperty.SufferType.Paralysis,
+				affectEffectProperty.clearParalysisIncidenceRate
+			},
+			{
+				SufferStateProperty.SufferType.Sleep,
+				affectEffectProperty.clearSleepIncidenceRate
+			},
+			{
+				SufferStateProperty.SufferType.Stun,
+				affectEffectProperty.clearStunIncidenceRate
+			},
+			{
+				SufferStateProperty.SufferType.SkillLock,
+				affectEffectProperty.clearSkillLockIncidenceRate
+			}
+		};
+		foreach (KeyValuePair<SufferStateProperty.SufferType, float> keyValuePair in dictionary)
 		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.DefenceUp);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackUp))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SpAttackUp);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpDefenceUp))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SpDefenceUp);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedUp))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SpeedUp);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.HitRateUp))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.HitRateUp);
+			if (RandomExtension.Switch(keyValuePair.Value) && target.currentSufferState.FindSufferState(keyValuePair.Key))
+			{
+				target.currentSufferState.RemoveSufferState(keyValuePair.Key);
+			}
 		}
 	}
 
-	public void CorrectionDownReset(CharacterStateControl isTargetsStatus)
-	{
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.AttackDown))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.AttackDown);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.DefenceDown))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.DefenceDown);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpAttackDown))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SpAttackDown);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpDefenceDown))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SpDefenceDown);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SpeedDown))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SpeedDown);
-		}
-		if (isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.HitRateDown))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.HitRateDown);
-		}
-	}
-
-	public void SufferStatusClear(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
-	{
-		if (RandomExtension.Switch(currentSuffer.clearPoisonIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Poison))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Poison);
-		}
-		if (RandomExtension.Switch(currentSuffer.clearConfusionIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Confusion))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Confusion);
-		}
-		if (RandomExtension.Switch(currentSuffer.clearParalysisIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Paralysis))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Paralysis);
-		}
-		if (RandomExtension.Switch(currentSuffer.clearSleepIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
-		}
-		if (RandomExtension.Switch(currentSuffer.clearStunIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Stun))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Stun);
-		}
-		if (RandomExtension.Switch(currentSuffer.clearSkillLockIncidenceRate) && isTargetsStatus.currentSufferState.FindSufferState(SufferStateProperty.SufferType.SkillLock))
-		{
-			isTargetsStatus.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.SkillLock);
-		}
-	}
-
-	public void ApUp(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
+	private void ApUp(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
 		int num;
-		if (currentSuffer.powerType == PowerType.Fixable)
+		if (affectEffectProperty.powerType == PowerType.Fixable)
 		{
-			num = currentSuffer.upPower;
+			num = affectEffectProperty.upPower;
 		}
 		else
 		{
-			num = Mathf.FloorToInt((float)isTargetsStatus.maxAp * currentSuffer.upPercent);
+			num = Mathf.FloorToInt((float)target.maxAp * affectEffectProperty.upPercent);
 		}
-		isTargetsStatus.ap += num;
+		target.ap += num;
 	}
 
-	public void ApDown(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
+	private void ApDown(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
 		int num;
-		if (currentSuffer.powerType == PowerType.Fixable)
+		if (affectEffectProperty.powerType == PowerType.Fixable)
 		{
-			num = currentSuffer.downPower;
+			num = affectEffectProperty.downPower;
 		}
 		else
 		{
-			num = Mathf.FloorToInt((float)isTargetsStatus.maxAp * currentSuffer.downPercent);
+			num = Mathf.FloorToInt((float)target.maxAp * affectEffectProperty.downPercent);
 		}
-		isTargetsStatus.ap -= num;
+		target.ap -= num;
 	}
 
-	public int HpRevival(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
+	private int HpRevival(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
 		int num;
-		if (currentSuffer.powerType == PowerType.Fixable)
+		if (affectEffectProperty.powerType == PowerType.Fixable)
 		{
-			num = currentSuffer.revivalPower;
+			num = affectEffectProperty.revivalPower;
 		}
 		else
 		{
-			num = Mathf.FloorToInt((float)isTargetsStatus.extraMaxHp * currentSuffer.revivalPercent);
+			num = Mathf.FloorToInt((float)target.extraMaxHp * affectEffectProperty.revivalPercent);
 		}
-		isTargetsStatus.hp += num;
+		target.hp += num;
 		return num;
 	}
 
-	public void HateUp(ref int hate, AffectEffectProperty currentSuffer)
+	private void HateUp(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
-		hate += currentSuffer.upPower;
+		target.hate += affectEffectProperty.upPower;
 	}
 
-	public void HateDown(ref int hate, AffectEffectProperty currentSuffer)
+	private void HateDown(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
-		hate -= currentSuffer.downPower;
+		target.hate += affectEffectProperty.downPower;
 	}
 
-	public void AddSufferStateOthers(CharacterStateControl isTargetsStatus, AffectEffectProperty currentSuffer)
+	private void AddSufferStateOthers(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
 	{
-		SufferStateProperty suffer = new SufferStateProperty(currentSuffer, base.battleStateData.currentLastGenerateStartTimingSufferState);
-		isTargetsStatus.currentSufferState.SetSufferState(suffer, null);
+		SufferStateProperty.Data data = new SufferStateProperty.Data(affectEffectProperty, base.battleStateData.currentLastGenerateStartTimingSufferState);
+		target.currentSufferState.SetSufferState(data, null);
 		base.battleStateData.currentLastGenerateStartTimingSufferState++;
+	}
+
+	public SkillResults GetOtherSkillResult(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)
+	{
+		SkillResults skillResults = new SkillResults();
+		skillResults.useAffectEffectProperty = affectEffectProperty;
+		skillResults.hitIconAffectEffect = affectEffectProperty.type;
+		skillResults.attackCharacter = attackerCharacter;
+		skillResults.targetCharacter = targetCharacter;
+		if (!affectEffectProperty.OnHit(attackerCharacter, targetCharacter))
+		{
+			skillResults.onMissHit = true;
+			return skillResults;
+		}
+		AffectEffect type = affectEffectProperty.type;
+		switch (type)
+		{
+		case AffectEffect.CorrectionUpReset:
+			this.CorrectionUpReset(targetCharacter);
+			break;
+		case AffectEffect.CorrectionDownReset:
+			this.CorrectionDownReset(targetCharacter);
+			break;
+		case AffectEffect.HpRevival:
+		{
+			int num = this.HpRevival(targetCharacter, affectEffectProperty);
+			skillResults.attackPower = num;
+			skillResults.originalAttackPower = num;
+			break;
+		}
+		default:
+			switch (type)
+			{
+			case AffectEffect.SufferStatusClear:
+				this.SufferStatusClear(targetCharacter, affectEffectProperty);
+				break;
+			default:
+				if (type != AffectEffect.HpSettingFixable)
+				{
+					if (type != AffectEffect.HpSettingPercentage)
+					{
+						if (type != AffectEffect.Recommand)
+						{
+							this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
+						}
+						else
+						{
+							targetCharacter.isRecommand = true;
+						}
+					}
+					else
+					{
+						int num2 = this.HpSettingPercentage(targetCharacter, affectEffectProperty);
+						if (num2 > 0)
+						{
+							skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
+						}
+						else
+						{
+							skillResults.hitIconAffectEffect = AffectEffect.Damage;
+						}
+						num2 = Mathf.Abs(num2);
+						skillResults.attackPower = num2;
+						skillResults.originalAttackPower = num2;
+					}
+				}
+				else
+				{
+					int num3 = this.HpSettingFixable(targetCharacter, affectEffectProperty);
+					if (num3 > 0)
+					{
+						skillResults.hitIconAffectEffect = AffectEffect.HpRevival;
+					}
+					else
+					{
+						skillResults.hitIconAffectEffect = AffectEffect.Damage;
+					}
+					num3 = Mathf.Abs(num3);
+					skillResults.attackPower = num3;
+					skillResults.originalAttackPower = num3;
+				}
+				break;
+			case AffectEffect.ApUp:
+				this.ApUp(targetCharacter, affectEffectProperty);
+				break;
+			case AffectEffect.ApDown:
+				this.ApDown(targetCharacter, affectEffectProperty);
+				break;
+			}
+			break;
+		case AffectEffect.HateUp:
+			this.HateUp(targetCharacter, affectEffectProperty);
+			break;
+		case AffectEffect.HateDown:
+			this.HateDown(targetCharacter, affectEffectProperty);
+			break;
+		}
+		skillResults.onMissHit = false;
+		return skillResults;
+	}
+
+	private int HpSettingFixable(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
+	{
+		int num = affectEffectProperty.revivalPower;
+		num = Mathf.Min(num, target.extraMaxHp);
+		int result = num - target.hp;
+		target.hp = num;
+		return result;
+	}
+
+	private int HpSettingPercentage(CharacterStateControl target, AffectEffectProperty affectEffectProperty)
+	{
+		int num = Mathf.FloorToInt((float)target.extraMaxHp * affectEffectProperty.revivalPercent);
+		int result = num - target.hp;
+		target.hp = num;
+		return result;
+	}
+
+	public SkillResults GetToleranceSkillResult(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)
+	{
+		SkillResults skillResults = new SkillResults();
+		skillResults.useAffectEffectProperty = affectEffectProperty;
+		skillResults.hitIconAffectEffect = affectEffectProperty.type;
+		skillResults.attackCharacter = attackerCharacter;
+		skillResults.targetCharacter = targetCharacter;
+		if (!affectEffectProperty.OnHit(attackerCharacter, targetCharacter))
+		{
+			skillResults.onMissHit = true;
+			return skillResults;
+		}
+		Strength affectEffectStrength = targetCharacter.tolerance.GetAffectEffectStrength(affectEffectProperty.type);
+		if (affectEffectStrength == Strength.Invalid)
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.Invalid;
+			skillResults.onWeakHit = Strength.Invalid;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnBarrier))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.TurnBarrier;
+			skillResults.onWeakHit = Strength.None;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.CountBarrier;
+			skillResults.onWeakHit = Strength.None;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnEvasion))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.TurnEvasion;
+			skillResults.onWeakHit = Strength.None;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.CountEvasion;
+			skillResults.onWeakHit = Strength.None;
+			skillResults.onMissHit = false;
+		}
+		else
+		{
+			skillResults.hitIconAffectEffect = affectEffectProperty.type;
+			skillResults.onWeakHit = Strength.None;
+			skillResults.onMissHit = false;
+			if (affectEffectProperty.type == AffectEffect.InstantDeath)
+			{
+				targetCharacter.Kill();
+			}
+			else
+			{
+				this.AddSufferStateOthers(targetCharacter, affectEffectProperty);
+			}
+		}
+		return skillResults;
+	}
+
+	public SkillResults GetApDrainSkillResult(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)
+	{
+		SkillResults skillResults = new SkillResults();
+		skillResults.useAffectEffectProperty = affectEffectProperty;
+		skillResults.hitIconAffectEffect = affectEffectProperty.type;
+		skillResults.attackCharacter = attackerCharacter;
+		skillResults.targetCharacter = targetCharacter;
+		if (!affectEffectProperty.OnHit(attackerCharacter, targetCharacter))
+		{
+			skillResults.onMissHit = true;
+			return skillResults;
+		}
+		if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnBarrier))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.TurnBarrier;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountBarrier))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.CountBarrier;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.TurnEvasion))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.TurnEvasion;
+			skillResults.onMissHit = false;
+		}
+		else if (targetCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.CountEvasion))
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.CountEvasion;
+			skillResults.onMissHit = false;
+		}
+		else
+		{
+			skillResults.hitIconAffectEffect = AffectEffect.ApDown;
+			skillResults.onMissHit = false;
+			int ap = targetCharacter.ap;
+			targetCharacter.ap -= affectEffectProperty.apDrainPower;
+			skillResults.attackPower = ap - targetCharacter.ap;
+		}
+		return skillResults;
+	}
+
+	public SkillResults GetDestructTargetSkillResult(AffectEffectProperty affectEffectProperty, CharacterStateControl attackerCharacter, CharacterStateControl targetCharacter)
+	{
+		SkillResults skillResults = new SkillResults();
+		skillResults.useAffectEffectProperty = affectEffectProperty;
+		skillResults.hitIconAffectEffect = affectEffectProperty.type;
+		skillResults.attackCharacter = attackerCharacter;
+		skillResults.targetCharacter = targetCharacter;
+		if (!affectEffectProperty.OnHit(attackerCharacter, targetCharacter))
+		{
+			skillResults.onMissHit = true;
+			return skillResults;
+		}
+		targetCharacter.OnHitDestruct();
+		skillResults.onMissHit = false;
+		return skillResults;
 	}
 }

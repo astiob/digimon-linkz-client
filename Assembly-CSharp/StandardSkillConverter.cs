@@ -28,8 +28,8 @@ public class StandardSkillConverter
 		case StandardSkillConverter.AffectEffect.SpeedDown:
 		case StandardSkillConverter.AffectEffect.HitRateUp:
 		case StandardSkillConverter.AffectEffect.HitRateDown:
-		case StandardSkillConverter.AffectEffect.SatisfactionLateUp:
-		case StandardSkillConverter.AffectEffect.SatisfactionLateDown:
+		case StandardSkillConverter.AffectEffect.SatisfactionRateUp:
+		case StandardSkillConverter.AffectEffect.SatisfactionRateDown:
 			result = StandardSkillConverter.ConvertToCorrectionUpDown(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.CorrectionUpReset:
@@ -65,7 +65,7 @@ public class StandardSkillConverter
 		case StandardSkillConverter.AffectEffect.Sleep:
 			result = StandardSkillConverter.ConvertToSleep(subSkillDetails.ToArray());
 			break;
-		case StandardSkillConverter.AffectEffect.SlillLock:
+		case StandardSkillConverter.AffectEffect.SkillLock:
 			result = StandardSkillConverter.ConvertToSlillLock(subSkillDetails.ToArray());
 			break;
 		case StandardSkillConverter.AffectEffect.InstantDeath:
@@ -152,6 +152,12 @@ public class StandardSkillConverter
 		case StandardSkillConverter.AffectEffect.SpDefenseThroughDamage:
 			result = StandardSkillConverter.ConvertToDefenseThroughDamage(subSkillDetails.ToArray());
 			break;
+		case StandardSkillConverter.AffectEffect.HpSettingFixable:
+			result = StandardSkillConverter.ConvertToHpSettingFixable(subSkillDetails.ToArray());
+			break;
+		case StandardSkillConverter.AffectEffect.HpSettingPercentage:
+			result = StandardSkillConverter.ConvertToHpSettingPercentage(subSkillDetails.ToArray());
+			break;
 		default:
 			UnityEngine.Debug.LogError("Not AffectEffect " + affectEffect);
 			break;
@@ -213,7 +219,8 @@ public class StandardSkillConverter
 			effect1 = skillDetails[0].continuousRound.ToInt32(),
 			effect3 = skillDetails[0].effect.ToInt32(),
 			effect4 = skillDetails[0].effect2.ToInt32(),
-			effect5 = skillDetails[0].effect3.ToInt32()
+			effect5 = skillDetails[0].effect3.ToInt32(),
+			effect6 = skillDetails[0].effect4.ToInt32()
 		};
 	}
 
@@ -277,7 +284,8 @@ public class StandardSkillConverter
 			attribute = skillDetails[0].attribute.ToInt32(),
 			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
 			effect1 = skillDetails[0].continuousRound.ToInt32(),
-			effect3 = skillDetails[0].effect.ToInt32()
+			effect3 = skillDetails[0].effect.ToInt32(),
+			effect4 = skillDetails[0].effect2.ToInt32()
 		};
 	}
 
@@ -817,6 +825,38 @@ public class StandardSkillConverter
 		};
 	}
 
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToHpSettingFixable(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		{
+			skillId = skillDetails[0].skillId,
+			subId = skillDetails[0].subId,
+			effectType = skillDetails[0].effectType.ToInt32(),
+			hitRate = skillDetails[0].hitRate.ToInt32(),
+			target = skillDetails[0].target.ToInt32(),
+			targetType = skillDetails[0].targetType.ToInt32(),
+			attribute = skillDetails[0].attribute.ToInt32(),
+			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
+			effect2 = skillDetails[0].effect.ToInt32()
+		};
+	}
+
+	private static GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM ConvertToHpSettingPercentage(GameWebAPI.RespDataMA_GetSkillDetailM.ReceiveSkillDetailM[] skillDetails)
+	{
+		return new GameWebAPI.RespDataMA_GetSkillDetailM.SkillDetailM
+		{
+			skillId = skillDetails[0].skillId,
+			subId = skillDetails[0].subId,
+			effectType = skillDetails[0].effectType.ToInt32(),
+			hitRate = skillDetails[0].hitRate.ToInt32(),
+			target = skillDetails[0].target.ToInt32(),
+			targetType = skillDetails[0].targetType.ToInt32(),
+			attribute = skillDetails[0].attribute.ToInt32(),
+			isMissTrough = skillDetails[0].isMissTrough.ToInt32(),
+			effect3 = skillDetails[0].effect.ToInt32()
+		};
+	}
+
 	public enum AffectEffect
 	{
 		PhysicalDamage = 1,
@@ -843,15 +883,15 @@ public class StandardSkillConverter
 		Paralysis,
 		PoisonFixable,
 		Sleep,
-		SlillLock,
+		SkillLock,
 		HitRateUp,
 		HitRateDown,
 		InstantDeath,
 		Confusion,
 		Stun,
 		SufferStatusClear,
-		SatisfactionLateUp,
-		SatisfactionLateDown,
+		SatisfactionRateUp,
+		SatisfactionRateDown,
 		SpecialDamage,
 		HpRevivalPercentage,
 		PhysicalDamegeDrain,
@@ -884,6 +924,8 @@ public class StandardSkillConverter
 		HpBorderlineDamage,
 		HpBorderlineSpDamage,
 		DefenseThroughDamage,
-		SpDefenseThroughDamage
+		SpDefenseThroughDamage,
+		HpSettingFixable,
+		HpSettingPercentage
 	}
 }

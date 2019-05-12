@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class BattleUIControlBasic : BattleUIControl
 {
+	private List<GameWebAPI.RespDataMA_GetWorldDungeonOptionRewardM.WorldDungeonOptionReward> speedRewardList = new List<GameWebAPI.RespDataMA_GetWorldDungeonOptionRewardM.WorldDungeonOptionReward>();
+
 	private UIPanel parentPanel;
 
 	private GameObject currentSelectMonster { get; set; }
@@ -30,7 +32,7 @@ public class BattleUIControlBasic : BattleUIControl
 		yield break;
 	}
 
-	public void AfterInitializeUIBefore()
+	protected void AfterInitializeUIBefore()
 	{
 		base.ui.GetUIRoot();
 		this.parentPanel = base.ui.initializeUi.panel;
@@ -273,7 +275,41 @@ public class BattleUIControlBasic : BattleUIControl
 		this.DroppingItemInitialize();
 		this.InstantiateGimmickStatusEffect();
 		base.ui.rootPanel.RebuildAllDrawCalls();
+		this.InitSpeedClearRound();
 		yield break;
+	}
+
+	protected void InitSpeedClearRound()
+	{
+		GameWebAPI.RespData_WorldMultiStartInfo respData_WorldMultiStartInfo = DataMng.Instance().RespData_WorldMultiStartInfo;
+		bool flag = null != respData_WorldMultiStartInfo;
+		int num;
+		if (flag)
+		{
+			if (CMD_MultiRecruitPartyWait.UserType == CMD_MultiRecruitPartyWait.USER_TYPE.OWNER)
+			{
+				num = 2;
+			}
+			else
+			{
+				num = 3;
+			}
+		}
+		else
+		{
+			num = 1;
+		}
+		foreach (GameWebAPI.RespDataMA_GetWorldDungeonOptionRewardM.WorldDungeonOptionReward worldDungeonOptionReward in MasterDataMng.Instance().RespDataMA_WorldDungeonOptionRewardM.worldDungeonOptionRewardM)
+		{
+			if (worldDungeonOptionReward.worldDungeonId.Equals(DataMng.Instance().WD_ReqDngResult.dungeonId) && int.Parse(worldDungeonOptionReward.joinType) == num && int.Parse(worldDungeonOptionReward.type) == 1)
+			{
+				this.speedRewardList.Add(worldDungeonOptionReward);
+			}
+		}
+		if (this.speedRewardList.Count > 0)
+		{
+			base.hierarchyData.speedClearRound = int.Parse(this.speedRewardList[this.speedRewardList.Count - 1].clearValue);
+		}
 	}
 
 	public void RemoveAllCachedUI()
@@ -642,10 +678,10 @@ public class BattleUIControlBasic : BattleUIControl
 		BattleUIControlBasic.ApplyDepthController(base.ui.arrowDepthController, z);
 	}
 
-	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isRecoil, ExtraEffectType extraEffectType = ExtraEffectType.Non)
+	public HitIcon ApplyShowHitIcon(int index, Vector3 position, AffectEffect affect, int onDamage, Strength onWeak, bool onMiss, bool onCrithical, bool isDrain, bool isCounter, bool isReflection, ExtraEffectType extraEffectType = ExtraEffectType.Non)
 	{
 		HitIcon unActiveHitIcon = this.GetUnActiveHitIcon(index, position);
-		unActiveHitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isRecoil, extraEffectType);
+		unActiveHitIcon.ApplyShowHitIcon(affect, onDamage, onWeak, onMiss, onCrithical, isDrain, isCounter, isReflection, extraEffectType);
 		return unActiveHitIcon;
 	}
 
@@ -998,11 +1034,9 @@ public class BattleUIControlBasic : BattleUIControl
 		if (base.hierarchyData.limitRound > 0 || base.hierarchyData.speedClearRound > 0)
 		{
 			int num = base.hierarchyData.limitRound - base.battleStateData.totalRoundNumber;
-			int num2 = base.hierarchyData.speedClearRound - base.battleStateData.totalRoundNumber;
 			num++;
-			num2++;
 			base.ui.roundLimitStart.ApplyWaveAndRound(round, num);
-			base.ui.roundChallengeStart.ApplyWaveAndRoundSpeed(num2);
+			base.ui.roundChallengeStart.ApplyWaveAndRoundSpeed(base.battleStateData.totalRoundNumber, this.speedRewardList);
 		}
 		base.ui.roundStart.ApplyWaveAndRound(round);
 	}

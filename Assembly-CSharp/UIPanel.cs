@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Panel")]
+[ExecuteInEditMode]
 public class UIPanel : UIRect
 {
 	public static List<UIPanel> list = new List<UIPanel>();
@@ -54,16 +54,16 @@ public class UIPanel : UIRect
 	[SerializeField]
 	private UIDrawCall.Clipping mClipping;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	private Vector4 mClipRange = new Vector4(0f, 0f, 300f, 200f);
 
 	[HideInInspector]
 	[SerializeField]
 	private Vector2 mClipSoftness = new Vector2(4f, 4f);
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private int mDepth;
 
 	[HideInInspector]

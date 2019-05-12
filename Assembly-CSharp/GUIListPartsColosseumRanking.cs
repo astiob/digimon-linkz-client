@@ -13,20 +13,20 @@ public class GUIListPartsColosseumRanking : GUIListPartBS
 	[SerializeField]
 	private GameObject goMONSTER_ICON;
 
-	[SerializeField]
 	[Header("ユーザーネーム")]
+	[SerializeField]
 	private UILabel lbTX_UserName;
 
-	[SerializeField]
 	[Header("称号アイコン")]
+	[SerializeField]
 	private GameObject goTITLE_ICON;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
-	[Header("ランキング順位")]
 	[SerializeField]
+	[Header("ランキング順位")]
 	private UILabel lbTX_RankingNumber;
 
 	[SerializeField]

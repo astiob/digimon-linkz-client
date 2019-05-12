@@ -61,7 +61,7 @@ public class SubStateMultiCharacterRevivalFunction : SubStateCharacterRevivalFun
 				playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
 				hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.EnemyTurnSync, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None)
 			};
-			IEnumerator wait = base.stateManager.multiBasicFunction.SendMessageInsistently<EnemyTurnSyncData>(TCPMessageType.EnemyTurnSync, message, 1f);
+			IEnumerator wait = base.stateManager.multiBasicFunction.SendMessageInsistently<EnemyTurnSyncData>(TCPMessageType.EnemyTurnSync, message, 2f);
 			while (wait.MoveNext())
 			{
 				object obj = wait.Current;

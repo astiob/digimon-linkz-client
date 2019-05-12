@@ -238,8 +238,8 @@ public class PropertyReference
 		return false;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	private bool Cache()
 	{
 		if (this.mTarget != null && !string.IsNullOrEmpty(this.mName))

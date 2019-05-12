@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
+	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Edge Detection/Crease Shading")]
 	internal class CreaseShading : PostEffectsBase
 	{

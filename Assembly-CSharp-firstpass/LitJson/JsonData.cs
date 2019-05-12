@@ -6,7 +6,7 @@ using System.IO;
 
 namespace LitJson
 {
-	public class JsonData : IJsonWrapper, IList, ICollection, IDictionary, IEnumerable, IOrderedDictionary, IEquatable<JsonData>
+	public class JsonData : IJsonWrapper, IList, ICollection, IDictionary, IEnumerable, IEquatable<JsonData>, IOrderedDictionary
 	{
 		private IList<JsonData> inst_array;
 

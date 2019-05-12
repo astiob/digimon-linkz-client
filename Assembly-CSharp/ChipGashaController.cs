@@ -9,8 +9,8 @@ public sealed class ChipGashaController : CutsceneBase
 	[SerializeField]
 	private GameObject lightLocatorRoot;
 
-	[Header("動作ロケーターのゲームオブジェクト一覧")]
 	[SerializeField]
+	[Header("動作ロケーターのゲームオブジェクト一覧")]
 	private List<GameObject> goLocatorList;
 
 	[Header("動作ロケーター光弾用のゲームオブジェクト一覧")]
@@ -37,8 +37,8 @@ public sealed class ChipGashaController : CutsceneBase
 	[SerializeField]
 	private int startFadeOutFrame;
 
-	[Header("メインカメラ")]
 	[SerializeField]
+	[Header("メインカメラ")]
 	private Camera mainCam;
 
 	[SerializeField]

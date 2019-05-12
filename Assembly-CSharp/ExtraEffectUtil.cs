@@ -28,32 +28,10 @@ public class ExtraEffectUtil
 		GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus[] eventPointBonuses = ExtraEffectUtil.GetEventPointBonuses(ExtraEffectUtil.GetDungeonId().ToString());
 		foreach (GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus eventPointBonus in eventPointBonuses)
 		{
-			switch (int.Parse(eventPointBonus.targetSubType))
+			bool flag = ExtraEffectUtil.CheckExtraParams(eventPointBonus.targetSubType, eventPointBonus.targetValue, eventPointBonus.effectValue, monsterData);
+			if (flag)
 			{
-			case 2:
-				if (monsterData.monsterMG.tribe.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
-			case 3:
-				if (monsterData.monsterMG.monsterGroupId.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
-			case 4:
-				if (monsterData.monsterMG.growStep.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
-			case 5:
-				if (monsterData.GetCommonSkill() != null && monsterData.GetCommonSkill().skillId.Equals(eventPointBonus.targetValue))
-				{
-					return true;
-				}
-				break;
+				return true;
 			}
 		}
 		EffectStatusBase.ExtraEffectType[] array2 = new EffectStatusBase.ExtraEffectType[]
@@ -64,14 +42,14 @@ public class ExtraEffectUtil
 			EffectStatusBase.ExtraEffectType.Speed,
 			EffectStatusBase.ExtraEffectType.Satk,
 			EffectStatusBase.ExtraEffectType.Sdef,
-			EffectStatusBase.ExtraEffectType.SkillDamage,
+			EffectStatusBase.ExtraEffectType.SkillPower,
 			EffectStatusBase.ExtraEffectType.SkillHit
 		};
 		foreach (EffectStatusBase.ExtraEffectType extraEffectType in array2)
 		{
 			int num2 = 0;
 			int num3 = 0;
-			if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillDamage || extraEffectType == EffectStatusBase.ExtraEffectType.SkillHit)
+			if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillPower || extraEffectType == EffectStatusBase.ExtraEffectType.SkillHit)
 			{
 				for (int l = 1; l <= 3; l++)
 				{
@@ -90,6 +68,58 @@ public class ExtraEffectUtil
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	public static bool CheckExtraParams(string targetSubType, string targetValue, string effectValue, MonsterData monsterData)
+	{
+		if (float.Parse(effectValue) < 0f)
+		{
+			return false;
+		}
+		switch (int.Parse(targetSubType))
+		{
+		case 2:
+			if (monsterData.monsterMG.tribe.Equals(targetValue))
+			{
+				return true;
+			}
+			break;
+		case 3:
+			if (monsterData.monsterMG.monsterGroupId.Equals(targetValue))
+			{
+				return true;
+			}
+			break;
+		case 4:
+			if (monsterData.monsterMG.growStep.Equals(targetValue))
+			{
+				return true;
+			}
+			break;
+		case 5:
+			if (monsterData.GetCommonSkill() != null && monsterData.GetCommonSkill().skillId.Equals(targetValue))
+			{
+				return true;
+			}
+			if (monsterData.GetLeaderSkill() != null && monsterData.GetLeaderSkill().skillId.Equals(targetValue))
+			{
+				return true;
+			}
+			break;
+		case 8:
+		{
+			GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] monsterIntegrationGroupM = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster.monsterIntegrationGroupM;
+			for (int i = 0; i < monsterIntegrationGroupM.Length; i++)
+			{
+				if (targetValue.Equals(monsterIntegrationGroupM[i].monsterIntegrationId) && monsterIntegrationGroupM[i].monsterId.Equals(monsterData.monsterM.monsterId))
+				{
+					return true;
+				}
+			}
+			break;
+		}
 		}
 		return false;
 	}
@@ -130,7 +160,7 @@ public class ExtraEffectUtil
 		}
 		int num2 = 0;
 		AffectEffectProperty affectEffectProperty = null;
-		if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillDamage)
+		if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillPower)
 		{
 			List<AffectEffectProperty> affectEffectPropertyListForUtil = BattleServerControl.GetAffectEffectPropertyListForUtil(num.ToString());
 			if (affectEffectPropertyListForUtil != null && affectEffectPropertyListForUtil.Count<AffectEffectProperty>() > 0)
@@ -186,7 +216,7 @@ public class ExtraEffectUtil
 			ExtraEffectStatus item = new ExtraEffectStatus(worldDungeonExtraEffectM);
 			list.Add(item);
 		}
-		if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillDamage)
+		if (extraEffectType == EffectStatusBase.ExtraEffectType.SkillPower)
 		{
 			return ExtraEffectStatus.GetExtraEffectCorrectionValue(ExtraEffectUtil.GetAreaId(), list, affectEffectProperty.GetPower(null), party, new MonsterData[0], monsterData, affectEffectProperty, extraEffectType);
 		}
@@ -201,7 +231,7 @@ public class ExtraEffectUtil
 	{
 		switch (type)
 		{
-		case EffectStatusBase.ExtraEffectType.SkillDamage:
+		case EffectStatusBase.ExtraEffectType.SkillPower:
 		case EffectStatusBase.ExtraEffectType.SkillHit:
 		{
 			float result = 0f;
@@ -250,7 +280,7 @@ public class ExtraEffectUtil
 				EffectStatusBase.ExtraEffectType effectType2 = EffectStatusBase.ExtraEffectType.Non;
 				switch (effectType)
 				{
-				case EffectStatusBase.ExtraEffectType.SkillDamage:
+				case EffectStatusBase.ExtraEffectType.SkillPower:
 				case EffectStatusBase.ExtraEffectType.SkillHit:
 					num3 = 0;
 					effectType2 = EffectStatusBase.ExtraEffectType.Non;
@@ -283,7 +313,7 @@ public class ExtraEffectUtil
 				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster responseMonsterIntegrationGroupMaster = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster;
 				GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] source = responseMonsterIntegrationGroupMaster.monsterIntegrationGroupM.Where((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterId == monsterData.monsterM.monsterId).ToArray<GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup>();
 				string[] monsterIntegrationIds = source.Select((GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup item) => item.monsterIntegrationId).ToArray<string>();
-				num += (int)ChipEffectStatus.GetChipEffectValueToFloat(invocationList, (float)num3, false, monsterIntegrationIds, monsterData.monsterM.monsterGroupId, ExtraEffectUtil.ResistanceToTolerance(monsterData), group.tribe, MonsterGrowStepData.ToGrowStep(group.growStep), null, null, ChipEffectStatus.TargetType.Actor, effectType2);
+				num += (int)ChipEffectStatus.GetChipEffectValueToFloat(invocationList, (float)num3, false, monsterIntegrationIds, monsterData.monsterM.monsterGroupId, ExtraEffectUtil.ResistanceToTolerance(monsterData), group.tribe, MonsterGrowStepData.ToGrowStep(group.growStep), null, null, ChipEffectStatus.TargetType.Actor, effectType2, 0);
 			}
 		}
 		return num;

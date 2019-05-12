@@ -16,8 +16,8 @@ public class MissionItem : GUIListPartBS
 	[SerializeField]
 	private UISprite rewardIcon;
 
-	[SerializeField]
 	[Header("報酬アイテム名")]
+	[SerializeField]
 	private UILabel rewardName;
 
 	[SerializeField]
@@ -437,42 +437,34 @@ public class MissionItem : GUIListPartBS
 
 	private void OnClickedMEAT()
 	{
-		GUIManager.CloseAllCommonDialog(new Action<int>(this.GoToMEAT));
-	}
-
-	private void GoToMEAT(int i)
-	{
-		this.GoToFacility(1);
+		GUIManager.CloseAllCommonDialog(delegate
+		{
+			this.GoToFacility(1);
+		});
 	}
 
 	private void OnClickedSTOREHOUSE()
 	{
-		GUIManager.CloseAllCommonDialog(new Action<int>(this.GoToSTOREHOUSE));
-	}
-
-	private void GoToSTOREHOUSE(int i)
-	{
-		this.GoToFacility(2);
+		GUIManager.CloseAllCommonDialog(delegate
+		{
+			this.GoToFacility(2);
+		});
 	}
 
 	private void OnClickedRESTAURANT()
 	{
-		GUIManager.CloseAllCommonDialog(new Action<int>(this.GoToRESTAURANT));
-	}
-
-	private void GoToRESTAURANT(int i)
-	{
-		this.GoToFacility(3);
+		GUIManager.CloseAllCommonDialog(delegate
+		{
+			this.GoToFacility(3);
+		});
 	}
 
 	private void OnClickedTRAINING()
 	{
-		GUIManager.CloseAllCommonDialog(new Action<int>(this.GoToTRAINING));
-	}
-
-	private void GoToTRAINING(int i)
-	{
-		this.GoToFacility(4);
+		GUIManager.CloseAllCommonDialog(delegate
+		{
+			this.GoToFacility(4);
+		});
 	}
 
 	private void GoToFacility(int facilityID)
@@ -545,7 +537,7 @@ public class MissionItem : GUIListPartBS
 
 	private void OnClickedSUCCESSION()
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int i)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_Succession");
 		});
@@ -553,7 +545,7 @@ public class MissionItem : GUIListPartBS
 
 	private void OnClickedLABORATORY()
 	{
-		GUIManager.CloseAllCommonDialog(delegate(int i)
+		GUIManager.CloseAllCommonDialog(delegate
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_Laboratory");
 		});

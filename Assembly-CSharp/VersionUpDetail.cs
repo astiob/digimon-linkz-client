@@ -8,8 +8,8 @@ public class VersionUpDetail : MonoBehaviour
 	[SerializeField]
 	private UISprite charaIcon;
 
-	[Header("バージョンアップ 文言")]
 	[SerializeField]
+	[Header("バージョンアップ 文言")]
 	private UILabel lbTXT_VerUp;
 
 	[SerializeField]
@@ -24,8 +24,8 @@ public class VersionUpDetail : MonoBehaviour
 	[SerializeField]
 	private UILabel lbTXT_LevAfter;
 
-	[SerializeField]
 	[Header("バージョンアップ スキル追加文言")]
+	[SerializeField]
 	private UILabel lbTXT_SkillUp;
 
 	private GUIMonsterIcon csMonsterIcon;

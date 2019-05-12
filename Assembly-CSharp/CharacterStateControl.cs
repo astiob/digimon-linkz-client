@@ -135,9 +135,11 @@ public class CharacterStateControl
 
 	public List<SufferStateProperty> hitSufferList = new List<SufferStateProperty>();
 
-	private CharacterStateControlChip chip;
+	private CharacterStateControlChip chip = CharacterStateControlChip.GetNullObject();
 
 	public bool isMultiAreaRandomDamageSkill;
+
+	public Dictionary<EffectStatusBase.EffectTriggerType, List<AffectEffectProperty>> everySkillList = new Dictionary<EffectStatusBase.EffectTriggerType, List<AffectEffectProperty>>();
 
 	public CharacterStateControl(CharacterStatus status, Tolerance tolerance, CharacterDatas datas, SkillStatus[] skillStatuses, LeaderSkillStatus leaderCharacterLeaderSkill, CharacterDatas leaderCharacterData, LeaderSkillStatus myLeaderSkill = null, bool isEnemy = false)
 	{
@@ -360,8 +362,9 @@ public class CharacterStateControl
 		set
 		{
 			int min = 0;
-			if (this.chip.gutsData != null)
+			if (this.chip.gutsData != null && value <= 0)
 			{
+				this.chip.gutsData.isUse = true;
 				min = this.chip.gutsData.hp;
 			}
 			int currentHp = this._currentHp;
@@ -387,7 +390,6 @@ public class CharacterStateControl
 			{
 				this.chip.ClearStagingChipIdList();
 				this.chip.OnChipTrigger(EffectStatusBase.EffectTriggerType.Dead);
-				this.chip.RemoveDeadStagingChips();
 			}
 			else
 			{
@@ -601,7 +603,7 @@ public class CharacterStateControl
 		this.skillOrder = savedCSC.skillOrder;
 		this.myIndex = savedCSC.myIndex;
 		this.isEnemy = savedCSC.isEnemy;
-		this.currentSufferState.SetCurrentSufferState(savedCSC.currentSufferState, battleStateData);
+		this.currentSufferState.Set(savedCSC.currentSufferState);
 		this.randomedSpeed = savedCSC.randomedSpeed;
 		this.chip.SetCharacterState(savedCSC);
 	}
@@ -1241,11 +1243,24 @@ public class CharacterStateControl
 				{
 					return true;
 				}
+				if (this.leaderSkillStatus.leaderSkillId.Equals(eventPointBonus.targetValue))
+				{
+					return true;
+				}
 				break;
 			case 6:
 				if (this.chipIds.Where((int item) => item == eventPointBonus.targetValue.ToInt32()).Any<int>())
 				{
 					return true;
+				}
+				break;
+			case 8:
+				foreach (string value in this.characterStatus.monsterIntegrationIds)
+				{
+					if (eventPointBonus.targetValue.Equals(value))
+					{
+						return true;
+					}
 				}
 				break;
 			}
@@ -1369,27 +1384,11 @@ public class CharacterStateControl
 		}
 	}
 
-	public bool isChipDropRateUp
+	public bool isChipServerAddValue
 	{
 		get
 		{
-			return this.chip.isDropRateUp;
-		}
-	}
-
-	public bool isChipDropCountUp
-	{
-		get
-		{
-			return this.chip.isDropCountUp;
-		}
-	}
-
-	public bool isChipExtaraStageRateUp
-	{
-		get
-		{
-			return this.chip.isExtaraStageRateUp;
+			return this.chip.isServerAddValue;
 		}
 	}
 
@@ -1406,6 +1405,11 @@ public class CharacterStateControl
 	public void OnChipTrigger(EffectStatusBase.EffectTriggerType triggerType)
 	{
 		this.chip.OnChipTrigger(triggerType);
+	}
+
+	public void RemovePotencyChip(EffectStatusBase.EffectTriggerType triggerType)
+	{
+		this.chip.RemovePotencyChip(triggerType);
 	}
 
 	public void AddChipEffectCount(int chipEffectId, int value)
@@ -1431,6 +1435,11 @@ public class CharacterStateControl
 	public void ClearGutsData()
 	{
 		this.chip.ClearGutsData();
+	}
+
+	public void RemoveDeadStagingChips()
+	{
+		this.chip.RemoveDeadStagingChips();
 	}
 
 	public void ChangeLeaderSkill(LeaderSkillStatus leaderSkillStatus, CharacterDatas characterDatas)

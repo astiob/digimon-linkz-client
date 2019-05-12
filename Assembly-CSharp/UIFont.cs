@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("NGUI/UI/NGUI Font")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/NGUI Font")]
 public class UIFont : MonoBehaviour
 {
 	[SerializeField]
@@ -18,8 +18,8 @@ public class UIFont : MonoBehaviour
 	[SerializeField]
 	private BMFont mFont = new BMFont();
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	private UIAtlas mAtlas;
 
 	[HideInInspector]

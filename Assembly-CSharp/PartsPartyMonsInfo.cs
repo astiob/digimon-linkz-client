@@ -90,8 +90,8 @@ public class PartsPartyMonsInfo : GUICollider
 	[SerializeField]
 	private GameObject gimmickSkillSucceedDown2;
 
-	[SerializeField]
 	[Header("左クリップのOBJ")]
+	[SerializeField]
 	private GameObject goL_CLIP;
 
 	[Header("右クリップのOBJ")]
@@ -115,6 +115,8 @@ public class PartsPartyMonsInfo : GUICollider
 	private QuestData.WorldDungeonData d_data;
 
 	private List<string> bonusListText = new List<string>();
+
+	private CMD_SPBonusList spBonusPop;
 
 	private GUISelectPanelBSLR selectPanelLR;
 
@@ -143,6 +145,10 @@ public class PartsPartyMonsInfo : GUICollider
 	{
 		base.OnDestroy();
 		this.ReleaseCharacter();
+		if (this.spBonusPop != null)
+		{
+			this.spBonusPop.ClosePanel(true);
+		}
 	}
 
 	public virtual void OnTapedMonster()
@@ -464,6 +470,10 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.spButton.SetActive(false);
 		}
+		else if (CMD_PartyEdit.ModeType == CMD_PartyEdit.MODE_TYPE.EDIT)
+		{
+			this.spButton.SetActive(false);
+		}
 		else if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(text2))
 		{
 			List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus> list = new List<GameWebAPI.RespDataMA_EventPointBonusM.EventPointBonus>();
@@ -545,83 +555,20 @@ public class PartsPartyMonsInfo : GUICollider
 					}
 				}
 			}
-			GameWebAPI.RespDataMA_MonsterIntegrationGroupMaster.MonsterIntegrationGroup[] monsterIntegrationGroupM = MasterDataMng.Instance().ResponseMonsterIntegrationGroupMaster.monsterIntegrationGroupM;
 			for (int num3 = 0; num3 < list.Count; num3++)
 			{
-				switch (int.Parse(list[num3].targetSubType))
+				bool flag3 = ExtraEffectUtil.CheckExtraParams(list[num3].targetSubType, list[num3].targetValue, list[num3].effectValue, this.Data);
+				if (flag3)
 				{
-				case 2:
-					if (this.Data.monsterMG.tribe.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(list[num3].detail);
-					}
-					break;
-				case 3:
-					if (this.Data.monsterMG.monsterGroupId.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(list[num3].detail);
-					}
-					break;
-				case 4:
-					if (this.Data.monsterMG.growStep.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(list[num3].detail);
-					}
-					break;
-				case 5:
-					if (this.Data.GetCommonSkill() != null && this.Data.GetCommonSkill().skillId.Equals(list[num3].targetValue) && float.Parse(list[num3].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(list[num3].detail);
-					}
-					break;
-				case 8:
-					for (int num4 = 0; num4 < monsterIntegrationGroupM.Length; num4++)
-					{
-						if (list[num3].targetValue.Equals(monsterIntegrationGroupM[num4].monsterIntegrationId) && monsterIntegrationGroupM[num4].monsterId.Equals(this.Data.monsterM.monsterId) && float.Parse(list[num3].effectValue) >= 0f)
-						{
-							this.bonusListText.Add(list[num3].detail);
-						}
-					}
-					break;
+					this.bonusListText.Add(list[num3].detail);
 				}
 			}
-			for (int num5 = 0; num5 < extraEffectDataList.Count; num5++)
+			for (int num4 = 0; num4 < extraEffectDataList.Count; num4++)
 			{
-				switch (int.Parse(extraEffectDataList[num5].targetSubType))
+				bool flag4 = ExtraEffectUtil.CheckExtraParams(extraEffectDataList[num4].targetSubType, extraEffectDataList[num4].targetValue, extraEffectDataList[num4].effectValue, this.Data);
+				if (flag4)
 				{
-				case 2:
-					if (this.Data.monsterMG.tribe.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(extraEffectDataList[num5].detail);
-					}
-					break;
-				case 3:
-					if (this.Data.monsterMG.monsterGroupId.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(extraEffectDataList[num5].detail);
-					}
-					break;
-				case 4:
-					if (this.Data.monsterMG.growStep.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(extraEffectDataList[num5].detail);
-					}
-					break;
-				case 6:
-					if (this.Data.GetCommonSkill() != null && this.Data.GetCommonSkill().skillId.Equals(extraEffectDataList[num5].targetValue) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
-					{
-						this.bonusListText.Add(extraEffectDataList[num5].detail);
-					}
-					break;
-				case 8:
-					for (int num6 = 0; num6 < monsterIntegrationGroupM.Length; num6++)
-					{
-						if (extraEffectDataList[num5].targetValue.Equals(monsterIntegrationGroupM[num6].monsterIntegrationId) && monsterIntegrationGroupM[num6].monsterId.Equals(this.Data.monsterM.monsterId) && float.Parse(extraEffectDataList[num5].effectValue) >= 0f)
-						{
-							this.bonusListText.Add(extraEffectDataList[num5].detail);
-						}
-					}
-					break;
+					this.bonusListText.Add(extraEffectDataList[num4].detail);
 				}
 			}
 			if (this.bonusListText.Count > 0)
@@ -632,10 +579,6 @@ public class PartsPartyMonsInfo : GUICollider
 			{
 				this.spButton.SetActive(false);
 			}
-		}
-		else if (CMD_PartyEdit.ModeType == CMD_PartyEdit.MODE_TYPE.EDIT)
-		{
-			this.spButton.SetActive(false);
 		}
 		this.monsterGimickEffectStatusList.SetValues(this.Data, gimmickEffectArray);
 		this.monsterResistanceList.SetValues(this.Data);
@@ -672,10 +615,10 @@ public class PartsPartyMonsInfo : GUICollider
 
 	public void SpEffectButton()
 	{
-		CMD_SPBonusList cmd_SPBonusList = GUIMain.ShowCommonDialog(null, "CMD_SPBonusList") as CMD_SPBonusList;
-		if (cmd_SPBonusList != null)
+		this.spBonusPop = (GUIMain.ShowCommonDialog(null, "CMD_SPBonusList") as CMD_SPBonusList);
+		if (this.spBonusPop != null)
 		{
-			cmd_SPBonusList.SetViewData(this.bonusListText);
+			this.spBonusPop.SetViewData(this.bonusListText);
 		}
 	}
 
@@ -780,7 +723,7 @@ public class PartsPartyMonsInfo : GUICollider
 		GameWebAPI.RespDataMA_GetWorldDungeonExtraEffectM.WorldDungeonExtraEffectM[] array = DataMng.Instance().StageGimmick.GetExtraEffectDataList(StageID, DungeonID).ToArray();
 		int num = 0;
 		int num2 = 0;
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillDamage, 1);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 1);
 		if (num2 == 1)
 		{
 			this.gimmickSkillActionUp.SetActive(true);
@@ -798,7 +741,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			this.gimmickSkillActionDown.SetActive(true);
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillDamage, 2);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 2);
 		if (num2 == 1)
 		{
 			this.gimmickSkillSucceedUp.SetActive(true);
@@ -820,7 +763,7 @@ public class PartsPartyMonsInfo : GUICollider
 		{
 			return array;
 		}
-		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillDamage, 3);
+		ExtraEffectUtil.GetExtraEffectFluctuationValue(out num, out num2, this.Data, array, EffectStatusBase.ExtraEffectType.SkillPower, 3);
 		if (num2 == 1)
 		{
 			this.gimmickSkillSucceedUp2.SetActive(true);

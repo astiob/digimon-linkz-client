@@ -329,7 +329,7 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 
 	public override IEnumerator AfterInitializeUI()
 	{
-		base.stateManager.uiControl.AfterInitializeUIBefore();
+		base.AfterInitializeUIBefore();
 		this.SetupAutoPlay();
 		this.SetupX2Play();
 		this.SetupMonster();
@@ -365,6 +365,7 @@ public class BattleUIControlMulti : BattleUIControlMultiBasic
 		base.DroppingItemInitialize();
 		base.InstantiateGimmickStatusEffect();
 		this.ui.rootPanel.RebuildAllDrawCalls();
+		base.InitSpeedClearRound();
 		yield break;
 	}
 

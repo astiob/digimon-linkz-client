@@ -1,12 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/NGUI Scroll Bar")]
+[ExecuteInEditMode]
 public class UIScrollBar : UISlider
 {
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected float mSize = 1f;
 
 	[HideInInspector]

@@ -117,9 +117,13 @@ public class BattleWaveControl : BattleFunctionBase
 	{
 		foreach (CharacterStateControl characterStateControl in this.GetTotalCharacters())
 		{
-			if (!characterStateControl.isDied && characterStateControl.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Sleep) && characterStateControl.currentSufferState.onSleep.GetSleepGetupOccurrence())
+			if (!characterStateControl.isDied)
 			{
-				characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
+				SufferStateProperty sufferStateProperty = characterStateControl.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Sleep);
+				if (sufferStateProperty.isActive && sufferStateProperty.GetSleepGetupOccurrence())
+				{
+					characterStateControl.currentSufferState.RemoveSufferState(SufferStateProperty.SufferType.Sleep);
+				}
 			}
 		}
 		for (int j = 0; j < totalCharacters.Length; j++)
@@ -130,7 +134,7 @@ public class BattleWaveControl : BattleFunctionBase
 				bool flag = false;
 				if (characterStateControl2.currentSufferState.FindSufferState(SufferStateProperty.SufferType.ApRevival))
 				{
-					int revivalAp = characterStateControl2.currentSufferState.onApRevival.GetRevivalAp(characterStateControl2.maxAp);
+					int revivalAp = characterStateControl2.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.ApRevival).GetRevivalAp(characterStateControl2.maxAp);
 					characterStateControl2.ap += revivalAp;
 					characterStateControl2.upAp += revivalAp;
 					flag = true;

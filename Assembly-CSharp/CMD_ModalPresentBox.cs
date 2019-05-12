@@ -13,19 +13,19 @@ public class CMD_ModalPresentBox : CMD
 	[SerializeField]
 	private UILabel lbTitle;
 
-	[SerializeField]
 	[Header("残り受取件数")]
+	[SerializeField]
 	private UILabel lbSubtitle;
 
-	[Header("初期メッセージ")]
 	[SerializeField]
+	[Header("初期メッセージ")]
 	private GameObject goDefaultMessage;
 
 	[SerializeField]
 	private UILabel lbDefaultMessage;
 
-	[SerializeField]
 	[Header("一括受取ボタン")]
+	[SerializeField]
 	private GameObject goBtnGetAll;
 
 	[SerializeField]

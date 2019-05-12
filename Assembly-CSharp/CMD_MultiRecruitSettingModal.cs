@@ -308,13 +308,7 @@ public class CMD_MultiRecruitSettingModal : CMD
 				this.MultiRoomCreateData = response;
 			}
 		};
-		yield return base.StartCoroutine(request.RunOneTime(null, null, null));
-		if (this.MultiRoomCreateData == null)
-		{
-			this.DispLoading(false);
-			this.ClosePanel(true);
-		}
-		else
+		yield return base.StartCoroutine(request.RunOneTime(delegate()
 		{
 			if (this.callbackAction != null)
 			{
@@ -322,7 +316,11 @@ public class CMD_MultiRecruitSettingModal : CMD
 			}
 			this.DispLoading(false);
 			this.ClosePanel(true);
-		}
+		}, delegate(Exception nop)
+		{
+			this.DispLoading(false);
+			this.ClosePanel(true);
+		}, null));
 		yield break;
 	}
 

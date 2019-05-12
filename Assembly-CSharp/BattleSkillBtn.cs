@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class BattleSkillBtn : MonoBehaviour
 {
-	[Header("スキルボタンが2つのときの位置")]
 	[SerializeField]
+	[Header("スキルボタンが2つのときの位置")]
 	private Vector3 twoButtonPosition = Vector3.zero;
 
-	[Header("スキルボタンが3つのときの位置")]
 	[SerializeField]
+	[Header("スキルボタンが3つのときの位置")]
 	private Vector3 threeButtonPosition = Vector3.zero;
 
-	[SerializeField]
 	[Header("ボタン")]
+	[SerializeField]
 	private UIButton button;
 
 	[Header("スキル名")]
@@ -37,28 +37,28 @@ public class BattleSkillBtn : MonoBehaviour
 	[Header("威力")]
 	private UILabel power;
 
-	[Header("Tweener1（開く）")]
 	[SerializeField]
+	[Header("Tweener1（開く）")]
 	private UITweener rotationEffect1;
 
-	[Header("Tweener2（閉じる）")]
 	[SerializeField]
+	[Header("Tweener2（閉じる）")]
 	private UITweener rotationEffect2;
 
-	[SerializeField]
 	[Header("Collider")]
+	[SerializeField]
 	private Collider colliderValue;
 
-	[Header("HoldPress")]
 	[SerializeField]
+	[Header("HoldPress")]
 	private HoldPressButton skillDescriptionSwitch;
 
-	[SerializeField]
 	[Header("属性アイコン")]
+	[SerializeField]
 	private UISprite attributeSprite;
 
-	[Header("スキル説明UIのルート")]
 	[SerializeField]
+	[Header("スキル説明UIのルート")]
 	private GameObject skillDescriptionRoot;
 
 	[Header("スキルロックアイコン")]
@@ -69,12 +69,12 @@ public class BattleSkillBtn : MonoBehaviour
 	[SerializeField]
 	private GameObject onSkillButton;
 
-	[SerializeField]
 	[Header("実行ボタンスプライト")]
+	[SerializeField]
 	private UISprite execButtonSprite;
 
-	[SerializeField]
 	[Header("スキルOFfボタン")]
+	[SerializeField]
 	private GameObject offSkillButton;
 
 	[Header("スキルボタンスプライト")]

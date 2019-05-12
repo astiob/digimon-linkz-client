@@ -69,7 +69,7 @@ public class SkillTestor : MonoBehaviour
 	{
 		this._effect.transform.position = this._character.transform.position;
 		this._camera.transform.position = this._character.transform.position;
-		this.effectPlay = this._effect.PlaySkillAnimation(this._character, false);
+		this.effectPlay = this._effect.PlaySkillAnimation(this._character);
 		this._camera.PlayCameraAnimation(this._character, false, false);
 		while (this.effectPlay != null && this.effectPlay.MoveNext())
 		{

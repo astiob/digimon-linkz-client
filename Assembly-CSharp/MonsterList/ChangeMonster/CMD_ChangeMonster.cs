@@ -8,8 +8,8 @@ namespace MonsterList.ChangeMonster
 {
 	public sealed class CMD_ChangeMonster : CMD
 	{
-		[SerializeField]
 		[Header("ベース用チップ装備")]
+		[SerializeField]
 		private ChipBaseSelect baseChipBaseSelect;
 
 		[Header("パートナー用チップ装備")]

@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
@@ -306,6 +308,7 @@
     <Compile Include="CampaignLabelArea.cs" />
     <Compile Include="CampaignLabelQuest.cs" />
     <Compile Include="CampaignUtil.cs" />
+    <Compile Include="CaptureBonusItem.cs" />
     <Compile Include="CharacterAnimationClip.cs" />
     <Compile Include="CharacterAnimationType.cs" />
     <Compile Include="CharacterDatas.cs" />
@@ -522,6 +525,19 @@
     <Compile Include="Colosseum\DeckUI\GUI_ColosseumDeckListItem.cs" />
     <Compile Include="Colosseum\DeckUI\UI_ColosseumDeckButton.cs" />
     <Compile Include="Colosseum\DeckUI\UI_ColosseumDeckList.cs" />
+    <Compile Include="Colosseum\Matching\CMD_ColosseumMatching.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingAnimation.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingEventListener.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingInfoMainBattle.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingInfoMockBattle.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetwork.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetworkHTTP.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetworkSocket.cs" />
+    <Compile Include="Colosseum\Matching\ColosseumMatchingNetworkSynchronize.cs" />
+    <Compile Include="Colosseum\Matching\IColosseumMatchingInfo.cs" />
+    <Compile Include="Colosseum\Matching\MatchingConfig.cs" />
+    <Compile Include="Colosseum\Matching\MatchingResult.cs" />
+    <Compile Include="Colosseum\Matching\SocketRequestMatchingFinish.cs" />
     <Compile Include="CommonDialog.cs" />
     <Compile Include="CommonRender2D.cs" />
     <Compile Include="CommonRender3D.cs" />
@@ -1300,6 +1316,25 @@
     <Compile Include="Neptune\WebView\NpWebViewAccessType.cs" />
     <Compile Include="Neptune\WebView\NpWebViewAndroid.cs" />
     <Compile Include="Neptune\WebView\NpWebViewIOS.cs" />
+    <Compile Include="Network\Socket\API\ISocketMessage.cs" />
+    <Compile Include="Network\Socket\ISocketConnectionAsyncListener.cs" />
+    <Compile Include="Network\Socket\ISocketConnectionSyncListener.cs" />
+    <Compile Include="Network\Socket\ISocketReceiveCallback.cs" />
+    <Compile Include="Network\Socket\SocketConnection.cs" />
+    <Compile Include="Network\Socket\SocketConnectionAsync.cs" />
+    <Compile Include="Network\Socket\SocketConnectionSync.cs" />
+    <Compile Include="Network\Socket\SocketController.cs" />
+    <Compile Include="Network\Socket\SocketNpCloudListener.cs" />
+    <Compile Include="Network\Socket\SocketNpCloudListenerLostPacketSimulation.cs" />
+    <Compile Include="Network\Socket\SocketPongInfo.cs" />
+    <Compile Include="Network\Socket\SocketRequestSend.cs" />
+    <Compile Include="Network\Socket\SocketResponseReceive.cs" />
+    <Compile Include="Network\Socket\SocketSynchronize.cs" />
+    <Compile Include="Network\Socket\SocketSynchronizeListener.cs" />
+    <Compile Include="Network\Socket\SocketSynchronizeMonitor.cs" />
+    <Compile Include="Network\Socket\SocketSynchronizeSend.cs" />
+    <Compile Include="Network\Socket\SynchronizeInfo.cs" />
+    <Compile Include="Network\Socket\Test\SocketTestScene.cs" />
     <Compile Include="NextChoice\NextChoiceReplay.cs" />
     <Compile Include="NGUIDebug.cs" />
     <Compile Include="NGUIDepth.cs" />
@@ -1343,6 +1378,7 @@
     <Compile Include="PartsMenuNotfIcon.cs" />
     <Compile Include="PartsMultiRecruitMonsInfo.cs" />
     <Compile Include="PartsPartyMonsInfo.cs" />
+    <Compile Include="PartsQuestDetails.cs" />
     <Compile Include="PartsQuestPoint.cs" />
     <Compile Include="PartsTitleBase.cs" />
     <Compile Include="PartsUpperCutinController.cs" />
@@ -1387,12 +1423,15 @@
     <Compile Include="PvPBattleSimulator.cs" />
     <Compile Include="PvPBattleStart.cs" />
     <Compile Include="PvPBattleState.cs" />
+    <Compile Include="PvPConnectionNoticeCheck.cs" />
     <Compile Include="PvPEnemyData.cs" />
     <Compile Include="PvPEnemyDataReceive.cs" />
+    <Compile Include="PvPJudgmentCheck.cs" />
     <Compile Include="PvPMatching.cs" />
     <Compile Include="PvPMatchingFinishAnimation.cs" />
     <Compile Include="PvPOnlineCheck.cs" />
     <Compile Include="PVPPartySelect3.cs" />
+    <Compile Include="PvPRegist.cs" />
     <Compile Include="PvPVersusInfo.cs" />
     <Compile Include="PvPVersusInfo6Icon.cs" />
     <Compile Include="PvP\PvPUtility.cs" />
@@ -1447,6 +1486,7 @@
     <Compile Include="ShopStoneIconList.cs" />
     <Compile Include="SignalColosseumEvent.cs" />
     <Compile Include="SignalMeatHarvest.cs" />
+    <Compile Include="SimpleDiskUtils\DiskUtils.cs" />
     <Compile Include="SingleBattleState.cs" />
     <Compile Include="Singleton.cs" />
     <Compile Include="SkillConverter.cs" />
@@ -1520,6 +1560,7 @@
     <Compile Include="SubStateWaitForCertainPeriodTimeAction.cs" />
     <Compile Include="SubStateWaitRandomSeedSync.cs" />
     <Compile Include="SufferStateProperty.cs" />
+    <Compile Include="SufferStatePropertyCounter.cs" />
     <Compile Include="SufferStatePropertyStore.cs" />
     <Compile Include="SwipeControllerLR.cs" />
     <Compile Include="TakeoverInput.cs" />

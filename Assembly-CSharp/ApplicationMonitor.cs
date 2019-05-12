@@ -13,6 +13,7 @@ public class ApplicationMonitor : MonoBehaviour
 		"Total:",
 		"FPS:",
 		"Json Parse Error",
+		"Debug Menu",
 		"Api"
 	};
 
@@ -23,6 +24,7 @@ public class ApplicationMonitor : MonoBehaviour
 		"mb",
 		"mb",
 		"fps",
+		string.Empty,
 		string.Empty,
 		"Log"
 	};
@@ -64,28 +66,6 @@ public class ApplicationMonitor : MonoBehaviour
 
 	private void Update()
 	{
-		if ((Input.touchCount >= 3 || Input.GetMouseButtonDown(2)) && !this.isLock)
-		{
-			this.isDisplay = !this.isDisplay;
-			this.isLock = true;
-			this.frameCount = 0;
-			this.elapsedTime = 0f;
-		}
-		if (this.isLock && ((Input.GetMouseButtonUp(0) && Input.touchCount < 3) || Input.GetMouseButtonUp(2)))
-		{
-			this.isLock = false;
-		}
-		if (this.isDisplay)
-		{
-			this.frameCount++;
-			this.elapsedTime += Time.deltaTime;
-			if (this.elapsedTime >= this.updateIntervalTime)
-			{
-				this.Monitoring();
-				this.frameCount = 0;
-				this.elapsedTime = 0f;
-			}
-		}
 	}
 
 	private void OnGUI()
@@ -191,6 +171,7 @@ public class ApplicationMonitor : MonoBehaviour
 		ReservedMemory,
 		FPS,
 		JSON,
+		DEBUG_MENU,
 		ApiLog
 	}
 }

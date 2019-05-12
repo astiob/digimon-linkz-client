@@ -92,7 +92,7 @@ public class BattleStateMultiPlayerWinner : BattleStateController
 		SoundPlayer.PlayBattleWinBGM();
 		if (base.stateManager.onServerConnect)
 		{
-			IEnumerator sendClearResult = base.stateManager.multiFunction.SendClearResult(null);
+			IEnumerator sendClearResult = base.stateManager.multiFunction.SendClearResult();
 			while (waitNextButton.MoveNext() || sendClearResult.MoveNext())
 			{
 				WinMotionWaitAction.MoveNext();

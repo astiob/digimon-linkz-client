@@ -3,12 +3,12 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[ExecuteInEditMode]
 [AddComponentMenu("Digimon Effects/Effect Params")]
+[ExecuteInEditMode]
 public class EffectParams : EffectParamsGeneric
 {
-	[FormerlySerializedAs("autoDisable")]
 	[SerializeField]
+	[FormerlySerializedAs("autoDisable")]
 	private bool _autoDisable;
 
 	protected IEnumerator _PlayAnimation;

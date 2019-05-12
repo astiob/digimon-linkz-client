@@ -90,7 +90,8 @@ public static class TimeUtility
 		DateTime dateTime = default(DateTime);
 		DateTime dateTime2 = default(DateTime);
 		dateTime2 = jpDateTime;
-		return dateTime2.AddHours(-9.0).ToLocalTime();
+		DateTime dateTime3 = new DateTime(dateTime2.AddHours(-9.0).Ticks, DateTimeKind.Utc);
+		return dateTime3.ToLocalTime();
 	}
 
 	public static DateTime DateTimeDifferenceServer(DateTime dateTime)

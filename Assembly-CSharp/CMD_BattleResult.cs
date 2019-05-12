@@ -14,8 +14,8 @@ public sealed class CMD_BattleResult : CMD
 	[SerializeField]
 	private DropItemResult dropItemResult;
 
-	[Header("経験値結果")]
 	[SerializeField]
+	[Header("経験値結果")]
 	private ExperienceResult experienceResult;
 
 	private Dictionary<CMD_BattleResult.State, ResultBase> results = new Dictionary<CMD_BattleResult.State, ResultBase>();

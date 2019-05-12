@@ -319,7 +319,19 @@ public sealed class BattleStateManager : MonoBehaviour
 	{
 		get
 		{
-			return (!this.onServerConnect) ? "public_attack" : GameWebAPI.RespDataMA_GetSkillM.SkillM.ActionSkill;
+			return BattleStateManager.PublicAttackSkillId;
+		}
+	}
+
+	public static string PublicAttackSkillId
+	{
+		get
+		{
+			if (string.IsNullOrEmpty(GameWebAPI.RespDataMA_GetSkillM.SkillM.ActionSkill))
+			{
+				return "public_attack";
+			}
+			return GameWebAPI.RespDataMA_GetSkillM.SkillM.ActionSkill;
 		}
 	}
 

@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[ExecuteInEditMode]
-	[AddComponentMenu("Image Effects/Other/Antialiasing")]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Other/Antialiasing")]
 	public class Antialiasing : PostEffectsBase
 	{
 		public AAMode mode = AAMode.FXAA3Console;

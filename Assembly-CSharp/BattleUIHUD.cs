@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleUIHUD : UITweener
 {
-	[SerializeField]
 	[Header("[マルチバトル用]AP UP用オブジェクト")]
+	[SerializeField]
 	public GameObject apUpObject;
 
 	[Header("[マルチバトル用]HP UP用オブジェクト")]
@@ -20,20 +20,20 @@ public class BattleUIHUD : UITweener
 	[Header("[マルチバトル用]AP数")]
 	public UILabel multiAPNumber;
 
-	[SerializeField]
 	[Header("HPゲージ")]
+	[SerializeField]
 	private UIGaugeManager hpGauge;
 
-	[Header("APゲージ")]
 	[SerializeField]
+	[Header("APゲージ")]
 	private UIGaugeManager apGauge;
 
 	[SerializeField]
 	[Header("押しっぱなしのボタン")]
 	private HoldPressButton holdPressButton;
 
-	[SerializeField]
 	[Header("アイコン画像(Group01)")]
+	[SerializeField]
 	private UISprite[] iconImageGroup01;
 
 	[SerializeField]
@@ -44,8 +44,8 @@ public class BattleUIHUD : UITweener
 	[SerializeField]
 	private UIComponentSkinner statePlateComponentSkinner;
 
-	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
 	[SerializeField]
+	[Header("[マルチバトル用]Pnスプライトのコンポーネントのスキナー")]
 	private UIComponentSkinner pnSpriteComponentSkinner;
 
 	[Header("[マルチバトル用]AP UP Rootのコンポーネントのスキナー")]
@@ -72,12 +72,12 @@ public class BattleUIHUD : UITweener
 	[Range(0f, 1f)]
 	private float from = 1f;
 
-	[SerializeField]
 	[Range(0f, 1f)]
+	[SerializeField]
 	private float to = 1f;
 
-	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
 	[SerializeField]
+	[Header("デジモン名、状態異常表示エリアのオブジェクトグループ")]
 	private List<UIWidget> viewWidgets = new List<UIWidget>();
 
 	private Dictionary<SufferStateProperty.SufferType, string> iconSpriteNames = new Dictionary<SufferStateProperty.SufferType, string>();

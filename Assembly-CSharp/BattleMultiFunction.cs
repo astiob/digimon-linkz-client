@@ -16,6 +16,8 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 
 	private List<string> failedMembers = new List<string>();
 
+	private bool isMultiBattleResume;
+
 	private bool isSendConnectionRecover;
 
 	private List<RevivalData> revivalDataList = new List<RevivalData>();
@@ -83,21 +85,6 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		}
 	}
 
-	protected override IEnumerator Reconnect(bool isDialog = true)
-	{
-		yield return new WaitForEndOfFrame();
-		base.InitializeTCPClient(true);
-		if (isDialog)
-		{
-			IEnumerator hidingCountDown = this.HidingCountDown(this.GetOwnerPlayer().userStatus.userId);
-			while (hidingCountDown.MoveNext())
-			{
-				yield return null;
-			}
-		}
-		yield break;
-	}
-
 	protected override void TCPCallbackMethod(Dictionary<string, object> arg)
 	{
 		if (arg.ContainsKey("800012"))
@@ -116,6 +103,25 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		{
 			base.TCPCallbackMethod(arg);
 		}
+	}
+
+	protected override IEnumerator ResumeTCP()
+	{
+		IEnumerator hidingCountDown = this.HidingCountDown(this.GetOwnerPlayer().userStatus.userId);
+		AppCoroutine.Start(hidingCountDown, false);
+		this.isMultiBattleResume = false;
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		MultiMemberResume message = new MultiMemberResume
+		{
+			ri = DataMng.Instance().RespData_WorldMultiStartInfo.multiRoomId
+		};
+		data.Add("820106", message);
+		while (!this.isMultiBattleResume)
+		{
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			yield return Util.WaitForRealTime(2f);
+		}
+		yield break;
 	}
 
 	private void ManageBattleResult(object messageObj)
@@ -143,7 +149,6 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				this.lastAction[TCPMessageType.Retire] = delegate()
 				{
 					this.recieveChecks[TCPMessageType.Retire] = true;
-					this.isDisconnected = true;
 					if (!base.hierarchyData.isPossibleContinue)
 					{
 						this.RunRetire(false, null);
@@ -183,7 +188,6 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				this.lastAction[TCPMessageType.BattleResult] = delegate()
 				{
 					this.recieveChecks[TCPMessageType.BattleResult] = true;
-					Singleton<TCPMessageSender>.Instance.IsWinnerWaitOver = true;
 				};
 				base.SendConfirmation(TCPMessageType.BattleResult, ownerPlayer.userStatus.userId, string.Empty);
 			}
@@ -222,7 +226,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 
 	private void ManageBattleResume(object messageObj)
 	{
-		Singleton<TCPMessageSender>.Instance.IsMultiBattleResume = true;
+		this.isMultiBattleResume = true;
 		int valueByKey = MultiTools.GetValueByKey<int>(messageObj, "rf");
 		global::Debug.LogFormat("rf: {0}.", new object[]
 		{
@@ -399,7 +403,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		}
 	}
 
-	public override IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 1f)
+	public override IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 2f)
 	{
 		IEnumerator function = this.SendMessageInsistently<T>(tcpMessageType, message, waitingTerm, true, 60f);
 		while (function.MoveNext())
@@ -410,9 +414,9 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		yield break;
 	}
 
-	private IEnumerator SendMessageInsistentlyDisconnected<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 1f) where T : class
+	private IEnumerator SendMessageInsistentlyDisconnected<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 2f) where T : class
 	{
-		IEnumerator function = this.SendMessageInsistently<T>(tcpMessageType, message, waitingTerm, false, 15f);
+		IEnumerator function = this.SendMessageInsistently<T>(tcpMessageType, message, waitingTerm, false, 60f);
 		while (function.MoveNext())
 		{
 			object obj = function.Current;
@@ -423,38 +427,31 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 
 	private IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm, bool enableDisconnected, float maxWaitingCount) where T : class
 	{
-		global::Debug.Log("SendMessageInsistently");
-		int waitingCount = 0;
+		global::Debug.LogFormat("Send tcpMessageType:{0}", new object[]
+		{
+			tcpMessageType
+		});
+		float sendWaitTime = waitingTerm;
+		float sendTotalWaitTime = 0f;
 		for (;;)
 		{
 			while (enableDisconnected && this.isDisconnected)
 			{
 				yield return null;
 			}
-			if (enableDisconnected)
+			if (sendWaitTime >= waitingTerm)
 			{
-				base.SendMessageForSync(tcpMessageType, message);
+				sendWaitTime = 0f;
+				if (enableDisconnected)
+				{
+					base.SendMessageForSync(tcpMessageType, message);
+				}
+				else
+				{
+					base.SendMessageForSyncDisconnected(tcpMessageType, message);
+				}
 			}
-			else
-			{
-				base.SendMessageForSyncDisconnected(tcpMessageType, message);
-			}
-			global::Debug.LogFormat("残りの人数:{0}/{1}, tcpMessageType{2}, waitingCount:{3}, sent:{4}", new object[]
-			{
-				this.confirmationChecks[tcpMessageType].Count,
-				base.otherUserCount,
-				tcpMessageType,
-				waitingCount,
-				string.Join(",", this.confirmationChecks[tcpMessageType].ToArray())
-			});
-			IEnumerator wait = Util.WaitForRealTime(waitingTerm);
-			while (wait.MoveNext())
-			{
-				object obj = wait.Current;
-				yield return obj;
-			}
-			waitingCount++;
-			bool isTimeOut = (float)waitingCount >= maxWaitingCount;
+			bool isTimeOut = sendTotalWaitTime >= maxWaitingCount;
 			bool isConfirm = this.confirmationChecks[tcpMessageType].Count == base.otherUserCount;
 			int failedCount = 0;
 			foreach (string otherUsersId in base.GetOtherUsersId())
@@ -473,14 +470,16 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				IEnumerator checkFailedPlayerAndShowDialog = this.CheckFailedPlayerAndShowDialog(tcpMessageType);
 				while (checkFailedPlayerAndShowDialog.MoveNext())
 				{
-					object obj2 = checkFailedPlayerAndShowDialog.Current;
-					yield return obj2;
+					object obj = checkFailedPlayerAndShowDialog.Current;
+					yield return obj;
 				}
 			}
 			if (isConfirm || isConfirmAndFailedMember || isTimeOut)
 			{
 				break;
 			}
+			sendWaitTime += Time.unscaledDeltaTime;
+			sendTotalWaitTime += Time.unscaledDeltaTime;
 			yield return null;
 		}
 		LastConfirmationData lastConfirmationMessage = new LastConfirmationData
@@ -542,12 +541,12 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 
 	private IEnumerator WaitAllPlayersDisconnected(TCPMessageType tcpMessageType)
 	{
-		return this.WaitAllPlayers(tcpMessageType, false, 25f);
+		return this.WaitAllPlayers(tcpMessageType, false, 70f);
 	}
 
 	private IEnumerator WaitAllPlayers(TCPMessageType tcpMessageType, bool enableDisconnected, float maxWaitingCount)
 	{
-		global::Debug.LogFormat("{0}の通信待ち.", new object[]
+		global::Debug.LogFormat("Wait tcpMessageType:{0}", new object[]
 		{
 			tcpMessageType
 		});
@@ -565,26 +564,14 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			userId = activePlayer2.userStatus.userId;
 			isOwner = activePlayer2.isOwner;
 		}
-		int waitingCount = 0;
+		float waitingCount = 0f;
 		for (;;)
 		{
 			while (enableDisconnected && this.isDisconnected)
 			{
 				yield return null;
 			}
-			bool isTimeOut = (float)waitingCount >= maxWaitingCount;
-			IEnumerator wait = Util.WaitForRealTime(1f);
-			while (wait.MoveNext())
-			{
-				object obj = wait.Current;
-				yield return obj;
-			}
-			waitingCount++;
-			global::Debug.LogFormat("[{0}]waiting ....(waitingCount:{1})", new object[]
-			{
-				tcpMessageType,
-				waitingCount
-			});
+			bool isTimeOut = waitingCount >= maxWaitingCount;
 			bool senderFailed = false;
 			foreach (string failedMember in this.failedMembers)
 			{
@@ -608,14 +595,15 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				IEnumerator check = this.DisconnectAction(userId, isOwner, null);
 				while (check.MoveNext())
 				{
-					object obj2 = check.Current;
-					yield return obj2;
+					object obj = check.Current;
+					yield return obj;
 				}
 			}
 			if (this.recieveChecks[tcpMessageType] || isTimeOut || senderFailed)
 			{
 				break;
 			}
+			waitingCount += Time.unscaledDeltaTime;
 			yield return null;
 		}
 		foreach (string failedMember2 in this.failedMembers)
@@ -625,8 +613,8 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 				IEnumerator check2 = this.DisconnectAction(failedMember2, false, null);
 				while (check2.MoveNext())
 				{
-					object obj3 = check2.Current;
-					yield return obj3;
+					object obj2 = check2.Current;
+					yield return obj2;
 				}
 			}
 		}
@@ -689,30 +677,17 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			IEnumerator coroutine = this.RunRetireByOwner(ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, null);
 			while (coroutine.MoveNext())
 			{
-				yield return null;
+				object obj = coroutine.Current;
+				yield return obj;
 			}
 		}
 		else
 		{
-			IEnumerator coroutine2 = Singleton<TCPMessageSender>.Instance.CountTimeOutMember();
+			IEnumerator coroutine2 = this.RunRetireByMember();
 			while (coroutine2.MoveNext())
 			{
-				while (this.isDisconnected)
-				{
-					yield return null;
-				}
-				if (Singleton<TCPMessageSender>.Instance.IsFinalTimeoutForRetire)
-				{
-					this.ShowDisconnectOwnerDialog(null);
-					for (;;)
-					{
-						yield return null;
-					}
-				}
-				else
-				{
-					yield return coroutine2.Current;
-				}
+				object obj2 = coroutine2.Current;
+				yield return obj2;
 			}
 		}
 		yield break;
@@ -728,7 +703,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			failedUserIds = failedUserIds,
 			randomSeed = seed
 		};
-		IEnumerator wait = this.SendMessageInsistentlyDisconnected<ConnectionRecoverData>(TCPMessageType.ConnectionRecover, message, 1f);
+		IEnumerator wait = this.SendMessageInsistentlyDisconnected<ConnectionRecoverData>(TCPMessageType.ConnectionRecover, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -860,7 +835,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			on2x = !base.hierarchyData.on2xSpeedPlay,
 			onPose = base.battleStateData.isShowMenuWindow
 		};
-		IEnumerator wait = this.SendMessageInsistently<X2Data>(TCPMessageType.X2, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<X2Data>(TCPMessageType.X2, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -956,7 +931,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.Continue, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
 			digiStone = beforeConfirmDigiStoneNumber
 		};
-		IEnumerator wait = this.SendMessageInsistently<ContinueData>(TCPMessageType.Continue, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<ContinueData>(TCPMessageType.Continue, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -1091,7 +1066,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			revivalCharacterIndex = charIndex,
 			waveNum = waveNum
 		};
-		IEnumerator wait = this.SendMessageInsistently<RevivalData>(revivalType, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<RevivalData>(revivalType, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -1115,7 +1090,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.RevivalCancel, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None),
 			cancelRevivalUserIds = userIds
 		};
-		IEnumerator wait = this.SendMessageInsistently<RevivalCancelData>(TCPMessageType.RevivalCancel, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<RevivalCancelData>(TCPMessageType.RevivalCancel, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
@@ -1335,7 +1310,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		}
 	}
 
-	public IEnumerator SendClearResult(Action callback = null)
+	public IEnumerator SendClearResult()
 	{
 		if (base.IsOwner && !this.isDisconnected)
 		{
@@ -1352,7 +1327,7 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 			if (info.status == "11")
 			{
 				global::Debug.LogWarning("SendClearResult : Reconnect");
-				IEnumerator reconnect = this.Reconnect(false);
+				IEnumerator reconnect = base.Reconnect();
 				while (reconnect.MoveNext())
 				{
 					object obj = reconnect.Current;
@@ -1369,62 +1344,60 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		if (base.IsOwner)
 		{
 			string[] userMonsterIds = base.hierarchyData.usePlayerCharacters.Select((PlayerStatus item) => item.userMonsterId).ToArray<string>();
-			IEnumerator coroutine = Singleton<TCPMessageSender>.Instance.SendWinnerOwner(base.battleStateData.playerCharacters, userMonsterIds, base.hierarchyData.startId.ToInt32(), 1, base.GetOtherUsersId().Select((string item) => item.ToInt32()).ToList<int>());
-			while (coroutine.MoveNext())
+			Dictionary<string, object> data2 = this.CreateResultData(base.battleStateData.playerCharacters, userMonsterIds, base.hierarchyData.startId.ToInt32(), 1, base.GetOtherUsersId().Select((string item) => item.ToInt32()).ToList<int>());
+			float waitWinTime = 0f;
+			do
 			{
 				while (this.isDisconnected)
 				{
 					yield return null;
 				}
-				if (Singleton<TCPMessageSender>.Instance.IsFinalTimeoutForWin || this.confirmationChecks[TCPMessageType.BattleResult].Count >= base.otherUserCount)
-				{
-					global::Debug.Log("SendMessageForSync TCPMessageType.BattleResult");
-					LastConfirmationData lastConfirmationMessage = new LastConfirmationData
-					{
-						playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
-						hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.BattleResult),
-						tcpMessageType = TCPMessageType.BattleResult.ToInteger(),
-						failedPlayerUserIds = this.failedMembers.Distinct<string>().ToArray<string>()
-					};
-					base.SendMessageForSyncDisconnected(TCPMessageType.LastConfirmation, lastConfirmationMessage);
-					IEnumerator wait = Util.WaitForRealTime(0.5f);
-					while (wait.MoveNext())
-					{
-						object obj2 = wait.Current;
-						yield return obj2;
-					}
-					Singleton<TCPMessageSender>.Instance.IsWinnerWaitOver = true;
-				}
-				yield return coroutine.Current;
+				Singleton<TCPUtil>.Instance.SendTCPRequest(data2, "activityList");
+				(data2["820102"] as BattleResult).requestStatus = 1;
+				yield return Util.WaitForRealTime(2f);
+				waitWinTime += 2f;
+			}
+			while (waitWinTime < 15f && this.confirmationChecks[TCPMessageType.BattleResult].Count < base.otherUserCount);
+			global::Debug.Log("SendMessageForSync TCPMessageType.BattleResult");
+			LastConfirmationData lastConfirmationMessage = new LastConfirmationData
+			{
+				playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+				hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.BattleResult),
+				tcpMessageType = TCPMessageType.BattleResult.ToInteger(),
+				failedPlayerUserIds = this.failedMembers.Distinct<string>().ToArray<string>()
+			};
+			base.SendMessageForSyncDisconnected(TCPMessageType.LastConfirmation, lastConfirmationMessage);
+			IEnumerator wait = Util.WaitForRealTime(0.5f);
+			while (wait.MoveNext())
+			{
+				object obj2 = wait.Current;
+				yield return obj2;
 			}
 		}
 		else
 		{
-			IEnumerator coroutine2 = Singleton<TCPMessageSender>.Instance.CountWinnerMember();
-			while (coroutine2.MoveNext())
+			float waitWinTime2 = 0f;
+			for (;;)
 			{
 				while (this.isDisconnected)
 				{
 					yield return null;
 				}
-				if (Singleton<TCPMessageSender>.Instance.IsFinalTimeoutForWin)
+				waitWinTime2 += Time.unscaledDeltaTime;
+				if (waitWinTime2 >= 15f)
 				{
-					this.ShowDisconnectOwnerDialog(null);
-					for (;;)
-					{
-						yield return null;
-					}
+					break;
 				}
-				else
+				if (this.recieveChecks[TCPMessageType.BattleResult])
 				{
-					yield return coroutine2.Current;
+					goto Block_14;
 				}
+				yield return null;
 			}
+			this.ShowDisconnectOwnerDialog(null);
+			Block_14:;
 		}
-		if (callback != null)
-		{
-			callback();
-		}
+		base.stateManager.uiControlMulti.BlockNewDialog();
 		yield break;
 	}
 
@@ -1447,43 +1420,75 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 
 	private IEnumerator RunRetireByOwner(string retiredPlayerId, Action callback)
 	{
+		float waitRetireTime = 0f;
 		string[] userMonsterIds = base.hierarchyData.usePlayerCharacters.Select((PlayerStatus item) => item.userMonsterId).ToArray<string>();
-		IEnumerator ownerCor = Singleton<TCPMessageSender>.Instance.SendRetireOwner(base.battleStateData.playerCharacters, userMonsterIds, base.hierarchyData.startId.ToInt32(), 0, base.GetOtherUsersId().Select((string item) => item.ToInt32()).ToList<int>());
-		while (ownerCor.MoveNext())
+		Dictionary<string, object> data = this.CreateResultData(base.battleStateData.playerCharacters, userMonsterIds, base.hierarchyData.startId.ToInt32(), 0, base.GetOtherUsersId().Select((string item) => item.ToInt32()).ToList<int>());
+		for (;;)
 		{
+			while (this.isDisconnected)
+			{
+				yield return null;
+			}
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			(data["820102"] as BattleResult).requestStatus = 1;
+			yield return Util.WaitForRealTime(2f);
+			waitRetireTime += 2f;
+			if (waitRetireTime >= 15f)
+			{
+				break;
+			}
 			if (this.confirmationChecks[TCPMessageType.Retire].Count >= base.otherUserCount)
 			{
-				global::Debug.Log("SendMessageForSync TCPMessageType.Retire");
-				while (this.isDisconnected)
-				{
-					yield return null;
-				}
-				LastConfirmationData lastConfirmationMessage = new LastConfirmationData
-				{
-					playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
-					hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.Retire),
-					tcpMessageType = TCPMessageType.Retire.ToInteger(),
-					failedPlayerUserIds = this.failedMembers.Distinct<string>().ToArray<string>()
-				};
-				base.SendMessageForSyncDisconnected(TCPMessageType.LastConfirmation, lastConfirmationMessage);
-				IEnumerator wait = Util.WaitForRealTime(0.5f);
-				while (wait.MoveNext())
-				{
-					object obj = wait.Current;
-					yield return obj;
-				}
-				this.RunRetireAfter(callback);
-				Singleton<TCPMessageSender>.Instance.IsRetireWaitOver = true;
-				yield break;
+				goto Block_5;
 			}
-			if (Singleton<TCPMessageSender>.Instance.IsFinalTimeoutForRetire)
-			{
-				this.RunRetireAfter(callback);
-				Singleton<TCPMessageSender>.Instance.IsRetireWaitOver = true;
-				yield break;
-			}
-			yield return ownerCor.Current;
 		}
+		this.RunRetireAfter(callback);
+		yield break;
+		Block_5:
+		global::Debug.Log("SendMessageForSync TCPMessageType.Retire");
+		LastConfirmationData lastConfirmationMessage = new LastConfirmationData
+		{
+			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+			hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.Retire),
+			tcpMessageType = TCPMessageType.Retire.ToInteger(),
+			failedPlayerUserIds = this.failedMembers.Distinct<string>().ToArray<string>()
+		};
+		base.SendMessageForSyncDisconnected(TCPMessageType.LastConfirmation, lastConfirmationMessage);
+		IEnumerator wait = Util.WaitForRealTime(0.5f);
+		while (wait.MoveNext())
+		{
+			object obj = wait.Current;
+			yield return obj;
+		}
+		this.RunRetireAfter(callback);
+		yield break;
+		yield break;
+	}
+
+	private IEnumerator RunRetireByMember()
+	{
+		float waitRetireTime = 0f;
+		for (;;)
+		{
+			while (this.isDisconnected)
+			{
+				yield return null;
+			}
+			waitRetireTime += Time.unscaledDeltaTime;
+			if (waitRetireTime >= 5f)
+			{
+				break;
+			}
+			if (this.recieveChecks[TCPMessageType.Retire])
+			{
+				goto Block_3;
+			}
+			yield return null;
+		}
+		this.ShowDisconnectOwnerDialog(null);
+		yield break;
+		Block_3:
+		yield break;
 		yield break;
 	}
 
@@ -1516,6 +1521,59 @@ public class BattleMultiFunction : BattleMultiBasicFunction
 		{
 			callback();
 		}
+	}
+
+	private Dictionary<string, object> CreateResultData(CharacterStateControl[] playerCharacters, string[] userMonsterIds, int startId, int clearFlag, List<int> ogis)
+	{
+		Dictionary<string, object> dictionary = new Dictionary<string, object>();
+		List<int> list = new List<int>();
+		for (int j = 0; j < playerCharacters.Length; j++)
+		{
+			if (!playerCharacters[j].isDied)
+			{
+				list.Add(userMonsterIds[j].ToInt32());
+			}
+			else
+			{
+				global::Debug.LogFormat("[死亡したデジモン]hp:{0}, isEnemy:{1}, id:{2}", new object[]
+				{
+					playerCharacters[j].hp,
+					playerCharacters[j].isEnemy,
+					userMonsterIds[j]
+				});
+			}
+		}
+		string[] value = list.Select((int i) => i.ToString()).ToArray<string>();
+		string text = string.Join(",", value);
+		global::Debug.LogFormat("生存モンスターID:{0}", new object[]
+		{
+			text
+		});
+		string[] value2 = ogis.Select((int i) => i.ToString()).Distinct<string>().ToArray<string>();
+		string text2 = string.Join(",", value2);
+		global::Debug.LogFormat("生存ユーザー:{0}", new object[]
+		{
+			text2
+		});
+		string multiRoomId = DataMng.Instance().RespData_WorldMultiStartInfo.multiRoomId;
+		int num = multiRoomId.ToInt32() + "820102".ToInt32();
+		global::Debug.LogFormat("clearFlag{0}, uniqueRequestId:{1}", new object[]
+		{
+			clearFlag,
+			num
+		});
+		BattleResult value3 = new BattleResult
+		{
+			ri = multiRoomId.ToInt32(),
+			si = startId,
+			cf = clearFlag,
+			amis = list,
+			ogis = ogis.Distinct<int>().ToList<int>(),
+			clearRound = DataMng.Instance().WD_ReqDngResult.clearRound,
+			uniqueRequestId = num
+		};
+		dictionary.Add("820102", value3);
+		return dictionary;
 	}
 
 	private enum DisconnectDialogType

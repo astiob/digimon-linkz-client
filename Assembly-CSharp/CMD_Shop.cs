@@ -29,23 +29,23 @@ public class CMD_Shop : CMD
 	[SerializeField]
 	private GUISelectPanelStone csSelectPanelStone;
 
-	private int _virtualAddStoneNum;
-
 	private List<StoreUtil.StoneStoreData> ssdList;
+
+	private int virtualUsedStoneCount;
 
 	private bool closeWhenConsumed;
 
 	private Action hideGUIAction;
 
-	public int virtualAddStoneNum
+	public int VirtualUsedStoneNum
 	{
 		get
 		{
-			return this._virtualAddStoneNum;
+			return this.virtualUsedStoneCount;
 		}
 		set
 		{
-			this._virtualAddStoneNum = value;
+			this.virtualUsedStoneCount = value;
 			this.UpdateDigistone();
 		}
 	}
@@ -132,11 +132,6 @@ public class CMD_Shop : CMD
 		base.ClosePanel(animation);
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void ClosePanel(bool animation = true)
 	{
 		if (this.hideGUIAction != null)
@@ -174,7 +169,8 @@ public class CMD_Shop : CMD
 
 	public void UpdateDigistone()
 	{
-		this.stoneNum.text = (DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point + this.virtualAddStoneNum).ToString();
+		int num = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point - this.virtualUsedStoneCount;
+		this.stoneNum.text = num.ToString();
 	}
 
 	private void SetCommonUI_Stone()
@@ -221,27 +217,47 @@ public class CMD_Shop : CMD
 		this.goListPartsStone.SetActive(false);
 	}
 
-	public void OnEndConsume(bool flg)
+	public void OnEndConsume(bool isSuccess)
+	{
+		if (DataMng.Instance().RespDataSH_ReqVerify != null && DataMng.Instance().RespDataSH_ReqVerify.status == 2)
+		{
+			RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_OFF);
+			GameWebAPI.RequestUS_UserStatus requestUS_UserStatus = new GameWebAPI.RequestUS_UserStatus();
+			requestUS_UserStatus.SetSendData = delegate(GameWebAPI.PlayerInfoSendData param)
+			{
+				param.keys = "point";
+			};
+			requestUS_UserStatus.OnReceived = delegate(GameWebAPI.RespDataUS_GetPlayerInfo response)
+			{
+				DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.point = response.playerInfo.point;
+			};
+			GameWebAPI.RequestUS_UserStatus request = requestUS_UserStatus;
+			base.StartCoroutine(request.Run(delegate()
+			{
+				RestrictionInput.EndLoad();
+				this.OnUpdatedDigistone(isSuccess);
+			}, null, null));
+		}
+		else
+		{
+			this.OnUpdatedDigistone(isSuccess);
+		}
+	}
+
+	private void OnUpdatedDigistone(bool isSuccess)
 	{
 		GUIPlayerStatus.RefreshParams_S(false);
 		this.UpdateDigistone();
-		if (this.closeWhenConsumed)
-		{
-			if (flg)
-			{
-				this.ClosePanel(true);
-			}
-			else if (StoreInit.Instance().GetStatus() < StoreInit.STATUS.DONE_RECONSUME)
-			{
-				this.ClosePanel(true);
-			}
-		}
-		else if (!flg)
+		if (!isSuccess)
 		{
 			if (StoreInit.Instance().GetStatus() < StoreInit.STATUS.DONE_RECONSUME)
 			{
 				this.ClosePanel(true);
 			}
+		}
+		else if (this.closeWhenConsumed)
+		{
+			this.ClosePanel(true);
 		}
 	}
 

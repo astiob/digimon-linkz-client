@@ -9,16 +9,16 @@ public class BattleAlways : MonoBehaviour
 	[NonSerialized]
 	public Transform menuPanelTransform;
 
-	[Header("Menuボタンのコライダー")]
 	[SerializeField]
+	[Header("Menuボタンのコライダー")]
 	protected Collider menuCollider;
 
-	[SerializeField]
 	[Header("Autoのコライダー")]
+	[SerializeField]
 	protected Collider autoCollider;
 
-	[SerializeField]
 	[Header("Skipのコライダー")]
+	[SerializeField]
 	private Collider skipCollider;
 
 	public void SetColliderActive(bool isEnable)

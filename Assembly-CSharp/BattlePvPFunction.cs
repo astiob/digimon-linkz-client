@@ -1,4 +1,6 @@
-﻿using Master;
+﻿using BattleStateMachineInternal;
+using JsonFx.Json;
+using Master;
 using MultiBattle.Tools;
 using System;
 using System.Collections;
@@ -18,6 +20,22 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 	public static bool isAlreadyLoseBeforeBattle;
 
 	public static int battleActionLogResult = -1;
+
+	private int returnPvPOnlineCheck = -1;
+
+	private int returnPvPJudgmentCheck = -1;
+
+	private bool isPvPRecoverCommunicateCheck;
+
+	private bool isPvPConnectionNoticeCheck;
+
+	private bool isRegist;
+
+	private bool isResume;
+
+	private bool isEnemyFailedAction;
+
+	private IEnumerator enemyFailedAction;
 
 	public void FinishedSync()
 	{
@@ -48,58 +66,237 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		}
 	}
 
-	public IEnumerator BattleStartActionFunction()
-	{
-		IEnumerator battelStart = Singleton<TCPMessageSender>.Instance.SendPvPBattleStart();
-		while (battelStart.MoveNext())
-		{
-			yield return null;
-		}
-		yield break;
-	}
-
 	public IEnumerator BattleEndActionFunction()
 	{
-		List<int> skill = new List<int>();
-		skill.Add(0);
-		IEnumerator battelEnd = Singleton<TCPMessageSender>.Instance.SendPvPBattleEnd(ClassSingleton<MultiBattleData>.Instance.BattleResult, base.battleStateData.currentRoundNumber, skill);
-		while (battelEnd.MoveNext())
+		base.stateManager.uiControlPvP.ShowLoading(false);
+		if (this.isSendEvent)
 		{
-			yield return null;
+			yield return this.BattleEndActionTCP();
+			yield return this.BattleEndActionHttp();
+		}
+		else
+		{
+			this.StopSomething();
+			yield return this.BattleEndActionTCP();
+			yield return this.BattleEndActionSync();
+			yield return this.BattleEndActionHttp();
+		}
+		base.stateManager.uiControlPvP.HideLoading();
+		yield break;
+	}
+
+	private IEnumerator BattleEndActionTCP()
+	{
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		PvPRegist message = new PvPRegist
+		{
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId(),
+			battleResult = ClassSingleton<MultiBattleData>.Instance.BattleResult
+		};
+		data.Add("080119", message);
+		this.isRegist = false;
+		float waitingCount = 0f;
+		while (!this.isRegist)
+		{
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			yield return Util.WaitForRealTime(2f);
+			waitingCount += 2f;
+			if (waitingCount >= 15f)
+			{
+				yield break;
+			}
 		}
 		yield break;
 	}
 
-	public void StopSomething()
+	private IEnumerator BattleEndActionSync()
 	{
-		this.isDisconnected = true;
+		if (base.IsOwner)
+		{
+			EnemyTurnSyncData message = new EnemyTurnSyncData
+			{
+				playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+				hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.EnemyTurnSync, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.None)
+			};
+			float sendWaitTime = 2f;
+			float waitingCount = 0f;
+			for (;;)
+			{
+				if (sendWaitTime >= 2f)
+				{
+					sendWaitTime = 0f;
+					base.SendMessageForSyncDisconnected(TCPMessageType.EnemyTurnSync, message);
+				}
+				if (waitingCount >= 45f || this.confirmationChecks[TCPMessageType.EnemyTurnSync].Count == base.otherUserCount)
+				{
+					break;
+				}
+				sendWaitTime += Time.unscaledDeltaTime;
+				waitingCount += Time.unscaledDeltaTime;
+				yield return null;
+			}
+			LastConfirmationData lastConfirmationMessage = new LastConfirmationData
+			{
+				playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
+				hashValue = Singleton<TCPUtil>.Instance.CreateHash(TCPMessageType.LastConfirmation, ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId, TCPMessageType.EnemyTurnSync),
+				tcpMessageType = TCPMessageType.EnemyTurnSync.ToInteger()
+			};
+			base.SendMessageForSync(TCPMessageType.LastConfirmation, lastConfirmationMessage);
+			this.confirmationChecks[TCPMessageType.EnemyTurnSync].Clear();
+		}
+		else
+		{
+			float waitingCount2 = 0f;
+			while (waitingCount2 < 45f && !this.recieveChecks[TCPMessageType.EnemyTurnSync])
+			{
+				waitingCount2 += Time.unscaledDeltaTime;
+				yield return null;
+			}
+			this.recieveChecks[TCPMessageType.EnemyTurnSync] = false;
+		}
+		yield break;
+	}
+
+	private IEnumerator BattleEndActionHttp()
+	{
+		GameWebAPI.RespData_ColosseumBattleEndLogic colosseumEnd = null;
+		GameWebAPI.ColosseumBattleEndLogic request = new GameWebAPI.ColosseumBattleEndLogic
+		{
+			SetSendData = delegate(GameWebAPI.ReqData_ColosseumBattleEndLogic param)
+			{
+				param.battleResult = ClassSingleton<MultiBattleData>.Instance.BattleResult;
+				param.roundCount = base.battleStateData.currentRoundNumber;
+				param.isMockBattle = ((!(ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode == "0")) ? 1 : 0);
+				param.skillUseDeckPosition = "0";
+			},
+			OnReceived = delegate(GameWebAPI.RespData_ColosseumBattleEndLogic resData)
+			{
+				colosseumEnd = resData;
+			}
+		};
+		yield return request.Run(new Action(RestrictionInput.EndLoad), delegate(Exception noop)
+		{
+			RestrictionInput.EndLoad();
+		}, null);
+		MultiBattleData.BattleEndResponseData responseData = new MultiBattleData.BattleEndResponseData();
+		if (colosseumEnd != null)
+		{
+			responseData.resultCode = colosseumEnd.resultCode;
+			List<MultiBattleData.BattleEndResponseData.Reward> rwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+			if (colosseumEnd.reward != null)
+			{
+				for (int i = 0; i < colosseumEnd.reward.Length; i++)
+				{
+					rwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+					{
+						assetCategoryId = colosseumEnd.reward[i].assetCategoryId,
+						assetNum = colosseumEnd.reward[i].assetNum,
+						assetValue = colosseumEnd.reward[i].assetValue
+					});
+				}
+			}
+			List<MultiBattleData.BattleEndResponseData.Reward> firstRankupRwardList = new List<MultiBattleData.BattleEndResponseData.Reward>();
+			if (colosseumEnd.firstRankUpReward != null)
+			{
+				for (int j = 0; j < colosseumEnd.firstRankUpReward.Length; j++)
+				{
+					firstRankupRwardList.Add(new MultiBattleData.BattleEndResponseData.Reward
+					{
+						assetCategoryId = colosseumEnd.firstRankUpReward[j].assetCategoryId,
+						assetNum = colosseumEnd.firstRankUpReward[j].assetNum,
+						assetValue = colosseumEnd.firstRankUpReward[j].assetValue
+					});
+				}
+			}
+			responseData.reward = rwardList.ToArray();
+			responseData.firstRankUpReward = firstRankupRwardList.ToArray();
+			responseData.score = colosseumEnd.score;
+			responseData.colosseumRankId = colosseumEnd.colosseumRankId;
+			responseData.isFirstRankUp = colosseumEnd.isFirstRankUp;
+			if (colosseumEnd.battleRecord != null)
+			{
+				responseData.battleRecord = new MultiBattleData.BattleEndResponseData.ColosseumBattleRecord();
+				responseData.battleRecord.count = colosseumEnd.battleRecord.count;
+				responseData.battleRecord.winPercent = colosseumEnd.battleRecord.winPercent;
+			}
+		}
+		else
+		{
+			responseData.reward = new MultiBattleData.BattleEndResponseData.Reward[0];
+		}
+		ClassSingleton<MultiBattleData>.Instance.BattleEndResponse = responseData;
+		yield break;
+	}
+
+	protected override IEnumerator SendConnectionNotice()
+	{
+		this.isPvPConnectionNoticeCheck = false;
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		PvPConnectionNoticeCheck message = new PvPConnectionNoticeCheck
+		{
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
+		};
+		data.Add("800013", message);
+		while (!this.isPvPConnectionNoticeCheck)
+		{
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			yield return Util.WaitForRealTime(2f);
+		}
+		yield break;
+	}
+
+	protected override IEnumerator ResumeTCP()
+	{
+		if (this.isResume)
+		{
+			yield break;
+		}
+		this.isResume = true;
+		if (!this.isSendEvent)
+		{
+			base.stateManager.uiControlPvP.HideRetireWindow();
+			base.stateManager.uiControlPvP.StartEnemyFailedTimer(delegate
+			{
+				base.stateManager.uiControlPvP.HideAlertDialog();
+				this.ShowDisconnectTCPDialog(null);
+			}, BattleUIControlPvP.DialogType.MyCount);
+		}
+		this.isPvPRecoverCommunicateCheck = false;
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		PvPBattleRecover message = new PvPBattleRecover
+		{
+			isMockBattle = ((!(ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode == "0")) ? 1 : 0),
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
+		};
+		data.Add("080112", message);
+		while (!this.isPvPRecoverCommunicateCheck)
+		{
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			yield return Util.WaitForRealTime(2f);
+		}
+		yield return this.SendConnectionNotice();
+		if (!this.isSendEvent)
+		{
+			base.stateManager.uiControlPvP.HideAlertDialog();
+		}
+		this.isDisconnected = false;
+		this.isResume = false;
+		yield break;
+	}
+
+	private void StopSomething()
+	{
+		this.isSendEvent = true;
 		base.stateManager.uiControlPvP.HideAlertDialog();
 		base.stateManager.uiControlPvP.HideSyncWait();
 		base.stateManager.uiControlPvP.StopAttackTimer();
 		base.stateManager.uiControlPvP.HideEmotionButton();
 		base.stateManager.uiControlPvP.HideSkillSelectUI();
 		base.stateManager.uiControlPvP.HideRetireWindow();
-	}
-
-	protected override IEnumerator Reconnect(bool isDialog = true)
-	{
-		yield return new WaitForEndOfFrame();
-		if (base.stateManager.uiControlPvP.IsAlreadyOpen())
+		if (this.enemyFailedAction != null)
 		{
-			global::Debug.Log("IsAlreadyOpen");
-			yield break;
+			AppCoroutine.Stop(this.enemyFailedAction, false);
 		}
-		base.InitializeTCPClient(true);
-		if (isDialog)
-		{
-			base.stateManager.uiControlPvP.StartEnemyFailedTimer(delegate
-			{
-				base.stateManager.uiControlPvP.HideAlertDialog();
-				global::Debug.LogError("自分が落ちた(時間経過)");
-				this.ShowDisconnectTCPDialog(null);
-			}, BattleUIControlPvP.DialogType.MyCount);
-		}
-		yield break;
 	}
 
 	protected override void ShowDisconnectTCPDialog(Action callback = null)
@@ -113,13 +310,11 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 			this.stateManager.uiControlPvP.HideAlertDialog();
 			this.stateManager.events.CallConnectionErrorEvent();
-			this.isSendEvent = true;
 			if (callback != null)
 			{
 				callback();
 			}
 		}, true, 10);
-		base.stateManager.uiControlPvP.BlockNewDialog();
 	}
 
 	private void ShowWinDialog()
@@ -133,20 +328,7 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 			base.stateManager.uiControlPvP.HideAlertDialog();
 			base.stateManager.events.CallWinEvent();
-			this.isSendEvent = true;
 		}, true, 10);
-		base.stateManager.uiControlPvP.BlockNewDialog();
-	}
-
-	private void ShowRetireDialog()
-	{
-		if (this.isSendEvent)
-		{
-			return;
-		}
-		this.StopSomething();
-		base.stateManager.events.CallRetireEvent();
-		this.isSendEvent = true;
 	}
 
 	private void ShowConnectionErrorDialog()
@@ -157,7 +339,6 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		}
 		this.StopSomething();
 		base.stateManager.events.CallConnectionErrorEvent();
-		this.isSendEvent = true;
 	}
 
 	private void ShowBackToTitleDialog()
@@ -174,7 +355,6 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 			GUIMain.BackToTOP("UIStartupCaution", 0.8f, 0.8f);
 		}, @string, string2, actionType, false);
-		this.isSendEvent = true;
 	}
 
 	public IEnumerator CheckAlreadyLoseBeforeBattle()
@@ -184,45 +364,26 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			BattlePvPFunction.isAlreadyLoseBeforeBattle = false;
 			this.ShowConnectionErrorDialog();
 		}
-		else
-		{
-			IEnumerator sendReconnection = Singleton<TCPMessageSender>.Instance.SendPvPRecoverCommunicate();
-			while (sendReconnection.MoveNext())
-			{
-				yield return null;
-			}
-		}
+		yield return null;
 		yield break;
 	}
 
 	public override IEnumerator WaitAllPlayers(TCPMessageType tcpMessageType)
 	{
-		global::Debug.LogFormat("{0}の通信待ち.", new object[]
+		global::Debug.LogFormat("Wait tcpMessageType:{0}", new object[]
 		{
 			tcpMessageType
 		});
-		int waitingCount = 0;
+		float waitingCount = 0f;
 		for (;;)
 		{
-			while (this.isDisconnected)
+			while (this.isSendEvent || this.isDisconnected)
 			{
 				yield return null;
 			}
-			IEnumerator wait = Util.WaitForRealTime(1f);
-			while (wait.MoveNext())
+			if (waitingCount >= 45f)
 			{
-				object obj = wait.Current;
-				yield return obj;
-			}
-			waitingCount++;
-			global::Debug.LogFormat("[{0}]waiting ....(waitingCount:{1})", new object[]
-			{
-				tcpMessageType,
-				waitingCount
-			});
-			if (waitingCount == 45)
-			{
-				waitingCount = 0;
+				waitingCount = 0f;
 				IEnumerator enemyFailedAction = this.EnemyFailedAction();
 				while (enemyFailedAction.MoveNext())
 				{
@@ -233,6 +394,7 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			{
 				break;
 			}
+			waitingCount += Time.unscaledDeltaTime;
 			yield return null;
 		}
 		global::Debug.LogFormat("Finish waiting [{0}].", new object[]
@@ -244,39 +406,28 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		yield break;
 	}
 
-	public override IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 1f)
+	public override IEnumerator SendMessageInsistently<T>(TCPMessageType tcpMessageType, TCPData<T> message, float waitingTerm = 2f)
 	{
-		int waitingCount = 0;
+		global::Debug.LogFormat("Send tcpMessageType:{0}", new object[]
+		{
+			tcpMessageType
+		});
+		float sendWaitTime = waitingTerm;
+		float sendTotalWaitTime = 0f;
 		for (;;)
 		{
-			while (this.isDisconnected)
+			while (this.isSendEvent || this.isDisconnected || this.isEnemyFailedAction)
 			{
 				yield return null;
 			}
-			base.SendMessageForSync(tcpMessageType, message);
-			global::Debug.LogFormat("残りの人数:{0}/{1}, tcpMessageType{2}, waitingCount:{3}, sent:{4}", new object[]
+			if (sendWaitTime >= waitingTerm)
 			{
-				this.confirmationChecks[tcpMessageType].Count,
-				base.otherUserCount,
-				tcpMessageType,
-				waitingCount,
-				string.Join(",", this.confirmationChecks[tcpMessageType].ToArray())
-			});
-			global::Debug.LogFormat("tcpMessageType:{0}, waitingCount:{1}", new object[]
-			{
-				tcpMessageType,
-				waitingCount
-			});
-			IEnumerator wait = Util.WaitForRealTime(waitingTerm);
-			while (wait.MoveNext())
-			{
-				object obj = wait.Current;
-				yield return obj;
+				sendWaitTime = 0f;
+				base.SendMessageForSync(tcpMessageType, message);
 			}
-			waitingCount++;
-			if (waitingCount == 45)
+			if (sendTotalWaitTime >= 45f)
 			{
-				waitingCount = 0;
+				sendTotalWaitTime = 0f;
 				IEnumerator enemyFailedAction = this.EnemyFailedAction();
 				while (enemyFailedAction.MoveNext())
 				{
@@ -287,6 +438,8 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			{
 				break;
 			}
+			sendWaitTime += Time.unscaledDeltaTime;
+			sendTotalWaitTime += Time.unscaledDeltaTime;
 			yield return null;
 		}
 		LastConfirmationData lastConfirmationMessage = new LastConfirmationData
@@ -311,13 +464,25 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 			this.ManageOnlineCheck(arg["080110"]);
 		}
+		else if (arg.ContainsKey("080120"))
+		{
+			this.ManageJudgmentCheck(arg["080120"]);
+		}
 		else if (arg.ContainsKey("080112"))
 		{
 			this.ManageRecoverCommunicate(arg["080112"]);
 		}
+		else if (arg.ContainsKey("800013"))
+		{
+			this.ManageConnectionNotice(arg["800013"]);
+		}
 		else if (arg.ContainsKey("080114"))
 		{
 			this.ManageBattleActionLog(arg["080114"]);
+		}
+		else if (arg.ContainsKey("080119"))
+		{
+			this.ManageRegist(arg["080119"]);
 		}
 		else
 		{
@@ -325,42 +490,96 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		}
 	}
 
+	private void ShowErrorCodeAlert(Dictionary<string, object> arg)
+	{
+		string text = string.Empty;
+		foreach (KeyValuePair<string, object> keyValuePair in arg)
+		{
+			if (keyValuePair.Key != null && keyValuePair.Value != null)
+			{
+				Dictionary<object, object> dictionary = (Dictionary<object, object>)keyValuePair.Value;
+				foreach (KeyValuePair<object, object> keyValuePair2 in dictionary)
+				{
+					if (keyValuePair2.Key.ToString() == "errorCode" && keyValuePair2.Value != null)
+					{
+						text = keyValuePair2.Value.ToString();
+						break;
+					}
+				}
+			}
+			if (!string.IsNullOrEmpty(text))
+			{
+				AlertManager.ShowAlertDialog(null, text);
+				global::Debug.LogError("Key " + keyValuePair.Key + " errorCode " + text);
+				break;
+			}
+		}
+	}
+
 	private void ManageFailedPlayer(object messageObj)
 	{
-		if (!this.isSyncFinished)
-		{
-			return;
-		}
-		global::Debug.LogError("誰か落ちた");
 		string valueByKey = MultiTools.GetValueByKey<string>(messageObj, "resultCode");
-		global::Debug.LogFormat("resultCode :{0}", new object[]
+		global::Debug.LogFormat("切断時処理(800012) resultCode :{0}", new object[]
 		{
 			valueByKey
 		});
-		AppCoroutine.Start(this.EnemyFailedAction(), false);
+		this.enemyFailedAction = this.EnemyFailedAction();
+		AppCoroutine.Start(this.enemyFailedAction, false);
 	}
 
 	private IEnumerator EnemyFailedAction()
 	{
+		if (this.isSendEvent || this.isEnemyFailedAction)
+		{
+			yield break;
+		}
+		this.isEnemyFailedAction = true;
 		base.stateManager.uiControlPvP.HideRetireWindow();
-		bool isEnd = false;
 		base.stateManager.uiControlPvP.StartEnemyFailedTimer(delegate
 		{
-			isEnd = true;
 			base.stateManager.uiControlPvP.HideAlertDialog();
-			global::Debug.LogError("相手が落ちた(時間経過)");
 		}, BattleUIControlPvP.DialogType.EnemyCount);
-		while (!isEnd)
+		Dictionary<string, object> data = new Dictionary<string, object>();
+		PvPOnlineCheck message = new PvPOnlineCheck
 		{
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
+		};
+		data.Add("080110", message);
+		this.returnPvPOnlineCheck = -1;
+		float sendWaitTime = 3f;
+		float sendTotalWaitTime = 0f;
+		while (this.returnPvPOnlineCheck != 1)
+		{
+			if (sendWaitTime >= 3f)
+			{
+				sendWaitTime = 0f;
+				Singleton<TCPUtil>.Instance.SendTCPRequest(data, "activityList");
+			}
+			if (sendTotalWaitTime >= (float)ConstValue.PVP_BATTLE_ENEMY_RECOVER_TIME)
+			{
+				break;
+			}
+			sendWaitTime += Time.unscaledDeltaTime;
+			sendTotalWaitTime += Time.unscaledDeltaTime;
 			yield return null;
 		}
-		global::Debug.LogError("Time out: サーバーのAPI呼ぶ.");
-		IEnumerator judge = Singleton<TCPMessageSender>.Instance.SendPvPOnlineCheck();
-		while (judge.MoveNext())
+		base.stateManager.uiControlPvP.HideAlertDialog();
+		if (this.returnPvPOnlineCheck == 1)
 		{
-			object obj = judge.Current;
-			yield return obj;
 		}
+		Dictionary<string, object> data2 = new Dictionary<string, object>();
+		PvPJudgmentCheck message2 = new PvPJudgmentCheck
+		{
+			uniqueRequestId = Singleton<TCPUtil>.Instance.GetUniqueRequestId()
+		};
+		data2.Add("080120", message2);
+		this.returnPvPJudgmentCheck = -1;
+		while (this.returnPvPJudgmentCheck == -1)
+		{
+			Singleton<TCPUtil>.Instance.SendTCPRequest(data2, "activityList");
+			yield return Util.WaitForRealTime(3f);
+		}
+		this.isEnemyFailedAction = false;
 		yield break;
 	}
 
@@ -371,15 +590,27 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 			valueByKey
 		});
-		if (valueByKey == 0)
+		this.returnPvPOnlineCheck = valueByKey;
+	}
+
+	private void ManageJudgmentCheck(object messageObj)
+	{
+		string valueByKey = MultiTools.GetValueByKey<string>(messageObj, "resultCode");
+		global::Debug.LogFormat("[試合判定（080120）]result_code:{0}", new object[]
 		{
-			Singleton<TCPMessageSender>.Instance.IsPvPOnlineCheck = true;
-			this.ShowWinDialog();
-		}
-		else if (valueByKey == 1)
+			valueByKey
+		});
+		this.returnPvPJudgmentCheck = valueByKey.ToInt32();
+		if (this.returnPvPJudgmentCheck != 1)
 		{
-			Singleton<TCPMessageSender>.Instance.IsPvPOnlineCheck = true;
-			base.stateManager.uiControlPvP.HideAlertDialog();
+			if (this.returnPvPJudgmentCheck == 2)
+			{
+				this.ShowWinDialog();
+			}
+			else if (this.returnPvPJudgmentCheck == 3)
+			{
+				this.ShowDisconnectTCPDialog(null);
+			}
 		}
 	}
 
@@ -390,34 +621,41 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		{
 			valueByKey
 		});
-		if (valueByKey == 1 || valueByKey == 6 || valueByKey == 5)
+		if (valueByKey == 1)
 		{
-			Singleton<TCPMessageSender>.Instance.IsPvPRecoverCommunicateCheck = true;
-			base.stateManager.uiControlPvP.HideAlertDialog();
-			this.isDisconnected = false;
+			this.isPvPRecoverCommunicateCheck = true;
 		}
-		else if (valueByKey == 2)
+		else if (valueByKey != 5)
 		{
-			Singleton<TCPMessageSender>.Instance.IsPvPRecoverCommunicateCheck = true;
-			this.ShowDisconnectTCPDialog(null);
-		}
-		else if (valueByKey == 3)
-		{
-			Singleton<TCPMessageSender>.Instance.IsPvPRecoverCommunicateCheck = true;
-			this.ShowWinDialog();
-		}
-		else if (valueByKey == 4)
-		{
-			Singleton<TCPMessageSender>.Instance.IsPvPRecoverCommunicateCheck = true;
-			this.ShowBackToTitleDialog();
-		}
-		else
-		{
-			global::Debug.LogErrorFormat("ありえないキー:{0}.", new object[]
+			if (valueByKey == 2 || valueByKey == 6)
 			{
-				valueByKey
-			});
+				this.isPvPRecoverCommunicateCheck = true;
+				this.ShowDisconnectTCPDialog(null);
+			}
+			else if (valueByKey == 3)
+			{
+				this.isPvPRecoverCommunicateCheck = true;
+				this.ShowWinDialog();
+			}
+			else if (valueByKey == 4)
+			{
+				this.isPvPRecoverCommunicateCheck = true;
+				this.ShowBackToTitleDialog();
+			}
+			else
+			{
+				global::Debug.LogErrorFormat("ありえないキー:{0}.", new object[]
+				{
+					valueByKey
+				});
+			}
 		}
+	}
+
+	private void ManageConnectionNotice(object messageObj)
+	{
+		global::Debug.Log("[TCPサーバーへ接続通知（800013）]");
+		this.isPvPConnectionNoticeCheck = true;
 	}
 
 	private void ManageBattleActionLog(object messageObj)
@@ -443,12 +681,27 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 		}
 	}
 
+	private void ManageRegist(object messageObj)
+	{
+		global::Debug.Log("[バトル結果登録（080119）]");
+		this.isRegist = true;
+	}
+
 	protected override void RunRecieverPlayerActions(TCPMessageType tcpMessageType, object messageObj)
 	{
 		switch (tcpMessageType)
 		{
 		case TCPMessageType.None:
 			return;
+		case TCPMessageType.EnemyTurnSync:
+			this.RecieveEnemyTurnSync(tcpMessageType, messageObj);
+			break;
+		case TCPMessageType.RandomSeedSync:
+			this.RecieveRandomSeedSync(tcpMessageType, messageObj);
+			break;
+		case TCPMessageType.Emotion:
+			this.RecieveEmotion(tcpMessageType, messageObj);
+			break;
 		default:
 			if (tcpMessageType != TCPMessageType.LeaderChange)
 			{
@@ -461,12 +714,6 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			{
 				base.RecieveLeaderChange(tcpMessageType, messageObj);
 			}
-			break;
-		case TCPMessageType.RandomSeedSync:
-			this.RecieveRandomSeedSync(tcpMessageType, messageObj);
-			break;
-		case TCPMessageType.Emotion:
-			this.RecieveEmotion(tcpMessageType, messageObj);
 			break;
 		case TCPMessageType.Attack:
 			this.RecieveAttack(tcpMessageType, messageObj);
@@ -481,6 +728,21 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			base.RecieveLastConfirmation(tcpMessageType, messageObj);
 			break;
 		}
+	}
+
+	private void RecieveEnemyTurnSync(TCPMessageType tcpMessageType, object messageObj)
+	{
+		global::Debug.Log("EnemyTurnSync: 受信");
+		EnemyTurnSyncData enemyTurnSyncData = TCPData<EnemyTurnSyncData>.Convert(messageObj);
+		if (base.CheckRecieveData(enemyTurnSyncData.playerUserId, enemyTurnSyncData.hashValue))
+		{
+			return;
+		}
+		this.lastAction[TCPMessageType.EnemyTurnSync] = delegate()
+		{
+			this.recieveChecks[TCPMessageType.EnemyTurnSync] = true;
+		};
+		base.SendConfirmationDisconnected(tcpMessageType, enemyTurnSyncData.playerUserId, string.Empty);
 	}
 
 	public void SendEmotion(UIButton button)
@@ -507,10 +769,6 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 
 	private void RecieveEmotion(TCPMessageType tcpMessageType, object messageObj)
 	{
-		if (this.isDisconnected)
-		{
-			return;
-		}
 		global::Debug.Log("Emotion: 受信");
 		EmotionData emotionData = TCPData<EmotionData>.Convert(messageObj);
 		string spriteName = emotionData.spriteName;
@@ -521,6 +779,10 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 
 	public IEnumerator SendRetire()
 	{
+		if (this.isSendEvent)
+		{
+			yield break;
+		}
 		RetireData message = new RetireData
 		{
 			playerUserId = ClassSingleton<MultiBattleData>.Instance.MyPlayerUserId,
@@ -532,22 +794,19 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			message.playerUserId,
 			message.hashValue
 		});
-		IEnumerator wait = this.SendMessageInsistently<RetireData>(TCPMessageType.Retire, message, 1f);
+		IEnumerator wait = this.SendMessageInsistently<RetireData>(TCPMessageType.Retire, message, 2f);
 		while (wait.MoveNext())
 		{
 			object obj = wait.Current;
 			yield return obj;
 		}
-		this.ShowRetireDialog();
+		this.StopSomething();
+		base.stateManager.events.CallRetireEvent();
 		yield break;
 	}
 
 	private void RecieveRetire(TCPMessageType tcpMessageType, object messageObj)
 	{
-		if (this.isDisconnected)
-		{
-			return;
-		}
 		global::Debug.Log("Retire: リタイア");
 		RetireData retierData = TCPData<RetireData>.Convert(messageObj);
 		if (base.CheckRecieveData(retierData.playerUserId, retierData.hashValue))
@@ -562,5 +821,31 @@ public sealed class BattlePvPFunction : BattleMultiBasicFunction
 			}
 		};
 		base.SendConfirmation(tcpMessageType, retierData.playerUserId, string.Empty);
+	}
+
+	public void SendPvPBattleActionLog(AttackData attackData, int attackerIndex, bool isMyAction, BattleStateData battleStateData, List<BattleLogData.AttackLog> attackLog, List<BattleLogData.BuffLog> buffLog)
+	{
+		BattleLogData value = new BattleLogData
+		{
+			playerUserId = attackData.playerUserId,
+			attackerIndex = attackerIndex,
+			selectSkillIdx = attackData.selectSkillIdx,
+			targetIdx = attackData.targetIdx,
+			isTargetCharacterEnemy = attackData.isTargetCharacterEnemy,
+			isMyAction = isMyAction,
+			round = battleStateData.currentRoundNumber,
+			turn = battleStateData.currentTurnNumber + 1,
+			attackLog = attackLog,
+			buffLog = buffLog
+		};
+		string action = JsonWriter.Serialize(value);
+		Dictionary<string, object> dictionary = new Dictionary<string, object>();
+		PvPBattleActionLog value2 = new PvPBattleActionLog
+		{
+			action = action,
+			isMockBattle = ((!(ClassSingleton<MultiBattleData>.Instance.MockBattleUserCode == "0")) ? 1 : 0)
+		};
+		dictionary.Add("080114", value2);
+		Singleton<TCPUtil>.Instance.SendTCPRequest(dictionary, "activityList");
 	}
 }

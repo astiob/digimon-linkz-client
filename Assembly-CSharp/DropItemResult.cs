@@ -28,12 +28,12 @@ public class DropItemResult : ResultBase
 	[SerializeField]
 	private UILabel areaName;
 
-	[Header("ステージ名")]
 	[SerializeField]
+	[Header("ステージ名")]
 	private UILabel stageName;
 
-	[Header("ライン達")]
 	[SerializeField]
+	[Header("ライン達")]
 	private GameObject[] lines;
 
 	[Header("クリッピングテクスチャ")]

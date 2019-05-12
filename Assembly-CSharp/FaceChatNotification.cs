@@ -68,7 +68,7 @@ public class FaceChatNotification : GUICollider
 		}
 	}
 
-	public void GetChatLastHistoryIdList()
+	private void GetChatLastHistoryIdList()
 	{
 		GameWebAPI.ChatLastHistoryIdList request = new GameWebAPI.ChatLastHistoryIdList
 		{
@@ -84,7 +84,7 @@ public class FaceChatNotification : GUICollider
 		}
 	}
 
-	public virtual void AfterChatLastHistoryIdList(GameWebAPI.RespData_ChatLastHistoryIdList data)
+	private void AfterChatLastHistoryIdList(GameWebAPI.RespData_ChatLastHistoryIdList data)
 	{
 		this.CheckMultiRequestNotification(data.multiRoomRequestId);
 		this.CheckPvPMockBattleNotification(data.lastMockBattleRequestTime);

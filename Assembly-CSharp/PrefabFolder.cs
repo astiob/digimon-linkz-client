@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[AddComponentMenu("GUI/PrefabFolder")]
 [ExecuteInEditMode]
+[AddComponentMenu("GUI/PrefabFolder")]
 public class PrefabFolder : MonoBehaviour
 {
 	[SerializeField]

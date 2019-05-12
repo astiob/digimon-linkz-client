@@ -35,6 +35,9 @@ public class BattleRoundFunction : BattleFunctionBase
 	{
 		base.stateManager.SetBattleScreen(BattleScreen.RoundStart);
 		base.stateManager.uiControl.SetMenuAuto2xButtonEnabled(false);
+		CharacterStateControl[] totalCharacters = base.battleStateData.GetTotalCharacters();
+		base.stateManager.threeDAction.ShowAliveCharactersAction(totalCharacters);
+		base.stateManager.threeDAction.PlayIdleAnimationActiveCharacterAction(totalCharacters);
 		if (base.hierarchyData.batteWaves[base.battleStateData.currentWaveNumber].cameraType == 1)
 		{
 			base.stateManager.cameraControl.PlayCameraMotionAction("BigBoss/0002_command", base.battleStateData.stageSpawnPoint, true);
@@ -234,10 +237,11 @@ public class BattleRoundFunction : BattleFunctionBase
 			this.onSleep = true;
 			this.onFreeze = true;
 		}
-		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.PowerCharge))
+		SufferStateProperty sufferStateProperty = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.PowerCharge);
+		if (sufferStateProperty.isActive)
 		{
 			this.onPowerCharge = true;
-			if (!sortedCharacter.currentSufferState.onPowerCharge.OnInvocationPowerChargeAttack)
+			if (!sufferStateProperty.OnInvocationPowerChargeAttack)
 			{
 				this.onSkipCharacterSelect = true;
 				this.onFreeze = true;
@@ -247,12 +251,14 @@ public class BattleRoundFunction : BattleFunctionBase
 
 	public void RunSufferAfterCommand(List<CharacterStateControl> sortedCharacters, CharacterStateControl sortedCharacter)
 	{
-		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Paralysis) && sortedCharacter.currentSufferState.onParalysis.GetOccurrenceFreeze())
+		SufferStateProperty sufferStateProperty = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Paralysis);
+		if (sufferStateProperty.isActive && sufferStateProperty.GetOccurrenceFreeze())
 		{
 			this.onFreeze = true;
 			this.onParalysis = true;
 		}
-		if (sortedCharacter.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Confusion) && sortedCharacter.currentSufferState.onConfusion.GetOccurrenceFreeze())
+		SufferStateProperty sufferStateProperty2 = sortedCharacter.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Confusion);
+		if (sufferStateProperty2.isActive && sufferStateProperty2.GetOccurrenceFreeze())
 		{
 			sortedCharacter.isSelectSkill = sortedCharacter.SkillIdToIndexOf(base.stateManager.publicAttackSkillId);
 			this.onConfusion = true;

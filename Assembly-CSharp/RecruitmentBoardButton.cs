@@ -21,12 +21,10 @@ public sealed class RecruitmentBoardButton : FacilityButtonSet
 		RestrictionInput.EndLoad();
 		if (GUIManager.CheckTopDialog("CMD_MultiRecruitTop", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OpenCMD));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				CMD_MultiRecruitTop.Create();
+			});
 		}
-	}
-
-	private void OpenCMD(int noop)
-	{
-		CMD_MultiRecruitTop.Create();
 	}
 }

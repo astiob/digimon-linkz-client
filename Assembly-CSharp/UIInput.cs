@@ -45,8 +45,8 @@ public class UIInput : MonoBehaviour
 
 	public UIInput.OnValidate onValidate;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected string mValue;
 
 	[NonSerialized]

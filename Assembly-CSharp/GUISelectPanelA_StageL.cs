@@ -8,8 +8,8 @@ public class GUISelectPanelA_StageL : GUISelectPanelBSPartsUD
 {
 	public bool animationMoving;
 
-	[Header("バナーのセルのスケール")]
 	[SerializeField]
+	[Header("バナーのセルのスケール")]
 	private Vector3 bannerScale;
 
 	private int animIndexBK = -1;

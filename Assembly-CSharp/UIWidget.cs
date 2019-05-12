@@ -2,28 +2,28 @@
 using System.Diagnostics;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [AddComponentMenu("NGUI/UI/NGUI Widget")]
+[ExecuteInEditMode]
 public class UIWidget : UIRect
 {
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected Color mColor = Color.white;
 
-	[SerializeField]
 	[HideInInspector]
+	[SerializeField]
 	protected UIWidget.Pivot mPivot = UIWidget.Pivot.Center;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mWidth = 100;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mHeight = 100;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected int mDepth;
 
 	public UIWidget.OnDimensionsChanged onChange;

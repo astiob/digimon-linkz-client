@@ -1,5 +1,6 @@
 ﻿using System;
 
+[Serializable]
 public class HaveSufferStateStore
 {
 	public HaveSufferStateStore.Data[] sufferStatePropertys;
@@ -7,8 +8,16 @@ public class HaveSufferStateStore
 	[Serializable]
 	public class Data
 	{
-		public int key;
+		public SufferStateProperty.SufferType key;
 
-		public string value;
+		public HaveSufferStateStore.DataChild[] values;
+	}
+
+	[Serializable]
+	public class DataChild
+	{
+		public string key;
+
+		public SufferStateProperty.Data[] values;
 	}
 }

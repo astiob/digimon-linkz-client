@@ -328,7 +328,7 @@ public class SubStateRoundStartAction : BattleStateController
 			foreach (CharacterStateControl character in temp)
 			{
 				SufferStateProperty property = character.currentSufferState.GetSufferStateProperty(sufferType);
-				if (property.turnRate > 0f && !characters.Contains(character))
+				if (property.isTurnRate && !characters.Contains(character))
 				{
 					characters.Add(character);
 				}

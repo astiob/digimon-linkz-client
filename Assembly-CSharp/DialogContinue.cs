@@ -13,20 +13,20 @@ public sealed class DialogContinue : MonoBehaviour
 	[SerializeField]
 	private UIButton retireButton;
 
-	[SerializeField]
 	[Header("復活ボタン")]
+	[SerializeField]
 	private UIButton revivalButton;
 
-	[SerializeField]
 	[Header("所持デジストーンの数")]
+	[SerializeField]
 	private UILabel digistoneNumLabel;
 
 	[SerializeField]
 	[Header("バックグラウンド")]
 	private GameObject background;
 
-	[SerializeField]
 	[Header("デジストーン説明のローカライズ")]
+	[SerializeField]
 	private UILabel digistoneDescription;
 
 	[SerializeField]
@@ -41,8 +41,8 @@ public sealed class DialogContinue : MonoBehaviour
 	[SerializeField]
 	private Collider revivalButtonCollider;
 
-	[Header("UIOpenCloseDialog")]
 	[SerializeField]
+	[Header("UIOpenCloseDialog")]
 	public UIOpenCloseDialog openCloseDialog;
 
 	[SerializeField]
@@ -57,12 +57,12 @@ public sealed class DialogContinue : MonoBehaviour
 	[SerializeField]
 	private UILabel continueTitleLocalize;
 
-	[Header("復活する/ショップへ移動ローカライズ")]
 	[SerializeField]
+	[Header("復活する/ショップへ移動ローカライズ")]
 	private UILabel revivalOrShopLocalize;
 
-	[SerializeField]
 	[Header("所持デジストーンローカライズ")]
+	[SerializeField]
 	private UILabel haveDigistoneLocalize;
 
 	[SerializeField]

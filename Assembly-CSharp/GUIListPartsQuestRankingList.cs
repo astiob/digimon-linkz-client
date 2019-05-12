@@ -14,16 +14,16 @@ public class GUIListPartsQuestRankingList : GUIListPartBS
 	[Header("ベースのSabスプライト")]
 	private UISprite spBaseSab;
 
-	[Header("ベースのLineスプライト")]
 	[SerializeField]
+	[Header("ベースのLineスプライト")]
 	private UISprite spBaseLine;
 
 	[Header("ベースのGlowスプライト")]
 	[SerializeField]
 	private UISprite spBaseGlow;
 
-	[Header("ポイント")]
 	[SerializeField]
+	[Header("ポイント")]
 	private UILabel lbTX_DuelPoint;
 
 	[Header("ランキング順位")]

@@ -11,12 +11,12 @@ public class BattleUIInitialize : MonoBehaviour
 	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[Header("ローディングのオブジェクト")]
 	[SerializeField]
+	[Header("ローディングのオブジェクト")]
 	public GameObject loadingGaugeRootObject;
 
-	[SerializeField]
 	[Header("ローディングのゲージ")]
+	[SerializeField]
 	private UIGaugeManager loadingGauge;
 
 	[Header("ローディングのパーセンテージ")]
@@ -27,12 +27,12 @@ public class BattleUIInitialize : MonoBehaviour
 	[Header("ローディングのパーセンテージ")]
 	private UILabel loadingLabel;
 
-	[Header("ローディングのメッセージのローカライズ")]
 	[SerializeField]
+	[Header("ローディングのメッセージのローカライズ")]
 	private UITextReplacer loadingMessageText;
 
-	[SerializeField]
 	[Header("ローディングのメッセージのローカライズ")]
+	[SerializeField]
 	private UILabel loadingMessageLabel;
 
 	private int currentLoadingLevel = 1;

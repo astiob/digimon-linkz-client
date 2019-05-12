@@ -12,16 +12,16 @@ public class VersionUpItem : GUICollider
 	[SerializeField]
 	public UITexture texIcon;
 
-	[SerializeField]
 	[Header("素材選択")]
+	[SerializeField]
 	public UILabel lbSelect;
 
-	[SerializeField]
 	[Header("個数プレート")]
+	[SerializeField]
 	public UISprite spNumPlate;
 
-	[SerializeField]
 	[Header("個数表示")]
+	[SerializeField]
 	public UILabel lbNum;
 
 	private Action actTouchShort;

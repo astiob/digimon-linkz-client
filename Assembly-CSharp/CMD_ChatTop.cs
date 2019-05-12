@@ -124,6 +124,8 @@ public class CMD_ChatTop : CMD
 
 	private bool[] tabAlertList = new bool[4];
 
+	private Action showWindow;
+
 	public bool isGetChatGroupListMax { get; set; }
 
 	public bool isChatPaging { get; set; }
@@ -156,19 +158,12 @@ public class CMD_ChatTop : CMD
 		CMD_ChatTop.instance = this;
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		base.HideDLG();
-		NormalTask normalTask = new NormalTask(this.PrepareConnect());
-		normalTask.Add(this.RequestChatData());
-		base.StartCoroutine(normalTask.Run(delegate
+		this.showWindow = delegate()
 		{
-			this.CheckColosseumOpenStatus();
+			this.isColosseumOpen = DataMng.Instance().IsReleaseColosseum;
 			ClassSingleton<ChatData>.Instance.UpdateMaxJoinState();
 			this.ShowDLG();
 			this.SetTutorialAnyTime("anytime_second_tutorial_digichat");
@@ -192,22 +187,24 @@ public class CMD_ChatTop : CMD
 			{
 				this.openMenuContent();
 			}
-		}, delegate(Exception noop)
-		{
-			this.ClosePanel(false);
-		}, null));
-	}
-
-	private IEnumerator PrepareConnect()
-	{
+		};
 		Singleton<TCPUtil>.Instance.PrepareTCPServer(new Action<string>(this.AfterPrepareTCPServer), "pvp");
-		yield return null;
-		yield break;
 	}
 
 	private void AfterPrepareTCPServer(string server)
 	{
+		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		Singleton<TCPUtil>.Instance.MakeTCPClient();
+		APIRequestTask task = this.RequestChatData();
+		base.StartCoroutine(task.Run(delegate
+		{
+			RestrictionInput.EndLoad();
+			this.showWindow();
+		}, delegate(Exception nop)
+		{
+			RestrictionInput.EndLoad();
+			base.ClosePanel(false);
+		}, null));
 	}
 
 	private APIRequestTask RequestChatData()
@@ -882,11 +879,6 @@ public class CMD_ChatTop : CMD
 		{
 			this.OnFinishAgreement(true);
 		}
-	}
-
-	private void CheckColosseumOpenStatus()
-	{
-		this.isColosseumOpen = DataMng.Instance().IsReleaseColosseum;
 	}
 
 	private void OnFinishAgreement(bool isAgree)

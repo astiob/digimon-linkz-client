@@ -77,8 +77,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private UILabel leaderSkillDescription;
 
-	[Header("特化型")]
 	[SerializeField]
+	[Header("特化型")]
 	private UILabel specificType;
 
 	[SerializeField]
@@ -89,8 +89,8 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("継承技1")]
 	private BattleDigimonStatus.Skill inheritance1;
 
-	[SerializeField]
 	[Header("継承技2")]
+	[SerializeField]
 	private BattleDigimonStatus.Skill inheritance2;
 
 	[SerializeField]
@@ -100,20 +100,20 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[SerializeField]
 	private MonsterMedalList MonsterMedalList;
 
-	[Header("Lvローカライズ")]
 	[SerializeField]
+	[Header("Lvローカライズ")]
 	private UILabel lvLocalize;
 
-	[SerializeField]
 	[Header("HPローカライズ")]
+	[SerializeField]
 	private UILabel hpLocalize;
 
 	[SerializeField]
 	[Header("友情度ローカライズ")]
 	private UILabel friendLocalize;
 
-	[Header("ATKローカライズ")]
 	[SerializeField]
+	[Header("ATKローカライズ")]
 	private UILabel atkLocalize;
 
 	[SerializeField]
@@ -124,12 +124,12 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 	[Header("SATKローカライズ")]
 	private UILabel satkLocalize;
 
-	[SerializeField]
 	[Header("SDEFローカライズ")]
+	[SerializeField]
 	private UILabel sdefLocalize;
 
-	[Header("SPDローカライズ")]
 	[SerializeField]
+	[Header("SPDローカライズ")]
 	private UILabel spdLocalize;
 
 	[Header("Luckローカライズ")]
@@ -265,7 +265,7 @@ public sealed class BattleDigimonStatus : BattleDigimonStatusBase
 			this.inheritance2.description.text = "-";
 			this.ApplyValue(0, 0, null, this.inheritance2.upObject, this.inheritance2.downObject);
 		}
-		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipDropRateUp || characterStatus.isChipDropCountUp || characterStatus.isChipExtaraStageRateUp || characterStatus.IsPoint());
+		this.stageGimmickObject.SetActive(num > 0 || characterStatus.isChipServerAddValue || characterStatus.IsPoint());
 		this.SetArousal(characterStatus.arousal);
 		base.SetupTolerance(characterStatus);
 		this.MonsterMedalList.SetValues(characterStatus.talent);

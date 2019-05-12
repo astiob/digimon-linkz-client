@@ -16,12 +16,12 @@ public class UIProgressBar : UIWidgetContainer
 	[HideInInspector]
 	protected UIWidget mBG;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected UIWidget mFG;
 
-	[HideInInspector]
 	[SerializeField]
+	[HideInInspector]
 	protected float mValue = 1f;
 
 	[SerializeField]

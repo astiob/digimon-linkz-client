@@ -56,8 +56,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[SerializeField]
 	private BoxCollider coBTN_READY;
 
-	[Header("決定ボタン")]
 	[SerializeField]
+	[Header("決定ボタン")]
 	private GameObject goBTN_DECIDE;
 
 	[SerializeField]
@@ -78,8 +78,8 @@ public class CMD_MultiRecruitPartyWait : CMD
 	[Header("エモーション処理")]
 	private EmotionSenderMulti emotionSenderMulti;
 
-	[SerializeField]
 	[Header("エモーションコンポーネント")]
+	[SerializeField]
 	private EmotionButtonFront emotionButtonCP;
 
 	[SerializeField]
@@ -171,6 +171,7 @@ public class CMD_MultiRecruitPartyWait : CMD
 		this.myUserId = DataMng.Instance().RespDataCM_Login.playerInfo.userId;
 		this.myNickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
 		this.myTitleId = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.titleId;
+		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.MULTI;
 	}
 
 	protected override void Update()
@@ -524,12 +525,12 @@ public class CMD_MultiRecruitPartyWait : CMD
 			ClassSingleton<MultiBattleData>.Instance.PvPUserDatas[k] = pvPUserData;
 		}
 		TipsLoading.Instance.StartTipsLoad(CMD_Tips.DISPLAY_PLACE.QuestToMultiBattle, false);
-		base.SetLastCallBack(new Action<int>(this.GoToBattleScene));
+		base.SetLastCallBack(new Action(this.GoToBattleScene));
 		this.CloseAllModal();
 		base.ClosePanel(true);
 	}
 
-	private void GoToBattleScene(int idx)
+	private void GoToBattleScene()
 	{
 		if (CMD_PartyEdit.instance != null)
 		{

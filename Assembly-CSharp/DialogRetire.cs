@@ -8,8 +8,8 @@ public class DialogRetire : MonoBehaviour
 	[Header("Yesボタン")]
 	private UIButton yesButton;
 
-	[SerializeField]
 	[Header("Noボタン")]
+	[SerializeField]
 	private UIButton noButton;
 
 	[Header("開く閉じるダイアログ")]
@@ -24,12 +24,12 @@ public class DialogRetire : MonoBehaviour
 	[SerializeField]
 	private UILabel noLocalize;
 
-	[Header("リタイア/降参ローカライズ")]
 	[SerializeField]
+	[Header("リタイア/降参ローカライズ")]
 	private UILabel retireLocalize;
 
-	[Header("リタイアメッセージローカライズ")]
 	[SerializeField]
+	[Header("リタイアメッセージローカライズ")]
 	private UILabel retireMessageLocalize;
 
 	private void Awake()

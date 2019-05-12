@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class GUIListPartsPackItem : GUIListPartBS
 {
-	[SerializeField]
 	[Header("アイコン")]
+	[SerializeField]
 	private UITexture ItemIcon;
 
-	[SerializeField]
 	[Header("アイテムネーム")]
+	[SerializeField]
 	private UILabel lbTX_ItemName;
 
-	[Header("アイテム個数")]
 	[SerializeField]
+	[Header("アイテム個数")]
 	private UILabel lbTX_ItemNum;
 
 	[SerializeField]

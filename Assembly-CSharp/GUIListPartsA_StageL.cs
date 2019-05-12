@@ -7,20 +7,20 @@ using UnityEngine;
 
 public class GUIListPartsA_StageL : GUIListPartBS
 {
-	[Header("デフォルトの進捗の画像")]
 	[SerializeField]
+	[Header("デフォルトの進捗の画像")]
 	private string normalProgress = "Common02_ProgressG";
 
-	[SerializeField]
 	[Header("クリア進捗の画像")]
+	[SerializeField]
 	private string clearProgress = "Common02_Progress";
 
 	[Header("進捗の四角")]
 	[SerializeField]
 	private List<GameObject> goPROGRESS_LIST;
 
-	[SerializeField]
 	[Header("NEWのGameObject")]
+	[SerializeField]
 	private GameObject goNEW;
 
 	[SerializeField]

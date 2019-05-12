@@ -65,8 +65,9 @@ namespace EvolutionRouteMap
 		{
 		}
 
-		protected override void OnCloseStartDialog()
+		protected override bool OnCloseStartDialog()
 		{
+			return true;
 		}
 
 		protected override void OnClosedDialog()

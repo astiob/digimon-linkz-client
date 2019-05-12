@@ -2,10 +2,6 @@
 
 public class TipsLoading
 {
-	private readonly string cmdTipsPrefabName = "CMD_Tips";
-
-	private readonly string cmdPvPTipsPrefabName = "CMD_PVPTips";
-
 	private static TipsLoading instance;
 
 	private CMD_Tips cmdTips;
@@ -46,8 +42,7 @@ public class TipsLoading
 		}
 		this.isShow = true;
 		CMD_Tips.DisPlayPlace = DisplayPlace;
-		string dialogName = (DisplayPlace != CMD_Tips.DISPLAY_PLACE.QuestToPvPBattle) ? this.cmdTipsPrefabName : this.cmdPvPTipsPrefabName;
-		this.cmdTips = (GUIMain.ShowCommonDialog(null, dialogName) as CMD_Tips);
+		this.cmdTips = (GUIMain.ShowCommonDialog(null, "CMD_Tips") as CMD_Tips);
 	}
 
 	public void StopTipsLoad(bool loadPrefabClose = true)

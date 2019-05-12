@@ -41,9 +41,9 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 		string strTitle = this.data.strTitle;
 		if (strTitle != null)
 		{
-			if (GUIListPartsTrainingMenu.<>f__switch$map39 == null)
+			if (GUIListPartsTrainingMenu.<>f__switch$map3A == null)
 			{
-				GUIListPartsTrainingMenu.<>f__switch$map39 = new Dictionary<string, int>(2)
+				GUIListPartsTrainingMenu.<>f__switch$map3A = new Dictionary<string, int>(2)
 				{
 					{
 						"MealTitle",
@@ -56,7 +56,7 @@ public class GUIListPartsTrainingMenu : GUIListPartBS
 				};
 			}
 			int num;
-			if (GUIListPartsTrainingMenu.<>f__switch$map39.TryGetValue(strTitle, out num))
+			if (GUIListPartsTrainingMenu.<>f__switch$map3A.TryGetValue(strTitle, out num))
 			{
 				if (num != 0)
 				{

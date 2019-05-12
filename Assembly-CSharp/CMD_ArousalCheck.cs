@@ -28,12 +28,12 @@ public sealed class CMD_ArousalCheck : CMD
 	[Header("Yesボタンのラベル")]
 	private UILabel buttonYesLabel;
 
-	[Header("Noボタンのラベル")]
 	[SerializeField]
+	[Header("Noボタンのラベル")]
 	private UILabel buttonNoLabel;
 
-	[Header("警告ダイアログの窓本体")]
 	[SerializeField]
+	[Header("警告ダイアログの窓本体")]
 	private GameObject dialogPlate;
 
 	[SerializeField]

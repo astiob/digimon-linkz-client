@@ -242,7 +242,6 @@ public class PartsMenu : MonoBehaviour
 
 	private void OnTappedTab()
 	{
-		global::Debug.Log("============================================= PARTS_MENU TAB");
 		this.ShowHide(true);
 	}
 
@@ -252,15 +251,12 @@ public class PartsMenu : MonoBehaviour
 		CommonDialog x = GUIManager.CheckTopDialog("CMD_BaseSelect", null);
 		if (x == null || CMD_BaseSelect.BaseType != CMD_BaseSelect.BASE_TYPE.MEAL)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedMeal));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
+				this.PartsMenuShowDialog(null, "CMD_BaseSelect");
+			});
 		}
-	}
-
-	private void OnClickedMeal(int i)
-	{
-		CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.MEAL;
-		this.PartsMenuShowDialog(null, "CMD_BaseSelect");
-		global::Debug.Log("============================================= PARTS_MENU Meal");
 	}
 
 	public void OnClickedTraining()
@@ -268,14 +264,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_ReinforcementTOP", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedTraining));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_ReinforcementTOP");
+			});
 		}
-	}
-
-	private void OnClickedTraining(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_ReinforcementTOP");
-		global::Debug.Log("============================================= PARTS_MENU Training");
 	}
 
 	public void OnClickedTrainingMenu()
@@ -284,14 +277,11 @@ public class PartsMenu : MonoBehaviour
 		CommonDialog x = GUIManager.CheckTopDialog("CMD_Training_Menu", null);
 		if (x == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedTrainingMenu));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_Training_Menu");
+			});
 		}
-	}
-
-	private void OnClickedTrainingMenu(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_Training_Menu");
-		global::Debug.Log("============================================= PARTS_MENU Training_Menu");
 	}
 
 	public void OnClickedArousal()
@@ -300,14 +290,11 @@ public class PartsMenu : MonoBehaviour
 		CommonDialog x = GUIManager.CheckTopDialog("CMD_ArousalTOP", null);
 		if (x == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedArousal));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_ArousalTOP");
+			});
 		}
-	}
-
-	private void OnClickedArousal(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_ArousalTOP");
-		global::Debug.Log("============================================= PARTS_MENU ArousalTOP");
 	}
 
 	public void OnClickedClearing()
@@ -317,7 +304,10 @@ public class PartsMenu : MonoBehaviour
 		{
 			if (GUIManager.CheckTopDialog("CMD_ClearingHouseTOP", null) == null)
 			{
-				GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedClearing));
+				GUIManager.CloseAllCommonDialog(delegate
+				{
+					this.PartsMenuShowDialog(null, "CMD_ClearingHouseTOP");
+				});
 			}
 		}
 		else
@@ -328,27 +318,18 @@ public class PartsMenu : MonoBehaviour
 		}
 	}
 
-	private void OnClickedClearing(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_ClearingHouseTOP");
-		global::Debug.Log("============================================= PARTS_MENU Training");
-	}
-
 	public void OnClickedEvo()
 	{
 		this.ForceHide(true);
 		CommonDialog x = GUIManager.CheckTopDialog("CMD_BaseSelect", null);
 		if (x == null || CMD_BaseSelect.BaseType != CMD_BaseSelect.BASE_TYPE.EVOLVE)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedEvo));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.EVOLVE;
+				this.PartsMenuShowDialog(null, "CMD_BaseSelect");
+			});
 		}
-	}
-
-	private void OnClickedEvo(int i)
-	{
-		CMD_BaseSelect.BaseType = CMD_BaseSelect.BASE_TYPE.EVOLVE;
-		this.PartsMenuShowDialog(null, "CMD_BaseSelect");
-		global::Debug.Log("============================================= PARTS_MENU Evo");
 	}
 
 	private void OnClickedParty()
@@ -356,15 +337,13 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_PartyEdit", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedParty));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+				CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.EDIT;
+				this.PartsMenuShowDialog(null, "CMD_PartyEdit");
+			});
 		}
-	}
-
-	private void OnClickedParty(int i)
-	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		CMD_PartyEdit.ModeType = CMD_PartyEdit.MODE_TYPE.EDIT;
-		this.PartsMenuShowDialog(null, "CMD_PartyEdit");
 	}
 
 	public void OnClickedQuest()
@@ -378,18 +357,16 @@ public class PartsMenu : MonoBehaviour
 		this.quest_ui_type_bk = quest_ui_type;
 		if (GUIManager.CheckTopDialog("CMD_QuestSelect", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.__OnClickedQuest));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
+				List<string> list = new List<string>();
+				list.Add("1");
+				list.Add("3");
+				list.Add("8");
+				ClassSingleton<QuestData>.Instance.GetWorldDungeonInfo(list, new Action<bool>(this.actCBQuest));
+			});
 		}
-	}
-
-	private void __OnClickedQuest(int i)
-	{
-		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
-		List<string> list = new List<string>();
-		list.Add("1");
-		list.Add("3");
-		list.Add("8");
-		ClassSingleton<QuestData>.Instance.GetWorldDungeonInfo(list, new Action<bool>(this.actCBQuest));
 	}
 
 	private void actCBQuest(bool isSuccess)
@@ -492,13 +469,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_PvPTop", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClicked_VS));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				FarmColosseum.ShowPvPTop();
+			});
 		}
-	}
-
-	private void OnClicked_VS(int i)
-	{
-		FarmColosseum.ShowPvPTop();
 	}
 
 	public void OnClickedGacha()
@@ -517,13 +492,10 @@ public class PartsMenu : MonoBehaviour
 				return;
 			}
 		}
-		GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedGacha));
-	}
-
-	private void OnClickedGacha(int i)
-	{
-		global::Debug.Log("================================================== OnClickedGacha;");
-		this.PartsMenuShowDialog(null, "CMD_GashaTOP");
+		GUIManager.CloseAllCommonDialog(delegate
+		{
+			this.PartsMenuShowDialog(null, "CMD_GashaTOP");
+		});
 	}
 
 	private void OnClickedChat()
@@ -531,13 +503,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_ChatTop", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedChat));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_ChatTop");
+			});
 		}
-	}
-
-	private void OnClickedChat(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_ChatTop");
 	}
 
 	private void OnClickedShop()
@@ -545,19 +515,16 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_Shop", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedShop));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_Shop");
+				FarmRoot farmRoot = FarmRoot.Instance;
+				if (null != farmRoot)
+				{
+					farmRoot.ClearSettingFarmObject();
+				}
+			});
 		}
-	}
-
-	private void OnClickedShop(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_Shop");
-		FarmRoot farmRoot = FarmRoot.Instance;
-		if (null != farmRoot)
-		{
-			farmRoot.ClearSettingFarmObject();
-		}
-		global::Debug.Log("============================================= PARTS_MENU Shop");
 	}
 
 	public void OnClickedFriend()
@@ -565,14 +532,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_FriendTop", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedFriend));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_FriendTop");
+			});
 		}
-	}
-
-	private void OnClickedFriend(int i)
-	{
-		global::Debug.Log("============================================= PARTS_MENU Friend");
-		this.PartsMenuShowDialog(null, "CMD_FriendTop");
 	}
 
 	private void OnClickedBook()
@@ -580,13 +544,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_PictureBookTOP", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedBook));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_PictureBookTOP");
+			});
 		}
-	}
-
-	private void OnClickedBook(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_PictureBookTOP");
 	}
 
 	private void OnClickedHelp()
@@ -594,14 +556,12 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_HelpCategory", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OpenHelpUI));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				CMD_HelpCategory.Data = MasterDataMng.Instance().RespDataMA_HelpCategoryM;
+				this.PartsMenuShowDialog(null, "CMD_HelpCategory");
+			});
 		}
-	}
-
-	private void OpenHelpUI(int i)
-	{
-		CMD_HelpCategory.Data = MasterDataMng.Instance().RespDataMA_HelpCategoryM;
-		this.PartsMenuShowDialog(null, "CMD_HelpCategory");
 	}
 
 	private void OnClickedSettings()
@@ -609,13 +569,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_Setting1", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedSettings));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_Setting1");
+			});
 		}
-	}
-
-	private void OnClickedSettings(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_Setting1");
 	}
 
 	private void OnClickedInfo()
@@ -623,13 +581,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_NewsALL", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedInfo));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_NewsALL");
+			});
 		}
-	}
-
-	private void OnClickedInfo(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_NewsALL");
 	}
 
 	private void OnClickedProfile()
@@ -637,13 +593,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_Profile", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedProfile));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_Profile");
+			});
 		}
-	}
-
-	private void OnClickedProfile(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_Profile");
 	}
 
 	private void OnClickedOthers()
@@ -651,13 +605,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_OtherTOP", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedOthers));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_OtherTOP");
+			});
 		}
-	}
-
-	private void OnClickedOthers(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_OtherTOP");
 	}
 
 	private void OnClickedClearingHouse()
@@ -665,13 +617,11 @@ public class PartsMenu : MonoBehaviour
 		this.ForceHide(true);
 		if (GUIManager.CheckTopDialog("CMD_ClearingHouse", null) == null)
 		{
-			GUIManager.CloseAllCommonDialog(new Action<int>(this.OnClickedClearingHouse));
+			GUIManager.CloseAllCommonDialog(delegate
+			{
+				this.PartsMenuShowDialog(null, "CMD_ClearingHouse");
+			});
 		}
-	}
-
-	private void OnClickedClearingHouse(int i)
-	{
-		this.PartsMenuShowDialog(null, "CMD_ClearingHouse");
 	}
 
 	private void SetCommonUI()

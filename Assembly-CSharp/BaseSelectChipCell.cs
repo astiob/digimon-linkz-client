@@ -12,12 +12,12 @@ public sealed class BaseSelectChipCell : MonoBehaviour
 	[Header("レア度のスプライト")]
 	private UISprite rareSprite;
 
-	[Header("チップ名のラベル")]
 	[SerializeField]
+	[Header("チップ名のラベル")]
 	private UILabel chipNameLabel;
 
-	[SerializeField]
 	[Header("非装着のラベル")]
+	[SerializeField]
 	private UILabel noChipLabel;
 
 	public void SetupIcon(GameWebAPI.RespDataCS_MonsterSlotInfoListLogic.Equip equip)

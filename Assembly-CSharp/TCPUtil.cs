@@ -81,25 +81,17 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		base.StartCoroutine(request.Run(delegate()
 		{
 			RestrictionInput.EndLoad();
-			this.AfterGetTcpShardingString(data);
-		}, delegate(Exception noop)
-		{
-			RestrictionInput.EndLoad();
-		}, null));
+			this.hostAddress = data.server;
+			global::Debug.Log("接続先TCPサーバは「" + this.hostAddress + "」です");
+			if (this.afterGetTcpShardingStringAction != null)
+			{
+				this.afterGetTcpShardingStringAction(data.server);
+			}
+		}, null, null));
 		this.parameter = new Dictionary<string, object>();
 		this.parameter.Add("X-AppVer", WebAPIPlatformValue.GetAppVersion());
 		this.header = new Dictionary<string, object>();
 		this.header.Add("headers", this.parameter);
-	}
-
-	private void AfterGetTcpShardingString(GameWebAPI.RespData_GetTcpShardingString data)
-	{
-		this.hostAddress = data.server;
-		global::Debug.Log("接続先TCPサーバは「" + this.hostAddress + "」です");
-		if (this.afterGetTcpShardingStringAction != null)
-		{
-			this.afterGetTcpShardingStringAction(data.server);
-		}
 	}
 
 	public void SetTcpShardingString(GameWebAPI.RespData_GetTcpShardingString data)
@@ -152,7 +144,7 @@ public class TCPUtil : Singleton<TCPUtil>, INpCloud
 		this.ResetAllCallBackMethod();
 	}
 
-	private void ResetAllCallBackMethod()
+	public void ResetAllCallBackMethod()
 	{
 		this.afterGetTcpShardingStringAction = null;
 		this.afterConnectTCPAction = null;

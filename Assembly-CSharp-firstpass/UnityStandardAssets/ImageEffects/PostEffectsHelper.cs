@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects
 {
-	[ExecuteInEditMode]
 	[RequireComponent(typeof(Camera))]
+	[ExecuteInEditMode]
 	internal class PostEffectsHelper : MonoBehaviour
 	{
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)

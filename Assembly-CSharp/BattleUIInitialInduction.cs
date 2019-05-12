@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class BattleUIInitialInduction : MonoBehaviour
 {
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("Rootのオブジェクト(Dialog)")]
+	[SerializeField]
 	private GameObject rootObject;
 
-	[Header("ボタン")]
 	[SerializeField]
+	[Header("ボタン")]
 	private UIButton button;
 
-	[Header("テキスト")]
 	[SerializeField]
+	[Header("テキスト")]
 	private UILabel text;
 
 	[Header("モニター")]

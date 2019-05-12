@@ -15,8 +15,8 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private const int BOSS_ID_AP_FREE = 4;
 
-	[Header("出現する敵リスト")]
 	[SerializeField]
+	[Header("出現する敵リスト")]
 	private List<GameObject> goENCOUNT_MONS_LIST;
 
 	[SerializeField]
@@ -29,24 +29,24 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_TITLE;
 
-	[SerializeField]
 	[Header("ステージの数字のラベル")]
+	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_NUMBER;
 
 	[SerializeField]
 	[Header("コンテンツ・ルート (ヒナと吹き出し)")]
 	private GameObject goContentsROOT;
 
-	[SerializeField]
 	[Header("ポイントコンテンツ・ルート (ボーナス)")]
+	[SerializeField]
 	private GameObject goPointContentsROOT;
 
-	[SerializeField]
 	[Header("詳細説明 (ヒナの吹き出し)")]
+	[SerializeField]
 	private UILabel ngTX_A_STAGE_DNG_DESCRIPT;
 
-	[Header("ポイント・タイトルのリスト)")]
 	[SerializeField]
+	[Header("ポイント・タイトルのリスト)")]
 	private List<UILabel> bonusPointLabelList;
 
 	[SerializeField]
@@ -56,8 +56,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[SerializeField]
 	private UILabel getEXPTitleLabel;
 
-	[Header("取得できるEXP")]
 	[SerializeField]
+	[Header("取得できるEXP")]
 	private UILabel getEXPLabel;
 
 	[Header("取得できるクラスタタイトル")]
@@ -72,8 +72,8 @@ public class CMD_QuestDetailedPOP : CMD
 	[Header("消費するスタミナタイトル")]
 	private UILabel getStaminaTitleLabel;
 
-	[SerializeField]
 	[Header("消費するスタミナ")]
+	[SerializeField]
 	private UILabel getStaminaLabel;
 
 	[Header("バトルボタン")]
@@ -82,8 +82,8 @@ public class CMD_QuestDetailedPOP : CMD
 
 	private UISprite spBattleBtn;
 
-	[SerializeField]
 	[Header("マルチバトルボタン")]
+	[SerializeField]
 	private GameObject goMultiBattleBtn;
 
 	[SerializeField]
@@ -124,11 +124,6 @@ public class CMD_QuestDetailedPOP : CMD
 		}
 	}
 
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
 		base.HideDLG();
@@ -159,20 +154,10 @@ public class CMD_QuestDetailedPOP : CMD
 		yield break;
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	public override void ClosePanel(bool animation = true)
 	{
 		this.isClosed = true;
 		base.ClosePanel(animation);
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
 	}
 
 	private void ShowInfo()

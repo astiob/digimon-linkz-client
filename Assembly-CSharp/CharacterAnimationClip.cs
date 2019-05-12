@@ -11,16 +11,16 @@ public class CharacterAnimationClip
 	[SerializeField]
 	private AnimationClip _idle;
 
-	[SerializeField]
 	[FormerlySerializedAs("hit")]
+	[SerializeField]
 	private AnimationClip _hit;
 
 	[SerializeField]
 	[FormerlySerializedAs("guard")]
 	private AnimationClip _guard;
 
-	[SerializeField]
 	[FormerlySerializedAs("revival")]
+	[SerializeField]
 	private AnimationClip _revival;
 
 	[FormerlySerializedAs("win")]

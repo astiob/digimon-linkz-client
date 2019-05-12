@@ -11,15 +11,15 @@ public static class NGUIMath
 		return from * (1f - factor) + to * factor;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int ClampIndex(int val, int max)
 	{
 		return (val >= 0) ? ((val >= max) ? (max - 1) : val) : 0;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static int RepeatIndex(int val, int max)
 	{
 		if (max < 1)
@@ -52,8 +52,8 @@ public static class NGUIMath
 		return angle;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static float Wrap01(float val)
 	{
 		return val - (float)Mathf.FloorToInt(val);
@@ -135,8 +135,8 @@ public static class NGUIMath
 		return (char)(65 + num - 10);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static string DecimalToHex8(int num)
 	{
 		num &= 255;
@@ -169,8 +169,8 @@ public static class NGUIMath
 		return num | Mathf.RoundToInt(c.a * 255f);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	public static Color IntToColor(int val)
 	{
 		float num = 0.003921569f;
@@ -199,8 +199,8 @@ public static class NGUIMath
 		return text;
 	}
 
-	[DebuggerHidden]
 	[DebuggerStepThrough]
+	[DebuggerHidden]
 	public static Color HexToColor(uint val)
 	{
 		return NGUIMath.IntToColor((int)val);
@@ -387,8 +387,8 @@ public static class NGUIMath
 		return new Bounds(Vector3.zero, Vector3.zero);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+	[DebuggerStepThrough]
 	private static void CalculateRelativeWidgetBounds(Transform content, bool considerInactive, bool isRoot, ref Matrix4x4 toLocal, ref Vector3 vMin, ref Vector3 vMax, ref bool isSet, bool considerChildren)
 	{
 		if (content == null)

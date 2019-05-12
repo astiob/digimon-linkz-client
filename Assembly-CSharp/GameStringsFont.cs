@@ -2,8 +2,8 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[ExecuteInEditMode]
 [AddComponentMenu("GUI/GameStrings Font")]
+[ExecuteInEditMode]
 public sealed class GameStringsFont : MonoBehaviour
 {
 	private TextMesh textMesh;

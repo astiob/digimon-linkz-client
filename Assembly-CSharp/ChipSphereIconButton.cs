@@ -18,36 +18,36 @@ public sealed class ChipSphereIconButton : GUICollider
 	[Header("LOOKのオブジェクト")]
 	private GameObject lookGO;
 
-	[SerializeField]
 	[Header("Chargesのオブジェクト")]
+	[SerializeField]
 	private GameObject chargesGO;
 
 	[Header("選択中(Chip_choosing)")]
 	[SerializeField]
 	private GameObject choosingGO;
 
-	[SerializeField]
 	[Header("チップの名前/拡張説明")]
+	[SerializeField]
 	private UILabel chipNameLabel;
 
 	[Header("チップの説明ラベル/拡張パッチの個数")]
 	[SerializeField]
 	private UILabel chipDescriptLabel;
 
-	[SerializeField]
 	[Header("チップのテクスチャ/枠")]
+	[SerializeField]
 	private UITexture chipTexture;
 
-	[Header("アイテムのスプライト")]
 	[SerializeField]
+	[Header("アイテムのスプライト")]
 	private UISprite itemSprite;
 
-	[Header("LOOKのスプライト")]
 	[SerializeField]
+	[Header("LOOKのスプライト")]
 	private UISprite lookSprite;
 
-	[SerializeField]
 	[Header("チップランクのスプライト")]
+	[SerializeField]
 	private UISprite rankSprite;
 
 	public CMD_ChipSphere cmdChipSphere { private get; set; }

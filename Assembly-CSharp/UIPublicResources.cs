@@ -330,30 +330,6 @@ public class UIPublicResources : ScriptableObject
 				return this.auxiliaryEffectIcons[9];
 			}
 			break;
-		case SufferStateProperty.SufferType.Counter:
-			if (this.auxiliaryEffectIcons[14] != null)
-			{
-				return this.auxiliaryEffectIcons[14];
-			}
-			break;
-		case SufferStateProperty.SufferType.Reflection:
-			if (this.auxiliaryEffectIcons[15] != null)
-			{
-				return this.auxiliaryEffectIcons[15];
-			}
-			break;
-		case SufferStateProperty.SufferType.Protect:
-			if (this.auxiliaryEffectIcons[16] != null)
-			{
-				return this.auxiliaryEffectIcons[16];
-			}
-			break;
-		case SufferStateProperty.SufferType.PowerCharge:
-			if (this.auxiliaryEffectIcons[19] != null)
-			{
-				return this.auxiliaryEffectIcons[19];
-			}
-			break;
 		case SufferStateProperty.SufferType.HitRateUp:
 			if (this.auxiliaryEffectIcons[26] != null)
 			{
@@ -376,6 +352,30 @@ public class UIPublicResources : ScriptableObject
 			if (this.auxiliaryEffectIcons[31] != null)
 			{
 				return this.auxiliaryEffectIcons[31];
+			}
+			break;
+		case SufferStateProperty.SufferType.Counter:
+			if (this.auxiliaryEffectIcons[14] != null)
+			{
+				return this.auxiliaryEffectIcons[14];
+			}
+			break;
+		case SufferStateProperty.SufferType.Reflection:
+			if (this.auxiliaryEffectIcons[15] != null)
+			{
+				return this.auxiliaryEffectIcons[15];
+			}
+			break;
+		case SufferStateProperty.SufferType.Protect:
+			if (this.auxiliaryEffectIcons[16] != null)
+			{
+				return this.auxiliaryEffectIcons[16];
+			}
+			break;
+		case SufferStateProperty.SufferType.PowerCharge:
+			if (this.auxiliaryEffectIcons[19] != null)
+			{
+				return this.auxiliaryEffectIcons[19];
 			}
 			break;
 		}

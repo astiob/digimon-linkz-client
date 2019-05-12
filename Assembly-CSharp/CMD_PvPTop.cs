@@ -16,8 +16,8 @@ public class CMD_PvPTop : CMD
 
 	private static CMD_PvPTop instance;
 
-	[SerializeField]
 	[Header("以下,PvPTopに関する設定")]
+	[SerializeField]
 	private UILabel lastTimeLabel;
 
 	[SerializeField]
@@ -69,8 +69,8 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private GameObject nationwideTextG;
 
-	[Header("拡張全国バトルボタン")]
 	[SerializeField]
+	[Header("拡張全国バトルボタン")]
 	private GUICollider nationwideExtraCollider;
 
 	[SerializeField]
@@ -138,24 +138,24 @@ public class CMD_PvPTop : CMD
 	[SerializeField]
 	private UILabel[] spanTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの開始時間ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] startTimeLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの'~'ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] fromMarkLabelArray = new UILabel[0];
 
-	[SerializeField]
 	[Header("以下,タイムスケジュールの終了時間ラベル(昇順)")]
+	[SerializeField]
 	private UILabel[] endTimeLabelArray = new UILabel[0];
 
-	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	[SerializeField]
+	[Header("以下,タイムスケジュールの開催中ラベル(昇順)")]
 	private GameObject[] inSessionObjArray = new GameObject[0];
 
-	[SerializeField]
 	[Header("以下,ヘルプの画像パス(表示順)")]
+	[SerializeField]
 	private List<string> helpImagePathList = new List<string>();
 
 	[SerializeField]
@@ -330,10 +330,7 @@ public class CMD_PvPTop : CMD
 			yield return null;
 		}
 		yield return new WaitForSeconds(0.5f);
-		base.StartCoroutine(screenHome.StartScreenFadeIn(delegate
-		{
-			RestrictionInput.EndLoad();
-		}));
+		base.StartCoroutine(screenHome.StartScreenFadeIn(new Action(RestrictionInput.EndLoad)));
 		yield break;
 	}
 
@@ -533,7 +530,7 @@ public class CMD_PvPTop : CMD
 		if (this.isAggregate)
 		{
 			this.colosseumUserStatus = new GameWebAPI.ColosseumUserStatus();
-			this.colosseumUserStatus.nickname = DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.nickname;
+			this.colosseumUserStatus.nickname = DataMng.Instance().UserName;
 			this.wartimeCareerLabel.text = StringMaster.GetString("PvpAggregate");
 		}
 		else
@@ -1165,16 +1162,19 @@ public class CMD_PvPTop : CMD
 		int num = colosseumReward.maxRewardListKey();
 		int num2 = colosseumReward.maxInterimRewardListKey();
 		CMD_ColosseumBonus cmd_ColosseumBonus = GUIMain.ShowCommonDialog(action, "CMD_ColosseumBonus") as CMD_ColosseumBonus;
+		string title = string.Empty;
+		GameWebAPI.ColosseumReward[] rewardList;
 		if (num >= num2)
 		{
-			cmd_ColosseumBonus.RewardList = colosseumReward.rewardList[num.ToString()];
-			cmd_ColosseumBonus.SetReward(StringMaster.GetString("ColosseumRankRewardTitle"));
+			rewardList = colosseumReward.rewardList[num.ToString()];
+			title = StringMaster.GetString("ColosseumRankRewardTitle");
 		}
 		else
 		{
-			cmd_ColosseumBonus.RewardList = colosseumReward.interimRewardList[num2.ToString()];
-			cmd_ColosseumBonus.SetReward(StringMaster.GetString("ColosseumInterimRankRewardName"));
+			rewardList = colosseumReward.interimRewardList[num2.ToString()];
+			title = StringMaster.GetString("ColosseumInterimRankRewardName");
 		}
+		cmd_ColosseumBonus.SetReward(title, rewardList);
 	}
 
 	private void ShowRankDownDialog()

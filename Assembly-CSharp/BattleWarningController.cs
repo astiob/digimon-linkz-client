@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BattleWarningController : MonoBehaviour
 {
-	[Header("サブサークルオブジェクト")]
 	[SerializeField]
+	[Header("サブサークルオブジェクト")]
 	private GameObject[] Subcircles = new GameObject[0];
 
 	[SerializeField]

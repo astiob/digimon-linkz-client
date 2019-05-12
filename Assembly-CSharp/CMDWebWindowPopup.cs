@@ -142,7 +142,7 @@ public class CMDWebWindowPopup : CMDWebWindow
 
 	public void OnClickShop()
 	{
-		Action<int> actCallBack = delegate(int x)
+		Action actCallBack = delegate()
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_Shop");
 			FarmRoot instance = FarmRoot.Instance;
@@ -156,7 +156,7 @@ public class CMDWebWindowPopup : CMDWebWindow
 
 	public void OnClickGasha()
 	{
-		Action<int> actCallBack = delegate(int x)
+		Action actCallBack = delegate()
 		{
 			GUIMain.ShowCommonDialog(null, "CMD_GashaTOP");
 			FarmRoot instance = FarmRoot.Instance;

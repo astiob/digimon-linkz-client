@@ -31,9 +31,10 @@ namespace MonsterPicturebook
 			this.parentDialog.SetActive(false);
 		}
 
-		protected override void OnCloseStartDialog()
+		protected override bool OnCloseStartDialog()
 		{
 			this.parentDialog.SetActive(true);
+			return true;
 		}
 
 		protected override void OnClosedDialog()

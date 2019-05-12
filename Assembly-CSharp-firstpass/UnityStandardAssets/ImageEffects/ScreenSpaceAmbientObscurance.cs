@@ -4,8 +4,8 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
 	[ExecuteInEditMode]
-	[AddComponentMenu("Image Effects/Rendering/Screen Space Ambient Obscurance")]
 	[RequireComponent(typeof(Camera))]
+	[AddComponentMenu("Image Effects/Rendering/Screen Space Ambient Obscurance")]
 	internal class ScreenSpaceAmbientObscurance : PostEffectsBase
 	{
 		[Range(0f, 3f)]

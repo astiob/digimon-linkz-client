@@ -20,6 +20,8 @@ public class GUIManager : Singleton<GUIManager>
 
 	private static int _generation = 0;
 
+	private static bool extBackKeyReady = true;
+
 	private static GUIBase isShowGUI;
 
 	private static float DLG_START_Z = -1000f;
@@ -42,7 +44,7 @@ public class GUIManager : Singleton<GUIManager>
 
 	private static List<CommonDialog> cdList_BK = null;
 
-	private static Action<int> actCallBackCloseAll = null;
+	private static Action actCallBackCloseAll = null;
 
 	private static bool someOneTouch_;
 
@@ -59,8 +61,6 @@ public class GUIManager : Singleton<GUIManager>
 	public static List<ITouchEvent> selectButtons;
 
 	public static float zposition = 0f;
-
-	private static bool extBackKeyReady = true;
 
 	public event Action ActCallBackCloseAllCMD;
 
@@ -758,7 +758,7 @@ public class GUIManager : Singleton<GUIManager>
 		GUIManager.cdList_BK = new List<CommonDialog>();
 	}
 
-	public static void CloseAllCommonDialog(Action<int> actCallBack = null)
+	public static void CloseAllCommonDialog(Action actCallBack = null)
 	{
 		GUIManager.actCallBackCloseAll = actCallBack;
 		GUIManager.closeAll_CT = 0;
@@ -766,7 +766,7 @@ public class GUIManager : Singleton<GUIManager>
 		{
 			if (GUIManager.actCallBackCloseAll != null)
 			{
-				GUIManager.actCallBackCloseAll(0);
+				GUIManager.actCallBackCloseAll();
 				GUIManager.actCallBackCloseAll = null;
 			}
 			return;
@@ -786,7 +786,7 @@ public class GUIManager : Singleton<GUIManager>
 			GUIManager.closeAll_CT = 0;
 			if (GUIManager.actCallBackCloseAll != null)
 			{
-				GUIManager.actCallBackCloseAll(0);
+				GUIManager.actCallBackCloseAll();
 				GUIManager.actCallBackCloseAll = null;
 			}
 		}

@@ -5,40 +5,30 @@ using UnityEngine;
 
 public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 {
-	private List<AlwaysEffectParams> currentShowEffects = new List<AlwaysEffectParams>();
-
-	private List<bool> currentRareList = new List<bool>();
-
 	private Dictionary<int, bool> isEffectPlaying = new Dictionary<int, bool>();
+
+	private CharacterStateControl[] currentDeathCharacters;
 
 	public SubStateEnemiesItemDroppingFunction(Action OnExit, Action<EventState> OnExitGotEvent) : base(null, OnExit, OnExitGotEvent)
 	{
 	}
 
-	private CharacterStateControl[] currentDeathCharacters
+	public void Init(CharacterStateControl[] deads)
 	{
-		get
-		{
-			if (base.battleStateData.currentDeadCharacters == null)
-			{
-				return new CharacterStateControl[0];
-			}
-			return base.battleStateData.currentDeadCharacters;
-		}
+		this.currentDeathCharacters = deads;
 	}
 
 	protected override void EnabledThisState()
 	{
-		this.currentShowEffects.Clear();
-		this.currentRareList.Clear();
 	}
 
 	protected override IEnumerator MainRoutine()
 	{
-		if (this.currentDeathCharacters.Length <= 0)
+		if (this.currentDeathCharacters == null || this.currentDeathCharacters.Length <= 0)
 		{
 			yield break;
 		}
+		base.stateManager.deadOrAlive.AfterEnemyDeadFunction(this.currentDeathCharacters);
 		int dropCount = 0;
 		int rareCount = 0;
 		int normalCount = 0;
@@ -113,21 +103,11 @@ public class SubStateEnemiesItemDroppingFunction : BattleStateBase
 
 	protected override void DisabledThisState()
 	{
-		base.stateManager.threeDAction.StopAlwaysEffectAction(this.currentShowEffects.ToArray());
-		base.battleStateData.SEStopFunction = new Action(this.StopEffect);
+		base.stateManager.uiControl.ApplyDroppedItemHide();
 	}
 
 	protected override void GetEventThisState(EventState eventState)
 	{
-		this.StopEffect();
-	}
-
-	private void StopEffect()
-	{
-		foreach (AlwaysEffectParams alwaysEffect in this.currentShowEffects)
-		{
-			base.stateManager.soundPlayer.TryStopSE(alwaysEffect);
-		}
 		base.stateManager.uiControl.ApplyDroppedItemHide();
 	}
 

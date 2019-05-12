@@ -63,5 +63,19 @@ namespace Chip
 		{
 			return this.equipList;
 		}
+
+		public ChipClientEquip FindChipEquip(int userChipId)
+		{
+			ChipClientEquip result = null;
+			for (int i = 0; i < this.equipList.Count; i++)
+			{
+				if (this.equipList[i].userChipId == userChipId)
+				{
+					result = this.equipList[i];
+					break;
+				}
+			}
+			return result;
+		}
 	}
 }

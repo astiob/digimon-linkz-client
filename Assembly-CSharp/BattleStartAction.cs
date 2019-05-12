@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BattleStartAction : MonoBehaviour
 {
-	[Header("タイトル")]
 	[SerializeField]
+	[Header("タイトル")]
 	private GameObject titleRoot;
 
 	[Header("味方のリーダースキルのUI")]
@@ -16,8 +16,8 @@ public class BattleStartAction : MonoBehaviour
 	[SerializeField]
 	private BattleStartAction.LeaderSkillUI enemyLeaderSkillUI;
 
-	[SerializeField]
 	[Header("VSの時のメッセージ")]
+	[SerializeField]
 	public UIWidget pvpVSUi;
 
 	public void SetActive(bool value)
@@ -88,12 +88,12 @@ public class BattleStartAction : MonoBehaviour
 	[Serializable]
 	private struct LeaderSkillUI
 	{
-		[Header("味方スキル発動ローカライズ")]
 		[SerializeField]
+		[Header("味方スキル発動ローカライズ")]
 		public UILabel leaderSkillLocalize;
 
-		[SerializeField]
 		[Header("リーダースキルのオブジェクト")]
+		[SerializeField]
 		public GameObject leaderSkillUIPlayer;
 
 		[SerializeField]

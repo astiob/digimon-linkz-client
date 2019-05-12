@@ -26,7 +26,8 @@ public class SubStatePvPAreaRandomDamageHitFunction : BattleStateController
 			yield break;
 		}
 		bool isConfusion = false;
-		if (attacker.currentSufferState.FindSufferState(SufferStateProperty.SufferType.Confusion) && attacker.currentSufferState.onConfusion.GetOccurrenceFreeze())
+		SufferStateProperty confusionSuffer = attacker.currentSufferState.GetSufferStateProperty(SufferStateProperty.SufferType.Confusion);
+		if (confusionSuffer.isActive && confusionSuffer.GetOccurrenceFreeze())
 		{
 			isConfusion = true;
 		}

@@ -31,7 +31,7 @@ namespace MultiBattle.Tools
 			Dictionary<object, object> dictionary = (Dictionary<object, object>)messageObj;
 			foreach (KeyValuePair<object, object> keyValuePair in dictionary)
 			{
-				if (keyValuePair.Key.ToString() == key)
+				if (keyValuePair.Key.ToString() == key && keyValuePair.Value != null)
 				{
 					global::Debug.LogFormat("{0}キー発見.", new object[]
 					{

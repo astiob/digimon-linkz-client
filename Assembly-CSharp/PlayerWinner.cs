@@ -11,16 +11,16 @@ public class PlayerWinner : MonoBehaviour
 	[SerializeField]
 	private Collider nextButtonCollider;
 
-	[Header("NextボタンのGameObject")]
 	[SerializeField]
+	[Header("NextボタンのGameObject")]
 	public GameObject nextButtonGO;
 
-	[Header("UIWidget")]
 	[SerializeField]
+	[Header("UIWidget")]
 	public UIWidget widget;
 
-	[SerializeField]
 	[Header("スピードクリア")]
+	[SerializeField]
 	public GameObject speedClearObject;
 
 	public void AddEvent(Action skipWinnerAction)

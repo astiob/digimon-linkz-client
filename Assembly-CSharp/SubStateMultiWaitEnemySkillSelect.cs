@@ -20,9 +20,12 @@ public class SubStateMultiWaitEnemySkillSelect : SubStateMultiPlayerCharacterAnd
 		base.stateManager.multiFunction.CurrentEnemyMyIndex = this.currentCharacter.myIndex;
 		IEnumerator coroutine = base.MainRoutine();
 		IEnumerator action = base.stateManager.multiFunction.WaitAllPlayers(TCPMessageType.Attack);
-		while (coroutine.MoveNext())
+		bool isActiveForCoroutine = true;
+		bool isActiveForAction = true;
+		while (isActiveForCoroutine || isActiveForAction)
 		{
-			action.MoveNext();
+			isActiveForCoroutine = coroutine.MoveNext();
+			isActiveForAction = action.MoveNext();
 			yield return null;
 		}
 		base.stateManager.uiControlMulti.StartSharedAPAnimation();

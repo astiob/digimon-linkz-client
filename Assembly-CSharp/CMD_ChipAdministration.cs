@@ -89,11 +89,6 @@ public sealed class CMD_ChipAdministration : CMD
 
 	public override void Show(Action<int> f, float sizeX, float sizeY, float aT)
 	{
-		AppCoroutine.Start(this.Init(f, sizeX, sizeY, aT), false);
-	}
-
-	private IEnumerator Init(Action<int> f, float sizeX, float sizeY, float aT)
-	{
 		GUICollider.DisableAllCollider("CMD_ChipList");
 		RestrictionInput.StartLoad(RestrictionInput.LoadType.LARGE_IMAGE_MASK_ON);
 		base.HideDLG();
@@ -104,14 +99,15 @@ public sealed class CMD_ChipAdministration : CMD
 		this.chipList.SetShortTouchCallback(new Action<GUIListChipParts.Data>(this.OnShortTouchChip));
 		this.chipList.SetLongTouchCallback(new Action<GUIListChipParts.Data>(this.OnLongTouchChip));
 		this.chipList.AddWidgetDepth(base.gameObject.GetComponent<UIWidget>().depth);
+		this.chipList.SetTouchAreaWidth(875f);
 		this.messageLabel.gameObject.SetActive(this.userChipList.Length == 0);
 		this.messageLabel.text = StringMaster.GetString("ChipAdministration-01");
-		int currentListNum = 0;
+		int num = 0;
 		if (ChipDataMng.userChipData != null && ChipDataMng.userChipData.userChipList != null)
 		{
-			currentListNum = ChipDataMng.userChipData.userChipList.Length;
+			num = ChipDataMng.userChipData.userChipList.Length;
 		}
-		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), currentListNum, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
+		this.listCountLabel.text = string.Format(StringMaster.GetString("SystemFraction"), num, DataMng.Instance().RespDataUS_PlayerInfo.playerInfo.chipLimitMax);
 		this.listButtonLabel.text = StringMaster.GetString("SystemList");
 		this.saleButtonLabel.text = StringMaster.GetString("SystemButtonSell");
 		this.saleClusterTitleLabel.text = StringMaster.GetString("SaleConfirmGain");
@@ -133,8 +129,6 @@ public sealed class CMD_ChipAdministration : CMD
 		base.SetTutorialAnyTime("anytime_second_tutorial_chip_list");
 		base.Show(f, sizeX, sizeY, aT);
 		RestrictionInput.EndLoad();
-		yield return null;
-		yield break;
 	}
 
 	private void OnShortTouchChip(GUIListChipParts.Data data)
